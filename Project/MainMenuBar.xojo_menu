@@ -421,9 +421,9 @@ Begin Menu MainMenuBar
       End
       Begin ApplicationMenuItem HelpCheckforUpdates
          SpecialMenu = 0
-         Value = "Check for Updates…"
+         Value = "Check for Beacon Updates…"
          Index = -2147483648
-         Text = "Check for Updates…"
+         Text = "Check for Beacon Updates…"
          AutoEnabled = True
          AutoEnable = True
          Visible = True
@@ -435,6 +435,33 @@ Begin Menu MainMenuBar
          Text = "Release Notes…"
          AutoEnabled = True
          AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpSeparator2
+         SpecialMenu = 0
+         Value = "-"
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpUpdateEngrams
+         SpecialMenu = 0
+         Value = "Update Engrams"
+         Index = -2147483648
+         Text = "Update Engrams"
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
+      Begin MenuItem HelpSyncCloudFiles
+         SpecialMenu = 0
+         Value = "Sync Cloud Files"
+         Index = -2147483648
+         Text = "Sync Cloud Files"
+         AutoEnabled = False
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem UntitledSeparator6

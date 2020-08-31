@@ -43,6 +43,27 @@ Implements NotificationKit.Receiver
 		  FileOpen.Enable
 		  FileImport.Enable
 		  
+		  If Preferences.OnlineEnabled Then
+		    HelpSyncCloudFiles.Visible = True
+		    HelpUpdateEngrams.Visible = True
+		    HelpSeparator2.Visible = True
+		    
+		    If UserCloud.IsBusy = False Then
+		      HelpSyncCloudFiles.Enable
+		    End If
+		    
+		    If Keyboard.OptionKey Then
+		      HelpUpdateEngrams.Value = "Refresh Engrams"
+		    Else
+		      HelpUpdateEngrams.Value = "Update Engrams"
+		    End If
+		    HelpUpdateEngrams.Enable
+		  Else
+		    HelpSyncCloudFiles.Visible = False
+		    HelpUpdateEngrams.Visible = False
+		    HelpSeparator2.Visible = False
+		  End If
+		  
 		  Var Counter As Integer = 1
 		  For I As Integer = 0 To WindowCount - 1
 		    Var Win As Window = Window(I)
@@ -128,7 +149,6 @@ Implements NotificationKit.Receiver
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
 		  ConfigNames.AddRow("deployments")
-		  ConfigNames.AddRow("maps")
 		  Var ConfigLabels() As String
 		  For Each ConfigName As String In ConfigNames
 		    ConfigLabels.AddRow(Language.LabelForConfig(ConfigName))
@@ -138,7 +158,7 @@ Implements NotificationKit.Receiver
 		    EditorMenu.AddMenu(New ConfigGroupMenuItem(ConfigName))
 		  Next
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
@@ -311,6 +331,20 @@ Implements NotificationKit.Receiver
 	#tag MenuHandler
 		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
 			Self.ShowBugReporter()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpSyncCloudFiles() As Boolean Handles HelpSyncCloudFiles.Action
+			UserCloud.Sync(True)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
+			LocalData.SharedInstance.CheckForEngramUpdates(Keyboard.OptionKey)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -601,7 +635,28 @@ Implements NotificationKit.Receiver
 		      End If
 		    Case "refreshuser"
 		      Self.IdentityManager.RefreshUserDetails()
-		      Self.mMainWindow.ShowLibraryPane(LibraryPane.PaneMenu)
+		    Case "releasenotes"
+		      Self.ShowReleaseNotes()
+		    Case "enableonline"
+		      UserWelcomeWindow.Present(False)
+		    Case "signin"
+		      UserWelcomeWindow.Present(True)
+		    Case "showaccount"
+		      ShowURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
+		    Case "spawncodes"
+		      Self.ShowSpawnCodes()
+		    Case "reportproblem"
+		      Self.ShowBugReporter()
+		    Case "exit"
+		      Quit
+		    Case "signout"
+		      Preferences.OnlineEnabled = False
+		      Preferences.OnlineToken = ""
+		      Self.IdentityManager.CurrentIdentity = Nil
+		      
+		      UserWelcomeWindow.Present(False)
+		    Case "syncusercloud"
+		      UserCloud.Sync(True)
 		    Else
 		      Break
 		    End Select
@@ -1069,6 +1124,12 @@ Implements NotificationKit.Receiver
 		    Preferences.OnlineToken = ""
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
+		  Case UserCloud.Notification_SyncStarted
+		    HelpSyncCloudFiles.Value = "Syncing Cloud Files…"
+		    HelpSyncCloudFiles.Enabled = False
+		  Case UserCloud.Notification_SyncFinished
+		    HelpSyncCloudFiles.Value = "Sync Cloud Files"
+		    HelpSyncCloudFiles.Enabled = True
 		  End Select
 		End Sub
 	#tag EndMethod

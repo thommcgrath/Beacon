@@ -272,6 +272,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648

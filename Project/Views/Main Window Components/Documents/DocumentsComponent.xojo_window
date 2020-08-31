@@ -241,19 +241,6 @@ End
 		  
 		  Self.DetachControllerEvents(Sender)
 		  
-		  #if false
-		    Var URL As Beacon.DocumentURL = Sender.URL
-		    Select Case URL.Scheme
-		    Case Beacon.DocumentURL.TypeLocal, Beacon.DocumentURL.TypeTransient
-		      Self.View = Self.ViewRecentDocuments
-		    Case Beacon.DocumentURL.TypeCloud
-		      Self.View = Self.ViewCloudDocuments
-		    Case Beacon.DocumentURL.TypeWeb
-		      Self.View = Self.ViewCommunityDocuments
-		    End Select
-		    Self.SelectDocument(URL)
-		  #endif
-		  
 		  Var View As New DocumentEditorView(Sender)
 		  View.Changed = Sender.Document.Modified
 		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Hash)
@@ -367,6 +354,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DocumentEditors() As DocumentEditorView()
+		  Var Editors() As DocumentEditorView
+		  Var Bound As Integer = Self.PageCount - 1
+		  For Idx As Integer = 0 To Bound
+		    Var Page As BeaconSubview = Self.Page(Idx)
+		    If Page IsA DocumentEditorView Then
+		      Editors.AddRow(DocumentEditorView(Page))
+		    End If
+		  Next
+		  Return Editors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
 		  Call DocumentImportWindow.Present(WeakAddressOf LoadImportedDocuments, New Beacon.Document, File)
 		End Sub
@@ -470,6 +471,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused Item
+		  
 		  For Idx As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.Page(Idx)
 		    If Page.LinkedOmniBarItem = Item Then

@@ -56,9 +56,9 @@ Protected Class Identity
 		  End If
 		  
 		  Try
-		    Self.mLoginKey = Dict.Lookup("login_key", "")
+		    Self.mUsername = Dict.Lookup("username", "")
 		  Catch Err As RuntimeException
-		    Self.mLoginKey = ""
+		    Self.mUsername = ""
 		  End Try
 		  
 		  Try
@@ -136,7 +136,7 @@ Protected Class Identity
 		  Dict.Value("Private") = Self.mPrivateKey
 		  Dict.Value("Version") = 2
 		  Dict.Value("Omni Version") = Self.mPurchasedOmniVersion
-		  Dict.Value("LoginKey") = Self.mLoginKey
+		  Dict.Value("Username") = Self.mUsername
 		  Dict.Value("Banned") = Self.mBanned
 		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
 		    Dict.Value("Signature") = EncodeHex(Self.mSignature)
@@ -226,8 +226,10 @@ Protected Class Identity
 		    Identity.mSignature = DecodeHex(Source.Value("Signature"))
 		  End If
 		  
-		  If Source.HasKey("LoginKey") Then
-		    Identity.mLoginKey = Source.Value("LoginKey")
+		  If Source.HasKey("Username") Then
+		    Identity.mUsername = Source.Value("Username")
+		  ElseIf Source.HasKey("LoginKey") Then
+		    Identity.mUsername = Source.Value("LoginKey")
 		  End If
 		  
 		  If Source.HasKey("Expiration") Then
@@ -254,7 +256,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function IsAnonymous() As Boolean
-		  Return Self.mLoginKey.Length = 0
+		  Return Self.mUsername.Length = 0
 		End Function
 	#tag EndMethod
 
@@ -281,8 +283,8 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LoginKey() As String
-		  Return Self.mLoginKey
+		Attributes( Deprecated = "Username" )  Function LoginKey() As String
+		  Return Self.mUsername
 		End Function
 	#tag EndMethod
 
@@ -299,7 +301,7 @@ Protected Class Identity
 		  End If
 		  
 		  // Case changes do matter
-		  Var Result As Integer = Self.mLoginKey.Compare(Other.mLoginKey, ComparisonOptions.CaseInsensitive)
+		  Var Result As Integer = Self.mUsername.Compare(Other.mUsername, ComparisonOptions.CaseInsensitive)
 		  If Result <> 0 Then
 		    Return Result
 		  End If
@@ -424,6 +426,16 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Username(WithSuffix As Boolean = False) As String
+		  If WithSuffix Then
+		    Return Self.mUsername + "#" + Self.mIdentifier.Left(8)
+		  Else
+		    Return Self.mUsername
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Validate()
 		  If Self.mSignature <> Nil Then
 		    Var Fields(3) As String
@@ -449,7 +461,7 @@ Protected Class Identity
 		    End If
 		  End If
 		  
-		  Self.mLoginKey = ""
+		  Self.mUsername = ""
 		  Self.mPurchasedOmniVersion = 0
 		End Sub
 	#tag EndMethod
@@ -490,10 +502,6 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLoginKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mParentAccountID As v4UUID
 	#tag EndProperty
 
@@ -515,6 +523,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mUsercloudKey As MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsername As String
 	#tag EndProperty
 
 

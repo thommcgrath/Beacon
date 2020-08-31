@@ -54,6 +54,8 @@ Begin BeaconDialog BlueprintEditorDialog
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
+         DesiredHeight   =   0
+         DesiredWidth    =   0
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True

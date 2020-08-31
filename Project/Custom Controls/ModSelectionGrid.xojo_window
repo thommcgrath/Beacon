@@ -45,6 +45,7 @@ Begin ContainerControl ModSelectionGrid
       TabStop         =   False
       Tooltip         =   ""
       Top             =   10
+      Transparent     =   False
       Visible         =   True
       Width           =   220
    End
@@ -76,6 +77,7 @@ Begin ContainerControl ModSelectionGrid
       Top             =   54
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   100

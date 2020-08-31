@@ -1,7 +1,7 @@
 #tag Class
 Protected Class OmniBar
 Inherits ControlCanvas
-Implements ObservationKit.Observer, NotificationKit.Receiver
+Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Event
 		Sub Activate()
 		  Self.Invalidate

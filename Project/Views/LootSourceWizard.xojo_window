@@ -1028,6 +1028,8 @@ Begin BeaconDialog LootSourceWizard
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DesiredHeight   =   0
+         DesiredWidth    =   0
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True

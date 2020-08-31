@@ -762,13 +762,8 @@ End
 		    Return
 		  End If
 		  
-		  Var Bound As Integer = Win.ViewCount - 1
-		  For Idx As Integer = 0 To Bound
-		    Var View As BeaconSubview = Win.ViewAtIndex(Idx)
-		    If (View IsA DocumentEditorView) = False Then
-		      Continue
-		    End If
-		    
+		  Var Editors() As DocumentEditorView = App.MainWindow.DocumentEditors
+		  For Each View As BeaconSubview In Editors
 		    Var Document As Beacon.Document = DocumentEditorView(View).Document
 		    If Document Is Nil Then
 		      Continue

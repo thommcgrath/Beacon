@@ -1003,7 +1003,14 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="OmniBarItem.Types"
-			EditorType=""
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Tab"
+				"1 - Button"
+				"2 - Space"
+				"3 - FlexSpace"
+				"4 - Separator"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

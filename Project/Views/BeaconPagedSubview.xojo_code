@@ -1,6 +1,17 @@
 #tag Class
 Protected Class BeaconPagedSubview
 Inherits BeaconSubview
+	#tag Event
+		Sub EnableMenuItems()
+		  RaiseEvent EnableMenuItems()
+		  
+		  If (Self.CurrentPage Is Nil) = False Then
+		    Self.CurrentPage.EnableMenuItems()
+		  End If
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub AppendPage(Page As BeaconSubview)
 		  If Self.IndexOf(Page) = -1 Then
@@ -189,6 +200,10 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event EnableMenuItems()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event PageChanged(OldIndex As Integer, NewIndex As Integer)

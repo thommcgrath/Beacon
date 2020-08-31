@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer,NotificationKit.Receiver
+Begin BeaconWindow MainWindow Implements ObservationKit.Observer, NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -27,89 +27,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Title           =   "Beacon"
    Visible         =   True
    Width           =   1200
-   Begin TabBar TabBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      Count           =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   25
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   21
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      SelectedIndex   =   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -115
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1159
-      WithTopBorder   =   False
-   End
-   Begin PagePanel Views
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   337
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   41
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      PanelCount      =   2
-      Panels          =   ""
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      Top             =   -409
-      Transparent     =   False
-      Value           =   0
-      Visible         =   True
-      Width           =   759
-   End
-   Begin ControlCanvas OverlayCanvas
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   380
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   -512
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   584
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   False
-      Width           =   500
-   End
    Begin LibraryPane LibraryPane1
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -190,7 +107,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   4
+      Value           =   1
       Visible         =   True
       Width           =   1200
       Begin DocumentsComponent DocumentsComponent1
@@ -339,8 +256,9 @@ End
 
 	#tag Event
 		Sub EnableMenuItems()
-		  If Self.mCurrentView <> Nil Then
-		    Self.mCurrentView.EnableMenuItems()
+		  Var Component As BeaconSubview = Self.CurrentComponent
+		  If (Component Is Nil) = False Then
+		    Component.EnableMenuItems()
 		  End If
 		End Sub
 	#tag EndEvent
@@ -443,19 +361,6 @@ End
 
 
 	#tag MenuHandler
-		Function FileClose() As Boolean Handles FileClose.Action
-			If Self.mCurrentView = Nil Then
-			Self.Close
-			Return True
-			End If
-			
-			Call Self.DiscardView(Self.mCurrentView)
-			
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
 			Self.ShowView(Self.DashboardPane1)
 			Return True
@@ -500,18 +405,6 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As String, Value As Double)
-		  // Part of the AnimationKit.ValueAnimator interface.
-		  
-		  Select Case Identifier
-		  Case "overlay_opacity"
-		    Self.mOverlayFillOpacity = Value
-		    Self.OverlayCanvas.Invalidate
-		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor()
 		  #if TargetMacOS
 		    Self.mObserver = New NSNotificationObserverMBS
@@ -526,39 +419,26 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function CurrentView() As BeaconSubview
-		  Return Self.mCurrentView
+		Function CurrentComponent() As BeaconSubview
+		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
+		  Select Case CurrentIndex
+		  Case Self.PageHome
+		    Return Self.DashboardPane1
+		  Case Self.PageDocuments
+		    Return Self.DocumentsComponent1
+		  Case Self.PageBlueprints
+		    Return Self.BlueprintsComponent1
+		  Case Self.PagePresets
+		    
+		  Case Self.PageHelp
+		    
+		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function DiscardView(View As BeaconSubview) As Boolean
-		  If View = DashboardPane1 Then
-		    Return False
-		  End If
-		  
-		  If Not View.ConfirmClose(AddressOf ShowView) Then
-		    Return False
-		  End If
-		  
-		  If View = Self.mCurrentView Then
-		    Self.ShowView(Nil)
-		  End If
-		  
-		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
-		  If ViewIndex = -1 Then
-		    Return True
-		  End If
-		  
-		  View.AddObserver(Self, "ToolbarCaption")
-		  View.AddObserver(Self, "ToolbarIcon")
-		  
-		  Self.mSubviews.RemoveRowAt(ViewIndex)
-		  View.Close
-		  Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
-		  Self.LibraryPane1.CleanupClosedViews()
-		  
-		  Return True
+		Function DocumentEditors() As DocumentEditorView()
+		  Return Self.DocumentsComponent1.DocumentEditors
 		End Function
 	#tag EndMethod
 
@@ -574,15 +454,10 @@ End
 
 	#tag Method, Flags = &h0
 		Function FrontmostDocumentView() As DocumentEditorView
-		  If (Self.mCurrentView Is Nil) = False And Self.mCurrentView IsA DocumentEditorView Then
-		    Return DocumentEditorView(Self.mCurrentView)
+		  Var DocumentView As BeaconSubview = Self.DocumentsComponent1.CurrentPage
+		  If (DocumentView Is Nil) = False And DocumentView IsA DocumentEditorView Then
+		    Return DocumentEditorView(DocumentView)
 		  End If
-		  
-		  For Each View As BeaconSubview In Self.mSubviews
-		    If (View Is Nil) = False And View IsA DocumentEditorView Then
-		      Return DocumentEditorView(View)
-		    End If
-		  Next
 		End Function
 	#tag EndMethod
 
@@ -610,18 +485,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub mOverlayFillAnimation_Completed(Sender As AnimationKit.ValueTask)
-		  #Pragma Unused Sender
-		  
-		  Self.OverlayCanvas.Visible = False
-		  #if TargetWin32
-		    Self.Views.Visible = True
-		    Self.TabBar1.Visible = True
-		  #endif
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
@@ -644,7 +507,7 @@ End
 		  
 		  Select Case Key
 		  Case "ToolbarCaption", "ToolbarIcon"
-		    Self.TabBar1.Invalidate
+		    Self.NavBar.Invalidate
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -691,6 +554,35 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowUserMenu(X As Integer, Y As Integer)
+		  Var Base As New MenuItem
+		  
+		  If Not Preferences.OnlineEnabled Then
+		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
+		  Else
+		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.LoginKey = "" Then
+		      Base.AddMenu(New MenuItem("Sign In", "beacon://action/signin"))
+		    Else
+		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
+		      IdentityItem.Enabled = False
+		      Base.AddMenu(IdentityItem)
+		      Base.AddMenu(New MenuItem("Manage Account", "beacon://action/showaccount"))
+		      Base.AddMenu(New MenuItem("Sign Out", "beacon://action/signout"))
+		    End If
+		  End If
+		  
+		  Var Choice As MenuItem = Base.PopUp(X, Y)
+		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then
+		    Return
+		  End If
+		  
+		  If Choice.Tag.StringValue.IsEmpty = False Then
+		    Call App.HandleURL(Choice.Tag.StringValue)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
 		  Var NewIndex As Integer
@@ -706,20 +598,6 @@ End
 		  End Select
 		  
 		  Self.SwitchView(NewIndex)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
-		  If Self.mCurrentView = Sender Then
-		    Self.Changed = Sender.Changed
-		    If Self.mCurrentView.ToolbarCaption.Length > 0 Then
-		      Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
-		    Else
-		      Self.Title = "Beacon"
-		    End If
-		  End If
-		  Self.TabBar1.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -784,8 +662,9 @@ End
 		  Next
 		  
 		  Var Items() As MenuItem
-		  If Self.CurrentView <> Nil Then
-		    Self.CurrentView.GetEditorMenuItems(Items)
+		  Var Component As BeaconSubview = Self.CurrentComponent
+		  If (Component Is Nil) = False Then
+		    Component.GetEditorMenuItems(Items)
 		  End If
 		  
 		  If Items.LastRowIndex = -1 Then
@@ -800,29 +679,9 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function ViewAtIndex(Idx As Integer) As BeaconSubview
-		  Return Self.mSubviews(Idx)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function ViewCount() As UInteger
-		  Return Self.mSubviews.LastRowIndex + 1
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mCurrentView As BeaconSubview
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mHelpLoaded As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLibraryPaneAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -834,39 +693,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOverlayFillAnimation As AnimationKit.ValueTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOverlayFillOpacity As Double = 0
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOverlayPic As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSubviews(-1) As BeaconSubview
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTabBarAnimation As AnimationKit.MoveTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mToolbar As NSToolbarMBS
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdateBarPressed As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mUpdateText As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mViewsAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
 
@@ -891,136 +722,20 @@ End
 
 #tag EndWindowCode
 
-#tag Events TabBar1
-	#tag Event
-		Sub Open()
-		  Me.Count = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function ViewAtIndex(TabIndex As Integer) As BeaconSubview
-		  If TabIndex = 0 Then
-		    Return DashboardPane1
-		  Else
-		    TabIndex = TabIndex - 1
-		    If TabIndex >= 0 And TabIndex <= Self.mSubviews.LastRowIndex Then
-		      Return Self.mSubviews(TabIndex)
-		    End If
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub ShouldDismissView(ViewIndex As Integer)
-		  If ViewIndex = 0 Then
-		    Return
-		  End If
-		  
-		  ViewIndex = ViewIndex - 1
-		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
-		    Call Self.DiscardView(Self.mSubviews(ViewIndex))
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SwitchToView(ViewIndex As Integer)
-		  If ViewIndex = 0 Then
-		    Self.ShowView(DashboardPane1)
-		    Return
-		  End If
-		  
-		  ViewIndex = ViewIndex - 1
-		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
-		    Self.ShowView(Self.mSubviews(ViewIndex))
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events OverlayCanvas
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
-		  
-		  If Self.mOverlayPic <> Nil Then
-		    G.DrawPicture(Self.mOverlayPic, 0, 0, G.Width, G.Height, 0, 0, Self.mOverlayPic.Width, Self.mOverlayPic.Height)
-		  End If
-		  
-		  G.DrawingColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
-		  G.FillRectangle(0, 0, G.Width, G.Height)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  If X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height Then
-		    Self.LibraryPane1.Dismiss
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.Visible = False
-		  Me.Left = 0
-		  Me.Top = 0
-		  Me.Width = Self.Width
-		  Me.Height = Self.Height
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events LibraryPane1
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
-		  Self.ShowView(View)
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function ShouldDiscardView(View As BeaconSubview) As Boolean
-		  Return Self.DiscardView(View)
+		  
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub ChangePosition(Difference As Integer)
-		  If Self.mLibraryPaneAnimation <> Nil Then
-		    Self.mLibraryPaneAnimation.Cancel
-		    Self.mLibraryPaneAnimation = Nil
-		  End If
 		  
-		  Self.mLibraryPaneAnimation = New AnimationKit.MoveTask(Me)
-		  Self.mLibraryPaneAnimation.Left = Me.Left + Difference
-		  Self.mLibraryPaneAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mLibraryPaneAnimation.DurationInSeconds = 0.12
-		  Self.mLibraryPaneAnimation.Run
-		  
-		  If Self.mOverlayFillAnimation <> Nil Then
-		    Self.mOverlayFillAnimation.Cancel
-		    Self.mOverlayFillAnimation = Nil
-		  End If
-		  
-		  If Self.mOverlayFillOpacity = 0 Then
-		    Self.mOverlayPic = Self.Capture
-		  End If
-		  
-		  If Difference > 0 Then
-		    Self.OverlayCanvas.Visible = True
-		    #if TargetWin32
-		      Self.Views.Visible = False
-		      Self.TabBar1.Visible = False
-		    #endif
-		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.35)
-		  Else
-		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
-		    AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
-		  End If
-		  
-		  Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
-		  Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
-		  Self.mOverlayFillAnimation.Run
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1062,6 +777,9 @@ End
 		    NewIndex = Self.PageHome
 		  Case "NavUpdate"
 		    Call App.HandleURL("beacon://action/checkforupdate")
+		    Return
+		  Case "NavUser"
+		    Self.ShowUserMenu(Self.Left + Me.Left + ItemRect.Left, Self.Top + Me.Top + ItemRect.Bottom)
 		    Return
 		  Else
 		    Return

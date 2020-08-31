@@ -753,14 +753,9 @@ End
 		      Classes.AddRow(Source.ClassString)
 		    Next
 		    
-		    Var Bound As UInteger = Win.ViewCount - 1
-		    For I As Integer = 0 To Bound
-		      Var View As BeaconSubview = Win.ViewAtIndex(I)
-		      If Not (View IsA DocumentEditorView) Then
-		        Continue
-		      End If
-		      
-		      Var Document As Beacon.Document = DocumentEditorView(View).Document
+		    Var Editors() As DocumentEditorView = Win.DocumentEditors
+		    For Each View As DocumentEditorView In Editors
+		      Var Document As Beacon.Document = View.Document
 		      If Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
 		        Var Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
 		        Var Sources As Beacon.LootSourceCollection = Config.DefinedSources
