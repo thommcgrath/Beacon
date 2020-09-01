@@ -2,7 +2,7 @@
 Protected Class LogoFillCanvas
 Inherits ControlCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
 		  
 		  G.FontSize = 24

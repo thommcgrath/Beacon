@@ -138,10 +138,9 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  Const DefaultEdgePadding = 20
 		  
-		  Var Highlighted As Boolean = Self.Highlighted
 		  If Self.mColorProfile Is Nil Then
 		    Self.mColorProfile = New OmniBarColorProfile
 		  End If

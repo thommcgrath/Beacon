@@ -49,7 +49,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
 		  
 		  Const ButtonHeight = 30

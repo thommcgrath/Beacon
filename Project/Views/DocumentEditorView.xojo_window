@@ -208,35 +208,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin SourceList ConfigList
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   478
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      SelectedRowIndex=   0
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   50
-      Transparent     =   True
-      Visible         =   True
-      Width           =   230
-   End
    Begin FadedSeparator SourceSeparator
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -260,7 +231,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   49
+      Top             =   50
       Transparent     =   True
       Visible         =   True
       Width           =   1
@@ -295,6 +266,36 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Transparent     =   True
       Visible         =   True
       Width           =   858
+   End
+   Begin SourceList ConfigList
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   478
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   50
+      Transparent     =   True
+      Visible         =   True
+      Width           =   230
    End
 End
 #tag EndWindow
@@ -1366,44 +1367,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ConfigList
-	#tag Event
-		Sub Change()
-		  Var TagVar As Variant
-		  If Me.SelectedRowIndex > -1 Then
-		    TagVar = Me.Item(Me.SelectedRowIndex).Tag
-		  End If
-		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
-		    Self.CurrentConfigName = TagVar.StringValue
-		  Else
-		    Self.CurrentConfigName = ""
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var Labels(), Tags() As String
-		  #if DeployEnabled
-		    Labels.AddRow("Servers")
-		    Tags.AddRow("deployments")
-		  #endif
-		  Labels.AddRow("Accounts")
-		  Tags.AddRow("accounts")
-		  
-		  Var Names() As String = BeaconConfigs.AllConfigNames
-		  For Each Name As String In Names
-		    Labels.AddRow(Language.LabelForConfig(Name))
-		    Tags.AddRow(Name)
-		  Next
-		  
-		  Labels.SortWith(Tags)
-		  
-		  For I As Integer = 0 To Labels.LastRowIndex
-		    Me.Append(New SourceListItem(Labels(I), Tags(I)))
-		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events OmniBar1
 	#tag Event
 		Sub Open()
@@ -1480,6 +1443,44 @@ End
 		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
 		    Self.mModsPopoverController = Controller
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigList
+	#tag Event
+		Sub Change()
+		  Var TagVar As Variant
+		  If Me.SelectedRowIndex > -1 Then
+		    TagVar = Me.Item(Me.SelectedRowIndex).Tag
+		  End If
+		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
+		    Self.CurrentConfigName = TagVar.StringValue
+		  Else
+		    Self.CurrentConfigName = ""
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Var Labels(), Tags() As String
+		  #if DeployEnabled
+		    Labels.AddRow("Servers")
+		    Tags.AddRow("deployments")
+		  #endif
+		  Labels.AddRow("Accounts")
+		  Tags.AddRow("accounts")
+		  
+		  Var Names() As String = BeaconConfigs.AllConfigNames
+		  For Each Name As String In Names
+		    Labels.AddRow(Language.LabelForConfig(Name))
+		    Tags.AddRow(Name)
+		  Next
+		  
+		  Labels.SortWith(Tags)
+		  
+		  For I As Integer = 0 To Labels.LastRowIndex
+		    Me.Append(New SourceListItem(Labels(I), Tags(I)))
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

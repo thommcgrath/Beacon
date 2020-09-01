@@ -25,35 +25,6 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
    Transparent     =   True
    Visible         =   True
    Width           =   800
-   Begin SourceList ModsList
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   486
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   -251
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      SelectedRowIndex=   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin ModEditorView Editor
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -115,6 +86,36 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
       Transparent     =   True
       Visible         =   True
       Width           =   1
+   End
+   Begin SourceList ModsList
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   486
+      InitialParent   =   ""
+      Left            =   -251
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   251
    End
 End
 #tag EndWindow

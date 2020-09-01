@@ -107,7 +107,7 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  Const CellCornerRadius = 6
 		  
 		  #Pragma Unused areas

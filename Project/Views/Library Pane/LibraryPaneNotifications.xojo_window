@@ -286,7 +286,7 @@ End
 
 #tag Events DrawCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
 		  
 		  If Self.mScrollPosition > 0 Then

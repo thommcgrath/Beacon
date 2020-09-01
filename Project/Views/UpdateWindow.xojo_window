@@ -580,7 +580,7 @@ End
 #tag EndEvents
 #tag Events ResultsIconCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused areas
 		  
 		  G.DrawPicture(IconApp, 0, 0)

@@ -404,7 +404,7 @@ End
 #tag EndEvents
 #tag Events DividerCap
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
 		  
 		  Var Icon As Picture = BeaconUI.IconWithColor(ImgToolbarDivider, SystemColors.SeparatorColor)

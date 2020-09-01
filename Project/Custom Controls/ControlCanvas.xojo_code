@@ -79,7 +79,7 @@ Inherits Canvas
 		    G.DrawingColor = TempColor
 		  End If
 		  
-		  RaiseEvent Paint(g, areas)
+		  RaiseEvent Paint(g, areas, Self.Highlighted)
 		  Self.mPainted = True
 		End Sub
 	#tag EndEvent
@@ -171,7 +171,7 @@ Inherits Canvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Paint(g As Graphics, areas() As REALbasic.Rect)
+		Event Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 	#tag EndHook
 
 
