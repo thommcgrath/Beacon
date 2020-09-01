@@ -101,7 +101,7 @@ Implements ObservationKit.Observable
 		  
 		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
-		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.ToolbarCaption + """?"
+		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.ViewTitle + """?"
 		  Dialog.Explanation = "Your changes will be lost if you don't save them."
 		  Dialog.ActionButton.Caption = "Save…"
 		  Dialog.CancelButton.Visible = True
@@ -269,8 +269,8 @@ Implements ObservationKit.Observable
 			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
 			    // Update the new OmniBarItem to match
 			    Self.Progress = Self.Progress
-			    Self.ToolbarCaption = Self.ToolbarCaption
-			    Self.ToolbarIcon = Self.ToolbarIcon
+			    Self.ViewTitle = Self.ViewTitle
+			    Self.ViewIcon = Self.ViewIcon
 			    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
 			  End If
 			End Set
@@ -339,11 +339,11 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mToolbarCaption As String
+		Private mViewIcon As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mToolbarIcon As Picture
+		Private mViewTitle As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -384,8 +384,29 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.mToolbarCaption <> "" Then
-			    Return Self.mToolbarCaption
+			  Return Self.mViewIcon
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mViewIcon <> Value Then
+			    Self.mViewIcon = Value
+			    Self.NotifyObservers("ViewIcon", Value)
+			  End If
+			  
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    Self.mLinkedOmniBarItem.Icon = Value
+			  End If
+			End Set
+		#tag EndSetter
+		ViewIcon As Picture
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mViewTitle <> "" Then
+			    Return Self.mViewTitle
 			  ElseIf Self.Title <> "" Then
 			    Return Self.Title
 			  Else
@@ -395,9 +416,9 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mToolbarCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Self.mToolbarCaption = Value
-			    Self.NotifyObservers("ToolbarCaption", Value)
+			  If Self.mViewTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mViewTitle = Value
+			    Self.NotifyObservers("ViewTitle", Value)
 			  End If
 			  
 			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
@@ -405,28 +426,7 @@ Implements ObservationKit.Observable
 			  End If
 			End Set
 		#tag EndSetter
-		ToolbarCaption As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mToolbarIcon
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mToolbarIcon <> Value Then
-			    Self.mToolbarIcon = Value
-			    Self.NotifyObservers("ToolbarIcon", Value)
-			  End If
-			  
-			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
-			    Self.mLinkedOmniBarItem.Icon = Value
-			  End If
-			End Set
-		#tag EndSetter
-		ToolbarIcon As Picture
+		ViewTitle As String
 	#tag EndComputedProperty
 
 
@@ -441,70 +441,6 @@ Implements ObservationKit.Observable
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackgroundColor"
-			Visible=true
-			Group="Background"
-			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HasBackgroundColor"
-			Visible=true
-			Group="Background"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -535,14 +471,6 @@ Implements ObservationKit.Observable
 			Group="Size"
 			InitialValue="300"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -594,14 +522,6 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabStop"
 			Visible=true
 			Group="Position"
@@ -615,6 +535,30 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -634,11 +578,43 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="BackgroundColor"
+			Visible=true
+			Group="Background"
+			InitialValue="&hFFFFFF"
+			Type="Color"
+			EditorType="Color"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBackgroundColor"
+			Visible=true
+			Group="Background"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Backdrop"
 			Visible=true
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocus"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -651,26 +627,18 @@ Implements ObservationKit.Observable
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
-			Visible=true
+			Visible=false
 			Group="Behavior"
-			InitialValue="400"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumHeight"
-			Visible=true
+			Visible=false
 			Group="Behavior"
-			InitialValue="300"
+			InitialValue=""
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -682,19 +650,51 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
+			Name="ViewTitle"
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="Untitled"
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarIcon"
+			Name="ViewIcon"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
 			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=true
+			Group="Windows Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EraseBackground"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

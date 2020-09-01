@@ -100,14 +100,16 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Recents"
          Visible         =   True
          Width           =   896
       End
@@ -132,14 +134,16 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Cloud"
          Visible         =   True
          Width           =   896
       End
@@ -164,14 +168,16 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Community"
          Visible         =   True
          Width           =   896
       End
@@ -252,9 +258,9 @@ End
 		  
 		  Select Case Sender.URL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    View.ToolbarIcon = IconCloudDocument
+		    View.ViewIcon = IconCloudDocument
 		  Case Beacon.DocumentURL.TypeWeb
-		    View.ToolbarIcon = IconCommunityDocument
+		    View.ViewIcon = IconCommunityDocument
 		  End Select
 		  
 		  Self.Views.AddPanel
@@ -520,43 +526,19 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
-		Visible=false
+		Name="ViewTitle"
+		Visible=true
 		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
+		InitialValue="Untitled"
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumWidth"
-		Visible=true
-		Group="Behavior"
-		InitialValue="400"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumHeight"
-		Visible=true
-		Group="Behavior"
-		InitialValue="300"
-		Type="Integer"
+		Type="Picture"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -589,14 +571,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="InitialParent"
-		Visible=false
-		Group="Position"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -650,14 +624,6 @@ End
 	#tag ViewProperty
 		Name="TabIndex"
 		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabPanelIndex"
-		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
@@ -736,6 +702,30 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowFocus"
 		Visible=true
 		Group="Behavior"
@@ -746,14 +736,6 @@ End
 	#tag ViewProperty
 		Name="AllowTabs"
 		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=false
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
@@ -772,6 +754,30 @@ End
 		Visible=true
 		Group="Windows Behavior"
 		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="InitialParent"
+		Visible=false
+		Group="Position"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabPanelIndex"
+		Visible=false
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EraseBackground"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

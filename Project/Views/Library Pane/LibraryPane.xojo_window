@@ -69,15 +69,17 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
          View            =   0
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End
@@ -102,14 +104,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   5
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End
@@ -134,14 +138,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   6
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End
@@ -166,14 +172,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   7
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End
@@ -198,14 +206,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   8
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End
@@ -230,14 +240,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End
@@ -262,14 +274,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   258
       End

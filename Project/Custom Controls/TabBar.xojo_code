@@ -196,12 +196,12 @@ Implements ObservationKit.Observer
 		  
 		  Var MaxCaptionWidth As Integer = G.Width - ((ButtonSize * 2) + (CellPadding * 4))
 		  
-		  Var Icon As Picture = View.ToolbarIcon
+		  Var Icon As Picture = View.ViewIcon
 		  If (Icon Is Nil) = False Then
 		    MaxCaptionWidth = MaxCaptionWidth - (CellPadding + ButtonSize)
 		  End If
 		  
-		  Var Caption As String = View.ToolbarCaption
+		  Var Caption As String = View.ViewTitle
 		  Var CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth).NearestMultiple(PrecisionX)
 		  Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, PrecisionX)
 		  Var CaptionBottom As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), PrecisionY)

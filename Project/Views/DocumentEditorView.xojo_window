@@ -562,7 +562,7 @@ End
 		      Callback.Invoke(Self)
 		    End If
 		    
-		    Self.ShowAlert(Self.ToolbarCaption + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
+		    Self.ShowAlert(Self.ViewTitle + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
 		    Return False
 		  End If
 		  
@@ -580,8 +580,8 @@ End
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  Self.ToolbarCaption = Controller.Name
-		  Self.UpdateToolbarIcon
+		  Self.ViewTitle = Controller.Name
+		  Self.UpdateViewIcon
 		  
 		  Self.Panels = New Dictionary
 		End Sub
@@ -754,9 +754,9 @@ End
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
 		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
-		    Self.ToolbarCaption = Sender.Name
+		    Self.ViewTitle = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
-		    Self.UpdateToolbarIcon()
+		    Self.UpdateViewIcon()
 		  End If
 		  
 		  Preferences.AddToRecentDocuments(Sender.URL)
@@ -849,7 +849,7 @@ End
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
 		  Case "Title"
-		    Self.ToolbarCaption = Self.mController.Document.Title
+		    Self.ViewTitle = Self.mController.Document.Title
 		    Self.Changed = True
 		  End Select
 		End Sub
@@ -897,7 +897,7 @@ End
 		Private Sub SaveAs()
 		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
 		  Case DocumentSaveToCloudWindow.StateSaved
-		    Self.ToolbarCaption = Self.mController.Name
+		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
 		    Var Dialog As New SaveFileDialog
@@ -919,7 +919,7 @@ End
 		    End If
 		    
 		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
-		    Self.ToolbarCaption = Self.mController.Name
+		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  End Select
 		End Sub
@@ -995,25 +995,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateToolbarIcon()
-		  Select Case Self.mController.URL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
-		    Self.ToolbarIcon = IconCloudTab
-		  Case Beacon.DocumentURL.TypeWeb
-		    Self.ToolbarIcon = IconCommunityTab
-		  Else
-		    Self.ToolbarIcon = Nil
-		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  Self.ToolbarCaption = Self.mController.Name
+		  Self.ViewTitle = Self.mController.Name
 		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
 		  #if DeployEnabled
 		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToExport
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateViewIcon()
+		  Select Case Self.mController.URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Self.ViewIcon = IconCloudTab
+		  Case Beacon.DocumentURL.TypeWeb
+		    Self.ViewIcon = IconCommunityTab
+		  Else
+		    Self.ViewIcon = Nil
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -1485,20 +1485,20 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"

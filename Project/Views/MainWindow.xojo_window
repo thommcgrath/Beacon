@@ -110,38 +110,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Value           =   0
       Visible         =   True
       Width           =   1200
-      Begin DocumentsComponent DocumentsComponent1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   642
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         ToolbarIcon     =   0
-         Tooltip         =   ""
-         Top             =   38
-         Transparent     =   True
-         Visible         =   True
-         Width           =   1200
-      End
       Begin HTMLViewer HelpViewer
          AllowAutoDeactivate=   True
          Enabled         =   True
@@ -185,14 +153,16 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarIcon     =   0
          Top             =   38
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Home"
          Visible         =   True
          Width           =   1200
       End
@@ -217,14 +187,50 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Blueprints"
+         Visible         =   True
+         Width           =   1200
+      End
+      Begin DocumentsComponent DocumentsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   642
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Documents"
          Visible         =   True
          Width           =   1200
       End
@@ -509,7 +515,7 @@ End
 		  #Pragma Unused Value
 		  
 		  Select Case Key
-		  Case "ToolbarCaption", "ToolbarIcon"
+		  Case "ViewTitle", "ViewIcon"
 		    Self.NavBar.Invalidate
 		  End Select
 		End Sub
