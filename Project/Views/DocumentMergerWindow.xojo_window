@@ -22,7 +22,7 @@ Begin BeaconDialog DocumentMergerWindow
    MinWidth        =   600
    Placement       =   1
    Resizable       =   "True"
-   Resizeable      =   False
+   Resizeable      =   True
    SystemUIVisible =   "True"
    Title           =   "Import From Document"
    Visible         =   True
@@ -249,6 +249,7 @@ End
 		    Win.List.HeaderAt(0) = " "
 		    Win.List.HeaderAt(1) = "Group"
 		    Win.List.HeaderAt(2) = "Merge Mode"
+		    Win.List.ColumnWidths = "20,*,260"
 		  End If
 		  
 		  Var ExistingConfigs() As Beacon.ConfigGroup = DestinationDocument.ImplementedConfigs
@@ -258,21 +259,21 @@ End
 		  
 		  Var Enabled As Boolean
 		  Var UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
+		  If UsePrefixes Then
+		    Win.List.DefaultRowHeight = 40
+		  End If
 		  Var UniqueMods As New Dictionary
 		  For Each Document As Beacon.Document In SourceDocuments
-		    Var Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
 		    Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		    For Each Config As Beacon.ConfigGroup In Configs
 		      Win.mConfigCounts.Value(Config.ConfigName) = Win.mConfigCounts.Lookup(Config.ConfigName, 0) + 1
 		      
 		      Var CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
-		      Var CellContent As String = Prefix + Language.LabelForConfig(Config)
-		      If Not Config.WasPerfectImport Then
-		        If Win.List.DefaultRowHeight <> 40 Then
-		          Win.List.DefaultRowHeight = 40
-		        End If
-		        CellContent = CellContent + EndOfLine + "This imported config group is not perfect. Beacon will make a close approximation."
+		      Var CellContent As String = Language.LabelForConfig(Config)
+		      If UsePrefixes Then
+		        CellContent = CellContent + EndOfLine + "From " + Document.Title
 		      End If
+		      
 		      Win.List.AddRow("", CellContent)
 		      Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = UsePrefixes = False And Config.DefaultImported And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
 		      Win.List.RowTagAt(Win.List.LastAddedRowIndex) = Config

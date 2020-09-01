@@ -1,614 +1,634 @@
 {
-	"Entries": [
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StonePillar_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StonePillar.PrimalItemStructure_StonePillar",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneCeilingWithTrapdoorGiant_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoorGiant.PrimalItemStructure_StoneCeilingWithTrapdoorGiant",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneFenceFoundation_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFenceFoundation.PrimalItemStructure_StoneFenceFoundation",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneCeiling_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeiling.PrimalItemStructure_StoneCeiling",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 1.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneRoof_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneRoof.PrimalItemStructure_StoneRoof",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneWall_Sloped_Left_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Left.PrimalItemStructure_StoneWall_Sloped_Left",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneWall_Sloped_Right_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Right.PrimalItemStructure_StoneWall_Sloped_Right",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneCeiling_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeiling.PrimalItemStructure_StoneCeiling",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneCeilingDoorGiant_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingDoorGiant.PrimalItemStructure_StoneCeilingDoorGiant",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneCeilingWithTrapdoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoor.PrimalItemStructure_StoneCeilingWithTrapdoor",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneCeilingWithTrapdoorGiant_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoorGiant.PrimalItemStructure_StoneCeilingWithTrapdoorGiant",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneDoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneDoor.PrimalItemStructure_StoneDoor",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneFenceFoundation_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFenceFoundation.PrimalItemStructure_StoneFenceFoundation",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneFloor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFloor.PrimalItemStructure_StoneFloor",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneGate_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGate.PrimalItemStructure_StoneGate",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneGateframe_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe.PrimalItemStructure_StoneGateframe",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneGateframe_Large_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe_Large.PrimalItemStructure_StoneGateframe_Large",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneGateLarge_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateLarge.PrimalItemStructure_StoneGateLarge",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StonePillar_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StonePillar.PrimalItemStructure_StonePillar",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneRailing_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneRailing.PrimalItemStructure_StoneRailing",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneStairs_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneStairs.PrimalItemStructure_StoneStairs",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneWall_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWall.PrimalItemStructure_StoneWall",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneWallWithDoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithDoor.PrimalItemStructure_StoneWallWithDoor",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneWallWithWindow_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithWindow.PrimalItemStructure_StoneWallWithWindow",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneTrapdoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneTrapdoor.PrimalItemStructure_StoneTrapdoor",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_StoneWindow_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneWindow.PrimalItemStructure_StoneWindow",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneGate_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGate.PrimalItemStructure_StoneGate",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneCeilingDoorGiant_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingDoorGiant.PrimalItemStructure_StoneCeilingDoorGiant",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneRailing_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneRailing.PrimalItemStructure_StoneRailing",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneGateframe_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe.PrimalItemStructure_StoneGateframe",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneRoof_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneRoof.PrimalItemStructure_StoneRoof",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneFloor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFloor.PrimalItemStructure_StoneFloor",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneTrapdoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneTrapdoor.PrimalItemStructure_StoneTrapdoor",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneWall_Sloped_Right_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Right.PrimalItemStructure_StoneWall_Sloped_Right",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 4,
-			"MinQuality": "Tier1",
-			"MinQuantity": 2,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneDoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneDoor.PrimalItemStructure_StoneDoor",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 2,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneWall_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWall.PrimalItemStructure_StoneWall",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 32,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneWall_Sloped_Left_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Left.PrimalItemStructure_StoneWall_Sloped_Left",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 4,
-			"MinQuality": "Tier1",
-			"MinQuantity": 2,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneStairs_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneStairs.PrimalItemStructure_StoneStairs",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 2,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneGateframe_Large_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe_Large.PrimalItemStructure_StoneGateframe_Large",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneCeilingWithTrapdoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoor.PrimalItemStructure_StoneCeilingWithTrapdoor",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 16,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneGateLarge_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateLarge.PrimalItemStructure_StoneGateLarge",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneWallWithDoor_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithDoor.PrimalItemStructure_StoneWallWithDoor",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 2,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneWallWithWindow_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithWindow.PrimalItemStructure_StoneWallWithWindow",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 4,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemStructure_StoneWindow_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneWindow.PrimalItemStructure_StoneWindow",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 4,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		}
-	],
-	"Grouping": "Housing",
-	"ID": "09037ce1-dc43-41c0-8233-c5e071c76c95",
-	"Label": "Stone Housing",
-	"Max": 6,
-	"Min": 2,
-	"Modifier Definitions": [
-		{
-			"Label": "Bonus Drops",
-			"ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$"
-		},
-		{
-			"Label": "Cave Crates",
-			"ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
-			"Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$"
-		},
-		{
-			"Label": "Open Desert Crate",
-			"ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
-			"Pattern": "^SupplyCreate_OceanInstant_High_C$"
-		},
-		{
-			"Label": "Deep Sea Crate",
-			"ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
-			"Pattern": "^SupplyCrate_OceanInstant_C$"
-		},
-		{
-			"Label": "Bosses",
-			"ModifierID": "4d70fee5-81c7-48f4-8a97-51057f7e6ac2",
-			"Pattern": "^DinoDropInventoryComponent_Boss(.+)_(.+)_C$"
-		},
-		{
-			"Label": "Artifact Crates",
-			"ModifierID": "87a001d7-5f3b-4d0e-8494-e00c4488e077",
-			"Pattern": "^ArtifactCrate_.+_C$"
-		},
-		{
-			"Label": "Aberration Surface Bonus Drops",
-			"ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$"
-		},
-		{
-			"Label": "Aberration Surface Drops",
-			"ModifierID": "e3454afa-d47a-4f9f-9cd9-ceb0171317e4",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_C$"
-		},
-		{
-			"Label": "Basic Drops",
-			"ModifierID": "e350c14c-a3a1-493a-bd5c-b34a530e45cb",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d)|(Level\\d\\d)|(Level\\d\\d_ScorchedEarth))_C$"
-		}
-	],
-	"Modifiers": {
-		"13299620-1aaa-43a7-9c44-42fc409ea7a1": {
-			"Quality": 0,
-			"Quantity": 2.0
-		},
-		"22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
-			"Quality": 0,
-			"Quantity": 3.0
-		},
-		"3910ae49-41bc-4307-b395-2c1bb44619b6": {
-			"Quality": 0,
-			"Quantity": 4.0
-		},
-		"4ae8364b-4890-4a53-9d24-204ab5f00411": {
-			"Quality": 0,
-			"Quantity": 4.0
-		},
-		"4d70fee5-81c7-48f4-8a97-51057f7e6ac2": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"87a001d7-5f3b-4d0e-8494-e00c4488e077": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
-			"Quality": 0,
-			"Quantity": 2.0
-		},
-		"e3454afa-d47a-4f9f-9cd9-ceb0171317e4": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"e350c14c-a3a1-493a-bd5c-b34a530e45cb": {
-			"Quality": 0,
-			"Quantity": 1.0
-		}
-	},
-	"Version": 2
+    "Version": 2,
+    "ID": "09037ce1-dc43-41c0-8233-c5e071c76c95",
+    "Label": "Stone Housing",
+    "Grouping": "Housing",
+    "Min": 2,
+    "Max": 6,
+    "Entries": [
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWall.PrimalItemStructure_StoneWall",
+                    "Class": "PrimalItemStructure_StoneWall_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 32,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneStairs.PrimalItemStructure_StoneStairs",
+                    "Class": "PrimalItemStructure_StoneStairs_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 2,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoor.PrimalItemStructure_StoneCeilingWithTrapdoor",
+                    "Class": "PrimalItemStructure_StoneCeilingWithTrapdoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StonePillar.PrimalItemStructure_StonePillar",
+                    "Class": "PrimalItemStructure_StonePillar_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe_Large.PrimalItemStructure_StoneGateframe_Large",
+                    "Class": "PrimalItemStructure_StoneGateframe_Large_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneRailing.PrimalItemStructure_StoneRailing",
+                    "Class": "PrimalItemStructure_StoneRailing_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 20,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneWindow.PrimalItemStructure_StoneWindow",
+                    "Class": "PrimalItemStructure_StoneWindow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Left.PrimalItemStructure_StoneWall_Sloped_Left",
+                    "Class": "PrimalItemStructure_StoneWall_Sloped_Left_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 2,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneRoof.PrimalItemStructure_StoneRoof",
+                    "Class": "PrimalItemStructure_StoneRoof_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGate.PrimalItemStructure_StoneGate",
+                    "Class": "PrimalItemStructure_StoneGate_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneTrapdoor.PrimalItemStructure_StoneTrapdoor",
+                    "Class": "PrimalItemStructure_StoneTrapdoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFloor.PrimalItemStructure_StoneFloor",
+                    "Class": "PrimalItemStructure_StoneFloor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithWindow.PrimalItemStructure_StoneWallWithWindow",
+                    "Class": "PrimalItemStructure_StoneWallWithWindow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 1.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateLarge.PrimalItemStructure_StoneGateLarge",
+                    "Class": "PrimalItemStructure_StoneGateLarge_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe_Large.PrimalItemStructure_StoneGateframe_Large",
+                    "Class": "PrimalItemStructure_StoneGateframe_Large_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingDoorGiant.PrimalItemStructure_StoneCeilingDoorGiant",
+                    "Class": "PrimalItemStructure_StoneCeilingDoorGiant_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoorGiant.PrimalItemStructure_StoneCeilingWithTrapdoorGiant",
+                    "Class": "PrimalItemStructure_StoneCeilingWithTrapdoorGiant_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGate.PrimalItemStructure_StoneGate",
+                    "Class": "PrimalItemStructure_StoneGate_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneTrapdoor.PrimalItemStructure_StoneTrapdoor",
+                    "Class": "PrimalItemStructure_StoneTrapdoor_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneWindow.PrimalItemStructure_StoneWindow",
+                    "Class": "PrimalItemStructure_StoneWindow_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneDoor.PrimalItemStructure_StoneDoor",
+                    "Class": "PrimalItemStructure_StoneDoor_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneRoof.PrimalItemStructure_StoneRoof",
+                    "Class": "PrimalItemStructure_StoneRoof_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Left.PrimalItemStructure_StoneWall_Sloped_Left",
+                    "Class": "PrimalItemStructure_StoneWall_Sloped_Left_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Right.PrimalItemStructure_StoneWall_Sloped_Right",
+                    "Class": "PrimalItemStructure_StoneWall_Sloped_Right_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeiling.PrimalItemStructure_StoneCeiling",
+                    "Class": "PrimalItemStructure_StoneCeiling_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe.PrimalItemStructure_StoneGateframe",
+                    "Class": "PrimalItemStructure_StoneGateframe_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithDoor.PrimalItemStructure_StoneWallWithDoor",
+                    "Class": "PrimalItemStructure_StoneWallWithDoor_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFenceFoundation.PrimalItemStructure_StoneFenceFoundation",
+                    "Class": "PrimalItemStructure_StoneFenceFoundation_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFloor.PrimalItemStructure_StoneFloor",
+                    "Class": "PrimalItemStructure_StoneFloor_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoor.PrimalItemStructure_StoneCeilingWithTrapdoor",
+                    "Class": "PrimalItemStructure_StoneCeilingWithTrapdoor_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StonePillar.PrimalItemStructure_StonePillar",
+                    "Class": "PrimalItemStructure_StonePillar_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneRailing.PrimalItemStructure_StoneRailing",
+                    "Class": "PrimalItemStructure_StoneRailing_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneStairs.PrimalItemStructure_StoneStairs",
+                    "Class": "PrimalItemStructure_StoneStairs_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWall.PrimalItemStructure_StoneWall",
+                    "Class": "PrimalItemStructure_StoneWall_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithWindow.PrimalItemStructure_StoneWallWithWindow",
+                    "Class": "PrimalItemStructure_StoneWallWithWindow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeiling.PrimalItemStructure_StoneCeiling",
+                    "Class": "PrimalItemStructure_StoneCeiling_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFenceFoundation.PrimalItemStructure_StoneFenceFoundation",
+                    "Class": "PrimalItemStructure_StoneFenceFoundation_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneDoor.PrimalItemStructure_StoneDoor",
+                    "Class": "PrimalItemStructure_StoneDoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 2,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingDoorGiant.PrimalItemStructure_StoneCeilingDoorGiant",
+                    "Class": "PrimalItemStructure_StoneCeilingDoorGiant_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Right.PrimalItemStructure_StoneWall_Sloped_Right",
+                    "Class": "PrimalItemStructure_StoneWall_Sloped_Right_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 2,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe.PrimalItemStructure_StoneGateframe",
+                    "Class": "PrimalItemStructure_StoneGateframe_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoorGiant.PrimalItemStructure_StoneCeilingWithTrapdoorGiant",
+                    "Class": "PrimalItemStructure_StoneCeilingWithTrapdoorGiant_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithDoor.PrimalItemStructure_StoneWallWithDoor",
+                    "Class": "PrimalItemStructure_StoneWallWithDoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 2,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateLarge.PrimalItemStructure_StoneGateLarge",
+                    "Class": "PrimalItemStructure_StoneGateLarge_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 3.0,
+            "Blueprint": 1.0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 4.0,
+            "Blueprint": 1.0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 4.0,
+            "Blueprint": 1.0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        }
+    },
+    "Modifier Definitions": [
+        {
+            "ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
+            "Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$",
+            "Label": "Bonus Drops"
+        },
+        {
+            "ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
+            "Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$",
+            "Label": "Cave Crates"
+        },
+        {
+            "ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
+            "Pattern": "^SupplyCreate_OceanInstant_High_C$",
+            "Label": "Open Desert Crate"
+        },
+        {
+            "ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
+            "Pattern": "^SupplyCrate_OceanInstant_C$",
+            "Label": "Deep Sea Crate"
+        },
+        {
+            "ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
+            "Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$",
+            "Label": "Aberration Surface Bonus Drops"
+        }
+    ]
 }

@@ -465,7 +465,6 @@ Implements ObservationKit.Observable
 		  Input = Input.ReplaceAll("<", "&lt;")
 		  Input = Input.ReplaceAll(">", "&gt;")
 		  Input = Input.ReplaceAll("""", "&quot;")
-		  Input = Input.ReplaceAll("'", "&apos;")
 		  
 		  // Clear control characters
 		  Var Searcher As New Regex
@@ -482,9 +481,7 @@ Implements ObservationKit.Observable
 		      Return Input
 		    End If
 		    
-		    Var Codepoint As Integer = Asc(Match.SubExpressionString(0))
-		    Var Replacement As String = "&#" + Codepoint.ToString + ";"
-		    Input = Input.ReplaceAll(Match.SubExpressionString(0), Replacement)
+		    Input = Input.ReplaceAll(Match.SubExpressionString(0), "")
 		  Loop
 		  
 		  Return Input

@@ -1,223 +1,209 @@
 {
-	"Entries": [
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_DesertClothShirt_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier3",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_DesertClothPants_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier3",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_DesertClothGloves_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier3",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_DesertClothBoots_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier3",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier3",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 1.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_DesertClothBoots_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemArmor_DesertClothGloves_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemArmor_DesertClothPants_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemArmor_DesertClothShirt_C",
-					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier3",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		}
-	],
-	"Grouping": "Wearables",
-	"ID": "0b0be285-2211-4e6e-9426-cf6f457e7af5",
-	"Label": "Desert Cloth Clothing",
-	"Max": 5,
-	"Min": 1,
-	"Modifier Definitions": [
-		{
-			"Label": "Bonus Drops",
-			"ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$"
-		},
-		{
-			"Label": "Cave Crates",
-			"ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
-			"Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$"
-		},
-		{
-			"Label": "Open Desert Crate",
-			"ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
-			"Pattern": "^SupplyCreate_OceanInstant_High_C$"
-		},
-		{
-			"Label": "Deep Sea Crate",
-			"ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
-			"Pattern": "^SupplyCrate_OceanInstant_C$"
-		},
-		{
-			"Label": "Bosses",
-			"ModifierID": "4d70fee5-81c7-48f4-8a97-51057f7e6ac2",
-			"Pattern": "^DinoDropInventoryComponent_Boss(.+)_(.+)_C$"
-		},
-		{
-			"Label": "Artifact Crates",
-			"ModifierID": "87a001d7-5f3b-4d0e-8494-e00c4488e077",
-			"Pattern": "^ArtifactCrate_.+_C$"
-		},
-		{
-			"Label": "Aberration Surface Bonus Drops",
-			"ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$"
-		},
-		{
-			"Label": "Aberration Surface Drops",
-			"ModifierID": "e3454afa-d47a-4f9f-9cd9-ceb0171317e4",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_C$"
-		},
-		{
-			"Label": "Basic Drops",
-			"ModifierID": "e350c14c-a3a1-493a-bd5c-b34a530e45cb",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d)|(Level\\d\\d)|(Level\\d\\d_ScorchedEarth))_C$"
-		}
-	],
-	"Modifiers": {
-		"13299620-1aaa-43a7-9c44-42fc409ea7a1": {
-			"Quality": 3,
-			"Quantity": 2.0
-		},
-		"22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
-			"Quality": 6,
-			"Quantity": 1.0
-		},
-		"3910ae49-41bc-4307-b395-2c1bb44619b6": {
-			"Quality": 6,
-			"Quantity": 1.0
-		},
-		"4ae8364b-4890-4a53-9d24-204ab5f00411": {
-			"Quality": 6,
-			"Quantity": 1.0
-		},
-		"4d70fee5-81c7-48f4-8a97-51057f7e6ac2": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"87a001d7-5f3b-4d0e-8494-e00c4488e077": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
-			"Quality": 3,
-			"Quantity": 2.0
-		},
-		"e3454afa-d47a-4f9f-9cd9-ceb0171317e4": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"e350c14c-a3a1-493a-bd5c-b34a530e45cb": {
-			"Quality": 0,
-			"Quantity": 1.0
-		}
-	},
-	"Version": 2
+    "Version": 2,
+    "ID": "0b0be285-2211-4e6e-9426-cf6f457e7af5",
+    "Label": "Desert Cloth Clothing",
+    "Grouping": "Wearables",
+    "Min": 1,
+    "Max": 5,
+    "Entries": [
+        {
+            "ChanceToBeBlueprintOverride": 1.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
+                    "Class": "PrimalItemArmor_DesertClothBoots_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
+                    "Class": "PrimalItemArmor_DesertClothGloves_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
+                    "Class": "PrimalItemArmor_DesertClothPants_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
+                    "Class": "PrimalItemArmor_DesertClothShirt_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
+                    "Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
+                    "Class": "PrimalItemArmor_DesertClothBoots_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
+                    "Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
+                    "Class": "PrimalItemArmor_DesertClothGloves_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
+                    "Class": "PrimalItemArmor_DesertClothShirt_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
+                    "Class": "PrimalItemArmor_DesertClothPants_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "MinQuality": 3,
+            "MaxQuality": 3,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "MinQuality": 6,
+            "MaxQuality": 6,
+            "Quantity": 1.0,
+            "Blueprint": 1.0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "MinQuality": 6,
+            "MaxQuality": 6,
+            "Quantity": 1.0,
+            "Blueprint": 1.0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "MinQuality": 6,
+            "MaxQuality": 6,
+            "Quantity": 1.0,
+            "Blueprint": 1.0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "MinQuality": 3,
+            "MaxQuality": 3,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        }
+    },
+    "Modifier Definitions": [
+        {
+            "ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
+            "Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$",
+            "Label": "Bonus Drops"
+        },
+        {
+            "ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
+            "Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$",
+            "Label": "Cave Crates"
+        },
+        {
+            "ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
+            "Pattern": "^SupplyCreate_OceanInstant_High_C$",
+            "Label": "Open Desert Crate"
+        },
+        {
+            "ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
+            "Pattern": "^SupplyCrate_OceanInstant_C$",
+            "Label": "Deep Sea Crate"
+        },
+        {
+            "ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
+            "Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$",
+            "Label": "Aberration Surface Bonus Drops"
+        }
+    ]
 }

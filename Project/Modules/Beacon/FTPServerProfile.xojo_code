@@ -16,7 +16,7 @@ Inherits Beacon.ServerProfile
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
 		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
-		  Self.mMask = Dict.Lookup("Mask", Beacon.Maps.All.Mask)
+		  Self.mMask = Dict.Lookup("Mask", 0)
 		End Sub
 	#tag EndEvent
 

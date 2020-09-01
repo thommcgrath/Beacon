@@ -1,329 +1,329 @@
 {
-	"Entries": [
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_CureLow_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumable_CureLow.PrimalItemConsumable_CureLow",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_BattleTartare_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_BattleTartare.PrimalItemConsumable_Soup_BattleTartare",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_ShadowSteak_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_ShadowSteak.PrimalItemConsumable_Soup_ShadowSteak",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_EnduroStew_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_EnduroStew.PrimalItemConsumable_Soup_EnduroStew",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_StaminaSoup_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_StaminaSoup.PrimalItemConsumable_StaminaSoup",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_HealSoup_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_TheHorn_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_TheHorn.PrimalItemConsumable_TheHorn",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_CactusBuffSoup_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_CactusBuffSoup.PrimalItemConsumable_CactusBuffSoup",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_LazarusChowder_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_LazarusChowder.PrimalItemConsumable_Soup_LazarusChowder",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumableRespecSoup_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableRespecSoup.PrimalItemConsumableRespecSoup",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_FocalChili_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FocalChili.PrimalItemConsumable_Soup_FocalChili",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_FriaCurry_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FriaCurry.PrimalItemConsumable_Soup_FriaCurry",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Soup_CalienSoup_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_CalienSoup.PrimalItemConsumable_Soup_CalienSoup",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 10,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		}
-	],
-	"Grouping": "Miscellaneous",
-	"ID": "32a54b26-f2c0-40ca-aace-288e256220c9",
-	"Label": "Player Consumables",
-	"Max": 1,
-	"Min": 1,
-	"Modifier Definitions": [
-		{
-			"Label": "Bonus Drops",
-			"ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$"
-		},
-		{
-			"Label": "Cave Crates",
-			"ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
-			"Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$"
-		},
-		{
-			"Label": "Open Desert Crate",
-			"ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
-			"Pattern": "^SupplyCreate_OceanInstant_High_C$"
-		},
-		{
-			"Label": "Deep Sea Crate",
-			"ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
-			"Pattern": "^SupplyCrate_OceanInstant_C$"
-		},
-		{
-			"Label": "Bosses",
-			"ModifierID": "4d70fee5-81c7-48f4-8a97-51057f7e6ac2",
-			"Pattern": "^DinoDropInventoryComponent_Boss(.+)_(.+)_C$"
-		},
-		{
-			"Label": "Artifact Crates",
-			"ModifierID": "87a001d7-5f3b-4d0e-8494-e00c4488e077",
-			"Pattern": "^ArtifactCrate_.+_C$"
-		},
-		{
-			"Label": "Aberration Surface Bonus Drops",
-			"ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$"
-		},
-		{
-			"Label": "Aberration Surface Drops",
-			"ModifierID": "e3454afa-d47a-4f9f-9cd9-ceb0171317e4",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_C$"
-		},
-		{
-			"Label": "Basic Drops",
-			"ModifierID": "e350c14c-a3a1-493a-bd5c-b34a530e45cb",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d)|(Level\\d\\d)|(Level\\d\\d_ScorchedEarth))_C$"
-		}
-	],
-	"Modifiers": {
-		"13299620-1aaa-43a7-9c44-42fc409ea7a1": {
-			"Quality": 0,
-			"Quantity": 2.0
-		},
-		"22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
-			"Quality": 0,
-			"Quantity": 3.0
-		},
-		"3910ae49-41bc-4307-b395-2c1bb44619b6": {
-			"Quality": 0,
-			"Quantity": 4.0
-		},
-		"4ae8364b-4890-4a53-9d24-204ab5f00411": {
-			"Quality": 0,
-			"Quantity": 4.0
-		},
-		"4d70fee5-81c7-48f4-8a97-51057f7e6ac2": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"87a001d7-5f3b-4d0e-8494-e00c4488e077": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
-			"Quality": 0,
-			"Quantity": 2.0
-		},
-		"e3454afa-d47a-4f9f-9cd9-ceb0171317e4": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"e350c14c-a3a1-493a-bd5c-b34a530e45cb": {
-			"Quality": 0,
-			"Quantity": 1.0
-		}
-	},
-	"Version": 2
+    "Version": 2,
+    "ID": "32a54b26-f2c0-40ca-aace-288e256220c9",
+    "Label": "Player Consumables",
+    "Grouping": "Miscellaneous",
+    "Min": 1,
+    "Max": 1,
+    "Entries": [
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FocalChili.PrimalItemConsumable_Soup_FocalChili",
+                    "Class": "PrimalItemConsumable_Soup_FocalChili_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FriaCurry.PrimalItemConsumable_Soup_FriaCurry",
+                    "Class": "PrimalItemConsumable_Soup_FriaCurry_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_TheHorn.PrimalItemConsumable_TheHorn",
+                    "Class": "PrimalItemConsumable_TheHorn_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_BattleTartare.PrimalItemConsumable_Soup_BattleTartare",
+                    "Class": "PrimalItemConsumable_Soup_BattleTartare_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup",
+                    "Class": "PrimalItemConsumable_HealSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_StaminaSoup.PrimalItemConsumable_StaminaSoup",
+                    "Class": "PrimalItemConsumable_StaminaSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_LazarusChowder.PrimalItemConsumable_Soup_LazarusChowder",
+                    "Class": "PrimalItemConsumable_Soup_LazarusChowder_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_CactusBuffSoup.PrimalItemConsumable_CactusBuffSoup",
+                    "Class": "PrimalItemConsumable_CactusBuffSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 106,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumable_CureLow.PrimalItemConsumable_CureLow",
+                    "Class": "PrimalItemConsumable_CureLow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_EnduroStew.PrimalItemConsumable_Soup_EnduroStew",
+                    "Class": "PrimalItemConsumable_Soup_EnduroStew_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_CalienSoup.PrimalItemConsumable_Soup_CalienSoup",
+                    "Class": "PrimalItemConsumable_Soup_CalienSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableRespecSoup.PrimalItemConsumableRespecSoup",
+                    "Class": "PrimalItemConsumableRespecSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_ShadowSteak.PrimalItemConsumable_Soup_ShadowSteak",
+                    "Class": "PrimalItemConsumable_Soup_ShadowSteak_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 3.0,
+            "Blueprint": 1.0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 4.0,
+            "Blueprint": 1.0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 4.0,
+            "Blueprint": 1.0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        }
+    },
+    "Modifier Definitions": [
+        {
+            "ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
+            "Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$",
+            "Label": "Bonus Drops"
+        },
+        {
+            "ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
+            "Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$",
+            "Label": "Cave Crates"
+        },
+        {
+            "ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
+            "Pattern": "^SupplyCreate_OceanInstant_High_C$",
+            "Label": "Open Desert Crate"
+        },
+        {
+            "ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
+            "Pattern": "^SupplyCrate_OceanInstant_C$",
+            "Label": "Deep Sea Crate"
+        },
+        {
+            "ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
+            "Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$",
+            "Label": "Aberration Surface Bonus Drops"
+        }
+    ]
 }
