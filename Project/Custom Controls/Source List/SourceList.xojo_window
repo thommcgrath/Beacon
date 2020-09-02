@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl SourceList
+Begin ContainerControl SourceList Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -61,9 +61,11 @@ End
 		  Self.mSelectedRowIndex = -1
 		  
 		  #if UseVibrancyView
+		    Const NSVisualEffectMaterialSidebar = 7
+		    
 		    Var VibrancyView As New NSVisualEffectViewMBS(0, 0, Self.Content.Width, Self.Content.Height)
 		    VibrancyView.BlendingMode = NSVisualEffectViewMBS.NSVisualEffectBlendingModeBehindWindow
-		    VibrancyView.Material = NSVisualEffectViewMBS.NSVisualEffectMaterialAppearanceBased
+		    VibrancyView.Material = NSVisualEffectMaterialSidebar
 		    VibrancyView.State = NSVisualEffectViewMBS.NSVisualEffectStateFollowsWindowActiveState
 		    VibrancyView.AutoresizesSubviews = True
 		    VibrancyView.AutoresizingMask = NSViewMBS.NSViewWidthSizable Or NSViewMBS.NSViewHeightSizable
@@ -79,15 +81,50 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Resized()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As String, Value As Double)
+		  // Part of the AnimationKit.ValueAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "Scroll Opacity"
+		    Self.mScrollOpacity = Value
+		    Self.Content.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Append(ParamArray Items() As SourceListItem)
 		  For Each Item As SourceListItem In Items
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
 		      Self.mItems.AddRow(Item)
-		      Self.Invalidate
+		      Self.Content.Invalidate
 		    End If
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BeginScrollFadeOut()
+		  Self.mScrollOpacityKey = ""
+		  
+		  Self.mScrollFadeAnimation = New AnimationKit.ValueTask(Self, "Scroll Opacity", Self.mScrollOpacity, 0.0)
+		  Self.mScrollFadeAnimation.DurationInSeconds = 0.5
+		  Self.mScrollFadeAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		  Self.mScrollFadeAnimation.Run
 		End Sub
 	#tag EndMethod
 
@@ -95,6 +132,15 @@ End
 		Function Count() As Integer
 		  Return Self.mItems.Count
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  If Self.mScrollOpacityKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mScrollOpacityKey)
+		    Self.mScrollOpacityKey = ""
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -133,25 +179,25 @@ End
 		    End If
 		    
 		    Self.mItems.AddRowAt(Idx, Item)
-		    Self.Invalidate
+		    Self.Content.Invalidate
 		  End If
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Invalidate(Idx As Integer)
+	#tag Method, Flags = &h21
+		Private Sub Invalidate(Idx As Integer)
 		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastRowIndex Then
-		    Super.Invalidate(False)
+		    Self.Content.Invalidate(False)
 		    Return
 		  End If
 		  
 		  Var ItemRect As Rect = Self.mItemRects(Idx)
 		  If ItemRect Is Nil Then
-		    Super.Invalidate(False)
+		    Self.Content.Invalidate(False)
 		    Return
 		  End If
 		  
-		  Super.Invalidate(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, False)
+		  Self.Content.Invalidate(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, False)
 		End Sub
 	#tag EndMethod
 
@@ -178,6 +224,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function LimitScrollOffset(Offset As Double, ContentHeight As Integer, ViewportHeight As Integer) As Double
+		  Return Min(Max(Offset, 0), Max(ContentHeight - ViewportHeight, 0))
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  #Pragma Warning "Won't trigger change event"
@@ -189,7 +241,7 @@ End
 		      Self.mSelectedRowIndex = Self.mSelectedRowIndex - 1
 		    End If
 		    
-		    Self.Invalidate
+		    Self.Content.Invalidate
 		  End If
 		End Sub
 	#tag EndMethod
@@ -200,7 +252,77 @@ End
 		  
 		  Self.mItems.ResizeTo(-1)
 		  Self.mSelectedRowIndex = -1
-		  Self.Invalidate
+		  Self.Content.Invalidate
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  RaiseEvent Resize()
+		  
+		  // This will cause the offset to recompute and invalidate if necessary
+		  Self.ScrollPosition = Self.mScrollOffset
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ScrollMaximum() As Double
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Return Self.mContentHeight - Self.Content.Height
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ScrollMaximum(Assigns Value As Double)
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  #Pragma Unused Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ScrollMinimum() As Double
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Return 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ScrollMinimum(Assigns Value As Double)
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  #Pragma Unused Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ScrollPosition() As Double
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Return Self.LimitScrollOffset(Self.mScrollOffset, Self.mContentHeight, Self.Content.Height)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ScrollPosition(Assigns Value As Double)
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Value = Self.LimitScrollOffset(Value, Self.mContentHeight, Self.Content.Height)
+		  If Self.mScrollOffset <> Value Then
+		    Self.mScrollOpacity = 1
+		    If Self.mScrollOpacityKey.IsEmpty = False THen
+		      CallLater.Cancel(Self.mScrollOpacityKey)
+		    End If
+		    If (Self.mScrollFadeAnimation Is Nil) = False Then
+		      Self.mScrollFadeAnimation.Cancel
+		      Self.mScrollFadeAnimation = Nil
+		    End If
+		    Self.mScrollOpacityKey = CallLater.Schedule(1000, WeakAddressOf BeginScrollFadeOut)
+		    Self.mScrollOffset = Value
+		    Self.Content.Invalidate
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -262,7 +384,7 @@ End
 		    Self.mSelectedRowIndex = Self.IndexOf(SelectedItem)
 		  End If
 		  
-		  Self.Invalidate
+		  Self.Content.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -273,6 +395,10 @@ End
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Resize()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -293,7 +419,7 @@ End
 			  End If
 			  
 			  Self.mContentHeight = Value
-			  Self.Invalidate()
+			  Self.Content.Invalidate()
 			End Set
 		#tag EndSetter
 		Private ContentHeight As Integer
@@ -304,7 +430,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mItemRects() As Xojo.Rect
+		Private mItemRects() As Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -329,6 +455,22 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMousePoint As Point
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollFadeAnimation As AnimationKit.ValueTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollOffset As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollOpacity As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollOpacityKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -364,7 +506,6 @@ End
 
 
 	#tag Constant, Name = UseVibrancyView, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
-		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
 	#tag EndConstant
 
 
@@ -373,12 +514,12 @@ End
 #tag Events Content
 	#tag Event
 		Sub Activate()
-		  Self.Invalidate
+		  Me.Invalidate
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Deactivate()
-		  Self.Invalidate
+		  Me.Invalidate
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -481,17 +622,17 @@ End
 		  Self.mMouseDown = False
 		  Self.mMouseDownIndex = -1
 		  
-		  Self.Invalidate
+		  Me.Invalidate
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
-		  #if Not UseVibrancyView
-		    G.DrawingColor = SystemColors.ControlBackgroundColor
+		  #if UseVibrancyView = False And TargetMacOS = False
+		    G.DrawingColor = SystemColors.WindowBackgroundColor
 		    G.FillRectangle(0, 0, G.Width, G.Height)
 		  #endif
 		  
-		  Var Rects() As Xojo.Rect
+		  Var Rects() As Rect
 		  Rects.ResizeTo(Self.mItems.LastRowIndex)
 		  
 		  Const RowHeight = 30
@@ -499,24 +640,24 @@ End
 		  Const CornerRadius = 8
 		  Const Padding = 8
 		  
-		  Var RowTop As Integer = Inset
+		  Var RowTop As Integer = Floor(Inset - Self.mScrollOffset)
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
-		    Rects(Idx) = New Xojo.Rect(Inset, RowTop, G.Width - (Inset * 2), RowHeight)
+		    Rects(Idx) = New Rect(Inset, RowTop, G.Width - (Inset * 2), RowHeight)
 		    RowTop = RowTop + RowHeight
 		  Next
 		  
-		  Self.ContentHeight = RowTop + Inset
+		  Self.ContentHeight = (Self.mItems.Count * RowHeight) + (Inset * 2)
 		  Self.mItemRects = Rects
 		  
-		  Var Viewport As New Xojo.Rect(0, 0, G.Width, G.Height)
+		  Var Viewport As New Rect(0, 0, G.Width, G.Height)
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
-		    Var ItemRect As Xojo.Rect = Self.mItemRects(Idx)
+		    Var ItemRect As Rect = Self.mItemRects(Idx)
 		    Var Draw As Boolean
 		    If Viewport.Intersects(ItemRect) Then
 		      If Areas.LastRowIndex = -1 Then
 		        Draw = True
 		      Else
-		        For Each Area As Xojo.Rect In Areas
+		        For Each Area As Rect In Areas
 		          If Area.Intersects(ItemRect) Then
 		            Draw = True
 		          End If
@@ -545,7 +686,30 @@ End
 		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		    End If
 		  Next
+		  
+		  If Self.mScrollOpacity > 0 Then
+		    Const ThumbWidth = 7
+		    Const ThumbPadding = 2
+		    
+		    Var Ratio As Double = Me.Height / Self.mContentHeight
+		    Var TrackArea As Integer = Me.Height - (ThumbPadding * 2)
+		    Var ThumbHeight As Double = NearestMultiple(TrackArea * Ratio, G.ScaleY)
+		    Var ThumbTop As Double = NearestMultiple(ThumbPadding + ((TrackArea - ThumbHeight) * (Self.ScrollPosition / Self.ScrollMaximum)), G.ScaleY)
+		    
+		    G.DrawingColor = SystemColors.SecondaryLabelColor.AtOpacity(Self.mScrollOpacity)
+		    G.FillRoundRectangle(G.Width - (ThumbWidth + ThumbPadding), ThumbTop, ThumbWidth, ThumbHeight, ThumbWidth, ThumbWidth)
+		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Double, PixelsY As Double, WheelData As BeaconUI.ScrollEvent) As Boolean
+		  #Pragma Unused MouseX
+		  #Pragma Unused MouseY
+		  #Pragma Unused WheelData
+		  #Pragma Unused PixelsX
+		  
+		  Self.ScrollPosition = Self.mScrollOffset + PixelsY
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

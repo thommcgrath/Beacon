@@ -35,7 +35,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Double, PixelsY As Double, WheelData As BeaconUI.ScrollEvent) As Boolean
 		  #Pragma Unused MouseX
 		  #Pragma Unused MouseY
 		  #Pragma Unused PixelsX

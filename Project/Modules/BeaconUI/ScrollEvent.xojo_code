@@ -37,8 +37,8 @@ Protected Class ScrollEvent
 		              If RespondsToSelector(EventObject,sel_registerName("hasPreciseScrollingDeltas")) And HasPreciseScrollingDeltas(EventObject) Then
 		                Factor = 1
 		              End If
-		              Self.mHorizontalAmount = Round(ScrollingDeltaX(EventObject) * Factor) * -1
-		              Self.mVerticalAmount = Round(ScrollingDeltaY(EventObject) * Factor) * -1
+		              Self.mHorizontalAmount = (ScrollingDeltaX(EventObject) * Factor) * -1
+		              Self.mVerticalAmount = (ScrollingDeltaY(EventObject) * Factor) * -1
 		            End If
 		          End If
 		        End If
@@ -62,7 +62,7 @@ Protected Class ScrollEvent
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Attributes( Hidden ) Private mHorizontalAmount As Integer
+		Attributes( Hidden ) Private mHorizontalAmount As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -87,7 +87,7 @@ Protected Class ScrollEvent
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Attributes( Hidden ) Private mVerticalAmount As Integer
+		Attributes( Hidden ) Private mVerticalAmount As Double
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -108,7 +108,7 @@ Protected Class ScrollEvent
 			  Return Self.mHorizontalAmount
 			End Get
 		#tag EndGetter
-		ScrollX As Integer
+		ScrollX As Double
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -117,7 +117,7 @@ Protected Class ScrollEvent
 			  Return Self.mVerticalAmount
 			End Get
 		#tag EndGetter
-		ScrollY As Integer
+		ScrollY As Double
 	#tag EndComputedProperty
 
 

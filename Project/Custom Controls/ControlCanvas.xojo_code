@@ -163,7 +163,7 @@ Inherits Canvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		Event MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Double, PixelsY As Double, WheelData As BeaconUI.ScrollEvent) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
