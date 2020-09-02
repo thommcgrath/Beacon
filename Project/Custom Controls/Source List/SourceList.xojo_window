@@ -144,6 +144,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub FlashScroller()
+		  If Self.mScrollOpacityKey.IsEmpty = False THen
+		    CallLater.Cancel(Self.mScrollOpacityKey)
+		  End If
+		  
+		  Self.mScrollOpacity = 1
+		  If (Self.mScrollFadeAnimation Is Nil) = False Then
+		    Self.mScrollFadeAnimation.Cancel
+		    Self.mScrollFadeAnimation = Nil
+		  End If
+		  Self.mScrollOpacityKey = CallLater.Schedule(1000, WeakAddressOf BeginScrollFadeOut)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexAtPoint(X As Integer, Y As Integer) As Integer
 		  Return Self.IndexAtPoint(New Xojo.Point(X, Y))
 		End Function
@@ -262,6 +277,14 @@ End
 		  
 		  // This will cause the offset to recompute and invalidate if necessary
 		  Self.ScrollPosition = Self.mScrollOffset
+		  
+		  If Self.ScrollMaximum > 0 Then
+		    Self.FlashScroller()
+		  Else
+		    If Self.mScrollOpacity > 0 And (Self.mScrollFadeAnimation Is Nil Or Self.mScrollFadeAnimation.Completed = True) Then
+		      Self.BeginScrollFadeOut()
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -269,7 +292,7 @@ End
 		Function ScrollMaximum() As Double
 		  // Part of the AnimationKit.Scrollable interface.
 		  
-		  Return Self.mContentHeight - Self.Content.Height
+		  Return Max(Self.mContentHeight - Self.Content.Height, 0)
 		End Function
 	#tag EndMethod
 
@@ -311,15 +334,7 @@ End
 		  
 		  Value = Self.LimitScrollOffset(Value, Self.mContentHeight, Self.Content.Height)
 		  If Self.mScrollOffset <> Value Then
-		    Self.mScrollOpacity = 1
-		    If Self.mScrollOpacityKey.IsEmpty = False THen
-		      CallLater.Cancel(Self.mScrollOpacityKey)
-		    End If
-		    If (Self.mScrollFadeAnimation Is Nil) = False Then
-		      Self.mScrollFadeAnimation.Cancel
-		      Self.mScrollFadeAnimation = Nil
-		    End If
-		    Self.mScrollOpacityKey = CallLater.Schedule(1000, WeakAddressOf BeginScrollFadeOut)
+		    Self.FlashScroller()
 		    Self.mScrollOffset = Value
 		    Self.Content.Invalidate
 		  End If
@@ -691,10 +706,15 @@ End
 		    Const ThumbWidth = 7
 		    Const ThumbPadding = 2
 		    
-		    Var Ratio As Double = Me.Height / Self.mContentHeight
+		    Var ScrollPercent As Double
+		    If Self.ScrollMaximum > 0 Then
+		      ScrollPercent = Self.ScrollPosition / Self.ScrollMaximum
+		    End If
+		    
+		    Var Ratio As Double = Min(Me.Height / Self.mContentHeight, 1.0)
 		    Var TrackArea As Integer = Me.Height - (ThumbPadding * 2)
 		    Var ThumbHeight As Double = NearestMultiple(TrackArea * Ratio, G.ScaleY)
-		    Var ThumbTop As Double = NearestMultiple(ThumbPadding + ((TrackArea - ThumbHeight) * (Self.ScrollPosition / Self.ScrollMaximum)), G.ScaleY)
+		    Var ThumbTop As Double = NearestMultiple(ThumbPadding + ((TrackArea - ThumbHeight) * ScrollPercent), G.ScaleY)
 		    
 		    G.DrawingColor = SystemColors.SecondaryLabelColor.AtOpacity(Self.mScrollOpacity)
 		    G.FillRoundRectangle(G.Width - (ThumbWidth + ThumbPadding), ThumbTop, ThumbWidth, ThumbHeight, ThumbWidth, ThumbWidth)
