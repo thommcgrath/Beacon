@@ -425,13 +425,13 @@ End
 		      Self.SimulatorPosition = Self.Height
 		    End If
 		    
-		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
+		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition, False)
 		  Else
 		    Self.SetListWidth(Self.Header.Width)
 		  End If
 		  
 		  Self.mSavePositions = True
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Self.Header.ResizerEnabled = Self.Width > Self.MinEditorWidth
 		End Sub
 	#tag EndEvent
 
@@ -700,6 +700,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function MinEditorWidth() As Integer
+		  Return ListMinWidth + ItemSetEditor.MinEditorWidth + 1
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function MinSimulatorPosition() As Integer
 		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200
@@ -707,15 +713,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetListWidth(NewSize As Integer)
-		  If Self.Width < Self.MinimumWidth Then
-		    // Don't compute anything
-		    Return
+		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
+		  Var ListWidth, EditorWidth As Integer
+		  If Self.Width <= Self.MinEditorWidth Then
+		    ListWidth = Self.ListMinWidth
+		    EditorWidth = ItemSetEditor.MinEditorWidth
+		  Else
+		    Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		    ListWidth = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - ItemSetEditor.MinEditorWidth)
+		    EditorWidth = AvailableSpace - ListWidth
 		  End If
-		  
-		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
-		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.HintsContainer.Width = ListWidth
@@ -985,16 +992,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = EditorMinWidth, Type = Double, Dynamic = False, Default = \"498", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.itemset", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"749", Scope = Public
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 	#tag EndConstant
 
 

@@ -455,7 +455,6 @@ End
 		  // Remember, this works BACKWARDS so a value of 100 means 100 from the bottom of the window
 		  
 		  Const SetsListMinHeight = 200
-		  Const LimitsListMinHeight = 150
 		  
 		  Var MinTop As Integer = SetsListMinHeight
 		  Var MaxTop As Integer = Self.Height - LimitsListMinHeight
@@ -782,13 +781,16 @@ End
 	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.set", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = LimitsListMinHeight, Type = Double, Dynamic = False, Default = \"150", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = PageNoSelection, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageSetEditor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Private
+	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 	#tag EndConstant
 
 

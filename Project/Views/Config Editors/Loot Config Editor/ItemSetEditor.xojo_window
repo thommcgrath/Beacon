@@ -453,6 +453,9 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.setentry", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = MinEditorWidth, Type = Double, Dynamic = False, Default = \"519", Scope = Public
+	#tag EndConstant
+
 
 #tag EndWindowCode
 

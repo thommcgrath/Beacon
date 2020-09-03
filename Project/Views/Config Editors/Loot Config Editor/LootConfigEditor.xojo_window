@@ -368,13 +368,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
-		  Self.MinimumHeight = 547
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) = False Then
 		    Return False
@@ -430,12 +423,12 @@ End
 	#tag Event
 		Sub Resize(Initial As Boolean)
 		  If Initial Then
-		    Self.SetListWidth(Preferences.SourcesSplitterPosition)
+		    Self.SetListWidth(Preferences.SourcesSplitterPosition, False)
 		  Else
 		    Self.SetListWidth(Self.Header.Width)
 		  End If
 		  
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Self.Header.ResizerEnabled = Self.Width > Self.MinEditorWidth
 		End Sub
 	#tag EndEvent
 
@@ -622,6 +615,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function MinEditorWidth() As Integer
+		  Return ListMinWidth + LootSourceEditor.MinEditorWidth + 1
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
 		  Var NumChanges As UInteger = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
@@ -642,15 +641,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetListWidth(NewSize As Integer)
-		  If Self.Width < Self.MinimumWidth Then
-		    // Don't compute anything
-		    Return
+		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
+		  Var ListWidth, EditorWidth As Integer
+		  If Self.Width <= Self.MinEditorWidth Then
+		    ListWidth = Self.ListMinWidth
+		    EditorWidth = LootSourceEditor.MinEditorWidth
+		  Else
+		    Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		    ListWidth = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinEditorWidth)
+		    EditorWidth = AvailableSpace - ListWidth
 		  End If
-		  
-		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinimumWidth)
-		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
@@ -660,7 +660,9 @@ End
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		  
-		  Preferences.SourcesSplitterPosition = ListWidth
+		  If Remember Then
+		    Preferences.SourcesSplitterPosition = ListWidth
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -776,7 +778,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 	#tag EndConstant
 
 
