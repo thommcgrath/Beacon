@@ -855,6 +855,11 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CancelLoad(URL as String) As Boolean
+		  If Beacon.IsBeaconURL(URL) Then
+		    Call App.HandleURL(URL, True)
+		    Return True
+		  End If
+		  
 		  Static TicketURL As String
 		  If TicketURL.IsEmpty Then
 		    TicketURL = Beacon.WebURL("/help/contact")
