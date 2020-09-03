@@ -175,7 +175,7 @@ Begin BeaconContainer SpawnPointEditor
          Visible         =   True
          Width           =   705
       End
-      Begin LogoFillCanvas LogoCanvas
+      Begin LogoFillCanvas NoSelectionFillCanvas
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   True
@@ -184,7 +184,7 @@ Begin BeaconContainer SpawnPointEditor
          Caption         =   "No Selection"
          DoubleBuffer    =   False
          Enabled         =   True
-         Height          =   664
+         Height          =   643
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
@@ -200,6 +200,36 @@ Begin BeaconContainer SpawnPointEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   705
+      End
+      Begin StatusBar NoSelectionStatusBar
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Borders         =   1
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   21
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   201
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   643
          Transparent     =   True
          Visible         =   True
          Width           =   705
@@ -410,7 +440,7 @@ End
 		  
 		  Self.SetsListWidth = Self.SetsListWidth
 		  Self.LimitsListHeight = Self.LimitsListHeight
-		  Self.SetsToolbar.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Self.SetsToolbar.ResizerEnabled = Self.Width > Self.MinEditorWidth
 		End Sub
 	#tag EndEvent
 
@@ -418,6 +448,12 @@ End
 	#tag Method, Flags = &h21
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function MinEditorWidth() As Integer
+		  Return SetsListMinWidth + SpawnPointSetEditor.MinEditorWidth + 1
 		End Function
 	#tag EndMethod
 
@@ -690,8 +726,6 @@ End
 			    Return
 			  End If
 			  
-			  System.DebugLog("Requested limits height: " + Value.ToString)
-			  
 			  // Remember, this works BACKWARDS so a value of 100 means 100 from the bottom of the window
 			  
 			  Const SetsListMinHeight = 200
@@ -709,7 +743,6 @@ End
 			  Self.SetsStatusBar.Top = Top - Self.SetsStatusBar.Height
 			  Self.SetsList.Height = Self.SetsStatusBar.Top - Self.SetsList.Top
 			  
-			  System.DebugLog("Actual limits height: " + Value.ToString)
 			  Preferences.SpawnPointEditorLimitsSplitterPosition = Value
 			End Set
 		#tag EndSetter
@@ -733,9 +766,15 @@ End
 			    Return
 			  End If
 			  
-			  Var AvailableSpace As Integer = Self.Width - Self.ColumnSeparator.Width
-			  Var ListWidth As Integer = Min(Max(Value, Self.SetsListMinWidth), AvailableSpace - SpawnPointSetEditor.MinimumWidth)
-			  Var EditorWidth As Integer = AvailableSpace - ListWidth
+			  Var ListWidth, EditorWidth As Integer
+			  If Self.Width <= Self.MinEditorWidth Then
+			    ListWidth = Self.SetsListMinWidth
+			    EditorWidth = SpawnPointSetEditor.MinEditorWidth
+			  Else
+			    Var AvailableSpace As Integer = Self.Width - Self.ColumnSeparator.Width
+			    ListWidth = Min(Max(Value, Self.SetsListMinWidth), AvailableSpace - SpawnPointSetEditor.MinEditorWidth)
+			    EditorWidth = AvailableSpace - ListWidth
+			  End If
 			  
 			  Self.SetsList.Width = ListWidth
 			  Self.SetsToolbar.Width = ListWidth
@@ -758,9 +797,6 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.set", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"810", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageNoSelection, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -900,7 +936,7 @@ End
 		  
 		  Self.SetEditor.SpawnSet = Nil
 		  Self.Pages.SelectedPanelIndex = Self.PageNoSelection
-		  Self.LogoCanvas.Caption = If(Me.SelectedRowCount = 0, "No Selection", "Multiple Selection")
+		  Self.NoSelectionFillCanvas.Caption = If(Me.SelectedRowCount = 0, "No Selection", "Multiple Selection")
 		End Sub
 	#tag EndEvent
 	#tag Event

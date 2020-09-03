@@ -229,36 +229,6 @@ Begin ConfigEditor SpawnPointsConfigEditor
          Visible         =   True
          Width           =   729
       End
-      Begin StatusBar NoSelectionStatusBar
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         Borders         =   2
-         Caption         =   ""
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   21
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   251
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   527
-         Transparent     =   True
-         Visible         =   True
-         Width           =   729
-      End
       Begin LogoFillCanvas NoSelectionFillCanvas
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -288,6 +258,36 @@ Begin ConfigEditor SpawnPointsConfigEditor
          Visible         =   True
          Width           =   729
       End
+      Begin StatusBar NoSelectionStatusBar
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Borders         =   1
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   21
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   527
+         Transparent     =   True
+         Visible         =   True
+         Width           =   729
+      End
    End
 End
 #tag EndWindow
@@ -311,7 +311,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = Self.ListMinWidth + Self.MainSeparator.Width + SpawnPointEditor.MinimumWidth
+		  Self.MinimumWidth = Self.ListMinWidth + Self.MainSeparator.Width + SpawnPointEditor.MinEditorWidth
 		  Self.MinimumHeight = 350
 		End Sub
 	#tag EndEvent
@@ -341,7 +341,7 @@ End
 		    Self.SetListWidth(Self.ControlToolbar.Width)
 		  End If
 		  
-		  Self.ControlToolbar.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Self.ControlToolbar.ResizerEnabled = Self.Width > Self.MinEditorWidth
 		End Sub
 	#tag EndEvent
 
@@ -429,6 +429,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function MinEditorWidth() As Integer
+		  Return ListMinWidth + SpawnPointEditor.MinEditorWidth + 1
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetListWidth(NewSize As Integer)
 		  If Self.Width < Self.MinimumWidth Then
@@ -436,9 +442,15 @@ End
 		    Return
 		  End If
 		  
-		  Var AvailableSpace As Integer = Self.Width - Self.MainSeparator.Width
-		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - SpawnPointEditor.MinimumWidth)
-		  Var EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var ListWidth, EditorWidth As Integer
+		  If Self.Width <= Self.MinEditorWidth Then
+		    ListWidth = Self.ListMinWidth
+		    EditorWidth = SpawnPointEditor.MinEditorWidth
+		  Else
+		    Var AvailableSpace As Integer = Self.Width - Self.MainSeparator.Width
+		    ListWidth = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - SpawnPointEditor.MinEditorWidth)
+		    EditorWidth = AvailableSpace - ListWidth
+		  End If
 		  
 		  Self.ControlToolbar.Width = ListWidth
 		  Self.MainSeparator.Left = ListWidth

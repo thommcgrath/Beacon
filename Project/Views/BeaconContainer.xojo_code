@@ -18,6 +18,10 @@ Inherits ContainerControl
 		    Return
 		  End If
 		  
+		  If (Self.Window Is Nil) = False Then
+		    Self.mEmbedded = True
+		  End If
+		  
 		  Self.Open()
 		End Sub
 	#tag EndEvent
@@ -61,7 +65,7 @@ Inherits ContainerControl
 		    If Win.FinishedEmbedding Then
 		      Self.mFinishedCallback = CallLater.Schedule(1, AddressOf TriggerEmbeddingFinished)
 		    Else
-		      BeaconContainer(Self.Window).AddChild(Self)
+		      Win.AddChild(Self)
 		    End If
 		    Return False
 		  End If

@@ -33,7 +33,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   304
+      Height          =   348
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -79,7 +79,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   326
+         Top             =   370
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -111,7 +111,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   326
+         Top             =   370
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -143,7 +143,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   326
+         Top             =   370
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -178,7 +178,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   216
+         Height          =   260
          Index           =   -2147483648
          InitialParent   =   "EntriesGroup"
          InitialValue    =   ""
@@ -217,7 +217,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   304
+      Height          =   348
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -263,7 +263,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   326
+         Top             =   370
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -295,7 +295,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   326
+         Top             =   370
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -327,7 +327,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   326
+         Top             =   370
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -362,7 +362,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   216
+         Height          =   260
          Index           =   -2147483648
          InitialParent   =   "ReplaceGroup"
          InitialValue    =   ""
@@ -581,7 +581,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   280
+      Height          =   236
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -596,7 +596,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   378
+      Top             =   422
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -629,12 +629,12 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   584
+         Top             =   526
          Transparent     =   False
          Underline       =   False
-         Value           =   "(Water Only) Min Height:"
+         Value           =   "Min Water Height:"
          Visible         =   True
-         Width           =   228
+         Width           =   136
       End
       Begin UITweaks.ResizedLabel SpreadRadiusLabel
          AllowAutoDeactivate=   True
@@ -664,84 +664,14 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   550
+         Top             =   492
          Transparent     =   False
          Underline       =   False
          Value           =   "Spread Radius:"
          Visible         =   True
-         Width           =   228
+         Width           =   136
       End
-      Begin UITweaks.ResizedLabel TameDistanceLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AdvancedGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   "3"
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   516
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Distance from Tames Multiplier:"
-         Visible         =   True
-         Width           =   228
-      End
-      Begin UITweaks.ResizedLabel StructureDistanceLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "AdvancedGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextAlignment   =   "3"
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   482
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Distance from Structures Multiplier:"
-         Visible         =   True
-         Width           =   228
-      End
-      Begin UITweaks.ResizedLabel PlayerDistanceLabel
+      Begin UITweaks.ResizedLabel DistanceMultipliersLabel
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -769,12 +699,12 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   448
+         Top             =   616
          Transparent     =   False
          Underline       =   False
-         Value           =   "Distance from Players Multiplier:"
+         Value           =   "Distance Multipliers:"
          Visible         =   True
-         Width           =   228
+         Width           =   136
       End
       Begin UITweaks.ResizedLabel OffsetLabel
          AllowAutoDeactivate=   True
@@ -804,12 +734,12 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   414
+         Top             =   458
          Transparent     =   False
          Underline       =   False
          Value           =   "Offset (X, Y, Z):"
          Visible         =   True
-         Width           =   228
+         Width           =   136
       End
       Begin RangeField WaterMinHeightField
          AllowAutoDeactivate=   True
@@ -832,7 +762,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   -2147483648
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   188
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -848,13 +778,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   584
+         Top             =   526
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField SpreadRadiusField
          AllowAutoDeactivate=   True
@@ -877,7 +807,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   -2147483648
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   188
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -893,13 +823,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   550
+         Top             =   492
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField TameDistanceField
          AllowAutoDeactivate=   True
@@ -922,7 +852,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   -2147483648
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   390
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -938,13 +868,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   516
+         Top             =   616
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField StructureDistanceField
          AllowAutoDeactivate=   True
@@ -967,7 +897,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   -2147483648
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   289
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -983,13 +913,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   482
+         Top             =   616
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField PlayerDistanceField
          AllowAutoDeactivate=   True
@@ -1012,7 +942,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   -2147483648
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   188
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1028,13 +958,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   448
+         Top             =   616
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField OffsetFields
          AllowAutoDeactivate=   True
@@ -1057,7 +987,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   2
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   464
+         Left            =   390
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1073,13 +1003,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   414
+         Top             =   458
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField OffsetFields
          AllowAutoDeactivate=   True
@@ -1102,7 +1032,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   1
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   372
+         Left            =   289
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1118,13 +1048,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   414
+         Top             =   458
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin RangeField OffsetFields
          AllowAutoDeactivate=   True
@@ -1147,7 +1077,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   0
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   188
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1163,13 +1093,13 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   414
+         Top             =   458
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
-         Width           =   80
+         Width           =   89
       End
       Begin CheckBox OffsetBeforeMultiplierCheck
          AllowAutoDeactivate=   True
@@ -1185,24 +1115,129 @@ Begin BeaconContainer SpawnPointSetEditor
          Index           =   -2147483648
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
-         Left            =   280
+         Left            =   188
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   True
+         LockRight       =   False
          LockTop         =   True
          Scope           =   2
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "When enabled, any level multipliers will be applied before adding any level offsets. When disabled, offsets are added first, then the multipliers are used."
-         Top             =   618
+         Top             =   560
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
          VisualState     =   "0"
-         Width           =   464
+         Width           =   291
+      End
+      Begin Label PlayerDistanceLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AdvancedGroup"
+         Italic          =   False
+         Left            =   188
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   0
+         Selectable      =   False
+         TabIndex        =   15
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   592
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Players"
+         Visible         =   True
+         Width           =   89
+      End
+      Begin Label StructureDistanceLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AdvancedGroup"
+         Italic          =   False
+         Left            =   289
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   0
+         Selectable      =   False
+         TabIndex        =   16
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   592
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Structures"
+         Visible         =   True
+         Width           =   89
+      End
+      Begin Label TameDistanceLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AdvancedGroup"
+         Italic          =   False
+         Left            =   390
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   0
+         Selectable      =   False
+         TabIndex        =   17
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   592
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Tames"
+         Visible         =   True
+         Width           =   89
       End
    End
 End
@@ -1487,7 +1522,7 @@ End
 	#tag Constant, Name = kReplacementClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.replacement", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"584", Scope = Public
+	#tag Constant, Name = MinEditorWidth, Type = Double, Dynamic = False, Default = \"519", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = WeightScale, Type = Double, Dynamic = False, Default = \"1.0", Scope = Private
