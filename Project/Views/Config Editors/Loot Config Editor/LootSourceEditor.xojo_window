@@ -410,20 +410,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EmbeddingFinished()
-		  Self.Simulator.Height = Preferences.SimulatorSize
-		  If Self.SimulatorVisible Then
-		    Self.SimulatorPosition = Self.Height - Self.Simulator.Height
-		  Else
-		    Self.SimulatorPosition = Self.Height
-		  End If
-		  
-		  Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
-		  Self.mSavePositions = True
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.UpdateStatus()
 		End Sub
@@ -431,12 +417,20 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  #Pragma Unused Initial
-		  
-		  If Self.mSavePositions Then
+		  If Initial Then
+		    Self.Simulator.Height = Preferences.SimulatorSize
+		    If Self.SimulatorVisible Then
+		      Self.SimulatorPosition = Self.Height - Self.Simulator.Height
+		    Else
+		      Self.SimulatorPosition = Self.Height
+		    End If
+		    
+		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
+		  Else
 		    Self.SetListWidth(Self.Header.Width)
 		  End If
 		  
+		  Self.mSavePositions = True
 		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
 		End Sub
 	#tag EndEvent

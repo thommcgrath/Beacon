@@ -424,22 +424,15 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EmbeddingFinished()
-		  Self.SetsListWidth = Preferences.SpawnPointEditorSetsSplitterPosition
-		  Self.LimitsListHeight = Preferences.SpawnPointEditorLimitsSplitterPosition
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Resize(Initial As Boolean)
-		  #Pragma Unused Initial
-		  
-		  If Not Self.FinishedEmbedding Then
-		    Return
+		  If Initial Then
+		    Self.SetsListWidth(False) = Preferences.SpawnPointEditorSetsSplitterPosition
+		    Self.LimitsListHeight(False) = Preferences.SpawnPointEditorLimitsSplitterPosition
+		  Else
+		    Self.SetsListWidth = Self.SetsListWidth
+		    Self.LimitsListHeight = Self.LimitsListHeight
 		  End If
 		  
-		  Self.SetsListWidth = Self.SetsListWidth
-		  Self.LimitsListHeight = Self.LimitsListHeight
 		  Self.SetsToolbar.ResizerEnabled = Self.Width > Self.MinEditorWidth
 		End Sub
 	#tag EndEvent
@@ -449,6 +442,37 @@ End
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function LimitsListHeight() As Integer
+		  Return Self.Height - Self.LimitsToolbar.Top
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LimitsListHeight(Remember As Boolean = True, Assigns Value As Integer)
+		  // Remember, this works BACKWARDS so a value of 100 means 100 from the bottom of the window
+		  
+		  Const SetsListMinHeight = 200
+		  Const LimitsListMinHeight = 150
+		  
+		  Var MinTop As Integer = SetsListMinHeight
+		  Var MaxTop As Integer = Self.Height - LimitsListMinHeight
+		  Var Top As Integer = Max(Min(Self.Height - Value, MaxTop), MinTop)
+		  Value = Self.Height - Top
+		  
+		  Self.LimitsToolbar.Top = Top
+		  Self.LimitsList.Top = Self.LimitsToolbar.Top + Self.LimitsToolbar.Height
+		  Self.LimitsList.Height = Self.LimitsStatusBar.Top - Self.LimitsList.Top
+		  
+		  Self.SetsStatusBar.Top = Top - Self.SetsStatusBar.Height
+		  Self.SetsList.Height = Self.SetsStatusBar.Top - Self.SetsList.Top
+		  
+		  If Remember Then
+		    Preferences.SpawnPointEditorLimitsSplitterPosition = Value
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -519,6 +543,40 @@ End
 		    
 		    Self.UpdateUI
 		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SetsListWidth() As Integer
+		  Return Self.SetsList.Width
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetsListWidth(Remember As Boolean = True, Assigns Value As Integer)
+		  Var ListWidth, EditorWidth As Integer
+		  If Self.Width <= Self.MinEditorWidth Then
+		    ListWidth = Self.SetsListMinWidth
+		    EditorWidth = SpawnPointSetEditor.MinEditorWidth
+		  Else
+		    Var AvailableSpace As Integer = Self.Width - Self.ColumnSeparator.Width
+		    ListWidth = Min(Max(Value, Self.SetsListMinWidth), AvailableSpace - SpawnPointSetEditor.MinEditorWidth)
+		    EditorWidth = AvailableSpace - ListWidth
+		  End If
+		  
+		  Self.SetsList.Width = ListWidth
+		  Self.SetsToolbar.Width = ListWidth
+		  Self.SetsStatusBar.Width = ListWidth
+		  Self.ColumnSeparator.Left = ListWidth
+		  Self.LimitsList.Width = ListWidth
+		  Self.LimitsToolbar.Width = ListWidth
+		  Self.LimitsStatusBar.Width = ListWidth
+		  Self.Pages.Left = Self.ColumnSeparator.Left + Self.ColumnSeparator.Width
+		  Self.Pages.Width = EditorWidth
+		  
+		  If Remember Then
+		    Preferences.SpawnPointEditorSetsSplitterPosition = ListWidth
 		  End If
 		End Sub
 	#tag EndMethod
@@ -713,84 +771,9 @@ End
 	#tag EndHook
 
 
-	#tag ComputedProperty, Flags = &h21
-		#tag Getter
-			Get
-			  Return Self.Height - Self.LimitsToolbar.Top
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.Height < Self.MinimumHeight Then
-			    // Don't compute anything
-			    Return
-			  End If
-			  
-			  // Remember, this works BACKWARDS so a value of 100 means 100 from the bottom of the window
-			  
-			  Const SetsListMinHeight = 200
-			  Const LimitsListMinHeight = 150
-			  
-			  Var MinTop As Integer = SetsListMinHeight
-			  Var MaxTop As Integer = Self.Height - LimitsListMinHeight
-			  Var Top As Integer = Max(Min(Self.Height - Value, MaxTop), MinTop)
-			  Value = Self.Height - Top
-			  
-			  Self.LimitsToolbar.Top = Top
-			  Self.LimitsList.Top = Self.LimitsToolbar.Top + Self.LimitsToolbar.Height
-			  Self.LimitsList.Height = Self.LimitsStatusBar.Top - Self.LimitsList.Top
-			  
-			  Self.SetsStatusBar.Top = Top - Self.SetsStatusBar.Height
-			  Self.SetsList.Height = Self.SetsStatusBar.Top - Self.SetsList.Top
-			  
-			  Preferences.SpawnPointEditorLimitsSplitterPosition = Value
-			End Set
-		#tag EndSetter
-		Private LimitsListHeight As Integer
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mSpawnPoints() As Beacon.MutableSpawnPoint
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h21
-		#tag Getter
-			Get
-			  Return Self.SetsList.Width
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.Width < Self.MinimumWidth Then
-			    // Don't compute anything
-			    Return
-			  End If
-			  
-			  Var ListWidth, EditorWidth As Integer
-			  If Self.Width <= Self.MinEditorWidth Then
-			    ListWidth = Self.SetsListMinWidth
-			    EditorWidth = SpawnPointSetEditor.MinEditorWidth
-			  Else
-			    Var AvailableSpace As Integer = Self.Width - Self.ColumnSeparator.Width
-			    ListWidth = Min(Max(Value, Self.SetsListMinWidth), AvailableSpace - SpawnPointSetEditor.MinEditorWidth)
-			    EditorWidth = AvailableSpace - ListWidth
-			  End If
-			  
-			  Self.SetsList.Width = ListWidth
-			  Self.SetsToolbar.Width = ListWidth
-			  Self.SetsStatusBar.Width = ListWidth
-			  Self.ColumnSeparator.Left = ListWidth
-			  Self.LimitsList.Width = ListWidth
-			  Self.LimitsToolbar.Width = ListWidth
-			  Self.LimitsStatusBar.Width = ListWidth
-			  Self.Pages.Left = Self.ColumnSeparator.Left + Self.ColumnSeparator.Width
-			  Self.Pages.Width = EditorWidth
-			  
-			  Preferences.SpawnPointEditorSetsSplitterPosition = ListWidth
-			End Set
-		#tag EndSetter
-		Private SetsListWidth As Integer
-	#tag EndComputedProperty
 
 
 	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.limit", Scope = Private

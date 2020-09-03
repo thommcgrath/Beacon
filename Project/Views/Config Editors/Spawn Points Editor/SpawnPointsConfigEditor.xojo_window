@@ -336,7 +336,7 @@ End
 	#tag Event
 		Sub Resize(Initial As Boolean)
 		  If Initial Then
-		    Self.SetListWidth(Preferences.SpawnPointsSplitterPosition)
+		    Self.SetListWidth(Preferences.SpawnPointsSplitterPosition, False)
 		  Else
 		    Self.SetListWidth(Self.ControlToolbar.Width)
 		  End If
@@ -436,12 +436,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetListWidth(NewSize As Integer)
-		  If Self.Width < Self.MinimumWidth Then
-		    // Don't compute anything
-		    Return
-		  End If
-		  
+		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
 		  Var ListWidth, EditorWidth As Integer
 		  If Self.Width <= Self.MinEditorWidth Then
 		    ListWidth = Self.ListMinWidth
@@ -459,7 +454,9 @@ End
 		  Self.Pages.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
 		  Self.Pages.Width = EditorWidth
 		  
-		  Preferences.SpawnPointsSplitterPosition = ListWidth
+		  If Remember Then
+		    Preferences.SpawnPointsSplitterPosition = ListWidth
+		  End If
 		End Sub
 	#tag EndMethod
 

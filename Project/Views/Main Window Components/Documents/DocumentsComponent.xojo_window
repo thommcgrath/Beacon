@@ -346,7 +346,7 @@ End
 		    Return False
 		  End If
 		  
-		  Self.RemovePage(Page)
+		  Self.CurrentPage = Self.RecentDocumentsComponent1
 		  
 		  Var NavItem As OmniBarItem = Page.LinkedOmniBarItem
 		  If (NavItem Is Nil) = False Then
@@ -358,7 +358,8 @@ End
 		    Self.Views.RemovePanelAt(PanelIndex)
 		  End If
 		  
-		  Self.CurrentPage = Self.RecentDocumentsComponent1
+		  Self.RemovePage(Page)
+		  Page.Close
 		End Function
 	#tag EndMethod
 
