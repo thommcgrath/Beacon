@@ -149,7 +149,10 @@ End
 		    CallLater.Cancel(Self.mScrollOpacityKey)
 		  End If
 		  
-		  Self.mScrollOpacity = 1
+		  If Self.mScrollOpacity <> 1 Then
+		    Self.mScrollOpacity = 1
+		    Self.Content.Invalidate
+		  End If
 		  If (Self.mScrollFadeAnimation Is Nil) = False Then
 		    Self.mScrollFadeAnimation.Cancel
 		    Self.mScrollFadeAnimation = Nil
@@ -273,6 +276,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Resize()
+		  If Self.mLastWidth = Self.Width And Self.mLastHeight = Self.Height Then
+		    Return
+		  End If
+		  
+		  Self.mLastWidth = Self.Width
+		  Self.mLastHeight = Self.Height
+		  
 		  RaiseEvent Resize()
 		  
 		  // This will cause the offset to recompute and invalidate if necessary
@@ -450,6 +460,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mItems() As SourceListItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastWidth As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
