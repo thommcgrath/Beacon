@@ -870,6 +870,11 @@ End
 		  End If
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.UserAgent = App.UserAgent
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events DashboardPane1
 	#tag Event
