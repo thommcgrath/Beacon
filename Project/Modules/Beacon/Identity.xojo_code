@@ -268,7 +268,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function IsChildAccount() As Boolean
-		  Return (Self.mParentAccountID Is Nil) = False And Self.mParentAccountID.IsNull
+		  Return (Self.mParentAccountID Is Nil) = False And Self.mParentAccountID.IsNull = False
 		End Function
 	#tag EndMethod
 
