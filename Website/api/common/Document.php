@@ -509,7 +509,12 @@ class Document implements \JsonSerializable {
 			}
 		}
 		if ($document_version >= 3) {
-			foreach ($document['Configs'] as $configname => $configcontent) {
+			if ($document_version >= 5) {
+				$base = $document['Config Sets']['Base'];
+			} else {
+				$base = $document['Configs'];
+			}
+			foreach ($base as $configname => $configcontent) {
 				if ($configname === 'LootDrops') {
 					$loot_drops_config = $configcontent['Contents'];
 					$editor_names[] = $configname;
