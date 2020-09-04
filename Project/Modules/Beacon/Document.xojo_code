@@ -8,40 +8,16 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(Profile As Beacon.ServerProfile)
-		  If Profile = Nil Then
-		    Return
-		  End If
-		  
-		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
-		    If Self.mServerProfiles(I) = Profile Then
-		      Self.mServerProfiles(I) = Profile.Clone
-		      Self.mModified = True
-		      Return
-		    End If
-		  Next
-		  
-		  Self.mServerProfiles.AddRow(Profile.Clone)
-		  If Profile.IsConsole Then
-		    Self.ConsoleMode = True
-		    
-		    For Each Entry As DictionaryEntry In Self.mMods
-		      Var ModInfo As Beacon.ModDetails = Beacon.Data.GetModWithID(Entry.Key.StringValue)
-		      If (ModInfo Is Nil Or ModInfo.ConsoleSafe = False) And Self.mMods.Value(Entry.Key).BooleanValue = True Then
-		        Self.mMods.Value(Entry.Key) = False
-		        Self.mModified = True
-		        Self.mModChangeTimestamp = System.Microseconds
-		      End If
-		    Next
-		  End If
-		  Self.mModified = True
+		Attributes( Deprecated = "AddServerProfile" )  Sub Add(Profile As Beacon.ServerProfile)
+		  Self.AddServerProfile(Profile)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
-		  Self.mConfigGroups.Value(Group.ConfigName) = Group
-		  Self.mModified = True
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, SetName As String = "")
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		  SetDict.Value(Group.ConfigName) = Group
+		  Self.ConfigSet(SetName) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -81,6 +57,37 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddServerProfile(Profile As Beacon.ServerProfile)
+		  If Profile = Nil Then
+		    Return
+		  End If
+		  
+		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
+		    If Self.mServerProfiles(I) = Profile Then
+		      Self.mServerProfiles(I) = Profile.Clone
+		      Self.mModified = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mServerProfiles.AddRow(Profile.Clone)
+		  If Profile.IsConsole Then
+		    Self.ConsoleMode = True
+		    
+		    For Each Entry As DictionaryEntry In Self.mMods
+		      Var ModInfo As Beacon.ModDetails = Beacon.Data.GetModWithID(Entry.Key.StringValue)
+		      If (ModInfo Is Nil Or ModInfo.ConsoleSafe = False) And Self.mMods.Value(Entry.Key).BooleanValue = True Then
+		        Self.mMods.Value(Entry.Key) = False
+		        Self.mModified = True
+		        Self.mModChangeTimestamp = System.Microseconds
+		      End If
+		    Next
+		  End If
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AddUser(UserID As String, PublicKey As String)
 		  Self.mEncryptedPasswords.Value(UserID.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mDocumentPassword, PublicKey), 0)
 		  Self.mModified = True
@@ -89,26 +96,64 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ConfigGroup(GroupName As String, Create As Boolean = False) As Beacon.ConfigGroup
-		  If Self.mConfigGroups.HasKey(GroupName) Then
-		    Return Self.mConfigGroups.Value(GroupName)
+		  Return Self.ConfigGroup(GroupName, "", Create)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigGroup(GroupName As String, SetName As String, Create As Boolean = False) As Beacon.ConfigGroup
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		  If SetDict.HasKey(GroupName) Then
+		    Return SetDict.Value(GroupName)
 		  End If
 		  
 		  If Create Then
 		    Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
-		    If Group <> Nil Then
+		    If (Group Is Nil) = False Then
 		      Group.IsImplicit = True
-		      Self.AddConfigGroup(Group)
+		      Self.AddConfigGroup(Group, SetName)
 		    End If
 		    Return Group
 		  End If
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ConfigSet(SetName As String) As Dictionary
+		  If SetName.IsEmpty Then
+		    SetName = "Base"
+		  End If
+		  
+		  If Self.mConfigSets.HasKey(SetName) Then
+		    Return Self.mConfigSets.Value(SetName)
+		  Else
+		    Return New Dictionary
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ConfigSet(SetName As String, Assigns Dict As Dictionary)
+		  If SetName.IsEmpty Then
+		    SetName = "Base"
+		  End If
+		  
+		  If Dict Is Nil And Self.mConfigSets.HasKey(SetName) Then
+		    Self.mConfigSets.Remove(SetName)
+		    Self.mModified = True
+		    Return
+		  End If
+		  
+		  Self.mConfigSets.Value(SetName) = Dict
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mIdentifier = New v4UUID
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
-		  Self.mConfigGroups = New Dictionary
+		  Self.mConfigSets = New Dictionary
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
@@ -491,20 +536,13 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  // New config system
-		  If Dict.HasKey("Configs") Then
-		    Var Groups As Dictionary = Dict.Value("Configs")
-		    For Each Entry As DictionaryEntry In Groups
-		      Try
-		        Var GroupName As String = Entry.Key
-		        Var GroupData As Dictionary = Entry.Value
-		        Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
-		        If Instance <> Nil Then
-		          Doc.mConfigGroups.Value(GroupName) = Instance
-		        End If
-		      Catch Err As RuntimeException
-		        App.Log("Unable to load config group " + Entry.Key + " from document " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
-		      End Try
+		  If Dict.HasKey("Config Sets") Then
+		    Var Sets As Dictionary = Dict.Value("Config Sets")
+		    For Each Entry As DictionaryEntry In Sets
+		      Doc.ConfigSet(Entry.Key) = LoadConfigSet(Entry.Value, Identity, Doc)
 		    Next
+		  ElseIf Dict.HasKey("Configs") Then
+		    Doc.ConfigSet("") = LoadConfigSet(Dict.Value("Configs"), Identity, Doc)
 		  End If
 		  
 		  If Dict.HasKey("Map") Then
@@ -631,8 +669,9 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasConfigGroup(GroupName As String) As Boolean
-		  Return Self.mConfigGroups.HasKey(GroupName)
+		Function HasConfigGroup(GroupName As String, SetName As String = "") As Boolean
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		  Return SetDict.HasKey(GroupName)
 		End Function
 	#tag EndMethod
 
@@ -643,9 +682,10 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImplementedConfigs() As Beacon.ConfigGroup()
+		Function ImplementedConfigs(SetName As String = "") As Beacon.ConfigGroup()
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  Var Groups() As Beacon.ConfigGroup
-		  For Each Entry As DictionaryEntry In Self.mConfigGroups
+		  For Each Entry As DictionaryEntry In SetDict
 		    Groups.AddRow(Entry.Value)
 		  Next
 		  Return Groups
@@ -678,6 +718,25 @@ Implements ObservationKit.Observable
 		  If Self.mLastSaved <> Nil Then
 		    Return New DateTime(Self.mLastSaved.SecondsFrom1970, Self.mLastSaved.Timezone)
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function LoadConfigSet(Source As Dictionary, Identity As Beacon.Identity, Doc As Beacon.Document) As Dictionary
+		  Var SetDict As New Dictionary
+		  For Each Entry As DictionaryEntry In Source
+		    Try
+		      Var GroupName As String = Entry.Key
+		      Var GroupData As Dictionary = Entry.Value
+		      Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
+		      If Instance <> Nil Then
+		        SetDict.Value(GroupName) = Instance
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log("Unable to load config group " + Entry.Key + " from document " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		    End Try
+		  Next
+		  Return SetDict
 		End Function
 	#tag EndMethod
 
@@ -764,11 +823,14 @@ Implements ObservationKit.Observable
 		    Return True
 		  End If
 		  
-		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Var Group As Beacon.ConfigGroup = Entry.Value
-		    If Group.Modified Then
-		      Return True
-		    End If
+		  For Each Entry As DictionaryEntry In Self.mConfigSets
+		    Var SetDict As Dictionary = Entry.Value
+		    For Each GroupEntry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		      If Group.Modified Then
+		        Return True
+		      End If
+		    Next
 		  Next
 		  
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
@@ -784,9 +846,12 @@ Implements ObservationKit.Observable
 		  Self.mModified = Value
 		  
 		  If Value = False Then
-		    For Each Entry As DictionaryEntry In Self.mConfigGroups
-		      Var Group As Beacon.ConfigGroup = Entry.Value
-		      Group.Modified = False
+		    For Each Entry As DictionaryEntry In Self.mConfigSets
+		      Var SetDict As Dictionary = Entry.Value
+		      For Each GroupEntry As DictionaryEntry In SetDict
+		        Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		        Group.Modified = False
+		      Next
 		    Next
 		    
 		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
@@ -919,9 +984,13 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(GroupName As String)
-		  If Self.mConfigGroups.HasKey(GroupName) Then
-		    Self.mConfigGroups.Remove(GroupName)
+		Sub RemoveConfigGroup(GroupName As String, SetName As String = "")
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		  If SetDict.HasKey(GroupName) Then
+		    SetDict.Remove(GroupName)
+		    If SetDict.Count = 0 Then
+		      Self.ConfigSet(SetName) = Nil
+		    End If
 		    Self.mModified = True
 		  End If
 		End Sub
@@ -1055,18 +1124,24 @@ Implements ObservationKit.Observable
 		  Document.Value("AllowUCS") = Self.AllowUCS
 		  Document.Value("IsConsole") = Self.ConsoleMode
 		  
-		  Var Groups As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Var Group As Beacon.ConfigGroup = Entry.Value
-		    Var GroupData As Dictionary = Group.ToDictionary(Self)
-		    If GroupData = Nil Then
-		      GroupData = New Dictionary
-		    End If
-		    
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Group)
-		    Groups.Value(Info.Name) = GroupData
+		  Var Sets As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mConfigSets
+		    Var SetName As String = Entry.Key
+		    Var SetDict As Dictionary = Entry.Value
+		    Var Groups As New Dictionary
+		    For Each GroupEntry As DictionaryEntry In SetDict
+		      Var Group As Beacon.ConfigGroup = GroupEntry.Value
+		      Var GroupData As Dictionary = Group.ToDictionary(Self)
+		      If GroupData = Nil Then
+		        GroupData = New Dictionary
+		      End If
+		      
+		      Var Info As Introspection.TypeInfo = Introspection.GetType(Group)
+		      Groups.Value(Info.Name) = GroupData
+		    Next
+		    Sets.Value(SetName) = Groups
 		  Next
-		  Document.Value("Configs") = Groups
+		  Document.Value("Config Sets") = Sets
 		  
 		  If Self.mMapCompatibility > 0 Then
 		    Document.Value("Map") = Self.mMapCompatibility
@@ -1210,7 +1285,7 @@ Implements ObservationKit.Observable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigGroups As Dictionary
+		Private mConfigSets As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
