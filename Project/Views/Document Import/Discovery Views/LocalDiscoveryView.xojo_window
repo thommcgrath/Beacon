@@ -630,7 +630,7 @@ End
 		    End Select
 		  End If
 		  
-		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty Or Self.mGameUserSettingsIniContent.IsEmpty) = False
+		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
 		End Sub
 	#tag EndEvent
 	#tag Event
