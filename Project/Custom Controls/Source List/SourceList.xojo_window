@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl SourceList Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
+Begin ContainerControl SourceList Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -31,6 +31,7 @@ Begin ContainerControl SourceList Implements AnimationKit.Scrollable, AnimationK
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   598
       Index           =   -2147483648
@@ -101,7 +102,7 @@ End
 		  Select Case Identifier
 		  Case "Scroll Opacity"
 		    Self.mScrollOpacity = Value
-		    Self.Content.Invalidate
+		    Self.Content.Invalidate(Self.Content.Width - ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), 0, ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), Self.Content.Height)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -117,17 +118,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub BeginScrollFadeOut()
-		  Self.mScrollOpacityKey = ""
-		  
-		  Self.mScrollFadeAnimation = New AnimationKit.ValueTask(Self, "Scroll Opacity", Self.mScrollOpacity, 0.0)
-		  Self.mScrollFadeAnimation.DurationInSeconds = 0.5
-		  Self.mScrollFadeAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mScrollFadeAnimation.Run
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mItems.Count
@@ -140,24 +130,6 @@ End
 		    CallLater.Cancel(Self.mScrollOpacityKey)
 		    Self.mScrollOpacityKey = ""
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub FlashScroller()
-		  If Self.mScrollOpacityKey.IsEmpty = False THen
-		    CallLater.Cancel(Self.mScrollOpacityKey)
-		  End If
-		  
-		  If Self.mScrollOpacity <> 1 Then
-		    Self.mScrollOpacity = 1
-		    Self.Content.Invalidate
-		  End If
-		  If (Self.mScrollFadeAnimation Is Nil) = False Then
-		    Self.mScrollFadeAnimation.Cancel
-		    Self.mScrollFadeAnimation = Nil
-		  End If
-		  Self.mScrollOpacityKey = CallLater.Schedule(1000, WeakAddressOf BeginScrollFadeOut)
 		End Sub
 	#tag EndMethod
 
@@ -287,14 +259,6 @@ End
 		  
 		  // This will cause the offset to recompute and invalidate if necessary
 		  Self.ScrollPosition = Self.mScrollOffset
-		  
-		  If Self.ScrollMaximum > 0 Then
-		    Self.FlashScroller()
-		  Else
-		    If Self.mScrollOpacity > 0 And (Self.mScrollFadeAnimation Is Nil Or Self.mScrollFadeAnimation.Completed = True) Then
-		      Self.BeginScrollFadeOut()
-		    End If
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -344,7 +308,6 @@ End
 		  
 		  Value = Self.LimitScrollOffset(Value, Self.mContentHeight, Self.Content.Height)
 		  If Self.mScrollOffset <> Value Then
-		    Self.FlashScroller()
 		    Self.mScrollOffset = Value
 		    Self.Content.Invalidate
 		  End If
@@ -491,6 +454,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mScrollActive As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mScrollFadeAnimation As AnimationKit.ValueTask
 	#tag EndProperty
 
@@ -499,7 +466,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mScrollOpacity As Double
+		Private mScrollOpacity As Double = 0.25
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -509,6 +476,47 @@ End
 	#tag Property, Flags = &h21
 		Private mSelectedRowIndex As Integer = -1
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mScrollActive
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mScrollActive = Value Then
+			    Return
+			  End If
+			  
+			  Self.mScrollActive = Value
+			  
+			  If (Self.mScrollFadeAnimation Is Nil) = False Then
+			    Self.mScrollFadeAnimation.Cancel
+			    Self.mScrollFadeAnimation = Nil
+			  End If
+			  
+			  Var Amount As Double = If(Value, 1.0, 0.25)
+			  
+			  If Self.mScrollOpacity = Amount Then
+			    Return
+			  End If
+			  
+			  Self.mScrollFadeAnimation = New AnimationKit.ValueTask(Self, "Scroll Opacity", Self.mScrollOpacity, Amount)
+			  If Value Then
+			    Self.mScrollFadeAnimation.DurationInSeconds = 0.15
+			  Else
+			    If Self.mScrollOpacity = 1.0 Then
+			      Self.mScrollFadeAnimation.DelayInSeconds = 1.0
+			    End If
+			    Self.mScrollFadeAnimation.DurationInSeconds = 0.5
+			  End If
+			  Self.mScrollFadeAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+			  Self.mScrollFadeAnimation.Run
+			End Set
+		#tag EndSetter
+		ScrollActive As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -537,6 +545,12 @@ End
 		SelectedRowIndex As Integer
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = ScrollThumbPadding, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ScrollThumbWidth, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = UseVibrancyView, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
@@ -610,6 +624,7 @@ End
 		  End If
 		  
 		  Self.mMousePoint = Nil
+		  Self.ScrollActive = False
 		  
 		  If Self.mMouseOverIndex <> -1 Then
 		    Self.Invalidate(Self.mMouseOverIndex)
@@ -625,7 +640,14 @@ End
 		  
 		  Self.mMousePoint = New Point(X, Y)
 		  Var OldIndex As Integer = Self.mMouseOverIndex
-		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
+		  
+		  If X >= Me.Width - ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth) Then
+		    Self.mMouseOverIndex = -1
+		    Self.ScrollActive = True
+		  Else
+		    Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
+		    Self.ScrollActive = False
+		  End If
 		  
 		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
 		    Self.Invalidate(OldIndex)
@@ -673,13 +695,19 @@ End
 		  Const CornerRadius = 8
 		  Const Padding = 8
 		  
+		  Self.ContentHeight = (Self.mItems.Count * RowHeight) + (Inset * 2)
+		  
+		  Var ItemWidth As Integer = G.Width - (Inset * 2)
+		  Var WithScroller As Boolean = Self.ScrollMaximum > 0
+		  If WithScroller Then
+		    ItemWidth = ItemWidth - (ScrollThumbWidth + (ScrollThumbPadding * 2))
+		  End If
 		  Var RowTop As Integer = Floor(Inset - Self.mScrollOffset)
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
-		    Rects(Idx) = New Rect(Inset, RowTop, G.Width - (Inset * 2), RowHeight)
+		    Rects(Idx) = New Rect(Inset, RowTop, ItemWidth, RowHeight)
 		    RowTop = RowTop + RowHeight
 		  Next
 		  
-		  Self.ContentHeight = (Self.mItems.Count * RowHeight) + (Inset * 2)
 		  Self.mItemRects = Rects
 		  
 		  Var Viewport As New Rect(0, 0, G.Width, G.Height)
@@ -720,22 +748,19 @@ End
 		    End If
 		  Next
 		  
-		  If Self.mScrollOpacity > 0 Then
-		    Const ThumbWidth = 7
-		    Const ThumbPadding = 2
-		    
+		  If WithScroller Then
 		    Var ScrollPercent As Double
 		    If Self.ScrollMaximum > 0 Then
 		      ScrollPercent = Self.ScrollPosition / Self.ScrollMaximum
 		    End If
 		    
 		    Var Ratio As Double = Min(Me.Height / Self.mContentHeight, 1.0)
-		    Var TrackArea As Integer = Me.Height - (ThumbPadding * 2)
-		    Var ThumbHeight As Double = NearestMultiple(TrackArea * Ratio, G.ScaleY)
-		    Var ThumbTop As Double = NearestMultiple(ThumbPadding + ((TrackArea - ThumbHeight) * ScrollPercent), G.ScaleY)
+		    Var TrackArea As Integer = Me.Height - (ScrollThumbPadding * 2)
+		    Var ScrollThumbHeight As Double = NearestMultiple(TrackArea * Ratio, G.ScaleY)
+		    Var ScrollThumbTop As Double = NearestMultiple(ScrollThumbPadding + ((TrackArea - ScrollThumbHeight) * ScrollPercent), G.ScaleY)
 		    
 		    G.DrawingColor = SystemColors.SecondaryLabelColor.AtOpacity(Self.mScrollOpacity)
-		    G.FillRoundRectangle(G.Width - (ThumbWidth + ThumbPadding), ThumbTop, ThumbWidth, ThumbHeight, ThumbWidth, ThumbWidth)
+		    G.FillRoundRectangle(G.Width - (ScrollThumbWidth + ScrollThumbPadding), ScrollThumbTop, ScrollThumbWidth, ScrollThumbHeight, ScrollThumbWidth, ScrollThumbWidth)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -973,6 +998,14 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ScrollActive"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
