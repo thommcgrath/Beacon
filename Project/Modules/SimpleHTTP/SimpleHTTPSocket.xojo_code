@@ -23,8 +23,6 @@ Private Class SimpleHTTPSocket
 		    AddHandler Self.mLegacySocket.Error, WeakAddressOf mLegacySocket_Error
 		    AddHandler Self.mLegacySocket.PageReceived, WeakAddressOf mLegacySocket_PageReceived
 		  #endif
-		  
-		  Self.RequestHeader("User-Agent") = App.UserAgent
 		End Sub
 	#tag EndMethod
 
@@ -124,6 +122,7 @@ Private Class SimpleHTTPSocket
 		Sub Send(Method As String, URL As String)
 		  Self.mWorking = True
 		  Self.mURL = URL
+		  Self.RequestHeader("User-Agent") = App.UserAgent
 		  #if UseNewSocket
 		    Self.mSocket.Send(Method, URL)
 		  #else

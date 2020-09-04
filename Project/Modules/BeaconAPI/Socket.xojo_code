@@ -25,6 +25,7 @@ Protected Class Socket
 		    Self.Socket.RequestHeader(Header) = Request.RequestHeader(Header)
 		  Next
 		  Self.Socket.RequestHeader("Cache-Control") = "no-cache"
+		  Self.Socket.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  If Request.Method = "GET" Then
 		    Var Query As String = Request.Query
@@ -65,7 +66,6 @@ Protected Class Socket
 		Sub Constructor()
 		  Self.Socket = New URLConnection
 		  Self.Socket.AllowCertificateValidation = True
-		  Self.Socket.RequestHeader("User-Agent") = App.UserAgent
 		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
 		  AddHandler Self.Socket.ContentReceived, WeakAddressOf Socket_ContentReceived
 		  AddHandler Self.Socket.ReceivingProgressed, WeakAddressOf Socket_ReceivingProgressed
