@@ -47,36 +47,18 @@ Inherits Listbox
 		    End If
 		  End If
 		  
-		  // Need to fill with color first so translucent system colors can apply correctly
-		  If Self.Transparent Then
-		    G.ClearRectangle(0, 0, G.Width, G.Height)
-		  End If
-		  G.DrawingColor = SystemColors.ControlBackgroundColor
-		  G.FillRectangle(0, 0, G.Width, G.Height)
-		  
-		  #if false
-		    #if TargetMacOS
-		      Var OSMajor, OSMinor, OSBug As Integer
-		      UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
-		      If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
-		        G.ClearRectangle(0, 0, G.Width, G.Height)
-		      Else
-		        G.DrawingColor = SystemColors.UnderPageBackgroundColor
-		        G.FillRectangle(0, 0, G.Width, G.Height)
-		      End If
-		    #else
-		      G.DrawingColor = SystemColors.UnderPageBackgroundColor
-		      G.FillRectangle(0, 0, G.Width, G.Height)
-		    #endif
-		  #endif
+		  // Make the listbox transparent
+		  G.ClearRectangle(0, 0, G.Width, G.Height)
 		  
 		  Var InsetLeft, InsetRight As Integer 
-		  If Column = 0 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
-		    InsetLeft = InsetAmount
-		  End If
-		  If Column = Self.ColumnCount - 1 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
-		    InsetRight = InsetAmount
-		  End If
+		  #if UseRoundedRows
+		    If Column = 0 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
+		      InsetLeft = InsetAmount
+		    End If
+		    If Column = Self.ColumnCount - 1 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
+		      InsetRight = InsetAmount
+		    End If
+		  #endif
 		  
 		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
 		  Var Clip As Graphics = G.Clip(InsetLeft, 0, ColumnWidth - (InsetLeft + InsetRight), RowHeight)
@@ -393,6 +375,10 @@ Inherits Listbox
 		  End If
 		  
 		  RaiseEvent Open
+		  
+		  #if TargetMacOS
+		    Self.Transparent = True
+		  #endif
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
 		  Self.mOpened = True
@@ -895,6 +881,9 @@ Inherits Listbox
 	#tag EndConstant
 
 	#tag Constant, Name = TextColor, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = UseRoundedRows, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
 
