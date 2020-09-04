@@ -25,28 +25,26 @@ if ($remaining_seats > 0) {
 echo '</p><p><a href="/omni/team">Learn more about Beacon for teams</a></div>';
 
 $children = $user->ChildAccounts();
-if (count($children) === 0) {
-	return;
-}
-
-echo '<table class="generic">';
-echo '<thead><tr><th>Name</th><th class="low-priority">Enabled</th><th class="low-priority">Actions</th></tr></thead>';
-foreach ($children as $child) {
-	$action_links = [];
-	if ($child->IsEnabled() === false && $remaining_seats > 0) {
-		$action_links[] = '<a href="team/enable" class="enable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Enable</a>';
-		$action_links[] = '<a href="team/delete" class="delete-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Delete</a>';
-	} else if ($child->IsEnabled()) {
-		$action_links[] = '<a href="team/disable" class="disable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Disable</a>';
+if (count($children) > 0) {
+	echo '<table class="generic">';
+	echo '<thead><tr><th>Name</th><th class="low-priority">Enabled</th><th class="low-priority">Actions</th></tr></thead>';
+	foreach ($children as $child) {
+		$action_links = [];
+		if ($child->IsEnabled() === false && $remaining_seats > 0) {
+			$action_links[] = '<a href="team/enable" class="enable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Enable</a>';
+			$action_links[] = '<a href="team/delete" class="delete-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Delete</a>';
+		} else if ($child->IsEnabled()) {
+			$action_links[] = '<a href="team/disable" class="disable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Disable</a>';
+		}
+		
+		echo '<tr>';
+		echo '<td>' . htmlentities($child->Username()) . '<span class="user-suffix">#' . htmlentities($child->Suffix()) . '</span><div class="row-details"><span class="detail">' . ($child->IsEnabled() ? 'Enabled' : 'Disabled') . '</span><span class="detail">' . implode('</span><span class="detail">', $action_links) . '</span></div></td>';
+		echo '<td class="low-priority text-center nowrap">' . ($child->IsEnabled() ? 'Yes' : 'No') . '</td>';
+		echo '<td class="low-priority text-center nowrap">' . implode('<br>', $action_links) . '</td>';
 	}
-	
-	echo '<tr>';
-	echo '<td>' . htmlentities($child->Username()) . '<span class="user-suffix">#' . htmlentities($child->Suffix()) . '</span><div class="row-details"><span class="detail">' . ($child->IsEnabled() ? 'Enabled' : 'Disabled') . '</span><span class="detail">' . implode('</span><span class="detail">', $action_links) . '</span></div></td>';
-	echo '<td class="low-priority text-center nowrap">' . ($child->IsEnabled() ? 'Yes' : 'No') . '</td>';
-	echo '<td class="low-priority text-center nowrap">' . implode('<br>', $action_links) . '</td>';
+	echo '</table>';
+	echo '<p class="smaller text-center text-lighter">Disabled accounts do not count against your license usage.<br><a href="team/reset" id="reset-member-button">Reset Member Password</a></p>';
 }
-echo '</table>';
-echo '<p class="smaller text-center text-lighter">Disabled accounts do not count against your license usage.<br><a href="team/reset" id="reset-member-button">Reset Member Password</a></p>';
 
 BeaconTemplate::StartModal('add-team-modal');
 ?><p class="title-bar">Add Team Member</p>
