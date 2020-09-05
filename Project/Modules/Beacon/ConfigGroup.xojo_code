@@ -1,6 +1,14 @@
 #tag Class
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
+		Function Clone() As Beacon.ConfigGroup
+		  Var Err As New UnsupportedOperationException
+		  Err.Reason = "Config group has not implemented Clone method"
+		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var Values() As Beacon.ConfigValue
 		  
@@ -143,6 +151,12 @@ Protected Class ConfigGroup
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ResolveIssuesCallback()
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Function SupportsConfigSets() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
