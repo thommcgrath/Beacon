@@ -29,6 +29,7 @@ Protected Module Tests
 		    #if Beacon.MOTDEditingEnabled
 		      TestArkML()
 		    #endif
+		    TestFilenames()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -149,6 +150,20 @@ Protected Module Tests
 		  End Try
 		  
 		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestFilenames()
+		  Const Filename = "Frog Blast: The Vent Core.extension"
+		  
+		  Var Sanitized As String = Beacon.SanitizeFilename(Filename)
+		  Var SanitizedAndShort As String = Beacon.SanitizeFilename(Filename, 20)
+		  Var SanitizedAndVeryShort As String = Beacon.SanitizeFilename(Filename, 11)
+		  
+		  Call Assert(Sanitized = "Frog Blast- The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
+		  Call Assert(SanitizedAndShort = "Frog…Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 20 characters correctly. Expected `Frog…Core.extension`, got `" + SanitizedAndShort + "`.")
+		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
 		End Sub
 	#tag EndMethod
 
@@ -411,12 +426,6 @@ Protected Module Tests
 		  Catch Err As UnsupportedFormatException
 		    System.DebugLog("MD5UUID generated bad format")
 		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Untitled()
-		  
 		End Sub
 	#tag EndMethod
 

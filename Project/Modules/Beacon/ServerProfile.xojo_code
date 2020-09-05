@@ -199,6 +199,15 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Beacon.SanitizeFilename(Self.Name, 60)
+			End Get
+		#tag EndGetter
+		BackupFolderName As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mEnabled
 			End Get
 		#tag EndGetter
