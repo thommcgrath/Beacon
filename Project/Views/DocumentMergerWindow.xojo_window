@@ -630,7 +630,7 @@ End
 		        End If
 		      Case IsA Beacon.ServerProfile
 		        Var Profile As Beacon.ServerProfile = Tag
-		        Self.mDestination.Add(Profile)
+		        Self.mDestination.AddServerProfile(Profile)
 		        
 		        If Profile.ExternalAccountUUID <> Nil Then
 		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(Profile.ExternalAccountUUID)

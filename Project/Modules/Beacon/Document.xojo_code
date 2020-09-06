@@ -8,16 +8,22 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "AddServerProfile" )  Sub Add(Profile As Beacon.ServerProfile)
-		  Self.AddServerProfile(Profile)
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, SetName As String = BaseConfigSetName)
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		  If SetDict Is Nil Then
+		    SetDict = New Dictionary
+		  End If
+		  SetDict.Value(Group.ConfigName) = Group
+		  Self.ConfigSet(SetName) = SetDict
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Beacon.ConfigGroup, SetName As String = BaseConfigSetName)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		  SetDict.Value(Group.ConfigName) = Group
-		  Self.ConfigSet(SetName) = SetDict
+		Sub AddConfigSet(SetName As String)
+		  If Self.mConfigSets.HasKey(SetName) = False Then
+		    Self.mConfigSets.Value(SetName) = New Dictionary
+		    Self.mModified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -95,16 +101,15 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(Priorities() As Beacon.ConfigSetPreference) As Beacon.ConfigGroup()
+		Function CombinedConfigs(SetNames() As String) As Beacon.ConfigGroup()
 		  Var Combined() As Beacon.ConfigGroup
-		  If Priorities Is Nil Or Priorities.Count = 0 Then
+		  If SetNames Is Nil Or SetNames.Count = 0 Then
 		    Return Combined
 		  End If
 		  
 		  Var Clones As New Dictionary
-		  For Idx As Integer = 0 To Priorities.LastRowIndex
-		    Var SetName As String = Priorities(Idx).SetName
-		    Var Mode As Beacon.ConfigSetPreference.MergeModes = Priorities(Idx).Mode
+		  For Idx As Integer = 0 To SetNames.LastRowIndex
+		    Var SetName As String = SetNames(Idx)
 		    Var Groups() As Beacon.ConfigGroup = Self.ImplementedConfigs(SetName)
 		    For Each Group As Beacon.ConfigGroup In Groups
 		      Var GroupName As String = Group.ConfigName
@@ -114,25 +119,11 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      Var Clone As Beacon.ConfigGroup
-		      Select Case Mode
-		      Case Beacon.ConfigSetPreference.MergeModes.OverwriteAll
-		        // Replace the whole group
-		        Clone = Group.Clone
-		      Case Beacon.ConfigSetPreference.MergeModes.OverwriteCommon
-		        Clone = Group.Clone
-		        If Clones.HasKey(GroupName) Then
-		          Call Clone.Merge(Clones.Value(GroupName))
-		        End If
-		      Case Beacon.ConfigSetPreference.MergeModes.SkipCommon
-		        If Clones.HasKey(GroupName) Then
-		          Clone = Clones.Value(GroupName)
-		          Call Clone.Merge(Group)
-		        Else
-		          Clone = Group.Clone
-		        End If
-		      End Select
-		      Clones.Value(GroupName) = Clone
+		      If Clones.HasKey(SetName) Then
+		        Call Beacon.ConfigGroup(Clones.Value(SetName)).Merge(Group)
+		      Else
+		        Clones.Value(SetName) = Group.Clone
+		      End If
 		    Next
 		  Next
 		  
@@ -153,7 +144,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function ConfigGroup(GroupName As String, SetName As String, Create As Boolean = False) As Beacon.ConfigGroup
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		  If SetDict.HasKey(GroupName) Then
+		  If (SetDict Is Nil) = False And SetDict.HasKey(GroupName) Then
 		    Return SetDict.Value(GroupName)
 		  End If
 		  
@@ -176,8 +167,6 @@ Implements ObservationKit.Observable
 		  
 		  If Self.mConfigSets.HasKey(SetName) Then
 		    Return Self.mConfigSets.Value(SetName)
-		  Else
-		    Return New Dictionary
 		  End If
 		End Function
 	#tag EndMethod
@@ -188,7 +177,8 @@ Implements ObservationKit.Observable
 		    SetName = Self.BaseConfigSetName
 		  End If
 		  
-		  If (Dict Is Nil Or Dict.Count = 0) Then
+		  // Empty sets are valid
+		  If Dict Is Nil Then
 		    If Self.mConfigSets.HasKey(SetName) Then
 		      Self.mConfigSets.Remove(SetName)
 		      Self.mModified = True
@@ -199,6 +189,12 @@ Implements ObservationKit.Observable
 		  Self.mConfigSets.Value(SetName) = Dict
 		  Self.mModified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigSetCount() As Integer
+		  Return Self.mConfigSets.KeyCount
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -733,7 +729,9 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function HasConfigGroup(GroupName As String, SetName As String = BaseConfigSetName) As Boolean
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		  Return SetDict.HasKey(GroupName)
+		  If (SetDict Is Nil) = False Then
+		    Return SetDict.HasKey(GroupName)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -747,9 +745,11 @@ Implements ObservationKit.Observable
 		Function ImplementedConfigs(SetName As String = BaseConfigSetName) As Beacon.ConfigGroup()
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  Var Groups() As Beacon.ConfigGroup
-		  For Each Entry As DictionaryEntry In SetDict
-		    Groups.AddRow(Entry.Value)
-		  Next
+		  If (SetDict Is Nil) = False Then
+		    For Each Entry As DictionaryEntry In SetDict
+		      Groups.AddRow(Entry.Value)
+		    Next
+		  End If
 		  Return Groups
 		End Function
 	#tag EndMethod
@@ -1048,11 +1048,8 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(GroupName As String, SetName As String = BaseConfigSetName)
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
-		  If SetDict.HasKey(GroupName) Then
+		  If (SetDict Is Nil) = False And SetDict.HasKey(GroupName) Then
 		    SetDict.Remove(GroupName)
-		    If SetDict.Count = 0 Then
-		      Self.ConfigSet(SetName) = Nil
-		    End If
 		    Self.mModified = True
 		  End If
 		End Sub

@@ -223,7 +223,7 @@ Inherits Beacon.Thread
 		      End If
 		    #endif
 		    
-		    Document.Add(Profile)
+		    Document.AddServerProfile(Profile)
 		  End If
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
