@@ -89,6 +89,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ViewSelector.Width = Self.ViewSelector.SegmentCount * 110 // Because the design-time size is not being respected
+		  Self.ViewSelector.Left = (Self.Width - Self.ViewSelector.Width) / 2
 		  Self.ViewSelector.ResizeCells
 		  Self.ViewSelector.SegmentAt(0).Selected = True
 		  Self.BuildCheckboxes()
