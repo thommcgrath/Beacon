@@ -319,6 +319,25 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Sub ResizeCells(Extends Target As SegmentedButton)
+		  #if TargetMacOS
+		    Var Handle As Integer = Target.Handle
+		    
+		    Declare Function sel_registerName Lib "/usr/lib/libobjc.dylib" (Name As CString) As Ptr
+		    Declare Function RespondsToSelector Lib "Cocoa.framework" Selector "respondsToSelector:" (Target As Integer, Sel As Ptr) As Boolean
+		    If RespondsToSelector(Handle, sel_registerName("setSegmentDistribution:")) Then
+		      Declare Sub SetSegmentDistribution Lib "AppKit" Selector "setSegmentDistribution:" (Target As Integer, Value As Integer)
+		      SetSegmentDistribution(Handle, 2)
+		      
+		      Var CellCount As Integer = Target.SegmentCount
+		      For I As Integer = 0 To CellCount - 1
+		        Var Cell As Segment = Target.SegmentAt(I)
+		        Cell.Width = 0
+		      Next
+		      
+		      Return
+		    End If
+		  #endif
+		  
 		  Var CellCount As Integer = Target.SegmentCount
 		  Var AvailableWidth As Integer = Target.Width - (CellCount + 3)
 		  Var BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
