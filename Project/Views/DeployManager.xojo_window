@@ -908,12 +908,12 @@ End
 		        BackupsFolder.CreateFolder
 		      End If
 		      
-		      Var EngineFolder As FolderItem = BackupsFolder.Child(Beacon.SanitizeFilename(Sender.Name))
+		      Var EngineFolder As FolderItem = BackupsFolder.Child(Sender.Profile.BackupFolderName)
 		      If Not EngineFolder.Exists Then
 		        EngineFolder.CreateFolder
 		      End If
 		      
-		      Var MomentFolder As FolderItem = EngineFolder.Child(Beacon.SanitizeFilename(Self.DeployLabel))
+		      Var MomentFolder As FolderItem = EngineFolder.Child(Beacon.SanitizeFilename(Self.DeployLabel, 60))
 		      If Not MomentFolder.Exists Then
 		        MomentFolder.CreateFolder
 		      End If

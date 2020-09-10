@@ -1024,7 +1024,7 @@ End
 		    If (BackupsFolder Is Nil) = False And BackupsFolder.Exists Then
 		      For Idx As Integer = 0 To ProfileBound
 		        Var Profile As Beacon.ServerProfile = Self.mTicketDocument.ServerProfile(Idx)
-		        Var Folder As FolderItem = BackupsFolder.Child(Beacon.SanitizeFilename(Profile.Name))
+		        Var Folder As FolderItem = BackupsFolder.Child(Profile.BackupFolderName)
 		        If Not Self.AddToArchive("Backups", Folder) Then
 		          Return
 		        End If

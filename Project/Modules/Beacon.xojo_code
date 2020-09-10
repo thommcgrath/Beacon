@@ -698,10 +698,13 @@ Protected Module Beacon
 		      Parts.AddRowAt(0, MapName)
 		    End If
 		    
-		    Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    If Parts.Count > 0 Then
+		      Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    End If
 		  Catch Err As RuntimeException
-		    Return Beacon.MakeHumanReadable(ClassString)
 		  End Try
+		  
+		  Return Beacon.MakeHumanReadable(ClassString)
 		End Function
 	#tag EndMethod
 
@@ -1334,7 +1337,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SanitizeFilename(Filename As String) As String
+		Protected Function SanitizeFilename(Filename As String, MaxLength As Integer = 0) As String
 		  Filename = Filename.ReplaceAll("/", "-")
 		  Filename = Filename.ReplaceAll("\", "-")
 		  Filename = Filename.ReplaceAll(":", "-")
@@ -1344,6 +1347,37 @@ Protected Module Beacon
 		  Filename = Filename.ReplaceAll("|", "")
 		  Filename = Filename.ReplaceAll("*", "")
 		  Filename = Filename.ReplaceAll("?", "")
+		  
+		  If MaxLength > 0 And Filename.Length > MaxLength Then
+		    // Extension cannot be truncated
+		    Var Parts() As String = Filename.Split(".")
+		    Var Basename, Extension As String
+		    If Parts.Count >= 2 Then
+		      Extension = "." + Parts(Parts.LastRowIndex)
+		      Parts.RemoveRowAt(Parts.LastRowIndex)
+		      Basename = Parts.Join(".")
+		      MaxLength = MaxLength - (Extension.Length)
+		      If MaxLength <= 0 Then
+		        // What do we do? The extension is longer than the max.
+		        MaxLength = (Extension.Length)
+		        Var Err As New UnsupportedOperationException
+		        Err.Message = "Cannot truncate filename `" + Filename + "` because the extension is longer than the requested maximum length of " + MaxLength.ToString + "."
+		        Raise Err
+		      End If
+		    Else
+		      Basename = Filename
+		    End If
+		    
+		    If MaxLength > 1 Then
+		      MaxLength = MaxLength - 1 // To leave space for the elipsis
+		    End If
+		    Var PrefixLength As Integer = Ceil(MaxLength / 2)
+		    Var SuffixLength As Integer = MaxLength - PrefixLength
+		    Var Prefix As String = Basename.Left(PrefixLength).Trim
+		    Var Suffix As String = Basename.Right(SuffixLength).Trim
+		    Filename = Prefix + If(PrefixLength + SuffixLength > 1, "…", "") + Suffix + Extension
+		  End If
+		  
 		  Return Filename
 		End Function
 	#tag EndMethod

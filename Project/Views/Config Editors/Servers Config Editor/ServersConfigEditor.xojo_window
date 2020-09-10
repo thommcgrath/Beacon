@@ -465,7 +465,7 @@ End
 		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
 		    CopyProfileMenuItem.Enabled = True
 		    
-		    Var Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
+		    Var Folder As FolderItem = BackupsRoot.Child(Profile.BackupFolderName)
 		    Base.AddMenu(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
 		    Var Item As New MenuItem("Show Config Backups", BackupsRoot)
