@@ -722,10 +722,13 @@ Protected Module Beacon
 		      Parts.AddRowAt(0, MapName)
 		    End If
 		    
-		    Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    If Parts.Count > 0 Then
+		      Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    End If
 		  Catch Err As RuntimeException
-		    Return Beacon.MakeHumanReadable(ClassString)
 		  End Try
+		  
+		  Return Beacon.MakeHumanReadable(ClassString)
 		End Function
 	#tag EndMethod
 
