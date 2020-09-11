@@ -287,6 +287,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       SelectedRowIndex=   0
       TabIndex        =   9
       TabPanelIndex   =   0

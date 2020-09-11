@@ -107,6 +107,7 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       SelectedRowIndex=   0
       TabIndex        =   3
       TabPanelIndex   =   0
