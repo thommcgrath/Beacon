@@ -230,6 +230,22 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GlobalizeCoordinate(Extends Target As RectControl, Coordinate As Xojo.Point) As Xojo.Point
+		  Var Globalized As New Xojo.Point(Target.Left + Coordinate.X, Target.Top + Coordinate.Y)
+		  
+		  Var Parent As Window = Target.Window
+		  Do
+		    Globalized = New Xojo.Point(Globalized.X + Parent.Left, Globalized.Y + Parent.Top)
+		    If Parent IsA ContainerControl Then
+		      Parent = ContainerControl(Parent).Window
+		    Else
+		      Return Globalized
+		    End If
+		  Loop
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function IconWithColor(Icon As Picture, FillColor As Color, MinFactor As Double, MaxFactor As Double, Overlay As Picture = Nil) As Picture
 		  Var Width As Integer = Icon.Width

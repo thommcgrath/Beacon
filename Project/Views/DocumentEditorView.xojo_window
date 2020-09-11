@@ -278,7 +278,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Enabled         =   True
       EraseBackground =   True
       HasBackgroundColor=   False
-      Height          =   478
+      Height          =   441
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -293,6 +293,60 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabStop         =   True
       Tooltip         =   ""
       Top             =   50
+      Transparent     =   True
+      Visible         =   True
+      Width           =   230
+   End
+   Begin FadedSeparator FadedSeparator2
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   491
+      Transparent     =   True
+      Visible         =   True
+      Width           =   230
+   End
+   Begin ControlCanvas ConfigSetPicker
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   36
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   492
       Transparent     =   True
       Visible         =   True
       Width           =   230
@@ -577,6 +631,8 @@ End
 		    Self.mEditorRefs = New Dictionary
 		  End If
 		  Self.mEditorRefs.Value(Controller.Document.DocumentID) = New WeakRef(Self)
+		  
+		  Self.mActiveConfigSet = Beacon.Document.BaseConfigSetName
 		  
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
@@ -1034,6 +1090,32 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mActiveConfigSet
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value.IsEmpty Then
+			    Value = Beacon.Document.BaseConfigSetName
+			  Else
+			    Var SetNames() As String = Self.Document.ConfigSetNames
+			    If SetNames.IndexOf(Value) = -1 Then
+			      Value = Beacon.Document.BaseConfigSetName
+			    End If
+			  End If
+			  
+			  If Self.mActiveConfigSet.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mActiveConfigSet = Value
+			    Self.ConfigSetPicker.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		ActiveConfigSet As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mCurrentConfigName
 			End Get
 		#tag EndGetter
@@ -1175,7 +1257,23 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mActiveConfigSet As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mAutosaveFile As BookmarkedFolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigPickerMenuOrigin As Point
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigPickerMouseDown As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigPickerMouseHover As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1484,6 +1582,134 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigSetPicker
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  
+		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet
+		  Var CaptionBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  Var CaptionLeft As Double = G.Height - CaptionBaseline
+		  
+		  Var DropdownLeft As Double = G.Width - (CaptionLeft + 8)
+		  Var DropdownTop As Double = (G.Height - 4) / 2
+		  
+		  Var Path As New GraphicsPath
+		  Path.MoveToPoint(NearestMultiple(DropdownLeft, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 2, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 2, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 6, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 8, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 4, G.ScaleY))
+		  
+		  If Self.mConfigPickerMouseHover Then
+		    G.DrawingColor = SystemColors.ControlAccentColor
+		  Else
+		    G.DrawingColor = SystemColors.LabelColor
+		  End If
+		  
+		  G.DrawText(Caption, NearestMultiple(CaptionLeft, G.ScaleX), NearestMultiple(CaptionBaseline, G.ScaleY), NearestMultiple(G.Width - ((CaptionLeft * 3) + 8), G.ScaleX), True)
+		  G.FillPath(Path)
+		  
+		  If Self.mConfigPickerMouseDown Then
+		    G.DrawingColor = &c000000A5
+		    G.FillRectangle(0, 0, G.Width, G.Height)
+		  End If
+		  
+		  Self.mConfigPickerMenuOrigin = New Point(CaptionLeft, CaptionBaseline)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  If Self.mConfigPickerMouseDown = False Then
+		    Self.mConfigPickerMouseDown = True
+		    Me.Invalidate
+		  End If
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
+		  If Self.mConfigPickerMouseDown <> Pressed Then
+		    Self.mConfigPickerMouseDown = Pressed
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseEnter()
+		  If Self.mConfigPickerMouseHover = False Then
+		    Self.mConfigPickerMouseHover = True
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseExit()
+		  If Self.mConfigPickerMouseHover = True Then
+		    Self.mConfigPickerMouseHover = False
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseMove(X As Integer, Y As Integer)
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  If Self.mConfigPickerMouseHover = False Then
+		    Self.mConfigPickerMouseHover = True
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
+		  If Pressed Then
+		    Var SetNames() As String = Self.Document.ConfigSetNames
+		    SetNames.Sort
+		    
+		    Var Menu As New MenuItem
+		    For Each SetName As String In SetNames
+		      Var Item As New MenuItem(SetName, SetName)
+		      Item.Checked = SetName = Self.ActiveConfigSet 
+		      Menu.AddMenu(Item)
+		    Next
+		    
+		    Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Menu.AddMenu(New MenuItem("Manage Config Sets…", "beacon:manage"))
+		    Menu.AddMenu(New MenuItem("Learn more about Config Sets…", "beacon:help"))
+		    
+		    Var Origin As Point = Me.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
+		    Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
+		    If (Choice Is Nil) = False Then
+		      If Choice.Tag.StringValue.BeginsWith("beacon:") Then
+		        Var Tag As String = Choice.Tag.StringValue.Middle(7)
+		        Select Case Tag
+		        Case "manage"
+		          Break
+		        Case "help"
+		          Break
+		        End Select
+		      Else
+		        Self.ActiveConfigSet = Choice.Tag.StringValue
+		      End If
+		    End If
+		  End If
+		  If Self.mConfigPickerMouseDown = True Or Self.mConfigPickerMouseHover <> Pressed Then
+		    Self.mConfigPickerMouseDown = False
+		    Self.mConfigPickerMouseHover = Pressed
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="ViewTitle"
@@ -1743,6 +1969,14 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentConfigName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ActiveConfigSet"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
