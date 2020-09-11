@@ -28,6 +28,24 @@ Protected Class SourceListItem
 		Private mTag As Variant
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUnemphasized As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mUnemphasized
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mUnemphasized = Value
+			End Set
+		#tag EndSetter
+		Unemphasized As Boolean
+	#tag EndComputedProperty
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
@@ -67,14 +85,6 @@ Protected Class SourceListItem
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

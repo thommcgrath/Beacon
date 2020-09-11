@@ -1106,6 +1106,18 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RenameConfigSet(OldName As String, NewName As String)
+		  If Self.mConfigSets.HasKey(OldName) = False Then
+		    Return
+		  End If
+		  
+		  Var OldSet As Dictionary = Self.mConfigSets.Value(OldName)
+		  Self.ConfigSet(OldName) = Nil
+		  Self.ConfigSet(NewName) = OldSet
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
 		  If OldAccount = Nil Or NewAccount = Nil Then
 		    Return

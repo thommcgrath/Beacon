@@ -1035,6 +1035,48 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateConfigList()
+		  Var Labels(), Tags() As String
+		  
+		  Var ActiveConfigSet As String = Self.ActiveConfigSet
+		  Var IsBase As Boolean = ActiveConfigSet = Beacon.Document.BaseConfigSetName
+		  If IsBase Then
+		    // Show everything
+		    #if DeployEnabled
+		      Labels.AddRow("Servers")
+		      Tags.AddRow("deployments")
+		    #endif
+		    Labels.AddRow("Accounts")
+		    Tags.AddRow("accounts")
+		  End If
+		  
+		  Var Names() As String = BeaconConfigs.AllConfigNames
+		  For Each Name As String In Names
+		    Labels.AddRow(Language.LabelForConfig(Name))
+		    Tags.AddRow(Name)
+		  Next
+		  
+		  Labels.SortWith(Tags)
+		  
+		  Var SourceItems() As SourceListItem
+		  For I As Integer = 0 To Labels.LastRowIndex
+		    Var Item As New SourceListItem(Labels(I), Tags(I))
+		    If Not IsBase Then
+		      Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(Tags(I))
+		      If Group.SupportsConfigSets = False Then
+		        Continue
+		      End If
+		      
+		      Item.Unemphasized = Self.Document.HasConfigGroup(Tags(I), ActiveConfigSet) = False
+		    End If
+		    SourceItems.AddRow(Item)
+		  Next
+		  
+		  Self.ConfigList.ReplaceContents(SourceItems)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateHelpForConfig(ConfigName As String)
 		  Var Title, Body, DetailURL As String
 		  Call LocalData.SharedInstance.GetConfigHelp(ConfigName, Title, Body, DetailURL)
@@ -1108,6 +1150,7 @@ End
 			  If Self.mActiveConfigSet.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mActiveConfigSet = Value
 			    Self.ConfigSetPicker.Invalidate
+			    Self.UpdateConfigList
 			  End If
 			End Set
 		#tag EndSetter
@@ -1561,25 +1604,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Var Labels(), Tags() As String
-		  #if DeployEnabled
-		    Labels.AddRow("Servers")
-		    Tags.AddRow("deployments")
-		  #endif
-		  Labels.AddRow("Accounts")
-		  Tags.AddRow("accounts")
-		  
-		  Var Names() As String = BeaconConfigs.AllConfigNames
-		  For Each Name As String In Names
-		    Labels.AddRow(Language.LabelForConfig(Name))
-		    Tags.AddRow(Name)
-		  Next
-		  
-		  Labels.SortWith(Tags)
-		  
-		  For I As Integer = 0 To Labels.LastRowIndex
-		    Me.Append(New SourceListItem(Labels(I), Tags(I)))
-		  Next
+		  Self.UpdateConfigList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1694,7 +1719,9 @@ End
 		        Var Tag As String = Choice.Tag.StringValue.Middle(7)
 		        Select Case Tag
 		        Case "manage"
-		          Break
+		          If ConfigSetManagerWindow.Present(Self, Self.Document) Then
+		            Self.ActiveConfigSet = Self.ActiveConfigSet
+		          End If
 		        Case "help"
 		          Break
 		        End Select

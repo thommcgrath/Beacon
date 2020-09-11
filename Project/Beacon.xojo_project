@@ -477,6 +477,7 @@ Class=BeaconPopover;Views/Popover Support/BeaconPopover.xojo_code;&h000000001938
 Window=ModSelectionGrid;Custom Controls/ModSelectionGrid.xojo_window;&h00000000043947FF;&h0000000030DCFFFF;false
 MultiImage=IconToolbarUpdate;Icons/IconToolbarUpdate.xojo_image;&h0000000067CB3FFF;&h0000000007F977FF;false
 MultiImage=IconToolbarUser;Icons/IconToolbarUser.xojo_image;&h0000000035BBDFFF;&h0000000007F977FF;false
+Window=ConfigSetManagerWindow;Views/ConfigSetManagerWindow.xojo_window;&h0000000035A7DFFF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

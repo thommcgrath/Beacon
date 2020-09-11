@@ -246,6 +246,40 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ReplaceContents(Items() As SourceListItem)
+		  // Replaces contents without firing change events if possible
+		  
+		  Var TargetTag As Variant = Self.SelectedTag
+		  Var NewRowIndex As Integer = -1
+		  For Idx As Integer = 0 To Items.LastRowIndex
+		    If Items(Idx).Tag = TargetTag Then
+		      NewRowIndex = Idx
+		      Exit
+		    End If
+		  Next
+		  
+		  If NewRowIndex > -1 Then
+		    // Can be done without a change event
+		    Self.mItems = Items
+		    Self.mSelectedRowIndex = NewRowIndex
+		    Self.Content.Invalidate
+		    Return
+		  End If
+		  
+		  // Since the the original can't be found, that means we need to fire a ShouldChange, which could cancel this operation.
+		  If IsEventImplemented("ShouldChange") Then
+		    If Not RaiseEvent ShouldChange(NewRowIndex) Then
+		      Return
+		    End If
+		  End If
+		  
+		  Self.mItems = Items
+		  Self.mSelectedRowIndex = -1
+		  Self.Content.Invalidate
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Resize()
 		  If Self.mLastWidth = Self.Width And Self.mLastHeight = Self.Height Then
