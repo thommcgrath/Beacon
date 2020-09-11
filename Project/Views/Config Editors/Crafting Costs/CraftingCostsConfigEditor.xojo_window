@@ -365,11 +365,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.CraftingCosts.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.CraftingCosts.ConfigName, Self.ConfigSetName) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.CraftingCosts.ConfigName))
+		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.CraftingCosts.ConfigName, Self.ConfigSetName))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return True
 		  End If
@@ -403,7 +403,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.CraftingCosts.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.CraftingCosts.ConfigName, Self.ConfigSetName)
 		End Sub
 	#tag EndEvent
 
@@ -475,16 +475,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.CraftingCosts(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName) Then
-		    Config = BeaconConfigs.CraftingCosts(Document.ConfigGroup(ConfigName))
+		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Config = BeaconConfigs.CraftingCosts(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.CraftingCosts
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
-		    Document.AddConfigGroup(Config)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Document.AddConfigGroup(Config, Self.ConfigSetName)
 		  End If
 		  
 		  Return Config
@@ -925,7 +925,7 @@ End
 		    Self.mProgressWindow.Detail = "Configured " + ProcessedItems.ToString(Locale.Current, "#,##0") + " of " + NumItems.ToString(Locale.Current, "#,##0") + " engrams"
 		  Next
 		  
-		  Self.Document.AddConfigGroup(Config)
+		  Self.Document.AddConfigGroup(Config, Self.ConfigSetName)
 		  Self.mConfigRef = New WeakRef(Config)
 		  
 		  Self.mProgressWindow.Close
@@ -1006,7 +1006,7 @@ End
 		    Self.mProgressWindow.Detail = "Updated " + Format(NumProcessed, "0,") + " of " + Format(Engrams.Count, "0,")
 		  Next
 		  
-		  Self.Document.AddConfigGroup(ReplacementConfig)
+		  Self.Document.AddConfigGroup(ReplacementConfig, Self.ConfigSetName)
 		  Self.mConfigRef = New WeakRef(ReplacementConfig)
 		  
 		  Self.mProgressWindow.Close

@@ -771,8 +771,10 @@ End
 		      Clip.DrawingColor = If(Highlighted, SystemColors.SelectedContentBackgroundColor, SystemColors.UnemphasizedSelectedContentBackgroundColor)
 		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		      Clip.DrawingColor = If(Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.UnemphasizedSelectedTextColor)
+		    ElseIf Self.mItems(Idx).Unemphasized = True Then
+		      Clip.DrawingColor = SystemColors.TertiaryLabelColor
 		    Else
-		      Clip.DrawingColor = SystemColors.ControlTextColor
+		      Clip.DrawingColor = SystemColors.LabelColor
 		    End If
 		    Clip.DrawText(Self.mItems(Idx).Caption, CaptionLeft, CaptionBaseline, Clip.Width - (Padding * 2), True)
 		    

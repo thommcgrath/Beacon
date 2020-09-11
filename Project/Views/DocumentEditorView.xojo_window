@@ -733,6 +733,42 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub HandleConfigPickerClick()
+		  Var SetNames() As String = Self.Document.ConfigSetNames
+		  SetNames.Sort
+		  
+		  Var Menu As New MenuItem
+		  For Each SetName As String In SetNames
+		    Var Item As New MenuItem(SetName, SetName)
+		    Item.Checked = SetName = Self.ActiveConfigSet 
+		    Menu.AddMenu(Item)
+		  Next
+		  
+		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Menu.AddMenu(New MenuItem("Manage Config Sets…", "beacon:manage"))
+		  Menu.AddMenu(New MenuItem("Learn more about Config Sets…", "beacon:help"))
+		  
+		  Var Origin As Point = Self.ConfigSetPicker.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
+		  Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
+		  If (Choice Is Nil) = False Then
+		    If Choice.Tag.StringValue.BeginsWith("beacon:") Then
+		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
+		      Select Case Tag
+		      Case "manage"
+		        If ConfigSetManagerWindow.Present(Self, Self.Document) Then
+		          Self.ActiveConfigSet = Self.ActiveConfigSet
+		        End If
+		      Case "help"
+		        Break
+		      End Select
+		    Else
+		      Self.ActiveConfigSet = Choice.Tag.StringValue
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub HideHelpDrawer()
 		  If Not Self.mHelpDrawerOpen Then
 		    Return
@@ -1148,9 +1184,14 @@ End
 			  End If
 			  
 			  If Self.mActiveConfigSet.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var ConfigName As String = Self.CurrentConfigName
+			    Self.CurrentConfigName = "" // To unload the current version
+			    
 			    Self.mActiveConfigSet = Value
 			    Self.ConfigSetPicker.Invalidate
 			    Self.UpdateConfigList
+			    
+			    Self.CurrentConfigName = ConfigName
 			  End If
 			End Set
 		#tag EndSetter
@@ -1172,18 +1213,20 @@ End
 			  
 			  Var NewPanel As ConfigEditor
 			  Var Embed As Boolean
-			  If Value.Length > 0 Then
+			  If Value.IsEmpty = False Then
+			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
+			    
 			    Self.UpdateHelpForConfig(Value)
 			    
 			    If Self.mController.Document <> Nil Then
 			      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Value
 			    End If
 			    
-			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Value)
+			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
 			    If HistoryIndex > 0 Then
 			      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
 			    End If
-			    Self.mPanelHistory.AddRowAt(0, Value)
+			    Self.mPanelHistory.AddRowAt(0, CacheKey)
 			    
 			    // Close older panels
 			    If Self.mPanelHistory.LastRowIndex > 2 Then
@@ -1198,49 +1241,49 @@ End
 			      Next
 			    End If
 			    
-			    If Self.Panels.HasKey(Value) Then
-			      NewPanel = Self.Panels.Value(Value)
+			    If Self.Panels.HasKey(CacheKey) Then
+			      NewPanel = Self.Panels.Value(CacheKey)
 			    Else
 			      Select Case Value
 			      Case "deployments"
-			        NewPanel = New ServersConfigEditor(Self.mController)
+			        NewPanel = New ServersConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case "accounts"
-			        NewPanel = New AccountsConfigEditor(Self.mController)
+			        NewPanel = New AccountsConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.LootDrops.ConfigName
-			        NewPanel = New LootConfigEditor(Self.mController)
+			        NewPanel = New LootConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.Difficulty.ConfigName
-			        NewPanel = New DifficultyConfigEditor(Self.mController)
+			        NewPanel = New DifficultyConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.LootScale.ConfigName
-			        NewPanel = New LootScaleConfigEditor(Self.mController)
+			        NewPanel = New LootScaleConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.Metadata.ConfigName
-			        NewPanel = New MetaDataConfigEditor(Self.mController)
+			        NewPanel = New MetaDataConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.ExperienceCurves.ConfigName
-			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
+			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.CustomContent.ConfigName
-			        NewPanel = New CustomContentConfigEditor(Self.mController)
+			        NewPanel = New CustomContentConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.CraftingCosts.ConfigName
-			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
+			        NewPanel = New CraftingCostsConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.StackSizes.ConfigName
-			        NewPanel = New StackSizesConfigEditor(Self.mController)
+			        NewPanel = New StackSizesConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.BreedingMultipliers.ConfigName
-			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
+			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.HarvestRates.ConfigName
-			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
+			        NewPanel = New HarvestRatesConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.DinoAdjustments.ConfigName
-			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
+			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.StatMultipliers.ConfigName
-			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
+			        NewPanel = New StatMultipliersConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.DayCycle.ConfigName
-			        NewPanel = New DayCycleConfigEditor(Self.mController)
+			        NewPanel = New DayCycleConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.SpawnPoints.ConfigName
-			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
+			        NewPanel = New SpawnPointsConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.StatLimits.ConfigName
-			        NewPanel = New StatLimitsConfigEditor(Self.mController)
+			        NewPanel = New StatLimitsConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      Case BeaconConfigs.EngramControl.ConfigName
-			        NewPanel = New EngramControlConfigEditor(Self.mController)
+			        NewPanel = New EngramControlConfigEditor(Self.mController, Self.ActiveConfigSet)
 			      End Select
 			      If NewPanel <> Nil Then
-			        Self.Panels.Value(Value) = NewPanel
+			        Self.Panels.Value(CacheKey) = NewPanel
 			        Embed = True
 			      End If
 			    End If
@@ -1253,8 +1296,6 @@ End
 			  End If
 			  
 			  If Self.CurrentPanel <> Nil Then
-			    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
-			    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
 			    Self.CurrentPanel.SwitchedFrom()
 			    Self.CurrentPanel.Visible = False
 			    Self.CurrentPanel = Nil
@@ -1281,8 +1322,6 @@ End
 			    Self.OmniNoticeBanner.Visible = RequiresPurchase
 			    Self.CurrentPanel.Visible = True
 			    Self.CurrentPanel.SwitchedTo()
-			    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
-			    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
 			    Self.PagePanel1.SelectedPanelIndex = 1
 			  Else
 			    Self.PagePanel1.SelectedPanelIndex = 0
@@ -1612,7 +1651,6 @@ End
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
-		  #Pragma Unused Highlighted
 		  
 		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet
 		  Var CaptionBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
@@ -1629,7 +1667,7 @@ End
 		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 8, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
 		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 4, G.ScaleY))
 		  
-		  If Self.mConfigPickerMouseHover Then
+		  If Self.mConfigPickerMouseHover And Highlighted Then
 		    G.DrawingColor = SystemColors.ControlAccentColor
 		  Else
 		    G.DrawingColor = SystemColors.LabelColor
@@ -1698,37 +1736,7 @@ End
 		Sub MouseUp(X As Integer, Y As Integer)
 		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
 		  If Pressed Then
-		    Var SetNames() As String = Self.Document.ConfigSetNames
-		    SetNames.Sort
-		    
-		    Var Menu As New MenuItem
-		    For Each SetName As String In SetNames
-		      Var Item As New MenuItem(SetName, SetName)
-		      Item.Checked = SetName = Self.ActiveConfigSet 
-		      Menu.AddMenu(Item)
-		    Next
-		    
-		    Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		    Menu.AddMenu(New MenuItem("Manage Config Sets…", "beacon:manage"))
-		    Menu.AddMenu(New MenuItem("Learn more about Config Sets…", "beacon:help"))
-		    
-		    Var Origin As Point = Me.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
-		    Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
-		    If (Choice Is Nil) = False Then
-		      If Choice.Tag.StringValue.BeginsWith("beacon:") Then
-		        Var Tag As String = Choice.Tag.StringValue.Middle(7)
-		        Select Case Tag
-		        Case "manage"
-		          If ConfigSetManagerWindow.Present(Self, Self.Document) Then
-		            Self.ActiveConfigSet = Self.ActiveConfigSet
-		          End If
-		        Case "help"
-		          Break
-		        End Select
-		      Else
-		        Self.ActiveConfigSet = Choice.Tag.StringValue
-		      End If
-		    End If
+		    Call CallLater.Schedule(10, WeakAddressOf HandleConfigPickerClick)
 		  End If
 		  If Self.mConfigPickerMouseDown = True Or Self.mConfigPickerMouseHover <> Pressed Then
 		    Self.mConfigPickerMouseDown = False

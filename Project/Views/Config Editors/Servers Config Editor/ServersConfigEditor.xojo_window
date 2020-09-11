@@ -300,9 +300,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As Beacon.DocumentController)
+		Sub Constructor(Controller As Beacon.DocumentController, ConfigSetName As String)
 		  Self.mViews = New Dictionary
-		  Super.Constructor(Controller)
+		  Super.Constructor(Controller, ConfigSetName)
 		End Sub
 	#tag EndMethod
 

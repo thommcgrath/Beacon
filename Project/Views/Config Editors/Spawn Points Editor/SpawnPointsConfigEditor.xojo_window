@@ -318,11 +318,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, Self.ConfigSetName) = False Then
 		    Return True
 		  End If
 		  
-		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName))
+		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, Self.ConfigSetName))
 		  If ParsedConfig = Nil Or ParsedConfig.Count = 0 Then
 		    Self.ShowAlert("No spawn points to import", "The parsed ini content did not contain any spawn point data.")
 		    Return True
@@ -347,7 +347,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.SpawnPoints.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, Self.ConfigSetName)
 		End Sub
 	#tag EndEvent
 
@@ -391,16 +391,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.SpawnPoints(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName) Then
-		    Config = BeaconConfigs.SpawnPoints(Document.ConfigGroup(ConfigName))
+		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Config = BeaconConfigs.SpawnPoints(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.SpawnPoints
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
-		    Document.AddConfigGroup(Config)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Document.AddConfigGroup(Config, Self.ConfigSetName)
 		  End If
 		  
 		  Return Config

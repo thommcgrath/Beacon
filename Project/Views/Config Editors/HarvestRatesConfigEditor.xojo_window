@@ -578,11 +578,11 @@ End
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the properties, it would likely be confusing for users
 		  
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.HarvestRates.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.HarvestRates.ConfigName, Self.ConfigSetName) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName))
+		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName, Self.ConfigSetName))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return True
 		  End If
@@ -600,7 +600,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.HarvestRates.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.HarvestRates.ConfigName, Self.ConfigSetName)
 		End Sub
 	#tag EndEvent
 
@@ -635,16 +635,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.HarvestRates(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName) Then
-		    Config = BeaconConfigs.HarvestRates(Document.ConfigGroup(ConfigName))
+		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Config = BeaconConfigs.HarvestRates(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.HarvestRates
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
-		    Document.AddConfigGroup(Config)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Document.AddConfigGroup(Config, Self.ConfigSetName)
 		  End If
 		  
 		  Return Config

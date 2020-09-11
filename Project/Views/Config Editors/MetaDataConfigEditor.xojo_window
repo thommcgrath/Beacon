@@ -292,7 +292,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName, Self.ConfigSetName)
 		  Self.Document.Mods.ResizeTo(-1)
 		End Sub
 	#tag EndEvent

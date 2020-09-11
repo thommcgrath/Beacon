@@ -739,7 +739,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatLimits.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatLimits.ConfigName, Self.ConfigSetName)
 		End Sub
 	#tag EndEvent
 
@@ -816,16 +816,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StatLimits(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName) Then
-		    Config = BeaconConfigs.StatLimits(Document.ConfigGroup(ConfigName))
+		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Config = BeaconConfigs.StatLimits(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.StatLimits
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
-		    Document.AddConfigGroup(Config)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    Document.AddConfigGroup(Config, Self.ConfigSetName)
 		  End If
 		  
 		  Return Config
