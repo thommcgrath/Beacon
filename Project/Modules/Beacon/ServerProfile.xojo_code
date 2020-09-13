@@ -6,6 +6,46 @@ Protected Class ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConfigSetStates() As Beacon.ConfigSetState()
+		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
+		  Var Clone() As Beacon.ConfigSetState
+		  For Each State As Beacon.ConfigSetState In Self.mConfigSetPriorities
+		    Clone.AddRow(State)
+		  Next
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConfigSetStates(Assigns States() As Beacon.ConfigSetState)
+		  // First decide if the States() array is different from the mConfigSetPriorities() array. Then, 
+		  // update mConfigSetPriorities() to match. Do not need to clone the members since they are immutable.
+		  
+		  Var Different As Boolean
+		  If Self.mConfigSetPriorities.Count <> States.Count Then
+		    Different = True
+		  Else
+		    For Idx As Integer = 0 To States.LastRowIndex
+		      If Self.mConfigSetPriorities(Idx) <> States(Idx) Then
+		        Different = True
+		        Exit
+		      End If
+		    Next
+		  End If
+		  
+		  If Not Different Then
+		    Return
+		  End If
+		  
+		  Self.mConfigSetPriorities.ResizeTo(States.LastRowIndex)
+		  For Idx As Integer = 0 To States.LastRowIndex
+		    Self.mConfigSetPriorities(Idx) = States(Idx)
+		  Next
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Var Err As New UnsupportedOperationException
@@ -35,6 +75,16 @@ Protected Class ServerProfile
 		  If Dict.HasKey("Message of the Day") Then
 		    Self.mMessageOfTheDay = Dict.Value("Message of the Day").StringValue
 		    Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
+		  End If
+		  
+		  If Dict.HasKey("Config Sets") Then
+		    Var Sets() As Variant = Dict.Value("Config Sets")
+		    For Each Set As Dictionary In Sets
+		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromDictionary(Set)
+		      If (State Is Nil) = False Then
+		        Self.mConfigSetPriorities.AddRow(State)
+		      End If
+		    Next
 		  End If
 		  
 		  RaiseEvent ReadFromDictionary(Dict)
@@ -174,6 +224,13 @@ Protected Class ServerProfile
 		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay
 		    Dict.Value("Message Duration") = Self.mMessageDuration
 		  End If
+		  If Self.mConfigSetPriorities.Count > 0 Then
+		    Var Priorities() As Dictionary
+		    For Each State As Beacon.ConfigSetState In Self.mConfigSetPriorities
+		      Priorities.AddRow(State.ToDictionary)
+		    Next
+		    Dict.Value("Config Sets") = Priorities
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -247,6 +304,10 @@ Protected Class ServerProfile
 		#tag EndGetter
 		IsConsole As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigSetPriorities() As Beacon.ConfigSetState
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mEnabled As Boolean
@@ -431,6 +492,14 @@ Protected Class ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MessageOfTheDay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BackupFolderName"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

@@ -1114,6 +1114,17 @@ Implements ObservationKit.Observable
 		  Var OldSet As Dictionary = Self.mConfigSets.Value(OldName)
 		  Self.ConfigSet(OldName) = Nil
 		  Self.ConfigSet(NewName) = OldSet
+		  
+		  For Idx As Integer = 0 To Self.mServerProfiles.LastRowIndex
+		    Var Profile As Beacon.ServerProfile = Self.mServerProfiles(Idx)
+		    Var ConfigSets() As Beacon.ConfigSetState = Profile.ConfigSetStates
+		    For SetIdx As Integer = 0 To ConfigSets.LastRowIndex
+		      If ConfigSets(SetIdx).Name = OldName Then
+		        ConfigSets(SetIdx) = New Beacon.ConfigSetState(NewName, ConfigSets(SetIdx).Enabled)
+		      End If
+		    Next
+		    Profile.ConfigSetStates = ConfigSets
+		  Next
 		End Sub
 	#tag EndMethod
 
