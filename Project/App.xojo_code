@@ -148,6 +148,7 @@ Implements NotificationKit.Receiver
 		  Self.RebuildRecentMenu
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
+		  ConfigNames.AddRow("accounts")
 		  ConfigNames.AddRow("deployments")
 		  Var ConfigLabels() As String
 		  For Each ConfigName As String In ConfigNames
