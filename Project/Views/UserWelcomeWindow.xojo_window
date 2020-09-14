@@ -1903,7 +1903,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowError(Message As String, Err As RuntimeException)
-		  Self.ShowAlert(Message, "The error message was: " + Err.Message)
+		  Var Explanation As String
+		  If Err.ErrorNumber <> 0 Then
+		    Explanation = "Error #" + Str(Err.ErrorNumber, "-0") + ": " + Err.Message
+		  Else
+		    Explanation = "Reason: " + Err.Message
+		  End If
+		  
+		  Self.ShowAlert(Message, Explanation)
 		End Sub
 	#tag EndMethod
 
