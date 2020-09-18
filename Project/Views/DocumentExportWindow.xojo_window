@@ -452,6 +452,38 @@ Begin BeaconDialog DocumentExportWindow
       StackSize       =   0
       TabPanelIndex   =   0
    End
+   Begin UITweaks.ResizedPushButton ConfigSetTestButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Config Sets"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   510
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      MacButtonStyle  =   "0"
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   635
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   98
+   End
 End
 #tag EndWindow
 
@@ -983,6 +1015,14 @@ End
 	#tag Event
 		Sub Started()
 		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigSetTestButton
+	#tag Event
+		Sub Action()
+		  Self.mDocument.ConfigSetStates = ConfigSetSelectorDialog.Present(Self, Self.mDocument.ConfigSetStates)
+		  Self.Setup()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

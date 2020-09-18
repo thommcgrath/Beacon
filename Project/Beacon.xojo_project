@@ -479,6 +479,7 @@ MultiImage=IconToolbarUpdate;Icons/IconToolbarUpdate.xojo_image;&h0000000067CB3F
 MultiImage=IconToolbarUser;Icons/IconToolbarUser.xojo_image;&h0000000035BBDFFF;&h0000000007F977FF;false
 Window=ConfigSetManagerWindow;Views/ConfigSetManagerWindow.xojo_window;&h0000000035A7DFFF;&h0000000008A387FF;false
 Class=ConfigSetState;Modules/Beacon/ConfigSetState.xojo_code;&h00000000504647FF;&h0000000055ADDFFF;false
+Window=ConfigSetSelectorDialog;Views/ConfigSetSelectorDialog.xojo_window;&h000000000A23CFFF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

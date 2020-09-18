@@ -10,7 +10,7 @@ Protected Class ServerProfile
 		Function ConfigSetStates() As Beacon.ConfigSetState()
 		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
 		  Var Clone() As Beacon.ConfigSetState
-		  For Each State As Beacon.ConfigSetState In Self.mConfigSetPriorities
+		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
 		    Clone.AddRow(State)
 		  Next
 		  Return Clone
@@ -19,15 +19,15 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Sub ConfigSetStates(Assigns States() As Beacon.ConfigSetState)
-		  // First decide if the States() array is different from the mConfigSetPriorities() array. Then, 
-		  // update mConfigSetPriorities() to match. Do not need to clone the members since they are immutable.
+		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
+		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
 		  
 		  Var Different As Boolean
-		  If Self.mConfigSetPriorities.Count <> States.Count Then
+		  If Self.mConfigSetStates.Count <> States.Count Then
 		    Different = True
 		  Else
 		    For Idx As Integer = 0 To States.LastRowIndex
-		      If Self.mConfigSetPriorities(Idx) <> States(Idx) Then
+		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
 		        Different = True
 		        Exit
 		      End If
@@ -38,9 +38,9 @@ Protected Class ServerProfile
 		    Return
 		  End If
 		  
-		  Self.mConfigSetPriorities.ResizeTo(States.LastRowIndex)
+		  Self.mConfigSetStates.ResizeTo(States.LastRowIndex)
 		  For Idx As Integer = 0 To States.LastRowIndex
-		    Self.mConfigSetPriorities(Idx) = States(Idx)
+		    Self.mConfigSetStates(Idx) = States(Idx)
 		  Next
 		  Self.Modified = True
 		End Sub
@@ -82,7 +82,7 @@ Protected Class ServerProfile
 		    For Each Set As Dictionary In Sets
 		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromDictionary(Set)
 		      If (State Is Nil) = False Then
-		        Self.mConfigSetPriorities.AddRow(State)
+		        Self.mConfigSetStates.AddRow(State)
 		      End If
 		    Next
 		  End If
@@ -224,9 +224,9 @@ Protected Class ServerProfile
 		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay
 		    Dict.Value("Message Duration") = Self.mMessageDuration
 		  End If
-		  If Self.mConfigSetPriorities.Count > 0 Then
+		  If Self.mConfigSetStates.Count > 0 Then
 		    Var Priorities() As Dictionary
-		    For Each State As Beacon.ConfigSetState In Self.mConfigSetPriorities
+		    For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
 		      Priorities.AddRow(State.ToDictionary)
 		    Next
 		    Dict.Value("Config Sets") = Priorities
@@ -306,7 +306,7 @@ Protected Class ServerProfile
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigSetPriorities() As Beacon.ConfigSetState
+		Private mConfigSetStates() As Beacon.ConfigSetState
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

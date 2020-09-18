@@ -22,6 +22,7 @@ Implements ObservationKit.Observable
 		Sub AddConfigSet(SetName As String)
 		  If Self.mConfigSets.HasKey(SetName) = False Then
 		    Self.mConfigSets.Value(SetName) = New Dictionary
+		    Self.mConfigSetStates.AddRow(New Beacon.ConfigSetState(SetName, False))
 		    Self.mModified = True
 		  End If
 		End Sub
@@ -186,6 +187,9 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
+		  If Self.mConfigSets.HasKey(SetName) = False Then
+		    Self.mConfigSetStates.AddRow(New Beacon.ConfigSetState(SetName, False))
+		  End If
 		  Self.mConfigSets.Value(SetName) = Dict
 		  Self.mModified = True
 		End Sub
@@ -205,6 +209,61 @@ Implements ObservationKit.Observable
 		  Next
 		  Return Names
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigSetStates() As Beacon.ConfigSetState()
+		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
+		  Var Clone() As Beacon.ConfigSetState
+		  Var Names() As String
+		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
+		    // Do not include any states for sets that don't exist. Should be zero, but just to be sure.
+		    If Self.mConfigSets.HasKey(State.Name) = False Then
+		      Continue
+		    End If
+		    
+		    Clone.AddRow(State)
+		    Names.AddRow(State.Name)
+		  Next
+		  
+		  // Make sure any new sets have a state
+		  For Each Entry As DictionaryEntry In Self.mConfigSets
+		    If Names.IndexOf(Entry.Key.StringValue) = -1 Then
+		      Clone.AddRow(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
+		    End If
+		  Next
+		  
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConfigSetStates(Assigns States() As Beacon.ConfigSetState)
+		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
+		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
+		  
+		  Var Different As Boolean
+		  If Self.mConfigSetStates.Count <> States.Count Then
+		    Different = True
+		  Else
+		    For Idx As Integer = 0 To States.LastRowIndex
+		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
+		        Different = True
+		        Exit
+		      End If
+		    Next
+		  End If
+		  
+		  If Not Different Then
+		    Return
+		  End If
+		  
+		  Self.mConfigSetStates.ResizeTo(States.LastRowIndex)
+		  For Idx As Integer = 0 To States.LastRowIndex
+		    Self.mConfigSetStates(Idx) = States(Idx)
+		  Next
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -598,6 +657,13 @@ Implements ObservationKit.Observable
 		    Var Sets As Dictionary = Dict.Value("Config Sets")
 		    For Each Entry As DictionaryEntry In Sets
 		      Doc.ConfigSet(Entry.Key) = LoadConfigSet(Entry.Value, Identity, Doc)
+		    Next
+		    
+		    // Doc.ConfigSet will add the states. We don't need them.
+		    Doc.mConfigSetStates.ResizeTo(-1)
+		    Var States() As Variant = Dict.Value("Config Set Priorities")
+		    For Each State As Dictionary In States
+		      Doc.mConfigSetStates.AddRow(Beacon.ConfigSetState.FromDictionary(State))
 		    Next
 		  ElseIf Dict.HasKey("Configs") Then
 		    Doc.ConfigSet(BaseConfigSetName) = LoadConfigSet(Dict.Value("Configs"), Identity, Doc)
@@ -1061,6 +1127,13 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
+		  For Idx As Integer = Self.mConfigSetStates.LastRowIndex DownTo 1
+		    If Self.mConfigSetStates(Idx).Name = SetName Then
+		      Self.mConfigSetStates.Remove(Idx)
+		      Self.Modified = True
+		    End If
+		  Next
+		  
 		  Self.ConfigSet(SetName) = Nil
 		End Sub
 	#tag EndMethod
@@ -1125,6 +1198,14 @@ Implements ObservationKit.Observable
 		    Next
 		    Profile.ConfigSetStates = ConfigSets
 		  Next
+		  
+		  For Idx As Integer = 1 To Self.mConfigSetStates.LastRowIndex
+		    If Self.mConfigSetStates(Idx).Name = OldName Then
+		      Self.mConfigSetStates(Idx) = New Beacon.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
+		    End If
+		  Next
+		  
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -1234,6 +1315,12 @@ Implements ObservationKit.Observable
 		    Sets.Value(SetName) = Groups
 		  Next
 		  Document.Value("Config Sets") = Sets
+		  
+		  Var States() As Dictionary
+		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
+		    States.AddRow(State.ToDictionary)
+		  Next
+		  Document.Value("Config Set Priorities") = States
 		  
 		  If Self.mMapCompatibility > 0 Then
 		    Document.Value("Map") = Self.mMapCompatibility
@@ -1378,6 +1465,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mConfigSets As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigSetStates() As Beacon.ConfigSetState
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

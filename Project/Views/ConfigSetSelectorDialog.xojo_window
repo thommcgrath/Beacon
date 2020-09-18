@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconDialog ConfigSetManagerWindow
+Begin BeaconDialog ConfigSetSelectorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -10,95 +10,66 @@ Begin BeaconDialog ConfigSetManagerWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   Height          =   330
    ImplicitInstance=   False
    MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
+   MaximumHeight   =   330
+   MaximumWidth    =   400
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   400
-   MinimumWidth    =   600
-   Resizeable      =   True
-   Title           =   "Manage Config Sets"
+   MinimumHeight   =   330
+   MinimumWidth    =   400
+   Resizeable      =   False
+   Title           =   "Prioritize Config Sets"
    Type            =   "8"
    Visible         =   True
-   Width           =   600
-   Begin UITweaks.ResizedPushButton ActionButton
+   Width           =   400
+   Begin Label InstructionsLabel
       AllowAutoDeactivate=   True
       Bold            =   False
-      Cancel          =   False
-      Caption         =   "OK"
-      Default         =   True
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
+      FontName        =   "SmallSystem"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   20
+      Height          =   30
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   False
+      LockLeft        =   True
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      Multiline       =   True
       Scope           =   2
+      Selectable      =   True
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      TextAlignment   =   "0"
+      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   360
+      Top             =   248
       Transparent     =   False
       Underline       =   False
+      Value           =   "Checked sets will be enabled. Drag sets to change priority. Highest priority is the top of the list."
       Visible         =   True
-      Width           =   80
+      Width           =   360
    End
-   Begin UITweaks.ResizedPushButton CancelButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   True
-      Caption         =   "Cancel"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   408
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      MacButtonStyle  =   "0"
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   360
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin BeaconListbox SetList
+   Begin BeaconListbox List
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   True
       AllowResizableColumns=   False
       AllowRowDragging=   False
-      AllowRowReordering=   False
+      AllowRowReordering=   True
       Bold            =   False
       ColumnCount     =   2
-      ColumnWidths    =   "*,100"
+      ColumnWidths    =   "24"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
@@ -113,14 +84,14 @@ Begin BeaconDialog ConfigSetManagerWindow
       GridLinesHorizontalStyle=   "0"
       GridLinesVerticalStyle=   "0"
       HasBorder       =   True
-      HasHeader       =   True
+      HasHeader       =   False
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   236
+      Height          =   184
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Set Name	Server Count"
+      InitialValue    =   ""
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -132,18 +103,17 @@ Begin BeaconDialog ConfigSetManagerWindow
       RequiresSelection=   False
       RowSelectionType=   "0"
       Scope           =   2
-      SelectionChangeBlocked=   False
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   104
+      Top             =   52
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   560
+      Width           =   360
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -169,7 +139,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "0"
@@ -178,116 +148,49 @@ Begin BeaconDialog ConfigSetManagerWindow
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Manage Config Sets"
+      Value           =   "Prioritize Config Sets"
       Visible         =   True
-      Width           =   560
+      Width           =   360
    End
-   Begin Label ExplanationLabel
+   Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   True
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   40
+      Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
-      LockBottom      =   False
+      Left            =   300
+      LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
+      LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Config Sets allow admins to manage multiple groups of configuration changes that can be blended together at export or deploy."
-      Visible         =   True
-      Width           =   560
-   End
-   Begin UITweaks.ResizedPushButton NewButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "New Config Set"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   125
-   End
-   Begin UITweaks.ResizedPushButton EditButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Edit"
-      Default         =   False
-      Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   157
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      MacButtonStyle  =   "0"
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   360
+      Top             =   290
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin UITweaks.ResizedPushButton DeleteButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       Bold            =   False
-      Cancel          =   False
-      Caption         =   "Delete"
+      Cancel          =   True
+      Caption         =   "Cancel"
       Default         =   False
-      Enabled         =   False
+      Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
@@ -295,19 +198,19 @@ Begin BeaconDialog ConfigSetManagerWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   249
+      Left            =   208
       LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   290
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -318,24 +221,51 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document)
-		  // Calling the overridden superclass constructor.
-		  Self.mDocument = Document
-		  Super.Constructor
+		Private Function Choices() As Beacon.ConfigSetState()
+		  Var States() As Beacon.ConfigSetState
+		  For Idx As Integer = Self.List.LastRowIndex DownTo 0
+		    States.AddRow(Self.List.RowTagAt(Idx))
+		  Next
+		  Return States
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Choices(Assigns States() As Beacon.ConfigSetState)
+		  // Zero is the lowest priority, so this needs to happen in reverse.
+		  
+		  Self.List.RemoveAllRows()
+		  
+		  For StateIdx As Integer = States.LastRowIndex DownTo 0
+		    Var State As Beacon.ConfigSetState = States(StateIdx)
+		    
+		    Self.List.AddRow("", State.Name)
+		    Var Idx As Integer = Self.List.LastAddedRowIndex
+		    Self.List.RowTagAt(Idx) = State
+		    Self.List.CellCheckBoxValueAt(Idx, 0) = State.Enabled
+		    
+		    If StateIdx = 0 Then
+		      Self.List.CellTypeAt(Idx, 0) = Listbox.CellTypes.Normal
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document) As Boolean
+		Shared Function Present(Parent As Window, States() As Beacon.ConfigSetState) As Beacon.ConfigSetState()
 		  If Parent Is Nil Then
-		    Return False
+		    Return States
 		  End If
 		  
-		  Var Win As New ConfigSetManagerWindow(Document)
+		  Var Win As New ConfigSetSelectorDialog
+		  Win.Choices = States
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Var Cancelled As Boolean = Win.mCancelled
+		  If Not Win.mCancelled Then
+		    States = Win.Choices
+		  End If
 		  Win.Close
-		  Return Not Cancelled
+		  
+		  Return States
 		End Function
 	#tag EndMethod
 
@@ -344,44 +274,41 @@ End
 		Private mCancelled As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mDeletedSetNames() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
+#tag Events List
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Row = Me.LastRowIndex Or Column <> 0 Then
+		    Return
+		  End If
+		  
+		  Var State As Beacon.ConfigSetState = Me.RowTagAt(Row)
+		  State = New Beacon.ConfigSetState(State.Name, Me.CellCheckBoxValueAt(Row, Column))
+		  Me.RowTagAt(Row) = State
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function DragReorderRows(newPosition as Integer, parentRow as Integer) As Boolean
+		  // What a stupid event this is. It doesn't even tell us *what* changed.
+		  // Rows have not been moved yet. Return true to prevent moving.
+		  
+		  If Me.SelectedRowIndex = Me.LastRowIndex Or NewPosition = Me.LastRowIndex Then
+		    // Can't move the base row
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  // Do the work here
-		  
-		  // Delete sets here
-		  For Each SetName As String In Self.mDeletedSetNames
-		    Self.mDocument.RemoveConfigSet(SetName)
-		  Next
-		  
-		  // Rename or add sets
-		  For Idx As Integer = 0 To Self.SetList.LastRowIndex
-		    Var SetName As String = Self.SetList.CellValueAt(Idx, 0)
-		    Var OriginalName As String = Self.SetList.RowTagAt(Idx)
-		    
-		    If OriginalName.IsEmpty = False Then
-		      // Possible rename
-		      If OriginalName.Compare(SetName, ComparisonOptions.CaseSensitive) <> 0 Then
-		        // Rename
-		        Self.mDocument.RenameConfigSet(OriginalName, SetName)
-		      End If
-		    Else
-		      // New set
-		      Self.mDocument.AddConfigSet(SetName)
-		    End If
-		  Next
-		  
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -392,119 +319,6 @@ End
 		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SetList
-	#tag Event
-		Sub Change()
-		  Self.EditButton.Enabled = Me.CanEdit
-		  Self.DeleteButton.Enabled = Me.CanDelete
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Document.BaseConfigSetName
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Document.BaseConfigSetName
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub PerformClear(Warn As Boolean)
-		  Var SetIsUsed As Boolean = Me.CellTagAt(Me.SelectedRowIndex, 1).IntegerValue > 0
-		  
-		  If SetIsUsed And Warn Then
-		    Var Sets() As String = Array(Me.CellValueAt(Me.SelectedRowIndex, 0))
-		    If BeaconUI.ShowDeleteConfirmation(Sets, "config set", "config sets") = False Then
-		      Return
-		    End If
-		  End If
-		  
-		  Var OriginalSetName As String = Me.RowTagAt(Me.SelectedRowIndex)
-		  If OriginalSetName.IsEmpty = False And Self.mDeletedSetNames.IndexOf(OriginalSetName) = -1 Then
-		    Self.mDeletedSetNames.AddRow(OriginalSetName)
-		  End If
-		  Me.RemoveRowAt(Me.SelectedRowIndex)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub PerformEdit()
-		  Me.CellTagAt(Me.SelectedRowIndex, 0) = Me.CellValueAt(Me.SelectedRowIndex, 0)
-		  Me.EditCellAt(Me.SelectedRowIndex, 0)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
-		  
-		  Var SetNames() As String = Self.mDocument.ConfigSetNames
-		  For Each SetName As String In SetNames
-		    Me.AddRow(SetName, "0 Servers")
-		    Me.RowTagAt(Me.LastAddedRowIndex) = SetName
-		    
-		    If SetName = Beacon.Document.BaseConfigSetName Then
-		      Me.CellTypeAt(Me.LastAddedRowIndex, 0) = Listbox.CellTypes.Normal
-		    End If
-		  Next
-		  Me.Sort
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  #Pragma Unused Column
-		  
-		  Var NewValue As String = Me.CellValueAt(Row, Column)
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    If Idx = Row Then
-		      Continue
-		    End If
-		    
-		    If Me.CellValueAt(Idx, 0) = NewValue Then
-		      // Duplicate!
-		      Var Original As String = Me.CellTagAt(Row, 0)
-		      If Original.IsEmpty Then
-		        Original = Me.RowTagAt(Row)
-		        If Original.IsEmpty Then
-		          Original = "New Config Set"
-		        End If
-		      End If
-		      System.Beep
-		      Me.CellValueAt(Row, Column) = Original
-		      Return
-		    End If
-		  Next
-		  
-		  Me.CellTagAt(Row, Column) = NewValue
-		  Me.Sort
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NewButton
-	#tag Event
-		Sub Action()
-		  Self.SetList.AddRow("New Config Set", "0 Servers")
-		  Self.SetList.CellTagAt(Self.SetList.LastAddedRowIndex, 1) = 0
-		  Self.SetList.SelectedRowIndex = Self.SetList.LastAddedRowIndex
-		  Self.SetList.Sort
-		  Self.SetList.DoEdit()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EditButton
-	#tag Event
-		Sub Action()
-		  Self.SetList.DoEdit
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DeleteButton
-	#tag Event
-		Sub Action()
-		  Self.SetList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents
