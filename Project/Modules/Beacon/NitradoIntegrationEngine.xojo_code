@@ -979,6 +979,9 @@ Inherits Beacon.IntegrationEngine
 		    Return False
 		  End Try
 		  
+		  // Wait a moment so the receiver server is ready for the file... or something?
+		  Self.Wait(1000)
+		  
 		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  PutSocket.RequestHeader("token") = PutToken
