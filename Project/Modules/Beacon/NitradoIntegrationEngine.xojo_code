@@ -982,12 +982,21 @@ Inherits Beacon.IntegrationEngine
 		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  PutSocket.RequestHeader("token") = PutToken
+		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(FileContent))
 		  PutSocket.SetRequestContent(FileContent, "text/plain")
 		  PutSocket.Send("POST", PutURL)
 		  If Self.Finished Then
 		    Return False
 		  End If
-		  Return Not Self.CheckError(PutSocket)
+		  If Self.CheckError(PutSocket) Then
+		    Self.Log("Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content.")
+		    If Self.BackupEnabled Then
+		      Self.Log("Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath)
+		    End If
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
