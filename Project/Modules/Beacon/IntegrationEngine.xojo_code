@@ -375,6 +375,14 @@ Protected Class IntegrationEngine
 		    Return
 		  End If
 		  
+		  // Verify content looks acceptable
+		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, "GameUserSettings.ini", "[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[MessageOfTheDay]", "[ScalabilityGroups]") Then
+		    Return
+		  End If
+		  If Not Self.ValidateContent(GameIniRewritten, "Game.ini", "[/script/shootergame.shootergamemode]") Then
+		    Return
+		  End If
+		  
 		  Var CommandLine() As Beacon.ConfigValue
 		  If Self.SupportsWideSettings Then
 		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
@@ -670,6 +678,25 @@ Protected Class IntegrationEngine
 		  End Try
 		  RaiseEvent Discovered(Data)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ValidateContent(Content As String, Filename As String, ParamArray RequiredHeaders() As String) As Boolean
+		  Var MissingHeaders() As String
+		  For Each RequiredHeader As String In RequiredHeaders
+		    If Content.IndexOf(RequiredHeader) = -1 Then
+		      MissingHeaders.AddRow(RequiredHeader)
+		    End If
+		  Next
+		  
+		  If MissingHeaders.Count > 1 Then
+		    Self.SetError(Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + ".")
+		  ElseIf MissingHeaders.Count = 1 Then
+		    Self.SetError(Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group.")
+		  End If
+		  
+		  Return MissingHeaders.Count = 0
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
