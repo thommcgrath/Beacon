@@ -92,6 +92,37 @@ Inherits Global.Thread
 		    Var EOL As String = InitialContent.DetectLineEnding
 		    InitialContent = InitialContent.ReplaceLineEndings(Encodings.UTF8.Chr(10))
 		    
+		    // Try to convert [ScalabilityGroups.sg] into [ScalabilityGroups]
+		    If ConfigDict.HasKey("ScalabilityGroups.sg") Then
+		      Var ScalabilityGroupsSuffixed As Dictionary = ConfigDict.Value("ScalabilityGroups.sg")
+		      Var ScalabilityGroups As Dictionary
+		      If ConfigDict.HasKey("ScalabilityGroups") Then
+		        ScalabilityGroups = ConfigDict.Value("ScalabilityGroups")
+		      Else
+		        ScalabilityGroups = New Dictionary
+		      End If
+		      
+		      For Each Entry As DictionaryEntry In ScalabilityGroupsSuffixed
+		        Var Key As String = Entry.Key
+		        Var Lines() As String = Entry.Value
+		        If Key.BeginsWith("sg.") = False Then
+		          Key = "sg." + Key
+		        End If
+		        For Idx As Integer = 0 To Lines.LastRowIndex
+		          If Lines(Idx).BeginsWith("sg.") = False Then
+		            Lines(Idx) = "sg." + Lines(Idx)
+		          End If
+		        Next
+		        
+		        If ScalabilityGroups.HasKey(Key) = False Then
+		          ScalabilityGroups.Value(Key) = Lines
+		        End If
+		      Next
+		      
+		      ConfigDict.Value("ScalabilityGroups") = ScalabilityGroups
+		      ConfigDict.Remove("ScalabilityGroups.sg")
+		    End If
+		    
 		    // Organize all existing content
 		    Var Lines() As String = InitialContent.Split(Encodings.ASCII.Chr(10))
 		    Var UntouchedConfigs As New Dictionary
@@ -105,6 +136,9 @@ Inherits Global.Thread
 		      If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		        // This is a group header
 		        LastGroupHeader = Line.Middle(1, Line.Length - 2)
+		        If LastGroupHeader = "ScalabilityGroups.sg" Then
+		          LastGroupHeader = "ScalabilityGroups"
+		        End If
 		        Continue
 		      End If
 		      
@@ -124,6 +158,10 @@ Inherits Global.Thread
 		      Var ModifierPos As Integer = Key.IndexOf("[")
 		      If ModifierPos > -1 Then
 		        Key = Key.Left(ModifierPos)
+		      End If
+		      If LastGroupHeader = "ScalabilityGroups" And Key.BeginsWith("sg.") = False Then
+		        Key = "sg." + Key
+		        Line = "sg." + Line
 		      End If
 		      
 		      If ConfigDict.HasKey(LastGroupHeader) Then
@@ -316,14 +354,24 @@ Inherits Global.Thread
 		        Continue
 		      End If
 		      
-		      If NewLines.LastRowIndex > -1 Then
-		        NewLines.AddRow("")
+		      Var SectionUntouched, SectionConfig As Dictionary
+		      If UntouchedConfigs.HasKey(Header) Then
+		        SectionUntouched = UntouchedConfigs.Value(Header)
 		      End If
-		      NewLines.AddRow("[" + Header + "]")
+		      If ConfigDict.HasKey(Header) Then
+		        SectionConfig = ConfigDict.Value(Header)
+		      End If
+		      
+		      Var HasUntouched As Boolean = (SectionUntouched Is Nil) = False And SectionUntouched.KeyCount > 0
+		      Var HasConfig As Boolean = (SectionConfig Is Nil) = False And SectionConfig.KeyCount > 0
+		      
+		      If HasUntouched = False And HasConfig = False Then
+		        Continue For Header
+		      End If
 		      
 		      Var SectionConfigs() As String
 		      
-		      If UntouchedConfigs.HasKey(Header) And (Header <> "MessageOfTheDay" Or ConfigDict.HasKey(Header) = False) Then
+		      If HasUntouched And UntouchedConfigs.HasKey(Header) And (Header <> "MessageOfTheDay" Or ConfigDict.HasKey(Header) = False) Then
 		        Var Section As Dictionary = UntouchedConfigs.Value(Header)
 		        Var SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
@@ -333,7 +381,7 @@ Inherits Global.Thread
 		        Next
 		      End If
 		      
-		      If ConfigDict.HasKey(Header) Then
+		      If HasConfig And ConfigDict.HasKey(Header) Then
 		        Var Section As Dictionary = ConfigDict.Value(Header)
 		        Var SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
@@ -345,20 +393,23 @@ Inherits Global.Thread
 		      
 		      SectionConfigs.Sort
 		      
+		      If NewLines.LastRowIndex > -1 Then
+		        NewLines.AddRow("")
+		      End If
+		      NewLines.AddRow("[" + Header + "]")
+		      
 		      For Each ConfigKey As String In SectionConfigs
-		        If UntouchedConfigs.HasKey(Header) Then
-		          Var Section As Dictionary = UntouchedConfigs.Value(Header)
-		          If Section.HasKey(ConfigKey) Then
-		            Var Values() As String = Section.Value(ConfigKey)
+		        If HasUntouched Then
+		          If SectionUntouched.HasKey(ConfigKey) Then
+		            Var Values() As String = SectionUntouched.Value(ConfigKey)
 		            For Each Line As String In Values
 		              NewLines.AddRow(Line)
 		            Next
 		          End If
 		        End If
-		        If ConfigDict.HasKey(Header) Then
-		          Var Section As Dictionary = ConfigDict.Value(Header)
-		          If Section.HasKey(ConfigKey) Then
-		            Var Values() As String = Section.Value(ConfigKey)
+		        If HasConfig Then
+		          If SectionConfig.HasKey(ConfigKey) Then
+		            Var Values() As String = SectionConfig.Value(ConfigKey)
 		            For Each Line As String In Values
 		              NewLines.AddRow(Line)
 		            Next
