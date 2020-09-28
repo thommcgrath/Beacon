@@ -598,7 +598,7 @@ Inherits ScrollCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="UInteger"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -606,7 +606,7 @@ Inherits ScrollCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="UInteger"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -622,7 +622,7 @@ Inherits ScrollCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="UInteger"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

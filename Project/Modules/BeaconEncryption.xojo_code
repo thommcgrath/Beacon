@@ -6,7 +6,32 @@ Protected Module BeaconEncryption
 		    Return 0
 		  End If
 		  
-		  Return CRC_32OfStrMBS(Data)
+		  Try
+		    Var crcg, c, t, x,b As UInt32
+		    Var ch As UInt8
+		    crcg = &hffffffff
+		    c = Data.Size - 1
+		    
+		    For x=0 To c
+		      ch = Data.UInt8Value(x)
+		      
+		      t = (crcg And &hFF) Xor ch
+		      
+		      For b=0 To 7
+		        If( (t And &h1) = &h1) Then
+		          t = BeaconEncryption.ShiftRight(t, 1) Xor &hEDB88320
+		        Else
+		          t = BeaconEncryption.ShiftRight(t, 1)
+		        End If
+		      Next
+		      crcg = BeaconEncryption.ShiftRight(crcg, 8) Xor t
+		    Next
+		    
+		    crcg = crcg Xor &hFFFFFFFF
+		    Return crcg
+		  Catch Err As RuntimeException
+		    Return 0
+		  End Try
 		End Function
 	#tag EndMethod
 
