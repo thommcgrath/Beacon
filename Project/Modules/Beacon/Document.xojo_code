@@ -744,7 +744,7 @@ Implements ObservationKit.Observable
 		    Var SelectedMods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
 		    Var Selections As New Dictionary
 		    For Each Details As Beacon.ModDetails In AllMods
-		      Selections.Value(Details.ModID) = (Details.ConsoleSafe Or Doc.mConsoleMode = False) And (SelectedMods.Count = 0 Or SelectedMods.IndexOf(Details.ModID) > -1)
+		      Selections.Value(Details.ModID) = (Details.ConsoleSafe Or Doc.mConsoleMode = False) And (SelectedMods.Count = CType(0, UInteger) Or SelectedMods.IndexOf(Details.ModID) > -1)
 		    Next
 		    
 		    Doc.mMods = Selections
@@ -822,7 +822,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function IsValid(Identity As Beacon.Identity) As Boolean
-		  If Self.mMapCompatibility = 0 Then
+		  If Self.mMapCompatibility = CType(0, UInt64) Then
 		    Return False
 		  End If
 		  If Self.DifficultyValue = -1 Then
@@ -1322,7 +1322,7 @@ Implements ObservationKit.Observable
 		  Next
 		  Document.Value("Config Set Priorities") = States
 		  
-		  If Self.mMapCompatibility > 0 Then
+		  If Self.mMapCompatibility > CType(0, UInt64) Then
 		    Document.Value("Map") = Self.mMapCompatibility
 		  End If
 		  

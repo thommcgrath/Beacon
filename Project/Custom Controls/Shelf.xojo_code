@@ -280,7 +280,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mItems.LastRowIndex + 1
+		  Return CType(Self.mItems.LastRowIndex + 1, UInteger)
 		End Function
 	#tag EndMethod
 

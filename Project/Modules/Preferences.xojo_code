@@ -379,13 +379,13 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Last Preset Map Filter", Beacon.Maps.All.Mask)
+			  Return mManager.VariantValue("Last Preset Map Filter", Beacon.Maps.All.Mask)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Init
-			  mManager.IntegerValue("Last Preset Map Filter") = Value
+			  mManager.VariantValue("Last Preset Map Filter") = Value
 			End Set
 		#tag EndSetter
 		Protected LastPresetMapFilter As UInt64

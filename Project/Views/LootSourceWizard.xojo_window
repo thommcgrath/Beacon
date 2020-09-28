@@ -1514,7 +1514,7 @@ End
 		    End If
 		    
 		    Var Mask As UInt64 = Self.DefineMapsSelector.Mask
-		    If Mask = 0 Then
+		    If Mask = CType(0, UInt64) Then
 		      Self.ShowAlert("Please select a map", "Your loot source should be available to at least one map.")
 		      Return
 		    End If

@@ -266,7 +266,7 @@ End
 		  End If
 		  
 		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.StackSizes.ConfigName, Self.ConfigSetName))
-		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
+		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
 		  
@@ -507,7 +507,7 @@ End
 		  End If
 		  
 		  Var Size As UInt64 = CDbl(Me.CellValueAt(Row, Column))
-		  If Size > BeaconConfigs.StackSizes.MaximumQuantity Then
+		  If Size > CType(BeaconConfigs.StackSizes.MaximumQuantity, UInt64) Then
 		    Size = BeaconConfigs.StackSizes.MaximumQuantity
 		    System.Beep
 		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + Format(BeaconConfigs.StackSizes.MaximumQuantity, Self.NumberFormat) + ".")

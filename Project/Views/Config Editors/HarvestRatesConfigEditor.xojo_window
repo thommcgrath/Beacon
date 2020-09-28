@@ -583,7 +583,7 @@ End
 		  End If
 		  
 		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName, Self.ConfigSetName))
-		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
+		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
 		  

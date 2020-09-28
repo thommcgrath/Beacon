@@ -2,13 +2,13 @@
 Protected Class IntegrationEngine
 	#tag Method, Flags = &h0
 		Function AnalyzeEnabled() As Boolean
-		  Return (Self.mOptions And (Self.OptionAnalyze Or Self.OptionReview)) = (Self.OptionAnalyze Or Self.OptionReview)
+		  Return (Self.mOptions And (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))) = (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BackupEnabled() As Boolean
-		  Return (Self.mOptions And Self.OptionBackup) = Self.OptionBackup
+		  Return (Self.mOptions And CType(Self.OptionBackup, UInt64)) = CType(Self.OptionBackup, UInt64)
 		End Function
 	#tag EndMethod
 
@@ -266,7 +266,7 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Function ReviewEnabled() As Boolean
-		  Return (Self.mOptions And Self.OptionReview) = Self.OptionReview
+		  Return (Self.mOptions And CType(Self.OptionReview, UInt64)) = CType(Self.OptionReview, UInt64)
 		End Function
 	#tag EndMethod
 

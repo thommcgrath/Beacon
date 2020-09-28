@@ -255,10 +255,7 @@ Protected Class UpdateChecker
 		  End If
 		  
 		  Try
-		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Var Contents As MemoryBlock = Stream.Read(Stream.Length)
-		    Stream.Close
-		    
+		    Var Contents As MemoryBlock = File.Read
 		    Return Crypto.RSAVerifySignature(Contents, DecodeHex(Signature), PublicKey)
 		  Catch Err As RuntimeException
 		    Return False

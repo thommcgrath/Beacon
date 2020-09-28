@@ -1688,7 +1688,7 @@ End
 		  Next
 		  
 		  Var Availability As UInt64 = Self.MapSelector.Mask
-		  If Availability = 0 Then
+		  If Availability = CType(0, UInt64) Then
 		    Self.ShowAlert("Object is not available to any maps", "This object should be usable on at least one map.")
 		    Return False
 		  End If

@@ -103,6 +103,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
       RequiresSelection=   False
       RowSelectionType=   "0"
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True

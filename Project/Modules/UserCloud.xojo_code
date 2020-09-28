@@ -480,9 +480,7 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  Var Stream As BinaryStream = BinaryStream.Open(LocalFile, False)
-		  Var Contents As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
+		  Var Contents As MemoryBlock = LocalFile.Read()
 		  
 		  Var Compressor As New _GZipString
 		  Contents = Compressor.Compress(Contents, _GZipString.DefaultCompression)

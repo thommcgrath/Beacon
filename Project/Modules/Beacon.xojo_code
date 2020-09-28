@@ -582,7 +582,7 @@ Protected Module Beacon
 		  Var Total As UInteger
 		  For Each Set As Beacon.ItemSet In Sets
 		    If Set.SourcePresetID <> "" Then
-		      Total = Total + 1
+		      Total = Total + CType(1, UInteger)
 		    End If
 		  Next
 		  Return Total
@@ -1049,7 +1049,7 @@ Protected Module Beacon
 		    If Abs(TestValue - Floor(TestValue)) < 0.0000000001 Then
 		      Exit
 		    End If
-		    Multiplier = Multiplier * 10
+		    Multiplier = Multiplier * CType(10, UInteger)
 		    Format = Format + "0"
 		    Places = Places + 1
 		  Wend
@@ -1108,9 +1108,9 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As UInteger
+		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Integer
 		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  Var NumChanged As UInteger
+		  Var NumChanged As Integer
 		  For Each Set As Beacon.ItemSet In Sets
 		    If Set.SourcePresetID = "" Then
 		      Continue
@@ -1826,13 +1826,13 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Blueprint As Beacon.Blueprint, Mask As UInt64) As Boolean
-		  Return Mask = 0 Or (Blueprint.Availability And Mask) > 0
+		  Return Mask = CType(0, UInt64) Or (Blueprint.Availability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Source As Beacon.LootSource, Mask As UInt64) As Boolean
-		  Return (Source.Availability And Mask) > 0
+		  Return (Source.Availability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod
 

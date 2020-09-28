@@ -120,7 +120,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mOverrides.KeyCount
+		  Return CType(Self.mOverrides.KeyCount, UInteger)
 		End Function
 	#tag EndMethod
 
@@ -174,9 +174,9 @@ Inherits Beacon.ConfigGroup
 		      
 		      Var Quantity As Dictionary = Dict.Value("Quantity")
 		      Var ClassString As String = Dict.Value("ItemClassString")
-		      Var StackSize As UInt64 = Quantity.Lookup("MaxItemQuantity", 0)
+		      Var StackSize As UInt64 = Quantity.Lookup("MaxItemQuantity", CType(0, UInt64))
 		      
-		      If ClassString <> "" And ClassString.EndsWith("_C") And StackSize > 0 Then
+		      If ClassString <> "" And ClassString.EndsWith("_C") And StackSize > CType(0, UInt64) Then
 		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		        If IsNull(Engram) Then
 		          Engram = Beacon.Engram.CreateFromClass(ClassString)

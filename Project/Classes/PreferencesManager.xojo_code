@@ -202,22 +202,22 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IntegerValue(Key As String, Default As Int32 = 0) As Int32
+		Function IntegerValue(Key As String, Default As Integer = 0) As Integer
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
 		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or Value.Type <> Variant.TypeInt32 Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeInteger Then
 		    Return Default
 		  End If
 		  
-		  Return Value.Int32Value
+		  Return Value.IntegerValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IntegerValue(Key As String, Assigns Value As Int32)
+		Sub IntegerValue(Key As String, Assigns Value As Integer)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Value
 		  Self.Commit()

@@ -920,7 +920,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function GetObjectIDsWithCraftingCosts(Mods As Beacon.StringList, Mask As UInt64) As String()
 		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
-		  If (Mods Is Nil) = False And Mods.Count > 0 Then
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
 		    Var List() As String
 		    For Each ModID As String In Mods
 		      List.AddRow("'" + ModID + "'")
@@ -1975,7 +1975,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused TotalBytes
 		  #Pragma Unused NewData
 		  
-		  Self.mDeltaDownloadedBytes = Self.mDeltaDownloadedBytes + BytesReceived
+		  Self.mDeltaDownloadedBytes = Self.mDeltaDownloadedBytes + CType(BytesReceived, UInt64)
 		End Sub
 	#tag EndMethod
 
@@ -2362,7 +2362,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If IsNull(Results.Column("alternate_label").Value) = False Then
 		      Creature.AlternateLabel = Results.Column("alternate_label").StringValue
 		    End If
-		    Creature.Availability = Results.Column("availability").IntegerValue
+		    Creature.Availability = Results.Column("availability").Value
 		    Creature.TagString = Results.Column("tags").StringValue
 		    Creature.ModID = Results.Column("mod_id").StringValue
 		    Creature.ModName = Results.Column("mod_name").StringValue
@@ -2398,7 +2398,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If IsNull(Results.Column("alternate_label").Value) = False Then
 		      Engram.AlternateLabel = Results.Column("alternate_label").StringValue
 		    End If
-		    Engram.Availability = Results.Column("availability").IntegerValue
+		    Engram.Availability = Results.Column("availability").Value
 		    Engram.TagString = Results.Column("tags").StringValue
 		    Engram.ModID = Results.Column("mod_id").StringValue
 		    Engram.ModName = Results.Column("mod_name").StringValue
@@ -2462,7 +2462,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Source As New Beacon.CustomLootContainer(Results.Column("class_string").StringValue)
 		    Source.Label = Results.Column("label").StringValue
 		    Source.Path = Results.Column("path").StringValue
-		    Source.Availability = Results.Column("availability").IntegerValue
+		    Source.Availability = Results.Column("availability").Value
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
@@ -2501,7 +2501,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If IsNull(Results.Column("alternate_label").Value) = False Then
 		      Point.AlternateLabel = Results.Column("alternate_label").StringValue
 		    End If
-		    Point.Availability = Results.Column("availability").IntegerValue
+		    Point.Availability = Results.Column("availability").Value
 		    Point.TagString = Results.Column("tags").StringValue
 		    Point.ModID = Results.Column("mod_id").StringValue
 		    Point.ModName = Results.Column("mod_name").StringValue

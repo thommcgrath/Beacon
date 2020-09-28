@@ -14,6 +14,12 @@ Private Class SymmetricHeader
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Payload As MemoryBlock, Version As Integer = 2)
+		  If Payload Is Nil Or Payload.Size = MemoryBlock.SizeUnknown Or Payload.Size > Self.MaxLength Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Cannot create symmetric header from memoryblock because it is too large or does not exist."
+		    Raise Err
+		  End If
+		  
 		  Self.mVersion = Version
 		  Self.mVector = Crypto.GenerateRandomBytes(If(Version = 2, 16, 8))
 		  Self.mLength = Payload.Size
@@ -29,17 +35,15 @@ Private Class SymmetricHeader
 		  Header.UInt8Value(0) = MagicByte
 		  Header.UInt8Value(1) = Self.mVersion
 		  Header.Middle(2, VectorSize) = Self.mVector
-		  Header.UInt32Value(2 + VectorSize) = Self.mLength
+		  Header.Int32Value(2 + VectorSize) = Self.mLength
 		  Header.UInt32Value(6 + VectorSize) = Self.mChecksum
 		  Return Header
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EncryptedLength() As UInt64
-		  // This is UInt64 because Header.Length is UInt32, and we're adding to it, so we need more space
-		  
-		  Var Factor As Integer
+		Function EncryptedLength() As Int32
+		  Var Factor As Int8
 		  Select Case Self.mVersion
 		  Case 1
 		    Factor = 8
@@ -47,9 +51,9 @@ Private Class SymmetricHeader
 		    Factor = 16
 		  End Select
 		  
-		  Var Blocks As Integer = Ceiling(Self.mLength / Factor)
-		  If Self.mLength Mod Factor = 0 Then
-		    Blocks = Blocks + 1
+		  Var Blocks As Int32 = Ceiling(Self.mLength / Factor)
+		  If Self.mLength Mod Factor = CType(0, Int32) Then
+		    Blocks = Blocks + CType(1, Int32)
 		  End If
 		  Return Blocks * Factor
 		End Function
@@ -85,7 +89,7 @@ Private Class SymmetricHeader
 		  End Select
 		  
 		  Var Vector As MemoryBlock = Clone.Middle(2, VectorSize)
-		  Var Length As UInt32 = Clone.UInt32Value(2 + VectorSize)
+		  Var Length As Int32 = Clone.Int32Value(2 + VectorSize)
 		  Var Checksum As UInt32 = Clone.UInt32Value(6 + VectorSize)
 		  
 		  Var Header As New SymmetricHeader
@@ -98,7 +102,7 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Length() As UInt32
+		Function Length() As Int32
 		  Return Self.mLength
 		End Function
 	#tag EndMethod
@@ -122,12 +126,21 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 
+	#tag Note, Name = Length
+		The length is stored as an Int32 because MemoryBlock methods accept Integer, which translates
+		to Int32 or Int64 depending on the platform. So the limit must be the smaller of the two
+		for compatibility. The MaxLength constant has enough space for an extra block and another UInt8
+		worth of header size.
+		
+	#tag EndNote
+
+
 	#tag Property, Flags = &h21
 		Private mChecksum As UInt32
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLength As UInt32
+		Private mLength As Int32
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -140,6 +153,9 @@ Private Class SymmetricHeader
 
 
 	#tag Constant, Name = MagicByte, Type = Double, Dynamic = False, Default = \"&h8A", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MaxLength, Type = Double, Dynamic = False, Default = \"2147483360", Scope = Public
 	#tag EndConstant
 
 

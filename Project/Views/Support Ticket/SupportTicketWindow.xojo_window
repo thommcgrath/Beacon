@@ -714,7 +714,7 @@ End
 		  
 		  Var Entry As New ArchiveEntryMBS
 		  Entry.PathName = Path
-		  Entry.Size = Data.Size
+		  Entry.Size = CType(Data.Size, UInt64)
 		  Entry.Permissions = &o0644
 		  Entry.FileType = ArchiveEntryMBS.kFileTypeRegular
 		  

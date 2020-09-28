@@ -130,7 +130,7 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
-		  If Self.mMask = 0 Then
+		  If Self.mMask = CType(0, UInt64) Then
 		    Return Beacon.Maps.All.Mask
 		  Else
 		    Return Self.mMask
@@ -299,7 +299,7 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mPlatform = Beacon.ServerProfile.PlatformXbox Or Self.mPlatform = Beacon.ServerProfile.PlatformPlayStation Or Self.mPlatform = Beacon.ServerProfile.PlatformSwitch
+			  Return Self.mPlatform = CType(Beacon.ServerProfile.PlatformXbox, UInteger) Or Self.mPlatform = CType(Beacon.ServerProfile.PlatformPlayStation, UInteger) Or Self.mPlatform = CType(Beacon.ServerProfile.PlatformSwitch, UInteger)
 			End Get
 		#tag EndGetter
 		IsConsole As Boolean

@@ -634,7 +634,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function SafeForMods(Mods As Beacon.StringList) As Boolean
 		  // This method kind of sucks, but yes it is needed for preset generation.
 		  
-		  If Mods.Count = 0 Then
+		  If Mods.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
 		  

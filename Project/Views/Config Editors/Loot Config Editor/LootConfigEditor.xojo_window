@@ -623,7 +623,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
-		  Var NumChanges As UInteger = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
+		  Var NumChanges As Integer = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
 		  If NumChanges = 0 Then
 		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
 		    Return
@@ -751,8 +751,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As UInteger = Self.List.RowCount
-		  Var SelectedCount As UInteger = Self.List.SelectedRowCount
+		  Var TotalCount As Integer = Self.List.RowCount
+		  Var SelectedCount As Integer = Self.List.SelectedRowCount
 		  
 		  Var Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
 		  If SelectedCount > 0 Then
@@ -842,7 +842,7 @@ End
 		    
 		    If LootSources.LastRowIndex = -1 Then
 		      Var Warning As MenuItem
-		      If Mask = 0 Then
+		      If Mask = CType(0, UInt64) Then
 		        Warning = New MenuItem("List is empty because no maps have been selected.")
 		      Else
 		        Warning = New MenuItem("List is empty because all drops have been implemented.")

@@ -42,8 +42,8 @@ Private Class NSColor
 		      ArrayRef = RowColors(NSColor)
 		    End If
 		    
-		    Declare Function ArrayCount Lib CocoaLib Selector "count" (Target As Ptr) As UInteger
-		    Declare Function ArrayObjectAtIndex Lib CocoaLib Selector "objectAtIndex:" (Target As Ptr, Index As UInteger) As Ptr
+		    Declare Function ArrayCount Lib CocoaLib Selector "count" (Target As Ptr) As Integer
+		    Declare Function ArrayObjectAtIndex Lib CocoaLib Selector "objectAtIndex:" (Target As Ptr, Index As Integer) As Ptr
 		    
 		    Var ObjectCount As Integer = ArrayCount(ArrayRef)
 		    For I As Integer = 0 To ObjectCount - 1

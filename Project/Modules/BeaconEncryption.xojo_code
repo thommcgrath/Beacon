@@ -6,37 +6,12 @@ Protected Module BeaconEncryption
 		    Return 0
 		  End If
 		  
-		  Try
-		    Var crcg, c, t, x,b As UInt32
-		    Var ch As UInt8
-		    crcg = &hffffffff
-		    c = Data.Size - 1
-		    
-		    For x=0 To c
-		      ch = Data.UInt8Value(x)
-		      
-		      t = (crcg And &hFF) Xor ch
-		      
-		      For b=0 To 7
-		        If( (t And &h1) = &h1) Then
-		          t = BeaconEncryption.ShiftRight(t, 1) Xor &hEDB88320
-		        Else
-		          t = BeaconEncryption.ShiftRight(t, 1)
-		        End If
-		      Next
-		      crcg = BeaconEncryption.ShiftRight(crcg, 8) Xor t
-		    Next
-		    
-		    crcg = crcg Xor &hFFFFFFFF
-		    Return crcg
-		  Catch Err As RuntimeException
-		    Return 0
-		  End Try
+		  Return CRC_32OfStrMBS(Data)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetLength(Data As MemoryBlock) As UInt64
+		Protected Function GetLength(Data As MemoryBlock) As Int32
 		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header <> Nil Then
 		    Return Header.Size + Header.EncryptedLength

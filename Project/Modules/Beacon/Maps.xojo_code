@@ -40,7 +40,7 @@ Protected Module Maps
 		  Var Possibles() As Beacon.Map = All
 		  Var Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
-		    If (Map.Mask And Mask) > 0 Then
+		    If (Map.Mask And Mask) > CType(0, UInt64) Then
 		      Matches.AddRow(Map)
 		    End If
 		  Next
@@ -83,7 +83,7 @@ Protected Module Maps
 		    End If
 		  Next
 		  
-		  If BestMask = 0 Then
+		  If BestMask = CType(0, UInt64) Then
 		    BestMask = TheIsland.Mask
 		  End If
 		  
