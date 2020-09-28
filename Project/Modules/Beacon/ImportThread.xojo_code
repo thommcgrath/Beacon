@@ -149,7 +149,7 @@ Inherits Beacon.Thread
 		  If (Profile Is Nil) = False Then
 		    Document.MapCompatibility = Profile.Mask
 		  End If
-		  If Document.MapCompatibility = 0 Then
+		  If Document.MapCompatibility = CType(0, UInt64) Then
 		    Document.MapCompatibility = Beacon.Maps.TheIsland.Mask
 		  End If
 		  

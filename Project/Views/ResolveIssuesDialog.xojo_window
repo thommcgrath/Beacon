@@ -344,7 +344,7 @@ End
 		  Var DocumentIssues() As Beacon.Issue
 		  
 		  Var UniqueIssues As New Dictionary
-		  If Document.MapCompatibility = 0 Then
+		  If Document.MapCompatibility = CType(0, UInt64) Then
 		    Var Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
 		    UniqueIssues.Value(Issue.Description) = Issue
 		    DocumentIssues.AddRow(Issue)

@@ -749,7 +749,7 @@ End
 		      Classes.AddRow(Source.ClassString)
 		    Next
 		    
-		    Var Bound As UInteger = Win.ViewCount - 1
+		    Var Bound As Integer = Win.ViewCount - 1
 		    For I As Integer = 0 To Bound
 		      Var View As BeaconSubview = Win.ViewAtIndex(I)
 		      If Not (View IsA DocumentEditorView) Then

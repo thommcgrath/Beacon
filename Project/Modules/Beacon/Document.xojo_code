@@ -653,7 +653,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function IsValid(Identity As Beacon.Identity) As Boolean
-		  If Self.mMapCompatibility = 0 Then
+		  If Self.mMapCompatibility = CType(0, UInt64) Then
 		    Return False
 		  End If
 		  If Self.DifficultyValue = -1 Then
@@ -1067,7 +1067,7 @@ Implements ObservationKit.Observable
 		  Next
 		  Document.Value("Configs") = Groups
 		  
-		  If Self.mMapCompatibility > 0 Then
+		  If Self.mMapCompatibility > CType(0, UInt64) Then
 		    Document.Value("Map") = Self.mMapCompatibility
 		  End If
 		  

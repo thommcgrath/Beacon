@@ -644,7 +644,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewCount() As UInteger
+		Function ViewCount() As Integer
 		  Return Self.mSubviews.LastRowIndex + 1
 		End Function
 	#tag EndMethod

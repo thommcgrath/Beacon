@@ -391,7 +391,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Mask As UInt64) As Boolean
-		  If Mask = 0 Then
+		  If Mask = CType(0, UInt64) Then
 		    Return True
 		  End If
 		  

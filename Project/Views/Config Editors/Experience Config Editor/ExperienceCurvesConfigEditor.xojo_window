@@ -308,7 +308,7 @@ End
 		  End If
 		  LevelXP = MinXP
 		  
-		  If MinXP > BeaconConfigs.ExperienceCurves.MaxSupportedXP Then
+		  If MinXP > CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64) Then
 		    Self.ShowAlert("No more levels possible", "Current Max XP is greater than Ark's supported maximum of " + Format(BeaconConfigs.ExperienceCurves.MaxSupportedXP, "0,"))
 		    Return
 		  End If
@@ -374,13 +374,13 @@ End
 		  If Self.ViewingPlayerStats Then
 		    CapIndex = Config.PlayerLevelCap - 2
 		    LevelXP = Config.PlayerExperience(Index)
-		    MinXP = If(Index > 0, Config.PlayerExperience(Index - 1), 0)
-		    MaxXP = If(Index < CapIndex, Config.PlayerExperience(Index + 1), BeaconConfigs.ExperienceCurves.MaxSupportedXP)
+		    MinXP = If(Index > 0, Config.PlayerExperience(Index - 1), CType(0, UInt64))
+		    MaxXP = If(Index < CapIndex, Config.PlayerExperience(Index + 1), CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64))
 		  Else
 		    CapIndex = Config.DinoLevelCap - 2
 		    LevelXP = Config.DinoExperience(Index)
-		    MinXP = If(Index > 0, Config.DinoExperience(Index - 1), 0)
-		    MaxXP = If(Index < CapIndex, Config.DinoExperience(Index + 1), BeaconConfigs.ExperienceCurves.MaxSupportedXP)
+		    MinXP = If(Index > 0, Config.DinoExperience(Index - 1), CType(0, UInt64))
+		    MaxXP = If(Index < CapIndex, Config.DinoExperience(Index + 1), CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64))
 		  End If
 		  
 		  If ExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, MaxXP) Then

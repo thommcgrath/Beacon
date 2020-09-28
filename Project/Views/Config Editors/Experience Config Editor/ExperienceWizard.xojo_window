@@ -797,7 +797,7 @@ End
 		  Var EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
 		  Var EndingXP As UInt64 = StartingXP + AdditionalXP
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  Var Allowed As Boolean = EndingXP <= BeaconConfigs.ExperienceCurves.MaxSupportedXP
+		  Var Allowed As Boolean = EndingXP <= CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64)
 		  
 		  Self.List.RemoveAllRows()
 		  Var LastXP As UInt64 = StartingXP

@@ -27,7 +27,7 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Count() As UInteger
+		Function Count() As Integer
 		  Return Self.mItems.LastRowIndex + 1
 		End Function
 	#tag EndMethod

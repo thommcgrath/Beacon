@@ -16,7 +16,7 @@ Inherits TCPSocket
 		  
 		  While Self.Buffer <> Nil And Self.Buffer.Size > 0
 		    Var PayloadLen As UInt64 = BeaconEncryption.GetLength(Self.Buffer)
-		    If PayloadLen = 0 Then
+		    If PayloadLen = CType(0, UInt64) Then
 		      Return
 		    End If
 		    

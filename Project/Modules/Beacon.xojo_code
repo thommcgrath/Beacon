@@ -601,9 +601,9 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImplementedPresetCount(Extends Source As Beacon.LootSource) As UInteger
+		Function ImplementedPresetCount(Extends Source As Beacon.LootSource) As Integer
 		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  Var Total As UInteger
+		  Var Total As Integer
 		  For Each Set As Beacon.ItemSet In Sets
 		    If Set.SourcePresetID <> "" Then
 		      Total = Total + 1
@@ -998,7 +998,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer, Localized As Boolean) As String
-		  Var Multiplier As UInteger = 1
+		  Var Multiplier As Integer = 1
 		  Var Places As Integer = 0
 		  Var Format As String = "-0"
 		  
@@ -1066,9 +1066,9 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As UInteger
+		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Integer
 		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  Var NumChanged As UInteger
+		  Var NumChanged As Integer
 		  For Each Set As Beacon.ItemSet In Sets
 		    If Set.SourcePresetID = "" Then
 		      Continue
@@ -1299,9 +1299,9 @@ Protected Module Beacon
 		Protected Function SecondsToString(ParamArray Intervals() As UInt64) As String
 		  Var WithDays, WithHours, WithMinutes As Boolean = True
 		  For Each Interval As UInt64 In Intervals
-		    WithDays = WithDays And Interval >= SecondsPerDay
-		    WithHours = WithHours And Interval >= SecondsPerHour
-		    WithMinutes = WithMinutes And Interval >= SecondsPerMinute
+		    WithDays = WithDays And Interval >= CType(SecondsPerDay, UInt64)
+		    WithHours = WithHours And Interval >= CType(SecondsPerHour, UInt64)
+		    WithMinutes = WithMinutes And Interval >= CType(SecondsPerMinute, UInt64)
 		  Next
 		  
 		  Var Values() As String
@@ -1325,17 +1325,17 @@ Protected Module Beacon
 		  
 		  If WithDays Then
 		    Days = Floor(Seconds / SecondsPerDay)
-		    Seconds = Seconds - (Days * SecondsPerDay)
+		    Seconds = Seconds - CType(Days * SecondsPerDay, UInt64)
 		  End If
 		  
 		  If WithHours Then
 		    Hours = Floor(Seconds / SecondsPerHour)
-		    Seconds = Seconds - (Hours * SecondsPerHour)
+		    Seconds = Seconds - CType(Hours * SecondsPerHour, UInt64)
 		  End If
 		  
 		  If WithMinutes Then
 		    Minutes = Floor(Seconds / SecondsPerMinute)
-		    Seconds = Seconds - (Minutes * SecondsPerMinute)
+		    Seconds = Seconds - CType(Minutes * SecondsPerMinute, UInt64)
 		  End If
 		  
 		  Var Parts() As String
@@ -1348,7 +1348,7 @@ Protected Module Beacon
 		  If Minutes > 0 Then
 		    Parts.AddRow(Str(Minutes, "-0") + "m")
 		  End If
-		  If Seconds > 0 Then
+		  If Seconds > CType(0, UInt64) Then
 		    Parts.AddRow(Str(Seconds, "-0") + "s")
 		  End If
 		  Return Parts.Join(" ")
@@ -1595,13 +1595,13 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Blueprint As Beacon.Blueprint, Mask As UInt64) As Boolean
-		  Return Mask = 0 Or (Blueprint.Availability And Mask) > 0
+		  Return Mask = CType(0, UInt64) Or (Blueprint.Availability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Source As Beacon.LootSource, Mask As UInt64) As Boolean
-		  Return (Source.Availability And Mask) > 0
+		  Return (Source.Availability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod
 

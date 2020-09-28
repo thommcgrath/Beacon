@@ -139,7 +139,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Count() As UInteger
+		Function Count() As Integer
 		  Return Self.mOverrides.KeyCount
 		End Function
 	#tag EndMethod
