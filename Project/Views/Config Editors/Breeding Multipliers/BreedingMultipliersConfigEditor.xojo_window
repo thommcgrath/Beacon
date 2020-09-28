@@ -1648,7 +1648,7 @@ End
 		  Var ImprintAmountMultiplier As Double = Self.Config(False).BabyImprintAmountMultiplier
 		  
 		  For Each Creature As Beacon.Creature In Creatures
-		    If Creature.IncubationTime = CType(0, UInt64) Or Creature.MatureTime = CType(0, UInt64) Then
+		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
 		    End If
 		    
@@ -1687,7 +1687,7 @@ End
 		  CreaturesList.ScrollPosition = Position
 		  CreaturesList.Sort
 		  
-		  Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(CType(CuddlePeriod, UInt64))
+		  Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(CuddlePeriod)
 		End Sub
 	#tag EndMethod
 

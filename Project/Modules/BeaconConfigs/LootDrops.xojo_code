@@ -424,12 +424,12 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigurePresets(Mask As UInt64, Mods As Beacon.StringList) As Integer
-		  If Mask = CType(0, UInt64) Then
+		Function ReconfigurePresets(Mask As UInt64, Mods As Beacon.StringList) As UInteger
+		  If Mask = 0 Then
 		    Return 0
 		  End If
 		  
-		  Var NumChanged As Integer
+		  Var NumChanged As UInteger
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    NumChanged = NumChanged + Source.ReconfigurePresets(Mask, Mods)
 		  Next

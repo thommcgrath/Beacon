@@ -581,7 +581,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As Integer
+			  Var Borders As UInteger
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderBottom
 			  Else
@@ -605,7 +605,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As Integer
+			  Var Borders As UInteger
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderLeft
 			  Else
@@ -629,7 +629,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As Integer
+			  Var Borders As UInteger
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderRight
 			  Else
@@ -653,7 +653,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As Integer
+			  Var Borders As UInteger
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderTop
 			  Else

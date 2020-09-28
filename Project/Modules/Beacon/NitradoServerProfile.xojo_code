@@ -53,7 +53,7 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Platform(Assigns Value As Integer)
+		Sub Platform(Assigns Value As UInteger)
 		  Super.Platform = Value
 		End Sub
 	#tag EndMethod

@@ -2,13 +2,13 @@
 Protected Class PresetEntry
 Inherits Beacon.SetEntry
 	#tag Method, Flags = &h0
-		Function Availability() As UInt64
+		Function Availability() As Integer
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Availability(Assigns Value As UInt64)
+		Sub Availability(Assigns Value As Integer)
 		  Self.mAvailability = Value
 		End Sub
 	#tag EndMethod
@@ -131,7 +131,7 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Mask As UInt64) As Boolean
-		  Return (Self.mAvailability And Mask) > CType(0, UInt64)
+		  Return (Self.mAvailability And Mask) > 0
 		End Function
 	#tag EndMethod
 
@@ -147,7 +147,7 @@ Inherits Beacon.SetEntry
 
 
 	#tag Property, Flags = &h21
-		Private mAvailability As UInt64
+		Private mAvailability As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

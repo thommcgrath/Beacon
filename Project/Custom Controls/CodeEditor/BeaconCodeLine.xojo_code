@@ -100,7 +100,7 @@ Protected Class BeaconCodeLine
 		      End If
 		      Self.AddText(G, Theme.MarkupColor, "=", Offset)
 		      If ValuePart.Length > 1 And ValuePart.BeginsWith("(") Then
-		        Var Pos As Integer = 0
+		        Var Pos As UInteger = 0
 		        Self.RenderArray(ValuePart, Pos, G, Offset, Theme)
 		      Else
 		        Var ValueColor As Color
@@ -141,7 +141,7 @@ Protected Class BeaconCodeLine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RenderArray(ValuePart As String, ByRef StartPos As Integer, G As Graphics, ByRef OffsetX As Double, Theme As BeaconCodeTheme)
+		Private Sub RenderArray(ValuePart As String, ByRef StartPos As UInteger, G As Graphics, ByRef OffsetX As Double, Theme As BeaconCodeTheme)
 		  If ValuePart.Middle(StartPos, 1) <> "(" Then
 		    Return
 		  End If
@@ -223,7 +223,7 @@ Protected Class BeaconCodeLine
 			  Return Self.mContent.Length
 			End Get
 		#tag EndGetter
-		Length As Integer
+		Length As UInteger
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

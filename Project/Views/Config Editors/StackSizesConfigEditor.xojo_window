@@ -503,8 +503,8 @@ End
 		  End If
 		  
 		  Var Size As UInt64 = CDbl(Me.CellValueAt(Row, Column))
-		  If Size > CType(BeaconConfigs.StackSizes.MaximumQuantity, UInt64) Then
-		    Size = CType(BeaconConfigs.StackSizes.MaximumQuantity, UInt64)
+		  If Size > BeaconConfigs.StackSizes.MaximumQuantity Then
+		    Size = BeaconConfigs.StackSizes.MaximumQuantity
 		    System.Beep
 		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + Format(BeaconConfigs.StackSizes.MaximumQuantity, Self.NumberFormat) + ".")
 		  End If

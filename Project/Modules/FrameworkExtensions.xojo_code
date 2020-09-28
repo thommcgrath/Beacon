@@ -290,13 +290,13 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Left(Extends Source As MemoryBlock, Length As Integer) As MemoryBlock
+		Function Left(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
 		  Return Source.Middle(0, Length)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Left(Extends Target As MemoryBlock, Length As Integer, Assigns NewData As MemoryBlock)
+		Sub Left(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
 		  Target.Middle(0, Length) = NewData
 		End Sub
 	#tag EndMethod
@@ -309,9 +309,9 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Middle(Extends Source As MemoryBlock, Offset As Integer, Length As Integer) As MemoryBlock
+		Function Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger) As MemoryBlock
 		  Offset = Min(Offset, Source.Size)
-		  Var Bound As Integer = Min(Offset + Length, Source.Size)
+		  Var Bound As UInteger = Min(Offset + Length, Source.Size)
 		  Length = Bound - Offset
 		  
 		  Var Mem As New MemoryBlock(Length)
@@ -322,14 +322,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Middle(Extends Source As MemoryBlock, Offset As Integer, Length As Integer, Assigns NewData As MemoryBlock)
+		Sub Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger, Assigns NewData As MemoryBlock)
 		  If NewData = Nil Then
 		    Return
 		  End If
 		  
 		  Offset = Min(Offset, Source.Size)
-		  Var Bound As Integer = Min(Offset + Length, Source.Size)
-		  Var TailLength As Integer = Source.Size - Bound
+		  Var Bound As UInteger = Min(Offset + Length, Source.Size)
+		  Var TailLength As UInteger = Source.Size - Bound
 		  Length = Bound - Offset
 		  Var Delta As Integer = NewData.Size - Length
 		  
@@ -402,13 +402,13 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Right(Extends Source As MemoryBlock, Length As Integer) As MemoryBlock
+		Function Right(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
 		  Return Source.Middle(Source.Size - Length, Length)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Right(Extends Target As MemoryBlock, Length As Integer, Assigns NewData As MemoryBlock)
+		Sub Right(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
 		  Target.Middle(Target.Size - Length, Length) = NewData
 		End Sub
 	#tag EndMethod

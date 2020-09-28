@@ -392,8 +392,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As Integer = Self.EntryList.RowCount
-		  Var SelectedCount As Integer = Self.EntryList.SelectedRowCount
+		  Var TotalCount As UInteger = Self.EntryList.RowCount
+		  Var SelectedCount As UInteger = Self.EntryList.SelectedRowCount
 		  
 		  Var Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
 		  If SelectedCount > 0 Then

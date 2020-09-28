@@ -321,7 +321,7 @@ End
 		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
 		  
 		  For Each Creature As Beacon.Creature In Self.mCreatures
-		    If Creature.IncubationTime = CType(0, UInt64) Or Creature.MatureTime = CType(0, UInt64) Then
+		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
 		    End If
 		    
@@ -452,7 +452,7 @@ End
 		  Var FastestMature As UInt64
 		  For Each Creature As Beacon.Creature In Creatures
 		    Var MatureSeconds As UInt64 = Creature.MatureTime / Self.mMatureSpeedMultiplier
-		    If FastestMature = CType(0, UInt64) Or MatureSeconds < FastestMature Then
+		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If
 		  Next

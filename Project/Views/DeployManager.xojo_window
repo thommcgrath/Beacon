@@ -847,13 +847,13 @@ End
 		  // Start the engines!
 		  Var Options As UInt64
 		  If Self.CreateBackupCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionBackup, UInt64)
+		    Options = Options Or Beacon.IntegrationEngine.OptionBackup
 		  End If
 		  If Self.ReviewChangesCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionReview, UInt64)
+		    Options = Options Or Beacon.IntegrationEngine.OptionReview
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
-		    Options = Options Or CType(Beacon.IntegrationEngine.OptionAnalyze, UInt64)
+		    Options = Options Or Beacon.IntegrationEngine.OptionAnalyze
 		  End If
 		  Var StopMessage As String
 		  Var HasPromptedForStopMessage As Boolean

@@ -182,7 +182,7 @@ Inherits ScrollCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub InsertText(NewText As String, StartPosition As Integer, Length As Integer)
+		Private Sub InsertText(NewText As String, StartPosition As UInteger, Length As UInteger)
 		  Var LeftChunk As String = Self.mContent.Left(StartPosition)
 		  Var RightChunk As String = Self.mContent.Middle(StartPosition + Length)
 		  Self.mContent = LeftChunk + NewText + RightChunk
@@ -229,11 +229,11 @@ Inherits ScrollCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelLength As Integer
+		Private mSelLength As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelStart As Integer
+		Private mSelStart As UInteger
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -261,7 +261,7 @@ Inherits ScrollCanvas
 			  Return Self.mSelStart + Self.mSelLength
 			End Get
 		#tag EndGetter
-		SelEnd As Integer
+		SelEnd As UInteger
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -278,7 +278,7 @@ Inherits ScrollCanvas
 			  End If
 			End Set
 		#tag EndSetter
-		SelLength As Integer
+		SelLength As UInteger
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -295,7 +295,7 @@ Inherits ScrollCanvas
 			  End If
 			End Set
 		#tag EndSetter
-		SelStart As Integer
+		SelStart As UInteger
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

@@ -2516,7 +2516,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Select Case Blueprint
 		      Case IsA Beacon.Creature
 		        Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
-		        If Creature.IncubationTime > CType(0, UInt64) And Creature.MatureTime > CType(0, UInt64) Then
+		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
 		          Columns.Value("incubation_time") = Creature.IncubationTime
 		          Columns.Value("mature_time") = Creature.MatureTime
 		        Else

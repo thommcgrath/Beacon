@@ -80,7 +80,7 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
-		  If Self.mMask = CType(0, UInt64) Then
+		  If Self.mMask = 0 Then
 		    Return Beacon.Maps.All.Mask
 		  Else
 		    Return Self.mMask
@@ -112,13 +112,13 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Platform() As Integer
+		Function Platform() As UInteger
 		  Return Self.mPlatform
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Platform(Assigns Value As Integer)
+		Protected Sub Platform(Assigns Value As UInteger)
 		  If Self.mPlatform <> Value Then
 		    Self.mPlatform = Value
 		    Self.Modified = True
@@ -311,7 +311,7 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPlatform As Integer
+		Private mPlatform As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -431,14 +431,6 @@ Protected Class ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MessageOfTheDay"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackupFolderName"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

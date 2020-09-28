@@ -14,24 +14,24 @@ Inherits Beacon.ConfigGroup
 		  
 		  For I As Integer = 0 To Self.mPlayerLevels.LastRowIndex
 		    Var Level As Integer = I + 2
-		    Var XP As UInt64 = Self.mPlayerLevels(I)
-		    Var LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), CType(0, UInt64))
+		    Var XP As Integer = Self.mPlayerLevels(I)
+		    Var LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), 0)
 		    If XP < LastXP Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level.", "Player:" + Level.ToString))
 		    End If
-		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
+		    If XP > Self.MaxSupportedXP Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,") + ".", "Player:" + Level.ToString))
 		    End If
 		  Next
 		  
 		  For I As Integer = 0 To Self.mDinoLevels.LastRowIndex
 		    Var Level As Integer = I + 2
-		    Var XP As UInt64 = Self.mDinoLevels(I)
-		    Var LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), CType(0, UInt64))
+		    Var XP As Integer = Self.mDinoLevels(I)
+		    Var LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), 0)
 		    If XP < LastXP Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level.", "Dino:" + Level.ToString))
 		    End If
-		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
+		    If XP > Self.MaxSupportedXP Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,") + ".", "Dino:" + Level.ToString))
 		    End If
 		  Next
@@ -103,7 +103,7 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  ElseIf Dict.HasAllKeys("Player Curve", "Player Level Cap", "Player Max Experience") Then
 		    Var Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Player Curve"))
-		    Var MaxLevel As Integer = Dict.Value("Player Level Cap")
+		    Var MaxLevel As UInt64 = Dict.Value("Player Level Cap")
 		    Var MaxXP As UInt64 = Dict.Value("Player Max Experience")
 		    Self.mPlayerLevels = Self.LegacyCurveImport(Curve, MaxLevel, MaxXP)
 		  End If
@@ -115,7 +115,7 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  ElseIf Dict.HasAllKeys("Dino Curve", "Dino Level Cap", "Dino Max Experience") Then
 		    Var Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Dino Curve"))
-		    Var MaxLevel As Integer = Dict.Value("Dino Level Cap")
+		    Var MaxLevel As UInt64 = Dict.Value("Dino Level Cap")
 		    Var MaxXP As UInt64 = Dict.Value("Dino Max Experience")
 		    Self.mDinoLevels = Self.LegacyCurveImport(Curve, MaxLevel, MaxXP)
 		  End If
@@ -229,7 +229,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  For I As Integer = StartingIndex + 1 To Values.LastRowIndex
-		    If Values(I) > CType(0, UInt64) Then
+		    If Values(I) > 0 Then
 		      EndingIndex = I
 		      Return Values(I)
 		    End If
@@ -248,7 +248,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  For I As Integer = StartingIndex - 1 DownTo 0
-		    If Values(I) > CType(0, UInt64) Then
+		    If Values(I) > 0 Then
 		      EndingIndex = I
 		      Return Values(I)
 		    End If
@@ -312,7 +312,7 @@ Inherits Beacon.ConfigGroup
 		      // Now make sure there are no gaps. If there are, fill in
 		      // the gap with the average of the surrounding values
 		      For I As Integer = 0 To Levels.LastRowIndex
-		        If Levels(I) <> CType(0, UInt64) Then
+		        If Levels(I) <> 0 Then
 		          Continue
 		        End If
 		        
@@ -328,7 +328,7 @@ Inherits Beacon.ConfigGroup
 		        Var Difference As UInt64 = NextXP - PreviousXP
 		        Var XPPerLevel As UInt64 = Round(Difference / Range)
 		        For X As Integer = LowIndex + 1 To HighIndex - 1
-		          Levels(X) = PreviousXP + (XPPerLevel * CType(X - LowIndex, UInt64))
+		          Levels(X) = PreviousXP + (XPPerLevel * (X - LowIndex))
 		          Config.mWasPerfectImport = False
 		        Next
 		      Next
@@ -346,7 +346,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function LegacyCurveImport(Curve As Beacon.Curve, MaxLevel As Integer, MaxXP As UInt64) As UInt64()
+		Private Shared Function LegacyCurveImport(Curve As Beacon.Curve, MaxLevel As UInt64, MaxXP As UInt64) As UInt64()
 		  Var Levels() As UInt64
 		  For Index As Integer = 0 To MaxLevel - 2
 		    Var Level As Integer = Index + 2
@@ -427,7 +427,7 @@ Inherits Beacon.ConfigGroup
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
-		DinoLevelCap As Integer
+		DinoLevelCap As UInteger
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -469,7 +469,7 @@ Inherits Beacon.ConfigGroup
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
-		PlayerLevelCap As Integer
+		PlayerLevelCap As UInteger
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
