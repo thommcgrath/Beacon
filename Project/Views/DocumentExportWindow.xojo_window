@@ -571,23 +571,25 @@ End
 		  
 		  Var ProfileBound As Integer = Document.ServerProfileCount - 1
 		  If ProfileBound > -1 Then
-		    // The menu will show the profiles
 		    For I As Integer = 0 To ProfileBound
 		      Var Profile As Beacon.ServerProfile = Document.ServerProfile(I)
 		      Win.ProfileMenu.AddRow(Profile.Name, Profile)
 		    Next
-		  Else
-		    // The menu will show maps instead
-		    Var Maps() As Beacon.Map = Document.Maps
-		    If Maps.LastRowIndex = 0 Then
-		      Win.ProfileMenu.AddRow(Maps(0).Name, New Beacon.GenericServerProfile(Maps(0).Name, Maps(0).Mask))
-		    ElseIf Maps.LastRowIndex > 0 Then
-		      Win.ProfileMenu.AddRow("All Maps", New Beacon.GenericServerProfile("All Maps", Beacon.Maps.All.Mask))
-		      For Each Map As Beacon.Map In Maps
-		        Win.ProfileMenu.AddRow(Map.Name, New Beacon.GenericServerProfile(Map.Name, Map.Mask))
-		      Next
-		    End If
+		    #if TargetMacOS
+		      Win.ProfileMenu.AddSeparator
+		    #endif
 		  End If
+		  
+		  Var Maps() As Beacon.Map = Document.Maps
+		  If Maps.LastRowIndex = 0 Then
+		    Win.ProfileMenu.AddRow(Maps(0).Name, New Beacon.GenericServerProfile(Maps(0).Name, Maps(0).Mask))
+		  ElseIf Maps.LastRowIndex > 0 Then
+		    Win.ProfileMenu.AddRow("All Maps", New Beacon.GenericServerProfile("All Maps", Beacon.Maps.All.Mask))
+		    For Each Map As Beacon.Map In Maps
+		      Win.ProfileMenu.AddRow(Map.Name, New Beacon.GenericServerProfile(Map.Name, Map.Mask))
+		    Next
+		  End If
+		  
 		  If Win.ProfileMenu.RowCount > 0 Then
 		    Win.ProfileMenu.SelectedRowIndex = 0
 		  End If
