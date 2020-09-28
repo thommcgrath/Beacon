@@ -21,9 +21,9 @@ Inherits TCPSocket
 		    End If
 		    
 		    Var Payload As MemoryBlock
-		    If Self.Buffer.Size < PayloadLen Then
+		    If CType(Self.Buffer.Size, UInt64) < PayloadLen Then
 		      Return
-		    ElseIf Self.Buffer.Size > PayloadLen Then
+		    ElseIf CType(Self.Buffer.Size, UInt64) > PayloadLen Then
 		      Payload = Self.Buffer.Left(PayloadLen)
 		      Self.Buffer = Self.Buffer.Middle(PayloadLen, Self.Buffer.Size - PayloadLen)
 		    Else
@@ -259,7 +259,7 @@ Inherits TCPSocket
 		  Var Payload As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Self.ConnectionKey, Decrypted)
 		  #if DebugBuild
 		    Var PredictedLength As UInt64 = BeaconEncryption.GetLength(Payload)
-		    If Payload.Size <> PredictedLength Then
+		    If CType(Payload.Size, UInt64) <> PredictedLength Then
 		      Break
 		    End If
 		  #endif

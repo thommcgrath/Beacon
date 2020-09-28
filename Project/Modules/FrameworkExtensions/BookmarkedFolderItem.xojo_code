@@ -24,7 +24,7 @@ Inherits FolderItem
 		  #elseif TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLByResolvingBookmarkData Lib "Cocoa" Selector "URLByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:" (Target As Ptr, BookmarkData As Ptr, Options As UInt32, RelativeURL As Ptr, IsStale As Boolean, ByRef Error As Ptr) As Ptr
-		    Declare Function DataWithBytes Lib "Cocoa" Selector "initWithBytes:length:" (Target As Ptr, Bytes As Ptr, Length As UInteger) As Ptr
+		    Declare Function DataWithBytes Lib "Cocoa" Selector "initWithBytes:length:" (Target As Ptr, Bytes As Ptr, Length As Integer) As Ptr
 		    Declare Function AbsoluteString Lib "Cocoa" Selector "absoluteString" (Target As Ptr) As CFStringRef
 		    Declare Function Alloc Lib "Cocoa" Selector "alloc" (Target As Ptr) As Ptr
 		    Declare Sub Autorelease Lib "Cocoa" Selector "autorelease" (Target As Ptr)
@@ -64,8 +64,8 @@ Inherits FolderItem
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLWithString Lib "Cocoa" Selector "URLWithString:" (Target As Ptr, URLString As CFStringRef) As Ptr
 		    Declare Function BookmarkDataWithOptions Lib "Cocoa" Selector "bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:" (Target As Ptr, Options as UInt32, ResourceValuesKeys As Ptr, RelativeURL As Ptr, ByRef Error As Ptr) As Ptr
-		    Declare Function DataLength Lib "Cocoa" Selector "length" (Target As Ptr) As UInteger
-		    Declare Sub DataBytes Lib "Cocoa" Selector "getBytes:length:" (Target As Ptr, Buffer As Ptr, Length As UInteger)
+		    Declare Function DataLength Lib "Cocoa" Selector "length" (Target As Ptr) As Integer
+		    Declare Sub DataBytes Lib "Cocoa" Selector "getBytes:length:" (Target As Ptr, Buffer As Ptr, Length As Integer)
 		    
 		    Var ErrorRef as Ptr
 		    Var NSURL As Ptr = objc_getClass("NSURL")
