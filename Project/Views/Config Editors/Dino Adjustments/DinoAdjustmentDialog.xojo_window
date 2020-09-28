@@ -1181,7 +1181,7 @@ End
 	#tag Constant, Name = HeightDisable, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"136", Scope = Private
+	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"168", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HeightReplace, Type = Double, Dynamic = False, Default = \"32", Scope = Private

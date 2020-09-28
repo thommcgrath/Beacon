@@ -1773,6 +1773,31 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
+		  Var MissingHeaders() As String
+		  For Each RequiredHeader As String In RequiredHeaders
+		    If Content.IndexOf(RequiredHeader) = -1 Then
+		      MissingHeaders.AddRow(RequiredHeader)
+		    End If
+		  Next
+		  MissingHeaders.Sort
+		  Return MissingHeaders
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ValidateIniContent(Content As String, Filename As String) As String()
+		  Var RequiredHeaders() As String
+		  If Filename = "Game.ini" Then
+		    RequiredHeaders = Array("[/script/shootergame.shootergamemode]")
+		  ElseIf Filename = "GameUserSettings.ini" Then
+		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[MessageOfTheDay]", "[ScalabilityGroups]")
+		  End If
+		  Return Beacon.ValidateIniContent(Content, RequiredHeaders)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ValidForDocument(Extends Blueprint As Beacon.Blueprint, Document As Beacon.Document) As Boolean
 		  Return (Document Is Nil) = False And Document.ModEnabled(Blueprint.ModID)

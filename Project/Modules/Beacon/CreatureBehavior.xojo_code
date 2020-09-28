@@ -88,7 +88,7 @@ Protected Class CreatureBehavior
 		    Behavior.mResistanceMultiplier = Dict.Lookup("Resistance Multiplier", 1.0)
 		    Behavior.mTamedDamageMultiplier = Dict.Lookup("Tamed Damage Multiplier", 1.0)
 		    Behavior.mTamedResistanceMultiplier = Dict.Lookup("Tamed Resistance Multiplier", 1.0)
-		    Behavior.mPreventTaming = Dict.Lookup("PreventTaming", False)
+		    Behavior.mPreventTaming = Dict.Lookup("Prevent Taming", False)
 		  End If
 		  
 		  Return Behavior

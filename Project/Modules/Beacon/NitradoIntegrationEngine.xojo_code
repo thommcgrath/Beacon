@@ -775,6 +775,7 @@ Inherits Beacon.IntegrationEngine
 		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode, ServiceID As Integer) As String
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  Sock.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path))
 		  If Self.Finished Then
 		    Return ""
@@ -821,6 +822,7 @@ Inherits Beacon.IntegrationEngine
 		  End Try
 		  
 		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
+		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  FetchSocket.Send("GET", FetchURL)
 		  
@@ -944,6 +946,7 @@ Inherits Beacon.IntegrationEngine
 		Private Function UploadFile(Path As String, FileContent As String) As Boolean
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  
 		  Var PathParts() As String = Path.Split("/")
 		  Var Filename As String = PathParts(PathParts.LastRowIndex)
@@ -979,15 +982,28 @@ Inherits Beacon.IntegrationEngine
 		    Return False
 		  End Try
 		  
+		  // Wait a moment so the receiver server is ready for the file... or something?
+		  Self.Wait(1000)
+		  
 		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  PutSocket.RequestHeader("token") = PutToken
-		  PutSocket.SetRequestContent(FileContent, "text/plain")
+		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(FileContent))
+		  PutSocket.SetRequestContent(FileContent, "application/octet-stream")
+		  PutSocket.RequestHeader("Cache-Control") = "no-cache"
 		  PutSocket.Send("POST", PutURL)
 		  If Self.Finished Then
 		    Return False
 		  End If
-		  Return Not Self.CheckError(PutSocket)
+		  If Self.CheckError(PutSocket) Then
+		    Self.Log("Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content.")
+		    If Self.BackupEnabled Then
+		      Self.Log("Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath)
+		    End If
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 

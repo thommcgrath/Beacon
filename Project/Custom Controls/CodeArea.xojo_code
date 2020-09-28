@@ -34,8 +34,31 @@ Inherits TextArea
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function EditCopy() As Boolean Handles EditCopy.Action
+			Self.Copy()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+
+	#tag Method, Flags = &h0
+		Sub Copy()
+		  If IsEventImplemented("ShouldCopy") And RaiseEvent ShouldCopy() = False Then
+		    Return
+		  End If
+		  
+		  Super.Copy()
+		End Sub
+	#tag EndMethod
+
+
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldCopy() As Boolean
 	#tag EndHook
 
 

@@ -615,6 +615,7 @@ End
 		  Self.Downloader.Send("GET", Self.mURL)
 		  Self.DownloadProgressBar.MaximumValue = 0
 		  Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
+		  Me.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

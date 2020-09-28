@@ -499,6 +499,29 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Function CanCopy(Content As String, Filename As String, Verb As String = "Copy") As Boolean
+		  Var MissingHeaders() As String = Beacon.ValidateIniContent(Content, Filename)
+		  Var MissingCount As Integer = MissingHeaders.Count
+		  If MissingCount > 0 Then
+		    Var Message As String = "This content is missing required groups. Do you want to " + Verb.Lowercase + " it anyway?"
+		    Var Explanation As String = "The " + MissingHeaders.EnglishOxfordList + " " + If(MissingCount = 1, "group is", "groups are") + " missing. Ark will not start up correctly if this file is used in its current state. Use the ""Rewrite Clipboard"" or ""Update File"" buttons to have Beacon correctly update your existing ini content."
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, Verb + " Anyway", "Cancel", "Help")
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      Return True
+		    Case BeaconUI.ConfirmResponses.Cancel
+		      Return False
+		    Case BeaconUI.ConfirmResponses.Alternate
+		      ShowURL(Beacon.WebURL("/help/updating_your_server_manually"))
+		      Return False
+		    End Select
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub CheckButtons()
 		  Var Rewriting As Boolean = Self.IsRewriting
 		  Self.RewriteFileButton.Enabled = Rewriting = False And (Self.Switcher.SelectedIndex = 1 Or Self.Switcher.SelectedIndex = 2)
@@ -581,23 +604,25 @@ End
 		  
 		  Var ProfileBound As Integer = Document.ServerProfileCount - 1
 		  If ProfileBound > -1 Then
-		    // The menu will show the profiles
 		    For I As Integer = 0 To ProfileBound
 		      Var Profile As Beacon.ServerProfile = Document.ServerProfile(I)
 		      Win.ProfileMenu.AddRow(Profile.Name, Profile)
 		    Next
-		  Else
-		    // The menu will show maps instead
-		    Var Maps() As Beacon.Map = Document.Maps
-		    If Maps.LastRowIndex = 0 Then
-		      Win.ProfileMenu.AddRow(Maps(0).Name, New Beacon.GenericServerProfile(Maps(0).Name, Maps(0).Mask))
-		    ElseIf Maps.LastRowIndex > 0 Then
-		      Win.ProfileMenu.AddRow("All Maps", New Beacon.GenericServerProfile("All Maps", Beacon.Maps.All.Mask))
-		      For Each Map As Beacon.Map In Maps
-		        Win.ProfileMenu.AddRow(Map.Name, New Beacon.GenericServerProfile(Map.Name, Map.Mask))
-		      Next
-		    End If
+		    #if TargetMacOS
+		      Win.ProfileMenu.AddSeparator
+		    #endif
 		  End If
+		  
+		  Var Maps() As Beacon.Map = Document.Maps
+		  If Maps.LastRowIndex = 0 Then
+		    Win.ProfileMenu.AddRow(Maps(0).Name, New Beacon.GenericServerProfile(Maps(0).Name, Maps(0).Mask))
+		  ElseIf Maps.LastRowIndex > 0 Then
+		    Win.ProfileMenu.AddRow("All Maps", New Beacon.GenericServerProfile("All Maps", Beacon.Maps.All.Mask))
+		    For Each Map As Beacon.Map In Maps
+		      Win.ProfileMenu.AddRow(Map.Name, New Beacon.GenericServerProfile(Map.Name, Map.Mask))
+		    Next
+		  End If
+		  
 		  If Win.ProfileMenu.RowCount > 0 Then
 		    Win.ProfileMenu.SelectedRowIndex = 0
 		  End If
@@ -823,9 +848,25 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ContentArea
+	#tag Event
+		Function ShouldCopy() As Boolean
+		  If Me.SelectionLength <> Me.Value.Length Then
+		    Return True
+		  End If
+		  
+		  Var Content As String = Me.Value
+		  Return Self.CanCopy(Content, Self.CurrentFilename)
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag Events SaveButton
 	#tag Event
 		Sub Action()
+		  If Not Self.CanCopy(Self.ContentArea.Value, Self.CurrentFilename, "Save") Then
+		    Return
+		  End If
+		  
 		  Var Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Self.CurrentFilename
@@ -847,8 +888,13 @@ End
 #tag Events CopyButton
 	#tag Event
 		Sub Action()
+		  Var Content As String = Self.ContentArea.Value
+		  If Not Self.CanCopy(Content, Self.CurrentFilename) Then
+		    Return
+		  End If
+		  
 		  Var Board As New Clipboard
-		  Board.Text = Self.ContentArea.Value
+		  Board.Text = Content
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
@@ -982,11 +1028,21 @@ End
 #tag Events FileRewriter
 	#tag Event
 		Sub Finished()
-		  If Me.Errored = True Or Self.mFileDestination = Nil Or Self.mFileDestination.Write(Me.UpdatedContent) = False Then
+		  Var Errored As Boolean
+		  If Me.Errored = False And (Self.mFileDestination Is Nil) = False Then
+		    If Self.CanCopy(Me.UpdatedContent, Me.Mode, "Save") Then
+		      If Self.mFileDestination.Write(Me.UpdatedContent) = False Then
+		        Errored = True
+		      End If
+		    End If
+		  Else
+		    Errored = True
+		  End If
+		  If Errored Then
 		    Self.ShowAlert("Unable to update file", "There was an error trying to rewrite the ini content in the selected file.")
 		  End If
-		  Self.mFileDestination = Nil
 		  
+		  Self.mFileDestination = Nil
 		  Self.CheckButtons()
 		End Sub
 	#tag EndEvent
@@ -1002,6 +1058,10 @@ End
 		  If Me.Errored Then
 		    Self.CheckButtons()
 		    Self.ShowAlert("Unable to update clipboard", "There was an error trying to rewrite the ini content on the clipboard.")
+		    Return
+		  End If
+		  
+		  If Not Self.CanCopy(Me.UpdatedContent, Me.Mode) Then
 		    Return
 		  End If
 		  

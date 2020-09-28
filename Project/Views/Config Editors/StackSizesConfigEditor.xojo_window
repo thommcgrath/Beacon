@@ -368,7 +368,7 @@ End
 		  End If
 		  
 		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Var Size As Integer = Config.Override(SourceEngram)
+		  Var Size As UInt64 = Config.Override(SourceEngram)
 		  
 		  Config = Self.Config(True)
 		  
@@ -415,7 +415,7 @@ End
 		  
 		  Self.List.RemoveAllRows()
 		  For Each Engram As Beacon.Engram In Engrams
-		    Var Size As Integer = Config.Override(Engram)
+		    Var Size As UInt64 = Config.Override(Engram)
 		    Self.List.AddRow(Engram.Label, Format(Size, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
@@ -506,7 +506,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Size As Integer = CDbl(Me.CellValueAt(Row, Column))
+		  Var Size As UInt64 = CDbl(Me.CellValueAt(Row, Column))
 		  If Size > BeaconConfigs.StackSizes.MaximumQuantity Then
 		    Size = BeaconConfigs.StackSizes.MaximumQuantity
 		    System.Beep
@@ -572,7 +572,7 @@ End
 		    End If
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
-		    Var Size As Integer = Config.Override(Engram)
+		    Var Size As UInt64 = Config.Override(Engram)
 		    Items.Value(Engram.Path) = Size
 		  Next
 		  
@@ -611,7 +611,7 @@ End
 		        End If
 		      End If
 		      
-		      Var Size As Integer = Entry.Value
+		      Var Size As UInt64 = Entry.Value
 		      SelectPaths.AddRow(Engram.Path)
 		      Config.Override(Engram) = Size
 		    Next
