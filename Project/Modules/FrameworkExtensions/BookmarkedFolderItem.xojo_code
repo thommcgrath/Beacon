@@ -24,14 +24,14 @@ Inherits FolderItem
 		  #elseif TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLByResolvingBookmarkData Lib "Cocoa" Selector "URLByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:" (Target As Ptr, BookmarkData As Ptr, Options As UInt32, RelativeURL As Ptr, IsStale As Boolean, ByRef Error As Ptr) As Ptr
-		    Declare Function DataWithBytes Lib "Cocoa" Selector "initWithBytes:length:" (Target As Ptr, Bytes As Ptr, Length As Integer) As Ptr
+		    Declare Function DataWithBytes Lib "Cocoa" Selector "initWithBytes:length:" (Target As Ptr, Bytes As Ptr, Length As UInteger) As Ptr
 		    Declare Function AbsoluteString Lib "Cocoa" Selector "absoluteString" (Target As Ptr) As CFStringRef
 		    Declare Function Alloc Lib "Cocoa" Selector "alloc" (Target As Ptr) As Ptr
 		    Declare Sub Autorelease Lib "Cocoa" Selector "autorelease" (Target As Ptr)
 		    Declare Function StartAccessingSecurityScopedResource Lib "Cocoa" Selector "startAccessingSecurityScopedResource" (Target As Ptr) As Boolean
 		    
 		    Var Mem As MemoryBlock = DecodeBase64(SaveInfo)
-		    Var DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, Mem.Size)
+		    Var DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, CType(Mem.Size, UInteger))
 		    Autorelease(DataRef)
 		    
 		    Var ErrorRef As Ptr
@@ -64,8 +64,8 @@ Inherits FolderItem
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLWithString Lib "Cocoa" Selector "URLWithString:" (Target As Ptr, URLString As CFStringRef) As Ptr
 		    Declare Function BookmarkDataWithOptions Lib "Cocoa" Selector "bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:" (Target As Ptr, Options as UInt32, ResourceValuesKeys As Ptr, RelativeURL As Ptr, ByRef Error As Ptr) As Ptr
-		    Declare Function DataLength Lib "Cocoa" Selector "length" (Target As Ptr) As Integer
-		    Declare Sub DataBytes Lib "Cocoa" Selector "getBytes:length:" (Target As Ptr, Buffer As Ptr, Length As Integer)
+		    Declare Function DataLength Lib "Cocoa" Selector "length" (Target As Ptr) As UInteger
+		    Declare Sub DataBytes Lib "Cocoa" Selector "getBytes:length:" (Target As Ptr, Buffer As Ptr, Length As UInteger)
 		    
 		    Var ErrorRef as Ptr
 		    Var NSURL As Ptr = objc_getClass("NSURL")
@@ -73,8 +73,9 @@ Inherits FolderItem
 		    If FileURL <> Nil Then
 		      Var DataRef As Ptr = BookmarkDataWithOptions(FileURL, 2048, Nil, Nil, ErrorRef)
 		      If DataRef <> Nil Then
-		        Var Mem As New MemoryBlock(DataLength(DataRef))
-		        DataBytes(DataRef, Mem, Mem.Size)
+		        Var DataLen As UInteger = DataLength(DataRef)
+		        Var Mem As New MemoryBlock(CType(DataLen, Integer))
+		        DataBytes(DataRef, Mem, DataLen)
 		        Return EncodeBase64(Mem, 0)
 		      Else
 		        Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
