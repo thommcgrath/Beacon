@@ -105,7 +105,9 @@ Implements ObservationKit.Observable
 		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Beacon.ConfigGroup()
 		  Var Names() As String
 		  For Each State As Beacon.ConfigSetState In States
-		    Names.AddRow(State.Name)
+		    If State.Enabled Then
+		      Names.AddRow(State.Name)
+		    End If
 		  Next
 		  Return Self.CombinedConfigs(Names)
 		End Function

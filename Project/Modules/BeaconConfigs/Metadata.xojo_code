@@ -200,6 +200,15 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone() As Beacon.ConfigGroup
+		  Var Instance As New BeaconConfigs.Metadata
+		  Instance.mDescription = Self.mDescription
+		  Instance.mTitle = Self.mTitle
+		  Return Instance
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "Metadata"
 		End Function
