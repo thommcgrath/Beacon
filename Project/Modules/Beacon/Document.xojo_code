@@ -102,6 +102,16 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Beacon.ConfigGroup()
+		  Var Names() As String
+		  For Each State As Beacon.ConfigSetState In States
+		    Names.AddRow(State.Name)
+		  Next
+		  Return Self.CombinedConfigs(Names)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CombinedConfigs(SetNames() As String) As Beacon.ConfigGroup()
 		  Var Combined() As Beacon.ConfigGroup
 		  If SetNames Is Nil Or SetNames.Count = 0 Then
@@ -232,6 +242,9 @@ Implements ObservationKit.Observable
 		      Clone.AddRow(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
 		    End If
 		  Next
+		  
+		  // First should always be an enabled base
+		  Clone(0) = New Beacon.ConfigSetState(Self.BaseConfigSetName, True)
 		  
 		  Return Clone
 		End Function

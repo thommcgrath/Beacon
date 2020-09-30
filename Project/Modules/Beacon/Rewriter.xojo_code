@@ -446,7 +446,7 @@ Inherits Global.Thread
 		    Var ConfigDict As New Dictionary
 		    Var CustomContentGroup As BeaconConfigs.CustomContent
 		    
-		    Var Groups() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    Var Groups() As Beacon.ConfigGroup = Document.CombinedConfigs(Profile.ConfigSetStates)
 		    For Each Group As Beacon.ConfigGroup In Groups
 		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		        CustomContentGroup = BeaconConfigs.CustomContent(Group)

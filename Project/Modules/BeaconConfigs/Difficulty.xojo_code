@@ -41,6 +41,12 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
+		Function Clone() As Beacon.ConfigGroup
+		  Return New BeaconConfigs.Difficulty(Self.DifficultyValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "Difficulty"
 		End Function
@@ -106,6 +112,15 @@ Inherits Beacon.ConfigGroup
 			End Set
 		#tag EndSetter
 		DifficultyValue As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.DifficultyValue * 45
+			End Get
+		#tag EndGetter
+		MaxCrystalWyvernLevel As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
