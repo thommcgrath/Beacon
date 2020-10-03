@@ -46,12 +46,6 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.ConfigGroup
-		  Return New BeaconConfigs.LootScale(Self.Multiplier)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "LootScale"
 		End Function

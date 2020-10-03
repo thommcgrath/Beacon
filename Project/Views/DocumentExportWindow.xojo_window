@@ -323,6 +323,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648
@@ -352,6 +353,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -640,6 +642,7 @@ Begin BeaconDialog DocumentExportWindow
       Top             =   -128
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   210
@@ -672,6 +675,7 @@ Begin BeaconDialog DocumentExportWindow
       Top             =   -96
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   210

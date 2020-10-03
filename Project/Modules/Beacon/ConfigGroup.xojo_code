@@ -1,10 +1,13 @@
 #tag Class
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.ConfigGroup
-		  Var Err As New UnsupportedOperationException
-		  Err.Reason = "Config group has not implemented Clone method"
-		  Raise Err
+		Function Clone(Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
+		  Var Dict As Dictionary = Self.ToDictionary(Document)
+		  If Dict Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return BeaconConfigs.CreateInstance(Self.ConfigName, Dict, Identity, Document)
 		End Function
 	#tag EndMethod
 

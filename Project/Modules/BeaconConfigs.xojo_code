@@ -149,6 +149,8 @@ Protected Module BeaconConfigs
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
+		  
+		  App.Log("Could not create config group """ + GroupName + """ because the correct constructor could not be found.")
 		End Function
 	#tag EndMethod
 

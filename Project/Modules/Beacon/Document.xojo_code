@@ -102,19 +102,19 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Beacon.ConfigGroup()
+		Function CombinedConfigs(States() As Beacon.ConfigSetState, Identity As Beacon.Identity) As Beacon.ConfigGroup()
 		  Var Names() As String
 		  For Each State As Beacon.ConfigSetState In States
 		    If State.Enabled Then
 		      Names.AddRow(State.Name)
 		    End If
 		  Next
-		  Return Self.CombinedConfigs(Names)
+		  Return Self.CombinedConfigs(Names, Identity)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(SetNames() As String) As Beacon.ConfigGroup()
+		Function CombinedConfigs(SetNames() As String, Identity As Beacon.Identity) As Beacon.ConfigGroup()
 		  Var Combined() As Beacon.ConfigGroup
 		  If SetNames Is Nil Or SetNames.Count = 0 Then
 		    Return Combined
@@ -128,14 +128,14 @@ Implements ObservationKit.Observable
 		      Var GroupName As String = Group.ConfigName
 		      
 		      If Idx = 0 Then
-		        Clones.Value(GroupName) = Group.Clone
+		        Clones.Value(GroupName) = Group.Clone(Identity, Self)
 		        Continue
 		      End If
 		      
 		      If Clones.HasKey(SetName) Then
 		        Call Beacon.ConfigGroup(Clones.Value(SetName)).Merge(Group)
 		      Else
-		        Clones.Value(SetName) = Group.Clone
+		        Clones.Value(SetName) = Group.Clone(Identity, Self)
 		      End If
 		    Next
 		  Next

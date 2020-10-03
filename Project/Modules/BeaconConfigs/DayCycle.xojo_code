@@ -37,15 +37,6 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.ConfigGroup
-		  Var Instance As New BeaconConfigs.DayCycle
-		  Instance.mDaySpeedMultiplier = Self.mDaySpeedMultiplier
-		  Instance.mNightSpeedMultiplier = Self.mNightSpeedMultiplier
-		  Return Instance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "DayCycle"
 		End Function

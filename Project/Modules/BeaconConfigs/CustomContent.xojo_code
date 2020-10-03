@@ -39,7 +39,12 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.ConfigGroup
+		Function Clone(Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
+		  #Pragma Unused Identity
+		  #Pragma Unused Document
+		  
+		  // Overridden for performance
+		  
 		  Var Instance As New BeaconConfigs.CustomContent
 		  Instance.mGameIniContent = Self.mGameIniContent
 		  Instance.mGameUserSettingsIniContent = Self.mGameUserSettingsIniContent
