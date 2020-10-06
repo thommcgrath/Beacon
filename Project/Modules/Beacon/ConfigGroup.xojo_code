@@ -189,7 +189,7 @@ Protected Class ConfigGroup
 		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  #Pragma Unused InputContent
 		  
-		  If Callback <> Nil Then
+		  If Callback <> Nil And (GetDelegateTargetMBS(Callback) Is Nil) = False Then
 		    Callback.Invoke
 		  End If
 		End Sub

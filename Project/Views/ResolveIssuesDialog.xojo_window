@@ -499,7 +499,9 @@ End
 		  
 		  Var Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
 		  Self.Hide()
-		  Self.GoToIssueHandler.Invoke(Issue)
+		  If (GetDelegateTargetMBS(Self.GoToIssueHandler) Is Nil) = False Then
+		    Self.GoToIssueHandler.Invoke(Issue)
+		  End If
 		  Self.Close()
 		End Sub
 	#tag EndEvent

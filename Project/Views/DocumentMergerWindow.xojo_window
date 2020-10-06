@@ -394,7 +394,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerCallback()
-		  Self.mCallback.Invoke()
+		  If (GetDelegateTargetMBS(Self.mCallback) Is Nil) = False Then
+		    Self.mCallback.Invoke()
+		  End If
 		  Self.Close
 		End Sub
 	#tag EndMethod

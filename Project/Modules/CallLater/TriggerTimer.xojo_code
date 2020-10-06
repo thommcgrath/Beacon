@@ -4,9 +4,17 @@ Inherits Timer
 	#tag Event
 		Sub Action()
 		  If Self.Callback <> Nil Then
-		    Self.Callback.Invoke()
+		    If (GetDelegateTargetMBS(Self.Callback) Is Nil) = False Then
+		      Self.Callback.Invoke()
+		    Else
+		      Self.Callback = Nil
+		    End If
 		  ElseIf Self.CallbackWithArg <> Nil Then
-		    Self.CallbackWithArg.Invoke(Self.Argument)
+		    If (GetDelegateTargetMBS(Self.CallbackWithArg) Is Nil) = False Then
+		      Self.CallbackWithArg.Invoke(Self.Argument)
+		    Else
+		      Self.CallbackWithArg = Nil
+		    End If
 		  End If
 		  
 		  If Timers <> Nil And Timers.HasKey(Self.Key) Then

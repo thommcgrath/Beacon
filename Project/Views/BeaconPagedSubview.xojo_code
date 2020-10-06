@@ -35,7 +35,7 @@ Inherits BeaconSubview
 		  Case 0
 		    Return AllowClose
 		  Case 1
-		    If Callback <> Nil Then
+		    If Callback <> Nil And (GetDelegateTargetMBS(Callback) Is Nil) = False Then
 		      Callback.Invoke(Self)
 		    End If
 		    Return ModifiedViews(0).ConfirmClose(AddressOf ShowView)

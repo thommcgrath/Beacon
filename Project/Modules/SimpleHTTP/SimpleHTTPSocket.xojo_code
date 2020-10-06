@@ -56,7 +56,9 @@ Private Class SimpleHTTPSocket
 		    Else
 		      Reason = "Other error " + ErrorNum.ToString
 		    End Select
-		    Self.Handler.Invoke(Self.mURL, 0, Reason, Self.Tag)
+		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
+		      Self.Handler.Invoke(Self.mURL, 0, Reason, Self.Tag)
+		    End If
 		    Self.Handler = Nil
 		  Else
 		    Break
@@ -72,7 +74,9 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Headers
 		  
 		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
+		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
+		      Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
+		    End If
 		    Self.Handler = Nil
 		  End If
 		  Self.ClearRequestHeaders()
@@ -85,7 +89,9 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
+		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
+		      Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
+		    End If
 		    Self.Handler = Nil
 		  End If
 		  Self.ClearRequestHeaders()
@@ -98,7 +104,9 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(Self.mURL, 0, Err.Reason, Self.Tag)
+		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
+		      Self.Handler.Invoke(Self.mURL, 0, Err.Reason, Self.Tag)
+		    End If
 		    Self.Handler = Nil
 		  Else
 		    Break

@@ -467,7 +467,7 @@ Protected Module Beacon
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf ValueName = FullName Then
 		    Return Value
-		  ElseIf Adapter <> Nil Then
+		  ElseIf Adapter <> Nil And (GetDelegateTargetMBS(Adapter) Is Nil) = False Then
 		    If Adapter.Invoke(Value, ValueName) Then
 		      Return Value
 		    Else

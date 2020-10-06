@@ -193,7 +193,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  If Self.mCancelAction <> Nil Then
+		  If Self.mCancelAction <> Nil And (GetDelegateTargetMBS(Self.mCancelAction) Is Nil) = False Then
 		    Self.mCancelAction.Invoke()
 		  End If
 		End Sub

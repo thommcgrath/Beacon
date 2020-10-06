@@ -484,7 +484,9 @@ Implements Iterable
 		  RemoveHandler Sender.Finished, AddressOf Searcher_Finished
 		  RemoveHandler Sender.EngramsFound, AddressOf Searcher_EngramsFound
 		  If Self.mResolveIssuesCallback <> Nil Then
-		    Self.mResolveIssuesCallback.Invoke
+		    If (GetDelegateTargetMBS(Self.mResolveIssuesCallback) Is Nil) = False Then
+		      Self.mResolveIssuesCallback.Invoke
+		    End If
 		    Self.mResolveIssuesCallback = Nil
 		  End If
 		End Sub

@@ -364,7 +364,7 @@ End
 		    Return True
 		  End If
 		  
-		  If Callback <> Nil Then
+		  If Callback <> Nil And (GetDelegateTargetMBS(Callback) Is Nil) = False Then
 		    Callback.Invoke(Self)
 		  End If
 		  
