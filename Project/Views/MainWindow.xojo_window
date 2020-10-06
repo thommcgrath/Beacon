@@ -234,6 +234,38 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Visible         =   True
          Width           =   1200
       End
+      Begin PresetsComponent PresetsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   642
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         Visible         =   True
+         Width           =   1200
+      End
    End
 End
 #tag EndWindow
@@ -438,7 +470,7 @@ End
 		  Case Self.PageBlueprints
 		    Return Self.BlueprintsComponent1
 		  Case Self.PagePresets
-		    
+		    Return Self.PresetsComponent1
 		  Case Self.PageHelp
 		    
 		  End Select
@@ -522,8 +554,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Presets() As LibraryPanePresets
-		  Return Self.LibraryPane1.PresetsPane
+		Function Presets(SwitchTo As Boolean = True) As PresetsComponent
+		  If SwitchTo Then
+		    Self.SwitchView(Self.PagePresets)
+		  End If
+		  
+		  Return Self.PresetsComponent1
 		End Function
 	#tag EndMethod
 
