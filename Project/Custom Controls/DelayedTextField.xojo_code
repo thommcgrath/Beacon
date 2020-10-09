@@ -52,6 +52,14 @@ Inherits UITweaks.ResizedTextField
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Text"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Bold"
 			Visible=true
 			Group="Font"
@@ -132,14 +140,6 @@ Inherits UITweaks.ResizedTextField
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Hint"
-			Visible=true
-			Group="Initial State"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
 			Visible=true
 			Group="Initial State"
 			InitialValue=""

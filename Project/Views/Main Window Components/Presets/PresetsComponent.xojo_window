@@ -32,6 +32,7 @@ Begin BeaconPagedSubview PresetsComponent
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -70,13 +71,12 @@ Begin BeaconPagedSubview PresetsComponent
       PanelCount      =   1
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   300
       Begin ListPresetsComponent PresetsList
@@ -100,6 +100,7 @@ Begin BeaconPagedSubview PresetsComponent
          LockTop         =   True
          MinimumHeight   =   0
          MinimumWidth    =   0
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1

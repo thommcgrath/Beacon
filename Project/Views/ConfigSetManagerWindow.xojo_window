@@ -3,7 +3,7 @@ Begin BeaconDialog ConfigSetManagerWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog ConfigSetManagerWindow
    MinimumWidth    =   600
    Resizeable      =   True
    Title           =   "Manage Config Sets"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
@@ -44,7 +44,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -76,7 +76,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -110,8 +110,8 @@ Begin BeaconDialog ConfigSetManagerWindow
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -130,7 +130,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "0"
+      RowSelectionType=   0
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   3
@@ -172,7 +172,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -207,7 +207,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -237,7 +237,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -269,7 +269,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -301,7 +301,7 @@ Begin BeaconDialog ConfigSetManagerWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0

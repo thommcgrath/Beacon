@@ -168,7 +168,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Top             =   273
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   "0"
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   586
@@ -252,7 +252,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Top             =   95
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   "0"
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   586

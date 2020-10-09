@@ -3,7 +3,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
    MinimumWidth    =   400
    Resizeable      =   False
    Title           =   "Set Points for Level"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   400
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -111,7 +111,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -155,7 +155,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -198,7 +198,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   94
@@ -234,7 +234,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -269,7 +269,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   94

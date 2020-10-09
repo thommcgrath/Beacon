@@ -21,6 +21,14 @@ Inherits Label
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Text"
+			Visible=true
+			Group="Appearance"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
 			Group="Appearance"
@@ -48,14 +56,6 @@ Inherits Label
 				"2 - Center"
 				"3 - Right"
 			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
-			Visible=true
-			Group="Appearance"
-			InitialValue="Untitled"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FontName"

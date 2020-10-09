@@ -45,7 +45,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   1122
       Begin UITweaks.ResizedLabel PlayerBaseLabel
@@ -73,7 +73,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   53
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   453
@@ -108,7 +108,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   48
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   419
@@ -143,7 +143,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   43
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   382
@@ -178,7 +178,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   38
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   351
@@ -213,7 +213,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   15
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   181
@@ -248,7 +248,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   56
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   453
@@ -291,7 +291,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   55
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   453
@@ -327,7 +327,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   54
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   453
@@ -362,7 +362,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   51
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   419
@@ -405,7 +405,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   50
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   419
@@ -441,7 +441,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   49
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   419
@@ -476,7 +476,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   46
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   385
@@ -519,7 +519,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   45
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   385
@@ -555,7 +555,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   44
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   385
@@ -590,7 +590,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   41
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   351
@@ -633,7 +633,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   40
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   351
@@ -669,7 +669,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   39
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   351
@@ -704,7 +704,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   36
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   317
@@ -747,7 +747,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   35
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   317
@@ -783,7 +783,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   34
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   317
@@ -818,7 +818,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   31
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   283
@@ -861,7 +861,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   30
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   283
@@ -897,7 +897,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   29
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   283
@@ -932,7 +932,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   26
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   249
@@ -975,7 +975,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   25
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   249
@@ -1011,7 +1011,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   24
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   249
@@ -1046,7 +1046,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   21
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   215
@@ -1089,7 +1089,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   20
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   215
@@ -1125,7 +1125,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   19
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   215
@@ -1160,7 +1160,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   16
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   181
@@ -1195,7 +1195,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   14
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   181
@@ -1230,7 +1230,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   11
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   147
@@ -1273,7 +1273,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   10
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   147
@@ -1309,7 +1309,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   147
@@ -1344,7 +1344,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   113
@@ -1387,7 +1387,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   113
@@ -1423,7 +1423,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   113
@@ -1458,7 +1458,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   81
@@ -1493,7 +1493,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   81
@@ -1528,7 +1528,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   52
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   453
@@ -1563,7 +1563,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   47
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   419
@@ -1598,7 +1598,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   42
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   385
@@ -1633,7 +1633,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   37
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   351
@@ -1668,7 +1668,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   32
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   317
@@ -1711,7 +1711,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   33
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   317
@@ -1747,7 +1747,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   27
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   283
@@ -1790,7 +1790,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   28
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   283
@@ -1826,7 +1826,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   22
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   249
@@ -1869,7 +1869,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   23
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   249
@@ -1905,7 +1905,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   17
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   215
@@ -1948,7 +1948,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   18
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   215
@@ -1984,7 +1984,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   181
@@ -2027,7 +2027,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   13
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   181
@@ -2063,7 +2063,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   147
@@ -2106,7 +2106,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   147
@@ -2142,7 +2142,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   113
@@ -2185,7 +2185,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   113
@@ -2253,7 +2253,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   81
@@ -2288,7 +2288,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   157
@@ -2323,7 +2323,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   191
@@ -2358,7 +2358,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   225
@@ -2393,7 +2393,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   259
@@ -2428,7 +2428,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   293
@@ -2463,7 +2463,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   395
@@ -2498,7 +2498,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   12
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   429
@@ -2533,7 +2533,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   13
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   463
@@ -2688,7 +2688,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   14
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   327
@@ -2723,7 +2723,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   15
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   361
@@ -2758,7 +2758,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   16
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   497
@@ -2793,7 +2793,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabIndex        =   17
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   531

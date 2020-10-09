@@ -47,7 +47,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   "1"
+      Resizer         =   1
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -82,8 +82,8 @@ Begin ConfigEditor SpawnPointsConfigEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -102,7 +102,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   3
@@ -197,7 +197,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   729
       Begin SpawnPointEditor Editor

@@ -555,7 +555,7 @@ Protected Module Beacon
 		    End If
 		    Created = New DateTime(Created.SecondsFrom1970, New TimeZone(0))
 		    
-		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase
+		    Return EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase
 		  #endif
 		End Function
 	#tag EndMethod
@@ -572,7 +572,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function Hash(Block As MemoryBlock) As String
-		  Return REALbasic.EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8)
+		  Return EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8)
 		End Function
 	#tag EndMethod
 

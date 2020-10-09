@@ -47,7 +47,7 @@ Begin LibrarySubview LibraryPaneSearch
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -104,6 +104,7 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

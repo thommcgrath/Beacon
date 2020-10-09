@@ -3,7 +3,7 @@ Begin BeaconDialog AdjustCostDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "0"
+   DefaultLocation =   0
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog AdjustCostDialog
    MinimumWidth    =   500
    Resizeable      =   False
    Title           =   "Choose Crafting Cost Multiplier"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   500
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog AdjustCostDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -84,7 +84,7 @@ Begin BeaconDialog AdjustCostDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -126,7 +126,7 @@ Begin BeaconDialog AdjustCostDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   139
@@ -157,7 +157,7 @@ Begin BeaconDialog AdjustCostDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -189,7 +189,7 @@ Begin BeaconDialog AdjustCostDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0

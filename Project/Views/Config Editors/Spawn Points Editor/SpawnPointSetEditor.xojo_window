@@ -73,7 +73,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -105,7 +105,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   0
@@ -137,7 +137,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   0
@@ -171,8 +171,8 @@ Begin BeaconContainer SpawnPointSetEditor
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   "0"
-         GridLinesVerticalStyle=   "0"
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
          HasBorder       =   True
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -191,7 +191,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   "1"
+         RowSelectionType=   1
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   0
@@ -257,7 +257,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -289,7 +289,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   0
@@ -321,7 +321,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   0
@@ -355,8 +355,8 @@ Begin BeaconContainer SpawnPointSetEditor
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   "0"
-         GridLinesVerticalStyle=   "0"
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
          HasBorder       =   True
          HasHeader       =   False
          HasHorizontalScrollbar=   False
@@ -375,7 +375,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   "1"
+         RowSelectionType=   1
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   0
@@ -425,7 +425,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -469,7 +469,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -505,7 +505,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -540,7 +540,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -626,7 +626,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   526
@@ -661,7 +661,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   492
@@ -696,7 +696,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   616
@@ -731,7 +731,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   458
@@ -775,7 +775,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   526
@@ -820,7 +820,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   492
@@ -865,7 +865,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   616
@@ -910,7 +910,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   616
@@ -955,7 +955,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   616
@@ -1000,7 +1000,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   458
@@ -1045,7 +1045,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   458
@@ -1090,7 +1090,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   458
@@ -1131,7 +1131,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   291
       End
       Begin Label PlayerDistanceLabel
@@ -1159,7 +1159,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   592
@@ -1194,7 +1194,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   592
@@ -1229,7 +1229,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   592

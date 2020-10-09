@@ -47,7 +47,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -108,7 +108,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   510
       Begin FadedSeparator EditorHeaderSeparator
@@ -161,7 +161,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Resizer         =   "0"
+         Resizer         =   0
          ResizerEnabled  =   True
          Scope           =   2
          ScrollSpeed     =   20
@@ -263,14 +263,18 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

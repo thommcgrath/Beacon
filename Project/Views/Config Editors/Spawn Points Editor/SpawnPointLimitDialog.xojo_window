@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnPointLimitDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnPointLimitDialog
    MinimumWidth    =   64
    Resizeable      =   False
    Title           =   "Creature Limit"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -84,7 +84,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -114,7 +114,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -190,7 +190,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   186
@@ -226,7 +226,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -261,7 +261,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   186
@@ -291,7 +291,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -323,7 +323,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
