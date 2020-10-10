@@ -8,7 +8,7 @@ Begin BeaconDialog ResolveIssuesDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   547
+   Height          =   400
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
@@ -17,7 +17,7 @@ Begin BeaconDialog ResolveIssuesDialog
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   500
+   MinHeight       =   400
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   1
@@ -88,7 +88,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   507
+      Top             =   360
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -115,7 +115,7 @@ Begin BeaconDialog ResolveIssuesDialog
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   160
+      Height          =   296
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -123,7 +123,7 @@ Begin BeaconDialog ResolveIssuesDialog
       InitialValue    =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
@@ -153,122 +153,6 @@ Begin BeaconDialog ResolveIssuesDialog
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Label BlueprintsExplanation
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   39
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   224
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-   End
-   Begin TextArea BlueprintsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   220
-      HelpTag         =   ""
-      HideSelection   =   True
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LimitText       =   0
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Multiline       =   True
-      ReadOnly        =   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollbarVertical=   True
-      Styled          =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "Source Code Pro"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   275
-      Transparent     =   False
-      Underline       =   False
-      UnicodeMode     =   0
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
-   Begin UITweaks.ResizedPushButton ExtractButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Extract Blueprints"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   507
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   131
-   End
    Begin UITweaks.ResizedPushButton GoToButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -295,33 +179,11 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   507
+      Top             =   360
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   105
-   End
-   Begin ProgressWheel ResolutionSpinner
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   16
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   163
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   509
-      Transparent     =   False
-      Visible         =   False
-      Width           =   16
    End
 End
 #tag EndWindow
@@ -387,40 +249,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ResolvingFinished()
-		  Self.ConfigsWaitingToResolve = Self.ConfigsWaitingToResolve - 1
-		  
-		  If Self.ConfigsWaitingToResolve > 0 Then
-		    Return
-		  End If
-		  
-		  Var Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
-		  If Issues.LastRowIndex = -1 Then
-		    BeaconUI.ShowAlert("All issues resolved.", "Great! All issues have been resolved.")
-		    Self.Close
-		    Return
-		  End If
-		  
-		  Var SomeResolved As Boolean = Issues.LastRowIndex < Self.Issues.LastRowIndex
-		  
-		  Self.Issues = Issues
-		  Self.UpdateUI
-		  
-		  Self.ActionButton.Enabled = True
-		  Self.ExtractButton.Enabled = BlueprintsField.Value.Length > 0
-		  Self.ResolutionSpinner.Visible = False
-		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.SelectedRowIndex > -1
-		  Self.BlueprintsField.ReadOnly = False
-		  
-		  If SomeResolved Then
-		    BeaconUI.ShowAlert("Some issues resolved.", "The text successfully resolved some issues, but not all of them.")
-		  Else
-		    BeaconUI.ShowAlert("No issues resolved.", "The text provided did not resolve any issues.")
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.IssuesList.RemoveAllRows
 		  For Each Issue As Beacon.Issue In Self.Issues
@@ -460,33 +288,7 @@ End
 #tag Events IssuesList
 	#tag Event
 		Sub Change()
-		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.SelectedRowIndex > -1
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BlueprintsField
-	#tag Event
-		Sub TextChange()
-		  Self.ExtractButton.Enabled = Me.Value.Trim <> ""
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ExtractButton
-	#tag Event
-		Sub Action()
-		  ResolutionSpinner.Visible = True
-		  ActionButton.Enabled = False
-		  GoToButton.Enabled = False
-		  Me.Enabled = False
-		  BlueprintsField.ReadOnly = True
-		  
-		  Var Content As String = BlueprintsField.Value
-		  Var Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
-		  Var Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
-		  Self.ConfigsWaitingToResolve = Configs.LastRowIndex + 1
-		  For Each Config As Beacon.ConfigGroup In Configs
-		    Config.TryToResolveIssues(Content, Callback)
-		  Next
+		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Me.SelectedRowIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

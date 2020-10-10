@@ -452,8 +452,8 @@ End
 		  
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Issue.UserData)
 		  Select Case Info.FullName
-		  Case "Beacon.LootSource"
-		    Var Source As Beacon.LootSource = Issue.UserData
+		  Case "Beacon.LootContainer"
+		    Var Source As Beacon.LootContainer = Issue.UserData
 		    Call Self.GoToChild(Source)
 		  Case "Dictionary"
 		    Var Dict As Dictionary = Issue.UserData

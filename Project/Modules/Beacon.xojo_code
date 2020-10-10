@@ -372,7 +372,7 @@ Protected Module Beacon
 		    Var Line As String = Lines(I).Trim
 		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		      Select Case Line
-		      Case "[Beacon]", "[/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]"
+		      Case "[Beacon]", "[/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]", "[ScalabilityGroups.sg]"
 		        IgnoreLines = True
 		      Else
 		        IgnoreLines = False
