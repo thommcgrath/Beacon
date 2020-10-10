@@ -142,7 +142,39 @@ End
 	#tag Method, Flags = &h21
 		Private Function ClosePreset(Preset As Beacon.Preset) As Boolean
 		  Break
+		  
+		  Var Bound As Integer = Self.PageCount - 1
+		  For Idx As Integer = 0 To Bound
+		    Var View As BeaconSubview = Self.Page(Idx)
+		    If (View IsA PresetEditorView) = False Then
+		      Continue
+		    End If
+		    
+		    // Will only match database presets, not file presets. That's ok.
+		    Var EditorView As PresetEditorView = PresetEditorView(View)
+		    If EditorView.ViewID <> Preset.PresetID Then
+		      Continue
+		    End If
+		    
+		    Return Self.CloseView(EditorView)
+		  Next
+		  
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CloseView(View As PresetEditorView) As Boolean
+		  If View.CanBeClosed = False Or View.ConfirmClose(WeakAddressOf ShowView) = False Then
+		    Return False
+		  End If
+		  
+		  Var Idx As Integer = Self.IndexOf(View)
+		  
+		  Self.RemovePage(Idx)
+		  Self.Views.RemovePanelAt(Idx)
+		  Self.Nav.Remove(View.LinkedOmniBarItem)
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -280,7 +312,7 @@ End
 		    If Self.Page(Idx).LinkedOmniBarItem = Item Then
 		      Var View As BeaconSubview = Self.Page(Idx)
 		      If View IsA PresetEditorView Then
-		        Break
+		        Call Self.CloseView(PresetEditorView(View))
 		      End If
 		      Return
 		    End If
