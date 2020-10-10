@@ -17,7 +17,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetLength(Data As MemoryBlock) As UInt64
+		Protected Function GetLength(Data As MemoryBlock) As Int32
 		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header <> Nil Then
 		    Return Header.Size + Header.EncryptedLength
