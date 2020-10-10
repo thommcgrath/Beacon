@@ -288,6 +288,7 @@ End
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  If Self.mScrollPosition > 0 Then
 		    G.DrawingColor = SystemColors.SeparatorColor

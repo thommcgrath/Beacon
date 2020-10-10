@@ -77,6 +77,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  Var Count As Integer = Self.Count
 		  Var MaxTotalTabWidth As Integer = (Count * Self.MaxTabWidth) + (Count - 1)

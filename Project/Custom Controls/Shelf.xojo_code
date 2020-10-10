@@ -111,6 +111,7 @@ Implements ObservationKit.Observer
 		  Const CellCornerRadius = 6
 		  
 		  #Pragma Unused areas
+		  #Pragma Unused Highlighted
 		  
 		  G.FontSize = 10
 		  G.FontUnit = FontUnits.Point

@@ -1429,7 +1429,7 @@ Protected Module Beacon
 		    If MaxLength > 1 Then
 		      MaxLength = MaxLength - 1 // To leave space for the elipsis
 		    End If
-		    Var PrefixLength As Integer = Ceil(MaxLength / 2)
+		    Var PrefixLength As Integer = Ceiling(MaxLength / 2)
 		    Var SuffixLength As Integer = MaxLength - PrefixLength
 		    Var Prefix As String = Basename.Left(PrefixLength).Trim
 		    Var Suffix As String = Basename.Right(SuffixLength).Trim

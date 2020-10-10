@@ -742,7 +742,7 @@ End
 		  Var Menu As New MenuItem
 		  For Each SetName As String In SetNames
 		    Var Item As New MenuItem(SetName, SetName)
-		    Item.Checked = SetName = Self.ActiveConfigSet 
+		    Item.HasCheckMark = SetName = Self.ActiveConfigSet 
 		    Menu.AddMenu(Item)
 		  Next
 		  

@@ -208,7 +208,7 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or Value.Type <> Variant.TypeInteger Then
+		  If IsNull(Value) Or (Value.Type <> Variant.TypeInt32 And Value.Type <> Variant.TypeInt64) Then
 		    Return Default
 		  End If
 		  

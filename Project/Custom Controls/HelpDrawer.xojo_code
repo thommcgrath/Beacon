@@ -51,6 +51,7 @@ Inherits ControlCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  Const ButtonHeight = 30
 		  

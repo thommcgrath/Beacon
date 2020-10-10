@@ -582,6 +582,7 @@ End
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused areas
+		  #Pragma Unused Highlighted
 		  
 		  G.DrawPicture(IconApp, 0, 0)
 		End Sub

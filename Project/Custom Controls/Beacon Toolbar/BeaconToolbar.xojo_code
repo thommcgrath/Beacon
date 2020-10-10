@@ -182,6 +182,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  Self.PaintContent(G)
 		End Sub

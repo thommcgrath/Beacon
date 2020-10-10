@@ -1145,7 +1145,7 @@ Implements ObservationKit.Observable
 		  
 		  For Idx As Integer = Self.mConfigSetStates.LastRowIndex DownTo 1
 		    If Self.mConfigSetStates(Idx).Name = SetName Then
-		      Self.mConfigSetStates.Remove(Idx)
+		      Self.mConfigSetStates.RemoveRowAt(Idx)
 		      Self.Modified = True
 		    End If
 		  Next

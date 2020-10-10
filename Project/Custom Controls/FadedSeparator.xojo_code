@@ -4,6 +4,7 @@ Inherits ControlCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)

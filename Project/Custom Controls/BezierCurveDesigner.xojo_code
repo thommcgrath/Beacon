@@ -92,6 +92,7 @@ Inherits ControlCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
 		  G.FillRectangle(1, 1, G.Width - 2, G.Height - 2)

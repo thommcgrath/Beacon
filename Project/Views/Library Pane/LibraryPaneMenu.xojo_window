@@ -136,10 +136,10 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Links.AddRow("Enable Cloud && Community" : "beacon://enableonline")
 		  Else
-		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.LoginKey = "" Then
+		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.Username = "" Then
 		      Links.AddRow("Sign In" : "beacon://signin")
 		    Else
-		      Links.AddRow(App.IdentityManager.CurrentIdentity.LoginKey : "")
+		      Links.AddRow(App.IdentityManager.CurrentIdentity.Username : "")
 		      Links.AddRow("Manage Account" : "beacon://showaccount")
 		      Links.AddRow("Sign Out" : "beacon://signout")
 		    End If

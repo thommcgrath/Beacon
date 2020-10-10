@@ -406,6 +406,7 @@ End
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
 		  
 		  Var Icon As Picture = BeaconUI.IconWithColor(ImgToolbarDivider, SystemColors.SeparatorColor)
 		  G.DrawPicture(Icon, 0, 0)
