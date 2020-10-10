@@ -54,7 +54,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   438
+      Height          =   388
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Preset Name	Type"
@@ -74,7 +74,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   50
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -83,6 +83,36 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       Width           =   576
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin OmniBar PresetsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   576
    End
 End
 #tag EndWindow
@@ -327,10 +357,15 @@ End
 #tag Events List
 	#tag Event
 		Sub Change()
-		  #if false
-		    Header.Duplicate.Enabled = Me.SelectedRowCount > 0
-		    Header.Export.Enabled = Me.SelectedRowCount > 0
-		  #endif
+		  If (Self.PresetsToolbar.Item("ClonePreset") Is Nil) = False Then
+		    Self.PresetsToolbar.Item("ClonePreset").Enabled = Me.SelectedRowCount > 0
+		  End If
+		  If (Self.PresetsToolbar.Item("EditPreset") Is Nil) = False Then
+		    Self.PresetsToolbar.Item("EditPreset").Enabled = Me.SelectedRowCount = 1
+		  End If
+		  If (Self.PresetsToolbar.Item("ExportPreset") Is Nil) = False Then
+		    Self.PresetsToolbar.Item("ExportPreset").Enabled = Me.SelectedRowCount > 0
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -408,11 +443,43 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
 		  If Me.SelectedRowIndex > -1 Then
 		    Var Preset As Beacon.Preset = Me.RowTagAt(Me.SelectedRowIndex)
 		    Self.OpenPreset(Preset)
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PresetsToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateButton("NewPreset", "New Preset", IconToolbarAdd, "Create a new preset."))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("EditPreset", "Edit Preset", IconToolbarEdit, "Edit the selected preset.", Self.List.SelectedRowCount = 1))
+		  Me.Append(OmniBarItem.CreateButton("ClonePreset", "Duplicate", IconToolbarClone, "Create a copy of the selected presets.", Self.List.SelectedRowCount > 0))
+		  Me.Append(OmniBarItem.CreateButton("ExportPreset", "Export", IconToolbarExport, "Export the selected presets to disk for sharing or backup.", Self.List.SelectedRowCount > 0))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "NewPreset"
+		    Self.OpenPreset(New Beacon.MutablePreset)
+		  Case "EditPreset"
+		    Self.List.DoEdit()
+		  Case "ClonePreset"
+		    Self.CloneSelected()
+		  Case "ExportPreset"
+		    Self.ExportSelected()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

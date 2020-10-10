@@ -141,8 +141,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ClosePreset(Preset As Beacon.Preset) As Boolean
-		  Break
-		  
 		  Var Bound As Integer = Self.PageCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var View As BeaconSubview = Self.Page(Idx)
@@ -159,7 +157,7 @@ End
 		    Return Self.CloseView(EditorView)
 		  Next
 		  
-		  Return False
+		  Return True
 		End Function
 	#tag EndMethod
 

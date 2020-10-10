@@ -86,9 +86,10 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateButton(Name As String, Caption As String, Icon As Picture, HelpTag As String) As OmniBarItem
+		Shared Function CreateButton(Name As String, Caption As String, Icon As Picture, HelpTag As String, Enabled As Boolean = True) As OmniBarItem
 		  Var Item As New OmniBarItem(OmniBarItem.Types.Button, Name, Caption, Icon)
 		  Item.HelpTag = HelpTag
+		  Item.Enabled = Enabled
 		  Return Item
 		End Function
 	#tag EndMethod
@@ -147,6 +148,11 @@ Implements ObservationKit.Observable
 		  Else
 		    ForeColor = Colors.TextColor
 		    ShadowColor = Colors.TextShadowColor
+		  End If
+		  
+		  If Not Self.Enabled Then
+		    ForeColor = ForeColor.AtOpacity(0.5)
+		    ShadowColor = ShadowColor.AtOpacity(0.5)
 		  End If
 		  
 		  Var IconRect As New Rect(NearestMultiple((G.Width - Self.ButtonIconSize) / 2, G.ScaleX), CellTop, Self.ButtonIconSize, Self.ButtonIconSize)
