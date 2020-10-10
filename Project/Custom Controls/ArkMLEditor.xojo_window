@@ -62,13 +62,13 @@ Begin ContainerControl ArkMLEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   42
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   0
+      UnicodeMode     =   "0"
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True
@@ -96,7 +96,7 @@ Begin ContainerControl ArkMLEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   False
       Scope           =   2
       ScrollSpeed     =   20

@@ -45,7 +45,7 @@ Begin DiscoveryView FTPDiscoveryView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
@@ -889,11 +889,10 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin Timer StatusWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
-      RunMode         =   2
+      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End

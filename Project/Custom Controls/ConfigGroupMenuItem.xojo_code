@@ -76,7 +76,7 @@ Inherits MenuItem
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Text"
+			Name="Value"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

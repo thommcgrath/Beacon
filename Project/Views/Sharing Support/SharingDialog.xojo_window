@@ -110,7 +110,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   336
@@ -418,7 +418,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   176
@@ -453,7 +453,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   248
@@ -488,7 +488,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   248
@@ -518,7 +518,7 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   0
@@ -532,11 +532,10 @@ Begin BeaconDialog SharingDialog
       End
    End
    Begin Timer StatusCheckTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   200
-      RunMode         =   1
+      RunMode         =   "1"
       Scope           =   2
       TabPanelIndex   =   0
    End

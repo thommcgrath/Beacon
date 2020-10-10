@@ -55,7 +55,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -88,7 +88,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -121,7 +121,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -154,7 +154,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -187,7 +187,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -220,7 +220,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -253,7 +253,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -286,7 +286,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   142
    End
    Begin UITweaks.ResizedTextField StatFields
@@ -321,7 +321,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   88
@@ -364,7 +364,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -407,7 +407,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   54
@@ -450,7 +450,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   88
@@ -493,7 +493,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   122
@@ -536,7 +536,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -579,7 +579,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   122
@@ -622,7 +622,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   54
@@ -655,8 +655,8 @@ Begin ConfigEditor StatLimitsConfigEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVerticalStyle=   "0"
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -675,7 +675,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   "0"
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   17
@@ -717,7 +717,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   168

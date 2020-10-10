@@ -3,7 +3,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
    MinimumWidth    =   475
    Resizeable      =   False
    Title           =   "Set Engram Properties"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   475
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -111,7 +111,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -155,7 +155,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -191,7 +191,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -291,7 +291,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   216
    End
    Begin UITweaks.ResizedTextField RequiredLevelField
@@ -326,7 +326,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -362,7 +362,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -404,7 +404,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -440,7 +440,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -480,7 +480,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   216
    End
    Begin CheckBox HiddenEditCheck
@@ -513,7 +513,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   80
    End
    Begin CheckBox AutoUnlockEditCheck
@@ -546,7 +546,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   80
    End
    Begin CheckBox LevelEditCheck
@@ -579,7 +579,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   80
    End
    Begin CheckBox PointsEditCheck
@@ -612,7 +612,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   80
    End
    Begin CheckBox PrereqEditCheck
@@ -645,7 +645,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   80
    End
 End

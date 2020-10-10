@@ -47,7 +47,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20

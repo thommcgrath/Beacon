@@ -47,7 +47,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -112,7 +112,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -205,8 +205,8 @@ Begin ConfigEditor EngramControlConfigEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVerticalStyle=   "0"
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -225,7 +225,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   1
+      RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   7
@@ -264,8 +264,8 @@ Begin ConfigEditor EngramControlConfigEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVerticalStyle=   "0"
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -284,7 +284,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   1
+      RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   8

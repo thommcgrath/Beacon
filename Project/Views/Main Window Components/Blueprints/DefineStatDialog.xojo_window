@@ -3,7 +3,7 @@ Begin BeaconDialog DefineStatDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog DefineStatDialog
    MinimumWidth    =   400
    Resizeable      =   True
    Title           =   "Creature Stat Editor"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   400
    Begin PopupMenu StatMenu
@@ -88,7 +88,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -131,7 +131,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86
@@ -174,7 +174,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -217,7 +217,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -260,7 +260,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   188
@@ -296,7 +296,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   21
@@ -331,7 +331,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   53
@@ -366,7 +366,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   87
@@ -401,7 +401,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -436,7 +436,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -471,7 +471,7 @@ Begin BeaconDialog DefineStatDialog
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   188
@@ -501,7 +501,7 @@ Begin BeaconDialog DefineStatDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -533,7 +533,7 @@ Begin BeaconDialog DefineStatDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0

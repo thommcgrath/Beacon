@@ -64,7 +64,7 @@ Inherits TextArea
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Text"
+			Name="Value"
 			Visible=true
 			Group="Initial State"
 			InitialValue=""

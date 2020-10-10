@@ -47,8 +47,8 @@ Begin BeaconSubview ModEditorView
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVerticalStyle=   "0"
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -67,7 +67,7 @@ Begin BeaconSubview ModEditorView
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   1
+      RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   0
@@ -106,7 +106,7 @@ Begin BeaconSubview ModEditorView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   False
       Scope           =   2
       ScrollSpeed     =   20
@@ -120,11 +120,10 @@ Begin BeaconSubview ModEditorView
       Width           =   844
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   1000
-      RunMode         =   2
+      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End

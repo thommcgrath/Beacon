@@ -103,7 +103,7 @@ Begin BeaconDialog DocumentExportWindow
       Top             =   111
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   0
+      UnicodeMode     =   "0"
       UseFocusRing    =   True
       Visible         =   True
       Width           =   597
@@ -285,48 +285,36 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   597
    End
    Begin Beacon.Rewriter GameIniRewriter
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin Beacon.Rewriter GameUserSettingsRewriter
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin Beacon.Rewriter FileRewriter
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin Beacon.Rewriter ClipboardRewriter
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin OmniBar ExportToolbar
       Alignment       =   0
@@ -412,7 +400,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -447,7 +435,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -482,7 +470,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   126
@@ -549,7 +537,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -579,7 +567,7 @@ Begin BeaconDialog DocumentExportWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   21
       TabPanelIndex   =   0
@@ -616,7 +604,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   218
@@ -656,7 +644,7 @@ Begin BeaconDialog DocumentExportWindow
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   210
    End
    Begin CheckBox ConfigSetsOverrideCheck
@@ -689,7 +677,7 @@ Begin BeaconDialog DocumentExportWindow
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   210
    End
 End

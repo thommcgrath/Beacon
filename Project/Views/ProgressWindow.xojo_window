@@ -3,7 +3,7 @@ Begin BeaconDialog ProgressWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog ProgressWindow
    MinimumWidth    =   500
    Resizeable      =   False
    Title           =   "Progress"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   500
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog ProgressWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -108,7 +108,7 @@ Begin BeaconDialog ProgressWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -138,7 +138,7 @@ Begin BeaconDialog ProgressWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -151,11 +151,10 @@ Begin BeaconDialog ProgressWindow
       Width           =   80
    End
    Begin Timer UpdateTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   10
-      RunMode         =   0
+      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End

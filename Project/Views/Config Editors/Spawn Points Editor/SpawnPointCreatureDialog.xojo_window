@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
    MinimumWidth    =   524
    Resizeable      =   False
    Title           =   "Creature Entry"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   524
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -116,7 +116,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -151,7 +151,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -194,7 +194,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -238,7 +238,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -282,7 +282,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -318,7 +318,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -361,7 +361,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   118
@@ -397,7 +397,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   118
@@ -427,7 +427,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -459,7 +459,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
@@ -496,7 +496,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   446
@@ -559,7 +559,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   254
@@ -594,7 +594,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
@@ -629,7 +629,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
@@ -664,7 +664,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
@@ -699,7 +699,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
@@ -734,7 +734,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
@@ -769,7 +769,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
@@ -813,7 +813,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
@@ -858,7 +858,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
@@ -903,7 +903,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
@@ -948,7 +948,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
@@ -993,7 +993,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
@@ -1038,7 +1038,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
@@ -1074,7 +1074,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   188
@@ -1109,7 +1109,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   188
@@ -1144,7 +1144,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   354

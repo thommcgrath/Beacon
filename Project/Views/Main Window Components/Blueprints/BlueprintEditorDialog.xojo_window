@@ -3,7 +3,7 @@ Begin BeaconDialog BlueprintEditorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog BlueprintEditorDialog
    MinimumWidth    =   540
    Resizeable      =   True
    Title           =   "New Blueprint"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   540
    Begin PagePanel Pages
@@ -44,7 +44,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -451,7 +451,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   58
@@ -495,7 +495,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   92
@@ -539,7 +539,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   126
@@ -583,7 +583,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   160
@@ -616,8 +616,8 @@ Begin BeaconDialog BlueprintEditorDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -636,7 +636,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   1
+         RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   9
@@ -673,7 +673,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   10
          TabPanelIndex   =   2
@@ -705,7 +705,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   11
          TabPanelIndex   =   2
@@ -742,7 +742,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   58
@@ -777,7 +777,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   92
@@ -812,7 +812,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   126
@@ -847,7 +847,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   160
@@ -882,7 +882,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   194
@@ -912,7 +912,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   12
          TabPanelIndex   =   2
@@ -957,7 +957,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   58
@@ -993,7 +993,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   58
@@ -1036,7 +1036,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   92
@@ -1072,7 +1072,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   92
@@ -1115,7 +1115,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   126
@@ -1151,7 +1151,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   126
@@ -1194,7 +1194,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   160
@@ -1230,7 +1230,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   160
@@ -1262,8 +1262,8 @@ Begin BeaconDialog BlueprintEditorDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -1282,7 +1282,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   1
+         RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   8
@@ -1319,7 +1319,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   3
@@ -1351,7 +1351,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   10
          TabPanelIndex   =   3
@@ -1383,7 +1383,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   11
          TabPanelIndex   =   3
@@ -1447,7 +1447,7 @@ Begin BeaconDialog BlueprintEditorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -1479,7 +1479,7 @@ Begin BeaconDialog BlueprintEditorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0

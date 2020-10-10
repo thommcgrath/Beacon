@@ -47,7 +47,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   False
       Scope           =   2
       ScrollSpeed     =   20

@@ -3,7 +3,7 @@ Begin BeaconDialog StopMessageDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog StopMessageDialog
    MinimumWidth    =   500
    Resizeable      =   True
    Title           =   "Stop Message"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   500
    Begin UITweaks.ResizedTextField MessageField
@@ -56,7 +56,7 @@ Begin BeaconDialog StopMessageDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -92,7 +92,7 @@ Begin BeaconDialog StopMessageDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -127,7 +127,7 @@ Begin BeaconDialog StopMessageDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -157,7 +157,7 @@ Begin BeaconDialog StopMessageDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -189,7 +189,7 @@ Begin BeaconDialog StopMessageDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0

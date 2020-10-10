@@ -105,7 +105,7 @@ Begin DiscoveryView LocalDiscoveryView
       Top             =   151
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   0
+      UnicodeMode     =   "0"
       UseFocusRing    =   True
       Visible         =   True
       Width           =   560
@@ -301,7 +301,6 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2

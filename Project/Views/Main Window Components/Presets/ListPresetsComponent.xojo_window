@@ -47,8 +47,8 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       FontName        =   "SmallSystem"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVerticalStyle=   "0"
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -67,7 +67,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   1
+      RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   0

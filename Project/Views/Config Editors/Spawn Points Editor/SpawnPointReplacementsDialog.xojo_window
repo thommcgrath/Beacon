@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
    MinimumWidth    =   660
    Resizeable      =   True
    Title           =   "Creature Replacements"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   660
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -84,7 +84,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -114,7 +114,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -151,7 +151,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   174
@@ -186,7 +186,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   174
@@ -244,7 +244,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   0
@@ -276,7 +276,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   0
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -310,8 +310,8 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -330,7 +330,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   1
+         RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   2
@@ -368,7 +368,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -400,7 +400,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0

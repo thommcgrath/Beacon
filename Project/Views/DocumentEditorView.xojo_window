@@ -45,7 +45,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       Top             =   50
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   627
       Begin LogoFillCanvas LogoFillCanvas1
@@ -155,7 +155,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -201,7 +201,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2

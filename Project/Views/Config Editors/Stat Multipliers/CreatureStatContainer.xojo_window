@@ -86,7 +86,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   42
@@ -122,7 +122,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   42
@@ -157,7 +157,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   42
@@ -200,7 +200,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   76
@@ -236,7 +236,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   76
@@ -271,7 +271,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   76
@@ -314,7 +314,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   110
@@ -350,7 +350,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   110
@@ -385,7 +385,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   110
@@ -428,7 +428,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   144
@@ -464,7 +464,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   144
@@ -499,7 +499,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   144
@@ -542,7 +542,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   178
@@ -578,7 +578,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   178
@@ -613,7 +613,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   178
@@ -656,7 +656,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   280
@@ -692,7 +692,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   280
@@ -727,7 +727,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   280
@@ -770,7 +770,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   19
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   314
@@ -806,7 +806,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   18
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   314
@@ -841,7 +841,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   20
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   314
@@ -884,7 +884,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   22
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   348
@@ -920,7 +920,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   21
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   348
@@ -955,7 +955,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   23
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   348
@@ -990,7 +990,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   24
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   212
@@ -1033,7 +1033,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   25
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   212
@@ -1069,7 +1069,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   26
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   212
@@ -1104,7 +1104,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   27
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   246
@@ -1147,7 +1147,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   28
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   246
@@ -1183,7 +1183,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   29
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   246
@@ -1218,7 +1218,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   30
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   382
@@ -1261,7 +1261,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   31
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   382
@@ -1297,7 +1297,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   32
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   382
@@ -1332,7 +1332,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   33
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   3
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   416
@@ -1375,7 +1375,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   34
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   2
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   416
@@ -1411,7 +1411,7 @@ Begin ContainerControl CreatureStatContainer
          TabIndex        =   35
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   0
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   416

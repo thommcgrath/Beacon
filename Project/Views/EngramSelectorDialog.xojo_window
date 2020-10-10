@@ -411,7 +411,7 @@ Begin BeaconDialog EngramSelectorDialog
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   376
    End
 End

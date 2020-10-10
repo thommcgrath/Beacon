@@ -163,7 +163,7 @@ Begin BeaconSubview ModsView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   1
+      Resizer         =   "1"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20

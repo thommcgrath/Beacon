@@ -47,7 +47,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   1
+      Resizer         =   "1"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -225,7 +225,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -317,26 +317,20 @@ Begin ConfigEditor CraftingCostsConfigEditor
       End
    End
    Begin Thread FibercraftBuilderThread
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin Thread AdjusterThread
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
 End
 #tag EndWindow

@@ -55,7 +55,7 @@ Begin ServerViewContainer ConnectorServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -156,7 +156,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   124
@@ -192,7 +192,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   124
@@ -227,7 +227,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
@@ -262,7 +262,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
@@ -304,7 +304,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -347,7 +347,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -390,7 +390,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
@@ -426,7 +426,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -461,7 +461,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -496,7 +496,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
@@ -507,11 +507,10 @@ Begin ServerViewContainer ConnectorServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   30000
-      RunMode         =   0
+      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End

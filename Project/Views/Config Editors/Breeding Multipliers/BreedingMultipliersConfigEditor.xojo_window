@@ -1089,7 +1089,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   0
+      Resizer         =   "0"
       ResizerEnabled  =   False
       Scope           =   2
       ScrollSpeed     =   20
@@ -1353,7 +1353,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   31
       TabPanelIndex   =   0
       TabStop         =   False
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   381
@@ -1395,7 +1395,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   38
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   2
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   381
@@ -1431,7 +1431,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   32
       TabPanelIndex   =   0
       TabStop         =   False
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   407
@@ -1466,7 +1466,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   False
-      TextAlignment   =   3
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   151

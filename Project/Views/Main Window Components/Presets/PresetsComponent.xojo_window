@@ -76,7 +76,7 @@ Begin BeaconPagedSubview PresetsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   300
       Begin ListPresetsComponent PresetsList

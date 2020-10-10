@@ -3,7 +3,7 @@ Begin BeaconDialog BlueprintMultiEditor
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   1
+   DefaultLocation =   "1"
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog BlueprintMultiEditor
    MinimumWidth    =   540
    Resizeable      =   True
    Title           =   "Edit Blueprints"
-   Type            =   8
+   Type            =   "8"
    Visible         =   True
    Width           =   540
    Begin TagPicker Picker
@@ -216,7 +216,7 @@ Begin BeaconDialog BlueprintMultiEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -246,7 +246,7 @@ Begin BeaconDialog BlueprintMultiEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -278,7 +278,7 @@ Begin BeaconDialog BlueprintMultiEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   0
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0

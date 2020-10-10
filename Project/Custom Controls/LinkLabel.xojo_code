@@ -96,7 +96,7 @@ Inherits Label
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Text"
+			Name="Value"
 			Visible=true
 			Group="Appearance"
 			InitialValue="Untitled"

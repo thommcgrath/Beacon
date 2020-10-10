@@ -47,8 +47,8 @@ Begin DocumentsComponentView RecentDocumentsComponent
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   0
-      GridLinesVerticalStyle=   0
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVerticalStyle=   "0"
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -67,7 +67,7 @@ Begin DocumentsComponentView RecentDocumentsComponent
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   1
+      RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   0

@@ -147,7 +147,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Top             =   54
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   0
+      UnicodeMode     =   "0"
       UseFocusRing    =   True
       Visible         =   True
       Width           =   476
@@ -283,7 +283,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   "0"
       Width           =   476
    End
 End
