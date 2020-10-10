@@ -1351,11 +1351,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  Var MagicBytes As String = Content.LeftBytes(2)
-		  If MagicBytes = Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B) Then
-		    Var Decompressor As New _GZipString
-		    Content = Decompressor.Decompress(Content)
-		  End If
+		  Content = Beacon.Decompress(Content)
 		  
 		  Var BuildNumber As Integer = App.BuildNumber
 		  

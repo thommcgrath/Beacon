@@ -19,8 +19,7 @@ Inherits Thread
 		      Return
 		    End Try
 		    
-		    Var Decompressor As New _GZipString
-		    Content = Decompressor.Decompress(Content)
+		    Content = Beacon.Decompress(Content)
 		  End If
 		  
 		  // So where do we put the file now?

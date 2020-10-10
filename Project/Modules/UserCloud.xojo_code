@@ -481,9 +481,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  Var Contents As MemoryBlock = LocalFile.Read()
-		  
-		  Var Compressor As New _GZipString
-		  Contents = Compressor.Compress(Contents, _GZipString.DefaultCompression)
+		  Contents = Beacon.Compress(Contents)
 		  
 		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  

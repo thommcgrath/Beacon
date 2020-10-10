@@ -77,7 +77,7 @@ Protected Module Preferences
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub LoadWindowPosition(Extends Win As Window)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
@@ -175,7 +175,7 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub SaveWindowPosition(Extends Win As Window)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
@@ -247,7 +247,7 @@ Protected Module Preferences
 		Protected BreedingTunerCreatures As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -311,7 +311,7 @@ Protected Module Preferences
 		Protected DeployRunAdvisor As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -359,7 +359,7 @@ Protected Module Preferences
 		Protected HasShownSubscribeDialog As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -407,7 +407,7 @@ Protected Module Preferences
 		Protected LastStopMessage As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -423,7 +423,7 @@ Protected Module Preferences
 		Protected LastUsedScreenSize As Size
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -502,7 +502,7 @@ Protected Module Preferences
 		Protected ShowExperimentalLootSources As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -518,7 +518,7 @@ Protected Module Preferences
 		Protected SimulatorSize As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -534,7 +534,7 @@ Protected Module Preferences
 		Protected SimulatorVisible As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -550,7 +550,7 @@ Protected Module Preferences
 		Protected SourcesSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -566,7 +566,7 @@ Protected Module Preferences
 		Protected SpawnPointEditorLimitsSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -582,7 +582,7 @@ Protected Module Preferences
 		Protected SpawnPointEditorSetsSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init

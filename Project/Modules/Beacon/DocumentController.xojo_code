@@ -270,19 +270,13 @@ Protected Class DocumentController
 		  End If
 		  
 		  If FileContent.Size > 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
-		    #if Not TargetiOS
-		      Var Compressor As New _GZipString
-		      Var Decompressed As String = Compressor.Decompress(FileContent)
-		      If Decompressed <> "" Then
-		        FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
-		      Else
-		        Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
-		        Return
-		      End If
-		    #else
-		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Compressed files are not supported in this version")
+		    Var Decompressed As String = Beacon.Decompress(FileContent)
+		    If Decompressed <> "" Then
+		      FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
 		      Return
-		    #endif
+		    End If
 		  End If
 		  
 		  Var Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity)
@@ -309,10 +303,7 @@ Protected Class DocumentController
 		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Session " + Preferences.OnlineToken
 		  
-		  Var Compressor As New _GZipString
-		  Compressor.UseHeaders = True
-		  
-		  Var Body As MemoryBlock = Compressor.Compress(JSON, _GZipString.DefaultCompression)
+		  Var Body As MemoryBlock = Beacon.Compress(JSON)
 		  Headers.Value("Content-Encoding") = "gzip"
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket

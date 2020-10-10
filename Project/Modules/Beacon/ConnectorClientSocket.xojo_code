@@ -176,8 +176,7 @@ Inherits TCPSocket
 		    Var Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
 		    
 		    If Compressed Then
-		      Var Compressor As New _GZipString
-		      Contents = Compressor.Compress(Contents, _GZipString.BestCompression)
+		      Contents = Beacon.Compress(Contents)
 		    End If
 		    
 		    Contents = EncodeBase64(Contents)
@@ -239,8 +238,7 @@ Inherits TCPSocket
 		  Var Compressed As Boolean = Dict.Lookup("Compressed", False).BooleanValue
 		  Content = DecodeBase64(Content)
 		  If Compressed Then
-		    Var Compressor As New _GZipString
-		    Content = Compressor.Decompress(Content)
+		    Content = Beacon.Decompress(Content)
 		  End If
 		  Var ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
 		  

@@ -2,27 +2,15 @@
 Private Class SimpleHTTPSocket
 	#tag Method, Flags = &h0
 		Sub ClearRequestHeaders()
-		  #if UseNewSocket
-		    Self.mSocket.ClearRequestHeaders
-		  #else
-		    Self.mLegacySocket.ClearRequestHeaders
-		  #endif
+		  Self.mSocket.ClearRequestHeaders
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  #if UseNewSocket
-		    Self.mSocket = New URLConnection
-		    AddHandler Self.mSocket.Error, WeakAddressOf mSocket_Error
-		    AddHandler Self.mSocket.ContentReceived, WeakAddressOf mSocket_ContentReceived
-		  #else
-		    Self.mLegacySocket = New HTTPSecureSocket
-		    Self.mLegacySocket.SSLEnabled = True
-		    Self.mLegacySocket.SSLConnectionType = SSLSocket.SSLConnectionTypes.TLSv12
-		    AddHandler Self.mLegacySocket.Error, WeakAddressOf mLegacySocket_Error
-		    AddHandler Self.mLegacySocket.PageReceived, WeakAddressOf mLegacySocket_PageReceived
-		  #endif
+		  Self.mSocket = New URLConnection
+		  AddHandler Self.mSocket.Error, WeakAddressOf mSocket_Error
+		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf mSocket_ContentReceived
 		End Sub
 	#tag EndMethod
 
@@ -30,58 +18,6 @@ Private Class SimpleHTTPSocket
 		Function IsIdle() As Boolean
 		  Return Not Self.mWorking
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mLegacySocket_Error(Sender As HTTPSecureSocket, ErrorNum As Integer)
-		  #Pragma Unused Sender
-		  
-		  If Self.Handler <> Nil Then
-		    Var Reason As String
-		    Select Case ErrorNum
-		    Case SocketCore.OpenDriverError
-		      Reason = "Open driver error"
-		    Case SocketCore.LostConnection
-		      Reason = "Lost connection"
-		    Case SocketCore.NameResolutionError
-		      Reason = "Name resolution error"
-		    Case SocketCore.AddressInUseError
-		      Reason = "Address in use"
-		    Case SocketCore.InvalidStateError
-		      Reason = "Socket not ready"
-		    Case SocketCore.InvalidPortError
-		      Reason = "Invalid port"
-		    Case SocketCore.OutOfMemoryError
-		      Reason = "Out of memory"
-		    Else
-		      Reason = "Other error " + ErrorNum.ToString
-		    End Select
-		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
-		      Self.Handler.Invoke(Self.mURL, 0, Reason, Self.Tag)
-		    End If
-		    Self.Handler = Nil
-		  Else
-		    Break
-		  End If
-		  Self.ClearRequestHeaders()
-		  Self.mWorking = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mLegacySocket_PageReceived(Sender As HTTPSecureSocket, URL As String, HTTPStatus As Integer, Headers As InternetHeaders, Content As String)
-		  #Pragma Unused Sender
-		  #Pragma Unused Headers
-		  
-		  If Self.Handler <> Nil Then
-		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
-		      Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
-		    End If
-		    Self.Handler = Nil
-		  End If
-		  Self.ClearRequestHeaders()
-		  Self.mWorking = False
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -118,11 +54,7 @@ Private Class SimpleHTTPSocket
 
 	#tag Method, Flags = &h0
 		Sub RequestHeader(Key As String, Assigns Value As String)
-		  #if UseNewSocket
-		    Self.mSocket.RequestHeader(Key) = Value
-		  #else
-		    Self.mLegacySocket.SetRequestHeader(Key, Value)
-		  #endif
+		  Self.mSocket.RequestHeader(Key) = Value
 		End Sub
 	#tag EndMethod
 
@@ -131,31 +63,19 @@ Private Class SimpleHTTPSocket
 		  Self.mWorking = True
 		  Self.mURL = URL
 		  Self.RequestHeader("User-Agent") = App.UserAgent
-		  #if UseNewSocket
-		    Self.mSocket.Send(Method, URL)
-		  #else
-		    Self.mLegacySocket.SendRequest(Method, URL)
-		  #endif
+		  Self.mSocket.Send(Method, URL)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SetRequestContent(Content As MemoryBlock, ContentType As String)
-		  #if UseNewSocket
-		    Self.mSocket.SetRequestContent(Content, ContentType)
-		  #else
-		    Self.mLegacySocket.SetRequestContent(Content, ContentType)
-		  #endif
+		  Self.mSocket.SetRequestContent(Content, ContentType)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h0
 		Handler As SimpleHTTP.ResponseCallback
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLegacySocket As HTTPSecureSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -173,11 +93,6 @@ Private Class SimpleHTTPSocket
 	#tag Property, Flags = &h0
 		Tag As Variant
 	#tag EndProperty
-
-
-	#tag Constant, Name = UseNewSocket, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"False"
-	#tag EndConstant
 
 
 	#tag ViewBehavior

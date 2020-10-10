@@ -181,6 +181,20 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function Compress(Data As String) As String
+		  If IsCompressed(Data) Then
+		    Return Data
+		  End If
+		  
+		  Var Compressor As New GZipFileMBS
+		  If Compressor.CreateForString Then
+		    Compressor.Write(Data)
+		    Return Compressor.CloseForString
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
 		  OverrideOfficialDifficulty = Max(Ceiling(DesiredDinoLevel / 30), BaseDifficulty)
 		  DifficultyOffset = Max((DesiredDinoLevel - 15) / ((OverrideOfficialDifficulty * 30) - 15), 0.001)
@@ -296,6 +310,25 @@ Protected Module Beacon
 		    mDataSource.LoadPresets
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Decompress(Data As String) As String
+		  If Not IsCompressed(Data) Then
+		    Return Data
+		  End If
+		  
+		  Const ChunkSize = 1000000
+		  
+		  Var Decompressor As New GZipFileMBS
+		  If Decompressor.OpenString(Data) Then
+		    Var Parts() As String
+		    While Not Decompressor.EOF
+		      Parts.AddRow(Decompressor.Read(ChunkSize))
+		    Wend
+		    Return String.FromArray(Parts, "")
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -603,6 +636,31 @@ Protected Module Beacon
 		      Return True
 		    End If
 		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IsCompressed(Value As Variant) As Boolean
+		  If Value.IsNull Then
+		    Return False
+		  End If
+		  
+		  // Try to get a string value
+		  #Pragma BreakOnExceptions Off
+		  Var StringValue As String
+		  Try
+		    StringValue = Value
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  If StringValue.Bytes < 2 Then
+		    Return False
+		  End If
+		  
+		  // See if the value starts with 1F8B
+		  Var MagicBytes As String = StringValue.LeftBytes(2)
+		  Return MagicBytes = Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B)
 		End Function
 	#tag EndMethod
 
