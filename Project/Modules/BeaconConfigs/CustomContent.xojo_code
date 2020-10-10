@@ -90,35 +90,32 @@ Inherits Beacon.ConfigGroup
 		    Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
 		    Var ExpectedHash As String = SecureDict.Value("Hash")
 		    
-		    #if Not TargetiOS
-		      Var AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		      AES.SetKey(Key)
-		      AES.SetInitialVector(Vector)
-		      
-		      Var Decrypted As String
-		      Try
-		        Decrypted = AES.DecryptCBC(Encrypted)
-		      Catch Err As RuntimeException
-		        Return ""
-		      End Try
-		      
-		      Var ComputedHash As String = EncodeHex(Crypto.SHA512(Decrypted))
-		      If ComputedHash <> ExpectedHash Then
-		        Return ""
-		      End If
-		      
-		      If Decrypted = "" Or Not Encodings.UTF8.IsValidData(Decrypted) Then
-		        Return ""
-		      End If
-		      Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
-		      
-		      // Do not store to encrypted values when decrypting legacy content so the
-		      // new encryption will be used on save.
-		      
-		      Return Decrypted
-		    #else
-		      #Pragma Error "Not implemented"
-		    #endif
+		    Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
+		    If Not Crypt.DecryptInit(Key, Vector) Then
+		      Return ""
+		    End If
+		    
+		    Var Decrypted As String
+		    Try
+		      Decrypted = Crypt.Process(Encrypted)
+		    Catch Err As RuntimeException
+		      Return ""
+		    End Try
+		    
+		    Var ComputedHash As String = EncodeHex(Crypto.SHA512(Decrypted))
+		    If ComputedHash <> ExpectedHash Then
+		      Return ""
+		    End If
+		    
+		    If Decrypted = "" Or Not Encodings.UTF8.IsValidData(Decrypted) Then
+		      Return ""
+		    End If
+		    Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
+		    
+		    // Do not store to encrypted values when decrypting legacy content so the
+		    // new encryption will be used on save.
+		    
+		    Return Decrypted
 		  Catch Err As RuntimeException
 		  End Try
 		  

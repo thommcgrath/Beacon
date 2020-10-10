@@ -139,13 +139,16 @@ Protected Module Tests
 		  
 		  Call Assert(TestValue = Decrypted, "Decrypted value does not match original")
 		  
-		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(24)
+		  Var Key As MemoryBlock = BeaconEncryption.GenerateSymmetricKey()
 		  
 		  Try
 		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to symmetric encrypt test value")
 		  End Try
+		  
+		  Var Board As New Clipboard
+		  Board.Text = "Key: " + EncodeHex(Key) + EndOfLine + "Encrypted: " + EncodeHex(Encrypted) + EndOfLine + "Decrypted: " + EncodeHex(TestValue)
 		  
 		  Try
 		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
@@ -168,6 +171,19 @@ Protected Module Tests
 		  End Try
 		  
 		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		  
+		  // Test decrypting constant values
+		  
+		  Key = DecodeHex("F433EAEEDB6B12B4EDC354FAB072BC14FF44B8A3F93B299E")
+		  Encrypted = DecodeHex("8A0257B63E837DA5B5D995FF2E32FEEA0FA9000000188A24AAE6742E36962B17E1C903B8DA8ADCF00D16EC59E4369B40DA145ABCB7D7CBAAAB92")
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		    If EncodeHex(Decrypted) <> "B5457B456A0A662198A72ABEEB9D409B5B6AD5603743ABAB" Then
+		      System.DebugLog("Constant value was decrypted to the wrong value.")
+		    End If
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric decrypt constant values.")
+		  End Try
 		End Sub
 	#tag EndMethod
 

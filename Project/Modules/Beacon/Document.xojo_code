@@ -1074,13 +1074,14 @@ Implements ObservationKit.Observable
 		  Var ExpectedHash As String = SecureDict.Lookup("Hash", "")
 		  Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
 		  Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
-		  Var AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		  AES.SetKey(Key)
-		  AES.SetInitialVector(Vector)
+		  Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
+		  If Not Crypt.DecryptInit(Key, Vector) Then
+		    Return Nil
+		  End If
 		  
 		  Var Decrypted As String
 		  Try
-		    Decrypted = AES.DecryptCBC(Encrypted)
+		    Decrypted = Crypt.Process(Encrypted)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try

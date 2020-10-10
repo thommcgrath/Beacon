@@ -11,7 +11,13 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetLength(Data As MemoryBlock) As Int32
+		Protected Function GenerateSymmetricKey(Bits As Integer = 256) As MemoryBlock
+		  Return Crypto.GenerateRandomBytes(Bits / 8)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GetLength(Data As MemoryBlock) As UInt64
 		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header <> Nil Then
 		    Return Header.Size + Header.EncryptedLength
@@ -116,6 +122,17 @@ Protected Module BeaconEncryption
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Process(Extends Cipher As CipherMBS, Data As MemoryBlock) As MemoryBlock
+		  Var Initial As MemoryBlock = Cipher.ProcessMemory(Data)
+		  If Initial Is Nil Then
+		    Return Cipher.FinalizeAsMemory
+		  Else
+		    Return Initial + Cipher.FinalizeAsMemory
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
 		  // It is insane that I need to implement this method manually.
@@ -147,16 +164,20 @@ Protected Module BeaconEncryption
 		  
 		  Data = Data.Middle(Header.Size, Data.Size - Header.Size)
 		  
+		  Var Crypt As CipherMBS
 		  Select Case Header.Version
-		  Case 1
-		    Var Crypt As New M_Crypto.Blowfish_MTC(Key)
-		    Crypt.SetInitialVector(Header.Vector)
-		    Data = Crypt.DecryptCBC(Data)
 		  Case 2
-		    Var Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
-		    Crypt.SetInitialVector(Header.Vector)
-		    Data = Crypt.DecryptCBC(Data)
+		    Crypt = CipherMBS.aes_256_cbc
+		  Case 1
+		    Crypt = CipherMBS.bf_cbc
 		  End Select
+		  If Not Crypt.DecryptInit(Key, Header.Vector) Then
+		    Var Err As New CryptoException
+		    Err.Reason = "Incorrect key or vector length"
+		    Raise Err
+		  End If
+		  Data = Crypt.Process(Data)
+		  
 		  If Data.Size > Header.Length Then
 		    Data = Data.Left(Header.Length)
 		  End If
@@ -180,20 +201,24 @@ Protected Module BeaconEncryption
 		  
 		  Var Header As New BeaconEncryption.SymmetricHeader(Data, Version)
 		  
+		  Var Crypt As CipherMBS
 		  Select Case Version
 		  Case 2
-		    Var Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
-		    Crypt.SetInitialVector(Header.Vector)
-		    Return Header.Encoded + Crypt.EncryptCBC(Data)
+		    Crypt = CipherMBS.aes_256_cbc
 		  Case 1
-		    Var Crypt As New M_Crypto.Blowfish_MTC(Key)
-		    Crypt.SetInitialVector(Header.Vector)
-		    Return Header.Encoded + Crypt.EncryptCBC(Data)
+		    Crypt = CipherMBS.bf_cbc
 		  Else
 		    Var Err As New CryptoException
 		    Err.Message = "Unknown symmetric version " + Version.ToString
 		    Raise Err
 		  End Select
+		  If Not Crypt.EncryptInit(Key, Header.Vector) Then
+		    Var Err As New CryptoException
+		    Err.Reason = "Incorrect key or vector length"
+		    Raise Err
+		    Return ""
+		  End If
+		  Return Header.Encoded + Crypt.Process(Data)
 		End Function
 	#tag EndMethod
 
