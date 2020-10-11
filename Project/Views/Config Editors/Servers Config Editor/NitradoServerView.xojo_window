@@ -485,7 +485,7 @@ End
 		  Self.ServerNameField.Value = Self.mProfile.Name
 		  
 		  #if Beacon.MOTDEditingEnabled
-		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
+		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay.RTFValue
 		    Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
 		  #endif
 		  
@@ -750,7 +750,7 @@ End
 #tag Events MessageOfTheDayArea
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.MessageOfTheDay = Me.RTFData
+		  Self.mProfile.MessageOfTheDay = Beacon.ArkML.FromRTF(Me.RTFData)
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent

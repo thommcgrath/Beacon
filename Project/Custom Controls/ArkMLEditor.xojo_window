@@ -261,6 +261,30 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function ArkML() As Beacon.ArkML
+		  If Self.RawMode Then
+		    // Currently viewing the ArkML version
+		    Return Beacon.ArkML.FromArkML(Self.Field.Value)
+		  Else
+		    // Viewing the RTF version
+		    Return Beacon.ArkML.FromRTF(Self.Field.StyledText.RTFData)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ArkML(Assigns ArkML As Beacon.ArkML)
+		  If Self.RawMode Then
+		    // Currently viewing the ArkML version
+		    Self.Field.Value = ArkML.ArkMLValue
+		  Else
+		    // Viewing the RTF version
+		    Self.Field.StyledText.RTFData = ArkML.RTFValue
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub ChangeSelectionColor()
 		  Var UserColor As Color = Self.Field.StyledText.TextColor(Self.Field.SelectionStart, Self.Field.SelectionLength)
@@ -275,12 +299,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyRTF()
-		  Var RTFData As String = Self.RTFData
+		Private Sub CopyJSON()
+		  Var JSONData As String = Self.JSONData
 		  
 		  Var Board As New Clipboard
-		  Board.Text = RTFData
-		  Board.RawData("public.rtf") = RTFData
+		  Board.Text = JSONData
+		  Board.RawData("public.json") = JSONData
+		  Board.RawData("public.rtf") = Self.RTFData
 		  
 		  Self.ShowAlert("Shareable version copied", "You can now paste it where you need it.")
 		End Sub
@@ -291,6 +316,39 @@ End
 		Event TextChange()
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.Field.Value.IsEmpty Then
+			    Return ""
+			  End If
+			  
+			  Try
+			    Var Dict As New Dictionary
+			    Dict.Value("Type") = "ArkML Objects"
+			    Dict.Value("Objects") = Self.ArkML.ArrayValue
+			    Return Beacon.GenerateJSON(Dict, True)
+			  Catch Err As RuntimeException
+			    Return ""
+			  End Try
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value.IsEmpty Then
+			    Return
+			  End If
+			  
+			  Try
+			    Var Parsed As Dictionary = Beacon.ParseJSON(Value)
+			    Self.ArkML = Beacon.ArkML.FromObjects(Parsed.Value("Objects"))
+			  Catch Err As RuntimeException
+			  End Try
+			End Set
+		#tag EndSetter
+		JSONData As String
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mRawMode As Boolean
@@ -317,7 +375,7 @@ End
 			    // Convert RTF data to ArkML
 			    Var ArkML As String
 			    Try
-			      ArkML = BeaconConfigs.Metadata.RTFToArkML(Self.Field.StyledText.RTFData)
+			      ArkML = Beacon.ArkML.FromRTF(Self.Field.StyledText.RTFData).ArkMLValue
 			    Catch Err As RuntimeException
 			      // Something went wrong
 			    End Try
@@ -331,7 +389,7 @@ End
 			    // Convert ArkML to RTF
 			    Var RTF As String
 			    Try
-			      RTF = BeaconConfigs.Metadata.ArkMLToRTF(Self.Field.Value)
+			      RTF = Beacon.ArkML.FromArkML(Self.Field.Value).RTFValue
 			    Catch Err As RuntimeException
 			      // Something went wrong
 			    End Try
@@ -361,11 +419,7 @@ End
 			  End If
 			  
 			  Try
-			    If Self.RawMode Then
-			      Return BeaconConfigs.Metadata.ArkMLToRTF(Self.Field.Value)
-			    Else
-			      Return Self.Field.StyledText.RTFData
-			    End If
+			    Return Self.ArkML.RTFValue
 			  Catch Err As RuntimeException
 			    Return ""
 			  End Try
@@ -373,16 +427,14 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Not Value.IsEmpty Then
-			    Try
-			      If Self.RawMode Then
-			        Self.Field.Value = BeaconConfigs.Metadata.RTFToArkML(Value)
-			      Else
-			        Self.Field.StyledText.RTFData = Value
-			      End If
-			    Catch Err As RuntimeException
-			    End Try
+			  If Value.IsEmpty Then
+			    Return
 			  End If
+			  
+			  Try
+			    Self.ArkML = Beacon.ArkML.FromRTF(Value)
+			  Catch Err As RuntimeException
+			  End Try
 			End Set
 		#tag EndSetter
 		RTFData As String
@@ -452,15 +504,23 @@ End
 	#tag Event
 		Function DoPaste() As Boolean
 		  Var Board As New Clipboard
-		  If (Board.TextAvailable And Board.Text.BeginsWith("{\rtf1\")) Then
-		    Self.RawMode = False
-		    Self.RTFData = Board.Text
+		  If Board.RawDataAvailable("public.json") Then
+		    Self.JSONData = Board.RawData("public.json")
 		    Return True
 		  ElseIf Board.RawDataAvailable("public.rtf") Then
-		    Self.RawMode = False
 		    Self.RTFData = Board.RawData("public.rtf")
 		    Return True
+		  ElseIf Board.TextAvailable Then
+		    If Board.Text.IndexOf("""Type"": ""ArkML Objects""") > -1 Then
+		      Self.JSONData = Board.Text
+		      Return True
+		    ElseIf Board.Text.BeginsWith("{\rtf1\") Then
+		      Self.RTFData = Board.Text
+		      Return True
+		    End If
 		  End If
+		  
+		  Return False
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -473,7 +533,7 @@ End
 		  Case "ColorButton"
 		    Self.ChangeSelectionColor
 		  Case "ShareButton"
-		    Self.CopyRTF()
+		    Self.CopyJSON()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -711,6 +771,14 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="RTFData"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="JSONData"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""

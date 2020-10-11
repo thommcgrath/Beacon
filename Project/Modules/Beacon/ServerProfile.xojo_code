@@ -73,8 +73,18 @@ Protected Class ServerProfile
 		  End If
 		  
 		  If Dict.HasKey("Message of the Day") Then
-		    Self.mMessageOfTheDay = Dict.Value("Message of the Day").StringValue
+		    If Dict.Value("Message of the Day").Type = Variant.TypeString Then
+		      #if Not TargetiOS
+		        Self.mMessageOfTheDay = Beacon.ArkML.FromRTF(Dict.Value("Message of the Day"))
+		      #endif
+		    Else
+		      Self.mMessageOfTheDay = Beacon.ArkML.FromObjects(Dict.Value("Message of the Day"))
+		    End If
 		    Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
+		  End If
+		  
+		  If Self.mMessageOfTheDay Is Nil Then
+		    Self.mMessageOfTheDay = New Beacon.ArkML
 		  End If
 		  
 		  If Dict.HasKey("Config Sets") Then
@@ -221,7 +231,7 @@ Protected Class ServerProfile
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
 		  If Self.mMessageOfTheDay.IsEmpty = False Then
-		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay
+		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay.ArrayValue
 		    Dict.Value("Message Duration") = Self.mMessageDuration
 		  End If
 		  If Self.mConfigSetStates.Count > 0 Then
@@ -338,13 +348,13 @@ Protected Class ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mMessageOfTheDay.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			  If Self.mMessageOfTheDay <> Value Then
 			    Self.mMessageOfTheDay = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		MessageOfTheDay As String
+		MessageOfTheDay As Beacon.ArkML
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -360,7 +370,7 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMessageOfTheDay As String
+		Private mMessageOfTheDay As Beacon.ArkML
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

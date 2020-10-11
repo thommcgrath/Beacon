@@ -39,8 +39,8 @@ Protected Module Tests
 		Private Sub TestArkML()
 		  Var InputString As String = "This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like 'discord.gg/invite' that\nneed to be encoded."
 		  
-		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
-		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
+		  Var ArkML As Beacon.ArkML = Beacon.ArkML.FromArkML(InputString)
+		  Var ArkMLString As String = ArkML.ArkMLValue()
 		  
 		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated. Input: `" + InputString + "` Output: `" + ArkMLString + "`")
 		End Sub
@@ -200,8 +200,8 @@ Protected Module Tests
 		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
 		End Sub
 	#tag EndMethod
-	
-	#tag Method, Flags = &c21
+
+	#tag Method, Flags = &h21
 		Private Sub TestIntervalParsing()
 		  Var Interval As DateInterval
 		  

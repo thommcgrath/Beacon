@@ -276,12 +276,12 @@ End
 			Return True
 			End If
 			
-			Var Message As String = SourceProfile.MessageOfTheDay
+			Var Message As Beacon.ArkML = SourceProfile.MessageOfTheDay
 			Var Duration As Integer = SourceProfile.MessageDuration
 			
 			For Idx As Integer = 0 To Bound
 			If Self.Document.ServerProfile(Idx).ProfileID <> CurrentProfileID Then
-			Self.Document.ServerProfile(Idx).MessageOfTheDay = Message
+			Self.Document.ServerProfile(Idx).MessageOfTheDay = Message.Clone
 			Self.Document.ServerProfile(Idx).MessageDuration = Duration
 			Self.Changed = Self.Changed Or Self.Document.Modified
 			End If

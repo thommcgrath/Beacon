@@ -217,8 +217,7 @@ Inherits Beacon.Thread
 		          Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
 		        End If
 		        
-		        Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True).Trim())
-		        Profile.MessageOfTheDay = Message
+		        Profile.MessageOfTheDay = Beacon.ArkML.FromArkML(ParsedData.StringValue("Message", "", True).Trim())
 		        Profile.MessageDuration = Duration
 		      End If
 		    #endif

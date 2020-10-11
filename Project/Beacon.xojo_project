@@ -479,6 +479,7 @@ Folder=Presets;Views/Main Window Components/Presets;&h000000001175E7FF;&h0000000
 Window=PresetsComponent;Views/Main Window Components/Presets/PresetsComponent.xojo_window;&h00000000445C3FFF;&h000000001175E7FF;false
 Class=PresetsComponentView;Views/Main Window Components/Presets/PresetsComponentView.xojo_code;&h000000007111AFFF;&h000000001175E7FF;false
 Window=ListPresetsComponent;Views/Main Window Components/Presets/ListPresetsComponent.xojo_window;&h000000004FCF97FF;&h000000001175E7FF;false
+Class=ArkML;Modules/Beacon/ArkML.xojo_code;&h00000000686FDFFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4
