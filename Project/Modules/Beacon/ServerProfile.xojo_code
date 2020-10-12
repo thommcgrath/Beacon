@@ -230,7 +230,7 @@ Protected Class ServerProfile
 		  If Self.mExternalAccountUUID <> Nil Then
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
-		  If Self.mMessageOfTheDay.IsEmpty = False Then
+		  If (Self.mMessageOfTheDay Is Nil) = False And Self.mMessageOfTheDay.IsEmpty = False Then
 		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay.ArrayValue
 		    Dict.Value("Message Duration") = Self.mMessageDuration
 		  End If
@@ -499,14 +499,6 @@ Protected Class ServerProfile
 			InitialValue=""
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MessageOfTheDay"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackupFolderName"

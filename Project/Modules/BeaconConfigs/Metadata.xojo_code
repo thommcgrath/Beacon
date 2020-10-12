@@ -53,7 +53,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  #if Beacon.MOTDEditingEnabled Then
-		    If Profile.MessageOfTheDay.IsEmpty = False Then
+		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
 		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Message", Profile.MessageOfTheDay.ArkMLValue))
 		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
 		    End If
