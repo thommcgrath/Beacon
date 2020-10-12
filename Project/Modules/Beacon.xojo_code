@@ -1850,7 +1850,7 @@ Protected Module Beacon
 		  If Filename = "Game.ini" Then
 		    RequiredHeaders = Array("[/script/shootergame.shootergamemode]")
 		  ElseIf Filename = "GameUserSettings.ini" Then
-		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[MessageOfTheDay]", "[ScalabilityGroups]")
+		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]")
 		  End If
 		  Return Beacon.ValidateIniContent(Content, RequiredHeaders)
 		End Function
