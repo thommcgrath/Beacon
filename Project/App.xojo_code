@@ -265,6 +265,22 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpAPIBuilder() As Boolean Handles HelpAPIBuilder.Action
+			Call Self.HandleURL("beacon://action/showapibuilder")
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpAPIGuide() As Boolean Handles HelpAPIGuide.Action
+			Call Self.HandleURL("beacon://action/showguide")
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpArkConfigFileReference() As Boolean Handles HelpArkConfigFileReference.Action
 			ShowURL(Beacon.WebURL("/help/ark_config_file_reference"))
 			Return True
@@ -615,11 +631,11 @@ Implements NotificationKit.Receiver
 		    Case "showmods"
 		      Self.mMainWindow.ShowBlueprints()
 		    Case "showidentity"
-		      Self.mMainWindow.Tools.ShowIdentity()
+		      IdentityWindow.Show()
 		    Case "showguide"
-		      Self.mMainWindow.Tools.ShowAPIGuide()
+		      ShowURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
 		    Case "showapibuilder"
-		      Self.mMainWindow.Tools.ShowAPIBuilder()
+		      APIBuilderWindow.Show()
 		    Case "shownewsletterprompt"
 		      SubscribeDialog.Present()
 		    Case "checkforupdate"

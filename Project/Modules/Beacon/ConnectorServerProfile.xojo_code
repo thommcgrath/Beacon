@@ -163,14 +163,6 @@ Inherits Beacon.ServerProfile
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MessageOfTheDay"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

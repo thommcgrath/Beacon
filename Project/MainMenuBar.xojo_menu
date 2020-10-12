@@ -536,6 +536,33 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem UntitledSeparator2
+         SpecialMenu = 0
+         Value = "-"
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpAPIGuide
+         SpecialMenu = 0
+         Value = "API Guide…"
+         Index = -2147483648
+         Text = "API Guide…"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpAPIBuilder
+         SpecialMenu = 0
+         Value = "API Builder…"
+         Index = -2147483648
+         Text = "API Builder…"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
    End
 End
 #tag EndMenu

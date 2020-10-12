@@ -648,6 +648,8 @@ End
 		      Base.AddMenu(New MenuItem("Sign Out", "beacon://action/signout"))
 		    End If
 		  End If
+		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New MenuItem("User Info…", "beacon://action/showidentity"))
 		  
 		  Var Choice As MenuItem = Base.PopUp(X, Y)
 		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then

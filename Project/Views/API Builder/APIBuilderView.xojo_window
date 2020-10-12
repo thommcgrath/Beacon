@@ -25,41 +25,6 @@ Begin BeaconSubview APIBuilderView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   1100
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "API Builder"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   ""
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1100
-   End
    Begin CheckBox AuthenticatedCheck
       AutoDeactivate  =   True
       Bold            =   False
@@ -86,7 +51,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   239
+      Top             =   198
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -134,7 +99,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   127
+      Top             =   86
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   "0"
@@ -171,7 +136,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   127
+      Top             =   86
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -203,7 +168,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   271
+      Top             =   230
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -221,7 +186,7 @@ Begin BeaconSubview APIBuilderView
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   137
+      Height          =   178
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -250,7 +215,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   303
+      Top             =   262
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   "0"
@@ -287,7 +252,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   303
+      Top             =   262
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -329,7 +294,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   205
+      Top             =   164
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -365,7 +330,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   205
+      Top             =   164
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -397,7 +362,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   271
+      Top             =   230
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -432,7 +397,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   271
+      Top             =   230
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -467,7 +432,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   54
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -499,7 +464,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   54
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -541,7 +506,7 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   20
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -577,39 +542,11 @@ Begin BeaconSubview APIBuilderView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   20
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   95
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1100
    End
 End
 #tag EndWindow

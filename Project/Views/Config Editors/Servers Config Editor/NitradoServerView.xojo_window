@@ -291,6 +291,7 @@ Begin ServerViewContainer NitradoServerView
       HasBackgroundColor=   False
       Height          =   145
       InitialParent   =   ""
+      JSONData        =   ""
       Left            =   168
       LockBottom      =   False
       LockedInPosition=   False

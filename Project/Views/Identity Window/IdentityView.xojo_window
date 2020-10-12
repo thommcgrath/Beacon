@@ -25,47 +25,12 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    UseFocusRing    =   False
    Visible         =   True
    Width           =   1100
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Identity"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   ""
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1100
-   End
    Begin GroupBox ExplanationGroup
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "About This Data"
       Enabled         =   True
-      Height          =   379
+      Height          =   370
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -73,7 +38,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Left            =   710
       LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
+      LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
@@ -83,7 +48,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   70
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -94,7 +59,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         Height          =   323
+         Height          =   314
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "ExplanationGroup"
@@ -117,7 +82,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   97
+         Top             =   106
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -136,7 +101,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   167
+      Height          =   158
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -148,7 +113,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Mask            =   ""
       Multiline       =   True
@@ -165,7 +130,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   273
+      Top             =   282
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   "0"
@@ -202,7 +167,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   273
+      Top             =   282
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -232,7 +197,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Mask            =   ""
       Multiline       =   True
@@ -249,7 +214,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   104
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   "0"
@@ -286,7 +251,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   104
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -334,7 +299,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   70
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -370,37 +335,39 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   70
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar IdentityToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
+      Height          =   50
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   8
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
+      Tooltip         =   ""
+      Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   1100
    End
@@ -477,9 +444,11 @@ End
 
 #tag EndWindowCode
 
-#tag Events Header
+#tag Events IdentityToolbar
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
 		  Select Case Item.Name
 		  Case "ExportIdentity"
 		    Self.ShowExportIdentity()
@@ -490,8 +459,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("ExportIdentity", IconToolbarExport, "Create a backup of your identity file."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("ImportIdentity", IconToolbarImport, "Restore an indentity file backup."))
+		  Me.Append(OmniBarItem.CreateButton("ExportIdentity", "Export", IconToolbarExport, "Create a backup of your identity file."))
+		  Me.Append(OmniBarItem.CreateButton("ImportIdentity", "Import", IconToolbarImport, "Restore an identity file backup."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

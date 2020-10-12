@@ -473,6 +473,7 @@ Begin ServerViewContainer LocalServerView
       HasBackgroundColor=   False
       Height          =   145
       InitialParent   =   ""
+      JSONData        =   ""
       Left            =   204
       LockBottom      =   False
       LockedInPosition=   False

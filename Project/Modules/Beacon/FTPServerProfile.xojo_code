@@ -312,14 +312,6 @@ Inherits Beacon.ServerProfile
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MessageOfTheDay"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="IsConsole"
 			Visible=false
 			Group="Behavior"
