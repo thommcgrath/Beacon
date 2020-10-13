@@ -977,7 +977,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mEngine_Wait(Sender As Beacon.FTPIntegrationEngine, Controller As Beacon.TaskWaitController)
+		Private Function mEngine_Wait(Sender As Beacon.FTPIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  #Pragma Unused Sender
 		  
 		  Select Case Controller.Action
@@ -987,8 +987,9 @@ End
 		    Self.mBrowserRoot = Dictionary(Controller.UserData).Value("Root")
 		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
 		    Self.Browser.Reset()
+		    Return True
 		  End Select
-		End Sub
+		End Function
 	#tag EndMethod
 
 

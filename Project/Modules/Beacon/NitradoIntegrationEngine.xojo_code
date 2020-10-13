@@ -860,7 +860,31 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportsCheckpoints() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsRestarting() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsStatus() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SupportsStopMessage() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsWideSettings() As Boolean
 		  Return True
 		End Function
 	#tag EndMethod

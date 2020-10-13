@@ -172,7 +172,7 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
-		  Return IsEventImplemented("MergeFrom")
+		  Return False
 		End Function
 	#tag EndMethod
 

@@ -493,6 +493,12 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  Self.mResolveIssuesCallback = Callback
 		  

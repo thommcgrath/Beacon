@@ -898,7 +898,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController)
+		Private Function Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Backup"
 		    Var UserData As Dictionary = Controller.UserData
@@ -968,7 +968,7 @@ End
 		      Else
 		        Controller.Cancelled = True
 		        Controller.ShouldResume = True
-		        Return
+		        Return True
 		      End If
 		    End If
 		    
@@ -1023,8 +1023,12 @@ End
 		    End Select
 		    
 		    Controller.ShouldResume = True
+		  Else
+		    Return False
 		  End Select
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

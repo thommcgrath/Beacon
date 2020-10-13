@@ -225,6 +225,12 @@ Inherits Beacon.ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCosts As Dictionary

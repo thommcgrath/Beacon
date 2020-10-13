@@ -340,6 +340,12 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function WriteContent(Input As String, Document As Beacon.Document) As String
 		  Var Pos As Integer

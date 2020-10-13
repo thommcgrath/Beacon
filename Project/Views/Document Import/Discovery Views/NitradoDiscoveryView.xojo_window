@@ -521,7 +521,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Engine_Wait(Sender As Beacon.NitradoIntegrationEngine, Controller As Beacon.TaskWaitController)
+		Private Function Engine_Wait(Sender As Beacon.NitradoIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Auth External"
 		    Var Profile As Beacon.ServerProfile = Sender.Profile
@@ -537,8 +537,10 @@ End
 		      Controller.Cancelled = True
 		      Controller.ShouldResume = True
 		    End If
+		    
+		    Return True
 		  End Select
-		End Sub
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

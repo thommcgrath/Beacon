@@ -701,6 +701,12 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Note, Name = Configs
 		OverrideEngramEntries - Target engrams by index. This is not used by Beacon and will be ignored.

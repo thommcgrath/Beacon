@@ -123,9 +123,7 @@ Protected Class IntegrationEngine
 		    Return
 		  End If
 		  
-		  If IsEventImplemented("Wait") Then
-		    RaiseEvent Wait(Controller)
-		  Else
+		  If RaiseEvent Wait(Controller) = False Then
 		    Controller.Cancelled = False
 		    Controller.ShouldResume = True
 		  End If
@@ -633,19 +631,19 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Function SupportsCheckpoints() As Boolean
-		  Return IsEventImplemented("CreateCheckpoint")
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsRestarting() As Boolean
-		  Return IsEventImplemented("StartServer") And IsEventImplemented("StopServer")
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsStatus() As Boolean
-		  Return IsEventImplemented("RefreshServerStatus")
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -657,7 +655,7 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Function SupportsWideSettings() As Boolean
-		  Return IsEventImplemented("ApplySettings")
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -780,7 +778,7 @@ Protected Class IntegrationEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Wait(Controller As Beacon.TaskWaitController)
+		Event Wait(Controller As Beacon.TaskWaitController) As Boolean
 	#tag EndHook
 
 
