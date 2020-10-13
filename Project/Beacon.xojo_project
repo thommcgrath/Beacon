@@ -199,7 +199,6 @@ Window=DocumentImportWindow;Views/Document Import/DocumentImportWindow.xojo_wind
 Window=DocumentImportView;Views/Document Import/DocumentImportView.xojo_window;&h00000000426457FF;&h00000000427C0FFF;false
 Folder=Discovery Views;Views/Document Import/Discovery Views;&h0000000020AC2FFF;&h00000000427C0FFF;false
 Module=SystemColors;Modules/SystemColors.xojo_code;&h0000000077CEBFFF;&h000000001444B7FF;false
-Class=NSColor;Modules/SystemColors/NSColor.xojo_code;&h000000007C700FFF;&h0000000077CEBFFF;false
 MultiImage=IconToolbarDropdown;Icons/IconToolbarDropdown.xojo_image;&h000000005D7087FF;&h0000000007F977FF;false
 Class=TabBar;Custom Controls/TabBar.xojo_code;&h000000001BD63FFF;&h0000000030DCFFFF;false
 MultiImage=IconModified;Icons/IconModified.xojo_image;&h000000000BC93FFF;&h0000000007F977FF;false
