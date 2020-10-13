@@ -78,6 +78,12 @@ Protected Interface Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UserAgent() As String
+		  
+		End Function
+	#tag EndMethod
+
 
 End Interface
 #tag EndInterface
