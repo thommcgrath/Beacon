@@ -1,7 +1,7 @@
 #tag Class
 Protected Class App
 Inherits Application
-Implements NotificationKit.Receiver
+Implements NotificationKit.Receiver, Beacon.Application
 	#tag Event
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
@@ -380,35 +380,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AutosaveFolder(Create As Boolean = False) As FolderItem
-		  Var Folder As FolderItem = Self.ApplicationSupport.Child("Autosave")
-		  If Folder = Nil Then
-		    Return Nil
-		  End If
-		  If Not Folder.Exists Then
-		    If Create Then
-		      Folder.CreateFolder
-		    Else
-		      Return Nil
-		    End If
-		  End If
-		  Return Folder
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function BackupsFolder() As FolderItem
-		  Return Self.ApplicationSupport.Child("Backups")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function BuildNumber() As Integer
 		  Return (Self.MajorVersion * 10000000) + (Self.MinorVersion * 100000) + (Self.BugVersion * 1000) + (Self.StageCode * 100) + Self.NonReleaseVersion
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function BuildVersion() As String
 		  Var VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
 		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
@@ -1234,6 +1211,13 @@ Implements NotificationKit.Receiver
 		    Item.Enabled = False
 		    FileOpenRecent.AddMenu(Item)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReportException(Err As RuntimeException)
+		  // Does not display the exception to the user, instead uploads it directly to the server.
+		  ExceptionWindow.Report(Err)
 		End Sub
 	#tag EndMethod
 

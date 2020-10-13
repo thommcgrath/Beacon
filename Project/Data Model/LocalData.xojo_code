@@ -2920,7 +2920,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Rows.MoveToNextRow
 		    Wend
 		  Catch Err As RuntimeException
-		    ExceptionWindow.Report(Err)
+		    App.ReportException(Err)
 		  End Try
 		  Return Results
 		End Function

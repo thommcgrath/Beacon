@@ -82,6 +82,29 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AutosaveFolder(Extends Target As Beacon.Application, Create As Boolean = False) As FolderItem
+		  Var Folder As FolderItem = Target.ApplicationSupport.Child("Autosave")
+		  If Folder = Nil Then
+		    Return Nil
+		  End If
+		  If Not Folder.Exists Then
+		    If Create Then
+		      Folder.CreateFolder
+		    Else
+		      Return Nil
+		    End If
+		  End If
+		  Return Folder
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BackupsFolder(Extends Target As Beacon.Application) As FolderItem
+		  Return Target.ApplicationSupport.Child("Backups")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BooleanValue(Extends Dict As Dictionary, Key As Variant, Default As Boolean, AllowArray As Boolean = False) As Boolean
 		  Return GetValueAsType(Dict, Key, "Boolean", Default, AllowArray, AddressOf CoerceToBoolean)
 		End Function

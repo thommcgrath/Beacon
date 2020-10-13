@@ -1,0 +1,83 @@
+#tag Interface
+Protected Interface Application
+	#tag Method, Flags = &h0
+		Function ApplicationSupport() As FolderItem
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BuildNumber() As Integer
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function BuildVersion() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CleanupConfigBackups()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub HandleException(Error As RuntimeException)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IdentityManager() As IdentityManager
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Log(Err As RuntimeException, Location As String, MoreDetail As String = "")
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Log(Message As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LogAPIException(Err As RuntimeException, Location As String, HTTPStatus As Integer, RawContent As MemoryBlock)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LogsFolder() As FolderItem
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReportException(Err As RuntimeException)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ResourcesFolder() As FolderItem
+		  
+		End Function
+	#tag EndMethod
+
+
+End Interface
+#tag EndInterface
