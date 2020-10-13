@@ -16,7 +16,7 @@ Private Class NSColor
 		    
 		    Var RedValue, GreenValue, BlueValue, AlphaValue As CGFloat
 		    GetRGBValues(Handle, RedValue, GreenValue, BlueValue, AlphaValue)
-		    Return RGB(255 * RedValue, 255 * GreenValue, 255 * BlueValue, 255 - (AlphaValue * 255))
+		    Return Color.RGB(255 * RedValue, 255 * GreenValue, 255 * BlueValue, 255 - (AlphaValue * 255))
 		  #endif
 		End Function
 	#tag EndMethod

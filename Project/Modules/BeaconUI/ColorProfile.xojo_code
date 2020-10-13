@@ -94,11 +94,11 @@ Protected Class ColorProfile
 		  End If
 		  
 		  Var LuminanceDifference As Double = ForegroundLuminance - SelectedGray
-		  Self.mSelectedBackgroundColor = HSV(0, 0, SelectedGray)
+		  Self.mSelectedBackgroundColor = Color.HSV(0, 0, SelectedGray)
 		  Self.mSelectedShadowColor = If(LuminanceDifference <= 0, &cFFFFFF, &C00000080)
 		  
-		  Self.mBorderColor = HSV(0, 0, Min(Max(SelectedGray * 0.80, 0.00), 0.65))
-		  Self.mStandardBackgroundColor = HSV(0, 0, Min(SelectedGray * 1.3, 0.968))
+		  Self.mBorderColor = Color.HSV(0, 0, Min(Max(SelectedGray * 0.80, 0.00), 0.65))
+		  Self.mStandardBackgroundColor = Color.HSV(0, 0, Min(SelectedGray * 1.3, 0.968))
 		  If Self.mStandardBackgroundColor.Luminance > 0.55 Then
 		    Self.mStandardForegroundColor = &c4C4C4C
 		    Self.mStandardShadowColor = &cFFFFFF

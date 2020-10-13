@@ -5,7 +5,7 @@ Protected Module BeaconUI
 		  // Opacity = 1.0 means unchanged, may not actually be opaque
 		  // Opacity = 0.5 means cut opacity in half
 		  
-		  Return RGB(SourceColor.Red, SourceColor.Green, SourceColor.Blue, 255 + ((SourceColor.Alpha - 255) * Opacity))
+		  Return Color.RGB(SourceColor.Red, SourceColor.Green, SourceColor.Blue, 255 + ((SourceColor.Alpha - 255) * Opacity))
 		End Function
 	#tag EndMethod
 
@@ -22,7 +22,7 @@ Protected Module BeaconUI
 		  Var Blue As Integer = (Color1.Blue * Color1Percent) + (Color2.Blue * Color2Percent)
 		  Var Alpha As Integer = (Color1.Alpha * Color1Percent) + (Color2.Alpha * Color2Percent)
 		  
-		  Return RGB(Red, Green, Blue, Alpha)
+		  Return Color.RGB(Red, Green, Blue, Alpha)
 		End Function
 	#tag EndMethod
 
@@ -77,7 +77,7 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Capture(Extends Win As Window) As Picture
 		  #if TargetWin32
 		    Declare Sub BitBlt Lib "GDI32" (DestinationContext As Ptr, X As Integer, Y As Integer, Width As Integer, Height As Integer, SourceContext As Integer, SrcX As Integer, SrcY As Integer, RasterOperationCode As Integer)
@@ -207,7 +207,7 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub FixTabFont(Extends Panel As TabPanel)
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
@@ -230,7 +230,7 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function GlobalizeCoordinate(Extends Target As RectControl, Coordinate As Xojo.Point) As Xojo.Point
 		  Var Globalized As New Xojo.Point(Target.Left + Coordinate.X, Target.Top + Coordinate.Y)
 		  
@@ -258,7 +258,7 @@ Protected Module BeaconUI
 		    Var Pic As New Picture(Width * Factor, Height * Factor)
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
-		    Pic.Graphics.DrawingColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
+		    Pic.Graphics.DrawingColor = Color.RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    
 		    Var Mask As New Picture(Width * Factor, Height * Factor)
@@ -274,7 +274,7 @@ Protected Module BeaconUI
 		    End If
 		    
 		    If FillColor.Alpha <> 0 Then
-		      Mask.Graphics.DrawingColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
+		      Mask.Graphics.DrawingColor = Color.RGB(255, 255, 255, 255 - FillColor.Alpha)
 		      Mask.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    End If
 		    
@@ -333,7 +333,7 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ResizeCells(Extends Target As SegmentedButton)
 		  #if TargetMacOS
 		    Var Handle As Integer = Target.Handle
@@ -371,13 +371,13 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
 		  ShowAlert(Win, Message, Explanation)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Sub ShowAlert(Win As Window = Nil, Message As String, Explanation As String)
 		  Try
 		    Win = Win.TrueWindow
@@ -405,25 +405,25 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowConfirm(Extends Win As Window, Account As Beacon.ExternalAccount) As Boolean
 		  Return ShowConfirm(Win, Account)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateCaption As String) As BeaconUI.ConfirmResponses
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As Window = Nil, Account As Beacon.ExternalAccount) As Boolean
 		  If Account Is Nil Then
 		    Return False
@@ -445,13 +445,13 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
 		  Try
 		    Win = Win.TrueWindow
@@ -496,19 +496,19 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowDeleteConfirmation(Extends Win As Window, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun, Restore)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowDeleteConfirmation(Extends Win As Window, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var Names() As String
 		  For Each Item As Beacon.NamedItem In Items
@@ -518,7 +518,7 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var UniqueNames() As String
 		  Var UseGenericNames As Boolean

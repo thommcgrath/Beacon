@@ -1116,7 +1116,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
-		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
+		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
 		  Var PrimaryColor, AccentColor As Color
 		  Var IconID As String
@@ -2460,7 +2460,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Source.Path = Results.Column("path").StringValue
 		    Source.Availability = Results.Column("availability").Value
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
-		    Source.UIColor = RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		    Source.UIColor = Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue

@@ -318,7 +318,7 @@ Protected Module SystemColors
 		  // This is to work around an issue where the even dark color isn't getting the proper alpha channel
 		  // https://forum.xojo.com/50440-dark-mode-alternatingcontentbackgroundcolors-doesn-t-seem-corre
 		  If SystemColors.IsDarkMode Then
-		    Colors(0) = RGB(Colors(0).Red, Colors(0).Green, Colors(0).Blue, 153)
+		    Colors(0) = Color.RGB(Colors(0).Red, Colors(0).Green, Colors(0).Blue, 153)
 		  End If
 		  
 		  Return Colors
