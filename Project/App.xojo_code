@@ -504,6 +504,12 @@ Implements NotificationKit.Receiver, Beacon.Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GenericLootSourceIcon() As Picture
+		  Return IconLootStandard
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetOnlinePermission() As Boolean
 		  If Self.mIdentityManager.CurrentIdentity <> Nil And Preferences.OnlineEnabled Then

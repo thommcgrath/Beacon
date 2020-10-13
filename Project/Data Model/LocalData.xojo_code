@@ -1112,8 +1112,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, BackgroundColor As Color) As Picture
-		  Const IncludeExperimentalBadge = False
-		  
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
 		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
@@ -1124,14 +1122,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
-		    If IncludeExperimentalBadge And Results.Column("experimental").BooleanValue Then
-		      BadgeSheet = IconExperimentalBadge
-		      IconID = IconID + "exp"
-		    End If
 		    IconID = Results.Column("icon_id").StringValue
 		    PrimaryColor = Source.UIColor
 		  Else
-		    SpriteSheet = IconLootStandard
+		    SpriteSheet = App.GenericLootSourceIcon()
 		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
 		    PrimaryColor = &cFFFFFF00
 		  End If

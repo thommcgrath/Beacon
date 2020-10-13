@@ -25,6 +25,12 @@ Protected Interface Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GenericLootSourceIcon() As Picture
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub HandleException(Error As RuntimeException)
 		  
 		End Sub
