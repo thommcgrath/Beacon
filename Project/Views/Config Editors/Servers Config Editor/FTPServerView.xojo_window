@@ -47,7 +47,7 @@ Begin ServerViewContainer FTPServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -859,7 +859,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   363
@@ -894,7 +894,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   520
@@ -937,7 +937,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   520
@@ -973,7 +973,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   520

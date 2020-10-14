@@ -100,7 +100,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   "0"
+      UnicodeMode     =   0
       UseFocusRing    =   False
       Visible         =   True
       Width           =   608
@@ -155,7 +155,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20

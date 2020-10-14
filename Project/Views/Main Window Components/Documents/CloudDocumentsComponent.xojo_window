@@ -45,7 +45,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -97,7 +97,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   232
@@ -129,8 +129,8 @@ Begin DocumentsComponentView CloudDocumentsComponent
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   "0"
-         GridLinesVerticalStyle=   "0"
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
          HasBorder       =   False
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -149,7 +149,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          LockTop         =   True
          PreferencesKey  =   "Cloud Documents"
          RequiresSelection=   False
-         RowSelectionType=   "1"
+         RowSelectionType=   1
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   0

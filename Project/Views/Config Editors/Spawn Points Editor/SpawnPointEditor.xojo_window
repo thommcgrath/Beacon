@@ -75,7 +75,7 @@ Begin BeaconContainer SpawnPointEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      Resizer         =   "2"
+      Resizer         =   2
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -110,7 +110,7 @@ Begin BeaconContainer SpawnPointEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   "1"
+      Resizer         =   1
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -143,7 +143,7 @@ Begin BeaconContainer SpawnPointEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   705
       Begin SpawnPointSetEditor SetEditor
@@ -317,8 +317,8 @@ Begin BeaconContainer SpawnPointEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -337,7 +337,7 @@ Begin BeaconContainer SpawnPointEditor
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   3
@@ -376,8 +376,8 @@ Begin BeaconContainer SpawnPointEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -396,7 +396,7 @@ Begin BeaconContainer SpawnPointEditor
       LockTop         =   False
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   6

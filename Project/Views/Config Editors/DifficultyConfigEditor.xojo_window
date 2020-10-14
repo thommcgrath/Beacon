@@ -480,7 +480,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   226
@@ -524,7 +524,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   260
@@ -560,7 +560,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   226
@@ -595,7 +595,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   260
@@ -638,7 +638,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   294
@@ -674,7 +674,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   294

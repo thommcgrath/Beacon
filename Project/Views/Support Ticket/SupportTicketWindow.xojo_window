@@ -3,7 +3,7 @@ Begin BeaconWindow SupportTicketWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "3"
+   DefaultLocation =   3
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconWindow SupportTicketWindow
    MinimumWidth    =   600
    Resizeable      =   True
    Title           =   "New Support Ticket"
-   Type            =   "0"
+   Type            =   0
    Visible         =   True
    Width           =   600
    Begin GroupBox DisclosureGroup
@@ -77,7 +77,7 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   422
@@ -117,7 +117,7 @@ Begin BeaconWindow SupportTicketWindow
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   512
       End
    End
@@ -141,7 +141,7 @@ Begin BeaconWindow SupportTicketWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   14
       TabPanelIndex   =   0
@@ -173,7 +173,7 @@ Begin BeaconWindow SupportTicketWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -217,7 +217,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   54
@@ -253,7 +253,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   54
@@ -295,7 +295,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -331,7 +331,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -398,7 +398,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   88
@@ -440,7 +440,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -476,7 +476,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -523,13 +523,13 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   "0"
+      UnicodeMode     =   0
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True
@@ -560,7 +560,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   194
@@ -627,7 +627,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -638,18 +638,22 @@ Begin BeaconWindow SupportTicketWindow
       Width           =   123
    End
    Begin Thread SubmitThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
    Begin Timer SubmitWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   500
-      RunMode         =   "0"
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End

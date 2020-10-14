@@ -102,7 +102,7 @@ Begin BeaconSubview APIBuilderView
       Top             =   86
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   "0"
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   953
@@ -218,7 +218,7 @@ Begin BeaconSubview APIBuilderView
       Top             =   262
       Transparent     =   False
       Underline       =   False
-      UnicodeMode     =   "0"
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   953

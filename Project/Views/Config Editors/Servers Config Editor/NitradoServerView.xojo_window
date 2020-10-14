@@ -53,7 +53,7 @@ Begin ServerViewContainer NitradoServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -130,6 +130,7 @@ Begin ServerViewContainer NitradoServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -334,7 +335,7 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -369,7 +370,7 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   315
@@ -412,7 +413,7 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   315
@@ -448,7 +449,7 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   315

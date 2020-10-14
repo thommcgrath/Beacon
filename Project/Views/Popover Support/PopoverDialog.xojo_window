@@ -3,7 +3,7 @@ Begin BeaconDialog PopoverDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog PopoverDialog
    MinimumWidth    =   64
    Resizeable      =   False
    Title           =   "Dialog"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
@@ -44,7 +44,7 @@ Begin BeaconDialog PopoverDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -76,7 +76,7 @@ Begin BeaconDialog PopoverDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0

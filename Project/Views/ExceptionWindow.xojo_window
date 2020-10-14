@@ -289,7 +289,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       Top             =   103
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   474
       Begin Label CheckingLabel

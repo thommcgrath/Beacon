@@ -3,7 +3,7 @@ Begin BeaconDialog AddSpawnPointDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   True
@@ -21,7 +21,7 @@ Begin BeaconDialog AddSpawnPointDialog
    MinimumWidth    =   600
    Resizeable      =   True
    Title           =   "Add Spawn Point Override"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
@@ -44,7 +44,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -76,7 +76,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -113,7 +113,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   314
@@ -145,8 +145,8 @@ Begin BeaconDialog AddSpawnPointDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   True
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -165,7 +165,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   4
@@ -207,7 +207,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -228,10 +228,10 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       Segments        =   "Spawn Points\n\nTrue\rCreatures\n\nFalse"
-      SelectionStyle  =   "0"
+      SelectionStyle  =   0
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -273,7 +273,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   53
@@ -309,7 +309,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   53
@@ -349,7 +349,7 @@ Begin BeaconDialog AddSpawnPointDialog
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   270
    End
    Begin RadioButton OverrideRadio

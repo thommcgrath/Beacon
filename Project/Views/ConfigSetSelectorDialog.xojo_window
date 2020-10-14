@@ -3,7 +3,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
    MinimumWidth    =   400
    Resizeable      =   False
    Title           =   "Prioritize Config Sets"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   400
    Begin Label InstructionsLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   248
@@ -81,8 +81,8 @@ Begin BeaconDialog ConfigSetSelectorDialog
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   True
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -101,7 +101,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "0"
+      RowSelectionType=   0
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   1
@@ -143,7 +143,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -173,7 +173,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -205,7 +205,7 @@ Begin BeaconDialog ConfigSetSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0

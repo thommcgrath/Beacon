@@ -3,7 +3,7 @@ Begin BeaconDialog EngramControlWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog EngramControlWizard
    MinimumWidth    =   64
    Resizeable      =   False
    Title           =   "Engram Control Wizard"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   508
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramControlWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -116,7 +116,7 @@ Begin BeaconDialog EngramControlWizard
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -146,7 +146,7 @@ Begin BeaconDialog EngramControlWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -178,7 +178,7 @@ Begin BeaconDialog EngramControlWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -223,7 +223,7 @@ Begin BeaconDialog EngramControlWizard
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   59
@@ -235,12 +235,15 @@ Begin BeaconDialog EngramControlWizard
       Width           =   80
    End
    Begin Thread WorkThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
 End
 #tag EndWindow

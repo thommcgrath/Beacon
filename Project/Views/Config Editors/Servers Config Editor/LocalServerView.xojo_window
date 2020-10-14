@@ -47,7 +47,7 @@ Begin ServerViewContainer LocalServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
@@ -85,7 +85,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   95
@@ -120,7 +120,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   95
@@ -194,7 +194,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
@@ -230,7 +230,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
@@ -272,7 +272,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   127
@@ -303,7 +303,7 @@ Begin ServerViewContainer LocalServerView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -340,7 +340,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   127
@@ -382,7 +382,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   161
@@ -413,7 +413,7 @@ Begin ServerViewContainer LocalServerView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -450,7 +450,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   161
@@ -516,7 +516,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   195
@@ -551,7 +551,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   352
@@ -594,7 +594,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   352
@@ -630,7 +630,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   352

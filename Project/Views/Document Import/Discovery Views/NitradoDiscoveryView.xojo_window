@@ -45,7 +45,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton FindingCancelButton
@@ -258,7 +258,7 @@ Begin DiscoveryView NitradoDiscoveryView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   2
@@ -295,7 +295,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   218
@@ -372,10 +372,11 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Timer StatusWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
-      RunMode         =   "2"
+      RunMode         =   2
       Scope           =   2
       TabPanelIndex   =   0
    End

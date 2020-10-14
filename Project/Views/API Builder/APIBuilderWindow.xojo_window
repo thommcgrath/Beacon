@@ -3,7 +3,7 @@ Begin BeaconAutopositionWindow APIBuilderWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "2"
+   DefaultLocation =   2
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   True
@@ -21,7 +21,7 @@ Begin BeaconAutopositionWindow APIBuilderWindow
    MinimumWidth    =   600
    Resizeable      =   True
    Title           =   "API Builder"
-   Type            =   "0"
+   Type            =   0
    Visible         =   True
    Width           =   800
    Begin APIBuilderView APIBuilderView1

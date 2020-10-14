@@ -3,7 +3,7 @@ Begin BeaconAutopositionWindow DeployManager
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "2"
+   DefaultLocation =   2
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   True
@@ -21,7 +21,7 @@ Begin BeaconAutopositionWindow DeployManager
    MinimumWidth    =   800
    Resizeable      =   True
    Title           =   "Deploy"
-   Type            =   "0"
+   Type            =   0
    Visible         =   True
    Width           =   800
    Begin BeaconListbox ServerList
@@ -46,8 +46,8 @@ Begin BeaconAutopositionWindow DeployManager
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -66,7 +66,7 @@ Begin BeaconAutopositionWindow DeployManager
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "0"
+      RowSelectionType=   0
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   0
@@ -131,7 +131,7 @@ Begin BeaconAutopositionWindow DeployManager
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   499
       Begin Label OptionsMessageLabel
@@ -159,7 +159,7 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   201
@@ -199,7 +199,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   459
       End
       Begin CheckBox ReviewChangesCheckbox
@@ -232,7 +232,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   459
       End
       Begin UITweaks.ResizedPushButton OptionsActionButton
@@ -255,7 +255,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   1
@@ -297,7 +297,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   False
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   459
       End
       Begin Label LogsMessageLabel
@@ -325,7 +325,7 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   20
@@ -373,13 +373,13 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
-         UnicodeMode     =   "0"
+         UnicodeMode     =   0
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
@@ -436,7 +436,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -468,7 +468,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -510,7 +510,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   255
       End
       Begin FadedSeparator ReviewBottomSeparator
@@ -607,13 +607,13 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   73
          Transparent     =   False
          Underline       =   False
-         UnicodeMode     =   "0"
+         UnicodeMode     =   0
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
@@ -650,10 +650,11 @@ Begin BeaconAutopositionWindow DeployManager
       End
    End
    Begin Timer DeployWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
-      RunMode         =   "0"
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End

@@ -57,7 +57,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -100,7 +100,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86
@@ -136,7 +136,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -171,7 +171,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86
@@ -206,7 +206,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -241,7 +241,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -276,7 +276,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86
@@ -318,7 +318,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -361,7 +361,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86
@@ -397,7 +397,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -432,7 +432,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -467,7 +467,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -502,7 +502,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -565,7 +565,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   222
@@ -600,7 +600,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   256
@@ -635,7 +635,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   290
@@ -678,7 +678,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   222
@@ -722,7 +722,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   256
@@ -766,7 +766,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   290
@@ -802,7 +802,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   222
@@ -837,7 +837,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   256
@@ -872,7 +872,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   290
@@ -915,7 +915,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   222
@@ -959,7 +959,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   256
@@ -1003,7 +1003,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   290
@@ -1039,7 +1039,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   190
@@ -1074,7 +1074,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   190
@@ -1109,7 +1109,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   190
@@ -1144,7 +1144,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   222
@@ -1179,7 +1179,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   256
@@ -1214,7 +1214,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   290
@@ -1250,7 +1250,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -1285,7 +1285,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   86

@@ -36,10 +36,10 @@ Begin ContainerControl ModSelectionGrid
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse"
-      SelectionStyle  =   "0"
+      SelectionStyle  =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   False
@@ -79,7 +79,7 @@ Begin ContainerControl ModSelectionGrid
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   100
    End
 End

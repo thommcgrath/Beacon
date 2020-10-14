@@ -147,7 +147,7 @@ Begin BeaconDialog LootSourceWizard
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   510
+         Width           =   249
       End
       Begin UITweaks.ResizedPushButton SelectionCustomButton
          AutoDeactivate  =   True
@@ -1172,6 +1172,34 @@ Begin BeaconDialog LootSourceWizard
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin SearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         ClearMenuItemValue=   "Clear"
+         Enabled         =   True
+         Height          =   22
+         Hint            =   "Search Loot Sources"
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   281
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Visible         =   True
+         Width           =   249
+      End
    End
 End
 #tag EndWindow
@@ -1222,7 +1250,7 @@ End
 		  Var Labels As Dictionary = Data.LootSourceLabels(Self.mMask)
 		  
 		  Var CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
-		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources("", Self.mMods, Preferences.ShowExperimentalLootSources)
+		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources(Self.FilterField.Text, Self.mMods, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootSources.LastRowIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
 		      AllowedLootSources.RemoveRowAt(X)
@@ -1411,6 +1439,22 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateSourceList(Delay As Integer)
+		  If Delay <= 0 Then
+		    Self.BuildSourceList()
+		    Return
+		  End If
+		  
+		  CallLater.Cancel(Self.mBuildListDelay)
+		  Self.mBuildListDelay = CallLater.Schedule(Delay, AddressOf BuildSourceList)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mBuildListDelay As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1727,6 +1771,18 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateSourceList(100)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Pressed()
+		  Self.UpdateSourceList(10)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

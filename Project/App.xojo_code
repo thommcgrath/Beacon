@@ -1,7 +1,7 @@
 #tag Class
 Protected Class App
 Inherits Application
-Implements NotificationKit.Receiver, Beacon.Application
+Implements NotificationKit.Receiver,Beacon.Application
 	#tag Event
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
