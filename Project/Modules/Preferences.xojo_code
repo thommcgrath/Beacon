@@ -49,28 +49,28 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ListSortColumn(Key As String, Assigns Idx As Integer)
 		  Init
 		  mManager.IntegerValue(Key + " Sort Column") = Idx
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ListSortColumn(Key As String, Default As Integer) As Integer
 		  Init
 		  Return mManager.IntegerValue(Key + " Sort Column", Default)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ListSortDirection(Key As String, Assigns Direction As Listbox.SortDirections)
 		  Init
 		  mManager.IntegerValue(Key + " Sort Direction") = CType(Direction, Integer)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ListSortDirection(Key As String, Default As Listbox.SortDirections) As Listbox.SortDirections
 		  Init
 		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), Listbox.SortDirections)

@@ -45,45 +45,37 @@ Protected Class PresetModifier
 	#tag Method, Flags = &h0
 		Function Matches(Sources() As Beacon.LootSource) As Beacon.LootSource()
 		  Var Results() As Beacon.LootSource
-		  #if TargetiOS
-		    #Pragma Error "Not Yet Implemented"
-		  #else
-		    Var Reg As New Regex
-		    Reg.Options.CaseSensitive = False
-		    Reg.SearchPattern = Self.mPattern
-		    
-		    For Each Source As Beacon.LootSource In Sources
-		      #Pragma BreakOnExceptions False
-		      Try
-		        If Reg.Search(Source.ClassString) <> Nil Then
-		          Results.AddRow(Source)
-		        End If
-		      Catch Err As RegExException
-		        
-		      End Try
-		      #Pragma BreakOnExceptions Default
-		    Next
-		  #endif
+		  Var Reg As New Regex
+		  Reg.Options.CaseSensitive = False
+		  Reg.SearchPattern = Self.mPattern
+		  
+		  For Each Source As Beacon.LootSource In Sources
+		    #Pragma BreakOnExceptions False
+		    Try
+		      If Reg.Search(Source.ClassString) <> Nil Then
+		        Results.AddRow(Source)
+		      End If
+		    Catch Err As RegExException
+		      
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		  Next
 		  Return Results
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Matches(Source As Beacon.LootSource) As Boolean
-		  #if TargetiOS
-		    #Pragma Error "Not Yet Implemented"
-		  #else
-		    #Pragma BreakOnExceptions False
-		    Try
-		      Var Reg As New Regex
-		      Reg.Options.CaseSensitive = False
-		      Reg.SearchPattern = Self.mPattern
-		      
-		      Return Reg.Search(Source.ClassString) <> Nil
-		    Catch Err As RegExException
-		      Return False
-		    End Try
-		  #endif
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Var Reg As New Regex
+		    Reg.Options.CaseSensitive = False
+		    Reg.SearchPattern = Self.mPattern
+		    
+		    Return Reg.Search(Source.ClassString) <> Nil
+		  Catch Err As RegExException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -101,24 +93,20 @@ Protected Class PresetModifier
 
 	#tag Method, Flags = &h0
 		Function TestPattern(ByRef Message As String) As Boolean
-		  #if TargetiOS
-		    #Pragma Error "Not Yet Implemented"
-		  #else
-		    Var Reg As New Regex
-		    Reg.Options.CaseSensitive = False
-		    Reg.SearchPattern = Self.mPattern
-		    
-		    #Pragma BreakOnExceptions False
-		    Try
-		      Call Reg.Search("Testing")
-		      Message = ""
-		      Return True
-		    Catch Err As RegexException
-		      Message = Err.Message
-		      Return False
-		    End Try
-		    #Pragma BreakOnExceptions Default
-		  #endif
+		  Var Reg As New Regex
+		  Reg.Options.CaseSensitive = False
+		  Reg.SearchPattern = Self.mPattern
+		  
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Call Reg.Search("Testing")
+		    Message = ""
+		    Return True
+		  Catch Err As RegexException
+		    Message = Err.Message
+		    Return False
+		  End Try
+		  #Pragma BreakOnExceptions Default
 		End Function
 	#tag EndMethod
 

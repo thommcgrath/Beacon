@@ -147,7 +147,6 @@ Class=ColorProfile;Modules/BeaconUI/ColorProfile.xojo_code;&h0000000022CD67FF;&h
 Class=ProfileTask;Modules/BeaconUI/ProfileTask.xojo_code;&h0000000063A1CFFF;&h0000000012A7B7FF;false
 Interface=ProfileAnimator;Modules/BeaconUI/ProfileAnimator.xojo_code;&h0000000012A457FF;&h0000000012A7B7FF;false
 Class=StatusBar;Custom Controls/StatusBar.xojo_code;&h000000002FE4FFFF;&h0000000030DCFFFF;false
-Interface=SheetPositionHandler;Modules/BeaconUI/SheetPositionHandler.xojo_code;&h0000000060391FFF;&h0000000012A7B7FF;false
 MultiImage=IconToolbarSimulate;Icons/IconToolbarSimulate.xojo_image;&h000000002DA24FFF;&h0000000007F977FF;false
 MultiImage=IconToolbarEdit;Icons/IconToolbarEdit.xojo_image;&h000000004620CFFF;&h0000000007F977FF;false
 Class=ConfigParser;Modules/Beacon/ConfigParser.xojo_code;&h000000005BA577FF;&h0000000055ADDFFF;false

@@ -49,7 +49,7 @@ Protected Module FrameworkExtensions
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Bottom(Extends Ctl As RectControl) As Integer
 		  Return Ctl.Top + Ctl.Height
 		End Function
@@ -150,7 +150,7 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
 		  #if TargetWin32
 		    If Win = Nil Or Parent = Nil Then
@@ -283,7 +283,7 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
 		  Return File.Name.EndsWith(Type.PrimaryExtension)
 		End Function
@@ -425,13 +425,13 @@ Protected Module FrameworkExtensions
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Right(Extends Ctl As RectControl) As Integer
 		  Return Ctl.Left + Ctl.Width
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function SelectedRowTag(Extends Menu As PopupMenu) As Variant
 		  If Menu.SelectedRowIndex > -1 Then
 		    Return Menu.RowTagAt(Menu.SelectedRowIndex)

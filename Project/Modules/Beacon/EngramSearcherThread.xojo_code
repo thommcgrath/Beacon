@@ -1,7 +1,6 @@
 #tag Class
 Protected Class EngramSearcherThread
 Inherits Beacon.Thread
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Var StartTime As Double = System.Microseconds
