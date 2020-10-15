@@ -25,67 +25,31 @@ Begin ContainerControl DocumentFilterControl
    Transparent     =   True
    Visible         =   True
    Width           =   750
-   Begin NSSearchFieldControlMBS MacFilterField
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   295
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -134
-      Visible         =   True
-      Width           =   200
-   End
-   Begin DelayedTextField GenericFilterField
+   Begin DelayedSearchField FilterField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
       Height          =   22
-      Hint            =   "Filter"
+      Hint            =   ""
       Index           =   -2147483648
-      Italic          =   False
-      Left            =   295
+      InitialParent   =   ""
+      Left            =   530
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   -100
+      Top             =   20
       Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   200
    End
@@ -93,29 +57,9 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  #if TargetMacOS
-		    Self.MacFilterField.Left = Self.Width - (20 + Self.MacFilterField.Width)
-		    Self.MacFilterField.Top = 20
-		    NSSearchFieldMBS(Self.MacFilterField.NSViewMBS).PlaceholderString = "Filter"
-		  #else
-		    Self.GenericFilterField.Left = Self.Width - (20 + Self.GenericFilterField.Width)
-		    Self.GenericFilterField.Top = 20
-		  #endif
-		  
-		  RaiseEvent Open
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Function SearchText() As String
-		  #if TargetMacOS
-		    Return NSSearchFieldMBS(Self.MacFilterField.NSViewMBS).StringValue
-		  #else
-		    Return Self.GenericFilterField.Value
-		  #endif
+		  Return Self.FilterField.Text
 		End Function
 	#tag EndMethod
 
@@ -124,23 +68,12 @@ End
 		Event Changed()
 	#tag EndHook
 
-	#tag Hook, Flags = &h0
-		Event Open()
-	#tag EndHook
-
 
 #tag EndWindowCode
 
-#tag Events MacFilterField
+#tag Events FilterField
 	#tag Event
-		Sub Action()
-		  RaiseEvent Changed
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GenericFilterField
-	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
