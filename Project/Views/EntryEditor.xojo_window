@@ -55,50 +55,6 @@ Begin BeaconDialog EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin DelayedTextField FilterField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   "Search"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         Italic          =   False
-         Left            =   40
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   340
-      End
       Begin CheckBox SingleEntryCheck
          AutoDeactivate  =   True
          Bold            =   False
@@ -220,6 +176,34 @@ Begin BeaconDialog EntryEditor
          Width           =   340
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin DelayedSearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         ClearMenuItemValue=   "Clear"
+         Enabled         =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         Visible         =   True
+         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -573,7 +557,7 @@ End
 		    Next
 		  End If
 		  
-		  Self.FilterField.Value = Prefilter
+		  Self.FilterField.Text = Prefilter
 		  Self.UpdateFilter()
 		  SingleEntryCheck.Value = Self.mSelectedEngrams.KeyCount > 1
 		  
@@ -591,7 +575,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Value
+		  Var SearchText As String = Self.FilterField.Text
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
@@ -710,13 +694,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events FilterField
-	#tag Event
-		Sub TextChange()
-		  Self.UpdateFilter()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SingleEntryCheck
 	#tag Event
 		Sub Action()
@@ -831,6 +808,13 @@ End
 		  
 		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

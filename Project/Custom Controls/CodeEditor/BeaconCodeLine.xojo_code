@@ -318,7 +318,7 @@ Protected Class BeaconCodeLine
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="UInteger"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

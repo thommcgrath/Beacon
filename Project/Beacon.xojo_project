@@ -483,6 +483,7 @@ Window=IdentityDecryptDialog;Views/Identity Window/IdentityDecryptDialog.xojo_wi
 Window=IdentityView;Views/Identity Window/IdentityView.xojo_window;&h000000005C2BA7FF;&h000000005A59DFFF;false
 Window=IdentityWindow;Views/Identity Window/IdentityWindow.xojo_window;&h000000006B7317FF;&h000000005A59DFFF;false
 Interface=Application;Modules/Beacon/Application.xojo_code;&h00000000473D07FF;&h0000000055ADDFFF;false
+Class=ResizedSearchField;Modules/UITweaks/ResizedSearchField.xojo_code;&h000000005CDE77FF;&h00000000316ECFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

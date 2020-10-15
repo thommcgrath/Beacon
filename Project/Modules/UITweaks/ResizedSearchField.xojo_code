@@ -1,62 +1,22 @@
 #tag Class
-Protected Class DelayedSearchField
-Inherits UITweaks.ResizedSearchField
+Protected Class ResizedSearchField
+Inherits SearchField
 	#tag Event
-		Sub Pressed()
-		  Self.mTimer.Reset
-		  Self.mTimer.Period = 10
-		  Self.mTimer.RunMode = Timer.RunModes.Single
+		Sub Opening()
+		  Self.ResizeForPlatform(Self.IdealHeight)
+		  
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
-
-	#tag Event
-		Sub TextChanged()
-		  Self.mTimer.Reset
-		  Self.mTimer.Period = 100
-		  Self.mTimer.RunMode = Timer.RunModes.Single
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  // Calling the overridden superclass constructor.
-		  
-		  Self.mTimer = New Timer
-		  Self.mTimer.RunMode = Timer.RunModes.Off
-		  Self.mTimer.Period = 100
-		  AddHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
-		  
-		  Super.Constructor
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Destructor()
-		  RemoveHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
-		  Self.mTimer.RunMode = Timer.RunModes.Off
-		  Self.mTimer.Reset
-		  Self.mTimer = Nil
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mTimer_Action(Sender As Timer)
-		  #Pragma Unused Sender
-		  
-		  RaiseEvent TextChanged
-		End Sub
-	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event TextChanged()
+		Event Opening()
 	#tag EndHook
 
 
-	#tag Property, Flags = &h21
-		Private mTimer As Timer
-	#tag EndProperty
+	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"22", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

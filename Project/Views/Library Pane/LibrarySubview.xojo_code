@@ -104,6 +104,22 @@ Inherits BeaconSubview
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="ViewTitle"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ViewIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="EraseBackground"
 			Visible=false
 			Group="Behavior"
@@ -310,14 +326,6 @@ Inherits BeaconSubview
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

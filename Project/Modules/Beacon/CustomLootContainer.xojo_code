@@ -170,14 +170,6 @@ Implements Beacon.MutableLootSource
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="AppendMode"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -194,43 +186,11 @@ Implements Beacon.MutableLootSource
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MaxItemSets"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinItemSets"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="NumItemSetsPower"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SetsRandomWithoutReplacement"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

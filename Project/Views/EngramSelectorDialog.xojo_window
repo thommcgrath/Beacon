@@ -62,49 +62,6 @@ Begin BeaconDialog EngramSelectorDialog
       Visible         =   True
       Width           =   560
    End
-   Begin UITweaks.ResizedTextField FilterField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   "Search Objects"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
    Begin BeaconListbox List
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -414,6 +371,34 @@ Begin BeaconDialog EngramSelectorDialog
       VisualState     =   0
       Width           =   376
    End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Search Objects"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Visible         =   True
+      Width           =   560
+   End
 End
 #tag EndWindow
 
@@ -636,7 +621,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Value
+		  Var SearchText As String = Self.FilterField.Text
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
@@ -693,13 +678,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events FilterField
-	#tag Event
-		Sub TextChange()
-		  Self.UpdateFilter()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Change()
@@ -802,6 +780,13 @@ End
 		  Var ToggleButtonsHeight As Integer = AddToSelectionsButton.Height + RemoveFromSelectionsButton.Height + 12
 		  Self.AddToSelectionsButton.Top = Self.SelectedList.Top + ((Self.SelectedList.Height - ToggleButtonsHeight) / 2)
 		  Self.RemoveFromSelectionsButton.Top = Self.AddToSelectionsButton.Top + Self.AddToSelectionsButton.Height + 12
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -225,8 +225,8 @@ Begin BeaconDialog AddSpawnPointDialog
       Left            =   380
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
@@ -413,7 +413,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       MaximumRecentItems=   -1
       RecentItemsValue=   "Recent Searches"
