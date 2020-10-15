@@ -15,7 +15,7 @@ Inherits UITweaks.ResizedTextField
 		  
 		  Self.mTimer = New Timer
 		  Self.mTimer.RunMode = Timer.RunModes.Off
-		  Self.mTimer.Period = 250
+		  Self.mTimer.Period = 100
 		  AddHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
 		  
 		  Super.Constructor

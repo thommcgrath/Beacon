@@ -1172,7 +1172,7 @@ Begin BeaconDialog LootSourceWizard
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin SearchField FilterField
+      Begin DelayedSearchField FilterField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowRecentItems=   False
@@ -1439,22 +1439,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub UpdateSourceList(Delay As Integer)
-		  If Delay <= 0 Then
-		    Self.BuildSourceList()
-		    Return
-		  End If
-		  
-		  CallLater.Cancel(Self.mBuildListDelay)
-		  Self.mBuildListDelay = CallLater.Schedule(Delay, AddressOf BuildSourceList)
-		End Sub
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mBuildListDelay As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1777,12 +1761,7 @@ End
 #tag Events FilterField
 	#tag Event
 		Sub TextChanged()
-		  Self.UpdateSourceList(100)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Pressed()
-		  Self.UpdateSourceList(10)
+		  Self.BuildSourceList
 		End Sub
 	#tag EndEvent
 #tag EndEvents

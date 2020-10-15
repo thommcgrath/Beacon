@@ -291,6 +291,7 @@ Window=ExperienceLevelEditor;Views/Config Editors/Experience Config Editor/Exper
 Window=ExperienceWizard;Views/Config Editors/Experience Config Editor/ExperienceWizard.xojo_window;&h00000000038107FF;&h000000005A6CD7FF;false
 MultiImage=IconToolbarExperience;Icons/IconToolbarExperience.xojo_image;&h000000004AAF67FF;&h0000000007F977FF;false
 Class=DelayedTextField;Custom Controls/DelayedTextField.xojo_code;&h000000007A3AE7FF;&h0000000030DCFFFF;false
+Class=DelayedSearchField;Custom Controls/DelayedSearchField.xojo_code;&h00000000580037FF;&h0000000030DCFFFF;false
 Class=SymmetricHeader;Modules/BeaconEncryption/SymmetricHeader.xojo_code;&h00000000704997FF;&h0000000029410FFF;false
 Class=StringList;Modules/Beacon/StringList.xojo_code;&h000000005AF0F7FF;&h0000000055ADDFFF;false
 Class=StringArrayIterator;Modules/Beacon/StringArrayIterator.xojo_code;&h00000000343227FF;&h0000000055ADDFFF;false

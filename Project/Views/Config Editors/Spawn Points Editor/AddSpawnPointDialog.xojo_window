@@ -241,49 +241,6 @@ Begin BeaconDialog AddSpawnPointDialog
       Visible         =   True
       Width           =   200
    End
-   Begin DelayedTextField FilterField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      Height          =   22
-      Hint            =   "Search for spawn points"
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   84
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   53
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   284
-   End
    Begin UITweaks.ResizedLabel FilterLabel
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -442,6 +399,34 @@ Begin BeaconDialog AddSpawnPointDialog
       Visible         =   True
       Width           =   214
    End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Search for spawn points"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   84
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Visible         =   True
+      Width           =   284
+   End
 End
 #tag EndWindow
 
@@ -509,7 +494,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Value.Trim
+		  Var SearchText As String = Self.FilterField.Text.Trim
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  
 		  If SearchText = "" Then
@@ -724,13 +709,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChange()
-		  Self.UpdateFilter()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events OverrideRadio
 	#tag Event
 		Sub Action()
@@ -749,6 +727,13 @@ End
 	#tag Event
 		Sub Action()
 		  Self.CheckActionEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
