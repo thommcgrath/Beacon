@@ -45,7 +45,6 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -1604,7 +1603,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1613,7 +1611,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection CheckForConfirmationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1622,7 +1619,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1631,7 +1627,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection IdentitySuggestionSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1640,7 +1635,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection SubmitIdentitySocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1649,7 +1643,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection LoginSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

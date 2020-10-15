@@ -42,11 +42,10 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -66,7 +65,6 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   256
          Transparent     =   False
@@ -208,7 +206,6 @@ Begin DocumentsComponentView CloudDocumentsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   62
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   False
@@ -228,7 +225,6 @@ Begin DocumentsComponentView CloudDocumentsComponent
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

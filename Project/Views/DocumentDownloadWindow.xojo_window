@@ -147,7 +147,6 @@ Begin BeaconDialog DocumentDownloadWindow
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   84
       Transparent     =   False
       Value           =   0.0

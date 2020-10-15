@@ -223,10 +223,9 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -270,7 +269,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          HasBackColor    =   False
          Height          =   396
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -320,7 +318,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    End
    Begin Thread FibercraftBuilderThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -332,7 +329,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

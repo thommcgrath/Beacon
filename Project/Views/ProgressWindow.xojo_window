@@ -76,7 +76,6 @@ Begin BeaconDialog ProgressWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False

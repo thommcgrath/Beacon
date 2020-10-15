@@ -143,7 +143,7 @@ Begin BeaconContainer SpawnPointEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   705
       Begin SpawnPointSetEditor SetEditor
