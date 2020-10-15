@@ -40,7 +40,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Ctl As RectControl)
 		  If Self.IndexOf(Ctl) = -1 Then
-		    Self.mMembers.AddRowAt(Index, New WeakRef(Ctl))
+		    Self.mMembers.AddAt(Index, New WeakRef(Ctl))
 		    Self.UpdateBounds()
 		  End If
 		End Sub

@@ -776,7 +776,7 @@ Protected Module Beacon
 		    Next
 		    
 		    If MapName <> "" Then
-		      Parts.AddRowAt(0, MapName)
+		      Parts.AddAt(0, MapName)
 		    End If
 		    
 		    If Parts.Count > 0 Then
@@ -1751,7 +1751,7 @@ Protected Module Beacon
 		Function TagString(Extends Blueprint As Beacon.Blueprint) As String
 		  Var Tags() As String = Blueprint.Tags
 		  If Tags.IndexOf("object") = -1 Then
-		    Tags.AddRowAt(0, "object")
+		    Tags.AddAt(0, "object")
 		  End If
 		  Return Tags.Join(",")
 		End Function

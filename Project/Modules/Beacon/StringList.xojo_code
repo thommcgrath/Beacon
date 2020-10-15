@@ -62,7 +62,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
-		    Self.mItems.AddRowAt(Index, Item)
+		    Self.mItems.AddAt(Index, Item)
 		    Self.Modified = True
 		  End If
 		End Sub

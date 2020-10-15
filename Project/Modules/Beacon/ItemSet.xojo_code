@@ -390,7 +390,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Entry As Beacon.SetEntry)
-		  Self.mEntries.AddRowAt(Index, Entry)
+		  Self.mEntries.AddAt(Index, Entry)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

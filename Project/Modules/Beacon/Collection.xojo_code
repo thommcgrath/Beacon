@@ -50,7 +50,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Variant)
-		  Self.mItems.AddRowAt(Index, Item)
+		  Self.mItems.AddAt(Index, Item)
 		End Sub
 	#tag EndMethod
 

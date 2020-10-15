@@ -359,7 +359,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Source As Beacon.LootSource)
-		  Self.mSources.AddRowAt(Index, Source)
+		  Self.mSources.AddAt(Index, Source)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

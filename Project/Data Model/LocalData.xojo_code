@@ -19,7 +19,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Tags.Add(Tag)
 		      Next
 		      TagString = Tags.Join(",")
-		      Tags.AddRowAt(0, "object")
+		      Tags.AddAt(0, "object")
 		      TagStringForSearching = Tags.Join(",")
 		    Catch Err As RuntimeException
 		      
@@ -186,11 +186,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mLock.Enter
 		  
 		  If Self.mTransactions.LastRowIndex = -1 Then
-		    Self.mTransactions.AddRowAt(0, "")
+		    Self.mTransactions.AddAt(0, "")
 		    Self.SQLExecute("BEGIN TRANSACTION;")
 		  Else
 		    Var Savepoint As String = "Savepoint_" + EncodeHex(Crypto.GenerateRandomBytes(4))
-		    Self.mTransactions.AddRowAt(0, Savepoint)
+		    Self.mTransactions.AddAt(0, Savepoint)
 		    Self.SQLExecute("SAVEPOINT " + Savepoint + ";")
 		  End If
 		End Sub
@@ -1592,7 +1592,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		            Tags.Add(Tag)
 		          Next
 		          TagString = Tags.Join(",")
-		          Tags.AddRowAt(0, "object")
+		          Tags.AddAt(0, "object")
 		          TagStringForSearching = Tags.Join(",")
 		        Catch Err As RuntimeException
 		          

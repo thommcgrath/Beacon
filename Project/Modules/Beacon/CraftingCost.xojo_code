@@ -158,7 +158,7 @@ Implements Beacon.NamedItem
 		    Return
 		  End If
 		  
-		  Self.mIngredients.AddRowAt(Idx, New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
+		  Self.mIngredients.AddAt(Idx, New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

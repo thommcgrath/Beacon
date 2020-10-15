@@ -1231,7 +1231,7 @@ End
 			    If HistoryIndex > 0 Then
 			      Self.mPanelHistory.RemoveAt(HistoryIndex)
 			    End If
-			    Self.mPanelHistory.AddRowAt(0, CacheKey)
+			    Self.mPanelHistory.AddAt(0, CacheKey)
 			    
 			    // Close older panels
 			    If Self.mPanelHistory.LastRowIndex > 2 Then

@@ -12,7 +12,7 @@ Protected Module Preferences
 		      Recents.RemoveAt(I)
 		    End If
 		  Next
-		  Recents.AddRowAt(0, URL)
+		  Recents.AddAt(0, URL)
 		  
 		  While Recents.LastRowIndex > 19
 		    Recents.RemoveAt(20)

@@ -119,7 +119,7 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h0
 		Sub InsertPage(Idx As Integer, Page As BeaconSubview)
 		  If Self.IndexOf(Page) = -1 Then
-		    Self.mPages.AddRowAt(Idx, Page)
+		    Self.mPages.AddAt(Idx, Page)
 		    
 		    If Self.CurrentPageIndex = -1 Then
 		      Self.CurrentPageIndex = 0

@@ -168,7 +168,7 @@ End
 		      Self.mSelectedRowIndex = Self.mSelectedRowIndex + 1
 		    End If
 		    
-		    Self.mItems.AddRowAt(Idx, Item)
+		    Self.mItems.AddAt(Idx, Item)
 		    Self.Content.Invalidate
 		  End If
 		End Sub

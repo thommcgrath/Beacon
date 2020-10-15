@@ -108,7 +108,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Arguments.LastRowIndex > -1 Then
-		      Arguments.AddRowAt(0, "EngramClassName=""" + EntryString + """")
+		      Arguments.AddAt(0, "EngramClassName=""" + EntryString + """")
 		      OverrideEntries.Add(EntryString)
 		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
 		    End If

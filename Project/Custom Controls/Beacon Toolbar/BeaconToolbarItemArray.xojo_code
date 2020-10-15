@@ -63,7 +63,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As BeaconToolbarItem)
-		  Self.mItems.AddRowAt(Index, Item)
+		  Self.mItems.AddAt(Index, Item)
 		  
 		  If Item <> Nil Then
 		    Item.AddObserver(Self, BeaconToolbarItem.KeyChanged)

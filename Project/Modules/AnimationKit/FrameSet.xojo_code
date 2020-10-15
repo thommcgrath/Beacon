@@ -119,7 +119,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Frame As AnimationKit.Frame)
 		  Self.VerifyFrame(Frame)
-		  Self.Frames.AddRowAt(Index, Frame)
+		  Self.Frames.AddAt(Index, Frame)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod

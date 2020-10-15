@@ -93,8 +93,8 @@ Protected Class Socket
 		    Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest
 		    FollowingRequest.HasBeenRetried = True
 		    
-		    Self.Queue.AddRowAt(0, NextRequest)
-		    Self.Queue.AddRowAt(1, FollowingRequest)
+		    Self.Queue.AddAt(0, NextRequest)
+		    Self.Queue.AddAt(1, FollowingRequest)
 		    
 		    Self.ActiveRequest = Nil
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)

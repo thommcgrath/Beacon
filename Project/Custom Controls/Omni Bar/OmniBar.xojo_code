@@ -328,7 +328,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		Sub Insert(Index As Integer, Item As OmniBarItem)
 		  If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
 		    Item.AddObserver(Self, "MinorChange", "MajorChange")
-		    Self.mItems.AddRowAt(Index, Item)
+		    Self.mItems.AddAt(Index, Item)
 		    Self.Invalidate
 		  End If
 		End Sub

@@ -59,7 +59,7 @@ Inherits Beacon.Preset
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.PresetEntry)
-		  Self.mContents.AddRowAt(Index, Item)
+		  Self.mContents.AddAt(Index, Item)
 		End Sub
 	#tag EndMethod
 
