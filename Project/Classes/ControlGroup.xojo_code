@@ -102,7 +102,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mMembers.RemoveRowAt(Index)
+		  Self.mMembers.RemoveAt(Index)
 		End Sub
 	#tag EndMethod
 

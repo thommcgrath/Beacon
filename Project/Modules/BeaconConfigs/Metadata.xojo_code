@@ -101,7 +101,7 @@ Implements ObservationKit.Observable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -157,7 +157,7 @@ Implements ObservationKit.Observable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -182,7 +182,7 @@ Implements ObservationKit.Observable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		  Next

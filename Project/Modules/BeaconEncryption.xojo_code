@@ -45,8 +45,8 @@ Protected Module BeaconEncryption
 		    Raise Err
 		  End If
 		  
-		  Lines.RemoveRowAt(0)
-		  Lines.RemoveRowAt(Lines.LastRowIndex)
+		  Lines.RemoveAt(0)
+		  Lines.RemoveAt(Lines.LastRowIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
@@ -74,8 +74,8 @@ Protected Module BeaconEncryption
 		    Raise Err
 		  End If
 		  
-		  Lines.RemoveRowAt(0)
-		  Lines.RemoveRowAt(Lines.LastRowIndex)
+		  Lines.RemoveAt(0)
+		  Lines.RemoveAt(Lines.LastRowIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  

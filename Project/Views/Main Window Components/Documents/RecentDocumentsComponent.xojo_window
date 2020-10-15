@@ -208,7 +208,7 @@ End
 		    For X As Integer = Recents.LastRowIndex DownTo 0
 		      If Recents(X) = SelectedURL Then
 		        Changed = True
-		        Recents.RemoveRowAt(X)
+		        Recents.RemoveAt(X)
 		        Exit For X
 		      End If
 		    Next

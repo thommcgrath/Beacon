@@ -144,7 +144,7 @@ Inherits Beacon.SpawnPointSetEntry
 		Sub Remove(Level As Beacon.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
 		  If Idx > -1 Then
-		    Self.mLevels.RemoveRowAt(Idx)
+		    Self.mLevels.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -152,7 +152,7 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  Self.mLevels.RemoveRowAt(Idx)
+		  Self.mLevels.RemoveAt(Idx)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

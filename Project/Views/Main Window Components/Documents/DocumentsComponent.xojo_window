@@ -298,7 +298,7 @@ End
 		  
 		  If RecentIdx > -1 Then
 		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted. Would you like to remove it from the recent documents list?", "Remove", "Keep") Then
-		      Recents.RemoveRowAt(RecentIdx)
+		      Recents.RemoveAt(RecentIdx)
 		      Preferences.RecentDocuments = Recents
 		    End If
 		  Else

@@ -14,7 +14,7 @@ Protected Module NotificationKit
 		    
 		    For I As Integer = Refs.LastRowIndex DownTo 0
 		      If Refs(I).Value = Nil Or Refs(I).Value = Receiver Then
-		        Refs.RemoveRowAt(I)
+		        Refs.RemoveAt(I)
 		      End If
 		    Next
 		    
@@ -35,7 +35,7 @@ Protected Module NotificationKit
 		  End If
 		  
 		  Var Notification As NotificationKit.Invocation = mPendingNotifications(0)
-		  mPendingNotifications.RemoveRowAt(0)
+		  mPendingNotifications.RemoveAt(0)
 		  
 		  Notification.Invoke
 		End Sub
@@ -50,7 +50,7 @@ Protected Module NotificationKit
 		  Var Refs() As WeakRef = mReceivers.Value(Notification.Name)
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		    End If
 		  Next
 		  
@@ -97,7 +97,7 @@ Protected Module NotificationKit
 		    
 		    For I As Integer = Refs.LastRowIndex DownTo 0
 		      If Refs(I).Value = Nil Then
-		        Refs.RemoveRowAt(I)
+		        Refs.RemoveAt(I)
 		      End If
 		    Next
 		    

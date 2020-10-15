@@ -16,7 +16,7 @@ Protected Module Language
 		    Return Items(0) + " and " + Items(1)
 		  Else
 		    Var LastItem As String = Items(Items.LastRowIndex)
-		    Items.RemoveRowAt(Items.LastRowIndex)
+		    Items.RemoveAt(Items.LastRowIndex)
 		    Var List As String = Items.Join(", ") + ", and " + LastItem
 		    Items.Add(LastItem) // Gotta put it back
 		    Return List

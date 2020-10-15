@@ -65,7 +65,7 @@ Protected Class IntegrationEngine
 		Sub Destructor()
 		  While Self.mPendingCalls.Count > 0
 		    CallLater.Cancel(Self.mPendingCalls(0))
-		    Self.mPendingCalls.RemoveRowAt(0)
+		    Self.mPendingCalls.RemoveAt(0)
 		  Wend
 		End Sub
 	#tag EndMethod
@@ -257,7 +257,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub RemoveLastLog()
 		  If Self.mLogMessages.Count > 0 Then
-		    Self.mLogMessages.RemoveRowAt(Self.mLogMessages.LastRowIndex)
+		    Self.mLogMessages.RemoveAt(Self.mLogMessages.LastRowIndex)
 		  End If
 		End Sub
 	#tag EndMethod

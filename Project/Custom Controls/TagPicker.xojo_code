@@ -44,10 +44,10 @@ Inherits ControlCanvas
 		    Var ExcludeIndex As Integer = Self.mExcludeTags.IndexOf(Tag)
 		    
 		    If RequireIndex > -1 Then
-		      Self.mRequireTags.RemoveRowAt(RequireIndex)
+		      Self.mRequireTags.RemoveAt(RequireIndex)
 		      Self.mExcludeTags.Add(Tag)
 		    ElseIf ExcludeIndex > -1 Then
-		      Self.mExcludeTags.RemoveRowAt(ExcludeIndex)
+		      Self.mExcludeTags.RemoveAt(ExcludeIndex)
 		    Else
 		      Self.mRequireTags.Add(Tag)
 		    End If
@@ -316,12 +316,12 @@ Inherits ControlCanvas
 		  
 		  For I As Integer = RequiredTags.LastRowIndex DownTo RequiredTags.FirstRowIndex
 		    If RequiredTags(I) <> "object" And Self.mTags.IndexOf(RequiredTags(I)) = -1 Then
-		      RequiredTags.RemoveRowAt(I)
+		      RequiredTags.RemoveAt(I)
 		    End If
 		  Next
 		  For I As Integer = ExcludedTags.LastRowIndex DownTo ExcludedTags.FirstRowIndex
 		    If Self.mTags.IndexOf(ExcludedTags(I)) = -1 Then
-		      ExcludedTags.RemoveRowAt(I)
+		      ExcludedTags.RemoveAt(I)
 		    End If
 		  Next
 		  
@@ -386,11 +386,11 @@ Inherits ControlCanvas
 		    Var FireChangeEvent As Boolean
 		    For I As Integer = Self.mRequireTags.LastRowIndex DownTo 0
 		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
-		        Self.mRequireTags.RemoveRowAt(I)
+		        Self.mRequireTags.RemoveAt(I)
 		        FireChangeEvent = True
 		      End
 		      If Self.mTags.IndexOf(Self.mExcludeTags(I)) = -1 Then
-		        Self.mExcludeTags.RemoveRowAt(I)
+		        Self.mExcludeTags.RemoveAt(I)
 		        FireChangeEvent = True
 		      End If
 		    Next

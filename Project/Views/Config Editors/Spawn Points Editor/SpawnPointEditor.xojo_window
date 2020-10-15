@@ -986,7 +986,7 @@ End
 		          Var Set As Beacon.SpawnPointSet = Organizer.SetForPoint(Point)
 		          Point.RemoveSet(Set)
 		        Next
-		        Me.RemoveRowAt(I)
+		        Me.RemoveAt(I)
 		      End If
 		    Next
 		    Me.SelectionChangeBlocked = False

@@ -9,13 +9,13 @@ Protected Module Preferences
 		  Var Recents() As Beacon.DocumentURL = RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
-		      Recents.RemoveRowAt(I)
+		      Recents.RemoveAt(I)
 		    End If
 		  Next
 		  Recents.AddRowAt(0, URL)
 		  
 		  While Recents.LastRowIndex > 19
-		    Recents.RemoveRowAt(20)
+		    Recents.RemoveAt(20)
 		  Wend
 		  
 		  RecentDocuments = Recents

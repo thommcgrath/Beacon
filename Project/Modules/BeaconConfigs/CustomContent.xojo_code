@@ -215,7 +215,7 @@ Inherits Beacon.ConfigGroup
 		    #if Beacon.MOTDEditingEnabled
 		      For Idx As Integer = ConfigValues.LastRowIndex DownTo 0
 		        If ConfigValues(Idx).Header = "MessageOfTheDay" Then
-		          ConfigValues.RemoveRowAt(Idx)
+		          ConfigValues.RemoveAt(Idx)
 		        End If
 		      Next
 		    #endif

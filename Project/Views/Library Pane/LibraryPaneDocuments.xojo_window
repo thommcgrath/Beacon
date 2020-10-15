@@ -314,14 +314,14 @@ End
 		  Case Beacon.DocumentURL.TypeCloud
 		    For I As Integer = Self.mCloudDocuments.LastRowIndex DownTo 0
 		      If Self.mCloudDocuments(I) = URL Then
-		        Self.mCloudDocuments.RemoveRowAt(I)
+		        Self.mCloudDocuments.RemoveAt(I)
 		        Exit For I
 		      End If
 		    Next
 		  Case Beacon.DocumentURL.TypeWeb
 		    For I As Integer = Self.mCommunityDocuments.LastRowIndex DownTo 0
 		      If Self.mCommunityDocuments(I) = URL Then
-		        Self.mCommunityDocuments.RemoveRowAt(I)
+		        Self.mCommunityDocuments.RemoveAt(I)
 		        Exit For I
 		      End If
 		    Next
@@ -330,7 +330,7 @@ End
 		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
-		      Recents.RemoveRowAt(I)
+		      Recents.RemoveAt(I)
 		      Exit For I
 		    End If
 		  Next
@@ -388,7 +388,7 @@ End
 		  
 		  If RecentIdx > -1 Then
 		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted. Would you like to remove it from the recent documents list?", "Remove", "Keep") Then
-		      Recents.RemoveRowAt(RecentIdx)
+		      Recents.RemoveAt(RecentIdx)
 		      Preferences.RecentDocuments = Recents
 		    End If
 		  Else
@@ -803,7 +803,7 @@ End
 		      For X As Integer = Recents.LastRowIndex DownTo 0
 		        If Recents(X) = SelectedURL Then
 		          Changed = True
-		          Recents.RemoveRowAt(X)
+		          Recents.RemoveAt(X)
 		          Continue For I
 		        End If
 		      Next

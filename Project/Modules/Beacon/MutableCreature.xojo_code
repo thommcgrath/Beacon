@@ -102,7 +102,7 @@ Implements Beacon.MutableBlueprint
 		  Tag = Beacon.NormalizeTag(Tag)
 		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
-		    Self.mTags.RemoveRowAt(Idx)
+		    Self.mTags.RemoveAt(Idx)
 		  ElseIf Idx = -1 And Value = True Then
 		    Self.mTags.Add(Tag)
 		    Self.mTags.Sort()

@@ -618,7 +618,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mOptions.RemoveRowAt(Index)
+		  Self.mOptions.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

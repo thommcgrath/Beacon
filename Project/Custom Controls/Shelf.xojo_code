@@ -345,7 +345,7 @@ Implements ObservationKit.Observer
 		Sub Remove(Index As Integer)
 		  Self.mItems(Index).RemoveObserver(Self, "PulseAmount")
 		  Self.mItems(Index).RemoveObserver(Self, "Loading")
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod

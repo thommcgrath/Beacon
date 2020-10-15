@@ -167,7 +167,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.Frames.RemoveRowAt(Index)
+		  Self.Frames.RemoveAt(Index)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod

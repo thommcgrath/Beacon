@@ -8,7 +8,7 @@ Implements Beacon.Countable
 		  If Idx > -1 Then
 		    If Replace Then
 		      // Remove the set so it is not counted when finding a unique label
-		      Self.mItemSets.RemoveRowAt(Idx)
+		      Self.mItemSets.RemoveAt(Idx)
 		    Else
 		      // Create a new item set. Use CopyFrom so the identifier is not copied
 		      Var Clone As New Beacon.ItemSet
@@ -187,7 +187,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  Self.mItemSets.RemoveRowAt(Idx)
+		  Self.mItemSets.RemoveAt(Idx)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod

@@ -149,7 +149,7 @@ Inherits Beacon.Preset
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mContents.RemoveRowAt(Index)
+		  Self.mContents.RemoveAt(Index)
 		End Sub
 	#tag EndMethod
 

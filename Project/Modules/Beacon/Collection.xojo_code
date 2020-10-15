@@ -82,7 +82,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		End Sub
 	#tag EndMethod
 

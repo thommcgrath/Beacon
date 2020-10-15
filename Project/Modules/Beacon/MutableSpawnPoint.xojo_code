@@ -54,7 +54,7 @@ Implements Beacon.MutableBlueprint
 		  Tag = Beacon.NormalizeTag(Tag)
 		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
-		    Self.mTags.RemoveRowAt(Idx)
+		    Self.mTags.RemoveAt(Idx)
 		    Self.Modified = True
 		  ElseIf Idx = -1 And Value = True Then
 		    Self.mTags.Add(Tag)
@@ -149,7 +149,7 @@ Implements Beacon.MutableBlueprint
 		Sub RemoveSet(Set As Beacon.SpawnPointSet)
 		  Var Idx As Integer = Self.IndexOf(Set)
 		  If Idx > -1 Then
-		    Self.mSets.RemoveRowAt(Idx)
+		    Self.mSets.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub

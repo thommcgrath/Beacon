@@ -113,7 +113,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  AddHandler Downloader.Error, WeakAddressOf mDeltaDownload_Error
 		  AddHandler Downloader.ReceivingProgressed, WeakAddressOf mDeltaDownload_ReceivingProgressed
 		  Downloader.Send("GET", Self.mDeltaDownloadQueue(0))
-		  Self.mDeltaDownloadQueue.RemoveRowAt(0)
+		  Self.mDeltaDownloadQueue.RemoveAt(0)
 		  Self.mDeltaDownloader = Downloader
 		End Sub
 	#tag EndMethod
@@ -344,7 +344,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Var Savepoint As String = Self.mTransactions(0)
-		  Self.mTransactions.RemoveRowAt(0)
+		  Self.mTransactions.RemoveAt(0)
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("COMMIT TRANSACTION;")
@@ -2187,7 +2187,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Success As Boolean
 		  While Self.mPendingImports.Count > 0
 		    Var Content As String = Self.mPendingImports(0)
-		    Self.mPendingImports.RemoveRowAt(0)
+		    Self.mPendingImports.RemoveAt(0)
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Wend
@@ -2330,7 +2330,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Var Savepoint As String = Self.mTransactions(0)
-		  Self.mTransactions.RemoveRowAt(0)
+		  Self.mTransactions.RemoveAt(0)
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("ROLLBACK TRANSACTION;")

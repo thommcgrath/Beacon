@@ -61,7 +61,7 @@ Protected Class Coordinator
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
 		      RemovedTasks.Add(Self.Tasks(I))
-		      Self.Tasks.RemoveRowAt(I)
+		      Self.Tasks.RemoveAt(I)
 		    End If
 		  Next
 		  
@@ -80,7 +80,7 @@ Protected Class Coordinator
 		    Var Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
 		      RemovedTasks.Add(Task)
-		      Self.Tasks.RemoveRowAt(I)
+		      Self.Tasks.RemoveAt(I)
 		      
 		      If Task.NextTask <> Nil Then
 		        Self.AddTask(Task.NextTask)

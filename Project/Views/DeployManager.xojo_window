@@ -1068,7 +1068,7 @@ End
 		  End If
 		  
 		  Self.Authorizer.Authenticate(App.IdentityManager.CurrentIdentity)
-		  Self.AuthQueue.RemoveRowAt(0)
+		  Self.AuthQueue.RemoveAt(0)
 		End Sub
 	#tag EndMethod
 

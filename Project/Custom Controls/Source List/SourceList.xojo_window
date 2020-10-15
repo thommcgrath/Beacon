@@ -225,7 +225,7 @@ End
 		  #Pragma Warning "Won't trigger change event"
 		  
 		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
-		    Self.mItems.RemoveRowAt(Idx)
+		    Self.mItems.RemoveAt(Idx)
 		    
 		    If Idx <= Self.mSelectedRowIndex Then
 		      Self.mSelectedRowIndex = Self.mSelectedRowIndex - 1

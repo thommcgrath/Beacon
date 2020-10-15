@@ -107,7 +107,7 @@ Protected Class LogManager
 		      Var Stream As TextOutputStream = TextOutputStream.Open(Self.mFolder.Child(Filename))
 		      While Messages.Count > 0
 		        Stream.WriteLine(Messages(0))
-		        Messages.RemoveRowAt(0)
+		        Messages.RemoveAt(0)
 		      Wend
 		      Stream.Close
 		    Next
@@ -129,7 +129,7 @@ Protected Class LogManager
 		  #if TargetDesktop
 		    Var Stack() As StackFrame = Err.StackFrames
 		    While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		      Stack.RemoveRowAt(0)
+		      Stack.RemoveAt(0)
 		    Wend
 		    
 		    Var Origin As String = "Unknown"

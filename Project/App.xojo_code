@@ -974,7 +974,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  While Self.mPendingURLs.Count > 0
 		    Call Self.HandleURL(Self.mPendingURLs(0), False)
-		    Self.mPendingURLs.RemoveRowAt(0)
+		    Self.mPendingURLs.RemoveAt(0)
 		  Wend
 		  
 		  Self.NextLaunchQueueTask()
@@ -1109,7 +1109,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  Var Task As LaunchQueueTask = Self.mLaunchQueue(0)
-		  Self.mLaunchQueue.RemoveRowAt(0)
+		  Self.mLaunchQueue.RemoveAt(0)
 		  
 		  Task.Invoke()
 		End Sub

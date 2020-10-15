@@ -22,7 +22,7 @@ Inherits Global.Thread
 		  
 		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
-		    Self.mTriggers.RemoveRowAt(I)
+		    Self.mTriggers.RemoveAt(I)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -62,7 +62,7 @@ Inherits Global.Thread
 		Sub Destructor()
 		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
-		    Self.mTriggers.RemoveRowAt(I)
+		    Self.mTriggers.RemoveAt(I)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -285,7 +285,7 @@ Inherits Global.Thread
 		      If UntouchedConfigs.HasKey("Beacon") Then
 		        UntouchedConfigs.Remove("Beacon")
 		      End If
-		      AllSectionHeaders.RemoveRowAt(AllSectionHeaders.IndexOf("Beacon"))
+		      AllSectionHeaders.RemoveAt(AllSectionHeaders.IndexOf("Beacon"))
 		    Else
 		      // We'll need to use the legacy style of removing only what is being replaced
 		      For Each Header As String In NewKeys

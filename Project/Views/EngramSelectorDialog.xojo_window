@@ -602,7 +602,7 @@ End
 		    Var Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
 		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
 		    If Idx > -1 Then
-		      Self.mExcluded.RemoveRowAt(Idx)
+		      Self.mExcluded.RemoveAt(Idx)
 		    End If
 		    SelectPaths.Add(Blueprint.Path)
 		    Self.SelectedList.RemoveRowAt(I)

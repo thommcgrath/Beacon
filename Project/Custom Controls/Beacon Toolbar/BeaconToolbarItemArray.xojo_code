@@ -16,7 +16,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -102,7 +102,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -161,7 +161,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
 		  
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		  
 		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
 		End Sub
@@ -182,7 +182,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		  Next

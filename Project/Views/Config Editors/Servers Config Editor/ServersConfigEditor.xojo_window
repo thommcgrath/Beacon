@@ -241,7 +241,7 @@ End
 		    For X As Integer = 0 To SelectedProfiles.LastRowIndex
 		      If SelectedProfiles(X) = Profile Then
 		        Selected = True
-		        SelectedProfiles.RemoveRowAt(X)
+		        SelectedProfiles.RemoveAt(X)
 		        Exit For X
 		      End If
 		    Next

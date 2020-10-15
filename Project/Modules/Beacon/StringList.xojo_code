@@ -155,7 +155,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -164,7 +164,7 @@ Implements Iterable
 		Sub Remove(Item As String)
 		  Var Idx As Integer = Self.mItems.IndexOf(Item)
 		  If Idx > -1 Then
-		    Self.mItems.RemoveRowAt(Idx)
+		    Self.mItems.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub

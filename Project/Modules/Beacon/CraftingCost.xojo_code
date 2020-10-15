@@ -262,7 +262,7 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  If Idx >= Self.mIngredients.FirstRowIndex And Idx <= Self.mIngredients.LastRowIndex Then
-		    Self.mIngredients.RemoveRowAt(Idx)
+		    Self.mIngredients.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub

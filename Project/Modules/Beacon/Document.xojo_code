@@ -48,7 +48,7 @@ Implements ObservationKit.Observable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -532,7 +532,7 @@ Implements ObservationKit.Observable
 		            If Components.LastRowIndex > -1 Then
 		              Var LastComponent As String = Components(Components.LastRowIndex)
 		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
-		                Components.RemoveRowAt(Components.LastRowIndex)
+		                Components.RemoveAt(Components.LastRowIndex)
 		              End If
 		            End If
 		            Components.Add("Game.ini")
@@ -1040,7 +1040,7 @@ Implements ObservationKit.Observable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -1113,7 +1113,7 @@ Implements ObservationKit.Observable
 		Sub Remove(Profile As Beacon.ServerProfile)
 		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
 		    If Self.mServerProfiles(I) = Profile Then
-		      Self.mServerProfiles.RemoveRowAt(I)
+		      Self.mServerProfiles.RemoveAt(I)
 		      Self.Modified = True
 		      Return
 		    End If
@@ -1145,7 +1145,7 @@ Implements ObservationKit.Observable
 		  
 		  For Idx As Integer = Self.mConfigSetStates.LastRowIndex DownTo 1
 		    If Self.mConfigSetStates(Idx).Name = SetName Then
-		      Self.mConfigSetStates.RemoveRowAt(Idx)
+		      Self.mConfigSetStates.RemoveAt(Idx)
 		      Self.Modified = True
 		    End If
 		  Next
@@ -1174,7 +1174,7 @@ Implements ObservationKit.Observable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		  Next

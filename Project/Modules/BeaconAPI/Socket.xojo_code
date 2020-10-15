@@ -8,7 +8,7 @@ Protected Class Socket
 		  End If
 		  
 		  Var Request As BeaconAPI.Request = Self.Queue(0)
-		  Self.Queue.RemoveRowAt(0)
+		  Self.Queue.RemoveAt(0)
 		  
 		  Self.ActiveRequest = Request
 		  

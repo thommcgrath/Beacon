@@ -190,7 +190,7 @@ Inherits BeaconSubview
 		  If Not FiredSwitchedFrom Then
 		    Self.mPages(Idx).SwitchedFrom()
 		  End If
-		  Self.mPages.RemoveRowAt(Idx)
+		  Self.mPages.RemoveAt(Idx)
 		End Sub
 	#tag EndMethod
 

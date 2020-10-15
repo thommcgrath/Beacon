@@ -525,7 +525,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mEntries.RemoveRowAt(Index)
+		  Self.mEntries.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -596,7 +596,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        If Self.ItemsRandomWithoutReplacement Then
 		          For X As Integer = 0 To Pool.LastRowIndex
 		            If Pool(X) = SelectedEntry Then
-		              Pool.RemoveRowAt(X)
+		              Pool.RemoveAt(X)
 		              Exit For X
 		            End If
 		          Next

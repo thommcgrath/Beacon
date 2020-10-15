@@ -66,7 +66,7 @@ Inherits Beacon.Thread
 		      Var HeaderColumns() As String
 		      If Lines.LastRowIndex >= 0 Then
 		        HeaderColumns = Lines(0)
-		        Lines.RemoveRowAt(0)
+		        Lines.RemoveAt(0)
 		      End If
 		      Var PathColumnIdx, LabelColumnIdx, MaskColumnIdx, BlueprintColumnIdx, TagsColumnIndx, GroupColumnIdx As Integer
 		      PathColumnIdx = HeaderColumns.IndexOf("Path")
@@ -291,7 +291,7 @@ Inherits Beacon.Thread
 		Sub Cancel()
 		  For I As Integer = Self.mPendingTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mPendingTriggers(I))
-		    Self.mPendingTriggers.RemoveRowAt(I)
+		    Self.mPendingTriggers.RemoveAt(I)
 		  Next
 		  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.Stop

@@ -1229,7 +1229,7 @@ End
 			    
 			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
 			    If HistoryIndex > 0 Then
-			      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
+			      Self.mPanelHistory.RemoveAt(HistoryIndex)
 			    End If
 			    Self.mPanelHistory.AddRowAt(0, CacheKey)
 			    

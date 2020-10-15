@@ -57,7 +57,7 @@ Inherits Beacon.ConfigGroup
 		    For Index As Integer = 0 To Self.mPlayerLevels.LastRowIndex
 		      Var XP As UInt64 = Self.mPlayerLevels(Index)
 		      If CompactMode And XP = LastXP And Chunks.LastRowIndex > -1 Then
-		        Chunks.RemoveRowAt(Chunks.LastRowIndex)
+		        Chunks.RemoveAt(Chunks.LastRowIndex)
 		      End If
 		      Chunks.Add("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
 		      LastXP = XP
@@ -79,7 +79,7 @@ Inherits Beacon.ConfigGroup
 		    For Index As Integer = 0 To Self.mDinoLevels.LastRowIndex
 		      Var XP As UInt64 = Self.mDinoLevels(Index)
 		      If CompactMode And XP = LastXP And Chunks.LastRowIndex > -1 Then
-		        Chunks.RemoveRowAt(Chunks.LastRowIndex)
+		        Chunks.RemoveAt(Chunks.LastRowIndex)
 		      End If
 		      Chunks.Add("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
 		      LastXP = XP
@@ -392,14 +392,14 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RemoveDinoExperience(Index As Integer)
-		  Self.mDinoLevels.RemoveRowAt(Index)
+		  Self.mDinoLevels.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RemovePlayerExperience(Index As Integer)
-		  Self.mPlayerLevels.RemoveRowAt(Index)
+		  Self.mPlayerLevels.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

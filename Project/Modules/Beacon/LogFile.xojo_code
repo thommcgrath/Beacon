@@ -55,12 +55,12 @@ Protected Class LogFile
 		    End If
 		    
 		    Var StartupParams() As String = Params(0).Split("?")
-		    Params.RemoveRowAt(0)
+		    Params.RemoveAt(0)
 		    
 		    File.mMaps = Beacon.Maps.MaskForIdentifier(StartupParams(0))
-		    StartupParams.RemoveRowAt(0)
+		    StartupParams.RemoveAt(0)
 		    
-		    StartupParams.RemoveRowAt(0) // The Listen statement
+		    StartupParams.RemoveAt(0) // The Listen statement
 		    
 		    Var Merged() As String
 		    For Each Param As String In StartupParams

@@ -836,7 +836,7 @@ End
 		      For I As Integer = LootSources.LastRowIndex DownTo 0
 		        Var Source As Beacon.LootSource = LootSources(I)
 		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
-		          LootSources.RemoveRowAt(I)
+		          LootSources.RemoveAt(I)
 		          Continue For I
 		        End If
 		      Next

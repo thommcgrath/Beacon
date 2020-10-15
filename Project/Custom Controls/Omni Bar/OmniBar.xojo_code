@@ -419,7 +419,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		Sub Remove(Idx As Integer)
 		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
 		    Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
-		    Self.mItems.RemoveRowAt(Idx)
+		    Self.mItems.RemoveAt(Idx)
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -448,7 +448,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  If Self.mItems.Count > 0 Then
 		    For Idx As Integer = Self.mItems.LastRowIndex DownTo 0
 		      Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
-		      Self.mItems.RemoveRowAt(Idx)
+		      Self.mItems.RemoveAt(Idx)
 		    Next
 		    Self.Invalidate
 		  End If

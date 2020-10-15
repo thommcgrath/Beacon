@@ -452,7 +452,7 @@ Protected Module Beacon
 		  Var Words() As String = DesiredLabel.Split(" ")
 		  If Words.LastRowIndex > 0 And IsNumeric(Words(Words.LastRowIndex)) Then
 		    Counter = Val(Words(Words.LastRowIndex))
-		    Words.RemoveRowAt(Words.LastRowIndex)
+		    Words.RemoveAt(Words.LastRowIndex)
 		    DesiredLabel = Words.Join(" ")
 		  End If
 		  
@@ -708,7 +708,7 @@ Protected Module Beacon
 		    Return Names(0) + " & " + Names(1)
 		  Else
 		    Var Tail As String = Names(Names.LastRowIndex)
-		    Names.RemoveRowAt(Names.LastRowIndex)
+		    Names.RemoveAt(Names.LastRowIndex)
 		    Return Names.Join(", ") + ", & " + Tail
 		  End If
 		End Function
@@ -730,34 +730,34 @@ Protected Module Beacon
 		    
 		    Var Parts() As String = ClassString.Split("_")
 		    If Parts(0).BeginsWith("PrimalItem") Then
-		      Parts.RemoveRowAt(0)
+		      Parts.RemoveAt(0)
 		    End If
 		    
 		    For I As Integer = Parts.LastRowIndex DownTo 0
 		      Select Case Parts(I)
 		      Case "AB"
 		        MapName = "Aberration"
-		        Parts.RemoveRowAt(I)
+		        Parts.RemoveAt(I)
 		        Continue
 		      Case "Val"
 		        MapName = "Valguero"
-		        Parts.RemoveRowAt(I)
+		        Parts.RemoveAt(I)
 		        Continue
 		      Case "SE"
 		        MapName = "Scorched"
-		        Parts.RemoveRowAt(I)
+		        Parts.RemoveAt(I)
 		        Continue
 		      Case "Ext", "EX"
 		        MapName = "Extinction"
-		        Parts.RemoveRowAt(I)
+		        Parts.RemoveAt(I)
 		        Continue
 		      Case "JacksonL", "Ragnarok"
 		        MapName = "Ragnarok"
-		        Parts.RemoveRowAt(I)
+		        Parts.RemoveAt(I)
 		        Continue
 		      Case "TheCenter"
 		        MapName = "The Center"
-		        Parts.RemoveRowAt(I)
+		        Parts.RemoveAt(I)
 		        Continue
 		      End Select
 		      
@@ -769,7 +769,7 @@ Protected Module Beacon
 		      
 		      For Each Member As String In Blacklist
 		        If Parts(I) = Member Then
-		          Parts.RemoveRowAt(I)
+		          Parts.RemoveAt(I)
 		          Continue For I
 		        End If
 		      Next
@@ -1227,7 +1227,7 @@ Protected Module Beacon
 		      Continue
 		    End If
 		    
-		    Tags.RemoveRowAt(Idx)
+		    Tags.RemoveAt(Idx)
 		    Changed = True
 		  Next
 		  
@@ -1435,7 +1435,7 @@ Protected Module Beacon
 		    Var Basename, Extension As String
 		    If Parts.Count >= 2 Then
 		      Extension = "." + Parts(Parts.LastRowIndex)
-		      Parts.RemoveRowAt(Parts.LastRowIndex)
+		      Parts.RemoveAt(Parts.LastRowIndex)
 		      Basename = Parts.Join(".")
 		      MaxLength = MaxLength - (Extension.Length)
 		      If MaxLength <= 0 Then
@@ -1614,7 +1614,7 @@ Protected Module Beacon
 		  End If
 		  
 		  Var Value As String = Arr(Arr.FirstRowIndex)
-		  Arr.RemoveRowAt(Arr.FirstRowIndex)
+		  Arr.RemoveAt(Arr.FirstRowIndex)
 		  Return Value
 		End Function
 	#tag EndMethod
@@ -1685,7 +1685,7 @@ Protected Module Beacon
 		        If Source.PreventDuplicates Then
 		          For X As Integer = 0 To ItemSetPool.LastRowIndex
 		            If ItemSetPool(X) = SelectedSet Then
-		              ItemSetPool.RemoveRowAt(X)
+		              ItemSetPool.RemoveAt(X)
 		              Exit For X
 		            End If
 		          Next
@@ -1762,7 +1762,7 @@ Protected Module Beacon
 		  Var Tags() As String = Value.Split(",")
 		  Var Idx As Integer = Tags.IndexOf("object")
 		  If Idx > -1 Then
-		    Tags.RemoveRowAt(Idx)
+		    Tags.RemoveAt(Idx)
 		  End If
 		  Blueprint.Tags = Tags
 		End Sub

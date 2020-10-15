@@ -643,7 +643,7 @@ End
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Stack() As StackFrame = Err.StackFrames
 		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		    Stack.RemoveRowAt(0)
+		    Stack.RemoveAt(0)
 		  Wend
 		  
 		  Var Location As String = "Unknown"

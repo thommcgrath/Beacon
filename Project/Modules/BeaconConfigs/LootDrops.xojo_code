@@ -448,7 +448,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mSources.RemoveRowAt(Index)
+		  Self.mSources.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

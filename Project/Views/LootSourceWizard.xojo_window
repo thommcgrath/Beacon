@@ -1256,14 +1256,14 @@ End
 		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources(Self.FilterField.Text, Self.mMods, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootSources.LastRowIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
-		      AllowedLootSources.RemoveRowAt(X)
+		      AllowedLootSources.RemoveAt(X)
 		    End If
 		  Next
 		  
 		  For X As Integer = 0 To CurrentSources.LastRowIndex
 		    For Y As Integer = AllowedLootSources.LastRowIndex DownTo 0
 		      If AllowedLootSources(Y).ClassString = CurrentSources(X).ClassString Then
-		        AllowedLootSources.RemoveRowAt(Y)
+		        AllowedLootSources.RemoveAt(Y)
 		        Exit For Y
 		      End If
 		    Next
@@ -1605,7 +1605,7 @@ End
 		      
 		      Var Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
 		      If Idx > -1 Then
-		        AdditionalPresets.RemoveRowAt(Idx)
+		        AdditionalPresets.RemoveAt(Idx)
 		      End If
 		    Next
 		  End If

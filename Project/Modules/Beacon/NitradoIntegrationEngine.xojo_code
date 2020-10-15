@@ -974,7 +974,7 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Var PathParts() As String = Path.Split("/")
 		  Var Filename As String = PathParts(PathParts.LastRowIndex)
-		  PathParts.RemoveRowAt(PathParts.LastRowIndex)
+		  PathParts.RemoveAt(PathParts.LastRowIndex)
 		  Path = PathParts.Join("/")
 		  
 		  Var FormData As New Dictionary

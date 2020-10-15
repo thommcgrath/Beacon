@@ -448,7 +448,7 @@ End
 		  If TargetCreature <> Nil Then
 		    For I As Integer = 0 To DefinedCreatures.LastRowIndex
 		      If DefinedCreatures(I) = TargetCreature Then
-		        DefinedCreatures.RemoveRowAt(I)
+		        DefinedCreatures.RemoveAt(I)
 		        Exit
 		      End If
 		    Next
@@ -576,7 +576,7 @@ End
 		    For X As Integer = 0 To Creatures.LastRowIndex
 		      If Me.RowTagAt(I) = Creatures(X) Then
 		        Me.RemoveRowAt(I)
-		        Creatures.RemoveRowAt(X)
+		        Creatures.RemoveAt(X)
 		        Continue For I
 		      End If
 		    Next
