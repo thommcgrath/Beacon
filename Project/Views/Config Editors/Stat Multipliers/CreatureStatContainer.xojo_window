@@ -1571,26 +1571,26 @@ End
 		    
 		    If StatBaseLabel <> Nil Then
 		      If Stat.IsPercentage Then
-		        StatBaseLabel.Value = Self.FormatStat(PerLevel) + "% x"
+		        StatBaseLabel.Text = Self.FormatStat(PerLevel) + "% x"
 		      ElseIf ForceAsPercentage Then
-		        StatBaseLabel.Value = Beacon.PrettyText(PerLevel * 100, 2) + "% x"
+		        StatBaseLabel.Text = Beacon.PrettyText(PerLevel * 100, 2) + "% x"
 		      Else
-		        StatBaseLabel.Value = Self.FormatStat(PerLevel) + " x"
+		        StatBaseLabel.Text = Self.FormatStat(PerLevel) + " x"
 		      End If
 		    End If
 		    
 		    If StatMultiplierField <> Nil And Focus <> StatMultiplierField Then
-		      StatMultiplierField.Value = Self.FormatStat(Multiplier)
+		      StatMultiplierField.Text = Self.FormatStat(Multiplier)
 		    End If
 		    
 		    If StatComputedLabel <> Nil Then
 		      Var Amount As Double = PerLevel * Multiplier
 		      If Stat.IsPercentage Then
-		        StatComputedLabel.Value = "= " + Self.FormatStat(Amount) + "%"
+		        StatComputedLabel.Text = "= " + Self.FormatStat(Amount) + "%"
 		      ElseIf ForceAsPercentage Then
-		        StatComputedLabel.Value = "= " + Beacon.PrettyText(Amount * 100, 2) + "%"
+		        StatComputedLabel.Text = "= " + Beacon.PrettyText(Amount * 100, 2) + "%"
 		      Else
-		        StatComputedLabel.Value = "= " + Self.FormatStat(Amount)
+		        StatComputedLabel.Text = "= " + Self.FormatStat(Amount)
 		      End If
 		    End If
 		  Next
@@ -1628,11 +1628,11 @@ End
 #tag Events MultiplierField
 	#tag Event
 		Sub TextChange(index as Integer)
-		  If Self.mSettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.mSettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
-		  Var Multiplier As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = CDbl(Me.Text)
 		  RaiseEvent MultiplierUpdated(Index, Multiplier)
 		End Sub
 	#tag EndEvent

@@ -567,7 +567,7 @@ End
 		  End If
 		  
 		  Self.mSelectedCreature = Creatures(0)
-		  Self.CreatureNameField.Value = Self.mSelectedCreature.Label
+		  Self.CreatureNameField.Text = Self.mSelectedCreature.Label
 		  Self.CreatureNameField.Italic = False
 		End Sub
 	#tag EndEvent

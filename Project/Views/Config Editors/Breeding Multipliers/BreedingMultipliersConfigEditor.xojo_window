@@ -1516,17 +1516,17 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		  Self.EggLayPeriodField.Value = Format(Config.LayEggIntervalMultiplier, "0.0#####")
-		  Self.FoodConsumptionField.Value = Format(Config.BabyFoodConsumptionSpeedMultiplier, "0.0#####")
-		  Self.ImprintGracePeriodField.Value = Format(Config.BabyCuddleGracePeriodMultiplier, "0.0#####")
-		  Self.ImprintLossSpeedField.Value = Format(Config.BabyCuddleLoseImprintQualitySpeedMultiplier, "0.0#####")
-		  Self.ImprintPeriodField.Value = Format(Config.BabyCuddleIntervalMultiplier, "0.0#####")
-		  Self.ImprintStatScaleField.Value = Format(Config.BabyImprintingStatScaleMultiplier, "0.0#####")
-		  Self.ImprintAmountField.Value = Format(Config.BabyImprintAmountMultiplier, "0.0#####")
-		  Self.IncubationSpeedField.Value = Format(Config.EggHatchSpeedMultiplier, "0.0#####")
-		  Self.MatureSpeedField.Value = Format(Config.BabyMatureSpeedMultiplier, "0.0#####")
-		  Self.MatingSpeedField.Value = Format(Config.MatingSpeedMultiplier, "0.0#####")
-		  Self.MatingIntervalField.Value = Format(Config.MatingIntervalMultiplier, "0.0#####")
+		  Self.EggLayPeriodField.Text = Format(Config.LayEggIntervalMultiplier, "0.0#####")
+		  Self.FoodConsumptionField.Text = Format(Config.BabyFoodConsumptionSpeedMultiplier, "0.0#####")
+		  Self.ImprintGracePeriodField.Text = Format(Config.BabyCuddleGracePeriodMultiplier, "0.0#####")
+		  Self.ImprintLossSpeedField.Text = Format(Config.BabyCuddleLoseImprintQualitySpeedMultiplier, "0.0#####")
+		  Self.ImprintPeriodField.Text = Format(Config.BabyCuddleIntervalMultiplier, "0.0#####")
+		  Self.ImprintStatScaleField.Text = Format(Config.BabyImprintingStatScaleMultiplier, "0.0#####")
+		  Self.ImprintAmountField.Text = Format(Config.BabyImprintAmountMultiplier, "0.0#####")
+		  Self.IncubationSpeedField.Text = Format(Config.EggHatchSpeedMultiplier, "0.0#####")
+		  Self.MatureSpeedField.Text = Format(Config.BabyMatureSpeedMultiplier, "0.0#####")
+		  Self.MatingSpeedField.Text = Format(Config.MatingSpeedMultiplier, "0.0#####")
+		  Self.MatingIntervalField.Text = Format(Config.MatingIntervalMultiplier, "0.0#####")
 		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
@@ -1691,7 +1691,7 @@ End
 		  CreaturesList.ScrollPosition = Position
 		  CreaturesList.Sort
 		  
-		  Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(CuddlePeriod)
+		  Self.ImprintPeriodPreviewField.Text = Beacon.SecondsToString(CuddlePeriod)
 		End Sub
 	#tag EndMethod
 
@@ -1737,7 +1737,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1757,7 +1757,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1777,7 +1777,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1796,7 +1796,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1815,7 +1815,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1835,7 +1835,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1854,7 +1854,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1873,7 +1873,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1923,7 +1923,7 @@ End
 		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
 		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
 		    If Interval > 0 Then
-		      Self.ImprintPeriodField.Value = Interval.PrettyText
+		      Self.ImprintPeriodField.Text = Interval.PrettyText
 		      Self.UpdateStats
 		    End If
 		  Case "ShareLinkButton"
@@ -1951,7 +1951,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1970,7 +1970,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1990,7 +1990,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  

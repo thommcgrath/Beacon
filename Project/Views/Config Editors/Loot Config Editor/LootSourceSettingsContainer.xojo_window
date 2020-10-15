@@ -514,7 +514,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -555,7 +555,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If

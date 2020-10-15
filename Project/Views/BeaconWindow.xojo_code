@@ -155,7 +155,7 @@ Inherits Window
 	#tag Method, Flags = &h0
 		Sub UpdateWindowMenu()
 		  If Self.mWindowMenuItem <> Nil Then
-		    Self.mWindowMenuItem.Value = Self.Title
+		    Self.mWindowMenuItem.Text = Self.Title
 		    Self.mWindowMenuItem.Enable
 		  End If
 		End Sub

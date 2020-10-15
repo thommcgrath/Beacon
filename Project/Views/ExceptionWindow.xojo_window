@@ -741,7 +741,7 @@ End
 		    Self.BeginChecking()
 		  End If
 		  
-		  Self.ErrorIDLabel.Value = Self.ErrorIDLabel.Value.Replace("<hash>", Self.mExceptionHash)
+		  Self.ErrorIDLabel.Text = Self.ErrorIDLabel.Text.Replace("<hash>", Self.mExceptionHash)
 		  
 		  Super.ShowModal()
 		End Sub

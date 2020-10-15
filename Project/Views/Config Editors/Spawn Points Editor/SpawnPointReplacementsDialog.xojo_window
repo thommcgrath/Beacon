@@ -421,7 +421,7 @@ End
 		  Self.SwapButtons()
 		  
 		  If Self.mTargetCreature <> Nil Then
-		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
+		    Self.TargetCreatureField.Text = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
 		    
 		    Var Replacements() As Beacon.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
@@ -522,7 +522,7 @@ End
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
-		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
+		    Self.TargetCreatureField.Text = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
 		  End If
 		End Sub

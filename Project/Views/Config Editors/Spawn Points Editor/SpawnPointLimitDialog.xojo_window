@@ -490,7 +490,7 @@ End
 		Sub Open()
 		  If Self.mLimit <> Nil Then
 		    Var Limit As Double = Self.mLimit * 100
-		    Me.Value = Limit.PrettyText + "%"
+		    Me.Text = Limit.PrettyText + "%"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -503,7 +503,7 @@ End
 		    Return
 		  End If
 		  
-		  Var PercentageString As String = Self.PercentageField.Value.Trim
+		  Var PercentageString As String = Self.PercentageField.Text.Trim
 		  If PercentageString.EndsWith("%") Then
 		    PercentageString = PercentageString.Left(PercentageString.Length - 1)
 		  End If

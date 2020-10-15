@@ -459,7 +459,7 @@ End
 		    Self.AddToSelectionsButton.Left = Self.List.Left + Self.List.Width + 12
 		    Self.RemoveFromSelectionsButton.Left = Self.AddToSelectionsButton.Left
 		    Self.SelectedList.Left = Self.AddToSelectionsButton.Left + Self.AddToSelectionsButton.Width + 12
-		    Self.MessageLabel.Value = "Select Objects"
+		    Self.MessageLabel.Text = "Select Objects"
 		  End Select
 		End Sub
 	#tag EndMethod

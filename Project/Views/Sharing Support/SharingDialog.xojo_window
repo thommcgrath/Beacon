@@ -580,9 +580,9 @@ End
 		  
 		  If Response.HTTPStatus <> 200 Or Response.JSONParsed = False Then
 		    If Response.HTTPStatus = 403 Then
-		      Self.CommunityStatusField.Value = "Not Authorized"
+		      Self.CommunityStatusField.Text = "Not Authorized"
 		    Else
-		      Self.CommunityStatusField.Value = "Unknown"
+		      Self.CommunityStatusField.Text = "Unknown"
 		    End If
 		    Self.CommunityShareButton.Caption = "Share"
 		    Self.CommunityShareButton.Enabled = False
@@ -595,24 +595,24 @@ End
 		    
 		    Select Case Status
 		    Case "Requested"
-		      Self.CommunityStatusField.Value = "Private (Sharing Request Pending)"
+		      Self.CommunityStatusField.Text = "Private (Sharing Request Pending)"
 		      Self.CommunityShareButton.Caption = "Share"
 		      Self.CommunityShareButton.Enabled = False
 		    Case "Approved"
-		      Self.CommunityStatusField.Value = "Shared"
+		      Self.CommunityStatusField.Text = "Shared"
 		      Self.CommunityShareButton.Caption = "Unshare"
 		      Self.CommunityShareButton.Enabled = True
 		    Case "Private", "Approved But Private"
-		      Self.CommunityStatusField.Value = "Private"
+		      Self.CommunityStatusField.Text = "Private"
 		      Self.CommunityShareButton.Caption = "Share"
 		      Self.CommunityShareButton.Enabled = True
 		    Case "Denied"
-		      Self.CommunityStatusField.Value = "Private (Sharing Request Denied)"
+		      Self.CommunityStatusField.Text = "Private (Sharing Request Denied)"
 		      Self.CommunityShareButton.Caption = "Share"
 		      Self.CommunityShareButton.Enabled = False
 		    End Select
 		  Catch Err As RuntimeException
-		    Self.CommunityStatusField.Value = "Unknown"
+		    Self.CommunityStatusField.Text = "Unknown"
 		    Self.CommunityShareButton.Caption = "Share"
 		    Self.CommunityShareButton.Enabled = False
 		    Return
@@ -733,7 +733,7 @@ End
 #tag Events DownloadLinkLabel
 	#tag Event
 		Sub Open()
-		  Me.Value = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
+		  Me.Text = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -741,7 +741,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Board As New Clipboard
-		  Board.Text = Self.DownloadLinkLabel.Value
+		  Board.Text = Self.DownloadLinkLabel.Text
 		  
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
@@ -774,7 +774,7 @@ End
 		  APISocket.Start(Request)
 		  
 		  Me.Enabled = False
-		  Self.CommunityStatusField.Value = "Sharing…"
+		  Self.CommunityStatusField.Text = "Sharing…"
 		End Sub
 	#tag EndEvent
 #tag EndEvents

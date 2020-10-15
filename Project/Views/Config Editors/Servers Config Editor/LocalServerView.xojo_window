@@ -647,13 +647,13 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Header.Caption = Self.mProfile.Name
-		  Self.ServerNameField.Value = Self.mProfile.Name
+		  Self.ServerNameField.Text = Self.mProfile.Name
 		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
 		  If Self.mProfile.GameIniFile <> Nil Then
-		    Self.GameIniPathField.Value = Self.mProfile.GameIniFile.NativePath
+		    Self.GameIniPathField.Text = Self.mProfile.GameIniFile.NativePath
 		  End If
 		  If Self.mProfile.GameUserSettingsIniFile <> Nil Then
-		    Self.GameUserSettingsIniPathField.Value = Self.mProfile.GameUserSettingsIniFile.NativePath
+		    Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniFile.NativePath
 		  End If
 		  
 		  #if Beacon.MOTDEditingEnabled
@@ -732,8 +732,8 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Value
-		  Self.Header.Caption = Me.Value
+		  Self.mProfile.Name = Me.Text
+		  Self.Header.Caption = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -756,7 +756,7 @@ End
 		  End If
 		  
 		  Self.mProfile.GameIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
-		  Self.GameIniPathField.Value = File.NativePath
+		  Self.GameIniPathField.Text = File.NativePath
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -779,7 +779,7 @@ End
 		  End If
 		  
 		  Self.mProfile.GameUserSettingsIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
-		  Self.GameUserSettingsIniPathField.Value = File.NativePath
+		  Self.GameUserSettingsIniPathField.Text = File.NativePath
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -801,7 +801,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
+		  If IsNumeric(Me.Text) Then
 		    Self.mProfile.MessageDuration = Me.DoubleValue
 		    Self.Changed = Self.mProfile.Modified
 		  End If

@@ -17,7 +17,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Function ScrollMaximum() As Double
 		  If Self.Target <> Nil Then
-		    Return Self.Target.LineNumber(Self.Target.Value.Length - 1)
+		    Return Self.Target.LineNumber(Self.Target.Text.Length - 1)
 		  End If
 		End Function
 	#tag EndMethod

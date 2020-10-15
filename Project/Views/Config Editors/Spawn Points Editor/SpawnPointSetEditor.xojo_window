@@ -1446,7 +1446,7 @@ End
 		Private Sub UpdateUI(Set As Beacon.SpawnPointSet)
 		  Self.mSettingUp = True
 		  
-		  Self.NameField.Value = Set.Label
+		  Self.NameField.Text = Set.Label
 		  Self.WeightField.DoubleValue = Set.Weight
 		  Self.OffsetBeforeMultiplierCheck.Value = Set.LevelOffsetBeforeMultiplier
 		  
@@ -1904,7 +1904,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.SpawnSet.Label = Me.Value
+		  Self.SpawnSet.Label = Me.Text
 		  If Self.SpawnSet.Modified Then
 		    RaiseEvent Changed
 		  End If
@@ -1969,7 +1969,7 @@ End
 		    Return
 		  End If
 		  
-		  If Me.Value = "" Then
+		  If Me.Text = "" Then
 		    Self.SpawnSet.WaterOnlyMinimumHeight = Nil
 		  Else
 		    Self.SpawnSet.WaterOnlyMinimumHeight = Me.DoubleValue
@@ -2005,7 +2005,7 @@ End
 		    Return
 		  End If
 		  
-		  If Me.Value = "" Then
+		  If Me.Text = "" Then
 		    Self.SpawnSet.SpreadRadius = Nil
 		  Else
 		    Self.SpawnSet.SpreadRadius = Me.DoubleValue
@@ -2041,7 +2041,7 @@ End
 		    Return
 		  End If
 		  
-		  If Me.Value = "" Then
+		  If Me.Text = "" Then
 		    Self.SpawnSet.MinDistanceFromTamedDinosMultiplier = Nil
 		  Else
 		    Self.SpawnSet.MinDistanceFromTamedDinosMultiplier = Me.DoubleValue
@@ -2077,7 +2077,7 @@ End
 		    Return
 		  End If
 		  
-		  If Me.Value = "" Then
+		  If Me.Text = "" Then
 		    Self.SpawnSet.MinDistanceFromStructuresMultiplier = Nil
 		  Else
 		    Self.SpawnSet.MinDistanceFromStructuresMultiplier = Me.DoubleValue
@@ -2113,7 +2113,7 @@ End
 		    Return
 		  End If
 		  
-		  If Me.Value = "" Then
+		  If Me.Text = "" Then
 		    Self.SpawnSet.MinDistanceFromPlayersMultiplier = Nil
 		  Else
 		    Self.SpawnSet.MinDistanceFromPlayersMultiplier = Me.DoubleValue
@@ -2164,7 +2164,7 @@ End
 		  End If
 		  
 		  Var Offset As Beacon.Point3D
-		  If OffsetFields(0).Value = "" Or OffsetFields(1).Value = "" Or OffsetFields(2).Value = "" Then
+		  If OffsetFields(0).Text = "" Or OffsetFields(1).Text = "" Or OffsetFields(2).Text = "" Then
 		    Offset = Nil
 		  Else
 		    Offset = New Beacon.Point3D(OffsetFields(0).DoubleValue, OffsetFields(1).DoubleValue, OffsetFields(2).DoubleValue)

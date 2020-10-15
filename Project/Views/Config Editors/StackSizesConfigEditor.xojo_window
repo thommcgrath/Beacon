@@ -289,7 +289,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Self.GlobalMultiplierField.Value = Format(Self.Config(False).GlobalMultiplier, "0.0#####")
+		  Self.GlobalMultiplierField.Text = Format(Self.Config(False).GlobalMultiplier, "0.0#####")
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -458,7 +458,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Config.GlobalMultiplier = CDbl(Me.Value)
+		  Config.GlobalMultiplier = CDbl(Me.Text)
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub

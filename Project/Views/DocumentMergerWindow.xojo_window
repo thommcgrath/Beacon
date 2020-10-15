@@ -564,7 +564,7 @@ End
 		  If Choice.Tag.IntegerValue > -1 Then
 		    Me.CellTagAt(Row, Column) = Choice.Tag
 		  End If
-		  Me.CellValueAt(Row, Column) = Choice.Value
+		  Me.CellValueAt(Row, Column) = Choice.Text
 		  Me.CellCheckBoxValueAt(Row, 0) = Choice.Tag <> -1
 		  
 		  Self.CheckEnabled()

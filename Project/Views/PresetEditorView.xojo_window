@@ -1109,10 +1109,10 @@ End
 		  Var Focus As RectControl = Self.Window.Focus
 		  
 		  If Focus <> Self.MinItemsField Then
-		    Self.MinItemsField.Value = Str(Self.mPreset.MinItems)
+		    Self.MinItemsField.Text = Str(Self.mPreset.MinItems)
 		  End If
 		  If Focus <> Self.MaxItemsField Then
-		    Self.MaxItemsField.Value = Str(Self.mPreset.MaxItems)
+		    Self.MaxItemsField.Text = Str(Self.mPreset.MaxItems)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1153,8 +1153,8 @@ End
 		  Next
 		  Self.ContentsList.Sort
 		  
-		  Self.NameField.Value = Self.mPreset.Label
-		  Self.GroupingField.Value = Self.mPreset.Grouping
+		  Self.NameField.Text = Self.mPreset.Label
+		  Self.GroupingField.Text = Self.mPreset.Grouping
 		  Self.UpdateMinAndMaxFields
 		  
 		  Var AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
@@ -1307,24 +1307,24 @@ End
 #tag Events MaxItemsStepper
 	#tag Event
 		Sub Down()
-		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) - 1, "-0")
+		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) - 1, "-0")
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Up()
-		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) + 1, "-0")
+		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) + 1, "-0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsStepper
 	#tag Event
 		Sub Down()
-		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) - 1, "-0")
+		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) - 1, "-0")
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Up()
-		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) + 1, "-0")
+		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) + 1, "-0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1335,20 +1335,20 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Max(CDbl(Me.Value), 1)
+		  Var Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mPreset.MaxItems <> Value Then
 		    Self.mPreset.MaxItems = Value
 		    Self.Changed = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Value = Str(Self.mPreset.MaxItems, "-0")
+		    Me.Text = Str(Self.mPreset.MaxItems, "-0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Value = Str(Self.mPreset.MaxItems, "-0")
+		  Me.Text = Str(Self.mPreset.MaxItems, "-0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1359,20 +1359,20 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Max(CDbl(Me.Value), 1)
+		  Var Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mPreset.MinItems <> Value Then
 		    Self.mPreset.MinItems = Value
 		    Self.Changed = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Value = Str(Self.mPreset.MinItems, "-0")
+		    Me.Text = Str(Self.mPreset.MinItems, "-0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Value = Str(Self.mPreset.MinItems, "-0")
+		  Me.Text = Str(Self.mPreset.MinItems, "-0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1383,7 +1383,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As String = Me.Value.Trim
+		  Var Value As String = Me.Text.Trim
 		  If Value <> "" And Self.mPreset.Grouping.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mPreset.Grouping = Value
 		    Self.Changed = True
@@ -1398,7 +1398,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As String = Me.Value.Trim
+		  Var Value As String = Me.Text.Trim
 		  If Value <> "" And Self.mPreset.Label.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mPreset.Label = Value
 		    Self.Changed = True
@@ -1491,13 +1491,13 @@ End
 		  Var Item As MenuItem
 		  
 		  Item = New MenuItem
-		  Item.Value = "Create Blueprint Entry"
+		  Item.Text = "Create Blueprint Entry"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "createblueprintentry"
 		  Base.AddMenu(Item)
 		  
 		  Item = New MenuItem
-		  Item.Value = "Match Official Availability"
+		  Item.Text = "Match Official Availability"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "matchavailability"
 		  Base.AddMenu(Item)

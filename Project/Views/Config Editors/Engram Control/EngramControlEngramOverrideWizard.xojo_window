@@ -703,31 +703,31 @@ End
 		    End If
 		    
 		    If Self.mEngrams.LastIndex = 0 Then
-		      Self.EntryStringField.Value = Self.mConfig.EntryString(Self.mEngrams(0))
+		      Self.EntryStringField.Text = Self.mConfig.EntryString(Self.mEngrams(0))
 		    Else
-		      Self.EntryStringField.Value = "Multiple"
+		      Self.EntryStringField.Text = "Multiple"
 		    End If
 		    Self.EntryStringField.Enabled = False
 		    
 		    If Beacon.AreElementsEqual(RequiredLevels) Then
 		      Var RequiredLevel As NullableDouble = RequiredLevels(0)
 		      If (RequiredLevel Is Nil) = False Then
-		        Self.RequiredLevelField.Value = RequiredLevel.IntegerValue.ToString
+		        Self.RequiredLevelField.Text = RequiredLevel.IntegerValue.ToString
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
-		        Self.RequiredLevelField.Value = "0"
+		        Self.RequiredLevelField.Text = "0"
 		      Else
-		        Self.RequiredLevelField.Value = "Tek"
+		        Self.RequiredLevelField.Text = "Tek"
 		      End If
 		    End If
 		    
 		    If Beacon.AreElementsEqual(RequiredPointses) Then
 		      Var RequiredPoints As NullableDouble = RequiredPointses(0)
 		      If (RequiredPoints Is Nil) = False Then
-		        Self.RequiredPointsField.Value = RequiredPoints.IntegerValue.ToString
+		        Self.RequiredPointsField.Text = RequiredPoints.IntegerValue.ToString
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
-		        Self.RequiredPointsField.Value = ""
+		        Self.RequiredPointsField.Text = ""
 		      Else
-		        Self.RequiredPointsField.Value = ""
+		        Self.RequiredPointsField.Text = ""
 		      End If
 		    End If
 		    
@@ -877,14 +877,14 @@ End
 		Sub Action()
 		  Var Engrams() As Beacon.Engram
 		  If Self.mEngrams.LastIndex = -1 Then
-		    If Not Self.EntryStringField.Value.EndsWith("_C") Then
+		    If Not Self.EntryStringField.Text.EndsWith("_C") Then
 		      Self.ShowAlert("The entered Entry String is not correct.", "Ark Entry Strings usually begin with EngramEntry and always end with _C.")
 		      Return
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(Self.EntryStringField.Value)
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(Self.EntryStringField.Text)
 		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Value)
+		      Engram = Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Text)
 		    End If
 		    Engrams.Add(Engram)
 		  Else
@@ -904,15 +904,15 @@ End
 		  Var EditLevel As Boolean = Self.LevelEditCheck.Value And Self.LevelEditCheck.Enabled
 		  Var RequiredLevel As NullableDouble
 		  If EditLevel Then
-		    If Self.RequiredLevelField.Value = "Tek" Then
+		    If Self.RequiredLevelField.Text = "Tek" Then
 		      RequiredLevel = Nil
-		    ElseIf Self.RequiredLevelField.Value = "Spawn" Then
+		    ElseIf Self.RequiredLevelField.Text = "Spawn" Then
 		      RequiredLevel = 0
-		    ElseIf IsNumeric(Self.RequiredLevelField.Value) = False Then
+		    ElseIf IsNumeric(Self.RequiredLevelField.Text) = False Then
 		      Self.ShowAlert("Please enter a number for the level field.", "The value entered is not a number.")
 		      Return
 		    Else
-		      RequiredLevel = CDbl(Self.RequiredLevelField.Value)
+		      RequiredLevel = CDbl(Self.RequiredLevelField.Text)
 		    End If
 		  End If
 		  
@@ -925,13 +925,13 @@ End
 		  Var EditPoints As Boolean = Self.PointsEditCheck.Value And Self.PointsEditCheck.Enabled
 		  Var RequiredPoints As NullableDouble
 		  If EditPoints Then
-		    If Self.RequiredPointsField.Value = "Tek" Then
+		    If Self.RequiredPointsField.Text = "Tek" Then
 		      RequiredPoints = Nil
-		    ElseIf IsNumeric(Self.RequiredPointsField.Value) = False Then
+		    ElseIf IsNumeric(Self.RequiredPointsField.Text) = False Then
 		      Self.ShowAlert("Please enter a number for the points field.", "The value entered is not a number.")
 		      Return
 		    Else
-		      RequiredPoints = CDbl(Self.RequiredPointsField.Value)
+		      RequiredPoints = CDbl(Self.RequiredPointsField.Text)
 		    End If
 		  End If
 		  
@@ -1033,9 +1033,9 @@ End
 	#tag Event
 		Sub Action()
 		  If Me.Value Then
-		    Self.RequiredLevelLabel.Value = "Auto Unlocks At:"
+		    Self.RequiredLevelLabel.Text = "Auto Unlocks At:"
 		  Else
-		    Self.RequiredLevelLabel.Value = "Required Level:"
+		    Self.RequiredLevelLabel.Text = "Required Level:"
 		  End If
 		  If Not Self.mSettingUp Then
 		    Self.AutoUnlockEditCheck.Value = True

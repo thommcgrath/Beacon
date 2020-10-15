@@ -53,9 +53,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    
 		    If Keyboard.OptionKey Then
-		      HelpUpdateEngrams.Value = "Refresh Engrams"
+		      HelpUpdateEngrams.Text = "Refresh Engrams"
 		    Else
-		      HelpUpdateEngrams.Value = "Update Engrams"
+		      HelpUpdateEngrams.Text = "Update Engrams"
 		    End If
 		    HelpUpdateEngrams.Enable
 		  Else
@@ -1125,10 +1125,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
 		  Case UserCloud.Notification_SyncStarted
-		    HelpSyncCloudFiles.Value = "Syncing Cloud Files…"
+		    HelpSyncCloudFiles.Text = "Syncing Cloud Files…"
 		    HelpSyncCloudFiles.Enabled = False
 		  Case UserCloud.Notification_SyncFinished
-		    HelpSyncCloudFiles.Value = "Sync Cloud Files"
+		    HelpSyncCloudFiles.Text = "Sync Cloud Files"
 		    HelpSyncCloudFiles.Enabled = True
 		  End Select
 		End Sub

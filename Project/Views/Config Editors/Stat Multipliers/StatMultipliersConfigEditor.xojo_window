@@ -3051,24 +3051,24 @@ End
 		      If Not Stat.PlayerBaseCapped Then
 		        BaseAmount = BaseAmount * Config.PlayerBaseMultiplier(Stat)
 		      End If
-		      BaseField.Value = CreatureStatContainer.FormatStat(BaseAmount)
+		      BaseField.Text = CreatureStatContainer.FormatStat(BaseAmount)
 		    ElseIf BaseLabel <> Nil Then
-		      BaseLabel.Value = Stat.PlayerBase.PrettyText(2)
+		      BaseLabel.Text = Stat.PlayerBase.PrettyText(2)
 		    End If
 		    
 		    If PerLevelAmountLabel <> Nil Then
-		      PerLevelAmountLabel.Value = CreatureStatContainer.FormatStat(Stat.PlayerPerLevelAmount) + If(Stat.IsPercentage, "%", "") + " x"
+		      PerLevelAmountLabel.Text = CreatureStatContainer.FormatStat(Stat.PlayerPerLevelAmount) + If(Stat.IsPercentage, "%", "") + " x"
 		    End If
 		    
 		    If PerLevelMultiplierField <> Nil And Focus <> PerLevelMultiplierField Then
-		      PerLevelMultiplierField.Value = CreatureStatContainer.FormatStat(Config.PlayerPerLevelMultiplier(Stat))
+		      PerLevelMultiplierField.Text = CreatureStatContainer.FormatStat(Config.PlayerPerLevelMultiplier(Stat))
 		    ElseIf PerLevelMultiplierLabel <> Nil Then
-		      PerLevelMultiplierLabel.Value = CreatureStatContainer.FormatStat(Config.PlayerPerLevelMultiplier(Stat))
+		      PerLevelMultiplierLabel.Text = CreatureStatContainer.FormatStat(Config.PlayerPerLevelMultiplier(Stat))
 		    End If
 		    
 		    If PerLevelComputedLabel <> Nil Then
 		      Var PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
-		      PerLevelComputedLabel.Value = "= " + CreatureStatContainer.FormatStat(PerLevelAmount) + If(Stat.IsPercentage, "%", "")
+		      PerLevelComputedLabel.Text = "= " + CreatureStatContainer.FormatStat(PerLevelAmount) + If(Stat.IsPercentage, "%", "")
 		    End If
 		  Next
 		End Sub
@@ -3085,7 +3085,7 @@ End
 #tag Events PlayerPerLevelMultiplierField
 	#tag Event
 		Sub TextChange(index as Integer)
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
@@ -3095,7 +3095,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Var Multiplier As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = CDbl(Me.Text)
 		  Self.Config(True).PlayerPerLevelMultiplier(Stat) = Multiplier
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -3106,7 +3106,7 @@ End
 #tag Events PlayerBaseField
 	#tag Event
 		Sub TextChange(index as Integer)
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
@@ -3116,7 +3116,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Var DesiredBase As Double = CDbl(Me.Value)
+		  Var DesiredBase As Double = CDbl(Me.Text)
 		  Var Multiplier As Double = DesiredBase / Stat.PlayerBase
 		  Self.Config(True).PlayerBaseMultiplier(Stat) = Multiplier
 		  Self.Changed = True

@@ -196,16 +196,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  If Self.MessageLabel.Value.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.MessageLabel.Value = Self.mMessage
+		  If Self.MessageLabel.Text.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.MessageLabel.Text = Self.mMessage
 		  End If
 		  
 		  If Self.Title.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
 		    Self.Title = Self.mMessage
 		  End If
 		  
-		  If Self.DetailLabel.Value.Compare(Self.mDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.DetailLabel.Value = Self.mDetail
+		  If Self.DetailLabel.Text.Compare(Self.mDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.DetailLabel.Text = Self.mDetail
 		  End If
 		  
 		  Var ProgressValue, ProgressMaximum As Integer

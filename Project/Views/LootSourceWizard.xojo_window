@@ -1376,8 +1376,8 @@ End
 		    BasedOn = New Beacon.CustomLootContainer("Template")
 		  End If
 		  
-		  Self.CustomizeMinSetsField.Value = Format(BasedOn.MinItemSets, "-0")
-		  Self.CustomizeMaxSetsField.Value = Format(BasedOn.MaxItemSets, "-0")
+		  Self.CustomizeMinSetsField.Text = Format(BasedOn.MinItemSets, "-0")
+		  Self.CustomizeMaxSetsField.Text = Format(BasedOn.MaxItemSets, "-0")
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
 		  
 		  Var Presets() As Beacon.Preset = Beacon.Data.Presets()
@@ -1424,10 +1424,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowDefine(FieldSource As Beacon.LootSource)
 		  If FieldSource <> Nil Then
-		    Self.DefineClassField.Value = FieldSource.ClassString
-		    Self.DefineNameField.Value = FieldSource.Label
-		    Self.DefineMinMultiplierField.Value = Format(FieldSource.Multipliers.Min, "0.0000")
-		    Self.DefineMaxMultiplierField.Value = Format(FieldSource.Multipliers.Max, "0.0000")
+		    Self.DefineClassField.Text = FieldSource.ClassString
+		    Self.DefineNameField.Text = FieldSource.Label
+		    Self.DefineMinMultiplierField.Text = Format(FieldSource.Multipliers.Min, "0.0000")
+		    Self.DefineMaxMultiplierField.Text = Format(FieldSource.Multipliers.Max, "0.0000")
 		  End If
 		  
 		  Self.Panel.SelectedPanelIndex = Self.PaneDefine
@@ -1515,7 +1515,7 @@ End
 #tag Events DefineActionButton
 	#tag Event
 		Sub Action()
-		  Var ClassString As String = Self.DefineClassField.Value.Trim
+		  Var ClassString As String = Self.DefineClassField.Text.Trim
 		  Var ClassTester As New RegEx
 		  ClassTester.Options.TreatTargetAsOneLine = True
 		  ClassTester.SearchPattern = "^[A-Za-z0-9_]+_C$"
@@ -1529,14 +1529,14 @@ End
 		  If Source <> Nil Then
 		    Destination = Source.Clone
 		  Else
-		    Var Label As String = Self.DefineNameField.Value.Trim
+		    Var Label As String = Self.DefineNameField.Text.Trim
 		    If Label = "" Then
 		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
 		      Return
 		    End If
 		    
-		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Value)
-		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Value)
+		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Text)
+		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Text)
 		    If MinMultiplier <= 0 Or MaxMultiplier <= 0 Then
 		      Self.ShowAlert("Invalid multipliers", "The loot source multipliers must be greater than 0. If you do not know these values - which is common - set them to 1.0 to be safe.")
 		      Return
@@ -1577,8 +1577,8 @@ End
 #tag Events CustomizeActionButton
 	#tag Event
 		Sub Action()
-		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
-		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
+		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Text))
+		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Text))
 		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
 		  Var AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
 		  Var ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
@@ -1682,7 +1682,7 @@ End
 		Sub TextChange()
 		  If Not Self.mDefineLabelWasEditedByUser Then
 		    Self.mDefineLabelEditingAutomatically = True
-		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value.Trim)
+		    Self.DefineNameField.Text = Beacon.LabelFromClassString(Me.Text.Trim)
 		    Self.mDefineLabelEditingAutomatically = False
 		  End If
 		End Sub

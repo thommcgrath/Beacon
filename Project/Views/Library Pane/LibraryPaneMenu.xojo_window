@@ -160,7 +160,7 @@ End
 		    // Possibly unchanged
 		    Var Changed As Boolean
 		    For I As Integer = 0 To Links.LastIndex
-		      If If(Links(I) <> Nil, Links(I).Left, "") <> Self.Labels(I).Value And If(Links(I) <> Nil, Links(I).Right, "") <> Self.Labels(I).URL Then
+		      If If(Links(I) <> Nil, Links(I).Left, "") <> Self.Labels(I).Text And If(Links(I) <> Nil, Links(I).Right, "") <> Self.Labels(I).URL Then
 		        Changed = True
 		        Exit For I
 		      End If
@@ -193,7 +193,7 @@ End
 		    Self.Labels(I).Left = 20
 		    Self.Labels(I).Width = Self.Width - 40
 		    Self.Labels(I).Visible = Links(I) <> Nil And Links(I).Left <> ""
-		    Self.Labels(I).Value = If(Links(I) <> Nil, Links(I).Left, "")
+		    Self.Labels(I).Text = If(Links(I) <> Nil, Links(I).Left, "")
 		    Self.Labels(I).ShowAsLink = If(Links(I) <> Nil, Links(I).Right <> "", False)
 		    Self.Labels(I).URL = If(Links(I) <> Nil, Links(I).Right, "")
 		  Next

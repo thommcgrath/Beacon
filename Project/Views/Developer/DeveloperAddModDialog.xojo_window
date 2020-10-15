@@ -277,14 +277,14 @@ End
 #tag Events ModIDField
 	#tag Event
 		Sub TextChange()
-		  ActionButton.Enabled = Me.Value.Trim <> ""
+		  ActionButton.Enabled = Me.Text.Trim <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var ModID As String = ModIDField.Value.Trim
+		  Var ModID As String = ModIDField.Text.Trim
 		  If ModID.Left(4) = "http" Then
 		    Var Regex As New Regex
 		    Regex.SearchPattern = "id=(\d+)"

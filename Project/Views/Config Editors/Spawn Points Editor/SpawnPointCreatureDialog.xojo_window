@@ -1164,7 +1164,7 @@ End
 		  Self.SwapButtons()
 		  
 		  If Self.mTargetCreature <> Nil Then
-		    Self.CreatureNameLabel.Value = Self.mTargetCreature.Label
+		    Self.CreatureNameLabel.Text = Self.mTargetCreature.Label
 		    Self.CreatureNameLabel.Italic = False
 		  ElseIf Self.mMultiEditMode Then
 		    Var Names() As String
@@ -1172,7 +1172,7 @@ End
 		      Names.Add(Entry.Label)
 		    Next
 		    Names.Sort
-		    Self.CreatureNameLabel.Value = Language.EnglishOxfordList(Names)
+		    Self.CreatureNameLabel.Text = Language.EnglishOxfordList(Names)
 		  End If
 		  
 		  Var CommonOffset As Beacon.Point3D
@@ -1283,19 +1283,19 @@ End
 		Private Function CreateEntry() As Beacon.MutableSpawnPointSetEntry
 		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature)
 		  
-		  If Self.LevelOverrideMinField.Value <> "" And Self.LevelOverrideMaxField.Value <> "" Then
+		  If Self.LevelOverrideMinField.Text <> "" And Self.LevelOverrideMaxField.Text <> "" Then
 		    Entry.Append(Beacon.SpawnPointLevel.FromUserLevel(Self.LevelOverrideMinField.DoubleValue, Self.LevelOverrideMaxField.DoubleValue, Self.mDifficulty))
 		  End If
-		  If Self.LevelMultiplierMinField.Value <> "" Then
+		  If Self.LevelMultiplierMinField.Text <> "" Then
 		    Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
 		  End If
-		  If Self.LevelMultiplierMaxField.Value <> "" Then
+		  If Self.LevelMultiplierMaxField.Text <> "" Then
 		    Entry.MaxLevelMultiplier = Self.LevelMultiplierMaxField.DoubleValue
 		  End If
-		  If Self.LevelOffsetMinField.Value <> "" Then
+		  If Self.LevelOffsetMinField.Text <> "" Then
 		    Entry.MinLevelOffset = Self.LevelOffsetMinField.DoubleValue
 		  End If
-		  If Self.LevelOffsetMaxField.Value <> "" Then
+		  If Self.LevelOffsetMaxField.Text <> "" Then
 		    Entry.MaxLevelOffset = Self.LevelOffsetMaxField.DoubleValue
 		  End If
 		  
@@ -1345,14 +1345,14 @@ End
 		Private Sub UpdateEffectiveLevel()
 		  Var Entry As Beacon.MutableSpawnPointSetEntry = Self.CreateEntry
 		  
-		  If IsNumeric(Self.LevelOverrideMinField.Value) And IsNumeric(Self.LevelOverrideMaxField.Value) Then
+		  If IsNumeric(Self.LevelOverrideMinField.Text) And IsNumeric(Self.LevelOverrideMaxField.Text) Then
 		    Self.LevelOverrideMinField.Enabled = True
 		    Self.LevelOverrideMaxField.Enabled = True
 		    Self.LevelOffsetMinField.Enabled = False
 		    Self.LevelOffsetMaxField.Enabled = False
 		    Self.LevelMultiplierMinField.Enabled = False
 		    Self.LevelMultiplierMaxField.Enabled = False
-		  ElseIf (IsNumeric(Self.LevelOffsetMinField.Value) And IsNumeric(Self.LevelOffsetMaxField.Value)) Or (IsNumeric(Self.LevelMultiplierMinField.Value) And IsNumeric(Self.LevelMultiplierMaxField.Value)) Then
+		  ElseIf (IsNumeric(Self.LevelOffsetMinField.Text) And IsNumeric(Self.LevelOffsetMaxField.Text)) Or (IsNumeric(Self.LevelMultiplierMinField.Text) And IsNumeric(Self.LevelMultiplierMaxField.Text)) Then
 		    Self.LevelOverrideMinField.Enabled = False
 		    Self.LevelOverrideMaxField.Enabled = False
 		    Self.LevelOffsetMinField.Enabled = True
@@ -1369,8 +1369,8 @@ End
 		  End If
 		  
 		  Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
-		  Self.EffectiveMinLevelField.Value = Range.Min.PrettyText
-		  Self.EffectiveMaxLevelField.Value = Range.Max.PrettyText
+		  Self.EffectiveMinLevelField.Text = Range.Min.PrettyText
+		  Self.EffectiveMaxLevelField.Text = Range.Max.PrettyText
 		End Sub
 	#tag EndMethod
 
@@ -1424,7 +1424,7 @@ End
 		  End If
 		  
 		  Self.mTargetCreature = Creatures(0)
-		  Self.CreatureNameLabel.Value = Self.mTargetCreature.Label
+		  Self.CreatureNameLabel.Text = Self.mTargetCreature.Label
 		  Self.CreatureNameLabel.Italic = False
 		End Sub
 	#tag EndEvent
@@ -1524,21 +1524,21 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.OffsetFields(0)) > -1 Then
-		      If Self.OffsetFields(0).Value <> "" Then
+		      If Self.OffsetFields(0).Text <> "" Then
 		        OffsetX = Self.OffsetFields(0).DoubleValue
 		      Else
 		        OffsetX = 0
 		      End If
 		    End If
 		    If Self.mEditedFields.IndexOf(Self.OffsetFields(1)) > -1 Then
-		      If Self.OffsetFields(1).Value <> "" Then
+		      If Self.OffsetFields(1).Text <> "" Then
 		        OffsetY = Self.OffsetFields(1).DoubleValue
 		      Else
 		        OffsetY = 0
 		      End If
 		    End If
 		    If Self.mEditedFields.IndexOf(Self.OffsetFields(2)) > -1 Then
-		      If Self.OffsetFields(2).Value <> "" Then
+		      If Self.OffsetFields(2).Text <> "" Then
 		        OffsetZ = Self.OffsetFields(2).DoubleValue
 		      Else
 		        OffsetZ = 0
@@ -1552,7 +1552,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.SpawnChanceField) > -1 Then
-		      If Self.SpawnChanceField.Value <> "" Then
+		      If Self.SpawnChanceField.Text <> "" Then
 		        Entry.SpawnChance = Self.SpawnChanceField.DoubleValue
 		      Else
 		        Entry.SpawnChance = Nil
@@ -1563,10 +1563,10 @@ End
 		      Var MinLevel As Integer = Round(Self.mDifficulty)
 		      Var MaxLevel As Integer = Round(Self.mDifficulty) * 30
 		      
-		      If Self.LevelOverrideMinField.Value <> "" Then
+		      If Self.LevelOverrideMinField.Text <> "" Then
 		        MinLevel = Round(Self.LevelOverrideMinField.DoubleValue)
 		      End If
-		      If Self.LevelOverrideMaxField.Value <> "" Then
+		      If Self.LevelOverrideMaxField.Text <> "" Then
 		        MaxLevel = Round(Self.LevelOverrideMaxField.DoubleValue)
 		      End If
 		      
@@ -1580,14 +1580,14 @@ End
 		    ElseIf Self.mEditedFields.IndexOf(Self.LevelOffsetMinField) > -1 Or Self.mEditedFields.IndexOf(Self.LevelOffsetMaxField) > -1 Or Self.mEditedFields.IndexOf(Self.LevelMultiplierMinField) > -1 Or Self.mEditedFields.IndexOf(Self.LevelMultiplierMaxField) > -1 Then
 		      Entry.LevelCount = 0
 		      Entry.LevelOverride = Nil
-		      If IsNumeric(Self.LevelOffsetMinField.Value) And IsNumeric(Self.LevelOffsetMaxField.Value) Then
+		      If IsNumeric(Self.LevelOffsetMinField.Text) And IsNumeric(Self.LevelOffsetMaxField.Text) Then
 		        Entry.MinLevelOffset = Self.LevelOffsetMinField.DoubleValue
 		        Entry.MaxLevelOffset = Self.LevelOffsetMaxField.DoubleValue
 		      Else
 		        Entry.MinLevelOffset = Nil
 		        Entry.MaxLevelOffset = Nil
 		      End If
-		      If IsNumeric(Self.LevelMultiplierMinField.Value) And IsNumeric(Self.LevelMultiplierMaxField.Value) Then
+		      If IsNumeric(Self.LevelMultiplierMinField.Text) And IsNumeric(Self.LevelMultiplierMaxField.Text) Then
 		        Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
 		        Entry.MaxLevelMultiplier = Self.LevelMultiplierMaxField.DoubleValue
 		      Else
@@ -1597,7 +1597,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelMultiplierMinField) > -1 Then
-		      If Self.LevelMultiplierMinField.Value <> "" Then
+		      If Self.LevelMultiplierMinField.Text <> "" Then
 		        Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
 		      Else
 		        Entry.MinLevelMultiplier = Nil
@@ -1605,7 +1605,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelMultiplierMaxField) > -1 Then
-		      If Self.LevelMultiplierMaxField.Value <> "" Then
+		      If Self.LevelMultiplierMaxField.Text <> "" Then
 		        Entry.MaxLevelMultiplier = Self.LevelMultiplierMaxField.DoubleValue
 		      Else
 		        Entry.MaxLevelMultiplier = Nil
@@ -1613,7 +1613,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelOffsetMinField) > -1 Then
-		      If Self.LevelOffsetMinField.Value <> "" Then
+		      If Self.LevelOffsetMinField.Text <> "" Then
 		        Entry.MinLevelOffset = Self.LevelOffsetMinField.DoubleValue
 		      Else
 		        Entry.MinLevelOffset = Nil
@@ -1621,7 +1621,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelOffsetMaxField) > -1 Then
-		      If Self.LevelOffsetMaxField.Value <> "" Then
+		      If Self.LevelOffsetMaxField.Text <> "" Then
 		        Entry.MaxLevelOffset = Self.LevelOffsetMaxField.DoubleValue
 		      Else
 		        Entry.MaxLevelOffset = Nil

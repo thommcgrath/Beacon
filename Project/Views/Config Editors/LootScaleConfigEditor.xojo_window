@@ -118,7 +118,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Multiplier As Double = Self.Config(False).Multiplier
-		  Self.LootScaleField.Value = Str(Multiplier, "0%")
+		  Self.LootScaleField.Text = Str(Multiplier, "0%")
 		  Self.ScaleSlider.Value = Multiplier * 100
 		End Sub
 	#tag EndEvent
@@ -179,7 +179,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Double = CDbl(Me.Value)
+		  Var Value As Double = CDbl(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -199,7 +199,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.LootScaleField.Value = Str(Me.Value, "-0") + "%"
+		  Self.LootScaleField.Text = Str(Me.Value, "-0") + "%"
 		End Sub
 	#tag EndEvent
 #tag EndEvents

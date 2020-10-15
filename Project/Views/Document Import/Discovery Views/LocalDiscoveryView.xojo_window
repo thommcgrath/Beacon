@@ -348,7 +348,7 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.DesiredHeight = 400
-		  Self.ConfigArea.Value = ""
+		  Self.ConfigArea.Text = ""
 		End Sub
 	#tag EndEvent
 
@@ -551,16 +551,16 @@ End
 		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty = False Then
 		      Self.Switcher.SelectedIndex = Self.GameUserSettingsIniIndex
 		    Else
-		      Self.ConfigArea.Value = Self.mGameIniContent
+		      Self.ConfigArea.Text = Self.mGameIniContent
 		    End If
 		  Case Self.GameUserSettingsIniIndex
 		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty = False And Self.mGameUserSettingsIniContent.IsEmpty Then
 		      Self.Switcher.SelectedIndex = Self.GameIniIndex
 		    Else
-		      Self.ConfigArea.Value = Self.mGameUserSettingsIniContent
+		      Self.ConfigArea.Text = Self.mGameUserSettingsIniContent
 		    End If
 		  Else
-		    Self.ConfigArea.Value = ""
+		    Self.ConfigArea.Text = ""
 		  End Select
 		  Self.mSettingUp = SettingUp
 		End Sub
@@ -625,9 +625,9 @@ End
 		  If Not Self.mSettingUp Then
 		    Select Case Self.Switcher.SelectedIndex
 		    Case Self.GameIniIndex
-		      Self.mGameIniContent = Me.Value.Trim
+		      Self.mGameIniContent = Me.Text.Trim
 		    Case Self.GameUserSettingsIniIndex
-		      Self.mGameUserSettingsIniContent = Me.Value.Trim
+		      Self.mGameUserSettingsIniContent = Me.Text.Trim
 		    End Select
 		  End If
 		  

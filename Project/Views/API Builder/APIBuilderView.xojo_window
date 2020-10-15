@@ -703,10 +703,10 @@ End
 #tag Events BuildButton
 	#tag Event
 		Sub Action()
-		  Var Path As String = PathField.Value
+		  Var Path As String = PathField.Text
 		  Var Method As String = MethodMenu.SelectedRow
-		  Var Body As String = BodyField.Value
-		  Var ContentType As String = ContentTypeField.Value
+		  Var Body As String = BodyField.Text
+		  Var ContentType As String = ContentTypeField.Text
 		  
 		  Var Request As BeaconAPI.Request
 		  Try
@@ -725,11 +725,11 @@ End
 		  
 		  Select Case FormatMenu.SelectedRowIndex
 		  Case 0
-		    CodeField.Value = Self.BuildCURLCode(Request)
+		    CodeField.Text = Self.BuildCURLCode(Request)
 		  Case 1
-		    CodeField.Value = Self.BuildPHPCode(Request)
+		    CodeField.Text = Self.BuildPHPCode(Request)
 		  Case 2
-		    CodeField.Value = Self.BuildHTTPCode(Request)
+		    CodeField.Text = Self.BuildHTTPCode(Request)
 		  End Select
 		End Sub
 	#tag EndEvent

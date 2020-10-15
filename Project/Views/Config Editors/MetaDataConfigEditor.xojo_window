@@ -299,8 +299,8 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Self.TitleField.Value = Self.Document.Title
-		  Self.DescriptionArea.Value = Self.Document.Description
+		  Self.TitleField.Text = Self.Document.Title
+		  Self.DescriptionArea.Text = Self.Document.Description
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
 		  Self.ConsoleModeCheck.Value = Self.Document.ConsoleMode
@@ -343,7 +343,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Title = Me.Value.Trim
+		  Self.Document.Title = Me.Text.Trim
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -358,7 +358,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Self.SanitizeText(Me.Value.Trim, False)
+		  Self.Document.Description = Self.SanitizeText(Me.Text.Trim, False)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False

@@ -1397,40 +1397,40 @@ End
 		  End If
 		  
 		  If Focus <> Self.DayMultiplierField Then
-		    Self.DayMultiplierField.Value = Config.DaySpeedMultiplier.PrettyText
+		    Self.DayMultiplierField.Text = Config.DaySpeedMultiplier.PrettyText
 		  End If
 		  If Focus <> Self.NightMultiplierField Then
-		    Self.NightMultiplierField.Value = Config.NightSpeedMultiplier.PrettyText
+		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText
 		  End If
 		  If Focus <> Self.DayLengthField Then
-		    Self.DayLengthField.Value = If(DayLengthMinutes > 0, DayLengthMinutes.PrettyText(2), "∞")
+		    Self.DayLengthField.Text = If(DayLengthMinutes > 0, DayLengthMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.NightLengthField Then
-		    Self.NightLengthField.Value = If(NightLengthMinutes > 0, NightLengthMinutes.PrettyText(2), "∞")
+		    Self.NightLengthField.Text = If(NightLengthMinutes > 0, NightLengthMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.BalancedDayMinutesField Then
-		    Self.BalancedDayMinutesField.Value = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
+		    Self.BalancedDayMinutesField.Text = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.BalancedNightMinutesField Then
-		    Self.BalancedNightMinutesField.Value = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
+		    Self.BalancedNightMinutesField.Text = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.WarmDayMinutesField Then
-		    Self.WarmDayMinutesField.Value = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
+		    Self.WarmDayMinutesField.Text = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.WarmNightMinutesField Then
-		    Self.WarmNightMinutesField.Value = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
+		    Self.WarmNightMinutesField.Text = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.ColdDayMinutesField Then
-		    Self.ColdDayMinutesField.Value = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
+		    Self.ColdDayMinutesField.Text = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.ColdNightMinutesField Then
-		    Self.ColdNightMinutesField.Value = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
+		    Self.ColdNightMinutesField.Text = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
 		  End If
 		  
-		  Self.FullLengthField.Value = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
-		  Self.BalancedCycleField.Value = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
-		  Self.WarmCycleField.Value = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
-		  Self.ColdCycleField.Value = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
+		  Self.FullLengthField.Text = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
+		  Self.BalancedCycleField.Text = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
+		  Self.WarmCycleField.Text = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
+		  Self.ColdCycleField.Text = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
 		End Sub
 	#tag EndMethod
 
@@ -1477,12 +1477,12 @@ End
 #tag Events DayMultiplierField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Value)
+		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Text)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1492,12 +1492,12 @@ End
 #tag Events NightMultiplierField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Value)
+		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Text)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1507,12 +1507,12 @@ End
 #tag Events DayLengthField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mOfficialDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1522,12 +1522,12 @@ End
 #tag Events NightLengthField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mOfficialNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1537,12 +1537,12 @@ End
 #tag Events BalancedDayMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mBalancedDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1552,12 +1552,12 @@ End
 #tag Events WarmDayMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mWarmDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1567,12 +1567,12 @@ End
 #tag Events ColdDayMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mColdDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1582,12 +1582,12 @@ End
 #tag Events BalancedNightMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mBalancedNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1597,12 +1597,12 @@ End
 #tag Events WarmNightMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mWarmNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1612,12 +1612,12 @@ End
 #tag Events ColdNightMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mColdNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False

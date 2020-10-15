@@ -289,23 +289,23 @@ End
 		  
 		  If Self.mLevels.LastIndex = -1 Then
 		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, Beacon.Data.OfficialPlayerLevelData.MaxLevel) + 1
-		    Self.LevelField.Value = Level.ToString
+		    Self.LevelField.Text = Level.ToString
 		    Self.PointsField.SetFocus()
 		  ElseIf Self.mLevels.LastIndex = 0 Then
 		    Var Level As Integer = Self.mLevels(0)
-		    Self.LevelField.Value = Level.ToString
+		    Self.LevelField.Text = Level.ToString
 		    Self.LevelField.Enabled = False
 		    Self.LevelLabel.Enabled = False
 		    
 		    Var Points As NullableDouble = Self.mConfig.PointsForLevel(Level)
 		    If IsNull(Points) = False Then
-		      Self.PointsField.Value = Points.IntegerValue.ToString
+		      Self.PointsField.Text = Points.IntegerValue.ToString
 		    Else
-		      Self.PointsField.Value = Beacon.Data.OfficialPlayerLevelData.PointsForLevel(Level).ToString
+		      Self.PointsField.Text = Beacon.Data.OfficialPlayerLevelData.PointsForLevel(Level).ToString
 		    End If
 		    Self.PointsField.SetFocus()
 		  Else
-		    Self.LevelField.Value = "Multiple"
+		    Self.LevelField.Text = "Multiple"
 		    Self.LevelField.Enabled = False
 		    Self.LevelLabel.Enabled = False
 		    Self.PointsField.SetFocus()
@@ -317,7 +317,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Var Enabled As Boolean = ((Self.mLevels.LastIndex = -1 And IsNumeric(Self.LevelField.Value)) Or Self.mLevels.LastIndex > -1) And IsNumeric(Self.PointsField.Value)
+		  Var Enabled As Boolean = ((Self.mLevels.LastIndex = -1 And IsNumeric(Self.LevelField.Text)) Or Self.mLevels.LastIndex > -1) And IsNumeric(Self.PointsField.Text)
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If
@@ -394,7 +394,7 @@ End
 		Sub Action()
 		  Var Levels() As Integer
 		  If Self.mLevels.LastIndex = -1 Then
-		    Var Level As Integer = Round(CDbl(Self.LevelField.Value))
+		    Var Level As Integer = Round(CDbl(Self.LevelField.Text))
 		    If Level < 1 Or Level > 65535 Then
 		      Self.ShowAlert("Level is out of range", "The level must be a numeric value between 1 and 65,535.")
 		      Return
@@ -405,7 +405,7 @@ End
 		    Levels = Self.mLevels
 		  End If
 		  
-		  Var Points As Integer = Round(CDbl(Self.PointsField.Value))
+		  Var Points As Integer = Round(CDbl(Self.PointsField.Text))
 		  If Points < 0 Or Points > 65535 Then
 		    Self.ShowAlert("Points are out of range", "The points awarded must be a numeric value between 0 and 65,535.")
 		    Return

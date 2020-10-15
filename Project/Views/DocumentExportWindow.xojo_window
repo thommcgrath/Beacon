@@ -743,7 +743,7 @@ End
 		  Self.ExportToolbar.Item("SmartSave").Enabled = Not FileRewriting
 		  Self.ExportToolbar.Item("SmartSave").Caption = If(FileRewriting, "Working…", "Smart Save")
 		  
-		  Self.ExportToolbar.Item("LazyCopy").Enabled = Self.ContentArea.Value <> ""
+		  Self.ExportToolbar.Item("LazyCopy").Enabled = Self.ContentArea.Text <> ""
 		  Self.ExportToolbar.Item("LazySave").Enabled = Self.ExportToolbar.Item("LazyCopy").Enabled And Self.CurrentMode <> ""
 		  
 		  Var Rewriting As Boolean = Self.IsRewriting
@@ -802,7 +802,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub DoCopy()
-		  Var Content As String = Self.ContentArea.Value
+		  Var Content As String = Self.ContentArea.Text
 		  If Not Self.CanCopy(Content, Self.CurrentFilename) Then
 		    Return
 		  End If
@@ -817,7 +817,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub DoSave()
-		  If Not Self.CanCopy(Self.ContentArea.Value, Self.CurrentFilename, "Save") Then
+		  If Not Self.CanCopy(Self.ContentArea.Text, Self.CurrentFilename, "Save") Then
 		    Return
 		  End If
 		  
@@ -833,7 +833,7 @@ End
 		    Return
 		  End If
 		  
-		  If Not File.Write(Self.ContentArea.Value) Then
+		  If Not File.Write(Self.ContentArea.Text) Then
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
 		  End If
 		End Sub
@@ -1005,8 +1005,8 @@ End
 		  Case 3
 		    IntendedContent = Self.mCommandLineContent
 		  End Select
-		  If Self.ContentArea.Value <> IntendedContent Then
-		    Self.ContentArea.Value = IntendedContent
+		  If Self.ContentArea.Text <> IntendedContent Then
+		    Self.ContentArea.Text = IntendedContent
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1114,9 +1114,9 @@ End
 		      End If
 		    Next
 		    
-		    Self.ConfigSetsField.Value = EnabledSets.EnglishOxfordList()
+		    Self.ConfigSetsField.Text = EnabledSets.EnglishOxfordList()
 		  Else
-		    Self.ConfigSetsField.Value = Beacon.Document.BaseConfigSetName
+		    Self.ConfigSetsField.Text = Beacon.Document.BaseConfigSetName
 		    Self.ConfigSetsField.Enabled = False
 		    Self.ConfigSetsButton.Enabled = False
 		    Self.ConfigSetsLabel.Enabled = False
@@ -1136,7 +1136,7 @@ End
 			  Value = Value.ReplaceLineEndings(EndOfLine)
 			  If Self.mCurrentContent <> Value Then
 			    Self.mCurrentContent = Value
-			    Self.ContentArea.Value = Value
+			    Self.ContentArea.Text = Value
 			    Self.CheckClipboard()
 			  End If
 			End Set
@@ -1278,11 +1278,11 @@ End
 #tag Events ContentArea
 	#tag Event
 		Function ShouldCopy() As Boolean
-		  If Me.SelectionLength <> Me.Value.Length Then
+		  If Me.SelectionLength <> Me.Text.Length Then
 		    Return True
 		  End If
 		  
-		  Var Content As String = Me.Value
+		  Var Content As String = Me.Text
 		  Return Self.CanCopy(Content, Self.CurrentFilename)
 		End Function
 	#tag EndEvent

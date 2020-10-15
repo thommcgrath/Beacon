@@ -732,8 +732,8 @@ End
 		  
 		  Self.MinQualityField.DoubleValue = Self.mPreset.MinQualityModifier(Self.mEditID)
 		  Self.MaxQualityField.DoubleValue = Self.mPreset.MaxQualityModifier(Self.mEditID)
-		  Self.QuantityField.Value = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
-		  Self.BlueprintField.Value = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
+		  Self.QuantityField.Text = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
+		  Self.BlueprintField.Text = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
 		End Sub
 	#tag EndEvent
 
@@ -888,7 +888,7 @@ End
 #tag Events GroupPatternField
 	#tag Event
 		Sub TextChange()
-		  Var Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Value)
+		  Var Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text)
 		  Var Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
 		  Self.MatchesList.RemoveAllRows()
@@ -905,8 +905,8 @@ End
 		  Self.MaxQualityField.CheckValue
 		  Var MinQualityModifier As Integer = Self.MinQualityField.DoubleValue
 		  Var MaxQualityModifier As Integer = Self.MaxQualityField.DoubleValue
-		  Var QuantityMultiplier As Double = CDbl(Self.QuantityField.Value)
-		  Var BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Value)
+		  Var QuantityMultiplier As Double = CDbl(Self.QuantityField.Text)
+		  Var BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Text)
 		  
 		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
 		    BeaconUI.ShowAlert("This modifier has no effect", "There's no reason to add this modifier, because it does not change the quality or quantity of items.")
@@ -920,7 +920,7 @@ End
 		  
 		  Var Modifier As Beacon.PresetModifier = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
 		  If Modifier = Nil Then
-		    If Self.GroupNameField.Value.Trim = "" Or Self.GroupPatternField.Value.Trim = "" Then
+		    If Self.GroupNameField.Text.Trim = "" Or Self.GroupPatternField.Text.Trim = "" Then
 		      BeaconUI.ShowAlert("Group definition is not complete", "A new group must have both a name and pattern.")
 		      Return
 		    End If
@@ -928,7 +928,7 @@ End
 		      Return
 		    End If
 		    
-		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Value, Self.GroupPatternField.Value)
+		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Text, Self.GroupPatternField.Text)
 		    LocalData.SharedInstance.AddPresetModifier(Modifier)
 		  End If
 		  

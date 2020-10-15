@@ -1184,7 +1184,7 @@ End
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = Targets.LastIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
-		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
+		    CreateItem.Text = "Update """ + Preset.Label + """ Preset…"
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
@@ -1193,9 +1193,9 @@ End
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
 		    If Targets.LastIndex = 0 Then
-		      ReconfigureItem.Value = "Rebuild From """ + Preset.Label + """ Preset"
+		      ReconfigureItem.Text = "Rebuild From """ + Preset.Label + """ Preset"
 		    Else
-		      ReconfigureItem.Value = "Rebuild From Presets"
+		      ReconfigureItem.Text = "Rebuild From Presets"
 		    End If
 		  End If
 		  Base.AddMenu(ReconfigureItem)

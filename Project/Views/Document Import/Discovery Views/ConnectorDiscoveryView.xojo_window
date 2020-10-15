@@ -502,9 +502,9 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.DesiredHeight = 252
-		  Self.AddressField.Value = ""
-		  Self.PortField.Value = "48962"
-		  Self.KeyField.Value = ""
+		  Self.AddressField.Text = ""
+		  Self.PortField.Text = "48962"
+		  Self.KeyField.Text = ""
 		  Self.CheckEnabled()
 		  Self.StatusLabel.Top = Self.HelpLabel.Top
 		  Self.Spinner.Top = Self.StatusLabel.Top + 2
@@ -523,10 +523,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
 		  Var Port As Integer
-		  If IsNumeric(Self.PortField.Value) Then
-		    Port = CDbl(Self.PortField.Value)
+		  If IsNumeric(Self.PortField.Text) Then
+		    Port = CDbl(Self.PortField.Text)
 		  End If
-		  Self.ActionButton.Enabled = Self.HelpLabel.Visible And (Port >= 0 And Port <= 65535) And Self.AddressField.Value.Trim <> "" And Self.KeyField.Value.Trim <> ""
+		  Self.ActionButton.Enabled = Self.HelpLabel.Visible And (Port >= 0 And Port <= 65535) And Self.AddressField.Text.Trim <> "" And Self.KeyField.Text.Trim <> ""
 		End Sub
 	#tag EndMethod
 
@@ -568,15 +568,15 @@ End
 	#tag Event
 		Sub Action()
 		  Var Profile As New Beacon.ConnectorServerProfile
-		  Profile.Address = Self.AddressField.Value
-		  Profile.Port = CDbl(Self.PortField.Value)
-		  Profile.PreSharedKey = Self.KeyField.Value
+		  Profile.Address = Self.AddressField.Text
+		  Profile.Port = CDbl(Self.PortField.Text)
+		  Profile.PreSharedKey = Self.KeyField.Text
 		  Self.Profile = Profile
 		  
 		  Self.HelpLabel.Visible = False
 		  Self.Spinner.Visible = True
 		  Self.StatusLabel.Visible = True
-		  Self.StatusLabel.Value = "Connecting…"
+		  Self.StatusLabel.Text = "Connecting…"
 		  
 		  Self.TestSocket.Address = Profile.Address
 		  Self.TestSocket.Port = Profile.Port

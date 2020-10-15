@@ -392,16 +392,16 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateEngramStatus(LastSync As DateTime = Nil)
 		  If LocalData.SharedInstance.Importing Then
-		    Self.SyncLabel.Value = "Importing engrams…"
+		    Self.SyncLabel.Text = "Importing engrams…"
 		    Self.EngramImportIndicator.Visible = True
 		  Else
 		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
 		    If IsNull(LastSync) Then
-		      Self.SyncLabel.Value = "No engram data available"
+		      Self.SyncLabel.Text = "No engram data available"
 		    Else
-		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
+		      Self.SyncLabel.Text = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		    End If
 		    Self.EngramImportIndicator.Visible = False
 		  End If
@@ -452,7 +452,7 @@ End
 #tag Events VersionLabel
 	#tag Event
 		Sub Open()
-		  Me.Value = "Version " + App.BuildVersion
+		  Me.Text = "Version " + App.BuildVersion
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -461,9 +461,9 @@ End
 		Sub Open()
 		  Var LastSync As DateTime = LocalData.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
-		    Me.Value = "No engram data available"
+		    Me.Text = "No engram data available"
 		  Else
-		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
+		    Me.Text = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -487,12 +487,12 @@ End
 #tag Events WebsiteLink
 	#tag Event
 		Sub Open()
-		  Me.Value = Beacon.WebURL()
+		  Me.Text = Beacon.WebURL()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  ShowURL(Me.Value)
+		  ShowURL(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -843,7 +843,7 @@ End
 			  Self.Header.Caption = Value.Name
 			  
 			  If Not Self.mCurrentMod.Confirmed Then
-			    ConfirmField.Value = Self.mCurrentMod.ConfirmationCode
+			    ConfirmField.Text = Self.mCurrentMod.ConfirmationCode
 			    Panel.SelectedPanelIndex = PageNeedsConfirmation
 			    Return
 			  End If
@@ -921,7 +921,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var C As New Clipboard
-		  C.Text = ConfirmField.Value
+		  C.Text = ConfirmField.Text
 		  
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False

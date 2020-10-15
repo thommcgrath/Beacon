@@ -478,7 +478,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
-		  Select Case HitItem.Value
+		  Select Case HitItem.Text
 		  Case "Show Config Backups"
 		    Var Folder As FolderItem = HitItem.Tag
 		    If Folder = Nil Then

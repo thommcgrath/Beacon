@@ -794,8 +794,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Var Curve As Beacon.Curve = Self.Designer.Curve
-		  Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Value), 1)
-		  Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Value), 0)
+		  Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Text), 1)
+		  Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Text), 0)
 		  Var StartingLevel As Integer = Self.mStartingLevel
 		  Var StartingXP As UInt64 = Self.mStartingXP
 		  Var EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
@@ -816,8 +816,8 @@ End
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		  
-		  Self.FinalLevelField.Value = Format(EndingLevel, "0,")
-		  Self.NextLevelField.Value = Format(StartingLevel, "0,")
+		  Self.FinalLevelField.Text = Format(EndingLevel, "0,")
+		  Self.NextLevelField.Text = Format(StartingLevel, "0,")
 		  Self.ActionButton.Enabled = Allowed
 		  Self.WarningLabel.Visible = Not Allowed
 		End Sub
@@ -873,10 +873,10 @@ End
 		  
 		  Var Curve As Beacon.Curve = Me.Curve
 		  
-		  Self.PointFields(0).Value = Format(Curve.Point(1).X, "0.000")
-		  Self.PointFields(1).Value = Format(Curve.Point(1).Y, "0.000")
-		  Self.PointFields(2).Value = Format(Curve.Point(2).X, "0.000")
-		  Self.PointFields(3).Value = Format(Curve.Point(2).Y, "0.000")
+		  Self.PointFields(0).Text = Format(Curve.Point(1).X, "0.000")
+		  Self.PointFields(1).Text = Format(Curve.Point(1).Y, "0.000")
+		  Self.PointFields(2).Text = Format(Curve.Point(2).X, "0.000")
+		  Self.PointFields(3).Text = Format(Curve.Point(2).Y, "0.000")
 		  
 		  Self.UpdateList()
 		  
@@ -916,7 +916,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Value), CDbl(Self.PointFields(1).Value), CDbl(Self.PointFields(2).Value), CDbl(Self.PointFields(3).Value))
+		  Var Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Text), CDbl(Self.PointFields(1).Text), CDbl(Self.PointFields(2).Text), CDbl(Self.PointFields(3).Text))
 		  Self.Designer.Curve = Curve
 		End Sub
 	#tag EndEvent

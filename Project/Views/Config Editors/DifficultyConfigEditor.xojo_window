@@ -691,7 +691,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.MaxDinoLevelField.Value = "150"
+		  Self.MaxDinoLevelField.Text = "150"
 		  Self.Document.Difficulty.IsImplicit = True
 		End Sub
 	#tag EndEvent
@@ -699,7 +699,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		  Self.MaxDinoLevelField.Value = Format(Difficulty.MaxDinoLevel, "0,")
+		  Self.MaxDinoLevelField.Text = Format(Difficulty.MaxDinoLevel, "0,")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
 	#tag EndEvent
@@ -713,13 +713,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
-		  Self.LootScaleField.Value = Format(Difficulty.DifficultyValue, "0%")
-		  Self.DifficultyValueField.Value = Difficulty.DifficultyValue.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
-		  Self.DifficultyOffsetField.Value = Format(1.0, "0.0")
-		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
-		  Self.MaxTekLevelField.Value = Format(Difficulty.MaxTekLevel, "0,")
-		  Self.MaxWyvernLevelField.Value = Format(Difficulty.MaxWyvernLevel, "0,")
-		  Self.MaxCrystalWyvernLevelField.Value = Format(Difficulty.MaxCrystalWyvernLevel, "0,")
+		  Self.LootScaleField.Text = Format(Difficulty.DifficultyValue, "0%")
+		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
+		  Self.DifficultyOffsetField.Text = Format(1.0, "0.0")
+		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
+		  Self.MaxTekLevelField.Text = Format(Difficulty.MaxTekLevel, "0,")
+		  Self.MaxWyvernLevelField.Text = Format(Difficulty.MaxWyvernLevel, "0,")
+		  Self.MaxCrystalWyvernLevelField.Text = Format(Difficulty.MaxCrystalWyvernLevel, "0,")
 		End Sub
 	#tag EndMethod
 
@@ -733,7 +733,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = CDbl(Me.Value)
+		  Var Value As Integer = CDbl(Me.Text)
 		  If Value <= 0 Then
 		    Return
 		  End If

@@ -253,7 +253,7 @@ End
 	#tag Event
 		Sub Action()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
-		  Var Password As String = Self.PasswordField.Value
+		  Var Password As String = Self.PasswordField.Text
 		  
 		  Var Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password)
 		  If Identity <> Nil Then
@@ -277,7 +277,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
-		  Self.ActionButton.Enabled = Me.Value <> ""
+		  Self.ActionButton.Enabled = Me.Text <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -1089,13 +1089,13 @@ End
 		  
 		  Var Idx As Integer = Self.ServerList.SelectedRowIndex
 		  If Idx = -1 Then
-		    Self.LogsArea.Value = ""
+		    Self.LogsArea.Text = ""
 		    Return
 		  End If
 		  
 		  Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
 		  Var ShouldScroll As Boolean = True// = Self.LogsArea.VerticalScrollPosition = Self.LogsArea.
-		  Self.LogsArea.Value = Engine.Logs
+		  Self.LogsArea.Text = Engine.Logs
 		  If ShouldScroll Then
 		    Self.LogsArea.VerticalScrollPosition = 99999999
 		  End If
@@ -1146,7 +1146,7 @@ End
 		  Var State As New TextAreaState
 		  State.ApplyTo(Self.ReviewArea)
 		  Self.ReviewSwitcher.SelectedIndex = 1
-		  Self.ReviewArea.Value = UserData.Lookup("GameUserSettings.ini", "").StringValue
+		  Self.ReviewArea.Text = UserData.Lookup("GameUserSettings.ini", "").StringValue
 		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndMethod
@@ -1278,7 +1278,7 @@ End
 		  
 		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
 		  If Controller = Nil Or (Controller.UserData IsA Dictionary) = False Then
-		    Self.ReviewArea.Value = ""
+		    Self.ReviewArea.Text = ""
 		    Return
 		  End If
 		  
@@ -1286,9 +1286,9 @@ End
 		  Var UserData As Dictionary = Controller.UserData
 		  Select Case Me.SelectedIndex
 		  Case 1
-		    Self.ReviewArea.Value = UserData.Lookup("GameUserSettings.ini", "").StringValue
+		    Self.ReviewArea.Text = UserData.Lookup("GameUserSettings.ini", "").StringValue
 		  Case 2
-		    Self.ReviewArea.Value = UserData.Lookup("Game.ini", "").StringValue
+		    Self.ReviewArea.Text = UserData.Lookup("Game.ini", "").StringValue
 		  End Select
 		  Self.UpdatingReviewContent = False
 		End Sub

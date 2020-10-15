@@ -921,24 +921,24 @@ End
 		  Checker.SearchPattern = ":(\d{1,5})$"
 		  Checker.ReplacementPattern = ""
 		  
-		  Var CheckedValue As String = Self.ServerHostField.Value.Trim
+		  Var CheckedValue As String = Self.ServerHostField.Text.Trim
 		  
 		  Var Matches As RegexMatch = Checker.Search(CheckedValue)
 		  If Matches Is Nil Then
-		    If Self.ServerHostField.Value <> CheckedValue Then
-		      Self.ServerHostField.Value = CheckedValue
+		    If Self.ServerHostField.Text <> CheckedValue Then
+		      Self.ServerHostField.Text = CheckedValue
 		    End If
 		    Return
 		  End If
 		  
-		  Self.ServerHostField.Value = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
-		  Self.ServerPortField.Value = Matches.SubExpressionString(1)
+		  Self.ServerHostField.Text = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
+		  Self.ServerPortField.Text = Matches.SubExpressionString(1)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckServerActionButton()
-		  Var Enabled As Boolean = Self.ServerHostField.Value.Length > 0 And Val(Self.ServerPortField.Value) > 0 And Self.ServerUserField.Value.Length > 0 And Self.ServerPassField.Value.Length > 0
+		  Var Enabled As Boolean = Self.ServerHostField.Text.Length > 0 And Val(Self.ServerPortField.Text) > 0 And Self.ServerUserField.Text.Length > 0 And Self.ServerPassField.Text.Length > 0
 		  If Self.ServerActionButton.Enabled <> Enabled Then
 		    Self.ServerActionButton.Enabled = Enabled
 		  End If
@@ -1132,10 +1132,10 @@ End
 		  Self.CheckHostForPort()
 		  
 		  Self.mProfile = New Beacon.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Value
-		  Self.mProfile.Port = CDbl(Self.ServerPortField.Value)
-		  Self.mProfile.Username = Self.ServerUserField.Value
-		  Self.mProfile.Password = Self.ServerPassField.Value
+		  Self.mProfile.Host = Self.ServerHostField.Text
+		  Self.mProfile.Port = CDbl(Self.ServerPortField.Text)
+		  Self.mProfile.Username = Self.ServerUserField.Text
+		  Self.mProfile.Password = Self.ServerPassField.Text
 		  
 		  Select Case Self.ServerModeMenu.SelectedRowIndex
 		  Case 1
@@ -1167,7 +1167,7 @@ End
 		      Self.ShowAlert("There was a problem connecting to the FTP server", ErrorMessage)
 		      Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		    Else
-		      Self.DiscoveringMessage.Value = Self.mEngine.Logs(True)
+		      Self.DiscoveringMessage.Text = Self.mEngine.Logs(True)
 		    End If
 		  End If
 		End Sub

@@ -1509,9 +1509,9 @@ End
 		      Self.TypeMenu.SelectByCaption("Spawn Point")
 		    End Select
 		    Self.TypeMenu.Enabled = False
-		    Self.PathField.Value = Self.mOriginalBlueprint.Path
-		    Self.NameField.Value = Self.mOriginalBlueprint.Label
-		    Self.TagsField.Value = Self.mOriginalBlueprint.Tags.Join(", ")
+		    Self.PathField.Text = Self.mOriginalBlueprint.Path
+		    Self.NameField.Text = Self.mOriginalBlueprint.Label
+		    Self.TagsField.Text = Self.mOriginalBlueprint.Tags.Join(", ")
 		    Self.MapSelector.Mask = Self.mOriginalBlueprint.Availability
 		    
 		    Select Case Self.mOriginalBlueprint
@@ -1523,9 +1523,9 @@ End
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
 		    Self.TypeMenu.Enabled = True
-		    Self.PathField.Value = ""
-		    Self.NameField.Value = ""
-		    Self.TagsField.Value = ""
+		    Self.PathField.Text = ""
+		    Self.NameField.Text = ""
+		    Self.TagsField.Text = ""
 		    Self.MapSelector.Mask = 0
 		  End If
 		  
@@ -1557,19 +1557,19 @@ End
 	#tag Method, Flags = &h21
 		Private Sub LoadCreature(Creature As Beacon.Creature)
 		  If Creature.IncubationTime > 0 Then
-		    Self.CreatureIncubationTimeField.Value = Beacon.SecondsToString(Creature.IncubationTime)
+		    Self.CreatureIncubationTimeField.Text = Beacon.SecondsToString(Creature.IncubationTime)
 		  End If
 		  
 		  If Creature.MatureTime > 0 Then
-		    Self.CreatureMatureTimeField.Value = Beacon.SecondsToString(Creature.MatureTime)
+		    Self.CreatureMatureTimeField.Text = Beacon.SecondsToString(Creature.MatureTime)
 		  End If
 		  
 		  If Creature.MinMatingInterval > 0 Then
-		    Self.CreatureIntervalMinTimeField.Value = Beacon.SecondsToString(Creature.MinMatingInterval)
+		    Self.CreatureIntervalMinTimeField.Text = Beacon.SecondsToString(Creature.MinMatingInterval)
 		  End If
 		  
 		  If Creature.MaxMatingInterval > 0 Then
-		    Self.CreatureIntervalMaxTimeField.Value = Beacon.SecondsToString(Creature.MaxMatingInterval)
+		    Self.CreatureIntervalMaxTimeField.Text = Beacon.SecondsToString(Creature.MaxMatingInterval)
 		  End If
 		  
 		  Var Stats() As Beacon.Stat = Beacon.Stats.All
@@ -1589,18 +1589,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadEngram(Engram As Beacon.Engram)
-		  Self.EngramEntryStringField.Value = Engram.EntryString
+		  Self.EngramEntryStringField.Text = Engram.EntryString
 		  
 		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
-		    Self.EngramPlayerLevelField.Value = Format(Engram.RequiredPlayerLevel.IntegerValue, "0,")
+		    Self.EngramPlayerLevelField.Text = Format(Engram.RequiredPlayerLevel.IntegerValue, "0,")
 		  End If
 		  
 		  If (Engram.RequiredUnlockPoints Is Nil) = False Then
-		    Self.EngramRequiredPointsField.Value = Format(Engram.RequiredUnlockPoints.IntegerValue, "0,")
+		    Self.EngramRequiredPointsField.Text = Format(Engram.RequiredUnlockPoints.IntegerValue, "0,")
 		  End If
 		  
 		  If (Engram.StackSize Is Nil) = False Then
-		    Self.EngramStackSizeField.Value = Format(Engram.StackSize.IntegerValue, "0,")
+		    Self.EngramStackSizeField.Text = Format(Engram.StackSize.IntegerValue, "0,")
 		  End If
 		  
 		  Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
@@ -1651,8 +1651,8 @@ End
 
 	#tag Method, Flags = &h0
 		Function Save() As Boolean
-		  Var Label As String = Self.NameField.Value.Trim
-		  Var Path As String = Self.PathField.Value.Trim
+		  Var Label As String = Self.NameField.Text.Trim
+		  Var Path As String = Self.PathField.Text.Trim
 		  If Label = "" Then
 		    Self.ShowAlert("This object has no name", "You'll want to correct this, it will be hard to find this object again without a name.")
 		    Return False
@@ -1679,7 +1679,7 @@ End
 		    End If
 		  End If
 		  
-		  Var Tags() As String = Self.TagsField.Value.Split(",")
+		  Var Tags() As String = Self.TagsField.Text.Split(",")
 		  For I As Integer = Tags.LastIndex DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
@@ -1759,7 +1759,7 @@ End
 		Private Function UpdateCreature(Creature As Beacon.MutableCreature) As Boolean
 		  Const ParseInstructions = "Use a format like ""2 days 3 hours 4 minutes 5 seconds"" to specify an amount of time. Short versions such as ""2d3h4m5s"" may also be used. Omit any units that are not needed. Decimal values may only be used on the seconds field."
 		  
-		  Var IncubationString As String = Self.CreatureIncubationTimeField.Value.Trim
+		  Var IncubationString As String = Self.CreatureIncubationTimeField.Text.Trim
 		  If IncubationString.IsEmpty = False Then
 		    Var Interval As DateInterval = Beacon.ParseInterval(IncubationString)
 		    If Interval Is Nil Then
@@ -1772,7 +1772,7 @@ End
 		    Creature.IncubationTime = 0
 		  End If
 		  
-		  Var MatureString As String = Self.CreatureMatureTimeField.Value.Trim
+		  Var MatureString As String = Self.CreatureMatureTimeField.Text.Trim
 		  If MatureString.IsEmpty = False Then
 		    Var Interval As DateInterval = Beacon.ParseInterval(MatureString)
 		    If Interval Is Nil Then
@@ -1785,8 +1785,8 @@ End
 		    Creature.MatureTime = 0
 		  End If
 		  
-		  Var MinIntervalString As String = Self.CreatureIntervalMinTimeField.Value
-		  Var MaxIntervalString As String = Self.CreatureIntervalMaxTimeField.Value
+		  Var MinIntervalString As String = Self.CreatureIntervalMinTimeField.Text
+		  Var MaxIntervalString As String = Self.CreatureIntervalMaxTimeField.Text
 		  If MinIntervalString.IsEmpty = False Or MaxIntervalString.IsEmpty = False Then
 		    Var MinInterval As DateInterval = Beacon.ParseInterval(FirstValue(MinIntervalString, MaxIntervalString))
 		    Var MaxInterval As DateInterval = Beacon.ParseInterval(FirstValue(MaxIntervalString, MinIntervalString))
@@ -1822,9 +1822,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function UpdateEngram(Engram As Beacon.MutableEngram) As Boolean
-		  Var EntryString As String = Self.EngramEntryStringField.Value.Trim
-		  Var RequiredLevelString As String = Self.EngramPlayerLevelField.Value.Trim
-		  Var RequiredPointsString As String = Self.EngramRequiredPointsField.Value.Trim
+		  Var EntryString As String = Self.EngramEntryStringField.Text.Trim
+		  Var RequiredLevelString As String = Self.EngramPlayerLevelField.Text.Trim
+		  Var RequiredPointsString As String = Self.EngramRequiredPointsField.Text.Trim
 		  Var HasUnlockDetails As Boolean = EntryString.IsEmpty = False
 		  
 		  If HasUnlockDetails Then
@@ -1870,7 +1870,7 @@ End
 		    End If
 		  End If
 		  
-		  Var StackSizeString As String = Self.EngramStackSizeField.Value.Trim
+		  Var StackSizeString As String = Self.EngramStackSizeField.Text.Trim
 		  If StackSizeString.IsEmpty = False Then
 		    If IsNumeric(StackSizeString) = False Then
 		      Self.ShowAlert("Invalid Stack Size", "The stack size value should be numeric.")
@@ -1973,10 +1973,10 @@ End
 #tag Events NameField
 	#tag Event
 		Sub TextChange()
-		  If Me.Value.Trim = "" Then
+		  If Me.Text.Trim = "" Then
 		    Self.Title = "New Blueprint"
 		  Else
-		    Self.Title = Me.Value.Trim
+		    Self.Title = Me.Text.Trim
 		  End If
 		  Self.Modified = True
 		End Sub

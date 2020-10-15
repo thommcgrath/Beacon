@@ -675,7 +675,7 @@ End
 		  If (Identity Is Nil) = False Then
 		    Self.mUserID = Identity.UserID
 		    If Beacon.ValidateEmail(Identity.Username) Then
-		      Self.EmailField.Value = Identity.Username
+		      Self.EmailField.Text = Identity.Username
 		    End If
 		  End If
 		  
@@ -860,13 +860,13 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var Name As String = Self.NameField.Value.Trim
+		  Var Name As String = Self.NameField.Text.Trim
 		  If Name.IsEmpty Then
 		    Self.ShowAlert("Please provide some sort of name", "It might not seem like much, but a name can help solve certain problems, especially if the problem is related to a purchase.")
 		    Return
 		  End If
 		  
-		  Var Email As String = Self.EmailField.Value.Trim
+		  Var Email As String = Self.EmailField.Text.Trim
 		  If Not Beacon.ValidateEmail(Email) Then
 		    Self.ShowAlert("Please provide a valid email address", "You would not be able to receive a reply without an email address.")
 		    Return
@@ -877,7 +877,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Host As String = Self.HostField.Value.Trim
+		  Var Host As String = Self.HostField.Text.Trim
 		  If Host.IsEmpty Then
 		    Self.ShowAlert("Please include the name of your host", "While Beacon works for all hosts, including single player and self-hosted servers, instructions can vary vary depending on the host. This information helps to get accurate answers more quickly.")
 		    Return
@@ -890,7 +890,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Body As String = Self.BodyField.Value.Trim
+		  Var Body As String = Self.BodyField.Text.Trim
 		  If Body.IsEmpty Or Body.Length < 60 Then
 		    Self.ShowAlert("Please include a more detailed description of your issue", "The more information, the better.")
 		    Return
@@ -963,8 +963,8 @@ End
 		    Self.Changed = True
 		  End If
 		  
-		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Value.IsEmpty Then
-		    Self.HostField.Value = "Nitrado"
+		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Text.IsEmpty Then
+		    Self.HostField.Text = "Nitrado"
 		  End If
 		End Sub
 	#tag EndEvent

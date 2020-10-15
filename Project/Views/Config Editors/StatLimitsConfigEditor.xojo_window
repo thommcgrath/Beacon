@@ -750,11 +750,11 @@ End
 		    Var Value As NullableDouble = Config.Value(Stat)
 		    If Value = Nil Then
 		      Self.StatCheckboxes(Stat).Value = False
-		      Self.StatFields(Stat).Value = ""
+		      Self.StatFields(Stat).Text = ""
 		    Else
 		      Self.StatCheckboxes(Stat).Value = True
 		      Var DoubleValue As Double = Value
-		      Self.StatFields(Stat).Value = DoubleValue.PrettyText
+		      Self.StatFields(Stat).Text = DoubleValue.PrettyText
 		    End If
 		  Next
 		  
@@ -1184,15 +1184,15 @@ End
 		  Self.SettingUp = True
 		  If Not Me.Value Then
 		    Self.Config(True).Value(Index) = Nil
-		    Self.StatFields(Index).Value = ""
+		    Self.StatFields(Index).Text = ""
 		  Else
 		    Var Value As NullableDouble = Self.Config(False).Value(Index)
 		    If Value = Nil Then
-		      Self.StatFields(Index).Value = "0"
+		      Self.StatFields(Index).Text = "0"
 		      Self.Config(True).Value(Index) = 0
 		    Else
 		      Var DoubleValue As Double = Value
-		      Self.StatFields(Index).Value = DoubleValue.PrettyText
+		      Self.StatFields(Index).Text = DoubleValue.PrettyText
 		    End If
 		  End If
 		  Self.SettingUp = False
@@ -1208,7 +1208,7 @@ End
 		    Return
 		  End If
 		  
-		  Var StringValue As String = Me.Value
+		  Var StringValue As String = Me.Text
 		  If Not IsNumeric(StringValue) Then
 		    Return
 		  End If
@@ -1255,7 +1255,7 @@ End
 		  Var Limit As Double = CDbl(CellValue)
 		  Var Value As Double = BeaconConfigs.StatLimits.SolveForDesiredLimit(Limit, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
 		  Self.Config(True).Value(Stat) = Value
-		  Self.StatFields(Stat).Value = Value.PrettyText
+		  Self.StatFields(Stat).Text = Value.PrettyText
 		  
 		  Self.SettingUp = False
 		  Self.Changed = True

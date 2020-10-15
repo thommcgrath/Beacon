@@ -109,12 +109,12 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.NotesArea.Value
+			  Return Self.NotesArea.Text
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.NotesArea.Value = Value
+			  Self.NotesArea.Text = Value
 			End Set
 		#tag EndSetter
 		Notes As String

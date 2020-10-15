@@ -568,11 +568,11 @@ End
 		  If (Self.mValues Is Nil) = False Then
 		    Self.StatMenu.Enabled = False
 		    
-		    Self.BaseField.Value = Self.mValues.BaseValue.PrettyText(True)
-		    Self.WildField.Value = Self.mValues.WildMultiplier.PrettyText(True)
-		    Self.TamedField.Value = Self.mValues.TamedMultiplier.PrettyText(True)
-		    Self.AddField.Value = Self.mValues.AddMultiplier.PrettyText(True)
-		    Self.AffinityField.Value = Self.mValues.AffinityMultiplier.PrettyText(True)
+		    Self.BaseField.Text = Self.mValues.BaseValue.PrettyText(True)
+		    Self.WildField.Text = Self.mValues.WildMultiplier.PrettyText(True)
+		    Self.TamedField.Text = Self.mValues.TamedMultiplier.PrettyText(True)
+		    Self.AddField.Text = Self.mValues.AddMultiplier.PrettyText(True)
+		    Self.AffinityField.Text = Self.mValues.AffinityMultiplier.PrettyText(True)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -601,7 +601,7 @@ End
 		  End If
 		  
 		  Var Stat As Beacon.Stat = Win.StatMenu.RowTagAt(Win.StatMenu.SelectedRowIndex)
-		  Return New Beacon.CreatureStatValue(Stat, CDbl(Win.BaseField.Value), CDbl(Win.WildField.Value), CDbl(Win.TamedField.Value), CDbl(Win.AddField.Value), CDbl(Win.AffinityField.Value))
+		  Return New Beacon.CreatureStatValue(Stat, CDbl(Win.BaseField.Text), CDbl(Win.WildField.Text), CDbl(Win.TamedField.Text), CDbl(Win.AddField.Text), CDbl(Win.AffinityField.Text))
 		End Function
 	#tag EndMethod
 
@@ -631,7 +631,7 @@ End
 		  
 		  Var Fields() As TextField = Array(Self.BaseField, Self.WildField, Self.TamedField, Self.AddField, Self.AffinityField)
 		  For Each Field As TextField In Fields
-		    Var Value As String = Field.Value.Trim
+		    Var Value As String = Field.Text.Trim
 		    If IsNumeric(Value) = False Then
 		      Var FieldLabel As String
 		      Select Case Field
@@ -651,8 +651,8 @@ End
 		      Return
 		    End If
 		    
-		    If Field.Value <> Value Then
-		      Field.Value = Value
+		    If Field.Text <> Value Then
+		      Field.Text = Value
 		    End If
 		  Next
 		  

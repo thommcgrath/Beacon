@@ -281,10 +281,10 @@ End
 		Sub SetupUI()
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.ConfigArea.Value = Self.Config(False).GameUserSettingsIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
-		    Self.ConfigArea.Value = Self.Config(False).GameIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		End Sub
@@ -366,7 +366,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
-		  If Self.ConfigArea.SelectionStart >= Self.ConfigArea.Value.Length Then
+		  If Self.ConfigArea.SelectionStart >= Self.ConfigArea.Text.Length Then
 		    Return False
 		  End If
 		  
@@ -384,7 +384,7 @@ End
 		Private Sub ToggleEncryption()
 		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
-		  Var Source As String = Self.ConfigArea.Value
+		  Var Source As String = Self.ConfigArea.Text
 		  
 		  If Self.SelectionIsEncrypted Then
 		    Var StartPos As Integer = Self.ConfigArea.SelectionStart
@@ -405,7 +405,7 @@ End
 		    Var Content As String = Source.Middle(StartPos, ContentLen)
 		    Var Suffix As String = Source.Middle(EndPos + TagLen)
 		    
-		    Self.ConfigArea.Value = Prefix + Content + Suffix
+		    Self.ConfigArea.Text = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  Else
@@ -415,7 +415,7 @@ End
 		    Var Content As String = Source.Middle(Start, Length)
 		    Var Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
-		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix
+		    Self.ConfigArea.Text = Prefix + Tag + Content + Tag + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  End If
@@ -446,7 +446,7 @@ End
 		  Self.mEncryptedRanges.ResizeTo(-1)
 		  
 		  Var Pos As Integer
-		  Var Source As String = Self.ConfigArea.Value
+		  Var Source As String = Self.ConfigArea.Text
 		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
 		  Var Styles As StyledText = Self.ConfigArea.StyledText
@@ -523,11 +523,11 @@ End
 		  Select Case Me.SelectedIndex
 		  Case 1
 		    Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Value = Self.Config(False).GameUserSettingsIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
 		    Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Value = Self.Config(False).GameIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		  Self.SettingUp = SettingUp
@@ -543,11 +543,11 @@ End
 		    Return
 		  End If
 		  
-		  Var SanitizedText As String = Self.SanitizeText(Me.Value)
-		  If SanitizedText <> Me.Value Then
+		  Var SanitizedText As String = Self.SanitizeText(Me.Text)
+		  If SanitizedText <> Me.Text Then
 		    Var SelectionStart As Integer = Me.SelectionStart
 		    Var SelectionLength As Integer = Me.SelectionLength
-		    Me.Value = SanitizedText
+		    Me.Text = SanitizedText
 		    Me.SelectionStart = SelectionStart
 		    Me.SelectionLength = SelectionLength
 		  End If

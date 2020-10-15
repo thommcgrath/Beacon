@@ -213,7 +213,7 @@ End
 		  
 		  Var Win As New AdjustCostDialog
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Var Multiplier As Double = Max(CDbl(Win.MultiplierField.Value), 0.000001)
+		  Var Multiplier As Double = Max(CDbl(Win.MultiplierField.Text), 0.000001)
 		  Win.Close
 		  Return Multiplier
 		End Function
@@ -225,7 +225,7 @@ End
 #tag Events MultiplierField
 	#tag Event
 		Sub TextChange()
-		  Self.ActionButton.Enabled = IsNumeric(Me.Value)
+		  Self.ActionButton.Enabled = IsNumeric(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -239,7 +239,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.MultiplierField.Value = Format(1.0, "0.,0")
+		  Self.MultiplierField.Text = Format(1.0, "0.,0")
 		  Self.Hide
 		End Sub
 	#tag EndEvent

@@ -209,7 +209,7 @@ End
 		  
 		  Var Board As New Clipboard
 		  If Board.TextAvailable And (Board.Text.Left(7) = "http://" Or Board.Text.Left(8) = "https://") Then
-		    URLField.Value = Board.Text
+		    URLField.Text = Board.Text
 		  End If
 		End Sub
 	#tag EndEvent
@@ -242,7 +242,7 @@ End
 		  
 		  Downloader.ClearRequestHeaders
 		  Downloader.AllowCertificateValidation = True
-		  Downloader.Send("GET", URLField.Value.Trim)
+		  Downloader.Send("GET", URLField.Text.Trim)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -258,7 +258,7 @@ End
 #tag Events URLField
 	#tag Event
 		Sub TextChange()
-		  Var URL As String = Me.Value.Trim
+		  Var URL As String = Me.Text.Trim
 		  ActionButton.Enabled = Spinner.Visible = False And (URL.Left(7) = "http://" Or URL.Left(8) = "https://")
 		End Sub
 	#tag EndEvent
@@ -275,7 +275,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  URLField.Value = URL
+		  URLField.Text = URL
 		  
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True

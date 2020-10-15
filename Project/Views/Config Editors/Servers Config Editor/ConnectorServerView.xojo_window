@@ -528,10 +528,10 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ControlToolbar.Caption = Self.mProfile.Name
-		  Self.ServerNameField.Value = Self.mProfile.Name
-		  Self.AddressField.Value = Self.mProfile.Address
-		  Self.PortField.Value = Self.mProfile.Port.ToString
-		  Self.KeyField.Value = Self.mProfile.PreSharedKey
+		  Self.ServerNameField.Text = Self.mProfile.Name
+		  Self.AddressField.Text = Self.mProfile.Address
+		  Self.PortField.Text = Self.mProfile.Port.ToString
+		  Self.KeyField.Text = Self.mProfile.PreSharedKey
 		End Sub
 	#tag EndEvent
 
@@ -546,15 +546,15 @@ End
 		Private Sub RefreshServerStatus()
 		  Self.RefreshTimer.RunMode = Timer.RunModes.Off
 		  
-		  If IsNumeric(Self.PortField.Value) = False Or Self.AddressField.Value.Trim = "" Or Self.KeyField.Value.Trim = "" Then
+		  If IsNumeric(Self.PortField.Text) = False Or Self.AddressField.Text.Trim = "" Or Self.KeyField.Text.Trim = "" Then
 		    Self.Status = ServerStatus.UnableToCheck
 		    Self.ClientSocket.Close
 		    Return
 		  End If
 		  
-		  Var Port As Integer = CDbl(Self.PortField.Value)
-		  Var Address As String = Self.AddressField.Value.Trim
-		  Var Key As String = Self.KeyField.Value.Trim
+		  Var Port As Integer = CDbl(Self.PortField.Text)
+		  Var Address As String = Self.AddressField.Text.Trim
+		  Var Key As String = Self.KeyField.Text.Trim
 		  
 		  Self.Status = ServerStatus.Checking
 		  
@@ -613,23 +613,23 @@ End
 			  Self.mStatus = Value
 			  Select Case Value
 			  Case ServerStatus.Checking
-			    Self.ServerStatusField.Value = "Checking…"
+			    Self.ServerStatusField.Text = "Checking…"
 			    Self.ControlToolbar.PowerButton.Enabled = False
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  Case ServerStatus.Error
-			    Self.ServerStatusField.Value = "Error, check server details"
+			    Self.ServerStatusField.Text = "Error, check server details"
 			    Self.ControlToolbar.PowerButton.Enabled = False
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  Case ServerStatus.Started
-			    Self.ServerStatusField.Value = "Started"
+			    Self.ServerStatusField.Text = "Started"
 			    Self.ControlToolbar.PowerButton.Enabled = True
 			    Self.ControlToolbar.PowerButton.Toggled = True
 			  Case ServerStatus.Stopped
-			    Self.ServerStatusField.Value = "Stopped"
+			    Self.ServerStatusField.Text = "Stopped"
 			    Self.ControlToolbar.PowerButton.Enabled = True
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  Case ServerStatus.UnableToCheck
-			    Self.ServerStatusField.Value = "Cannot check until server details are complete"
+			    Self.ServerStatusField.Text = "Cannot check until server details are complete"
 			    Self.ControlToolbar.PowerButton.Enabled = False
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  End Select
@@ -715,8 +715,8 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Value
-		  Self.ControlToolbar.Caption = Me.Value
+		  Self.mProfile.Name = Me.Text
+		  Self.ControlToolbar.Caption = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -724,7 +724,7 @@ End
 #tag Events AddressField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Address = Me.Value.Trim
+		  Self.mProfile.Address = Me.Text.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
@@ -733,8 +733,8 @@ End
 #tag Events PortField
 	#tag Event
 		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
-		    Self.mProfile.Port = CDbl(Me.Value)
+		  If IsNumeric(Me.Text) Then
+		    Self.mProfile.Port = CDbl(Me.Text)
 		    Self.Changed = Self.mProfile.Modified
 		  End If
 		  Self.RefreshServerStatus()
@@ -744,7 +744,7 @@ End
 #tag Events KeyField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.PreSharedKey = Me.Value.Trim
+		  Self.mProfile.PreSharedKey = Me.Text.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub

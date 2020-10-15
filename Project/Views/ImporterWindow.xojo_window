@@ -181,7 +181,7 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.MessageLabel.Value = "Importing from " + Value
+			  Self.MessageLabel.Text = "Importing from " + Value
 			End Set
 		#tag EndSetter
 		Source As String

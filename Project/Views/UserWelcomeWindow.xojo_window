@@ -1687,9 +1687,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CheckConfirmButton()
 		  If Self.mConfirmEncryptionKey = "" Then
-		    Self.ConfirmActionButton.Enabled = Beacon.ValidateEmail(Self.ConfirmAddressField.Value.Trim)
+		    Self.ConfirmActionButton.Enabled = Beacon.ValidateEmail(Self.ConfirmAddressField.Text.Trim)
 		  Else
-		    Self.ConfirmActionButton.Enabled = Self.ConfirmCodeField.Value.Trim <> ""
+		    Self.ConfirmActionButton.Enabled = Self.ConfirmCodeField.Text.Trim <> ""
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1697,7 +1697,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CheckForConfirmedEmail()
 		  Var Fields As New Dictionary
-		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
+		  Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Self.CheckForConfirmationSocket.SetFormData(Fields)
 		  Self.CheckForConfirmationSocket.Send("POST", Beacon.WebURL("/account/login/verify"))
@@ -1706,13 +1706,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckIdentityActionButton()
-		  Self.IdentityActionButton.Enabled = Self.IdentityUsernameField.Value.Trim <> "" And Self.IdentityPasswordField.Value <> "" And Self.IdentityPasswordField.Value = Self.IdentityPasswordConfirmField.Value
+		  Self.IdentityActionButton.Enabled = Self.IdentityUsernameField.Text.Trim <> "" And Self.IdentityPasswordField.Text <> "" And Self.IdentityPasswordField.Text = Self.IdentityPasswordConfirmField.Text
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckLoginButton()
-		  Self.LoginActionButton.Enabled = Beacon.ValidateEmail(Self.LoginEmailField.Value.Trim) And Self.LoginPasswordField.Value <> ""
+		  Self.LoginActionButton.Enabled = Beacon.ValidateEmail(Self.LoginEmailField.Text.Trim) And Self.LoginPasswordField.Text <> ""
 		End Sub
 	#tag EndMethod
 
@@ -1798,13 +1798,13 @@ End
 		  Self.ConfirmCodeField.ReadOnly = True
 		  Self.ConfirmCodeField.Visible = False
 		  Self.ConfirmCodeLabel.Visible = False
-		  Self.ConfirmCodeField.Value = ""
+		  Self.ConfirmCodeField.Text = ""
 		  Self.ConfirmActionButton.Caption = "Send Confirmation"
 		  Self.ConfirmActionButton.Width = 142
 		  Self.ConfirmActionButton.Left = Self.Width - (20 + Self.ConfirmActionButton.Width)
 		  Self.ConfirmCancelButton.Left = Self.ConfirmActionButton.Left - (12 + Self.ConfirmCancelButton.Width)
 		  Self.ConfirmStatusLabel.Width = Self.ConfirmCancelButton.Left - (12 + Self.ConfirmStatusLabel.Left)
-		  Self.ConfirmStatusLabel.Value = "Sending Code…"
+		  Self.ConfirmStatusLabel.Text = "Sending Code…"
 		  Self.ConfirmSpinner.Visible = False
 		  Self.ConfirmStatusLabel.Visible = False
 		  Self.CheckConfirmButton()
@@ -1813,7 +1813,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetLoginStatus(Status As String)
-		  Self.LoginStatusLabel.Value = Status
+		  Self.LoginStatusLabel.Text = Status
 		  
 		  If Status = "" Then
 		    Self.LoginSpinner.Visible = False
@@ -1838,23 +1838,23 @@ End
 		Private Sub SetPageFocus()
 		  Select Case Self.PagePanel1.SelectedPanelIndex
 		  Case Self.PageLogin
-		    If Self.LoginEmailField.Value.Trim = "" Then
+		    If Self.LoginEmailField.Text.Trim = "" Then
 		      Self.LoginEmailField.SetFocus()
-		    ElseIf Self.LoginPasswordField.Value.Trim = "" Then
+		    ElseIf Self.LoginPasswordField.Text.Trim = "" Then
 		      Self.LoginPasswordField.SetFocus()
 		    End If
 		  Case Self.PageConfirm
-		    If Self.ConfirmAddressField.Value.Trim = "" And Self.ConfirmAddressField.ReadOnly = False Then
+		    If Self.ConfirmAddressField.Text.Trim = "" And Self.ConfirmAddressField.ReadOnly = False Then
 		      Self.ConfirmAddressField.SetFocus()
-		    ElseIf Self.ConfirmCodeField.Value.Trim = "" And Self.ConfirmCodeField.ReadOnly = False Then
+		    ElseIf Self.ConfirmCodeField.Text.Trim = "" And Self.ConfirmCodeField.ReadOnly = False Then
 		      Self.ConfirmCodeField.SetFocus()
 		    End If
 		  Case Self.PageIdentity
-		    If Self.IdentityUsernameField.Value.Trim = "" Then
+		    If Self.IdentityUsernameField.Text.Trim = "" Then
 		      Self.IdentityUsernameField.SetFocus()
-		    ElseIf Self.IdentityPasswordField.Value = "" Then
+		    ElseIf Self.IdentityPasswordField.Text = "" Then
 		      Self.IdentityPasswordField.SetFocus()
-		    ElseIf Self.IdentityPasswordConfirmField.Value = "" Then
+		    ElseIf Self.IdentityPasswordConfirmField.Text = "" Then
 		      Self.IdentityPasswordConfirmField.SetFocus()
 		    End If
 		  End Select
@@ -1863,7 +1863,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetSubmitIdentityStatus(Status As String)
-		  Self.IdentityStatusLabel.Value = Status
+		  Self.IdentityStatusLabel.Text = Status
 		  
 		  If Status = "" Then
 		    Self.CheckIdentityActionButton()
@@ -1920,8 +1920,8 @@ End
 		  Fields.Value("email") = Self.mConfirmedAddress
 		  Fields.Value("code") = Self.mConfirmedCode
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
-		  Fields.Value("username") = Self.IdentityUsernameField.Value.Trim
-		  Fields.Value("password") = Self.IdentityPasswordField.Value
+		  Fields.Value("username") = Self.IdentityUsernameField.Text.Trim
+		  Fields.Value("password") = Self.IdentityPasswordField.Text
 		  Fields.Value("allow_vulnerable") = AllowInsecurePassword
 		  
 		  Self.SubmitIdentitySocket.RequestHeader("X-BEACON-UPGRADE-ENCRYPTION") = "True"
@@ -1993,7 +1993,7 @@ End
 		  Case Self.PageIdentity
 		    Self.IdentityRevealCheckbox.Value = False
 		    Self.IdentityActionButton.Caption = If(Self.mUseRecoverLanguage, "Reset Password", "Create Account")
-		    Self.IdentityMessageLabel.Value = If(Self.mUseRecoverLanguage, "Recover Your Account", "Create Your Account")
+		    Self.IdentityMessageLabel.Text = If(Self.mUseRecoverLanguage, "Recover Your Account", "Create Your Account")
 		    Self.CheckIdentityActionButton()
 		  End Select
 		  
@@ -2041,7 +2041,7 @@ End
 		Sub Action()
 		  Self.SetLoginStatus("Logging in…")
 		  
-		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Value.Trim + ":" + Self.LoginPasswordField.Value, 0)
+		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
 		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session"))
 		End Sub
 	#tag EndEvent
@@ -2084,7 +2084,7 @@ End
 #tag Events ConfirmActionButton
 	#tag Event
 		Sub Action()
-		  If Self.mConfirmedAddress = Self.ConfirmAddressField.Value.Trim And Self.mConfirmedCode <> "" Then
+		  If Self.mConfirmedAddress = Self.ConfirmAddressField.Text.Trim And Self.mConfirmedCode <> "" Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageIdentity
 		    Return
 		  End If
@@ -2093,7 +2093,7 @@ End
 		    Self.mConfirmEncryptionKey = New v4UUID
 		    
 		    Var Fields As New Dictionary
-		    Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
+		    Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
 		    Fields.Value("key") = Self.mConfirmEncryptionKey
 		    Self.ConfirmCodeCreationSocket.SetFormData(Fields)
 		    Self.ConfirmCodeCreationSocket.Send("POST", Beacon.WebURL("/account/login/email"))
@@ -2107,7 +2107,7 @@ End
 		    Self.ConfirmActionButton.Left = Self.Width - (20 + Self.ConfirmActionButton.Width)
 		    Self.ConfirmCancelButton.Left = Self.ConfirmActionButton.Left - (12 + Self.ConfirmCancelButton.Width)
 		    Self.ConfirmStatusLabel.Width = Self.ConfirmCancelButton.Left - (12 + Self.ConfirmStatusLabel.Left)
-		    Self.ConfirmStatusLabel.Value = "Sending Code…"
+		    Self.ConfirmStatusLabel.Text = "Sending Code…"
 		    Self.ConfirmSpinner.Visible = True
 		    Self.ConfirmStatusLabel.Visible = True
 		    Self.CheckConfirmButton()
@@ -2121,9 +2121,9 @@ End
 		  Self.ConfirmCodeLabel.Visible = False
 		  
 		  Var Fields As New Dictionary
-		  Fields.Value("code") = Self.ConfirmCodeField.Value.Trim
+		  Fields.Value("code") = Self.ConfirmCodeField.Text.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
-		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
+		  Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
 		  
 		  Self.VerifyConfirmationCodeSocket.SetFormData(Fields)
 		  Self.VerifyConfirmationCodeSocket.Send("POST", Beacon.WebURL("/account/login/verify"))
@@ -2217,8 +2217,8 @@ End
 #tag Events LoginSignupButton
 	#tag Event
 		Sub Action()
-		  If Self.ConfirmAddressField.Value.Trim = "" Then
-		    Self.ConfirmAddressField.Value = Self.LoginEmailField.Value.Trim
+		  If Self.ConfirmAddressField.Text.Trim = "" Then
+		    Self.ConfirmAddressField.Text = Self.LoginEmailField.Text.Trim
 		  End If
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageConfirm
 		End Sub
@@ -2251,7 +2251,7 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    // Success
-		    Self.ConfirmStatusLabel.Value = "Waiting for confirmation…"
+		    Self.ConfirmStatusLabel.Text = "Waiting for confirmation…"
 		    Self.mConfirmedEmailScheduleKey = CallLater.Schedule(5000, AddressOf CheckForConfirmedEmail)
 		    Return
 		  End If
@@ -2280,12 +2280,12 @@ End
 		      Var Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
 		        Var Code As String = Dict.Value("code")
-		        Self.ConfirmCodeField.Value = Code
+		        Self.ConfirmCodeField.Text = Code
 		        Self.mConfirmedAddress = Dict.Value("email")
 		        Self.mConfirmedCode = Dict.Value("code")
 		        
 		        If Dict.Value("username") <> Nil Then
-		          Self.IdentityUsernameField.Value = Dict.Value("username")
+		          Self.IdentityUsernameField.Text = Dict.Value("username")
 		          Self.mUseRecoverLanguage = True
 		        Else
 		          Self.mUseRecoverLanguage = False
@@ -2330,7 +2330,7 @@ End
 		        End If
 		        
 		        If Dict.Value("username") <> Nil Then
-		          Self.IdentityUsernameField.Value = Dict.Value("username")
+		          Self.IdentityUsernameField.Text = Dict.Value("username")
 		          Self.mUseRecoverLanguage = True
 		        Else
 		          Self.mUseRecoverLanguage = False
@@ -2376,7 +2376,7 @@ End
 		    Try
 		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
 		      Var Username As String = Dict.Value("username")
-		      Self.IdentityUsernameField.Value = Username
+		      Self.IdentityUsernameField.Text = Username
 		    Catch Err As RuntimeException
 		      Self.ShowError("Cannot get a username suggestion.", Err)
 		      Return
@@ -2410,7 +2410,7 @@ End
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
 		      
-		      App.IdentityManager.RefreshUserDetails(Self.IdentityPasswordField.Value)
+		      App.IdentityManager.RefreshUserDetails(Self.IdentityPasswordField.Text)
 		      Self.SetSubmitIdentityStatus("Downloading keys…")
 		    Catch Err As RuntimeException
 		      Self.ShowError("There was an error reading the response from the connector.", Err)
@@ -2457,7 +2457,7 @@ End
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
 		      
-		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Value)
+		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Text)
 		      Self.SetLoginStatus("Downloading keys…")
 		    Catch Err As RuntimeException
 		      Self.ShowError("There was an error reading the response from the connector.", Err)

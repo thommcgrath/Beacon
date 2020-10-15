@@ -265,7 +265,7 @@ End
 		Function ArkML() As Beacon.ArkML
 		  If Self.RawMode Then
 		    // Currently viewing the ArkML version
-		    Return Beacon.ArkML.FromArkML(Self.Field.Value)
+		    Return Beacon.ArkML.FromArkML(Self.Field.Text)
 		  Else
 		    // Viewing the RTF version
 		    Return Beacon.ArkML.FromRTF(Self.Field.StyledText.RTFData)
@@ -277,7 +277,7 @@ End
 		Sub ArkML(Assigns ArkML As Beacon.ArkML)
 		  If Self.RawMode Then
 		    // Currently viewing the ArkML version
-		    Self.Field.Value = ArkML.ArkMLValue
+		    Self.Field.Text = ArkML.ArkMLValue
 		  Else
 		    // Viewing the RTF version
 		    Self.Field.StyledText.RTFData = ArkML.RTFValue
@@ -320,7 +320,7 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.Field.Value.IsEmpty Then
+			  If Self.Field.Text.IsEmpty Then
 			    Return ""
 			  End If
 			  
@@ -379,21 +379,21 @@ End
 			    Catch Err As RuntimeException
 			      // Something went wrong
 			    End Try
-			    Self.Field.Value = ""
+			    Self.Field.Text = ""
 			    Self.Field.BackgroundColor = &cFFFFFF
 			    Self.Field.TextColor = &c000000
-			    Self.Field.Value = ArkML
+			    Self.Field.Text = ArkML
 			    Self.Field.AllowStyledText = False
 			    Self.mRawMode = True
 			  Else
 			    // Convert ArkML to RTF
 			    Var RTF As String
 			    Try
-			      RTF = Beacon.ArkML.FromArkML(Self.Field.Value).RTFValue
+			      RTF = Beacon.ArkML.FromArkML(Self.Field.Text).RTFValue
 			    Catch Err As RuntimeException
 			      // Something went wrong
 			    End Try
-			    Self.Field.Value = ""
+			    Self.Field.Text = ""
 			    Self.Field.AllowStyledText = True
 			    Self.Field.BackgroundColor = &c1B384B
 			    Self.Field.TextColor = &cFFFFFF
@@ -414,7 +414,7 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.Field.Value.IsEmpty Then
+			  If Self.Field.Text.IsEmpty Then
 			    Return ""
 			  End If
 			  

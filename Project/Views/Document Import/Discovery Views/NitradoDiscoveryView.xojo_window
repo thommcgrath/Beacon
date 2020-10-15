@@ -791,8 +791,8 @@ End
 		    Label = "Discovering servers on multiple accounts…"
 		  End If
 		  
-		  If Self.FindingStatus.Value.Compare(Label, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.FindingStatus.Value = Label
+		  If Self.FindingStatus.Text.Compare(Label, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.FindingStatus.Text = Label
 		  End If
 		End Sub
 	#tag EndEvent

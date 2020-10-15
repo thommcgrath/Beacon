@@ -990,13 +990,13 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Header.Caption = Self.mProfile.Name
-		  Self.ServerNameField.Value = Self.mProfile.Name
-		  Self.HostField.Value = Self.mProfile.Host
-		  Self.PortField.Value = Self.mProfile.Port.ToString
-		  Self.UserField.Value = Self.mProfile.Username
-		  Self.PassField.Value = Self.mProfile.Password
-		  Self.GameIniPathField.Value = Self.mProfile.GameIniPath
-		  Self.GameUserSettingsIniPathField.Value = Self.mProfile.GameUserSettingsIniPath
+		  Self.ServerNameField.Text = Self.mProfile.Name
+		  Self.HostField.Text = Self.mProfile.Host
+		  Self.PortField.Text = Self.mProfile.Port.ToString
+		  Self.UserField.Text = Self.mProfile.Username
+		  Self.PassField.Text = Self.mProfile.Password
+		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
+		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
 		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
 		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
 		  
@@ -1031,8 +1031,8 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Value
-		  Self.Header.Caption = Me.Value
+		  Self.mProfile.Name = Me.Text
+		  Self.Header.Caption = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1040,7 +1040,7 @@ End
 #tag Events HostField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Host = Me.Value
+		  Self.mProfile.Host = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1048,7 +1048,7 @@ End
 #tag Events PortField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Port = Integer.FromString(Me.Value)
+		  Self.mProfile.Port = Integer.FromString(Me.Text)
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1056,7 +1056,7 @@ End
 #tag Events UserField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Username = Me.Value
+		  Self.mProfile.Username = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1064,7 +1064,7 @@ End
 #tag Events PassField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Password = Me.Value
+		  Self.mProfile.Password = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1072,7 +1072,7 @@ End
 #tag Events GameIniPathField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.GameIniPath = Me.Value
+		  Self.mProfile.GameIniPath = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1080,7 +1080,7 @@ End
 #tag Events GameUserSettingsIniPathField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.GameUserSettingsIniPath = Me.Value
+		  Self.mProfile.GameUserSettingsIniPath = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -1143,7 +1143,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
+		  If IsNumeric(Me.Text) Then
 		    Self.mProfile.MessageDuration = Me.DoubleValue
 		    Self.Changed = Self.mProfile.Modified
 		  End If

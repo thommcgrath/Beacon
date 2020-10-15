@@ -208,7 +208,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(DefaultMessage As String)
 		  Super.Constructor
-		  Self.MessageField.Value = DefaultMessage
+		  Self.MessageField.Text = DefaultMessage
 		  Self.SwapButtons()
 		End Sub
 	#tag EndMethod
@@ -243,14 +243,14 @@ End
 #tag Events MessageField
 	#tag Event
 		Sub TextChange()
-		  Self.ActionButton.Enabled = Me.Value.Trim <> ""
+		  Self.ActionButton.Enabled = Me.Text.Trim <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.mReturnMessage = Self.MessageField.Value.Trim
+		  Self.mReturnMessage = Self.MessageField.Text.Trim
 		  Self.Hide
 		End Sub
 	#tag EndEvent

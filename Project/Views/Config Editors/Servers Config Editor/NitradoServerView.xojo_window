@@ -484,7 +484,7 @@ End
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
 		  
-		  Self.ServerNameField.Value = Self.mProfile.Name
+		  Self.ServerNameField.Text = Self.mProfile.Name
 		  
 		  #if Beacon.MOTDEditingEnabled
 		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay.RTFValue
@@ -522,39 +522,39 @@ End
 		    Var Started, Enabled As Boolean
 		    Select Case ServerStatus
 		    Case "started"
-		      Self.ServerStatusField.Value = "Running"
+		      Self.ServerStatusField.Text = "Running"
 		      Started = True
 		      Enabled = True
 		    Case "stopped"
-		      Self.ServerStatusField.Value = "Stopped"
+		      Self.ServerStatusField.Text = "Stopped"
 		      Started = False
 		      Enabled = True
 		    Case "stopping"
-		      Self.ServerStatusField.Value = "Stopping"
+		      Self.ServerStatusField.Text = "Stopping"
 		      Started = True
 		      Enabled = False
 		    Case "restarting"
-		      Self.ServerStatusField.Value = "Restarting"
+		      Self.ServerStatusField.Text = "Restarting"
 		      Started = False
 		      Enabled = False
 		    Case "suspended"
-		      Self.ServerStatusField.Value = "Suspended"
+		      Self.ServerStatusField.Text = "Suspended"
 		      Started = False
 		      Enabled = False
 		    Case "guardian_locked"
-		      Self.ServerStatusField.Value = "Locked by Guardian"
+		      Self.ServerStatusField.Text = "Locked by Guardian"
 		      Started = False
 		      Enabled = False
 		    Case "gs_installation"
-		      Self.ServerStatusField.Value = "Switching games"
+		      Self.ServerStatusField.Text = "Switching games"
 		      Started = False
 		      Enabled = False
 		    Case "backup_restore"
-		      Self.ServerStatusField.Value = "Restoring from backup"
+		      Self.ServerStatusField.Text = "Restoring from backup"
 		      Started = False
 		      Enabled = False
 		    Case "backup_creation"
-		      Self.ServerStatusField.Value = "Creating backup"
+		      Self.ServerStatusField.Text = "Creating backup"
 		      Started = False
 		      Enabled = False
 		    End Select
@@ -566,7 +566,7 @@ End
 		    Self.Controls.PowerButton.Enabled = False
 		    Self.Controls.PowerButton.Toggled = False
 		    Self.Controls.PowerButton.HelpTag = "Server state unknown. Cannot start or stop."
-		    Self.ServerStatusField.Value = "Unknown"
+		    Self.ServerStatusField.Text = "Unknown"
 		  End Try
 		  
 		  Self.RefreshTimer.RunMode = Timer.RunModes.Single
@@ -743,8 +743,8 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Value
-		  Self.Controls.Caption = Me.Value
+		  Self.mProfile.Name = Me.Text
+		  Self.Controls.Caption = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -766,7 +766,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
+		  If IsNumeric(Me.Text) Then
 		    Self.mProfile.MessageDuration = Me.DoubleValue
 		    Self.Changed = Self.mProfile.Modified
 		  End If

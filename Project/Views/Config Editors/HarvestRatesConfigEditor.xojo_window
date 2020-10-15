@@ -607,10 +607,10 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Self.HarvestAmountMultiplierField.Value = Format(Config.HarvestAmountMultiplier, "0.0#####")
-		  Self.HarvestHealthMultiplierField.Value = Format(Config.HarvestHealthMultiplier, "0.0#####")
-		  Self.PlayerHarvestDamageMultiplierField.Value = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
-		  Self.DinoHarvestDamageMultiplierField.Value = Format(Config.DinoHarvestingDamageMultiplier, "0.0#####")
+		  Self.HarvestAmountMultiplierField.Text = Format(Config.HarvestAmountMultiplier, "0.0#####")
+		  Self.HarvestHealthMultiplierField.Text = Format(Config.HarvestHealthMultiplier, "0.0#####")
+		  Self.PlayerHarvestDamageMultiplierField.Text = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
+		  Self.DinoHarvestDamageMultiplierField.Text = Format(Config.DinoHarvestingDamageMultiplier, "0.0#####")
 		  Self.ClampHarvestDamageCheck.Value = Config.ClampResourceHarvestDamage
 		  Self.UseOptimizedRatesCheck.Value = Config.UseOptimizedRates
 		  Self.UpdateList()
@@ -810,7 +810,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.HarvestAmountMultiplier = CDbl(Me.Value)
+		  Config.HarvestAmountMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
@@ -1005,7 +1005,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.HarvestHealthMultiplier = CDbl(Me.Value)
+		  Config.HarvestHealthMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
@@ -1021,7 +1021,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Value)
+		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
@@ -1037,7 +1037,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Value)
+		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
