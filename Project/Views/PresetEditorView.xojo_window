@@ -918,7 +918,7 @@ End
 		    Entries.Add(Entry)
 		  Next
 		  
-		  If Entries.LastRowIndex = -1 Then
+		  If Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1075,7 +1075,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
 		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
-		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
+		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  Self.ContentsList.SelectedRowIndex = -1

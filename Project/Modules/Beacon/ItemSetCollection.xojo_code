@@ -18,8 +18,8 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Var Labels() As String
-		  Labels.ResizeTo(Self.mItemSets.LastRowIndex)
-		  For I As Integer = 0 To Labels.LastRowIndex
+		  Labels.ResizeTo(Self.mItemSets.LastIndex)
+		  For I As Integer = 0 To Labels.LastIndex
 		    Labels(I) = Self.mItemSets(I).Label
 		  Next
 		  
@@ -47,7 +47,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Clear()
-		  If Self.mItemSets.LastRowIndex = -1 Then
+		  If Self.mItemSets.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -77,8 +77,8 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Self.mModified = Source.mModified
-		  Self.mItemSets.ResizeTo(Source.mItemSets.LastRowIndex)
-		  For Idx As Integer = 0 To Source.mItemSets.LastRowIndex
+		  Self.mItemSets.ResizeTo(Source.mItemSets.LastIndex)
+		  For Idx As Integer = 0 To Source.mItemSets.LastIndex
 		    Self.mItemSets(Idx) = New Beacon.ItemSet(Source.mItemSets(Idx))
 		  Next
 		End Sub
@@ -108,7 +108,7 @@ Implements Beacon.Countable
 		    Return Sets
 		  End Try
 		  
-		  For Idx As Integer = 0 To Dicts.LastRowIndex
+		  For Idx As Integer = 0 To Dicts.LastIndex
 		    Try
 		      Var Dict As Variant = Dicts(Idx)
 		      If IsNull(Dict) Or Dict.IsArray = True Or Dict.Type <> Variant.TypeObject Or (Dict.ObjectValue IsA Dictionary) = False Then
@@ -129,7 +129,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Set As Beacon.ItemSet) As Integer
-		  For Idx As Integer = 0 To Self.mItemSets.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
 		    If Self.mItemSets(Idx) = Set Then
 		      Return Idx
 		    End If

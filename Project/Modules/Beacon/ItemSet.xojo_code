@@ -69,8 +69,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = System.Microseconds
 		  
-		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
-		  For I As Integer = 0 To Source.mEntries.LastRowIndex
+		  Self.mEntries.ResizeTo(Source.mEntries.LastIndex)
+		  For I As Integer = 0 To Source.mEntries.LastIndex
 		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
 		  Next
 		End Sub
@@ -78,7 +78,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mEntries.LastRowIndex + 1
+		  Return Self.mEntries.LastIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -138,7 +138,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    If PresetEntry.RespectQualityModifier Then
 		      Var MinQualityIndex, MaxQualityIndex As Integer
-		      For I As Integer = 0 To Qualities.LastRowIndex
+		      For I As Integer = 0 To Qualities.LastIndex
 		        If Qualities(I) = Entry.MinQuality Then
 		          MinQualityIndex = I
 		        End If
@@ -153,8 +153,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      For Each Modifier As Integer In MaxQualityModifiers
 		        MaxQualityIndex = MaxQualityIndex + Modifier
 		      Next
-		      MinQualityIndex = Max(Min(MinQualityIndex, Qualities.LastRowIndex), 0)
-		      MaxQualityIndex = Max(Min(MaxQualityIndex, Qualities.LastRowIndex), 0)
+		      MinQualityIndex = Max(Min(MinQualityIndex, Qualities.LastIndex), 0)
+		      MaxQualityIndex = Max(Min(MaxQualityIndex, Qualities.LastIndex), 0)
 		      Entry.MinQuality = Qualities(MinQualityIndex)
 		      Entry.MaxQuality = Qualities(MaxQualityIndex)
 		    End If
@@ -193,8 +193,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function Hash(ForPreset As Boolean = False) As String
 		  If Self.HashIsStale Or ForPreset Then
 		    Var Entries() As String
-		    Entries.ResizeTo(Self.mEntries.LastRowIndex)
-		    For I As Integer = 0 To Entries.LastRowIndex
+		    Entries.ResizeTo(Self.mEntries.LastIndex)
+		    For I As Integer = 0 To Entries.LastIndex
 		      Entries(I) = Self.mEntries(I).Hash
 		    Next
 		    Entries.Sort
@@ -294,7 +294,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
 		  End Try
 		  
-		  For Idx As Integer = 0 To Children.LastRowIndex
+		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
 		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dictionary(Children(Idx)))
 		      If (Entry Is Nil) = False Then
@@ -379,7 +379,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Entry As Beacon.SetEntry) As Integer
-		  For I As Integer = 0 To Self.mEntries.LastRowIndex
+		  For I As Integer = 0 To Self.mEntries.LastIndex
 		    If Self.mEntries(I) = Entry Then
 		      Return I
 		    End If
@@ -402,15 +402,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Return False
 		    End If
 		  Next
-		  Return Self.mEntries.LastRowIndex > -1
+		  Return Self.mEntries.LastIndex > -1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Iterator() As Iterator
 		  Var Entries() As Variant
-		  Entries.ResizeTo(Self.mEntries.LastRowIndex)
-		  For I As Integer = 0 To Self.mEntries.LastRowIndex
+		  Entries.ResizeTo(Self.mEntries.LastIndex)
+		  For I As Integer = 0 To Self.mEntries.LastIndex
 		    Entries(I) = Self.mEntries(I)
 		  Next
 		  Return New Beacon.GenericIterator(Entries)
@@ -540,7 +540,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Simulate() As Beacon.SimulatedSelection()
 		  Var Selections() As Beacon.SimulatedSelection
-		  If Self.mEntries.LastRowIndex = -1 Then
+		  If Self.mEntries.LastIndex = -1 Then
 		    Return Selections
 		  End If
 		  
@@ -557,8 +557,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Const WeightScale = 100000
 		    Var Pool() As Beacon.SetEntry
-		    Pool.ResizeTo(Self.mEntries.LastRowIndex)
-		    For I As Integer = 0 To Self.mEntries.LastRowIndex
+		    Pool.ResizeTo(Self.mEntries.LastIndex)
+		    For I As Integer = 0 To Self.mEntries.LastIndex
 		      Pool(I) = New Beacon.SetEntry(Self.mEntries(I))
 		    Next
 		    
@@ -567,7 +567,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Var WeightSum, Weights() As Double
 		    Var WeightLookup As Dictionary
 		    For I As Integer = 1 To ChooseEntries
-		      If Pool.LastRowIndex = -1 Then
+		      If Pool.LastIndex = -1 Then
 		        Exit For I
 		      End If
 		      
@@ -580,7 +580,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
 		        Var SelectedEntry As Beacon.SetEntry
 		        
-		        For X As Integer = 0 To Weights.LastRowIndex
+		        For X As Integer = 0 To Weights.LastIndex
 		          If Weights(X) >= Decision Then
 		            Var SelectedWeight As Double = Weights(X)
 		            SelectedEntry = WeightLookup.Value(SelectedWeight)
@@ -594,7 +594,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        
 		        SelectedEntries.Add(SelectedEntry)
 		        If Self.ItemsRandomWithoutReplacement Then
-		          For X As Integer = 0 To Pool.LastRowIndex
+		          For X As Integer = 0 To Pool.LastIndex
 		            If Pool(X) = SelectedEntry Then
 		              Pool.RemoveAt(X)
 		              Exit For X

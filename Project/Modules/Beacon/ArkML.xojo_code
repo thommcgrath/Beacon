@@ -13,7 +13,7 @@ Protected Class ArkML
 		  ColoredTextTrimmer.SearchPattern = "^(\s*)(.+)(\s*)$"
 		  ColoredTextTrimmer.Options.Greedy = True
 		  
-		  Var Bound As Integer = Self.mParts.LastRowIndex
+		  Var Bound As Integer = Self.mParts.LastIndex
 		  For Idx As Integer = 0 To Bound
 		    Var Dict As Dictionary = Self.mParts(Idx)
 		    Var Body As String = Dict.Value("Text").StringValue.ReplaceLineEndings(EndOfLine)
@@ -53,7 +53,7 @@ Protected Class ArkML
 		      Var CloseTag As String = "</>"
 		      
 		      Var Pieces() As String = Body.Split(EndOfLine)
-		      For Piece As Integer = 0 To Pieces.LastRowIndex
+		      For Piece As Integer = 0 To Pieces.LastIndex
 		        Var Match As RegexMatch = ColoredTextTrimmer.Search(Pieces(Piece))
 		        If (Match Is Nil) = False Then
 		          Pieces(Piece) = Match.SubExpressionString(1) + OpenTag + Match.SubExpressionString(2) + CloseTag + Match.SubExpressionString(3)
@@ -71,7 +71,7 @@ Protected Class ArkML
 		  // The first <RichColor> on each line gets replaced with a space. Whatever Ark...
 		  // So we need one more split on EndOfLine
 		  Parts = Parts.Join("").Split(EndOfLine)
-		  For Idx As Integer = 0 To Parts.LastRowIndex
+		  For Idx As Integer = 0 To Parts.LastIndex
 		    Var Pos As Integer = Parts(Idx).IndexOf("<RichColor")
 		    If Pos > 0 And Parts(Idx).Middle(Pos - 1, 1) = " " Then
 		      Parts(Idx) = Parts(Idx).Left(Pos - 1) + Parts(Idx).Middle(Pos)
@@ -147,7 +147,7 @@ Protected Class ArkML
 		    Chunk = Chunk.Left(Chunk.Length - 3)
 		    
 		    Var ColorParts() As String = ColorAttribute.Split(",")
-		    If ColorParts.LastRowIndex = 3 Then
+		    If ColorParts.LastIndex = 3 Then
 		      Var RedAmount As Integer = Round(255 * ColorParts(0).Trim.ToDouble)
 		      Var GreenAmount As Integer = Round(255 * ColorParts(1).Trim.ToDouble)
 		      Var BlueAmount As Integer = Round(255 * ColorParts(2).Trim.ToDouble)
@@ -173,8 +173,8 @@ Protected Class ArkML
 	#tag Method, Flags = &h0
 		Function ArrayValue() As Dictionary()
 		  Var Parts() As Dictionary
-		  Parts.ResizeTo(Self.mParts.LastRowIndex)
-		  For Idx As Integer = 0 To Parts.LastRowIndex
+		  Parts.ResizeTo(Self.mParts.LastIndex)
+		  For Idx As Integer = 0 To Parts.LastIndex
 		    Parts(Idx) = Self.mParts(Idx).Clone
 		  Next
 		  Return Parts
@@ -184,8 +184,8 @@ Protected Class ArkML
 	#tag Method, Flags = &h1
 		Protected Sub ArrayValue(Assigns Source() As Dictionary)
 		  Var Parts() As Dictionary
-		  Parts.ResizeTo(Source.LastRowIndex)
-		  For Idx As Integer = 0 To Parts.LastRowIndex
+		  Parts.ResizeTo(Source.LastIndex)
+		  For Idx As Integer = 0 To Parts.LastIndex
 		    Parts(Idx) = Source(Idx).Clone
 		  Next
 		  Self.mParts = Parts
@@ -544,7 +544,7 @@ Protected Class ArkML
 		  Try
 		    Var Styles As New StyledText
 		    
-		    For Idx As Integer = 0 To Self.mParts.LastRowIndex
+		    For Idx As Integer = 0 To Self.mParts.LastIndex
 		      Var Dict As Dictionary = Self.mParts(Idx)
 		      Var Run As New StyleRun(Dict.Value("Text").StringValue)
 		      Run.TextColor = Dict.Value("Color").ColorValue

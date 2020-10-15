@@ -20,7 +20,7 @@ Inherits Global.Thread
 		    Self.Stop
 		  End If
 		  
-		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
+		  For I As Integer = Self.mTriggers.LastIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
 		    Self.mTriggers.RemoveAt(I)
 		  Next
@@ -60,7 +60,7 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
+		  For I As Integer = Self.mTriggers.LastIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
 		    Self.mTriggers.RemoveAt(I)
 		  Next
@@ -108,7 +108,7 @@ Inherits Global.Thread
 		        If Key.BeginsWith("sg.") = False Then
 		          Key = "sg." + Key
 		        End If
-		        For Idx As Integer = 0 To Lines.LastRowIndex
+		        For Idx As Integer = 0 To Lines.LastIndex
 		          If Lines(Idx).BeginsWith("sg.") = False Then
 		            Lines(Idx) = "sg." + Lines(Idx)
 		          End If
@@ -127,7 +127,7 @@ Inherits Global.Thread
 		    Var Lines() As String = InitialContent.Split(Encodings.ASCII.Chr(10))
 		    Var UntouchedConfigs As New Dictionary
 		    Var LastGroupHeader As String
-		    For I As Integer = 0 To Lines.LastRowIndex
+		    For I As Integer = 0 To Lines.LastIndex
 		      Var Line As String = Lines(I).Trim
 		      If Line.Length = 0 Then
 		        Continue
@@ -393,7 +393,7 @@ Inherits Global.Thread
 		      
 		      SectionConfigs.Sort
 		      
-		      If NewLines.LastRowIndex > -1 Then
+		      If NewLines.LastIndex > -1 Then
 		        NewLines.Add("")
 		      End If
 		      NewLines.Add("[" + Header + "]")
@@ -460,7 +460,7 @@ Inherits Global.Thread
 		      Case Beacon.RewriteModeGameUserSettingsIni
 		        Options = Group.GameUserSettingsIniValues(Document, Identity, Profile)
 		      End Select
-		      If Options <> Nil And Options.LastRowIndex > -1 Then
+		      If Options <> Nil And Options.LastIndex > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
 		      End If
 		    Next
@@ -473,7 +473,7 @@ Inherits Global.Thread
 		      Case Beacon.RewriteModeGameUserSettingsIni
 		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, ConfigDict, Profile)
 		      End Select
-		      If Options <> Nil And Options.LastRowIndex > -1 Then
+		      If Options <> Nil And Options.LastIndex > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
 		      End If
 		    End If

@@ -48,7 +48,7 @@ Protected Module SimpleHTTP
 
 	#tag Method, Flags = &h21
 		Private Function GetSocket() As SimpleHTTP.SimpleHTTPSocket
-		  For I As Integer = 0 To Sockets.LastRowIndex
+		  For I As Integer = 0 To Sockets.LastIndex
 		    If Sockets(I).IsIdle Then
 		      Return Sockets(I)
 		    End If

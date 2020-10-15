@@ -287,11 +287,11 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  If Self.mLevels.LastRowIndex = -1 Then
+		  If Self.mLevels.LastIndex = -1 Then
 		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, Beacon.Data.OfficialPlayerLevelData.MaxLevel) + 1
 		    Self.LevelField.Value = Level.ToString
 		    Self.PointsField.SetFocus()
-		  ElseIf Self.mLevels.LastRowIndex = 0 Then
+		  ElseIf Self.mLevels.LastIndex = 0 Then
 		    Var Level As Integer = Self.mLevels(0)
 		    Self.LevelField.Value = Level.ToString
 		    Self.LevelField.Enabled = False
@@ -317,7 +317,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Var Enabled As Boolean = ((Self.mLevels.LastRowIndex = -1 And IsNumeric(Self.LevelField.Value)) Or Self.mLevels.LastRowIndex > -1) And IsNumeric(Self.PointsField.Value)
+		  Var Enabled As Boolean = ((Self.mLevels.LastIndex = -1 And IsNumeric(Self.LevelField.Value)) Or Self.mLevels.LastIndex > -1) And IsNumeric(Self.PointsField.Value)
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If
@@ -393,7 +393,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Levels() As Integer
-		  If Self.mLevels.LastRowIndex = -1 Then
+		  If Self.mLevels.LastIndex = -1 Then
 		    Var Level As Integer = Round(CDbl(Self.LevelField.Value))
 		    If Level < 1 Or Level > 65535 Then
 		      Self.ShowAlert("Level is out of range", "The level must be a numeric value between 1 and 65,535.")

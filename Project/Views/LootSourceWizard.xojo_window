@@ -1254,14 +1254,14 @@ End
 		  
 		  Var CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
 		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources(Self.FilterField.Text, Self.mMods, Preferences.ShowExperimentalLootSources)
-		  For X As Integer = AllowedLootSources.LastRowIndex DownTo 0
+		  For X As Integer = AllowedLootSources.LastIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
 		      AllowedLootSources.RemoveAt(X)
 		    End If
 		  Next
 		  
-		  For X As Integer = 0 To CurrentSources.LastRowIndex
-		    For Y As Integer = AllowedLootSources.LastRowIndex DownTo 0
+		  For X As Integer = 0 To CurrentSources.LastIndex
+		    For Y As Integer = AllowedLootSources.LastIndex DownTo 0
 		      If AllowedLootSources(Y).ClassString = CurrentSources(X).ClassString Then
 		        AllowedLootSources.RemoveAt(Y)
 		        Exit For Y
@@ -1354,7 +1354,7 @@ End
 		  Parent = Parent.TrueWindow
 		  
 		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
-		  If Maps.LastRowIndex = -1 Then
+		  If Maps.LastIndex = -1 Then
 		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName) + """ to select ""Maps"" and choose tha maps for this file.")
 		    Return False
 		  End If
@@ -1662,7 +1662,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mDestinations.LastRowIndex > -1 And Self.mDestinations(0).IsOfficial = False Then
+		  If Self.mDestinations.LastIndex > -1 And Self.mDestinations(0).IsOfficial = False Then
 		    Self.ShowDefine(Self.mDestinations(0))
 		  Else
 		    Self.ShowSelect()

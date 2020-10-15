@@ -140,7 +140,6 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -159,7 +158,6 @@ Begin BeaconContainer SpawnPointEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   664
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
          LockBottom      =   True
@@ -585,8 +583,8 @@ End
 	#tag Method, Flags = &h0
 		Function SpawnPoints() As Beacon.SpawnPoint()
 		  Var Points() As Beacon.SpawnPoint
-		  Points.ResizeTo(Self.mSpawnPoints.LastRowIndex)
-		  For I As Integer = 0 To Self.mSpawnPoints.LastRowIndex
+		  Points.ResizeTo(Self.mSpawnPoints.LastIndex)
+		  For I As Integer = 0 To Self.mSpawnPoints.LastIndex
 		    Points(I) = New Beacon.SpawnPoint(Self.mSpawnPoints(I))
 		  Next
 		  Return Points
@@ -598,8 +596,8 @@ End
 		  If Points = Nil Then
 		    Self.mSpawnPoints.ResizeTo(-1)
 		  Else
-		    Self.mSpawnPoints.ResizeTo(Points.LastRowIndex)
-		    For I As Integer = 0 To Points.LastRowIndex
+		    Self.mSpawnPoints.ResizeTo(Points.LastIndex)
+		    For I As Integer = 0 To Points.LastIndex
 		      Self.mSpawnPoints(I) = New Beacon.MutableSpawnPoint(Points(I))
 		    Next
 		  End If
@@ -721,7 +719,7 @@ End
 		      Next
 		    End If
 		    
-		    Var ExtendedLabels As Boolean = Self.mSpawnPoints.LastRowIndex > 0
+		    Var ExtendedLabels As Boolean = Self.mSpawnPoints.LastIndex > 0
 		    
 		    Self.SetsList.RowCount = CombinedSets.KeyCount
 		    Self.SetsList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
@@ -843,7 +841,7 @@ End
 		      Organizer.Attach(Point)
 		    Next
 		    
-		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0))
+		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
 		    Self.SetsList.RowTagAt(Self.SetsList.LastAddedRowIndex) = Organizer
 		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastAddedRowIndex
 		    Self.SetsList.Sort
@@ -858,7 +856,7 @@ End
 		      Return
 		    End If
 		    
-		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0))
+		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
 		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
 		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
 		    Self.SetsList.Sort
@@ -899,7 +897,7 @@ End
 		  Var Organizer As SpawnSetOrganizer = Self.SetsList.RowTagAt(Self.SetsList.SelectedRowIndex)
 		  Organizer.Replicate()
 		  
-		  Self.SetsList.CellValueAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0)
+		  Self.SetsList.CellValueAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mSpawnPoints.LastIndex > 0)
 		  
 		  RaiseEvent Changed
 		End Sub

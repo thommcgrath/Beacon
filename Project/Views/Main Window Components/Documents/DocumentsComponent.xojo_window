@@ -289,7 +289,7 @@ End
 		  
 		  Var RecentIdx As Integer = -1
 		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		  For I As Integer = 0 To Recents.LastRowIndex
+		  For I As Integer = 0 To Recents.LastIndex
 		    If Recents(I) = Sender.URL Then
 		      RecentIdx = I
 		      Exit For I

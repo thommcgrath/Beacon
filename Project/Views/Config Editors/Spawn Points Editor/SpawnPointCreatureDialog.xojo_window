@@ -1179,7 +1179,7 @@ End
 		  Var CommonSpawnChance, CommonMinLevelMultiplier, CommonMaxLevelMultiplier, CommonMinLevelOffset, CommonMaxLevelOffset As NullableDouble
 		  Var CommonLevelRange As Beacon.Range
 		  
-		  If Self.mEntries.LastRowIndex > -1 Then
+		  If Self.mEntries.LastIndex > -1 Then
 		    CommonOffset = Self.mEntries(0).Offset
 		    CommonSpawnChance = Self.mEntries(0).SpawnChance
 		    CommonMinLevelMultiplier = Self.mEntries(0).MinLevelMultiplier
@@ -1191,8 +1191,8 @@ End
 		    End If
 		  End If
 		  
-		  If Self.mEntries.LastRowIndex > 0 Then
-		    For I As Integer = 1 To Self.mEntries.LastRowIndex
+		  If Self.mEntries.LastIndex > 0 Then
+		    For I As Integer = 1 To Self.mEntries.LastIndex
 		      If CommonOffset <> Nil And Self.mEntries(I).Offset <> CommonOffset Then
 		        CommonOffset = Nil
 		      End If
@@ -1256,14 +1256,14 @@ End
 		  Self.mDifficulty = Document.DifficultyValue
 		  Self.mMods = Document.Mods
 		  Self.mEntries = Entries
-		  Self.mMultiEditMode = Entries.LastRowIndex > 0
+		  Self.mMultiEditMode = Entries.LastIndex > 0
 		  Self.mOffsetBeforeMultiplier = OffsetBeforeMultiplier
 		  
-		  If Entries.LastRowIndex > 0 Then
+		  If Entries.LastIndex > 0 Then
 		    Self.mMultiEditMode = True
 		    
 		    Var CommonCreature As Beacon.Creature = Entries(0).Creature
-		    For I As Integer = 1 To Entries.LastRowIndex
+		    For I As Integer = 1 To Entries.LastIndex
 		      If Entries(I).Creature.Path <> CommonCreature.Path Then
 		        CommonCreature = Nil
 		        Exit For I
@@ -1271,7 +1271,7 @@ End
 		    Next
 		    
 		    Self.mTargetCreature = CommonCreature
-		  ElseIf Entries.LastRowIndex = 0 Then
+		  ElseIf Entries.LastIndex = 0 Then
 		    Self.mTargetCreature = Entries(0).Creature
 		  End If
 		  
@@ -1311,7 +1311,7 @@ End
 		  End If
 		  
 		  Var Results() As Beacon.MutableSpawnPointSetEntry = Present(Parent, Document, Set, Entries)
-		  If Results = Nil Or Results.LastRowIndex = -1 Then
+		  If Results = Nil Or Results.LastIndex = -1 Then
 		    Return Nil
 		  End If
 		  
@@ -1419,7 +1419,7 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures = Nil Or Creatures.LastRowIndex <> 0 Then
+		  If Creatures = Nil Or Creatures.LastIndex <> 0 Then
 		    Return
 		  End If
 		  
@@ -1505,7 +1505,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mEntries.LastRowIndex = -1 Then
+		  If Self.mEntries.LastIndex = -1 Then
 		    Self.mEntries.Add(New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature))
 		  End If
 		  

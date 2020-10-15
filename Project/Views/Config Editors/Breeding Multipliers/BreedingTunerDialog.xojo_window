@@ -347,7 +347,7 @@ End
 		    Next
 		  Else
 		    Var Creatures() As String = List.Split(",")
-		    For I As Integer = 0 To Creatures.LastRowIndex
+		    For I As Integer = 0 To Creatures.LastIndex
 		      Creatures(I) = Creatures(I).Trim
 		    Next
 		    

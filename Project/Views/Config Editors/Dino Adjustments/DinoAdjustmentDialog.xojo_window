@@ -1256,7 +1256,7 @@ End
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
+		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.SelectedReplacement = Creatures(0)
 		  End If
 		End Sub
@@ -1314,7 +1314,7 @@ End
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
+		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.SelectedCreature = Creatures(0)
 		  End If
 		End Sub

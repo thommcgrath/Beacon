@@ -213,7 +213,7 @@ Inherits Beacon.ConfigGroup
 		  If SupportedConfigs <> Nil Then
 		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
 		    #if Beacon.MOTDEditingEnabled
-		      For Idx As Integer = ConfigValues.LastRowIndex DownTo 0
+		      For Idx As Integer = ConfigValues.LastIndex DownTo 0
 		        If ConfigValues(Idx).Header = "MessageOfTheDay" Then
 		          ConfigValues.RemoveAt(Idx)
 		        End If
@@ -226,7 +226,7 @@ Inherits Beacon.ConfigGroup
 		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
 		    
 		    // Make sure passwords get encrypted on save
-		    For I As Integer = ConfigValues.LastRowIndex DownTo 0
+		    For I As Integer = ConfigValues.LastIndex DownTo 0
 		      Var ConfigValue As Beacon.ConfigValue = ConfigValues(I)
 		      If ConfigValue.Value = "" Then
 		        Continue

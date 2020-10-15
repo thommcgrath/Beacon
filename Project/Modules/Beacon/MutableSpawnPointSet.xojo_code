@@ -69,8 +69,8 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub Entries(Assigns NewEntries() As Beacon.SpawnPointSetEntry)
-		  Self.mEntries.ResizeTo(NewEntries.LastRowIndex)
-		  For I As Integer = 0 To NewEntries.LastRowIndex
+		  Self.mEntries.ResizeTo(NewEntries.LastIndex)
+		  For I As Integer = 0 To NewEntries.LastIndex
 		    Self.mEntries(I) = NewEntries(I).ImmutableVersion
 		  Next
 		  Self.Modified = True

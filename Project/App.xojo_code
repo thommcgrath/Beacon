@@ -493,7 +493,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    
 		    Timestamps.SortWith(Folders)
 		    
-		    For I As Integer = 1 To Timestamps.LastRowIndex - 3
+		    For I As Integer = 1 To Timestamps.LastIndex - 3
 		      If Folders(I).DeepDelete Then
 		        App.Log("Removed backup " + Folders(I).NativePath)
 		      Else
@@ -551,7 +551,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Args.Add(Arg)
 		  End If
 		  
-		  If Args.LastRowIndex > 0 Then
+		  If Args.LastIndex > 0 Then
 		    Var Path As String = DefineEncoding(Args(1), Encodings.UTF8)
 		    If Beacon.IsBeaconURL(Path) Then
 		      // Given a url
@@ -1104,7 +1104,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub NextLaunchQueueTask()
-		  If Self.mLaunchQueue.LastRowIndex = -1 Then
+		  If Self.mLaunchQueue.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1205,7 +1205,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
-		  If Documents.LastRowIndex > -1 Then
+		  If Documents.LastIndex > -1 Then
 		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Var Item As New MenuItem("Clear Menu")

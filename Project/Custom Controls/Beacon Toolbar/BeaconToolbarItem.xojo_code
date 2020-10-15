@@ -14,7 +14,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -78,7 +78,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -103,7 +103,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
 		      Refs.RemoveAt(I)
 		      Continue

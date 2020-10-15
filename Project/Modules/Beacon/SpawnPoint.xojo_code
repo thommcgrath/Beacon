@@ -61,8 +61,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Self.mLimits = Source.mLimits.Clone
 		  Self.mMode = Source.mMode
 		  
-		  Self.mSets.ResizeTo(Source.mSets.LastRowIndex)
-		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastRowIndex
+		  Self.mSets.ResizeTo(Source.mSets.LastIndex)
+		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastIndex
 		    Self.mSets(I) = Source.mSets(I).ImmutableVersion
 		  Next
 		  
@@ -157,7 +157,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Set As Beacon.SpawnPointSet) As Integer
-		  For I As Integer = 0 To Self.mSets.LastRowIndex
+		  For I As Integer = 0 To Self.mSets.LastIndex
 		    If Self.mSets(I) = Set Then
 		      Return I
 		    End If
@@ -188,8 +188,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  // Part of the Iterable interface.
 		  
 		  Var Sets() As Variant
-		  Sets.ResizeTo(Self.mSets.LastRowIndex)
-		  For I As Integer = 0 To Self.mSets.LastRowIndex
+		  Sets.ResizeTo(Self.mSets.LastIndex)
+		  For I As Integer = 0 To Self.mSets.LastIndex
 		    Sets(I) = Self.mSets(I)
 		  Next
 		  Return New Beacon.GenericIterator(Sets)
@@ -349,7 +349,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
 		  Keys.Value("Mode") = Self.Mode
-		  If Children.LastRowIndex > -1 Then
+		  If Children.LastIndex > -1 Then
 		    Keys.Value("Sets") = Children
 		  End If
 		  If Self.mLimits.KeyCount > 0 Then
@@ -386,8 +386,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone

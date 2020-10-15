@@ -8,15 +8,15 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As String) As String
-		  If Items.LastRowIndex = -1 Then
+		  If Items.LastIndex = -1 Then
 		    Return ""
-		  ElseIf Items.LastRowIndex = 0 Then
+		  ElseIf Items.LastIndex = 0 Then
 		    Return Items(0)
-		  ElseIf Items.LastRowIndex = 1 Then
+		  ElseIf Items.LastIndex = 1 Then
 		    Return Items(0) + " and " + Items(1)
 		  Else
-		    Var LastItem As String = Items(Items.LastRowIndex)
-		    Items.RemoveAt(Items.LastRowIndex)
+		    Var LastItem As String = Items(Items.LastIndex)
+		    Items.RemoveAt(Items.LastIndex)
 		    Var List As String = Items.Join(", ") + ", and " + LastItem
 		    Items.Add(LastItem) // Gotta put it back
 		    Return List
@@ -168,7 +168,7 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function ReplacePlaceholders(Source As String, ParamArray Values() As String) As String
-		  For I As Integer = 0 To Values.LastRowIndex
+		  For I As Integer = 0 To Values.LastIndex
 		    Var Placeholder As String = "?" + Str(I + 1, "0")
 		    Source = Source.ReplaceAll(Placeholder, Values(I))
 		  Next

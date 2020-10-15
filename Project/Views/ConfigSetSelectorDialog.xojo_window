@@ -237,7 +237,7 @@ End
 		  
 		  Self.List.RemoveAllRows()
 		  
-		  For StateIdx As Integer = States.LastRowIndex DownTo 0
+		  For StateIdx As Integer = States.LastIndex DownTo 0
 		    Var State As Beacon.ConfigSetState = States(StateIdx)
 		    
 		    Self.List.AddRow("", State.Name)

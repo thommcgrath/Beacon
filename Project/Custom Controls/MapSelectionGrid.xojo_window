@@ -107,7 +107,7 @@ End
 		    Self.mBoxes.Add(Box)
 		  Next
 		  
-		  Self.mDesiredHeight = (OfficialMaps.LastRowIndex + 1) * 32
+		  Self.mDesiredHeight = (OfficialMaps.LastIndex + 1) * 32
 		  Self.mDesiredWidth = 304
 		  
 		  Self.Height = Self.mDesiredHeight
@@ -142,7 +142,7 @@ End
 		    Next
 		  Next
 		  
-		  Var MaskCount As Integer = Masks.LastRowIndex + 1
+		  Var MaskCount As Integer = Masks.LastIndex + 1
 		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
 		    Var Count As Integer = Dict.Lookup(Box.Mask, 0)
 		    If Count = 0 Then

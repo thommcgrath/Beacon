@@ -394,7 +394,7 @@ End
 		  
 		  G.DrawingColor = SystemColors.LabelColor
 		  
-		  If Self.mResultDicts.LastRowIndex = -1 Then
+		  If Self.mResultDicts.LastIndex = -1 Then
 		    If Self.mSearchTerms = "" Then
 		      G.FontName = "System"
 		      G.FontSize = 0
@@ -411,7 +411,7 @@ End
 		  
 		  Self.mContentHeight = Self.ResultSpacing
 		  Var NextTop As Integer = Self.ResultSpacing - Self.mScrollPosition
-		  For I As Integer = 0 To Self.mResultDicts.LastRowIndex
+		  For I As Integer = 0 To Self.mResultDicts.LastIndex
 		    Var Dict As Dictionary = Self.mResultDicts(I)
 		    Var Rect As Xojo.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
 		    If Rect <> Nil Then
@@ -440,7 +440,7 @@ End
 		  Var Point As New Xojo.Point(X, Y)
 		  
 		  Self.mMouseDownIndex = -1
-		  For I As Integer = 0 To Self.mResultRects.LastRowIndex
+		  For I As Integer = 0 To Self.mResultRects.LastIndex
 		    If Self.mResultRects(I) <> Nil And Self.mResultRects(I).Contains(Point) Then
 		      Self.mMouseDownIndex = I
 		      Exit For I

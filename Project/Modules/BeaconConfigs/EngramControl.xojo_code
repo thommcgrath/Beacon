@@ -107,7 +107,7 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    If Arguments.LastRowIndex > -1 Then
+		    If Arguments.LastIndex > -1 Then
 		      Arguments.AddAt(0, "EngramClassName=""" + EntryString + """")
 		      OverrideEntries.Add(EntryString)
 		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
@@ -134,8 +134,8 @@ Inherits Beacon.ConfigGroup
 		    Self.Modified = True
 		  Next
 		  
-		  Self.mPointsPerLevel.ResizeTo(Max(Self.mPointsPerLevel.LastRowIndex, Source.mPointsPerLevel.LastRowIndex))
-		  For Idx As Integer = 0 To Source.mPointsPerLevel.LastRowIndex
+		  Self.mPointsPerLevel.ResizeTo(Max(Self.mPointsPerLevel.LastIndex, Source.mPointsPerLevel.LastIndex))
+		  For Idx As Integer = 0 To Source.mPointsPerLevel.LastIndex
 		    Self.mPointsPerLevel(Idx) = Source.mPointsPerLevel(Idx)
 		    Self.Modified = True
 		  Next
@@ -171,8 +171,8 @@ Inherits Beacon.ConfigGroup
 		  
 		  If Dict.HasKey("Points Per Level") Then
 		    Var Values() As Variant = Dict.Value("Points Per Level")
-		    Self.mPointsPerLevel.ResizeTo(Values.LastRowIndex)
-		    For Idx As Integer = Self.mPointsPerLevel.FirstRowIndex To Self.mPointsPerLevel.LastRowIndex
+		    Self.mPointsPerLevel.ResizeTo(Values.LastIndex)
+		    For Idx As Integer = Self.mPointsPerLevel.FirstRowIndex To Self.mPointsPerLevel.LastIndex
 		      If IsNull(Values(Idx)) Then
 		        Self.mPointsPerLevel(Idx) = Nil
 		      Else
@@ -195,7 +195,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("Engrams") = Self.mBehaviors
 		  End If
 		  
-		  If Self.mPointsPerLevel.LastRowIndex > -1 Then
+		  If Self.mPointsPerLevel.LastIndex > -1 Then
 		    Var Levels() As Variant
 		    Var Bound As Integer = Self.LevelsDefined - 1
 		    Levels.ResizeTo(Bound)
@@ -430,7 +430,7 @@ Inherits Beacon.ConfigGroup
 		      Overrides.Add(ParsedValue)
 		    End If
 		    
-		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
+		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastIndex
 		      Var Level As Integer = Idx + 1
 		      Var Points As Integer
 		      Try
@@ -451,7 +451,7 @@ Inherits Beacon.ConfigGroup
 		      Overrides.Add(ParsedValue)
 		    End If
 		    
-		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
+		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastIndex
 		      Try
 		        Var Details As Dictionary = Overrides(Idx)
 		        Var ItemID As Integer = Details.Value("EngramIndex")
@@ -474,7 +474,7 @@ Inherits Beacon.ConfigGroup
 		      Overrides.Add(ParsedValue)
 		    End If
 		    
-		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
+		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastIndex
 		      Var Details As Dictionary
 		      Try
 		        Details = Overrides(Idx)
@@ -495,7 +495,7 @@ Inherits Beacon.ConfigGroup
 		      Unlocks.Add(ParsedValue)
 		    End If
 		    
-		    For Idx As Integer = Unlocks.FirstRowIndex To Unlocks.LastRowIndex
+		    For Idx As Integer = Unlocks.FirstRowIndex To Unlocks.LastIndex
 		      Var Details As Dictionary
 		      Try
 		        Details = Unlocks(Idx)
@@ -552,7 +552,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function LevelsDefined() As Integer
-		  For I As Integer = Self.mPointsPerLevel.LastRowIndex DownTo 0
+		  For I As Integer = Self.mPointsPerLevel.LastIndex DownTo 0
 		    If IsNull(Self.mPointsPerLevel(I)) = False Then
 		      Return I + 1
 		    End If
@@ -565,7 +565,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub LevelsDefined(Assigns FinalLevel As Integer)
 		  Var LastRowIndex As Integer = FinalLevel - 1
-		  If Self.mPointsPerLevel.LastRowIndex = LastRowIndex Then
+		  If Self.mPointsPerLevel.LastIndex = LastRowIndex Then
 		    Return
 		  End If
 		  
@@ -579,7 +579,7 @@ Inherits Beacon.ConfigGroup
 		  // This is 1-based, as the player starts at level 1.
 		  
 		  Var Idx As Integer = Level - 1
-		  If Idx < Self.mPointsPerLevel.FirstRowIndex Or Idx > Self.mPointsPerLevel.LastRowIndex Then
+		  If Idx < Self.mPointsPerLevel.FirstRowIndex Or Idx > Self.mPointsPerLevel.LastIndex Then
 		    Return Nil
 		  End If
 		  
@@ -597,7 +597,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  Var Modified As Boolean = Self.Modified
-		  Do Until Self.mPointsPerLevel.LastRowIndex >= Idx
+		  Do Until Self.mPointsPerLevel.LastIndex >= Idx
 		    Self.mPointsPerLevel.Add(Nil)
 		    Modified = True
 		  Loop

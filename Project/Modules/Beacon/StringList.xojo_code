@@ -12,8 +12,8 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.StringList)
-		  Self.mItems.ResizeTo(Source.mItems.LastRowIndex)
-		  For I As Integer = 0 To Source.mItems.LastRowIndex
+		  Self.mItems.ResizeTo(Source.mItems.LastIndex)
+		  For I As Integer = 0 To Source.mItems.LastIndex
 		    Self.mItems(I) = Source.mItems(I)
 		  Next
 		  Self.Modified = Source.Modified
@@ -28,7 +28,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return CType(Self.mItems.LastRowIndex + 1, UInteger)
+		  Return CType(Self.mItems.LastIndex + 1, UInteger)
 		End Function
 	#tag EndMethod
 
@@ -99,7 +99,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -124,8 +124,8 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As String()
 		  Var Items() As String
-		  Items.ResizeTo(Self.mItems.LastRowIndex)
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  Items.ResizeTo(Self.mItems.LastIndex)
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    Items(I) = Self.mItems(I)
 		  Next
 		  Return Items
@@ -134,8 +134,8 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Source() As String)
-		  Self.mItems.ResizeTo(Source.LastRowIndex)
-		  For I As Integer = 0 To Source.LastRowIndex
+		  Self.mItems.ResizeTo(Source.LastIndex)
+		  For I As Integer = 0 To Source.LastIndex
 		    Self.mItems(I) = Source(I)
 		  Next
 		End Sub

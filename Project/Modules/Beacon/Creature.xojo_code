@@ -327,8 +327,8 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone

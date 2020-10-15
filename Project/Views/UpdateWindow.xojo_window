@@ -493,9 +493,9 @@ End
 		  Self.ResultsNotesButton.Enabled = NotesURL.BeginsWith("https://")
 		  
 		  Var PathComponents() As String = FrameworkExtensions.FieldAtPosition(URL, "?", 1).Split("/")
-		  Var Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastRowIndex), "#", 1)
+		  Var Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastIndex), "#", 1)
 		  Var FilenameParts() As String = Filename.Split(".")
-		  Var Extension As String = FilenameParts(FilenameParts.LastRowIndex)
+		  Var Extension As String = FilenameParts(FilenameParts.LastIndex)
 		  
 		  Self.mFilename = "Beacon " + Version + "." + Extension
 		  

@@ -348,10 +348,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature, CreaturesInSpawnPoint() As Beacon.Creature)
-		  If SelectedCreatures.LastRowIndex = -1 Then
+		  If SelectedCreatures.LastIndex = -1 Then
 		    Self.mDisableSelection = False
 		    Self.mSelectedCreature = Nil
-		  ElseIf SelectedCreatures.LastRowIndex = 0 Then
+		  ElseIf SelectedCreatures.LastIndex = 0 Then
 		    Self.mDisableSelection = False
 		    Self.mSelectedCreature = SelectedCreatures(0)
 		  Else

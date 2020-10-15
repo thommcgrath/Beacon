@@ -704,7 +704,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Path As String = PathField.Value
-		  Var Method As String = MethodMenu.SelectedRowValue
+		  Var Method As String = MethodMenu.SelectedRow
 		  Var Body As String = BodyField.Value
 		  Var ContentType As String = ContentTypeField.Value
 		  

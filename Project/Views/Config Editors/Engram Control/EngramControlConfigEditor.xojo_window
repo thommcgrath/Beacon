@@ -413,7 +413,7 @@ End
 		  End If
 		  
 		  Self.EngramList.RowCount = Engrams.Count
-		  Var Bound As Integer = Engrams.LastRowIndex
+		  Var Bound As Integer = Engrams.LastIndex
 		  For Idx As Integer = 0 To Bound
 		    Var Engram As Beacon.Engram = Engrams(Idx)
 		    Self.EngramList.RowTagAt(Idx) = Engram
@@ -585,7 +585,7 @@ End
 		  Case "AddButton"
 		    Var Engrams() As Beacon.Engram
 		    Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
-		    If Engrams <> Nil And Engrams.LastRowIndex > -1 Then
+		    If Engrams <> Nil And Engrams.LastIndex > -1 Then
 		      Self.SetupEngramsList(Engrams)
 		      Self.EngramList.EnsureSelectionIsVisible()
 		    End If
@@ -803,7 +803,7 @@ End
 		  Next
 		  
 		  Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
-		  If Engrams <> Nil And Engrams.LastRowIndex > -1 Then
+		  If Engrams <> Nil And Engrams.LastIndex > -1 Then
 		    Self.SetupEngramsList(Engrams)
 		  End If
 		End Sub
@@ -978,7 +978,7 @@ End
 		    End If
 		  Next
 		  
-		  If Levels.LastRowIndex = -1 Then
+		  If Levels.LastIndex = -1 Then
 		    Return
 		  End If
 		  

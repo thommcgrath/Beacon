@@ -128,12 +128,12 @@ Protected Class LogManager
 		  
 		  #if TargetDesktop
 		    Var Stack() As StackFrame = Err.StackFrames
-		    While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		    While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
 		      Stack.RemoveAt(0)
 		    Wend
 		    
 		    Var Origin As String = "Unknown"
-		    If Stack.LastRowIndex >= 0 Then
+		    If Stack.LastIndex >= 0 Then
 		      Origin = Stack(0).Name
 		    End If
 		    

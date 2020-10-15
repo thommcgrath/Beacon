@@ -82,7 +82,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Sub CurrentPageIndex(Assigns Idx As Integer)
-		  Idx = Min(Idx, Self.mPages.LastRowIndex)
+		  Idx = Min(Idx, Self.mPages.LastIndex)
 		  
 		  If Self.mCurrentPageIndex = Idx Then
 		    Return
@@ -107,7 +107,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Page As BeaconSubview) As Integer
-		  For Idx As Integer = 0 To Self.mPages.LastRowIndex
+		  For Idx As Integer = 0 To Self.mPages.LastIndex
 		    If Self.mPages(Idx) = Page THen
 		      Return Idx
 		    End If
@@ -132,7 +132,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Function LastPageIndex() As Integer
-		  Return Self.mPages.LastRowIndex
+		  Return Self.mPages.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -150,7 +150,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Function Page(Idx As Integer) As BeaconSubview
-		  If Idx <= Self.mPages.LastRowIndex And Idx >= 0 Then
+		  If Idx <= Self.mPages.LastIndex And Idx >= 0 Then
 		    Return Self.mPages(Idx)
 		  End If
 		End Function
@@ -173,7 +173,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Sub RemovePage(Idx As Integer)
-		  If Idx < 0 Or Idx > Self.mPages.LastRowIndex Then
+		  If Idx < 0 Or Idx > Self.mPages.LastIndex Then
 		    Return
 		  End If
 		  
@@ -181,7 +181,7 @@ Inherits BeaconSubview
 		  If Self.mCurrentPageIndex > Idx Then
 		    // Decrement the current index, but don't trigger Switched events.
 		    Self.mCurrentPageIndex = Self.mCurrentPageIndex - 1
-		  ElseIf Self.mCurrentPageIndex = Self.mPages.LastRowIndex And Self.mCurrentPageIndex = Idx Then
+		  ElseIf Self.mCurrentPageIndex = Self.mPages.LastIndex And Self.mCurrentPageIndex = Idx Then
 		    // Removing the last page, so we need to switch pages
 		    Self.CurrentPageIndex = Self.CurrentPageIndex - 1
 		    FiredSwitchedFrom = True

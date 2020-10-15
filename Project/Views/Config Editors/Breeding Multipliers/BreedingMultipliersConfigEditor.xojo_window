@@ -1609,7 +1609,7 @@ End
 		      ColumnWidth = ColumnWidth + 1
 		    End If
 		    For RowIdx As Integer = 1 To RowsPerColumn + If(ColumnIdx <= CompleteColumns, 1, 0)
-		      If GroupIdx > Self.mFieldGroups.LastRowIndex Then
+		      If GroupIdx > Self.mFieldGroups.LastIndex Then
 		        Exit For ColumnIdx
 		      End If
 		      Self.mFieldGroups(GroupIdx).Top = RowTop

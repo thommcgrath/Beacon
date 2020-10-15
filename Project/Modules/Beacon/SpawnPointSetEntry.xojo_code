@@ -39,8 +39,8 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    Self.mOffset = New Beacon.Point3D(Source.mOffset)
 		  End If
 		  
-		  Self.mLevels.ResizeTo(Source.mLevels.LastRowIndex)
-		  For I As Integer = 0 To Source.mLevels.LastRowIndex
+		  Self.mLevels.ResizeTo(Source.mLevels.LastIndex)
+		  For I As Integer = 0 To Source.mLevels.LastIndex
 		    Self.mLevels(I) = New Beacon.SpawnPointLevel(Source.mLevels(I))
 		  Next
 		End Sub
@@ -159,7 +159,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Level As Beacon.SpawnPointLevel) As Integer
-		  For I As Integer = 0 To Self.mLevels.LastRowIndex
+		  For I As Integer = 0 To Self.mLevels.LastIndex
 		    If Self.mLevels(I) = Level Then
 		      Return I
 		    End If
@@ -194,7 +194,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function LevelBound() As Integer
-		  Return Self.mLevels.LastRowIndex
+		  Return Self.mLevels.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -231,9 +231,9 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    // First, sort them.
 		    Var Difficulties() As Double
 		    Var Levels() As Beacon.SpawnPointLevel
-		    Difficulties.ResizeTo(Self.mLevels.LastRowIndex)
-		    Levels.ResizeTo(Self.mLevels.LastRowIndex)
-		    For Idx As Integer = 0 To Self.mLevels.LastRowIndex
+		    Difficulties.ResizeTo(Self.mLevels.LastIndex)
+		    Levels.ResizeTo(Self.mLevels.LastIndex)
+		    For Idx As Integer = 0 To Self.mLevels.LastIndex
 		      Difficulties(Idx) = Self.mLevels(Idx).Difficulty
 		      Levels(Idx) = Self.mLevels(Idx)
 		    Next
@@ -244,16 +244,16 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    // 1.0 and 2.0. However, if asked for greater than the highest, then we return the lowest
 		    // value. Exact matches should use the same definition for the high and low.
 		    Var LowDefinition, HighDefinition As Beacon.SpawnPointLevel
-		    If Levels.Count = 1 Or Levels(Levels.LastRowIndex).Difficulty < Difficulty Or Levels(0).Difficulty > Difficulty Then
+		    If Levels.Count = 1 Or Levels(Levels.LastIndex).Difficulty < Difficulty Or Levels(0).Difficulty > Difficulty Then
 		      LowDefinition = Levels(0)
 		      HighDefinition = Levels(0)
 		    Else
-		      For Idx As Integer = 0 To Levels.LastRowIndex
+		      For Idx As Integer = 0 To Levels.LastIndex
 		        If Levels(Idx).Difficulty = Difficulty Then
 		          LowDefinition = Levels(Idx)
 		          HighDefinition = Levels(Idx)
 		          Exit For Idx
-		        ElseIf Idx < Levels.LastRowIndex And Levels(Idx).Difficulty < Difficulty And Levels(Idx + 1).Difficulty > Difficulty Then
+		        ElseIf Idx < Levels.LastIndex And Levels(Idx).Difficulty < Difficulty And Levels(Idx + 1).Difficulty > Difficulty Then
 		          LowDefinition = Levels(Idx)
 		          HighDefinition = Levels(Idx + 1)
 		          Exit For Idx
@@ -322,8 +322,8 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Levels() As Beacon.SpawnPointLevel()
 		  Var Arr() As Beacon.SpawnPointLevel
-		  Arr.ResizeTo(Self.mLevels.LastRowIndex)
-		  For I As Integer = 0 To Self.mLevels.LastRowIndex
+		  Arr.ResizeTo(Self.mLevels.LastIndex)
+		  For I As Integer = 0 To Self.mLevels.LastIndex
 		    Arr(I) = New Beacon.SpawnPointLevel(Self.mLevels(I))
 		  Next
 		  Return Arr
@@ -413,10 +413,10 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  If Self.mOffset <> Nil Then
 		    Dict.Value("spawn_offset") = Self.mOffset.SaveData
 		  End If
-		  If Self.mLevels.LastRowIndex > -1 Then
+		  If Self.mLevels.LastIndex > -1 Then
 		    Var Levels() As Dictionary
-		    Levels.ResizeTo(Self.mLevels.LastRowIndex)
-		    For I As Integer = 0 To Self.mLevels.LastRowIndex
+		    Levels.ResizeTo(Self.mLevels.LastIndex)
+		    For I As Integer = 0 To Self.mLevels.LastIndex
 		      Levels(I) = Self.mLevels(I).SaveData
 		    Next
 		    Dict.Value("level_overrides") = Levels

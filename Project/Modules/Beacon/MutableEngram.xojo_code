@@ -94,8 +94,8 @@ Implements Beacon.MutableBlueprint
 		    Return
 		  End If
 		  
-		  Self.mIngredients.ResizeTo(Ingredients.LastRowIndex)
-		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		  Self.mIngredients.ResizeTo(Ingredients.LastIndex)
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Self.mIngredients(Idx) = Ingredients(Idx)
 		  Next
 		  Self.mHasLoadedIngredients = True

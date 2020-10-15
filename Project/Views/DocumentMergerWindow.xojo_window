@@ -258,7 +258,7 @@ End
 		  Next
 		  
 		  Var Enabled As Boolean
-		  Var UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
+		  Var UsePrefixes As Boolean = SourceDocuments.LastIndex > 0
 		  If UsePrefixes Then
 		    Win.List.DefaultRowHeight = 40
 		  End If

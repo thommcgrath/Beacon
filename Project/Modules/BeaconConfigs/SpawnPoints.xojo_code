@@ -274,7 +274,7 @@ Implements Iterable
 		        LimitConfigs.Add("(NPCClassString=""" + Beacon.Creature(Entry.Key).ClassString + """,MaxPercentageOfDesiredNumToAllow=" + Entry.Value.DoubleValue.PrettyText + ")")
 		      End If
 		    Next
-		    If LimitConfigs.LastRowIndex > -1 Then
+		    If LimitConfigs.LastIndex > -1 Then
 		      Pieces.Add("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
 		    End If
 		  End If
@@ -414,7 +414,7 @@ Implements Iterable
 		            ElseIf Entry.HasKey("NPCsToSpawnStrings") Then
 		              Classes = Entry.Value("NPCsToSpawnStrings")
 		            End If
-		            If Classes.LastRowIndex = -1 Then
+		            If Classes.LastIndex = -1 Then
 		              Continue
 		            End If
 		            
@@ -449,7 +449,7 @@ Implements Iterable
 		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
 		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
 		            
-		            For I As Integer = 0 To Classes.LastRowIndex
+		            For I As Integer = 0 To Classes.LastIndex
 		              Var CreaturePath As String = Beacon.NormalizeBlueprintPath(Classes(I), "Creatures")
 		              Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(CreaturePath)
 		              If Creature = Nil Then
@@ -457,36 +457,36 @@ Implements Iterable
 		              End If
 		              
 		              Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
-		              If LevelMembers.LastRowIndex >= I Then
+		              If LevelMembers.LastIndex >= I Then
 		                Var LevelValues As Dictionary = LevelMembers(I)
 		                Var MinLevels() As Variant = LevelValues.Value("EnemyLevelsMin")
 		                Var MaxLevels() As Variant = LevelValues.Value("EnemyLevelsMax")
 		                Var Difficulties() As Variant = LevelValues.Value("GameDifficulties")
 		                
-		                For LevelIdx As Integer = 0 To Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
+		                For LevelIdx As Integer = 0 To Min(MinLevels.LastIndex, MaxLevels.LastIndex, Difficulties.LastIndex)
 		                  SetEntry.Append(New Beacon.SpawnPointLevel(MinLevels(LevelIdx), MaxLevels(LevelIdx), Difficulties(LevelIdx)))
 		                Next
 		              End If
-		              If OffsetMembers.LastRowIndex >= I Then
+		              If OffsetMembers.LastIndex >= I Then
 		                Var OffsetValues As Dictionary = OffsetMembers(I)
 		                SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
 		              End If
-		              If SpawnChanceMembers.LastRowIndex >= I Then
+		              If SpawnChanceMembers.LastIndex >= I Then
 		                SetEntry.SpawnChance = SpawnChanceMembers(I).DoubleValue
 		              End If
-		              If MinLevelMultiplierMembers.LastRowIndex >= I Then
+		              If MinLevelMultiplierMembers.LastIndex >= I Then
 		                SetEntry.MinLevelMultiplier = MinLevelMultiplierMembers(I).DoubleValue
 		              End If
-		              If MinLevelOffsetMembers.LastRowIndex >= I Then
+		              If MinLevelOffsetMembers.LastIndex >= I Then
 		                SetEntry.MinLevelOffset = MinLevelOffsetMembers(I).DoubleValue
 		              End If
-		              If MaxLevelMultipliersMembers.LastRowIndex >= I Then
+		              If MaxLevelMultipliersMembers.LastIndex >= I Then
 		                SetEntry.MaxLevelMultiplier = MaxLevelMultipliersMembers(I).DoubleValue
 		              End If
-		              If MaxLevelOffsetMembers.LastRowIndex >= I Then
+		              If MaxLevelOffsetMembers.LastIndex >= I Then
 		                SetEntry.MaxLevelOffset = MaxLevelOffsetMembers(I).DoubleValue
 		              End If
-		              If LevelOverrideMembers.LastRowIndex >= I Then
+		              If LevelOverrideMembers.LastIndex >= I Then
 		                SetEntry.LevelOverride = LevelOverrideMembers(I).DoubleValue
 		              End If
 		              Set.Append(SetEntry)
@@ -541,8 +541,8 @@ Implements Iterable
 		                
 		                Var ToWeights() As Variant = Replacement.Value("Weights")
 		                Var ToClassValues() As Variant = Replacement.Value("ToClasses")
-		                For I As Integer = 0 To ToClassValues.LastRowIndex
-		                  Var ToWeight As Double = If(I <= ToWeights.LastRowIndex, ToWeights(I), 1.0)
+		                For I As Integer = 0 To ToClassValues.LastIndex
+		                  Var ToWeight As Double = If(I <= ToWeights.LastIndex, ToWeights(I), 1.0)
 		                  Var ToClassValue As String = ToClassValues(I)
 		                  Var ToCreaturePath As String = Beacon.NormalizeBlueprintPath(ToClassValue, "Creatures")
 		                  Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToCreaturePath)

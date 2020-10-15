@@ -34,18 +34,18 @@ Private Class ConfigParser
 		  
 		  If InQuotes Then
 		    Var LastChar As String
-		    If Self.Buffer.LastRowIndex > -1 Then
-		      LastChar = Self.Buffer(Self.Buffer.LastRowIndex)
+		    If Self.Buffer.LastIndex > -1 Then
+		      LastChar = Self.Buffer(Self.Buffer.LastIndex)
 		    End If
 		    
 		    If Char = """" Then
 		      If LastChar = "\" Then
-		        Self.Buffer(Self.Buffer.LastRowIndex) = Char
+		        Self.Buffer(Self.Buffer.LastIndex) = Char
 		      Else
 		        InQuotes = False
 		      End If
 		    ElseIf Char = "n" And LastChar = "\" Then
-		      Self.Buffer(Self.Buffer.LastRowIndex) = EndOfLine
+		      Self.Buffer(Self.Buffer.LastIndex) = EndOfLine
 		    Else
 		      Self.Buffer.Add(Char)
 		    End If
@@ -56,7 +56,7 @@ Private Class ConfigParser
 		  Case Self.TypeIntrinsic
 		    Select Case Char
 		    Case "("
-		      If Self.Buffer.LastRowIndex = -1 Then
+		      If Self.Buffer.LastIndex = -1 Then
 		        Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
 		        Self.Type = Self.TypeArray
 		        

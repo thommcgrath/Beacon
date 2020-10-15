@@ -549,7 +549,7 @@ End
 		  
 		  Var WithDefaults As Boolean = True
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple, WithDefaults)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -577,7 +577,7 @@ End
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -624,7 +624,7 @@ End
 		  Self.List.RemoveAllRows
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
-		  For I As Integer = 0 To Engrams.LastRowIndex
+		  For I As Integer = 0 To Engrams.LastIndex
 		    Var Cost As Beacon.CraftingCost = Config.Cost(Engrams(I))
 		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost

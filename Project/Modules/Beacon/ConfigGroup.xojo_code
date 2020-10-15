@@ -30,7 +30,7 @@ Protected Class ConfigGroup
 		    Var Methods() As Introspection.MethodInfo = Info.GetMethods
 		    Var Found As Boolean
 		    For Each Signature As Introspection.MethodInfo In Methods
-		      If Signature.IsShared And Signature.Name = "ConfigName" And Signature.GetParameters.LastRowIndex = -1 And Signature.ReturnType.Name = "String" Then
+		      If Signature.IsShared And Signature.Name = "ConfigName" And Signature.GetParameters.LastIndex = -1 And Signature.ReturnType.Name = "String" Then
 		        Self.mConfigName = Signature.Invoke(Self)
 		        Found = True
 		        Exit

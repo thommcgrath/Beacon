@@ -104,7 +104,7 @@ Implements Iterable
 		    Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		    If Idx = -1 Then
 		      Self.mSources.Add(Source)
-		      UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
+		      UniqueClasses.Value(Source.ClassString) = Self.mSources.LastIndex
 		    Else
 		      Self.mSources(Idx) = Source
 		    End If
@@ -348,7 +348,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Source As Beacon.LootSource) As Integer
-		  For I As Integer = 0 To Self.mSources.LastRowIndex
+		  For I As Integer = 0 To Self.mSources.LastIndex
 		    If Self.mSources(I).ClassString = Source.ClassString Then
 		      Return I
 		    End If
@@ -369,8 +369,8 @@ Implements Iterable
 		  // Part of the Iterable interface.
 		  
 		  Var Items() As Variant
-		  Items.ResizeTo(Self.mSources.LastRowIndex)
-		  For I As Integer = Items.FirstRowIndex To Items.LastRowIndex
+		  Items.ResizeTo(Self.mSources.LastIndex)
+		  For I As Integer = Items.FirstRowIndex To Items.LastIndex
 		    Items(I) = Self.mSources(I)
 		  Next
 		  
@@ -380,7 +380,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mSources.LastRowIndex
+		  Return Self.mSources.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -461,7 +461,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub ResizeTo(NewUBound As Integer)
-		  If NewUBound <> Self.mSources.LastRowIndex Then
+		  If NewUBound <> Self.mSources.LastIndex Then
 		    Self.mSources.ResizeTo(NewUBound)
 		    Self.Modified = True
 		  End If

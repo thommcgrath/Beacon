@@ -14,7 +14,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -46,13 +46,13 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mItems.LastRowIndex + 1
+		  Return Self.mItems.LastIndex + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As BeaconToolbarItem) As Integer
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(I) = Item Then
 		      Return I
 		    End If
@@ -83,7 +83,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -100,7 +100,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -180,7 +180,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -194,11 +194,11 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Sub ResizeTo(NewBound As Integer)
-		  If NewBound = Self.mItems.LastRowIndex Then
+		  If NewBound = Self.mItems.LastIndex Then
 		    Return
 		  End If
 		  
-		  For I As Integer = Self.mItems.LastRowIndex DownTo NewBound + 1
+		  For I As Integer = Self.mItems.LastIndex DownTo NewBound + 1
 		    Var OldValue As BeaconToolbarItem = Self.mItems(I)
 		    If OldValue <> Nil Then
 		      OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)

@@ -22,7 +22,7 @@ Protected Class Coordinator
 		Private Sub Animator_Action(Sender As Timer)
 		  Self.RunTasks(False)
 		  
-		  If Self.Tasks.LastRowIndex = -1 Then
+		  If Self.Tasks.LastIndex = -1 Then
 		    Sender.RunMode = Timer.RunModes.Off
 		  End If
 		End Sub
@@ -58,7 +58,7 @@ Protected Class Coordinator
 	#tag Method, Flags = &h21
 		Private Sub RunTasks(Threaded As Boolean)
 		  Var AddedTasks(), RemovedTasks() As AnimationKit.Task
-		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
+		  For I As Integer = Self.Tasks.LastIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
 		      RemovedTasks.Add(Self.Tasks(I))
 		      Self.Tasks.RemoveAt(I)
@@ -76,7 +76,7 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
+		  For I As Integer = Self.Tasks.LastIndex DownTo 0
 		    Var Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
 		      RemovedTasks.Add(Task)
@@ -101,7 +101,7 @@ Protected Class Coordinator
 	#tag Method, Flags = &h21
 		Private Sub ThreadedAnimator_Run(Sender As Thread)
 		  Do
-		    If Self.Tasks.LastRowIndex = -1 Then
+		    If Self.Tasks.LastIndex = -1 Then
 		      Sender.Pause()
 		      Continue
 		    End If

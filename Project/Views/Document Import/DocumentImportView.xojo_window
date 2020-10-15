@@ -771,7 +771,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Finish()
 		  Var Documents() As Beacon.Document
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
 		    If Self.mImporters(I).Document <> Nil Then
 		      Documents.Add(Self.mImporters(I).Document)
 		    End If
@@ -782,8 +782,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish(Documents() As Beacon.Document)
-		  If Documents.LastRowIndex > -1 Then
-		    For Idx As Integer = 0 To Documents.LastRowIndex
+		  If Documents.LastIndex > -1 Then
+		    For Idx As Integer = 0 To Documents.LastIndex
 		      Documents(Idx).Accounts.Import(Self.mAccounts)
 		    Next
 		    RaiseEvent DocumentsImported(Documents)
@@ -802,10 +802,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
-		  Self.mImporters.ResizeTo(Data.LastRowIndex)
+		  Self.mImporters.ResizeTo(Data.LastIndex)
 		  Self.StatusList.RowCount = Data.Count
 		  
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
 		    Var Importer As New Beacon.ImportThread(Data(I), Self.mDestinationDocument)
 		    Importer.Start
 		    Self.mImporters(I) = Importer
@@ -831,7 +831,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Reset()
-		  For I As Integer = 0 To Self.mImporters.LastRowIndex
+		  For I As Integer = 0 To Self.mImporters.LastIndex
 		    If Self.mImporters(I) <> Nil And Not Self.mImporters(I).Finished Then
 		      Self.mImporters(I).Cancel
 		    End If
@@ -949,7 +949,7 @@ End
 #tag Events SourceRadio
 	#tag Event
 		Sub Action(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1) Or SourceRadio(4).Value
+		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastIndex > -1) Or SourceRadio(4).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent

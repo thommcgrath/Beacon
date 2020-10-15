@@ -46,7 +46,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -69,7 +69,7 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
+		  For I As Integer = 0 To Self.mServerProfiles.LastIndex
 		    If Self.mServerProfiles(I) = Profile Then
 		      Self.mServerProfiles(I) = Profile.Clone
 		      Self.mModified = True
@@ -121,7 +121,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var Clones As New Dictionary
-		  For Idx As Integer = 0 To SetNames.LastRowIndex
+		  For Idx As Integer = 0 To SetNames.LastIndex
 		    Var SetName As String = SetNames(Idx)
 		    Var Groups() As Beacon.ConfigGroup = Self.ImplementedConfigs(SetName)
 		    For Each Group As Beacon.ConfigGroup In Groups
@@ -261,7 +261,7 @@ Implements ObservationKit.Observable
 		  If Self.mConfigSetStates.Count <> States.Count Then
 		    Different = True
 		  Else
-		    For Idx As Integer = 0 To States.LastRowIndex
+		    For Idx As Integer = 0 To States.LastIndex
 		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
 		        Different = True
 		        Exit
@@ -273,8 +273,8 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
-		  Self.mConfigSetStates.ResizeTo(States.LastRowIndex)
-		  For Idx As Integer = 0 To States.LastRowIndex
+		  Self.mConfigSetStates.ResizeTo(States.LastIndex)
+		  For Idx As Integer = 0 To States.LastIndex
 		    Self.mConfigSetStates(Idx) = States(Idx)
 		  Next
 		  Self.Modified = True
@@ -529,16 +529,16 @@ Implements ObservationKit.Observable
 		            
 		            Var Path As String = FTPInfo.Value("Path")
 		            Var Components() As String = Path.Split("/")
-		            If Components.LastRowIndex > -1 Then
-		              Var LastComponent As String = Components(Components.LastRowIndex)
+		            If Components.LastIndex > -1 Then
+		              Var LastComponent As String = Components(Components.LastIndex)
 		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
-		                Components.RemoveAt(Components.LastRowIndex)
+		                Components.RemoveAt(Components.LastIndex)
 		              End If
 		            End If
 		            Components.Add("Game.ini")
 		            Profile.GameIniPath = Components.Join("/")
 		            
-		            Components(Components.LastRowIndex) = "GameUserSettings.ini"
+		            Components(Components.LastIndex) = "GameUserSettings.ini"
 		            Profile.GameUserSettingsIniPath = Components.Join("/")
 		            
 		            Doc.mServerProfiles.Add(Profile)
@@ -559,7 +559,7 @@ Implements ObservationKit.Observable
 		    // Will need this in a few lines
 		    Presets = Beacon.Data.Presets
 		  End If
-		  If LootSources.LastRowIndex > -1 Then
+		  If LootSources.LastIndex > -1 Then
 		    Var Drops As New BeaconConfigs.LootDrops
 		    For Each LootSource As Dictionary In LootSources
 		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(LootSource)
@@ -579,8 +579,8 @@ Implements ObservationKit.Observable
 		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
 		                
 		                // Now "deconfigure" it
-		                Set.ResizeTo(Entries.LastRowIndex)
-		                For I As Integer = 0 To Entries.LastRowIndex
+		                Set.ResizeTo(Entries.LastIndex)
+		                For I As Integer = 0 To Entries.LastIndex
 		                  Set(I) = Entries(I)
 		                Next
 		                Continue For Set
@@ -847,7 +847,7 @@ Implements ObservationKit.Observable
 		  Var Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Var Issues() As Beacon.Issue = Config.Issues(Self, Identity)
-		    If Issues <> Nil And Issues.LastRowIndex > -1 Then
+		    If Issues <> Nil And Issues.LastIndex > -1 Then
 		      Return False
 		    End If
 		  Next
@@ -1038,7 +1038,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -1111,7 +1111,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Profile As Beacon.ServerProfile)
-		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
+		  For I As Integer = 0 To Self.mServerProfiles.LastIndex
 		    If Self.mServerProfiles(I) = Profile Then
 		      Self.mServerProfiles.RemoveAt(I)
 		      Self.Modified = True
@@ -1143,7 +1143,7 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
-		  For Idx As Integer = Self.mConfigSetStates.LastRowIndex DownTo 1
+		  For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
 		    If Self.mConfigSetStates(Idx).Name = SetName Then
 		      Self.mConfigSetStates.RemoveAt(Idx)
 		      Self.Modified = True
@@ -1172,7 +1172,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
 		      Refs.RemoveAt(I)
 		      Continue
@@ -1204,10 +1204,10 @@ Implements ObservationKit.Observable
 		  Self.ConfigSet(OldName) = Nil
 		  Self.ConfigSet(NewName) = OldSet
 		  
-		  For Idx As Integer = 0 To Self.mServerProfiles.LastRowIndex
+		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
 		    Var Profile As Beacon.ServerProfile = Self.mServerProfiles(Idx)
 		    Var ConfigSets() As Beacon.ConfigSetState = Profile.ConfigSetStates
-		    For SetIdx As Integer = 0 To ConfigSets.LastRowIndex
+		    For SetIdx As Integer = 0 To ConfigSets.LastIndex
 		      If ConfigSets(SetIdx).Name = OldName Then
 		        ConfigSets(SetIdx) = New Beacon.ConfigSetState(NewName, ConfigSets(SetIdx).Enabled)
 		      End If
@@ -1215,7 +1215,7 @@ Implements ObservationKit.Observable
 		    Profile.ConfigSetStates = ConfigSets
 		  Next
 		  
-		  For Idx As Integer = 1 To Self.mConfigSetStates.LastRowIndex
+		  For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
 		    If Self.mConfigSetStates(Idx).Name = OldName Then
 		      Self.mConfigSetStates(Idx) = New Beacon.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
 		    End If
@@ -1273,7 +1273,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ServerProfileCount() As Integer
-		  Return Self.mServerProfiles.LastRowIndex + 1
+		  Return Self.mServerProfiles.LastIndex + 1
 		End Function
 	#tag EndMethod
 

@@ -238,7 +238,7 @@ End
 		    
 		    // Don't use IndexOf as it doesn't utilize Operator_Compare
 		    Var Selected As Boolean
-		    For X As Integer = 0 To SelectedProfiles.LastRowIndex
+		    For X As Integer = 0 To SelectedProfiles.LastIndex
 		      If SelectedProfiles(X) = Profile Then
 		        Selected = True
 		        SelectedProfiles.RemoveAt(X)

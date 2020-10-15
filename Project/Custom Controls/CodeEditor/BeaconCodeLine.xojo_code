@@ -78,7 +78,7 @@ Protected Class BeaconCodeLine
 		  Var KeywordMatches As RegexMatch = KeywordMatcher.Search(Self.mContent)
 		  Self.mRect = Rect.Clone
 		  
-		  If Self.mCachedObjects.LastRowIndex = -1 And Self.mContent <> "" Then
+		  If Self.mCachedObjects.LastIndex = -1 And Self.mContent <> "" Then
 		    Var Offset As Double
 		    
 		    If Self.mContent.BeginsWith("[") And Self.mContent.EndsWith("]") Then
@@ -126,7 +126,7 @@ Protected Class BeaconCodeLine
 		    Self.mLineWidth = Offset
 		  End If
 		  
-		  For Idx As Integer = 0 To Self.mCachedObjects.LastRowIndex
+		  For Idx As Integer = 0 To Self.mCachedObjects.LastIndex
 		    Var Obj As BeaconTextShape = Self.mCachedObjects(Idx)
 		    Var EffectiveLeft As Double = Obj.X + OffsetX
 		    Var EffectiveRight As Double = EffectiveLeft + Obj.Width

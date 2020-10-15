@@ -55,8 +55,8 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Self.mMinDistanceFromTamedDinosMultiplier = Source.mMinDistanceFromTamedDinosMultiplier
 		  Self.mOffsetBeforeMultiplier = Source.mOffsetBeforeMultiplier
 		  
-		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
-		  For I As Integer = 0 To Source.mEntries.LastRowIndex
+		  Self.mEntries.ResizeTo(Source.mEntries.LastIndex)
+		  For I As Integer = 0 To Source.mEntries.LastIndex
 		    Self.mEntries(I) = Source.mEntries(I).ImmutableVersion
 		  Next
 		End Sub
@@ -96,8 +96,8 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Entries() As Beacon.SpawnPointSetEntry()
 		  Var Arr() As Beacon.SpawnPointSetEntry
-		  Arr.ResizeTo(Self.mEntries.LastRowIndex)
-		  For I As Integer = 0 To Self.mEntries.LastRowIndex
+		  Arr.ResizeTo(Self.mEntries.LastIndex)
+		  For I As Integer = 0 To Self.mEntries.LastIndex
 		    Arr(I) = Self.mEntries(I).ImmutableVersion
 		  Next
 		  Return Arr
@@ -276,7 +276,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Entry As Beacon.SpawnPointSetEntry) As Integer
-		  For I As Integer = 0 To Self.mEntries.LastRowIndex
+		  For I As Integer = 0 To Self.mEntries.LastIndex
 		    If Self.mEntries(I) = Entry Then
 		      Return I
 		    End If
@@ -291,7 +291,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  
 		  #Pragma Unused Document
 		  
-		  If Self.mEntries.LastRowIndex = -1 Then
+		  If Self.mEntries.LastIndex = -1 Then
 		    Return False
 		  End If
 		  
@@ -304,8 +304,8 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  // Part of the Iterable interface.
 		  
 		  Var Entries() As Variant
-		  Entries.ResizeTo(Self.mEntries.LastRowIndex)
-		  For I As Integer = 0 To Self.mEntries.LastRowIndex
+		  Entries.ResizeTo(Self.mEntries.LastIndex)
+		  For I As Integer = 0 To Self.mEntries.LastIndex
 		    Entries(I) = Self.mEntries(I).ImmutableVersion
 		  Next
 		  Return New Beacon.GenericIterator(Entries)

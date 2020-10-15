@@ -50,7 +50,7 @@ Inherits ScrollCanvas
 		    CurrentTheme = New BeaconCodeTheme(&cFFFFFF00, &c00000000, &c9A239200, &c3F4F6100, &c3900A000, &c3900A000, &c1C00CE00, &c1C00CE00, &c52657900, &c63381F00)
 		  End If
 		  If Self.mLastTheme = Nil Or G.ScaleX <> Self.mLastScaleX Or G.ScaleY <> Self.mLastScaleY Or Self.mLastTheme.Matches(CurrentTheme) = False Then
-		    For I As Integer = 0 To Self.mContentLines.LastRowIndex
+		    For I As Integer = 0 To Self.mContentLines.LastIndex
 		      Self.mContentLines(I).Invalidate()
 		    Next
 		  End If
@@ -82,7 +82,7 @@ Inherits ScrollCanvas
 		  Gutter.DrawingColor = Area.DrawingColor.AtOpacity(0.5)
 		  Gutter.FontSize = 10
 		  Var ContentWidth As Integer
-		  For I As Integer = 0 To Self.mContentLines.LastRowIndex
+		  For I As Integer = 0 To Self.mContentLines.LastIndex
 		    Var Line As BeaconCodeLine = Self.mContentLines(I)
 		    ContentWidth = Max(ContentWidth, Area.TextWidth(Line.Content))
 		    
@@ -314,12 +314,12 @@ Inherits ScrollCanvas
 			    
 			    Var NewLines() As String = Value.Split(EOL)
 			    Var Dict As New Dictionary
-			    For I As Integer = 0 To Self.mContentLines.LastRowIndex
+			    For I As Integer = 0 To Self.mContentLines.LastIndex
 			      Dict.Value(Self.mContentLines(I).Content) = I
 			    Next
 			    
 			    Var NewContentLines() As BeaconCodeLine
-			    For I As Integer = 0 To NewLines.LastRowIndex
+			    For I As Integer = 0 To NewLines.LastIndex
 			      Var OldIdx As Integer = Dict.Lookup(NewLines(I), -1)
 			      If OldIdx = -1 Then
 			        NewContentLines.Add(New BeaconCodeLine(NewLines(I)))

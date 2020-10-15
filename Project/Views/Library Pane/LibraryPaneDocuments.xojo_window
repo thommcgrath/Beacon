@@ -312,14 +312,14 @@ End
 		  
 		  Select Case URL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    For I As Integer = Self.mCloudDocuments.LastRowIndex DownTo 0
+		    For I As Integer = Self.mCloudDocuments.LastIndex DownTo 0
 		      If Self.mCloudDocuments(I) = URL Then
 		        Self.mCloudDocuments.RemoveAt(I)
 		        Exit For I
 		      End If
 		    Next
 		  Case Beacon.DocumentURL.TypeWeb
-		    For I As Integer = Self.mCommunityDocuments.LastRowIndex DownTo 0
+		    For I As Integer = Self.mCommunityDocuments.LastIndex DownTo 0
 		      If Self.mCommunityDocuments(I) = URL Then
 		        Self.mCommunityDocuments.RemoveAt(I)
 		        Exit For I
@@ -328,7 +328,7 @@ End
 		  End Select
 		  
 		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		  For I As Integer = Recents.LastRowIndex DownTo 0
+		  For I As Integer = Recents.LastIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.RemoveAt(I)
 		      Exit For I
@@ -379,7 +379,7 @@ End
 		  
 		  Var RecentIdx As Integer = -1
 		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		  For I As Integer = 0 To Recents.LastRowIndex
+		  For I As Integer = 0 To Recents.LastIndex
 		    If Recents(I) = Sender.URL Then
 		      RecentIdx = I
 		      Exit For I
@@ -524,7 +524,7 @@ End
 		  End If
 		  
 		  If Self.ShowConfirm("Beacon found " + Language.NounWithQuantity(Files.Count, "unsaved document", "unsaved documents") + ". Would you like to recover the " + If(Files.Count = 1, "file", "files") + "?", "This can happen if Beacon finishes unexpectedly, such as during a crash. If the " + If(Files.Count = 1, "file is", "files are") + " not restored, " + If(Files.Count = 1, "it", "they") + " will be permanently deleted.", "Recover", "Discard") Then
-		    For Idx As Integer = 0 To Files.LastRowIndex
+		    For Idx As Integer = 0 To Files.LastIndex
 		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
 		      
 		      Var FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
@@ -536,7 +536,7 @@ End
 		      Controller.Load()
 		    Next
 		  Else
-		    For Idx As Integer = Files.LastRowIndex DownTo 0
+		    For Idx As Integer = Files.LastIndex DownTo 0
 		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
 		      
 		      Try
@@ -656,9 +656,9 @@ End
 		    End If
 		  Next
 		  
-		  Self.List.RowCount = Documents.LastRowIndex + 1
+		  Self.List.RowCount = Documents.LastIndex + 1
 		  
-		  For I As Integer = 0 To Documents.LastRowIndex
+		  For I As Integer = 0 To Documents.LastIndex
 		    Var URL As Beacon.DocumentURL = Documents(I)
 		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
 		    Self.List.RowTagAt(I) = URL
@@ -800,7 +800,7 @@ End
 		      End If
 		      
 		      Var SelectedURL As Beacon.DocumentURL = Me.RowTagAt(I)
-		      For X As Integer = Recents.LastRowIndex DownTo 0
+		      For X As Integer = Recents.LastIndex DownTo 0
 		        If Recents(X) = SelectedURL Then
 		          Changed = True
 		          Recents.RemoveAt(X)
@@ -829,10 +829,10 @@ End
 		  
 		  If Warn Then
 		    Var Message, Explanation As String
-		    If Controllers.LastRowIndex = 0 Then
+		    If Controllers.LastIndex = 0 Then
 		      Message = "Are you sure you want to delete the document """ + Controllers(0).Name + """?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Controllers.LastRowIndex + 1, "-0") + " documents?"
+		      Message = "Are you sure you want to delete these " + Str(Controllers.LastIndex + 1, "-0") + " documents?"
 		    End If
 		    Explanation = "Files will be deleted immediately and cannot be recovered."
 		    

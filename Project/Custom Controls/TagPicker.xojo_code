@@ -3,7 +3,7 @@ Protected Class TagPicker
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  For I As Integer = 0 To Self.mCells.LastRowIndex
+		  For I As Integer = 0 To Self.mCells.LastIndex
 		    If Self.mCells(I) <> Nil And Self.mCells(I).Contains(X, Y) Then
 		      Self.mMouseDownCellIndex = I
 		      Self.mMousePressedIndex = I
@@ -217,7 +217,7 @@ Inherits ControlCanvas
 		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
 		  End If
 		  
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Var Tag As String = Self.mTags(I)
 		    Var Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
 		    Var Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
@@ -314,12 +314,12 @@ Inherits ControlCanvas
 		    ExcludedTags = Temp
 		  End If
 		  
-		  For I As Integer = RequiredTags.LastRowIndex DownTo RequiredTags.FirstRowIndex
+		  For I As Integer = RequiredTags.LastIndex DownTo RequiredTags.FirstRowIndex
 		    If RequiredTags(I) <> "object" And Self.mTags.IndexOf(RequiredTags(I)) = -1 Then
 		      RequiredTags.RemoveAt(I)
 		    End If
 		  Next
-		  For I As Integer = ExcludedTags.LastRowIndex DownTo ExcludedTags.FirstRowIndex
+		  For I As Integer = ExcludedTags.LastIndex DownTo ExcludedTags.FirstRowIndex
 		    If Self.mTags.IndexOf(ExcludedTags(I)) = -1 Then
 		      ExcludedTags.RemoveAt(I)
 		    End If
@@ -354,8 +354,8 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		End Function
@@ -368,11 +368,11 @@ Inherits ControlCanvas
 		  End If
 		  
 		  Var Changed As Boolean
-		  If Self.mTags.LastRowIndex <> Values.LastRowIndex Then
-		    Self.mTags.ResizeTo(Values.LastRowIndex)
+		  If Self.mTags.LastIndex <> Values.LastIndex Then
+		    Self.mTags.ResizeTo(Values.LastIndex)
 		    Changed = True
 		  End If
-		  For I As Integer = 0 To Values.LastRowIndex
+		  For I As Integer = 0 To Values.LastIndex
 		    If Self.mTags(I).Compare(Values(I), ComparisonOptions.CaseSensitive) <> 0 Then
 		      Self.mTags(I) = Values(I)
 		      Changed = True
@@ -381,10 +381,10 @@ Inherits ControlCanvas
 		  
 		  If Changed Then
 		    Self.mCells.ResizeTo(-1)
-		    Self.mCells.ResizeTo(Self.mTags.LastRowIndex)
+		    Self.mCells.ResizeTo(Self.mTags.LastIndex)
 		    
 		    Var FireChangeEvent As Boolean
-		    For I As Integer = Self.mRequireTags.LastRowIndex DownTo 0
+		    For I As Integer = Self.mRequireTags.LastIndex DownTo 0
 		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
 		        Self.mRequireTags.RemoveAt(I)
 		        FireChangeEvent = True
@@ -498,10 +498,10 @@ Inherits ControlCanvas
 		#tag Getter
 			Get
 			  Var Value As String
-			  If Self.mRequireTags.LastRowIndex > -1 Then
+			  If Self.mRequireTags.LastIndex > -1 Then
 			    Value = "(""" + Self.mRequireTags.Join(""" AND """) + """)"
 			  End If
-			  If Self.mExcludeTags.LastRowIndex > -1 Then
+			  If Self.mExcludeTags.LastIndex > -1 Then
 			    If Value = "" Then
 			      Value = "object"
 			    End If

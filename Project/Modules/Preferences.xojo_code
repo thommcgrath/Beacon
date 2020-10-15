@@ -7,14 +7,14 @@ Protected Module Preferences
 		  End If
 		  
 		  Var Recents() As Beacon.DocumentURL = RecentDocuments
-		  For I As Integer = Recents.LastRowIndex DownTo 0
+		  For I As Integer = Recents.LastIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.RemoveAt(I)
 		    End If
 		  Next
 		  Recents.AddAt(0, URL)
 		  
-		  While Recents.LastRowIndex > 19
+		  While Recents.LastIndex > 19
 		    Recents.RemoveAt(20)
 		  Wend
 		  
@@ -164,8 +164,8 @@ Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
 		  Var URLs() As String
-		  URLs.ResizeTo(Values.LastRowIndex)
-		  For I As Integer = 0 To Values.LastRowIndex
+		  URLs.ResizeTo(Values.LastIndex)
+		  For I As Integer = 0 To Values.LastIndex
 		    URLs(I) = Values(I).URL
 		  Next
 		  

@@ -520,7 +520,7 @@ End
 		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
-		  Var HasTarget As Boolean = Self.mSources.LastRowIndex > -1
+		  Var HasTarget As Boolean = Self.mSources.LastIndex > -1
 		  
 		  For Each Group As String In GroupNames
 		    Var Arr() As Beacon.Preset = Groups.Value(Group)
@@ -532,7 +532,7 @@ End
 		        Items.Add(Preset)
 		      End If
 		    Next
-		    If Names.LastRowIndex = -1 Then
+		    If Names.LastIndex = -1 Then
 		      Continue For Group
 		    End If
 		    
@@ -824,16 +824,16 @@ End
 		  If Values = Nil Then
 		    Self.mSources.ResizeTo(-1)
 		  Else
-		    Self.mSources.ResizeTo(Values.LastRowIndex)
-		    For I As Integer = 0 To Values.LastRowIndex
+		    Self.mSources.ResizeTo(Values.LastIndex)
+		    For I As Integer = 0 To Values.LastIndex
 		      Self.mSources(I) = Values(I)
 		    Next
 		  End If
 		  
 		  Var CommonNotes As String
-		  If Self.mSources.LastRowIndex > -1 Then
+		  If Self.mSources.LastIndex > -1 Then
 		    CommonNotes = Self.mSources(0).Notes
-		    For I As Integer = 1 To Self.mSources.LastRowIndex
+		    For I As Integer = 1 To Self.mSources.LastIndex
 		      If Self.mSources(I).Notes <> CommonNotes Then
 		        CommonNotes = ""
 		        Exit For I
@@ -914,7 +914,7 @@ End
 		      Next
 		    End If
 		    
-		    Var ExtendedLabels As Boolean = Self.mSources.LastRowIndex > 0
+		    Var ExtendedLabels As Boolean = Self.mSources.LastIndex > 0
 		    
 		    Self.SetList.RowCount = CombinedSets.KeyCount
 		    Self.SetList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
@@ -936,7 +936,7 @@ End
 		  Self.SetList.Sort
 		  Self.SetList.SelectionChangeBlocked = False
 		  
-		  If Self.mSources.LastRowIndex = 0 Then
+		  If Self.mSources.LastIndex = 0 Then
 		    Self.Header.Simulate.Enabled = True
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  Else
@@ -1078,12 +1078,12 @@ End
 		      Dicts.Add(Dict)
 		    End If
 		  Next
-		  If Dicts.LastRowIndex = -1 Then
+		  If Dicts.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Contents As String
-		  If Dicts.LastRowIndex = 0 Then
+		  If Dicts.LastIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
 		    Contents = Beacon.GenerateJSON(Dicts, False)
@@ -1094,7 +1094,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Self.mSources.LastRowIndex = -1 Then
+		  If Self.mSources.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1172,7 +1172,7 @@ End
 		    Next
 		  End If
 		  
-		  If Targets.LastRowIndex = -1 Then
+		  If Targets.LastIndex = -1 Then
 		    Return False
 		  End If
 		  
@@ -1187,7 +1187,7 @@ End
 		  
 		  Var CreateItem As New MenuItem("Create Preset…", Targets)
 		  CreateItem.Name = "createpreset"
-		  CreateItem.Enabled = Targets.LastRowIndex = 0
+		  CreateItem.Enabled = Targets.LastIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
 		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
 		  End If
@@ -1197,7 +1197,7 @@ End
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
-		    If Targets.LastRowIndex = 0 Then
+		    If Targets.LastIndex = 0 Then
 		      ReconfigureItem.Value = "Rebuild From """ + Preset.Label + """ Preset"
 		    Else
 		      ReconfigureItem.Value = "Rebuild From Presets"
@@ -1232,7 +1232,7 @@ End
 		  
 		  Select Case HitItem.Name
 		  Case "createpreset"
-		    If Targets.LastRowIndex = 0 Then
+		    If Targets.LastIndex = 0 Then
 		      Var Organizer As ItemSetOrganizer = Targets(0)
 		      
 		      Var NewPreset As Beacon.Preset = App.MainWindow.Presets.CreatePreset(Organizer.Template)
@@ -1253,7 +1253,7 @@ End
 		        End If
 		      Next
 		      
-		      If AffectedItemSets.LastRowIndex > -1 Then
+		      If AffectedItemSets.LastIndex > -1 Then
 		        Self.UpdateUI(AffectedItemSets)
 		        RaiseEvent Updated
 		      End If
@@ -1286,8 +1286,8 @@ End
 		      Next
 		    Next
 		    
-		    If AffectedItemSets.LastRowIndex = -1 Then
-		      If Targets.LastRowIndex = 0 Then
+		    If AffectedItemSets.LastIndex = -1 Then
+		      If Targets.LastIndex = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the preset.")
 		      Else
 		        Self.ShowAlert("No changes made", "All item sets already match their preset.")
@@ -1298,12 +1298,12 @@ End
 		    Self.UpdateUI(AffectedItemSets)
 		    RaiseEvent Updated
 		    
-		    If Targets.LastRowIndex > 0 Then
+		    If Targets.LastIndex > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
 		    End If
 		  Case "copyjson"
-		    If Targets.LastRowIndex = 0 Then
+		    If Targets.LastIndex = 0 Then
 		      Var Dict As Dictionary = Targets(0).Template.Export()
 		      Var Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Dict, True)
@@ -1319,7 +1319,7 @@ End
 		    Var Multipliers As Beacon.Range
 		    Var UseBlueprints As Boolean = False
 		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		    If Self.mSources.LastRowIndex = 0 Then
+		    If Self.mSources.LastIndex = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
 		    Else
 		      Multipliers = New Beacon.Range(1, 1)
@@ -1331,7 +1331,7 @@ End
 		    Next
 		    
 		    Var Board As New Clipboard
-		    If Parts.LastRowIndex = 0 Then
+		    If Parts.LastIndex = 0 Then
 		      Board.Text = Parts(0)
 		    Else
 		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
@@ -1410,7 +1410,7 @@ End
 		  
 		  RaiseEvent Updated
 		  
-		  If Self.SimulatorVisible And Self.mSources.LastRowIndex = 0 Then
+		  If Self.SimulatorVisible And Self.mSources.LastIndex = 0 Then
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  End If
 		End Sub

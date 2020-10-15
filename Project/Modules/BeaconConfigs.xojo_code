@@ -3,7 +3,7 @@ Protected Module BeaconConfigs
 	#tag Method, Flags = &h1
 		Protected Function AllConfigNames(Human As Boolean = False) As String()
 		  Static Names() As String
-		  If Names.LastRowIndex = -1 Then
+		  If Names.LastIndex = -1 Then
 		    Names.Add(BeaconConfigs.Difficulty.ConfigName)
 		    Names.Add(BeaconConfigs.LootDrops.ConfigName)
 		    Names.Add(BeaconConfigs.LootScale.ConfigName)
@@ -23,9 +23,9 @@ Protected Module BeaconConfigs
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
-		    If HumanNames.LastRowIndex = -1 Then
-		      HumanNames.ResizeTo(Names.LastRowIndex)
-		      For I As Integer = 0 To Names.LastRowIndex
+		    If HumanNames.LastIndex = -1 Then
+		      HumanNames.ResizeTo(Names.LastIndex)
+		      For I As Integer = 0 To Names.LastIndex
 		        HumanNames(I) = Language.LabelForConfig(Names(I))
 		      Next
 		      HumanNames.Sort
@@ -90,7 +90,7 @@ Protected Module BeaconConfigs
 		  Var Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
 		    Var Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.LastRowIndex = -1 Then
+		    If Params.LastIndex = -1 Then
 		      Return Signature.Invoke()
 		    End If
 		  Next
@@ -111,7 +111,7 @@ Protected Module BeaconConfigs
 		  Var Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
 		    Var Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.LastRowIndex = 2 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" And Params(2).IsByRef = False And Params(2).ParameterType.FullName = "Beacon.Document" Then
+		    If Params.LastIndex = 2 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" And Params(2).IsByRef = False And Params(2).ParameterType.FullName = "Beacon.Document" Then
 		      Var Values(2) As Variant
 		      Values(0) = GroupData
 		      Values(1) = Identity
@@ -138,7 +138,7 @@ Protected Module BeaconConfigs
 		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
 		  For Each Signature As Introspection.MethodInfo In Methods
 		    Try
-		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastRowIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
+		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
 		        Var Params(3) As Variant
 		        Params(0) = ParsedData
 		        Params(1) = CommandLineOptions

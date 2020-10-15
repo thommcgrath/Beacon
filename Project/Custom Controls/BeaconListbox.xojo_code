@@ -117,7 +117,7 @@ Inherits Listbox
 		  Var Lines() As String = Contents.Split(EndOfLine)
 		  Var MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
 		  
-		  If Lines.LastRowIndex = -1 Then
+		  If Lines.LastIndex = -1 Then
 		    Return True
 		  End If
 		  
@@ -134,12 +134,12 @@ Inherits Listbox
 		  Var TotalTextHeight As Double = Clip.CapHeight
 		  Clip.FontName = "SmallSystem"
 		  Clip.Bold = False
-		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.LastRowIndex)
+		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.LastIndex)
 		  Clip.FontName = "System"
 		  Clip.Bold = RowInvalid
 		  
 		  Var DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
-		  For I As Integer = 0 To Lines.LastRowIndex
+		  For I As Integer = 0 To Lines.LastIndex
 		    Var LineWidth As Integer = Min(Ceiling(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Var DrawLeft As Integer

@@ -341,7 +341,7 @@ End
 		  
 		  Self.List.RowCount = FilteredDocuments.Count
 		  
-		  For I As Integer = 0 To FilteredDocuments.LastRowIndex
+		  For I As Integer = 0 To FilteredDocuments.LastIndex
 		    Var Document As BeaconAPI.Document = FilteredDocuments(I)
 		    
 		    Self.List.CellValueAt(I, Self.ColumnName) = Document.Name

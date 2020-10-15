@@ -1372,7 +1372,7 @@ End
 		    Figures.Sort
 		    
 		    Var Label As String = Entry.Creature.Label
-		    If Figures.LastRowIndex > -1 Then
+		    If Figures.LastIndex > -1 Then
 		      Label = Label + EndOfLine + Figures.Join("   ")
 		      RowHeight = BeaconListbox.DoubleLineRowHeight
 		    End If
@@ -1407,8 +1407,8 @@ End
 		  
 		  Var ReplacedCreatures() As Beacon.Creature = Set.ReplacedCreatures
 		  Self.ReplaceList.SelectionChangeBlocked = True
-		  Self.ReplaceList.RowCount = ReplacedCreatures.LastRowIndex + 1
-		  For RowIndex As Integer = 0 To ReplacedCreatures.LastRowIndex
+		  Self.ReplaceList.RowCount = ReplacedCreatures.LastIndex + 1
+		  For RowIndex As Integer = 0 To ReplacedCreatures.LastIndex
 		    Var ReplacedCreature As Beacon.Creature = ReplacedCreatures(RowIndex)
 		    Var ReplacementCreatures() As Beacon.Creature = Set.ReplacementCreatures(ReplacedCreature)
 		    
@@ -1684,7 +1684,7 @@ End
 		  
 		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
 		  Var UpdatedEntries() As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Set, Entries)
-		  If UpdatedEntries = Nil Or UpdatedEntries.LastRowIndex = -1 Then
+		  If UpdatedEntries = Nil Or UpdatedEntries.LastIndex = -1 Then
 		    Return
 		  End If
 		  

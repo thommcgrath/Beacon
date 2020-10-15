@@ -8,11 +8,11 @@ Inherits Beacon.ConfigGroup
 		  Var ConfigName As String = ConfigKey
 		  Var Locale As Locale = Locale.Current
 		  
-		  If Self.mPlayerLevels.LastRowIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
+		  If Self.mPlayerLevels.LastIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
 		    Issues.Add(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToString(Locale) + " player levels to handle ascension correctly."))
 		  End If
 		  
-		  For I As Integer = 0 To Self.mPlayerLevels.LastRowIndex
+		  For I As Integer = 0 To Self.mPlayerLevels.LastIndex
 		    Var Level As Integer = I + 2
 		    Var XP As UInt64 = Self.mPlayerLevels(I)
 		    Var LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), CType(0, UInt64))
@@ -24,7 +24,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  Next
 		  
-		  For I As Integer = 0 To Self.mDinoLevels.LastRowIndex
+		  For I As Integer = 0 To Self.mDinoLevels.LastIndex
 		    Var Level As Integer = I + 2
 		    Var XP As UInt64 = Self.mDinoLevels(I)
 		    Var LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), CType(0, UInt64))
@@ -45,7 +45,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Const CompactMode = False
 		  
-		  If Self.mPlayerLevels.LastRowIndex > -1 Then
+		  If Self.mPlayerLevels.LastIndex > -1 Then
 		    Var MaxXP As UInt64 = Self.PlayerMaxExperience
 		    
 		    // Index 0 is level 2!
@@ -54,10 +54,10 @@ Inherits Beacon.ConfigGroup
 		    // This is because players start at level 1, not level 0. Then the 0-based array needs to be accounted for.
 		    Var Chunks() As String
 		    Var LastXP As UInt64
-		    For Index As Integer = 0 To Self.mPlayerLevels.LastRowIndex
+		    For Index As Integer = 0 To Self.mPlayerLevels.LastIndex
 		      Var XP As UInt64 = Self.mPlayerLevels(Index)
-		      If CompactMode And XP = LastXP And Chunks.LastRowIndex > -1 Then
-		        Chunks.RemoveAt(Chunks.LastRowIndex)
+		      If CompactMode And XP = LastXP And Chunks.LastIndex > -1 Then
+		        Chunks.RemoveAt(Chunks.LastIndex)
 		      End If
 		      Chunks.Add("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
 		      LastXP = XP
@@ -65,21 +65,21 @@ Inherits Beacon.ConfigGroup
 		    
 		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
 		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToString))
-		  ElseIf Self.mPlayerLevels.LastRowIndex = -1 And Self.mDinoLevels.LastRowIndex > -1 Then
+		  ElseIf Self.mPlayerLevels.LastIndex = -1 And Self.mDinoLevels.LastIndex > -1 Then
 		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", ""))
 		  Else
 		    Return
 		  End If
 		  
-		  If Self.mDinoLevels.LastRowIndex > -1 Then
+		  If Self.mDinoLevels.LastIndex > -1 Then
 		    Var Chunks() As String
 		    Var MaxXP As UInt64 = Self.DinoMaxExperience
 		    
 		    Var LastXP As UInt64
-		    For Index As Integer = 0 To Self.mDinoLevels.LastRowIndex
+		    For Index As Integer = 0 To Self.mDinoLevels.LastIndex
 		      Var XP As UInt64 = Self.mDinoLevels(Index)
-		      If CompactMode And XP = LastXP And Chunks.LastRowIndex > -1 Then
-		        Chunks.RemoveAt(Chunks.LastRowIndex)
+		      If CompactMode And XP = LastXP And Chunks.LastIndex > -1 Then
+		        Chunks.RemoveAt(Chunks.LastIndex)
 		      End If
 		      Chunks.Add("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
 		      LastXP = XP
@@ -134,7 +134,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub AppendDinoExperience(XP As UInt64)
-		  If Self.mDinoLevels.LastRowIndex > -1 And XP < Self.mDinoLevels(Self.mDinoLevels.LastRowIndex) Then
+		  If Self.mDinoLevels.LastIndex > -1 And XP < Self.mDinoLevels(Self.mDinoLevels.LastIndex) Then
 		    Return
 		  End If
 		  
@@ -145,7 +145,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub AppendPlayerExperience(XP As UInt64)
-		  If Self.mPlayerLevels.LastRowIndex > -1 And XP < Self.mPlayerLevels(Self.mPlayerLevels.LastRowIndex) Then
+		  If Self.mPlayerLevels.LastIndex > -1 And XP < Self.mPlayerLevels(Self.mPlayerLevels.LastIndex) Then
 		    Return
 		  End If
 		  
@@ -213,8 +213,8 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function DinoLevels() As UInt64()
 		  Var Levels() As UInt64
-		  Levels.ResizeTo(Self.mDinoLevels.LastRowIndex)
-		  For I As Integer = 0 To Self.mDinoLevels.LastRowIndex
+		  Levels.ResizeTo(Self.mDinoLevels.LastIndex)
+		  For I As Integer = 0 To Self.mDinoLevels.LastIndex
 		    Levels(I) = Self.mDinoLevels(I)
 		  Next
 		  Return Levels
@@ -223,12 +223,12 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Shared Function FindHighValue(Values() As UInt64, StartingIndex As Integer, ByRef EndingIndex As Integer) As UInt64
-		  If StartingIndex >= Values.LastRowIndex Then
+		  If StartingIndex >= Values.LastIndex Then
 		    EndingIndex = -1
 		    Return 0
 		  End If
 		  
-		  For I As Integer = StartingIndex + 1 To Values.LastRowIndex
+		  For I As Integer = StartingIndex + 1 To Values.LastIndex
 		    If Values(I) > CType(0, UInt64) Then
 		      EndingIndex = I
 		      Return Values(I)
@@ -286,7 +286,7 @@ Inherits Beacon.ConfigGroup
 		  Var Config As New BeaconConfigs.ExperienceCurves
 		  Config.mWasPerfectImport = True
 		  
-		  Var Bound As Integer = Min(Overrides.LastRowIndex, 1)
+		  Var Bound As Integer = Min(Overrides.LastIndex, 1)
 		  For Idx As Integer = 0 To Bound
 		    Try
 		      Var Dict As Dictionary = Overrides(Idx)
@@ -302,7 +302,7 @@ Inherits Beacon.ConfigGroup
 		          OpenTagPosition = OpenTagPosition + 1
 		          Var IndexTxt As String = Key.Middle(OpenTagPosition, CloseTagPosition - OpenTagPosition)
 		          Var Index As Integer = Integer.FromString(IndexTxt)
-		          If Levels.LastRowIndex < Index Then
+		          If Levels.LastIndex < Index Then
 		            Levels.ResizeTo(Index)
 		          End If
 		          Levels(Index) = Entry.Value
@@ -311,7 +311,7 @@ Inherits Beacon.ConfigGroup
 		      
 		      // Now make sure there are no gaps. If there are, fill in
 		      // the gap with the average of the surrounding values
-		      For I As Integer = 0 To Levels.LastRowIndex
+		      For I As Integer = 0 To Levels.LastIndex
 		        If Levels(I) <> CType(0, UInt64) Then
 		          Continue
 		        End If
@@ -382,8 +382,8 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function PlayerLevels() As UInt64()
 		  Var Levels() As UInt64
-		  Levels.ResizeTo(Self.mPlayerLevels.LastRowIndex)
-		  For I As Integer = 0 To Self.mPlayerLevels.LastRowIndex
+		  Levels.ResizeTo(Self.mPlayerLevels.LastIndex)
+		  For I As Integer = 0 To Self.mPlayerLevels.LastIndex
 		    Levels(I) = Self.mPlayerLevels(I)
 		  Next
 		  Return Levels
@@ -414,7 +414,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mDinoLevels.LastRowIndex + 1
+			  Return Self.mDinoLevels.LastIndex + 1
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -433,8 +433,8 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.mDinoLevels.LastRowIndex > -1 Then
-			    Return Self.mDinoLevels(Self.mDinoLevels.LastRowIndex)
+			  If Self.mDinoLevels.LastIndex > -1 Then
+			    Return Self.mDinoLevels(Self.mDinoLevels.LastIndex)
 			  End If
 			End Get
 		#tag EndGetter
@@ -456,7 +456,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mPlayerLevels.LastRowIndex + 2
+			  Return Self.mPlayerLevels.LastIndex + 2
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -475,8 +475,8 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.mPlayerLevels.LastRowIndex > -1 Then
-			    Return Self.mPlayerLevels(Self.mPlayerLevels.LastRowIndex)
+			  If Self.mPlayerLevels.LastIndex > -1 Then
+			    Return Self.mPlayerLevels(Self.mPlayerLevels.LastIndex)
 			  End If
 			End Get
 		#tag EndGetter

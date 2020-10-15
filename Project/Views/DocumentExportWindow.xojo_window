@@ -980,10 +980,10 @@ End
 		  End If
 		  
 		  Var Maps() As Beacon.Map = Document.Maps
-		  If Maps.LastRowIndex = 0 Then
+		  If Maps.LastIndex = 0 Then
 		    Win.MapMenu.AddRow(Maps(0).Name, Maps(0).Mask)
 		    Win.MapMenu.SelectedRowIndex = 0
-		  ElseIf Maps.LastRowIndex > 0 Then
+		  ElseIf Maps.LastIndex > 0 Then
 		    Win.MapMenu.AddRow("All Maps", Beacon.Maps.All.Mask)
 		    For Each Map As Beacon.Map In Maps
 		      Win.MapMenu.AddRow(Map.Name, Map.Mask)
@@ -1069,13 +1069,13 @@ End
 		  Var Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		  For Each Group As Beacon.ConfigGroup In Groups
 		    Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
-		    If Options <> Nil And Options.LastRowIndex > -1 Then
+		    If Options <> Nil And Options.LastIndex > -1 Then
 		      Beacon.ConfigValue.FillConfigDict(CLIDict, Options)
 		    End If
 		  Next
 		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
 		  Var QuestionParameters As String
-		  If Maps.LastRowIndex = 0 Then
+		  If Maps.LastIndex = 0 Then
 		    QuestionParameters = Maps(0).Identifier + "?listen"
 		  Else
 		    QuestionParameters = "Map?listen"

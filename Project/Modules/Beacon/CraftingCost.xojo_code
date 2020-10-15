@@ -26,8 +26,8 @@ Implements Beacon.NamedItem
 		Sub Constructor(Source As Beacon.CraftingCost)
 		  Self.Constructor()
 		  Self.mEngram = Source.mEngram
-		  Self.mIngredients.ResizeTo(Source.mIngredients.LastRowIndex)
-		  For Idx As Integer = 0 To Source.mIngredients.LastRowIndex
+		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
+		  For Idx As Integer = 0 To Source.mIngredients.LastIndex
 		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
 		  Next
 		  Self.Modified = Source.Modified
@@ -42,7 +42,7 @@ Implements Beacon.NamedItem
 		  If LoadRecipe Then
 		    Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
 		    Self.mIngredients.ResizeTo(-1)
-		    For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		    For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		      Self.mIngredients(Idx) = Ingredients(Idx)
 		    Next
 		  End If
@@ -65,7 +65,7 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  Var Ingredients() As Dictionary
-		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Var Resource As New Dictionary
 		    Resource.Value("Class") = Self.mIngredients(Idx).Engram.ClassString
 		    Resource.Value("EngramID") = Self.mIngredients(Idx).Engram.ObjectID.StringValue
@@ -139,7 +139,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Resource As Beacon.Engram) As Integer
-		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    If Self.mIngredients(Idx).Engram = Resource Then
 		      Return Idx
 		    End If
@@ -175,7 +175,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mIngredients.LastRowIndex
+		  Return Self.mIngredients.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -226,7 +226,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Quantity(Idx As Integer) As Integer
-		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return 0
 		  End If
 		  
@@ -236,7 +236,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Quantity(Idx As Integer, Assigns Value As Integer)
-		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return
 		  End If
 		  
@@ -261,7 +261,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  If Idx >= Self.mIngredients.FirstRowIndex And Idx <= Self.mIngredients.LastRowIndex Then
+		  If Idx >= Self.mIngredients.FirstRowIndex And Idx <= Self.mIngredients.LastIndex Then
 		    Self.mIngredients.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
@@ -270,7 +270,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function RequireExactResource(Idx As Integer) As Boolean
-		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return False
 		  End If
 		  
@@ -280,7 +280,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub RequireExactResource(Idx As Integer, Assigns Value As Boolean)
-		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return
 		  End If
 		  
@@ -294,7 +294,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Resource(Idx As Integer) As Beacon.Engram
-		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return Nil
 		  End If
 		  
@@ -304,7 +304,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Resource(Idx As Integer, Assigns Value As Beacon.Engram)
-		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return
 		  End If
 		  
@@ -319,7 +319,7 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function StringValue() As String
 		  Var Components() As String
-		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Var ClassString As String = Self.mIngredients(Idx).Engram.ClassString
 		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
 		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "true", "false")

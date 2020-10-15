@@ -26,7 +26,7 @@ Protected Class ServerProfile
 		  If Self.mConfigSetStates.Count <> States.Count Then
 		    Different = True
 		  Else
-		    For Idx As Integer = 0 To States.LastRowIndex
+		    For Idx As Integer = 0 To States.LastIndex
 		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
 		        Different = True
 		        Exit
@@ -38,8 +38,8 @@ Protected Class ServerProfile
 		    Return
 		  End If
 		  
-		  Self.mConfigSetStates.ResizeTo(States.LastRowIndex)
-		  For Idx As Integer = 0 To States.LastRowIndex
+		  Self.mConfigSetStates.ResizeTo(States.LastIndex)
+		  For Idx As Integer = 0 To States.LastIndex
 		    Self.mConfigSetStates(Idx) = States(Idx)
 		  Next
 		  Self.Modified = True

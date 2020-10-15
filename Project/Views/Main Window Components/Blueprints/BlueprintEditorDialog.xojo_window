@@ -1682,7 +1682,7 @@ End
 		  End If
 		  
 		  Var Tags() As String = Self.TagsField.Value.Split(",")
-		  For I As Integer = Tags.LastRowIndex DownTo 0
+		  For I As Integer = Tags.LastIndex DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
 		      Tags.RemoveAt(I)
@@ -2129,7 +2129,7 @@ End
 		  
 		  Var Mods As New Beacon.StringList
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  

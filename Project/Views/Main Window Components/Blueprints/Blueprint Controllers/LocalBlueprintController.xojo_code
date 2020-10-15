@@ -26,11 +26,11 @@ Inherits BlueprintController
 		  Var Blueprints() As Beacon.Blueprint = Engrams
 		  Var Offset As Integer = Engrams.Count
 		  Blueprints.ResizeTo((Engrams.Count + Creatures.Count + Spawns.Count) - 1)
-		  For Idx As Integer = 0 To Creatures.LastRowIndex
+		  For Idx As Integer = 0 To Creatures.LastIndex
 		    Blueprints(Idx + Offset) = Creatures(Idx)
 		  Next
 		  Offset = Offset + Creatures.Count
-		  For Idx As Integer = 0 To Spawns.LastRowIndex
+		  For Idx As Integer = 0 To Spawns.LastIndex
 		    Blueprints(Idx + Offset) = Spawns(Idx)
 		  Next
 		  

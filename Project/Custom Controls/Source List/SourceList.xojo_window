@@ -141,7 +141,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function IndexAtPoint(Point As Xojo.Point) As Integer
-		  For Idx As Integer = 0 To Self.mItemRects.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItemRects.LastIndex
 		    If (Self.mItemRects(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
 		      Return Idx
 		    End If
@@ -152,7 +152,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As SourceListItem) As Integer
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(Idx) = Item Then
 		      Return Idx
 		    End If
@@ -176,7 +176,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Invalidate(Idx As Integer)
-		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastRowIndex Then
+		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
 		    Self.Content.Invalidate(False)
 		    Return
 		  End If
@@ -193,7 +193,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function Item(Idx As Integer) As SourceListItem
-		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
+		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Return Self.mItems(Idx)
 		  End If
 		End Function
@@ -201,7 +201,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Item(Idx As Integer, Assigns Item As SourceListItem)
-		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
+		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems(Idx) = Item
 		    Self.Invalidate(Idx)
 		  End If
@@ -210,7 +210,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function LastItemIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -224,7 +224,7 @@ End
 		Sub Remove(Idx As Integer)
 		  #Pragma Warning "Won't trigger change event"
 		  
-		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
+		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems.RemoveAt(Idx)
 		    
 		    If Idx <= Self.mSelectedRowIndex Then
@@ -252,7 +252,7 @@ End
 		  
 		  Var TargetTag As Variant = Self.SelectedTag
 		  Var NewRowIndex As Integer = -1
-		  For Idx As Integer = 0 To Items.LastRowIndex
+		  For Idx As Integer = 0 To Items.LastIndex
 		    If Items(Idx).Tag = TargetTag Then
 		      NewRowIndex = Idx
 		      Exit
@@ -376,7 +376,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SelectedTag(Assigns Tag As Variant)
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(Idx).Tag = Tag Then
 		      Self.SelectedRowIndex = Idx
 		      Return
@@ -391,11 +391,11 @@ End
 		  Var Names() As String
 		  Var SelectedItem As SourceListItem = Self.Item(Self.SelectedRowIndex)
 		  
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Names.Add(Self.mItems(Idx).Caption)
 		  Next
 		  
-		  If Self.mItemRects.LastRowIndex = Self.mItems.LastRowIndex Then
+		  If Self.mItemRects.LastIndex = Self.mItems.LastIndex Then
 		    Names.SortWith(Self.mItems, Self.mItemRects)
 		  Else
 		    Names.SortWith(Self.mItems)
@@ -722,7 +722,7 @@ End
 		  #endif
 		  
 		  Var Rects() As Rect
-		  Rects.ResizeTo(Self.mItems.LastRowIndex)
+		  Rects.ResizeTo(Self.mItems.LastIndex)
 		  
 		  Const RowHeight = 30
 		  Const Inset = 10
@@ -737,7 +737,7 @@ End
 		    ItemWidth = ItemWidth - (ScrollThumbWidth + (ScrollThumbPadding * 2))
 		  End If
 		  Var RowTop As Integer = Floor(Inset - Self.mScrollOffset)
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Rects(Idx) = New Rect(Inset, RowTop, ItemWidth, RowHeight)
 		    RowTop = RowTop + RowHeight
 		  Next
@@ -745,11 +745,11 @@ End
 		  Self.mItemRects = Rects
 		  
 		  Var Viewport As New Rect(0, 0, G.Width, G.Height)
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var ItemRect As Rect = Self.mItemRects(Idx)
 		    Var Draw As Boolean
 		    If Viewport.Intersects(ItemRect) Then
-		      If Areas.LastRowIndex = -1 Then
+		      If Areas.LastIndex = -1 Then
 		        Draw = True
 		      Else
 		        For Each Area As Rect In Areas

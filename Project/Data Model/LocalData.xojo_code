@@ -185,7 +185,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter
 		  
-		  If Self.mTransactions.LastRowIndex = -1 Then
+		  If Self.mTransactions.LastIndex = -1 Then
 		    Self.mTransactions.AddAt(0, "")
 		    Self.SQLExecute("BEGIN TRANSACTION;")
 		  Else
@@ -339,7 +339,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub Commit()
-		  If Self.mTransactions.LastRowIndex = -1 Then
+		  If Self.mTransactions.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -443,10 +443,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		      Next
 		      
-		      If Candidates.LastRowIndex > -1 Then
+		      If Candidates.LastIndex > -1 Then
 		        Versions.SortWith(Candidates)
 		        
-		        Var RestoreFile As FolderItem = Candidates(Candidates.LastRowIndex)
+		        Var RestoreFile As FolderItem = Candidates(Candidates.LastIndex)
 		        RestoreFile.MoveTo(AppSupport.Child("Library.sqlite"))
 		        
 		        Self.mBase = New SQLiteDatabase
@@ -923,7 +923,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
 		    Var List() As String
 		    For Each ModID As String In Mods
-		      List.AddRow("'" + ModID + "'")
+		      List.Add("'" + ModID + "'")
 		    Next
 		    SQL = SQL + " AND mod_id IN (" + List.Join(",") + ")"
 		  End If
@@ -1457,7 +1457,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
 		      End If
 		    Next
-		    If LootSourceIcons.LastRowIndex > -1 Then
+		    If LootSourceIcons.LastIndex > -1 Then
 		      Self.IconCache = Nil
 		    End If
 		    
@@ -1897,9 +1897,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Drops() As Beacon.LootSource = Self.SearchForLootSources("", New Beacon.StringList, True)
 		    Var Labels() As String
 		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Drops.LastRowIndex)
+		    Labels.ResizeTo(Drops.LastIndex)
 		    
-		    For I As Integer = 0 To Drops.LastRowIndex
+		    For I As Integer = 0 To Drops.LastIndex
 		      If Drops(I).ValidForMask(Availability) = False Then
 		        Continue
 		      End If
@@ -2085,7 +2085,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Commands.Add("DELETE FROM blueprints WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
 		  Commands.Add("DELETE FROM preset_modifiers WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
 		  
-		  If Commands.LastRowIndex > -1 Then
+		  If Commands.LastIndex > -1 Then
 		    Self.BeginTransaction()
 		    Try
 		      For Each Command As String In Commands
@@ -2146,7 +2146,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          
 		          File.Remove
 		        Catch Err As RuntimeException
-		          While Self.mTransactions.LastRowIndex > -1
+		          While Self.mTransactions.LastIndex > -1
 		            Self.Rollback()
 		          Wend
 		          Continue
@@ -2177,7 +2177,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub mImportThread_Run(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  If Self.mPendingImports.LastRowIndex = -1 Then
+		  If Self.mPendingImports.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -2325,7 +2325,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub Rollback()
-		  If Self.mTransactions.LastRowIndex = -1 Then
+		  If Self.mTransactions.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -2786,8 +2786,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
-		    If ExtraClauses.LastRowIndex > -1 And ExtraClauses.LastRowIndex = ExtraValues.LastRowIndex Then
-		      For I As Integer = 0 To ExtraClauses.LastRowIndex
+		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
+		      For I As Integer = 0 To ExtraClauses.LastIndex
 		        Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
 		        Var Value As Variant = ExtraValues(I)
 		        Clauses.Add(Clause)
@@ -2796,7 +2796,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		    End If
 		    
-		    If Clauses.LastRowIndex > -1 Then
+		    If Clauses.LastIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
@@ -2964,7 +2964,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
-		    If Clauses.LastRowIndex > -1 Then
+		    If Clauses.LastIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY sort_order, label;"
@@ -3008,9 +3008,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Points() As Beacon.SpawnPoint = Self.SearchForSpawnPoints("", New Beacon.StringList)
 		    Var Labels() As String
 		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Points.LastRowIndex)
+		    Labels.ResizeTo(Points.LastIndex)
 		    
-		    For I As Integer = 0 To Points.LastRowIndex
+		    For I As Integer = 0 To Points.LastIndex
 		      If Points(I).ValidForMask(Availability) = False Then
 		        Continue
 		      End If
@@ -3043,7 +3043,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
 		  Self.mLock.Enter
 		  
-		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		  If Values.LastIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
 		    Var Dict As Dictionary = Values(0)
 		    Values.ResizeTo(-1)
@@ -3056,11 +3056,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Catch Err As TypeMismatchException
 		      Values.ResizeTo(-1)
 		    End Try
-		  ElseIf Values.LastRowIndex = 0 And Values(0).IsArray Then
+		  ElseIf Values.LastIndex = 0 And Values(0).IsArray Then
 		    Values = Values(0)
 		  End If
 		  
-		  For I As Integer = 0 To Values.LastRowIndex
+		  For I As Integer = 0 To Values.LastIndex
 		    Var Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
@@ -3088,7 +3088,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Function SQLSelect(SQLString As String, ParamArray Values() As Variant) As RowSet
 		  Self.mLock.Enter
 		  
-		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		  If Values.LastIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
 		    Var Dict As Dictionary = Values(0)
 		    Values.ResizeTo(-1)
@@ -3103,7 +3103,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  For I As Integer = 0 To Values.LastRowIndex
+		  For I As Integer = 0 To Values.LastIndex
 		    Var Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue

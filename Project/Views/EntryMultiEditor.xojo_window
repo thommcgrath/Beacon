@@ -143,8 +143,8 @@ End
 		  End If
 		  
 		  Var Entries() As Beacon.SetEntry
-		  Entries.ResizeTo(Sources.LastRowIndex)
-		  For I As Integer = 0 To Sources.LastRowIndex
+		  Entries.ResizeTo(Sources.LastIndex)
+		  For I As Integer = 0 To Sources.LastIndex
 		    Entries(I) = New Beacon.SetEntry(Sources(I))
 		  Next
 		  Win.Editor.ApplyTo(Entries)

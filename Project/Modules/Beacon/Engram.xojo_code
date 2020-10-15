@@ -29,9 +29,9 @@ Implements Beacon.Blueprint
 		Function ClassString() As String
 		  If Self.IsValid Then
 		    Var Components() As String = Self.mPath.Split("/")
-		    Var Tail As String = Components(Components.LastRowIndex)
+		    Var Tail As String = Components(Components.LastIndex)
 		    Components = Tail.Split(".")
-		    Return Components(Components.LastRowIndex) + "_C"
+		    Return Components(Components.LastIndex) + "_C"
 		  Else
 		    If Self.mPath.Length > 2 And Self.mPath.Right(2) = "_C" Then
 		      Return Self.mPath
@@ -77,8 +77,8 @@ Implements Beacon.Blueprint
 		  Next
 		  
 		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
-		  Self.mIngredients.ResizeTo(Source.mIngredients.LastRowIndex)
-		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
 		  Next
 		End Sub
@@ -361,8 +361,8 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone

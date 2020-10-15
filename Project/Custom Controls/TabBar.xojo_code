@@ -5,7 +5,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Var Point As New Xojo.Point(X, Y)
-		  For I As Integer = 0 To Self.mTabRects.LastRowIndex
+		  For I As Integer = 0 To Self.mTabRects.LastIndex
 		    If Self.mTabRects(I) = Nil Then
 		      Continue
 		    End If
@@ -249,7 +249,7 @@ Implements ObservationKit.Observer
 		Private Sub MouseMove(X As Integer, Y As Integer)
 		  Var HoverRect As Xojo.Rect
 		  Var Point As New Xojo.Point(X, Y)
-		  For I As Integer = 0 To Self.mCloseBoxes.LastRowIndex
+		  For I As Integer = 0 To Self.mCloseBoxes.LastIndex
 		    If Self.mCloseBoxes(I) = Nil Then
 		      Continue
 		    End If
@@ -312,7 +312,7 @@ Implements ObservationKit.Observer
 			  If Self.mCount <> Value Then
 			    Self.mCount = Value
 			    
-			    Var OldBound As Integer = Self.mTabRects.LastRowIndex
+			    Var OldBound As Integer = Self.mTabRects.LastIndex
 			    Var NewBound As Integer = Value - 1
 			    For I As Integer = OldBound + 1 To NewBound
 			      Var View As BeaconSubview = RaiseEvent ViewAtIndex(I)

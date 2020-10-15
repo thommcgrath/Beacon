@@ -239,7 +239,7 @@ End
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document, Handler As ResolveIssuesDialog.GoToIssueCallback = Nil)
 		  Var Issues() As Beacon.Issue = DescribeIssues(Document)
-		  If Issues.LastRowIndex = -1 Then
+		  If Issues.LastIndex = -1 Then
 		    Return
 		  End If
 		  

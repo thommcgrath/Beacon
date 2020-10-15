@@ -232,7 +232,7 @@ End
 		  Self.mUpdating = True
 		  
 		  List.RemoveAllRows
-		  For I As Integer = 0 To Children.LastRowIndex  
+		  For I As Integer = 0 To Children.LastIndex  
 		    Var Child As String = Children(I)
 		    If Child.EndsWith("/") Then
 		      Child = Child.Left(Child.Length - 1)

@@ -6,10 +6,10 @@ Protected Module Beacon
 		    Return
 		  End If
 		  
-		  Var StartingIndex As Integer = Destination.LastRowIndex + 1
+		  Var StartingIndex As Integer = Destination.LastIndex + 1
 		  Destination.ResizeTo((Destination.Count + Source.Count) - 1)
 		  
-		  For Idx As Integer = StartingIndex To Destination.LastRowIndex
+		  For Idx As Integer = StartingIndex To Destination.LastIndex
 		    Destination(Idx) = Source(Idx - StartingIndex)
 		  Next
 		End Sub
@@ -25,7 +25,7 @@ Protected Module Beacon
 		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As String)
 		  Var Tags() As String = Blueprint.Tags
 		  Var Changed As Boolean
-		  For I As Integer = 0 To TagsToAdd.LastRowIndex
+		  For I As Integer = 0 To TagsToAdd.LastIndex
 		    Var Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
 		    
 		    If Tag = "object" Then
@@ -51,12 +51,12 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function AreElementsEqual(Items() As Variant) As Boolean
-		  If Items = Nil Or Items.LastRowIndex <= 0 Then
+		  If Items = Nil Or Items.LastIndex <= 0 Then
 		    Return True
 		  End If
 		  
 		  Var CommonValue As Variant = Items(0)
-		  For Idx As Integer = 1 To Items.LastRowIndex
+		  For Idx As Integer = 1 To Items.LastIndex
 		    If CommonValue <> Items(Idx) Then
 		      Return False
 		    End If
@@ -128,9 +128,9 @@ Protected Module Beacon
 		  End If
 		  
 		  Var Components() As String = Path.Split("/")
-		  Var Tail As String = Components(Components.LastRowIndex)
+		  Var Tail As String = Components(Components.LastIndex)
 		  Components = Tail.Split(".")
-		  Return Components(Components.LastRowIndex) + "_C"
+		  Return Components(Components.LastIndex) + "_C"
 		End Function
 	#tag EndMethod
 
@@ -424,7 +424,7 @@ Protected Module Beacon
 		  Var IgnoreLines As Boolean
 		  Var Lines() As String = Input.Split(EOL)
 		  Var FilteredLines() As String
-		  For I As Integer = 0 To Lines.LastRowIndex
+		  For I As Integer = 0 To Lines.LastIndex
 		    Var Line As String = Lines(I).Trim
 		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		      Select Case Line
@@ -450,9 +450,9 @@ Protected Module Beacon
 		  Var Counter As Integer = 1
 		  
 		  Var Words() As String = DesiredLabel.Split(" ")
-		  If Words.LastRowIndex > 0 And IsNumeric(Words(Words.LastRowIndex)) Then
-		    Counter = Val(Words(Words.LastRowIndex))
-		    Words.RemoveAt(Words.LastRowIndex)
+		  If Words.LastIndex > 0 And IsNumeric(Words(Words.LastIndex)) Then
+		    Counter = Val(Words(Words.LastIndex))
+		    Words.RemoveAt(Words.LastIndex)
 		    DesiredLabel = Words.Join(" ")
 		  End If
 		  
@@ -493,7 +493,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
-		  For I As Integer = Values.LastRowIndex DownTo 0
+		  For I As Integer = Values.LastIndex DownTo 0
 		    Var ValueName As String = NameOfValue(Values(I))
 		    If ValueName = FullName Then
 		      Return Values(I)
@@ -571,13 +571,13 @@ Protected Module Beacon
 		    
 		    Const TestValue = "/script/"
 		    Static EncodingsList() As TextEncoding
-		    If EncodingsList.LastRowIndex = -1 Then
+		    If EncodingsList.LastIndex = -1 Then
 		      EncodingsList = Array(Encodings.UTF8, Encodings.UTF16LE, Encodings.UTF16BE)
 		      Var Bound As Integer = Encodings.Count - 1
 		      For I As Integer = 0 To Bound
 		        Var Encoding As TextEncoding = Encodings.Item(I)
 		        If EncodingsList.IndexOf(Encoding) = -1 Then
-		          EncodingsList.AddRow(Encoding)
+		          EncodingsList.Add(Encoding)
 		        End If
 		      Next
 		    End If
@@ -700,15 +700,15 @@ Protected Module Beacon
 		    Names.Add(Map.Name)
 		  Next
 		  
-		  If Names.LastRowIndex = -1 Then
+		  If Names.LastIndex = -1 Then
 		    Return "No Maps"
-		  ElseIf Names.LastRowIndex = 0 Then
+		  ElseIf Names.LastIndex = 0 Then
 		    Return Names(0)
-		  ElseIf Names.LastRowIndex = 1 Then
+		  ElseIf Names.LastIndex = 1 Then
 		    Return Names(0) + " & " + Names(1)
 		  Else
-		    Var Tail As String = Names(Names.LastRowIndex)
-		    Names.RemoveAt(Names.LastRowIndex)
+		    Var Tail As String = Names(Names.LastIndex)
+		    Names.RemoveAt(Names.LastIndex)
 		    Return Names.Join(", ") + ", & " + Tail
 		  End If
 		End Function
@@ -733,7 +733,7 @@ Protected Module Beacon
 		      Parts.RemoveAt(0)
 		    End If
 		    
-		    For I As Integer = Parts.LastRowIndex DownTo 0
+		    For I As Integer = Parts.LastIndex DownTo 0
 		      Select Case Parts(I)
 		      Case "AB"
 		        MapName = "Aberration"
@@ -919,7 +919,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Sub Merge(Extends FirstArray() As String, SecondArray() As String)
-		  For Idx As Integer = SecondArray.FirstRowIndex To SecondArray.LastRowIndex
+		  For Idx As Integer = SecondArray.FirstRowIndex To SecondArray.LastIndex
 		    FirstArray.Add(SecondArray(Idx))
 		  Next
 		End Sub
@@ -1175,7 +1175,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Var Extensions() As String = Type.Extensions.Split(";")
-		  If Extensions.LastRowIndex = -1 Then
+		  If Extensions.LastIndex = -1 Then
 		    Return ""
 		  End If
 		  
@@ -1215,7 +1215,7 @@ Protected Module Beacon
 		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As String)
 		  Var Tags() As String = Blueprint.Tags
 		  Var Changed As Boolean
-		  For I As Integer = 0 To TagsToRemove.LastRowIndex
+		  For I As Integer = 0 To TagsToRemove.LastIndex
 		    Var Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
 		    
 		    If Tag = "object" Then
@@ -1434,8 +1434,8 @@ Protected Module Beacon
 		    Var Parts() As String = Filename.Split(".")
 		    Var Basename, Extension As String
 		    If Parts.Count >= 2 Then
-		      Extension = "." + Parts(Parts.LastRowIndex)
-		      Parts.RemoveAt(Parts.LastRowIndex)
+		      Extension = "." + Parts(Parts.LastIndex)
+		      Parts.RemoveAt(Parts.LastIndex)
 		      Basename = Parts.Join(".")
 		      MaxLength = MaxLength - (Extension.Length)
 		      If MaxLength <= 0 Then
@@ -1647,7 +1647,7 @@ Protected Module Beacon
 		    For I As Integer = 0 To Sets.LastRowIndex
 		      ItemSetPool.Add(Sets.AtIndex(I))
 		    Next
-		    For I As Integer = 0 To MandatorySets.LastRowIndex
+		    For I As Integer = 0 To MandatorySets.LastIndex
 		      ItemSetPool.Add(MandatorySets(I))
 		    Next
 		    
@@ -1656,7 +1656,7 @@ Protected Module Beacon
 		    Var WeightSum, Weights() As Double
 		    Var WeightLookup As Dictionary
 		    For I As Integer = 1 To ChooseSets
-		      If ItemSetPool.LastRowIndex = -1 Then
+		      If ItemSetPool.LastIndex = -1 Then
 		        Exit For I
 		      End If
 		      
@@ -1669,7 +1669,7 @@ Protected Module Beacon
 		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
 		        Var SelectedSet As Beacon.ItemSet
 		        
-		        For X As Integer = 0 To Weights.LastRowIndex
+		        For X As Integer = 0 To Weights.LastIndex
 		          If Weights(X) >= Decision Then
 		            Var SelectedWeight As Double = Weights(X)
 		            SelectedSet = WeightLookup.Value(SelectedWeight)
@@ -1683,7 +1683,7 @@ Protected Module Beacon
 		        
 		        SelectedSets.Add(SelectedSet)
 		        If Source.PreventDuplicates Then
-		          For X As Integer = 0 To ItemSetPool.LastRowIndex
+		          For X As Integer = 0 To ItemSetPool.LastIndex
 		            If ItemSetPool(X) = SelectedSet Then
 		              ItemSetPool.RemoveAt(X)
 		              Exit For X
@@ -1709,7 +1709,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Sources() As Beacon.LootSource)
-		  Var Bound As Integer = Sources.LastRowIndex
+		  Var Bound As Integer = Sources.LastIndex
 		  If Bound = -1 Then
 		    Return
 		  End If
@@ -1726,7 +1726,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Qualities() As Beacon.Quality)
-		  Var Bound As Integer = Qualities.LastRowIndex
+		  Var Bound As Integer = Qualities.LastIndex
 		  If Bound = -1 Then
 		    Return
 		  End If

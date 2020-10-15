@@ -642,12 +642,12 @@ End
 		Private Shared Function BuildPostFields(Err As RuntimeException) As Dictionary
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Stack() As StackFrame = Err.StackFrames
-		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		  While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
 		    Stack.RemoveAt(0)
 		  Wend
 		  
 		  Var Location As String = "Unknown"
-		  If Stack.LastRowIndex >= 0 Then
+		  If Stack.LastIndex >= 0 Then
 		    Location = Stack(0).Name
 		  End If
 		  Var Reason As String = Err.Reason

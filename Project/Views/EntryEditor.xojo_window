@@ -526,14 +526,14 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
-		  If Sources <> Nil And Sources.LastRowIndex > 0 Then
+		  If Sources <> Nil And Sources.LastIndex > 0 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
 		  Var Win As New EntryEditor(Mods)
 		  
-		  If Sources <> Nil And Sources.LastRowIndex = 0 Then
+		  If Sources <> Nil And Sources.LastIndex = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
 		  End If
 		  
@@ -543,7 +543,7 @@ End
 		  
 		  Var Entries() As Beacon.SetEntry = Win.mCreatedEntries
 		  Win.Close
-		  If Entries.LastRowIndex = -1 Then
+		  If Entries.LastIndex = -1 Then
 		    Return Nil
 		  Else
 		    Return Entries
@@ -854,7 +854,7 @@ End
 		      Entry.Append(Option)
 		    Next
 		    Entries.Add(Entry)
-		  ElseIf Options.LastRowIndex > 0 Then
+		  ElseIf Options.LastIndex > 0 Then
 		    If SingleEntryCheck.Value Then
 		      // Merge all into one
 		      Var Entry As New Beacon.SetEntry
@@ -870,7 +870,7 @@ End
 		        Entries.Add(Entry)
 		      Next
 		    End If
-		  ElseIf Options.LastRowIndex = 0 Then
+		  ElseIf Options.LastIndex = 0 Then
 		    Var Entry As New Beacon.SetEntry
 		    Entry.Append(Options(0))
 		    Entries.Add(Entry)

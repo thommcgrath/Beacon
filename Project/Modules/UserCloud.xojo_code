@@ -186,7 +186,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  Var Components() As String = RemotePath.Split("/")
-		  If Components.LastRowIndex = -1 Then
+		  If Components.LastIndex = -1 Then
 		    Return LocalFolder
 		  End If
 		  
@@ -199,14 +199,14 @@ Protected Module UserCloud
 		    End If
 		  End If
 		  
-		  For I As Integer = 0 To Components.LastRowIndex - 1
+		  For I As Integer = 0 To Components.LastIndex - 1
 		    LocalFolder = LocalFolder.Child(DecodeURLComponent(Components(I), Encoding))
 		    If Not LocalFolder.CheckIsFolder(Create) Then
 		      Return Nil
 		    End If
 		  Next
 		  
-		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastRowIndex), Encoding))
+		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastIndex), Encoding))
 		End Function
 	#tag EndMethod
 

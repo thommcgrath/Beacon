@@ -78,8 +78,8 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Self.mRequiredItemSets = Source.RequiredItemSetCount
 		  
 		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
-		  Self.mMandatoryItemSets.ResizeTo(MandatorySets.LastRowIndex)
-		  For I As Integer = 0 To MandatorySets.LastRowIndex
+		  Self.mMandatoryItemSets.ResizeTo(MandatorySets.LastIndex)
+		  For I As Integer = 0 To MandatorySets.LastIndex
 		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(MandatorySets(I))
 		  Next
 		End Sub
@@ -217,8 +217,8 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag Method, Flags = &h0
 		Function MandatoryItemSets() As Beacon.ItemSet()
 		  Var Arr() As Beacon.ItemSet
-		  Arr.ResizeTo(Self.mMandatoryItemSets.LastRowIndex)
-		  For I As Integer = 0 To Self.mMandatoryItemSets.LastRowIndex
+		  Arr.ResizeTo(Self.mMandatoryItemSets.LastIndex)
+		  For I As Integer = 0 To Self.mMandatoryItemSets.LastIndex
 		    Arr(I) = New Beacon.ItemSet(Self.mMandatoryItemSets(I))
 		  Next
 		  Return Arr

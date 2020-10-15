@@ -658,7 +658,7 @@ End
 		  Self.UpdateUI()
 		  Self.SwapButtons()
 		  
-		  If Self.mEngrams.LastRowIndex = -1 Then
+		  If Self.mEngrams.LastIndex = -1 Then
 		    // New entry
 		    Self.EnabledRadio.Value = True
 		  Else
@@ -702,7 +702,7 @@ End
 		      End If
 		    End If
 		    
-		    If Self.mEngrams.LastRowIndex = 0 Then
+		    If Self.mEngrams.LastIndex = 0 Then
 		      Self.EntryStringField.Value = Self.mConfig.EntryString(Self.mEngrams(0))
 		    Else
 		      Self.EntryStringField.Value = "Multiple"
@@ -741,7 +741,7 @@ End
 		    End If
 		  End If
 		  
-		  If Self.mEngrams.LastRowIndex > 0 Then
+		  If Self.mEngrams.LastIndex > 0 Then
 		    Self.AutoUnlockEditCheck.Visible = True
 		    Self.HiddenEditCheck.Visible = True
 		    Self.LevelEditCheck.Visible = True
@@ -811,7 +811,7 @@ End
 		    Self.RequiredPointsField.Enabled = False
 		    Self.RequiredPointsLabel.Enabled = False
 		    
-		    Var Multi As Boolean = Self.mEngrams.LastRowIndex > 0
+		    Var Multi As Boolean = Self.mEngrams.LastIndex > 0
 		    Self.AutoUnlockEditCheck.Visible = Multi
 		    Self.HiddenEditCheck.Visible = Multi
 		    Self.LevelEditCheck.Visible = Multi
@@ -876,7 +876,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Engrams() As Beacon.Engram
-		  If Self.mEngrams.LastRowIndex = -1 Then
+		  If Self.mEngrams.LastIndex = -1 Then
 		    If Not Self.EntryStringField.Value.EndsWith("_C") Then
 		      Self.ShowAlert("The entered Entry String is not correct.", "Ark Entry Strings usually begin with EngramEntry and always end with _C.")
 		      Return
@@ -942,7 +942,7 @@ End
 		  End If
 		  
 		  Var HasOfficialEngram As Boolean
-		  For Idx As Integer = 0 To Self.mEngrams.LastRowIndex
+		  For Idx As Integer = 0 To Self.mEngrams.LastIndex
 		    If Self.mEngrams(Idx) Is Nil Then
 		      Continue
 		    End If

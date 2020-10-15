@@ -1076,13 +1076,13 @@ End
 		Sub Action()
 		  Var GameIniPath As String = Self.Browser.CurrentPath
 		  Var Components() As String = GameIniPath.Split("/")
-		  If Components.LastRowIndex <= 2 Then
+		  If Components.LastIndex <= 2 Then
 		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
 		    Return
 		  End If
-		  Components.RemoveAt(Components.LastRowIndex) // Remove Game.ini
-		  Components.RemoveAt(Components.LastRowIndex) // Remove WindowsServer
-		  Components.RemoveAt(Components.LastRowIndex) // Remove Config
+		  Components.RemoveAt(Components.LastIndex) // Remove Game.ini
+		  Components.RemoveAt(Components.LastIndex) // Remove WindowsServer
+		  Components.RemoveAt(Components.LastIndex) // Remove Config
 		  
 		  // Should now equal the "Saved" directory
 		  Dictionary(Self.mActiveController.UserData).Value("path") = Components.Join("/")

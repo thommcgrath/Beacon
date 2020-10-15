@@ -104,7 +104,7 @@ End
 		  
 		  Self.List.RowCount = Recents.Count
 		  
-		  For I As Integer = 0 To Recents.LastRowIndex
+		  For I As Integer = 0 To Recents.LastIndex
 		    Var URL As Beacon.DocumentURL = Recents(I)
 		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
 		    Self.List.RowTagAt(I) = URL
@@ -205,7 +205,7 @@ End
 		    End If
 		    
 		    Var SelectedURL As Beacon.DocumentURL = Me.RowTagAt(I)
-		    For X As Integer = Recents.LastRowIndex DownTo 0
+		    For X As Integer = Recents.LastIndex DownTo 0
 		      If Recents(X) = SelectedURL Then
 		        Changed = True
 		        Recents.RemoveAt(X)

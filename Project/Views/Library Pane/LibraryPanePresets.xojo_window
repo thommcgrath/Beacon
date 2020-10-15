@@ -174,7 +174,7 @@ End
 		    End If
 		  Loop Until Obj.NextItem = False
 		  
-		  If AddedPresets.LastRowIndex > -1 Then
+		  If AddedPresets.LastIndex > -1 Then
 		    Self.UpdatePresets(AddedPresets)
 		  End If
 		End Sub
@@ -240,7 +240,7 @@ End
 		    End If
 		  Next
 		  
-		  If Clones.LastRowIndex = -1 Then
+		  If Clones.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -250,7 +250,7 @@ End
 		  
 		  Self.UpdatePresets(Clones)
 		  
-		  If Clones.LastRowIndex = 0 Then
+		  If Clones.LastIndex = 0 Then
 		    Self.OpenPreset(Clones(0))
 		  End If
 		End Sub
@@ -416,9 +416,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdatePresets(SelectPresets() As Beacon.Preset)
 		  Var Presets() As Beacon.Preset = Beacon.Data.Presets
-		  Var PresetCount As Integer = Presets.LastRowIndex + 1
+		  Var PresetCount As Integer = Presets.LastIndex + 1
 		  
-		  If SelectPresets.LastRowIndex = -1 Then
+		  If SelectPresets.LastIndex = -1 Then
 		    For I As Integer = 0 To List.RowCount - 1
 		      If List.Selected(I) Then
 		        SelectPresets.Add(List.RowTagAt(I))

@@ -144,10 +144,10 @@ End
 		  Var CellWidth As Double = G.Width - (CellPadding * 2)
 		  Var Pos As Double = VerticalOffset
 		  Var ContentHeight As Integer
-		  Self.mNotificationRects.ResizeTo(Self.mNotifications.LastRowIndex)
-		  Self.mCloseRects.ResizeTo(Self.mNotifications.LastRowIndex)
-		  For I As Integer = 0 To Self.mNotifications.LastRowIndex
-		    Var DrawBottomBorder As Boolean = I < Self.mNotifications.LastRowIndex
+		  Self.mNotificationRects.ResizeTo(Self.mNotifications.LastIndex)
+		  Self.mCloseRects.ResizeTo(Self.mNotifications.LastIndex)
+		  For I As Integer = 0 To Self.mNotifications.LastIndex
+		    Var DrawBottomBorder As Boolean = I < Self.mNotifications.LastIndex
 		    
 		    Var Message As String = Self.mNotifications(I).Message
 		    Var MessageTop As Double = Pos + CellPadding
@@ -215,8 +215,8 @@ End
 		  Var OldUnreadCount As Integer = Self.UnreadCount
 		  
 		  Self.mNotifications = LocalData.SharedInstance.GetNotifications
-		  Self.mNotificationRects.ResizeTo(Self.mNotifications.LastRowIndex)
-		  Self.mCloseRects.ResizeTo(Self.mNotifications.LastRowIndex)
+		  Self.mNotificationRects.ResizeTo(Self.mNotifications.LastIndex)
+		  Self.mCloseRects.ResizeTo(Self.mNotifications.LastIndex)
 		  Self.DrawCanvas.Invalidate
 		  
 		  Var NewUnreadCount As Integer = Self.UnreadCount
@@ -314,7 +314,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  For I As Integer = 0 To Self.mNotificationRects.LastRowIndex
+		  For I As Integer = 0 To Self.mNotificationRects.LastIndex
 		    Try
 		      If Self.mNotificationRects(I).Contains(X, Y) Then
 		        If Self.mCloseRects(I).Contains(X, Y) Then
@@ -374,7 +374,7 @@ End
 		  End If
 		  
 		  Try
-		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.LastRowIndex And Self.mDownRect.Contains(X, Y) Then
+		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.LastIndex And Self.mDownRect.Contains(X, Y) Then
 		      Var OldUnreadCount As Integer = Self.UnreadCount
 		      If Not Self.mPressedOnClose Then
 		        Var URL As String = Self.mNotifications(Self.mDownIndex).ActionURL

@@ -311,7 +311,7 @@ End
 		    Next
 		  Next
 		  
-		  Var BlueprintCount As Integer = Self.mBlueprints.LastRowIndex + 1
+		  Var BlueprintCount As Integer = Self.mBlueprints.LastIndex + 1
 		  Self.MapSelector.SetWithMasks(Masks)
 		  
 		  Var CommonTags() As String
@@ -343,8 +343,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Blueprints() As Beacon.Blueprint)
 		  // Calling the overridden superclass constructor.
-		  Self.mBlueprints.ResizeTo(Blueprints.LastRowIndex)
-		  For Idx As Integer = 0 To Blueprints.LastRowIndex
+		  Self.mBlueprints.ResizeTo(Blueprints.LastIndex)
+		  For Idx As Integer = 0 To Blueprints.LastIndex
 		    Self.mBlueprints(Idx) = Blueprints(Idx)
 		  Next
 		  
@@ -396,7 +396,7 @@ End
 		  Var AddMask As UInt64 = Self.MapSelector.CheckedMask
 		  Var ClearMask As UInt64 = Self.MapSelector.UncheckedMask
 		  
-		  For Idx As Integer = 0 To Self.mBlueprints.LastRowIndex
+		  For Idx As Integer = 0 To Self.mBlueprints.LastIndex
 		    Var Blueprint As Beacon.MutableBlueprint = Self.mBlueprints(Idx).MutableVersion
 		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
 		    Blueprint.AddTags(AddTags)

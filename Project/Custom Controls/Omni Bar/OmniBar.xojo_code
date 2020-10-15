@@ -151,9 +151,9 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var NextPos As Double = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
 		  Var Rects() As Rect
 		  Var FlexSpaceIndexes() As Integer
-		  Rects.ResizeTo(Self.mItems.LastRowIndex)
+		  Rects.ResizeTo(Self.mItems.LastIndex)
 		  G.Bold = True // Assume all are toggled for the sake of spacing
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    If Item Is Nil Then
 		      Continue
@@ -165,7 +165,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Else
 		      Var ItemWidth As Double = Item.Width(G)
 		      Rects(Idx) = New Rect(NextPos, 0, ItemWidth, G.Height)
-		      If ItemWidth > 0 And Idx < Self.mItems.LastRowIndex Then
+		      If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
 		        NextPos = NextPos + ItemWidth + Max(Item.Margin, Self.mItems(Idx + 1).Margin)
 		      End If
 		    End If
@@ -173,7 +173,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  If FlexSpaceIndexes.Count > 0 Then
 		    Var MinX, MaxX As Integer
-		    For Idx As Integer = 0 To Rects.LastRowIndex
+		    For Idx As Integer = 0 To Rects.LastIndex
 		      If Idx = 0 Then
 		        MinX = Rects(Idx).Left
 		        MaxX = Rects(Idx).Right
@@ -189,11 +189,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Var FlexItemWidth As Integer = Floor(FlexWidth / FlexSpaceIndexes.Count)
 		    Var FlexRemainder As Integer = AvailableWidth - (FlexItemWidth * FlexSpaceIndexes.Count)
 		    
-		    For FlexNum As Integer = 0 To FlexSpaceIndexes.LastRowIndex
+		    For FlexNum As Integer = 0 To FlexSpaceIndexes.LastIndex
 		      Var Idx As Integer = FlexSpaceIndexes(FlexNum)
 		      Var ItemWidth As Integer = FlexItemWidth + If(FlexNum < FlexRemainder, 1, 0)
 		      Rects(Idx) = New Rect(Rects(Idx).Left, Rects(Idx).Top, ItemWidth, Rects(Idx).Height)
-		      For ItemIdx As Integer = Idx + 1 To Rects.LastRowIndex
+		      For ItemIdx As Integer = Idx + 1 To Rects.LastIndex
 		        Rects(ItemIdx).Offset(ItemWidth, 0)
 		      Next
 		    Next
@@ -206,7 +206,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    Var ItemRect As Rect = Rects(Idx)
 		    If Item Is Nil Or ItemRect Is Nil Then
@@ -214,7 +214,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		    
 		    Var ShouldDraw As Boolean
-		    If Areas.LastRowIndex = -1 Then
+		    If Areas.LastIndex = -1 Then
 		      ShouldDraw = True
 		    Else
 		      For Each Area As Rect In Areas
@@ -289,7 +289,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function IndexAtPoint(Point As Point) As Integer
-		  For Idx As Integer = 0 To Self.mItemRects.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItemRects.LastIndex
 		    If (Self.mItemRects(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
 		      If Not Self.mItems(Idx).Clickable Then
 		        Return -1
@@ -315,7 +315,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Name As String) As Integer
-		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    If (Self.mItems(Idx) Is Nil) = False And Self.mItems(Idx).Name = Name Then
 		      Return Idx
 		    End If
@@ -336,7 +336,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(Idx As Integer)
-		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastRowIndex Then
+		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
 		    Super.Invalidate(False)
 		    Return
 		  End If
@@ -353,7 +353,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function Item(Idx As Integer) As OmniBarItem
-		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
+		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Return Self.mItems(Idx)
 		  End If
 		End Function
@@ -378,7 +378,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -417,7 +417,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
+		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems.RemoveAt(Idx)
 		    Self.Invalidate
@@ -446,7 +446,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub RemoveAllItems()
 		  If Self.mItems.Count > 0 Then
-		    For Idx As Integer = Self.mItems.LastRowIndex DownTo 0
+		    For Idx As Integer = Self.mItems.LastIndex DownTo 0
 		      Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
 		      Self.mItems.RemoveAt(Idx)
 		    Next

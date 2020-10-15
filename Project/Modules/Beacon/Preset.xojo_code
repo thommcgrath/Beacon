@@ -55,8 +55,8 @@ Implements Beacon.Countable
 		    Self.mModifierValues.Value(Entry.Key) = Dict.Clone
 		  Next
 		  
-		  Self.mContents.ResizeTo(Source.mContents.LastRowIndex)
-		  For I As Integer = 0 To Self.mContents.LastRowIndex
+		  Self.mContents.ResizeTo(Source.mContents.LastIndex)
+		  For I As Integer = 0 To Self.mContents.LastIndex
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
 		End Sub
@@ -64,7 +64,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mContents.LastRowIndex + 1
+		  Return Self.mContents.LastIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -151,7 +151,7 @@ Implements Beacon.Countable
 		      End If
 		      
 		      Var IDs() As String = SourceKindToModifierID(ModifierID)
-		      If IDs.LastRowIndex = -1 Then
+		      If IDs.LastIndex = -1 Then
 		        IDs.Add(ModifierID)
 		      End If
 		      
@@ -202,7 +202,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Entry As Beacon.PresetEntry) As Integer
-		  For I As Integer = 0 To Self.mContents.LastRowIndex
+		  For I As Integer = 0 To Self.mContents.LastIndex
 		    If Self.mContents(I) = Entry Then
 		      Return I
 		    End If
@@ -220,8 +220,8 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Iterator() As Iterator
 		  Var Contents() As Variant
-		  Contents.ResizeTo(Self.mContents.LastRowIndex)
-		  For I As Integer = 0 To Self.mContents.LastRowIndex
+		  Contents.ResizeTo(Self.mContents.LastIndex)
+		  For I As Integer = 0 To Self.mContents.LastIndex
 		    Contents(I) = Self.mContents(I)
 		  Next
 		  Return New Beacon.GenericIterator(Contents)

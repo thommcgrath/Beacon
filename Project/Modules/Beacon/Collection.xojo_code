@@ -24,8 +24,8 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Items() As Variant)
-		  Self.Constructor(Items.LastRowIndex)
-		  For I As Integer = 0 To Items.LastRowIndex
+		  Self.Constructor(Items.LastIndex)
+		  For I As Integer = 0 To Items.LastIndex
 		    Self.mItems(I) = Items(I)
 		  Next
 		End Sub
@@ -33,13 +33,13 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mItems.LastRowIndex + 1
+		  Return Self.mItems.LastIndex + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Variant) As Integer
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(I) = Item Then
 		      Return I
 		    End If
@@ -64,7 +64,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 

@@ -22,9 +22,9 @@ Protected Class Engram
 		Function ClassString() As String
 		  If Self.mPath.IndexOf("/") > -1 And Self.mPath.IndexOf(".") > -1 Then
 		    Var Components() As String = Self.mPath.Split("/")
-		    Var Tail As String = Components(Components.LastRowIndex)
+		    Var Tail As String = Components(Components.LastIndex)
 		    Components = Tail.Split(".")
-		    Return Components(Components.LastRowIndex) + "_C"
+		    Return Components(Components.LastIndex) + "_C"
 		  End If
 		End Function
 	#tag EndMethod

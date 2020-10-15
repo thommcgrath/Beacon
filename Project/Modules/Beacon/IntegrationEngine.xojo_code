@@ -152,13 +152,13 @@ Protected Class IntegrationEngine
 		Protected Sub Log(Message As String, ReplaceLast As Boolean = False)
 		  App.Log(Self.mID + Encodings.ASCII.Chr(9) + Message)
 		  
-		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message Then
+		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastIndex) = Message Then
 		    // Don't duplicate the logs
 		    Return
 		  End If
 		  
 		  If ReplaceLast And Self.mLogMessages.Count > 0 Then
-		    Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message
+		    Self.mLogMessages(Self.mLogMessages.LastIndex) = Message
 		  Else
 		    Self.mLogMessages.Add(Message)
 		  End If
@@ -172,7 +172,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  If MostRecent Then
-		    Return Self.mLogMessages(Self.mLogMessages.LastRowIndex)
+		    Return Self.mLogMessages(Self.mLogMessages.LastIndex)
 		  Else
 		    Return Self.mLogMessages.Join(EndOfLine)
 		  End If
@@ -257,7 +257,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub RemoveLastLog()
 		  If Self.mLogMessages.Count > 0 Then
-		    Self.mLogMessages.RemoveAt(Self.mLogMessages.LastRowIndex)
+		    Self.mLogMessages.RemoveAt(Self.mLogMessages.LastIndex)
 		  End If
 		End Sub
 	#tag EndMethod

@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  For I As Integer = 0 To Self.mValues.LastRowIndex
+		  For I As Integer = 0 To Self.mValues.LastIndex
 		    If Self.mValues(I) = Nil Then
 		      Continue
 		    End If
@@ -24,7 +24,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  For I As Integer = 0 To Self.mValues.LastRowIndex
+		  For I As Integer = 0 To Self.mValues.LastIndex
 		    If Self.mValues(I) = Nil Then
 		      Continue
 		    End If
@@ -40,7 +40,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  For I As Integer = 0 To Self.mValues.LastRowIndex
+		  For I As Integer = 0 To Self.mValues.LastIndex
 		    If Self.mValues(I) = Nil Then
 		      Continue
 		    End If
@@ -159,7 +159,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Config As New BeaconConfigs.StatLimits()
 		  
-		  For Index As Integer = 0 To Config.mValues.LastRowIndex
+		  For Index As Integer = 0 To Config.mValues.LastIndex
 		    Var ValueTestOne As Double = ParsedData.DoubleValue("ItemStatClamps[" + Index.ToString + "]", 100.0, True)
 		    Var ValueTestTwo As Double = ParsedData.DoubleValue("ItemStatClamps[" + Index.ToString + "]", 200.0, True)
 		    

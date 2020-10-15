@@ -417,7 +417,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandlePastedSpawnPoints(SpawnPoints() As Beacon.SpawnPoint)
-		  If SpawnPoints.LastRowIndex = -1 Then
+		  If SpawnPoints.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -488,7 +488,7 @@ End
 		  
 		  Self.List.SelectionChangeBlocked = True
 		  Self.List.RowCount = Config.Count
-		  For I As Integer = 0 To SpawnPoints.LastRowIndex
+		  For I As Integer = 0 To SpawnPoints.LastIndex
 		    Var Prefix As String
 		    Select Case SpawnPoints(I).Mode
 		    Case Beacon.SpawnPoint.ModeOverride
@@ -559,7 +559,7 @@ End
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Var SpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document)
-		    If SpawnPoints.LastRowIndex = -1 Then
+		    If SpawnPoints.LastIndex = -1 Then
 		      Return
 		    End If
 		    
@@ -572,7 +572,7 @@ End
 		    Self.UpdateList(SpawnPoints)
 		  Case "DuplicateButton"
 		    Var TargetSpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document, AddSpawnPointDialog.UIModeDuplicate)
-		    If TargetSpawnPoints.LastRowIndex = -1 Then
+		    If TargetSpawnPoints.LastIndex = -1 Then
 		      Return
 		    End If
 		    
@@ -613,7 +613,7 @@ End
 		  
 		  Self.Editor.SpawnPoints = SpawnPoints
 		  Self.ControlToolbar.DuplicateButton.Enabled = Me.SelectedRowCount = 1
-		  Self.Pages.SelectedPanelIndex = If(SpawnPoints.LastRowIndex = -1, 0, 1)
+		  Self.Pages.SelectedPanelIndex = If(SpawnPoints.LastIndex = -1, 0, 1)
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent

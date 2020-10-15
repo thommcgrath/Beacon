@@ -505,8 +505,8 @@ End
 		  Next
 		  
 		  Self.mSettingUp = True
-		  Self.List.RowCount = Blueprints.LastRowIndex + 1
-		  For I As Integer = 0 To Blueprints.LastRowIndex
+		  Self.List.RowCount = Blueprints.LastIndex + 1
+		  For I As Integer = 0 To Blueprints.LastIndex
 		    Var Blueprint As Beacon.Blueprint = Blueprints(I)
 		    
 		    Self.List.RowTagAt(I) = Blueprint
@@ -663,7 +663,7 @@ End
 		  
 		  Var Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
 		  Var ImportedCount As Integer = LocalData.SharedInstance.SaveBlueprints(Blueprints, False)
-		  Var SkippedCount As Integer = (Blueprints.LastRowIndex + 1) - ImportedCount
+		  Var SkippedCount As Integer = (Blueprints.LastIndex + 1) - ImportedCount
 		  
 		  Self.SetupUI()
 		  

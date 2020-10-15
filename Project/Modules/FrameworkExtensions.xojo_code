@@ -19,14 +19,14 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
 		  Var Words() As String = Title.Split(" ")
-		  If Words.LastRowIndex >= 0 And Words(Words.LastRowIndex) = Suffix Then
+		  If Words.LastIndex >= 0 And Words(Words.LastIndex) = Suffix Then
 		    Words.Add("2")
-		  ElseIf Words.LastRowIndex >= 1 And Words(Words.LastRowIndex - 1) = Suffix Then
+		  ElseIf Words.LastIndex >= 1 And Words(Words.LastIndex - 1) = Suffix Then
 		    Var CopyNum As Integer
 		    #Pragma BreakOnExceptions Off
 		    Try
-		      CopyNum = Integer.FromString(Words(Words.LastRowIndex), Locale.Raw) + 1
-		      Words(Words.LastRowIndex) = CopyNum.ToString(Locale.Raw, "0")
+		      CopyNum = Integer.FromString(Words(Words.LastIndex), Locale.Raw) + 1
+		      Words(Words.LastIndex) = CopyNum.ToString(Locale.Raw, "0")
 		    Catch Err As RuntimeException
 		      Words.Add(Suffix)
 		    End Try
@@ -130,8 +130,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source() As String) As String()
 		  Var Result() As String
-		  Result.ResizeTo(Source.LastRowIndex)
-		  For I As Integer = 0 To Source.LastRowIndex
+		  Result.ResizeTo(Source.LastIndex)
+		  For I As Integer = 0 To Source.LastIndex
 		    Result(I) = Source(I)
 		  Next
 		  Return Result
@@ -220,7 +220,7 @@ Protected Module FrameworkExtensions
 		  End If
 		  
 		  Var Parts() As String = Name.Split(".")
-		  Return Parts(Parts.LastRowIndex)
+		  Return Parts(Parts.LastIndex)
 		End Function
 	#tag EndMethod
 
@@ -235,7 +235,7 @@ Protected Module FrameworkExtensions
 		  // Replaces NthField
 		  Var Fields() As String = Source.Split(Separator)
 		  Var Index As Integer = OneBasedIndex - 1
-		  If Index < 0 Or Index > Fields.LastRowIndex Then
+		  If Index < 0 Or Index > Fields.LastIndex Then
 		    Return ""
 		  Else
 		    Return Fields(Index)
@@ -527,8 +527,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToString(Extends Source() As String) As String()
 		  Var Result() As String
-		  Result.ResizeTo(Source.LastRowIndex)
-		  For I As Integer = 0 To Source.LastRowIndex
+		  Result.ResizeTo(Source.LastIndex)
+		  For I As Integer = 0 To Source.LastIndex
 		    Result(I) = Source(I)
 		  Next
 		  Return Result
@@ -561,13 +561,13 @@ Protected Module FrameworkExtensions
 		      Var Decoded As Double = VariantToDouble(Possible, ResolveWithFirst)
 		      Possibles.Add(Decoded)
 		    Next
-		    If Possibles.LastRowIndex = -1 Then
+		    If Possibles.LastIndex = -1 Then
 		      Return 0
 		    End If
 		    If ResolveWithFirst Then
 		      Return Possibles(0)
 		    Else
-		      Return Possibles(Possibles.LastRowIndex)
+		      Return Possibles(Possibles.LastIndex)
 		    End If
 		    
 		    Return 0

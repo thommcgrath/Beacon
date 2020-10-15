@@ -413,7 +413,7 @@ End
 		    Config.Append(Source)
 		  Next
 		  
-		  If AddedSources.LastRowIndex > -1 Then
+		  If AddedSources.LastIndex > -1 Then
 		    Self.Changed = True
 		    Self.UpdateSourceList(AddedSources)
 		  End If
@@ -538,7 +538,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddLootSources(Sources() As Beacon.LootSource)
-		  If Sources.LastRowIndex = -1 Then
+		  If Sources.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -722,11 +722,11 @@ End
 		    Next
 		  End If
 		  
-		  Self.List.RowCount = VisibleSources.LastRowIndex + 1
+		  Self.List.RowCount = VisibleSources.LastIndex + 1
 		  
 		  Self.mBlockSelectionChanged = True
 		  Var Selection() As Beacon.LootSource
-		  For I As Integer = 0 To VisibleSources.LastRowIndex
+		  For I As Integer = 0 To VisibleSources.LastIndex
 		    Self.List.RowTagAt(I) = VisibleSources(I)
 		    Self.List.CellValueAt(I, 0) = "" // Causes a redraw of the cell
 		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleSources(I).Path, VisibleSources(I).Label)
@@ -740,13 +740,13 @@ End
 		  Self.mBlockSelectionChanged = False
 		  
 		  Editor.Sources = Selection
-		  If Selection.LastRowIndex = -1 Then
+		  If Selection.LastIndex = -1 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1
 		  End If
 		  
-		  Self.Header.Rebuild.Enabled = VisibleSources.LastRowIndex > -1
+		  Self.Header.Rebuild.Enabled = VisibleSources.LastIndex > -1
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
@@ -833,7 +833,7 @@ End
 		    Var Config As BeaconConfigs.LootDrops = Self.Config(False)
 		    Var Mask As UInt64 = Self.Document.MapCompatibility
 		    If Config <> Nil Then
-		      For I As Integer = LootSources.LastRowIndex DownTo 0
+		      For I As Integer = LootSources.LastIndex DownTo 0
 		        Var Source As Beacon.LootSource = LootSources(I)
 		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
 		          LootSources.RemoveAt(I)
@@ -842,7 +842,7 @@ End
 		      Next
 		    End If
 		    
-		    If LootSources.LastRowIndex = -1 Then
+		    If LootSources.LastIndex = -1 Then
 		      Var Warning As MenuItem
 		      If Mask = CType(0, UInt64) Then
 		        Warning = New MenuItem("List is empty because no maps have been selected.")
@@ -984,7 +984,7 @@ End
 		  Next
 		  
 		  Var RawData As String
-		  If Dicts.LastRowIndex = 0 Then
+		  If Dicts.LastIndex = 0 Then
 		    RawData = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
 		    RawData = Beacon.GenerateJSON(Dicts, False)
@@ -1049,7 +1049,7 @@ End
 		  Next
 		  
 		  Editor.Sources = Sources
-		  If Sources.LastRowIndex = -1 Then
+		  If Sources.LastIndex = -1 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1

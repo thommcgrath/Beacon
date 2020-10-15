@@ -653,7 +653,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
 		  Var ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
-		  If ExcludedConfigs.LastRowIndex = -1 Then
+		  If ExcludedConfigs.LastIndex = -1 Then
 		    Return True
 		  End If
 		  
@@ -664,7 +664,7 @@ End
 		  HumanNames.Sort
 		  
 		  Var Message, Explanation As String
-		  If HumanNames.LastRowIndex = 0 Then
+		  If HumanNames.LastIndex = 0 Then
 		    Message = "You are using an editor that will not be included in your config files."
 		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
 		  Else
@@ -1100,7 +1100,7 @@ End
 		  Labels.SortWith(Tags)
 		  
 		  Var SourceItems() As SourceListItem
-		  For I As Integer = 0 To Labels.LastRowIndex
+		  For I As Integer = 0 To Labels.LastIndex
 		    Var Item As New SourceListItem(Labels(I), Tags(I))
 		    If Not IsBase Then
 		      Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(Tags(I))
@@ -1234,8 +1234,8 @@ End
 			    Self.mPanelHistory.AddAt(0, CacheKey)
 			    
 			    // Close older panels
-			    If Self.mPanelHistory.LastRowIndex > 2 Then
-			      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
+			    If Self.mPanelHistory.LastIndex > 2 Then
+			      For I As Integer = Self.mPanelHistory.LastIndex DownTo 3
 			        Var PanelTag As String = Self.mPanelHistory(I)
 			        If Self.Panels.HasKey(PanelTag) Then
 			          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)

@@ -12,7 +12,7 @@ Implements Iterable
 	#tag Method, Flags = &h21
 		Private Sub CheckCurrentFrames()
 		  Var FirstFrame As AnimationKit.Frame
-		  For I As Integer = 0 To Self.Frames.LastRowIndex
+		  For I As Integer = 0 To Self.Frames.LastIndex
 		    If Self.Frames(I) <> Nil Then
 		      FirstFrame = Self.Frames(I)
 		      Exit For I
@@ -37,7 +37,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.Frames.LastRowIndex + 1
+		  Return Self.Frames.LastIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -50,8 +50,8 @@ Implements Iterable
 		  End If
 		  
 		  Var Set As New AnimationKit.FrameSet()
-		  Set.ResizeTo(StandardCells.LastRowIndex)
-		  For I As Integer = 0 To StandardCells.LastRowIndex
+		  Set.ResizeTo(StandardCells.LastIndex)
+		  For I As Integer = 0 To StandardCells.LastIndex
 		    If RetinaSprites <> Nil Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
 		    Else
@@ -71,8 +71,8 @@ Implements Iterable
 		  End If
 		  
 		  Var Set As New AnimationKit.FrameSet()
-		  Set.ResizeTo(StandardCells.LastRowIndex)
-		  For I As Integer = 0 To StandardCells.LastRowIndex
+		  Set.ResizeTo(StandardCells.LastIndex)
+		  For I As Integer = 0 To StandardCells.LastIndex
 		    If RetinaSprites <> Nil Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
 		    Else
@@ -107,7 +107,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Frame As AnimationKit.Frame) As Integer
-		  For I As Integer = 0 To Self.Frames.LastRowIndex
+		  For I As Integer = 0 To Self.Frames.LastIndex
 		    If Self.Frames(I) = Frame Then
 		      Return I
 		    End If
@@ -135,14 +135,14 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function LastFrame() As AnimationKit.Frame
 		  If Self.Count > 0 Then
-		    Return Self.Frames(Self.Frames.LastRowIndex)
+		    Return Self.Frames(Self.Frames.LastIndex)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.Frames.LastRowIndex
+		  Return Self.Frames.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -182,7 +182,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function Reverse() As AnimationKit.FrameSet
 		  Var Set As New AnimationKit.FrameSet
-		  For I As Integer = Self.Frames.LastRowIndex DownTo 0
+		  For I As Integer = Self.Frames.LastIndex DownTo 0
 		    Set.Frames.Add(Self.Frames(I))
 		  Next
 		  Set.CheckCurrentFrames()

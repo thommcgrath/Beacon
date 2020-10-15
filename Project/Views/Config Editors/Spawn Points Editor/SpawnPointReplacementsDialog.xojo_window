@@ -446,7 +446,7 @@ End
 		  Var DefinedCreatures() As Beacon.Creature = SpawnSet.ReplacedCreatures
 		  
 		  If TargetCreature <> Nil Then
-		    For I As Integer = 0 To DefinedCreatures.LastRowIndex
+		    For I As Integer = 0 To DefinedCreatures.LastIndex
 		      If DefinedCreatures(I) = TargetCreature Then
 		        DefinedCreatures.RemoveAt(I)
 		        Exit
@@ -520,7 +520,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
+		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
 		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
@@ -573,7 +573,7 @@ End
 		  End If
 		  
 		  For I As Integer = Bound DownTo 0
-		    For X As Integer = 0 To Creatures.LastRowIndex
+		    For X As Integer = 0 To Creatures.LastIndex
 		      If Me.RowTagAt(I) = Creatures(X) Then
 		        Me.RemoveRowAt(I)
 		        Creatures.RemoveAt(X)

@@ -320,7 +320,7 @@ Inherits Beacon.IntegrationEngine
 		      Var Config As Dictionary = Settings.Value("config")
 		      Var MapText As String = Config.Value("map")
 		      Var MapParts() As String = MapText.Split(",")
-		      Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
+		      Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastIndex))
 		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
 		      Var GameShortcode As String = GameServer.Value("game")
 		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
@@ -436,7 +436,7 @@ Inherits Beacon.IntegrationEngine
 		    Var EOL As String = Encodings.ASCII.Chr(10)
 		    Var Lines() As String = LogContent.ReplaceLineEndings(EOL).Split(EOL)
 		    Var TimestampFound As Boolean
-		    For I As Integer = Lines.LastRowIndex DownTo 0
+		    For I As Integer = Lines.LastIndex DownTo 0
 		      Var Line As String = Lines(I)
 		      If Line.IndexOf("Log file closed") = -1 Then
 		        Continue
@@ -541,7 +541,7 @@ Inherits Beacon.IntegrationEngine
 		      Var Config As Dictionary = Settings.Value("config")
 		      Var MapText As String = Config.Value("map")
 		      Var MapParts() As String = MapText.Split(",")
-		      Self.Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
+		      Self.Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastIndex))
 		      
 		      // Keep track of the current settings for later
 		      Self.mCurrentSettings = Settings
@@ -973,8 +973,8 @@ Inherits Beacon.IntegrationEngine
 		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  
 		  Var PathParts() As String = Path.Split("/")
-		  Var Filename As String = PathParts(PathParts.LastRowIndex)
-		  PathParts.RemoveAt(PathParts.LastRowIndex)
+		  Var Filename As String = PathParts(PathParts.LastIndex)
+		  PathParts.RemoveAt(PathParts.LastIndex)
 		  Path = PathParts.Join("/")
 		  
 		  Var FormData As New Dictionary

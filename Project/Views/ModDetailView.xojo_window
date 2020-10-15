@@ -616,7 +616,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function DeletePendingEngrams() As Boolean
 		  Var DeletedEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToDelete
-		  If DeletedEngrams.LastRowIndex = -1 Then
+		  If DeletedEngrams.LastIndex = -1 Then
 		    Return False
 		  End If
 		  
@@ -723,7 +723,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function SavePendingEngrams() As Boolean
 		  Var NewEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToSave
-		  If NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams.LastIndex = -1 Then
 		    Return False
 		  End If
 		  
@@ -1055,7 +1055,7 @@ End
 		  Var Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
 		  Var Engrams() As Beacon.Engram = Blueprints.Engrams
 		  
-		  If Engrams.LastRowIndex = -1 Then
+		  If Engrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  

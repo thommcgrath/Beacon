@@ -863,7 +863,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub UpdateList()
-		  If Self.mPreviewItemStats.LastRowIndex = -1 Then
+		  If Self.mPreviewItemStats.LastIndex = -1 Then
 		    Var Dict As Dictionary
 		    
 		    Dict = New Dictionary
@@ -1093,8 +1093,8 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.StatLimits = Self.Config(False)
-		  Self.PreviewList.RowCount = Self.mPreviewItemStats.LastRowIndex + 1
-		  For I As Integer = 0 To Self.mPreviewItemStats.LastRowIndex
+		  Self.PreviewList.RowCount = Self.mPreviewItemStats.LastIndex + 1
+		  For I As Integer = 0 To Self.mPreviewItemStats.LastIndex
 		    Var Dict As Dictionary = Self.mPreviewItemStats(I)
 		    Var Engram As Beacon.Engram = Dict.Value("Engram")
 		    If Engram = Nil Then

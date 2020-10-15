@@ -147,7 +147,7 @@ End
 		    Profiles.Add(Self.Document.ServerProfile(Idx))
 		  Next
 		  
-		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastRowIndex
+		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastIndex
 		    Var Account As Beacon.ExternalAccount = Accounts(Idx)
 		    Var ServerCount As Integer
 		    For Each Profile As Beacon.ServerProfile In Profiles

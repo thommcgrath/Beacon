@@ -58,7 +58,7 @@ Implements Beacon.MutableBlueprint
 		    Return
 		  End Try
 		  
-		  For I As Integer = 0 To Arr.LastRowIndex
+		  For I As Integer = 0 To Arr.LastIndex
 		    Try
 		      Var Dict As Dictionary = Dictionary(Arr(I))
 		      If Not Dict.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then

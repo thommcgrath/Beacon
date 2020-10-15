@@ -268,7 +268,7 @@ End
 		  
 		  Var TextList As String = LocalData.SharedInstance.GetStringVariable("Dino Default Experience")
 		  Var List() As String = TextList.Split(",")
-		  For I As Integer = 0 To List.LastRowIndex
+		  For I As Integer = 0 To List.LastIndex
 		    Config.DinoExperience(I) = UInt64.FromString(List(I))
 		  Next
 		  
@@ -348,7 +348,7 @@ End
 		  End If
 		  
 		  Var Levels() As UInt64 = ExperienceWizard.Present(Self, Level, MinXP)
-		  If Levels.LastRowIndex = -1 Then
+		  If Levels.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -438,7 +438,7 @@ End
 		  End If
 		  
 		  Var LastXP As UInt64
-		  For I As Integer = 0 To Levels.LastRowIndex
+		  For I As Integer = 0 To Levels.LastIndex
 		    Var Level As Integer = I + IndexOffset
 		    Var TotalXP As UInt64 = Levels(I)
 		    Var LevelXP As UInt64 = TotalXP - LastXP

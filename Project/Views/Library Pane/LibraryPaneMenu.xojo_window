@@ -156,10 +156,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SetContents(Links() As Pair)
-		  If Self.mLabelsBound = Links.LastRowIndex Then
+		  If Self.mLabelsBound = Links.LastIndex Then
 		    // Possibly unchanged
 		    Var Changed As Boolean
-		    For I As Integer = 0 To Links.LastRowIndex
+		    For I As Integer = 0 To Links.LastIndex
 		      If If(Links(I) <> Nil, Links(I).Left, "") <> Self.Labels(I).Value And If(Links(I) <> Nil, Links(I).Right, "") <> Self.Labels(I).URL Then
 		        Changed = True
 		        Exit For I
@@ -177,7 +177,7 @@ End
 		  Next
 		  Self.mLabelsBound = 0
 		  
-		  For I As Integer = 0 To Links.LastRowIndex
+		  For I As Integer = 0 To Links.LastIndex
 		    Var LastBottom As Integer = 20
 		    If I > 0 Then
 		      LastBottom = Self.Labels(I - 1).Top + Self.Labels(I - 1).Height

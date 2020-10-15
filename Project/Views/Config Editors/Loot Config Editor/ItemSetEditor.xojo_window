@@ -229,11 +229,11 @@ End
 		  Next
 		  
 		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
-		  If Entries = Nil Or Entries.LastRowIndex <> Sources.LastRowIndex Then
+		  If Entries = Nil Or Entries.LastIndex <> Sources.LastIndex Then
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Entries.LastRowIndex
+		  For I As Integer = 0 To Entries.LastIndex
 		    Var Source As Beacon.SetEntry = Sources(I)
 		    Var Idx As Integer = Self.mSet.IndexOf(Source)
 		    If Idx > -1 Then
@@ -487,12 +487,12 @@ End
 		    End If
 		  Next
 		  
-		  If Entries.LastRowIndex = -1 Then
+		  If Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Contents As String
-		  If Entries.LastRowIndex = 0 Then
+		  If Entries.LastIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Entries(0), False)
 		  Else
 		    Contents = Beacon.GenerateJSON(Entries, False)
@@ -616,7 +616,7 @@ End
 		    Next
 		    
 		    Var Replacements() As Beacon.SetEntry = Beacon.SetEntry.Split(Entries)
-		    If Replacements = Nil Or Replacements.LastRowIndex = -1 Then
+		    If Replacements = Nil Or Replacements.LastIndex = -1 Then
 		      Return True
 		    End If
 		    

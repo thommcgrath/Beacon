@@ -535,7 +535,7 @@ Protected Module BeaconUI
 		  If Restore Then
 		    If UseGenericNames Then
 		      Message = "Are you sure you want to restore these " + Names.Count.ToString + " " + PluralNoun + " to their default settings?"
-		    ElseIf Names.LastRowIndex = 0 Then
+		    ElseIf Names.LastIndex = 0 Then
 		      Message = "Are you sure you want to restore the " + SingularNoun + " " + UniqueNames(0) + " to its default settings?"
 		    Else
 		      Message = "Are you sure you want to restore the " + PluralNoun + " " + Language.EnglishOxfordList(UniqueNames) + " to their default settings?"
@@ -543,7 +543,7 @@ Protected Module BeaconUI
 		  Else
 		    If UseGenericNames Then
 		      Message = "Are you sure you want to delete these " + Names.Count.ToString + " " + PluralNoun + "?"
-		    ElseIf Names.LastRowIndex = 0 Then
+		    ElseIf Names.LastIndex = 0 Then
 		      Message = "Are you sure you want to delete the " + SingularNoun + " " + UniqueNames(0) + "?"
 		    Else
 		      Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(UniqueNames) + "?"

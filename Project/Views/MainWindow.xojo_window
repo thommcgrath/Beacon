@@ -752,7 +752,7 @@ End
 		    Component.GetEditorMenuItems(Items)
 		  End If
 		  
-		  If Items.LastRowIndex = -1 Then
+		  If Items.LastIndex = -1 Then
 		    Return
 		  End If
 		  

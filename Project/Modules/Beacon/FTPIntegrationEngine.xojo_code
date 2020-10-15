@@ -246,7 +246,7 @@ Inherits Beacon.IntegrationEngine
 		        Filenames.Add(Info.Filename)
 		      Next
 		      Filenames.Sort
-		      For Idx As Integer = Filenames.LastRowIndex DownTo 0
+		      For Idx As Integer = Filenames.LastIndex DownTo 0
 		        Var Contents As String = Self.DownloadFile(LogsPath + "/" + Filenames(Idx))
 		        If Self.ParseLogFile(Data, Contents) Then
 		          Exit

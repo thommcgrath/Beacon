@@ -110,8 +110,8 @@ Implements Beacon.MutableLootSource
 
 	#tag Method, Flags = &h0
 		Sub MandatoryItemSets(Assigns Sets() As Beacon.ItemSet)
-		  Self.mMandatoryItemSets.ResizeTo(Sets.LastRowIndex)
-		  For I As Integer = 0 To Sets.LastRowIndex
+		  Self.mMandatoryItemSets.ResizeTo(Sets.LastIndex)
+		  For I As Integer = 0 To Sets.LastIndex
 		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(Sets(I))
 		  Next
 		End Sub

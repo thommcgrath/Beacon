@@ -12,13 +12,13 @@ Protected Module NotificationKit
 		      Refs = mReceivers.Value(Key)
 		    End If
 		    
-		    For I As Integer = Refs.LastRowIndex DownTo 0
+		    For I As Integer = Refs.LastIndex DownTo 0
 		      If Refs(I).Value = Nil Or Refs(I).Value = Receiver Then
 		        Refs.RemoveAt(I)
 		      End If
 		    Next
 		    
-		    If Refs.LastRowIndex > -1 Then
+		    If Refs.LastIndex > -1 Then
 		      mReceivers.Value(Key) = Refs
 		    ElseIf mReceivers.HasKey(Key) Then
 		      mReceivers.Remove(Key)
@@ -29,7 +29,7 @@ Protected Module NotificationKit
 
 	#tag Method, Flags = &h21
 		Private Sub mQueueTimer_Action(Sender As Timer)
-		  If mPendingNotifications.LastRowIndex = -1 Then
+		  If mPendingNotifications.LastIndex = -1 Then
 		    Sender.RunMode = Timer.RunModes.Off
 		    Return
 		  End If
@@ -48,13 +48,13 @@ Protected Module NotificationKit
 		  End If
 		  
 		  Var Refs() As WeakRef = mReceivers.Value(Notification.Name)
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveAt(I)
 		    End If
 		  Next
 		  
-		  If Refs.LastRowIndex = -1 Then
+		  If Refs.LastIndex = -1 Then
 		    mReceivers.Remove(Notification.Name)
 		    Return
 		  End If
@@ -95,7 +95,7 @@ Protected Module NotificationKit
 		      Refs = mReceivers.Value(Key)
 		    End If
 		    
-		    For I As Integer = Refs.LastRowIndex DownTo 0
+		    For I As Integer = Refs.LastIndex DownTo 0
 		      If Refs(I).Value = Nil Then
 		        Refs.RemoveAt(I)
 		      End If

@@ -304,7 +304,7 @@ End
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If Creatures.LastRowIndex = -1 Then
+		  If Creatures.LastIndex = -1 Then
 		    Return
 		  End If
 		  Config = Self.Config(True)
@@ -511,7 +511,7 @@ End
 		    Catch Err As RuntimeException
 		    End Try
 		    
-		    If Items.LastRowIndex = -1 Then
+		    If Items.LastIndex = -1 Then
 		      Return
 		    End If
 		    

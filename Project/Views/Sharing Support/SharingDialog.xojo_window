@@ -786,7 +786,7 @@ End
 		  APISocket.Start(Request)
 		  
 		  Var Users() As String = Self.mDocument.GetUsers
-		  If Users.LastRowIndex > -1 Then
+		  If Users.LastIndex > -1 Then
 		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("/user/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
 		    APISocket.Start(UsersLookup)
 		    Self.UsernameLookupSpinner.Visible = True

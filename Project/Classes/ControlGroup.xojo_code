@@ -27,7 +27,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Ctl As RectControl) As Integer
-		  For I As Integer = 0 To Self.mMembers.LastRowIndex
+		  For I As Integer = 0 To Self.mMembers.LastIndex
 		    If Self.mMembers(I).Value = Ctl Then
 		      Return I
 		    End If
@@ -56,7 +56,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mMembers.LastRowIndex
+		  Return Self.mMembers.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -116,7 +116,7 @@ Implements Iterable
 		Private Sub UpdateBounds()
 		  Var Top, Left, Bottom, Right As Integer
 		  Var First As Boolean = True
-		  For I As Integer = 0 To Self.mMembers.LastRowIndex
+		  For I As Integer = 0 To Self.mMembers.LastIndex
 		    Var Ctl As RectControl = RectControl(Self.mMembers(I).Value)
 		    If Ctl = Nil Then
 		      Continue

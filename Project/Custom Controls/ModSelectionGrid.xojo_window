@@ -112,7 +112,7 @@ End
 		  Var Measure As New Picture(20, 20)
 		  Var Filtered() As Beacon.ModDetails
 		  Var MaxWidth As Double
-		  For Idx As Integer = 0 To Mods.LastRowIndex
+		  For Idx As Integer = 0 To Mods.LastIndex
 		    If (ConsoleOnly <> Mods(Idx).ConsoleSafe) Or Mods(Idx).ModID = LocalData.UserModID Then
 		      Continue
 		    End If
@@ -120,13 +120,13 @@ End
 		    Filtered.Add(Mods(Idx))
 		    MaxWidth = Max(MaxWidth, Measure.Graphics.TextWidth(Mods(Idx).Name))
 		  Next
-		  Self.CheckboxesBound = Filtered.LastRowIndex
+		  Self.CheckboxesBound = Filtered.LastIndex
 		  
 		  Var CheckboxWidth As Integer = Ceiling(MaxWidth + 40)
 		  Var ColumnCount As Integer = Ceiling(450 / CheckboxWidth)
 		  Var RowCount As Integer = Ceiling(Filtered.Count / ColumnCount)
 		  
-		  Self.mMap.ResizeTo(Filtered.LastRowIndex)
+		  Self.mMap.ResizeTo(Filtered.LastIndex)
 		  
 		  Self.ModCheckbox(0).Caption = Filtered(0).Name
 		  Self.ModCheckbox(0).Width = CheckboxWidth
@@ -135,7 +135,7 @@ End
 		  
 		  Var NextLeft As Integer = Self.ModCheckbox(0).Left + Self.ModCheckbox(0).Width + 12
 		  Var NextTop As Integer = Self.ModCheckbox(0).Top
-		  For Idx As Integer = 1 To Filtered.LastRowIndex
+		  For Idx As Integer = 1 To Filtered.LastIndex
 		    Var Check As CheckBox = New ModCheckbox
 		    Check.Caption = Filtered(Idx).Name
 		    Check.Width = CheckboxWidth

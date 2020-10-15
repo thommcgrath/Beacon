@@ -897,7 +897,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Entries() As Beacon.SetEntry)
-		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
+		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Self.Setup()
 		    Return
 		  End If
@@ -923,9 +923,9 @@ End
 		  
 		  Self.mIgnoreChanges = True
 		  MinQuantityField.Value = Str(MinQuantities(0))
-		  MaxQuantityField.Value = Str(MaxQuantities(MaxQuantities.LastRowIndex))
+		  MaxQuantityField.Value = Str(MaxQuantities(MaxQuantities.LastIndex))
 		  If CanBeBlueprint Then
-		    ChanceSlider.Value = 100 * (TotalChance / (Entries.LastRowIndex + 1))
+		    ChanceSlider.Value = 100 * (TotalChance / (Entries.LastIndex + 1))
 		    ChanceSlider.Enabled = True
 		    ChanceLabel.Enabled = True
 		    ChanceField.Enabled = True
@@ -938,12 +938,12 @@ End
 		    EditChanceCheck.Enabled = False
 		  End If
 		  MinQualityMenu.SelectByTag(MinQualities(0))
-		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastRowIndex))
-		  WeightSlider.Value = TotalWeight / (Entries.LastRowIndex + 1)
-		  WeightField.DoubleValue = TotalWeight / (Entries.LastRowIndex + 1)
+		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastIndex))
+		  WeightSlider.Value = TotalWeight / (Entries.LastIndex + 1)
+		  WeightField.DoubleValue = TotalWeight / (Entries.LastIndex + 1)
 		  Self.mIgnoreChanges = False
 		  
-		  If Entries.LastRowIndex > 0 Then
+		  If Entries.LastIndex > 0 Then
 		    EditChanceCheck.Visible = True
 		    EditMaxQualityCheck.Visible = True
 		    EditMaxQuantityCheck.Visible = True

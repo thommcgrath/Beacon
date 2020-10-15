@@ -27,7 +27,7 @@ Inherits Beacon.Thread
 		  Var MessageOfTheDayMode As Boolean = False
 		  Var ParsedData As New Dictionary
 		  Var Lines() As String = Content.Split(LineEnding)
-		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastRowIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
+		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
 		  For Each Line As String In Lines
 		    If Self.mCancelled Then
 		      Return

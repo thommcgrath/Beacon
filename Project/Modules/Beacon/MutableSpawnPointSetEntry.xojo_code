@@ -47,7 +47,7 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub LevelBound(Assigns Value As Integer)
-		  If Self.mLevels.LastRowIndex <> Value Then
+		  If Self.mLevels.LastIndex <> Value Then
 		    Self.mLevels.ResizeTo(Value)
 		    Self.Modified = True
 		  End If
@@ -74,8 +74,8 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Levels(Assigns NewLevels() As Beacon.SpawnPointLevel)
-		  Self.mLevels.ResizeTo(NewLevels.LastRowIndex)
-		  For I As Integer = 0 To NewLevels.LastRowIndex
+		  Self.mLevels.ResizeTo(NewLevels.LastIndex)
+		  For I As Integer = 0 To NewLevels.LastIndex
 		    Self.mLevels(I) = New Beacon.SpawnPointLevel(NewLevels(I))
 		  Next
 		  Self.Modified = True
