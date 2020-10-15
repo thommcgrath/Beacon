@@ -41,10 +41,11 @@ Begin BeaconDialog BlueprintEditorDialog
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -61,6 +62,7 @@ Begin BeaconDialog BlueprintEditorDialog
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   254
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   146
          LockBottom      =   True
@@ -1885,7 +1887,7 @@ End
 		  If Self.EngramCraftingCostList.RowCount > 0  Then
 		    Var Ingredients() As Beacon.RecipeIngredient
 		    For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
-		      Ingredients.AddRow(Self.EngramCraftingCostList.RowTagAt(Row))
+		      Ingredients.Add(Self.EngramCraftingCostList.RowTagAt(Row))
 		    Next
 		    Engram.Recipe = Ingredients
 		  Else
@@ -2071,7 +2073,7 @@ End
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(Row) Then
 		        Var Ingredient As Beacon.RecipeIngredient = Me.RowTagAt(Row)
-		        Labels.AddRow(Ingredient.Engram.Label)
+		        Labels.Add(Ingredient.Engram.Label)
 		      End If
 		    Next
 		    
@@ -2122,7 +2124,7 @@ End
 		Sub Action()
 		  Var Engrams() As Beacon.Engram
 		  For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
-		    Engrams.AddRow(Beacon.RecipeIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
+		    Engrams.Add(Beacon.RecipeIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
 		  Next
 		  
 		  Var Mods As New Beacon.StringList

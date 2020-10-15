@@ -43,6 +43,7 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -249,6 +250,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -278,6 +280,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -307,6 +310,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -564,6 +568,7 @@ Begin ContainerControl DocumentImportView
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   456
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -768,7 +773,7 @@ End
 		  Var Documents() As Beacon.Document
 		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
 		    If Self.mImporters(I).Document <> Nil Then
-		      Documents.AddRow(Self.mImporters(I).Document)
+		      Documents.Add(Self.mImporters(I).Document)
 		    End If
 		  Next
 		  Self.Finish(Documents)
@@ -1078,7 +1083,7 @@ End
 		    End If
 		    
 		    Var Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
-		    Documents.AddRow(Doc)
+		    Documents.Add(Doc)
 		  Next
 		  Self.Finish(Documents)
 		End Sub

@@ -68,7 +68,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -134,7 +134,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		      For Each Data As Dictionary In SetSaveData
 		        Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(Data)
 		        If Set <> Nil Then
-		          SpawnPoint.mSets.AddRow(Set)
+		          SpawnPoint.mSets.Add(Set)
 		        End If
 		      Next
 		    End If
@@ -313,7 +313,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
 		    Var Creatures() As String
 		    For Each Entry As Beacon.SpawnPointSetEntry In Set
-		      Creatures.AddRow(Entry.Creature.Path)
+		      Creatures.Add(Entry.Creature.Path)
 		    Next
 		    
 		    Var PackedSet As New Dictionary
@@ -321,7 +321,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    PackedSet.Value("group_id") = Set.ID
 		    PackedSet.Value("weight") = Set.Weight
 		    PackedSet.Value("creatures") = Creatures
-		    Sets.AddRow(PackedSet)
+		    Sets.Add(PackedSet)
 		  Next
 		  
 		  Dict.Value("groups") = Sets
@@ -341,7 +341,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Function SaveData() As Dictionary
 		  Var Children() As Variant
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
-		    Children.AddRow(Set.SaveData)
+		    Children.Add(Set.SaveData)
 		  Next
 		  
 		  Var Keys As New Dictionary
@@ -370,7 +370,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Var Objects() As Variant
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
 		    If Set <> Nil Then
-		      Objects.AddRow(Set.SaveData)
+		      Objects.Add(Set.SaveData)
 		    End If
 		  Next
 		  Try

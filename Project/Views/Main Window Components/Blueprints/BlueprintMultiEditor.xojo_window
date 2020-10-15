@@ -173,6 +173,7 @@ Begin BeaconDialog BlueprintMultiEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   188
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   146
       LockBottom      =   False
@@ -302,7 +303,7 @@ End
 		  Var Masks() As UInt64
 		  Var Tags As New Dictionary
 		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
-		    Masks.AddRow(Blueprint.Availability)
+		    Masks.Add(Blueprint.Availability)
 		    
 		    Var BlueprintTags() As String = Blueprint.Tags
 		    For Each Tag As String In BlueprintTags
@@ -317,7 +318,7 @@ End
 		  For I As Integer = 0 To Tags.KeyCount - 1
 		    Var Tag As String = Tags.Key(I)
 		    If Tags.Lookup(Tag, 0) = BlueprintCount Then
-		      CommonTags.AddRow(Tag)
+		      CommonTags.Add(Tag)
 		    End If
 		  Next
 		  Self.Picker.SetSelections(CommonTags, Nil)

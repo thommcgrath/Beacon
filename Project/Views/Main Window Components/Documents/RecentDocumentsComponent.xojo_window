@@ -98,7 +98,7 @@ End
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(I) Then
 		      Var URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
-		      SelectedURLs.AddRow(URL)
+		      SelectedURLs.Add(URL)
 		    End If
 		  Next
 		  

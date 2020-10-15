@@ -144,7 +144,7 @@ Protected Class Request
 		  Var Headers() As String
 		  If Self.mRequestHeaders <> Nil Then
 		    For Each Entry As DictionaryEntry In Self.mRequestHeaders
-		      Headers.AddRow(Entry.Key.StringValue)
+		      Headers.Add(Entry.Key.StringValue)
 		    Next
 		  End If
 		  Return Headers

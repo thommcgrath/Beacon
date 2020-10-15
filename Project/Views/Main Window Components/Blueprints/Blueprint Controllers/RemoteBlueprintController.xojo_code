@@ -6,7 +6,7 @@ Inherits BlueprintController
 		  If BlueprintsToDelete.Count > 0 Then
 		    Var UUIDs() As String
 		    For Each Blueprint As Beacon.Blueprint In BlueprintsToDelete
-		      UUIDs.AddRow(Blueprint.ObjectID)
+		      UUIDs.Add(Blueprint.ObjectID)
 		    Next
 		    
 		    Self.mPendingDeleteRequest = New BeaconAPI.Request("engram", "DELETE", UUIDs.Join(","), "text/plain", WeakAddressOf APICallback_DeleteBlueprints)
@@ -17,7 +17,7 @@ Inherits BlueprintController
 		    For Each Blueprint As Beacon.Blueprint In BlueprintsToSave
 		      Var Dict As Dictionary = Beacon.PackBlueprint(Blueprint)
 		      If (Dict Is Nil) = False Then
-		        SaveDictionaries.AddRow(Dict)
+		        SaveDictionaries.Add(Dict)
 		      End If
 		    Next
 		    
@@ -103,7 +103,7 @@ Inherits BlueprintController
 		      Var Dict As Dictionary = Obj
 		      Var Blueprint As Beacon.MutableBlueprint = Beacon.UnpackBlueprint(Dict)
 		      If (Blueprint Is Nil) = False Then
-		        Self.mLoadedBlueprints.AddRow(Blueprint)
+		        Self.mLoadedBlueprints.Add(Blueprint)
 		      End If
 		    Catch Err As RuntimeException
 		      Continue
@@ -140,7 +140,7 @@ Inherits BlueprintController
 		      Var Dict As Dictionary = Obj
 		      Var Blueprint As Beacon.MutableBlueprint = Beacon.UnpackBlueprint(Dict)
 		      If (Blueprint Is Nil) = False Then
-		        Self.mLoadedBlueprints.AddRow(Blueprint)
+		        Self.mLoadedBlueprints.Add(Blueprint)
 		      End If
 		    Catch Err As RuntimeException
 		      Continue
@@ -177,7 +177,7 @@ Inherits BlueprintController
 		      Var Dict As Dictionary = Obj
 		      Var Blueprint As Beacon.MutableBlueprint = Beacon.UnpackBlueprint(Dict)
 		      If (Blueprint Is Nil) = False Then
-		        Self.mLoadedBlueprints.AddRow(Blueprint)
+		        Self.mLoadedBlueprints.Add(Blueprint)
 		      End If
 		    Catch Err As RuntimeException
 		      Continue

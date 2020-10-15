@@ -161,7 +161,7 @@ Protected Class LogManager
 		      If Self.mPendingMessages.HasKey(Filename) Then
 		        Messages = Self.mPendingMessages.Value(Filename)
 		      End If
-		      Messages.AddRow(DetailedMessage)
+		      Messages.Add(DetailedMessage)
 		      Self.mPendingMessages.Value(Filename) = Messages
 		      
 		      Self.Flush()

@@ -18,7 +18,7 @@ Private Class ConfigParser
 		        Return True
 		      Case Self.TypeArray
 		        Var Values() As Variant = Self.mValue
-		        Values.AddRow(Self.SubParser.Value)
+		        Values.Add(Self.SubParser.Value)
 		        Self.mValue = Values
 		        Var Consumed As Boolean = Self.SubParser.ConsumedLastChar
 		        Self.SubParser = Nil
@@ -47,7 +47,7 @@ Private Class ConfigParser
 		    ElseIf Char = "n" And LastChar = "\" Then
 		      Self.Buffer(Self.Buffer.LastRowIndex) = EndOfLine
 		    Else
-		      Self.Buffer.AddRow(Char)
+		      Self.Buffer.Add(Char)
 		    End If
 		    Return False
 		  End If
@@ -63,7 +63,7 @@ Private Class ConfigParser
 		        Var Values() As Variant
 		        Self.mValue = Values
 		      Else
-		        Self.Buffer.AddRow(Char)
+		        Self.Buffer.Add(Char)
 		      End If
 		    Case "="
 		      If Not Self.KeyFound Then
@@ -76,11 +76,11 @@ Private Class ConfigParser
 		        Self.SubParser.KeyFound = True
 		        Self.KeyFound = True
 		      Else
-		        Self.Buffer.AddRow(Char)
+		        Self.Buffer.Add(Char)
 		      End If
 		    Case ")", ",", LineEndingChar
 		      If Self.Level = 0 And Char <> LineEndingChar Then
-		        Self.Buffer.AddRow(Char)
+		        Self.Buffer.Add(Char)
 		      Else
 		        Self.ConsumedLastChar = False
 		        Self.mValue = Self.Buffer.Join("")
@@ -91,7 +91,7 @@ Private Class ConfigParser
 		    Case """"
 		      Self.InQuotes = True
 		    Else
-		      Self.Buffer.AddRow(Char)
+		      Self.Buffer.Add(Char)
 		    End Select
 		  Case Self.TypeArray
 		    Select Case Char

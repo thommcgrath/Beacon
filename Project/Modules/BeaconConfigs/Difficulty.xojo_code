@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
+		  Values.Add(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
 		End Sub
 	#tag EndEvent
 
@@ -15,8 +15,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
 		End Sub
 	#tag EndEvent
 
@@ -57,7 +57,7 @@ Inherits Beacon.ConfigGroup
 		Function Levels() As Integer()
 		  Var Results() As Integer
 		  For I As Integer = 1 To 30
-		    Results.AddRow(Floor(Self.DifficultyValue * I))
+		    Results.Add(Floor(Self.DifficultyValue * I))
 		  Next
 		  Return Results
 		End Function

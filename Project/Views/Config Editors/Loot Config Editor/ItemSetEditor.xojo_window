@@ -159,6 +159,7 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -224,7 +225,7 @@ End
 		      Continue
 		    End If
 		    
-		    Sources.AddRow(EntryList.RowTagAt(I))
+		    Sources.Add(EntryList.RowTagAt(I))
 		  Next
 		  
 		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
@@ -300,7 +301,7 @@ End
 		  If SelectEntries <> Nil Then
 		    For Each Entry As Beacon.SetEntry In SelectEntries
 		      If Entry <> Nil Then
-		        Selected.AddRow(Entry.UniqueID)
+		        Selected.Add(Entry.UniqueID)
 		      End If
 		    Next
 		    ScrollToSelection = True
@@ -308,7 +309,7 @@ End
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
 		        Var Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
-		        Selected.AddRow(Entry.UniqueID)
+		        Selected.Add(Entry.UniqueID)
 		      End If
 		    Next
 		  End If
@@ -482,7 +483,7 @@ End
 		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.AddRow(Beacon.SetEntry(Me.RowTagAt(I)).Export)
+		      Entries.Add(Beacon.SetEntry(Me.RowTagAt(I)).Export)
 		    End If
 		  Next
 		  
@@ -589,7 +590,7 @@ End
 		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Entries.AddRow(Me.RowTagAt(I))
+		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
@@ -610,7 +611,7 @@ End
 		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(I) And Beacon.SetEntry(Me.RowTagAt(I)).Count > 1 Then
-		        Entries.AddRow(Me.RowTagAt(I))
+		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
@@ -637,7 +638,7 @@ End
 		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(I) Then
-		        Entries.AddRow(Me.RowTagAt(I))
+		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		    

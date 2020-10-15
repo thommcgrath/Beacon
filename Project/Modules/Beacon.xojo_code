@@ -36,7 +36,7 @@ Protected Module Beacon
 		      Continue
 		    End If
 		    
-		    Tags.AddRow(Tag)
+		    Tags.Add(Tag)
 		    Changed = True
 		  Next
 		  
@@ -74,7 +74,7 @@ Protected Module Beacon
 		    If IsNull(Value) = False And Value.IsArray And Value.ArrayElementType = Variant.TypeObject Then
 		      Entries = Value
 		    Else
-		      Entries.AddRow(Value)
+		      Entries.Add(Value)
 		    End If
 		  End If
 		  Return Entries
@@ -253,7 +253,7 @@ Protected Module Beacon
 		      Continue
 		    End If
 		    WeightSum = WeightSum + Set.RawWeight
-		    Weights.AddRow(WeightSum * WeightScale)
+		    Weights.Add(WeightSum * WeightScale)
 		    WeightLookup.Value(WeightSum * WeightScale) = Set
 		  Next
 		  Weights.Sort
@@ -301,7 +301,7 @@ Protected Module Beacon
 		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw, "#")
 		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
 		    Columns(4) = """" + Blueprint.Category + """"
-		    Lines.AddRow(Columns.Join(","))
+		    Lines.Add(Columns.Join(","))
 		  Next
 		  
 		  Return Lines.Join(Encodings.ASCII.Chr(13) + Encodings.ASCII.Chr(10))
@@ -313,7 +313,7 @@ Protected Module Beacon
 		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.AddRow(Beacon.Creature(Blueprint))
+		      Creatures.Add(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -347,7 +347,7 @@ Protected Module Beacon
 		  If Decompressor.OpenString(Data) Then
 		    Var Parts() As String
 		    While Not Decompressor.EOF
-		      Parts.AddRow(Decompressor.Read(ChunkSize))
+		      Parts.Add(Decompressor.Read(ChunkSize))
 		    Wend
 		    Return String.FromArray(Parts, "")
 		  End If
@@ -409,7 +409,7 @@ Protected Module Beacon
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.AddRow(Beacon.Engram(Blueprint))
+		      Engrams.Add(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -436,7 +436,7 @@ Protected Module Beacon
 		    End If
 		    
 		    If Not IgnoreLines Then
-		      FilteredLines.AddRow(Line)
+		      FilteredLines.Add(Line)
 		    End If
 		  Next
 		  
@@ -648,8 +648,8 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Var PossiblePrefixes() As String
-		  PossiblePrefixes.AddRow(Beacon.URLScheme + "://")
-		  PossiblePrefixes.AddRow("https://app.usebeacon.app/")
+		  PossiblePrefixes.Add(Beacon.URLScheme + "://")
+		  PossiblePrefixes.Add("https://app.usebeacon.app/")
 		  
 		  Var URLLength As Integer = Value.Length
 		  For Each PossiblePrefix As String In PossiblePrefixes
@@ -697,7 +697,7 @@ Protected Module Beacon
 		Function Label(Extends Maps() As Beacon.Map) As String
 		  Var Names() As String
 		  For Each Map As Beacon.Map In Maps
-		    Names.AddRow(Map.Name)
+		    Names.Add(Map.Name)
 		  Next
 		  
 		  If Names.LastRowIndex = -1 Then
@@ -866,12 +866,12 @@ Protected Module Beacon
 		  For Each Char As String In SourceChars
 		    Var Codepoint As Integer = Asc(Char)
 		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
-		      Chars.AddRow(Char)
+		      Chars.Add(Char)
 		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
-		      Chars.AddRow(" ")
-		      Chars.AddRow(Char)
+		      Chars.Add(" ")
+		      Chars.Add(Char)
 		    ElseIf CodePoint = 95 Then
-		      Chars.AddRow(" ")
+		      Chars.Add(" ")
 		    End If
 		  Next
 		  Source = Chars.Join("")
@@ -911,7 +911,7 @@ Protected Module Beacon
 		  Next
 		  Var Merged() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Unique
-		    Merged.AddRow(Entry.Value)
+		    Merged.Add(Entry.Value)
 		  Next
 		  Return Merged
 		End Function
@@ -920,7 +920,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Sub Merge(Extends FirstArray() As String, SecondArray() As String)
 		  For Idx As Integer = SecondArray.FirstRowIndex To SecondArray.LastRowIndex
-		    FirstArray.AddRow(SecondArray(Idx))
+		    FirstArray.Add(SecondArray(Idx))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -1507,7 +1507,7 @@ Protected Module Beacon
 		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.AddRow(Beacon.Creature(Blueprint))
+		      Creatures.Add(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -1523,7 +1523,7 @@ Protected Module Beacon
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.AddRow(Beacon.Engram(Blueprint))
+		      Engrams.Add(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -1539,7 +1539,7 @@ Protected Module Beacon
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.SpawnPoint Then
-		      SpawnPoints.AddRow(Beacon.SpawnPoint(Blueprint))
+		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
 		    End If
 		  Next
 		  Return SpawnPoints
@@ -1557,7 +1557,7 @@ Protected Module Beacon
 		  
 		  Var Values() As String
 		  For Each Interval As Double In Intervals
-		    Values.AddRow(SecondsToString(Interval, WithDays, WithHours, WithMinutes))
+		    Values.Add(SecondsToString(Interval, WithDays, WithHours, WithMinutes))
 		  Next
 		  
 		  If Intervals.Count = 1 Then
@@ -1591,16 +1591,16 @@ Protected Module Beacon
 		  
 		  Var Parts() As String
 		  If Days > 0 Then
-		    Parts.AddRow(Str(Days, "-0") + "d")
+		    Parts.Add(Str(Days, "-0") + "d")
 		  End If
 		  If Hours > 0 Then
-		    Parts.AddRow(Str(Hours, "-0") + "h")
+		    Parts.Add(Str(Hours, "-0") + "h")
 		  End If
 		  If Minutes > 0 Then
-		    Parts.AddRow(Str(Minutes, "-0") + "m")
+		    Parts.Add(Str(Minutes, "-0") + "m")
 		  End If
 		  If Seconds > 0 Then
-		    Parts.AddRow(Seconds.PrettyText(False) + "s")
+		    Parts.Add(Seconds.PrettyText(False) + "s")
 		  End If
 		  Return Parts.Join(" ")
 		End Function
@@ -1636,19 +1636,19 @@ Protected Module Beacon
 		  If NumSets = MinSets And MinSets = MaxSets And Source.PreventDuplicates Then
 		    // All
 		    For Each Set As Beacon.ItemSet In Sets
-		      SelectedSets.AddRow(Set)
+		      SelectedSets.Add(Set)
 		    Next
 		    For Each Set As Beacon.ItemSet In MandatorySets
-		      SelectedSets.AddRow(Set)
+		      SelectedSets.Add(Set)
 		    Next
 		  Else
 		    Const WeightScale = 100000
 		    Var ItemSetPool() As Beacon.ItemSet
 		    For I As Integer = 0 To Sets.LastRowIndex
-		      ItemSetPool.AddRow(Sets.AtIndex(I))
+		      ItemSetPool.Add(Sets.AtIndex(I))
 		    Next
 		    For I As Integer = 0 To MandatorySets.LastRowIndex
-		      ItemSetPool.AddRow(MandatorySets(I))
+		      ItemSetPool.Add(MandatorySets(I))
 		    Next
 		    
 		    Var RecomputeFigures As Boolean = True
@@ -1681,7 +1681,7 @@ Protected Module Beacon
 		          Continue
 		        End If
 		        
-		        SelectedSets.AddRow(SelectedSet)
+		        SelectedSets.Add(SelectedSet)
 		        If Source.PreventDuplicates Then
 		          For X As Integer = 0 To ItemSetPool.LastRowIndex
 		            If ItemSetPool(X) = SelectedSet Then
@@ -1700,7 +1700,7 @@ Protected Module Beacon
 		  For Each Set As Beacon.ItemSet In SelectedSets
 		    Var SetSelections() As Beacon.SimulatedSelection = Set.Simulate
 		    For Each Selection As Beacon.SimulatedSelection In SetSelections
-		      Selections.AddRow(Selection)
+		      Selections.Add(Selection)
 		    Next
 		  Next
 		  Return Selections
@@ -1815,7 +1815,7 @@ Protected Module Beacon
 		      Var Temp() As Variant = Dict.Value("tags")
 		      For Each Tag As Variant In Temp
 		        If Tag.Type = Variant.TypeString Then
-		          Tags.AddRow(Tag.StringValue)
+		          Tags.Add(Tag.StringValue)
 		        End If
 		      Next
 		    End If
@@ -1859,7 +1859,7 @@ Protected Module Beacon
 		  Var MissingHeaders() As String
 		  For Each RequiredHeader As String In RequiredHeaders
 		    If Content.IndexOf(RequiredHeader) = -1 Then
-		      MissingHeaders.AddRow(RequiredHeader)
+		      MissingHeaders.Add(RequiredHeader)
 		    End If
 		  Next
 		  MissingHeaders.Sort

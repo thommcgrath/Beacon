@@ -11,7 +11,7 @@ Implements Beacon.NamedItem
 		    Return
 		  End If
 		  
-		  Self.mIngredients.AddRow(New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
+		  Self.mIngredients.Add(New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -72,7 +72,7 @@ Implements Beacon.NamedItem
 		    Resource.Value("Quantity") = Self.mIngredients(Idx).Quantity
 		    Resource.Value("Exact") = Self.mIngredients(Idx).RequireExact
 		    
-		    Ingredients.AddRow(Resource)
+		    Ingredients.Add(Resource)
 		  Next
 		  Dict.Value("Resources") = Ingredients
 		  
@@ -90,7 +90,7 @@ Implements Beacon.NamedItem
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
 		      
-		      Cost.mIngredients.AddRow(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""), Quantity, RequireExact))
+		      Cost.mIngredients.Add(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""), Quantity, RequireExact))
 		    Next
 		  End If
 		  
@@ -323,12 +323,12 @@ Implements Beacon.NamedItem
 		    Var ClassString As String = Self.mIngredients(Idx).Engram.ClassString
 		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
 		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "true", "false")
-		    Components.AddRow("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
+		    Components.Add("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
 		  Var Pieces() As String
-		  Pieces.AddRow("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
-		  Pieces.AddRow("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
+		  Pieces.Add("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
+		  Pieces.Add("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
 		  Return "(" + Pieces.Join(",") + ")"
 		End Function
 	#tag EndMethod

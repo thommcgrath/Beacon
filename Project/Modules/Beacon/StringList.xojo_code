@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
-		    Self.mItems.AddRow(Item)
+		    Self.mItems.Add(Item)
 		    Self.Modified = True
 		  End If
 		End Sub

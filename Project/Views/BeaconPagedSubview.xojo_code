@@ -15,7 +15,7 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h0
 		Sub AppendPage(Page As BeaconSubview)
 		  If Self.IndexOf(Page) = -1 Then
-		    Self.mPages.AddRow(Page)
+		    Self.mPages.Add(Page)
 		    If Self.CurrentPageIndex = -1 Then
 		      Self.CurrentPageIndex = 0
 		    End If
@@ -141,7 +141,7 @@ Inherits BeaconSubview
 		  Var Pages() As BeaconSubview
 		  For Each Page As BeaconSubview In Self.mPages
 		    If Page.Changed Then
-		      Pages.AddRow(Page)
+		      Pages.Add(Page)
 		    End If
 		  Next
 		  Return Pages

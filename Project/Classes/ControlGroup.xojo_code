@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Ctl As RectControl)
 		  If Self.IndexOf(Ctl) = -1 Then
-		    Self.mMembers.AddRow(New WeakRef(Ctl))
+		    Self.mMembers.Add(New WeakRef(Ctl))
 		    Self.UpdateBounds()
 		  End If
 		End Sub
@@ -13,7 +13,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Constructor(ParamArray Controls() As RectControl)
 		  For Each Ctl As RectControl In Controls
-		    Self.mMembers.AddRow(New WeakRef(Ctl))
+		    Self.mMembers.Add(New WeakRef(Ctl))
 		  Next
 		  Self.UpdateBounds()
 		End Sub

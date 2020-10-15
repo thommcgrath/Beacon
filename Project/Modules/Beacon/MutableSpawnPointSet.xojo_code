@@ -5,7 +5,7 @@ Inherits Beacon.SpawnPointSet
 		Sub Append(Entry As Beacon.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
 		  If Idx = -1 Then
-		    Self.mEntries.AddRow(Entry.ImmutableVersion)
+		    Self.mEntries.Add(Entry.ImmutableVersion)
 		    Self.Modified = True
 		  End If
 		End Sub

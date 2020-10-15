@@ -134,7 +134,7 @@ End
 		  Var Selected() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(I) Then
-		      Selected.AddRow(Beacon.ExternalAccount(Self.List.RowTagAt(I)).UUID)
+		      Selected.Add(Beacon.ExternalAccount(Self.List.RowTagAt(I)).UUID)
 		    End If
 		  Next
 		  
@@ -144,7 +144,7 @@ End
 		  Var ProfileCount As Integer = Self.Document.ServerProfileCount
 		  Var Profiles() As Beacon.ServerProfile
 		  For Idx As Integer = 0 To ProfileCount - 1
-		    Profiles.AddRow(Self.Document.ServerProfile(Idx))
+		    Profiles.Add(Self.Document.ServerProfile(Idx))
 		  Next
 		  
 		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastRowIndex
@@ -212,7 +212,7 @@ End
 		      Continue
 		    End If
 		    
-		    Accounts.AddRow(Me.RowTagAt(I))
+		    Accounts.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Accounts, "account", "accounts") = False Then
@@ -243,7 +243,7 @@ End
 		  Var Accounts() As Dictionary
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    Var Account As Beacon.ExternalAccount = Me.RowTagAt(Idx)
-		    Accounts.AddRow(Account.AsDictionary)
+		    Accounts.Add(Account.AsDictionary)
 		  Next
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Accounts, False)
 		End Sub

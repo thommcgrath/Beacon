@@ -189,7 +189,7 @@ End
 		  Var ScanItem As New MenuItem("Setup Guided Editors")
 		  ScanItem.Name = "EditorLookforSupportedConfigLines"
 		  ScanItem.Enabled = True
-		  Items.AddRow(ScanItem)
+		  Items.Add(ScanItem)
 		End Sub
 	#tag EndEvent
 
@@ -220,7 +220,7 @@ End
 		      Continue
 		    End If
 		    
-		    ImportedConfigs.AddRow(CreatedConfig)
+		    ImportedConfigs.Add(CreatedConfig)
 		    
 		    If SelfDocument.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
 		      Var CurrentConfig As Beacon.ConfigGroup = SelfDocument.ConfigGroup(ConfigName, False)
@@ -241,16 +241,16 @@ End
 		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
 		      Select Case Key.File
 		      Case "Game.ini"
-		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		        GameIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
 		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		        GameUserSettingsIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
 		      End Select
 		    Next
 		    
 		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
 		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
 		    
-		    CreatedEditorNames.AddRow(Language.LabelForConfig(ConfigName))
+		    CreatedEditorNames.Add(Language.LabelForConfig(ConfigName))
 		  Next
 		  
 		  If CreatedEditorNames.Count > 0 Then
@@ -468,7 +468,7 @@ End
 		      EndPos = Source.Length
 		    End If
 		    
-		    Self.mEncryptedRanges.AddRow(New Beacon.Range(StartPos, EndPos))
+		    Self.mEncryptedRanges.Add(New Beacon.Range(StartPos, EndPos))
 		    
 		    If Styles <> Nil Then
 		      Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor

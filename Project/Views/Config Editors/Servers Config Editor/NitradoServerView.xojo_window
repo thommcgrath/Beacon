@@ -26,6 +26,7 @@ Begin ServerViewContainer NitradoServerView
    Visible         =   True
    Width           =   600
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -291,6 +292,7 @@ Begin ServerViewContainer NitradoServerView
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   145
+      Index           =   -2147483648
       InitialParent   =   ""
       JSONData        =   ""
       Left            =   168

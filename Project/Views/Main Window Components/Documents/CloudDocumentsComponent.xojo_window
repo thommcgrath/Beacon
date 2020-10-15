@@ -42,10 +42,11 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -65,6 +66,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   256
          Transparent     =   False
@@ -206,6 +208,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   62
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   False
@@ -225,6 +228,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -319,7 +323,7 @@ End
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(I) Then
 		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
-		      SelectedDocuments.AddRow(Document.ResourceURL)
+		      SelectedDocuments.Add(Document.ResourceURL)
 		    End If
 		  Next
 		  
@@ -330,7 +334,7 @@ End
 		  Else
 		    For Each Document As BeaconAPI.Document In Self.mDocuments
 		      If Document.Name.IndexOf(SearchText) > -1 Then
-		        FilteredDocuments.AddRow(Document)
+		        FilteredDocuments.Add(Document)
 		      End If
 		    Next
 		  End If
@@ -364,7 +368,7 @@ End
 		  Var Dicts() As Variant = Response.JSON
 		  For Each Dict As Dictionary In Dicts
 		    Var Document As New BeaconAPI.Document(Dict)
-		    Self.mDocuments.AddRow(Document)
+		    Self.mDocuments.Add(Document)
 		  Next
 		  
 		  Self.UpdateFilter()

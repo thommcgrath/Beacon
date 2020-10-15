@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue("?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false")))
+		  Values.Add(New Beacon.ConfigValue("?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false")))
 		End Sub
 	#tag EndEvent
 
@@ -22,12 +22,12 @@ Inherits Beacon.ConfigGroup
 		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var ClassString As String = Engram.ClassString
 		      Var Rate As Double = Entry.Value
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
 		    End If
 		  Next
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier", Self.mDinoHarvestingDamageMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier", Self.mDinoHarvestingDamageMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 
@@ -36,9 +36,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
 		End Sub
 	#tag EndEvent
 
@@ -153,7 +153,7 @@ Inherits Beacon.ConfigGroup
 		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
 		    End If
 		    If IsNull(Engram) = False Then
-		      Results.AddRow(Engram)
+		      Results.Add(Engram)
 		    End If
 		  Next
 		  Return Results
@@ -191,11 +191,11 @@ Inherits Beacon.ConfigGroup
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
-		      Dicts.AddRow(AutoValue)
+		      Dicts.Add(AutoValue)
 		    Case "Object()"
 		      Var ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
-		        Dicts.AddRow(Dict)
+		        Dicts.Add(Dict)
 		      Next
 		    End Select
 		    

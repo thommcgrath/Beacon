@@ -12,7 +12,7 @@ Implements Beacon.Blueprint
 		  For Each Stat As Beacon.Stat In Stats
 		    Var Value As Beacon.CreatureStatValue = Self.StatValue(Stat)
 		    If (Value Is Nil) = False Then
-		      Values.AddRow(Value)
+		      Values.Add(Value)
 		    End If
 		  Next
 		  
@@ -77,7 +77,7 @@ Implements Beacon.Blueprint
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -225,8 +225,8 @@ Implements Beacon.Blueprint
 		      PackedStats.Value("add_multiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue)
 		      PackedStats.Value("affinity_multiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue)
 		      
-		      Stats.AddRow(PackedStats)
-		      Indexes.AddRow(StatIndex)
+		      Stats.Add(PackedStats)
+		      Indexes.Add(StatIndex)
 		    Next
 		    
 		    Indexes.SortWith(Stats)

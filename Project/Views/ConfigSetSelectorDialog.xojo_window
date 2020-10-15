@@ -225,7 +225,7 @@ End
 		Private Function Choices() As Beacon.ConfigSetState()
 		  Var States() As Beacon.ConfigSetState
 		  For Idx As Integer = Self.List.LastRowIndex DownTo 0
-		    States.AddRow(Self.List.RowTagAt(Idx))
+		    States.Add(Self.List.RowTagAt(Idx))
 		  Next
 		  Return States
 		End Function

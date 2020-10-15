@@ -275,9 +275,10 @@ Begin BeaconDialog DinoAdjustmentDialog
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   158
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
@@ -1042,9 +1043,9 @@ End
 		    If Behavior.TargetCreature = EditCreature Then
 		      Continue
 		    End If
-		    ConfiguredCreatures.AddRow(Behavior.TargetCreature)
+		    ConfiguredCreatures.Add(Behavior.TargetCreature)
 		    If Behavior.ProhibitSpawning Then
-		      DisabledCreatures.AddRow(Behavior.TargetCreature)
+		      DisabledCreatures.Add(Behavior.TargetCreature)
 		    End If
 		  Next
 		  
@@ -1248,10 +1249,10 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  If Not IsNull(Self.SelectedCreature) Then
-		    Exclude.AddRow(Self.SelectedCreature)
+		    Exclude.Add(Self.SelectedCreature)
 		  End If
 		  For Each Creature As Beacon.Creature In Self.DisabledCreatures
-		    Exclude.AddRow(Creature)
+		    Exclude.Add(Creature)
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
@@ -1309,7 +1310,7 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  For Each Creature As Beacon.Creature In Self.ConfiguredCreatures
-		    Exclude.AddRow(Creature)
+		    Exclude.Add(Creature)
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)

@@ -199,7 +199,7 @@ End
 		  Var ReplicateItem As New MenuItem("Copy Message of the Day to All Servers")
 		  ReplicateItem.Name = "CopyMOTDToAllServers"
 		  ReplicateItem.Enabled = (Self.ServerList.SelectedRowCount = 1)
-		  Items.AddRow(ReplicateItem)
+		  Items.Add(ReplicateItem)
 		End Sub
 	#tag EndEvent
 
@@ -227,7 +227,7 @@ End
 		  Var SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
 		    If Self.ServerList.Selected(I) Then
-		      SelectedProfiles.AddRow(Self.ServerList.RowTagAt(I))
+		      SelectedProfiles.Add(Self.ServerList.RowTagAt(I))
 		    End If
 		  Next
 		  

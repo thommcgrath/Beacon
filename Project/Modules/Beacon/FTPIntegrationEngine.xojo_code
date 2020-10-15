@@ -8,23 +8,23 @@ Inherits Beacon.IntegrationEngine
 		  Var Protocols() As String
 		  Select Case FTPProfile.Mode
 		  Case Beacon.FTPServerProfile.ModeFTP
-		    Protocols.AddRow("ftp")
+		    Protocols.Add("ftp")
 		  Case Beacon.FTPServerProfile.ModeFTPTLS
-		    Protocols.AddRow("ftps")
+		    Protocols.Add("ftps")
 		  Case Beacon.FTPServerProfile.ModeSFTP
-		    Protocols.AddRow("sftp")
+		    Protocols.Add("sftp")
 		  Else
 		    // If the port number ends in 21, try sftp mode last.
 		    Var BasePort As Integer = Abs(FTPProfile.Port) Mod 100
 		    Break
 		    If BasePort = 21 Then
-		      Protocols.AddRow("ftps")
-		      Protocols.AddRow("ftp")
-		      Protocols.AddRow("sftp")
+		      Protocols.Add("ftps")
+		      Protocols.Add("ftp")
+		      Protocols.Add("sftp")
 		    Else
-		      Protocols.AddRow("sftp")
-		      Protocols.AddRow("ftps")
-		      Protocols.AddRow("ftp")
+		      Protocols.Add("sftp")
+		      Protocols.Add("ftps")
+		      Protocols.Add("ftp")
 		    End If
 		  End Select
 		  
@@ -65,16 +65,16 @@ Inherits Beacon.IntegrationEngine
 		      End If
 		      
 		      If Info.Filename = "arkse" Or Info.Filename = "arkserer" Then
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.FileName + "/ShooterGame/Saved")
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
+		        PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/ShooterGame/Saved")
+		        PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
 		      ElseIf Info.Filename = "ShooterGame" Then
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.FileName + "/Saved")
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.FileName + "/SavedArks")
+		        PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/Saved")
+		        PotentialPaths.Add(BaseURL + "/" + Info.FileName + "/SavedArks")
 		      ElseIf Info.Filename = "Saved" Or Info.Filename = "SavedArks" Then
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename)
+		        PotentialPaths.Add(BaseURL + "/" + Info.Filename)
 		      ElseIf IPMatch.Search(Info.Filename) <> Nil Then
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename + "/ShooterGame/Saved")
-		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
+		        PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/Saved")
+		        PotentialPaths.Add(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
 		      End If
 		    Next
 		    
@@ -96,7 +96,7 @@ Inherits Beacon.IntegrationEngine
 		  For Each Path As String In PotentialPaths
 		    Var Data As Beacon.DiscoveredData = Self.DiscoverFromPath(Path)
 		    If Data <> Nil Then
-		      DiscoveredData.AddRow(Data)
+		      DiscoveredData.Add(Data)
 		    End If
 		  Next
 		  
@@ -115,7 +115,7 @@ Inherits Beacon.IntegrationEngine
 		      Var SavedPath As String = UserData.Value("Path")
 		      Var Data As Beacon.DiscoveredData = Self.DiscoverFromPath(Self.BaseURL + SavedPath)
 		      If Data <> Nil Then
-		        DiscoveredData.AddRow(Data)
+		        DiscoveredData.Add(Data)
 		      End If
 		    End If
 		  End If
@@ -243,7 +243,7 @@ Inherits Beacon.IntegrationEngine
 		          Continue
 		        End If
 		        
-		        Filenames.AddRow(Info.Filename)
+		        Filenames.Add(Info.Filename)
 		      Next
 		      Filenames.Sort
 		      For Idx As Integer = Filenames.LastRowIndex DownTo 0
@@ -285,7 +285,7 @@ Inherits Beacon.IntegrationEngine
 		    Var Params(1) As Variant
 		    Params(0) = Path
 		    Params(1) = Files
-		    Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerFilesListed, Params))
+		    Self.mPendingCalls.Add(CallLater.Schedule(1, WeakAddressOf TriggerFilesListed, Params))
 		    Return
 		  End If
 		  
@@ -330,7 +330,7 @@ Inherits Beacon.IntegrationEngine
 		      For Each Char As String In Characters
 		        If Char = """" Then
 		          If InQuotes Then
-		            Params.AddRow(Buffer)
+		            Params.Add(Buffer)
 		            Buffer = ""
 		            InQuotes = False
 		          Else
@@ -338,7 +338,7 @@ Inherits Beacon.IntegrationEngine
 		          End If
 		        ElseIf Char = " " Then
 		          If InQuotes = False And Buffer.Length > 0 Then
-		            Params.AddRow(Buffer)
+		            Params.Add(Buffer)
 		            Buffer = ""
 		          End If
 		        ElseIf Char = "-" And Buffer.Length = 0 Then
@@ -348,7 +348,7 @@ Inherits Beacon.IntegrationEngine
 		        End If
 		      Next
 		      If Buffer.Length > 0 Then
-		        Params.AddRow(Buffer)
+		        Params.Add(Buffer)
 		        Buffer = ""
 		      End If
 		      
@@ -416,8 +416,8 @@ Inherits Beacon.IntegrationEngine
 		      Var Permissions As String = Matches.SubExpressionString(1)
 		      Var Filename As String = Matches.SubExpressionString(7)
 		      
-		      Files.AddRow(New Beacon.FTPFileListing(Permissions.BeginsWith("d"), Filename))
-		      Names.AddRow(Filename)
+		      Files.Add(New Beacon.FTPFileListing(Permissions.BeginsWith("d"), Filename))
+		      Names.Add(Filename)
 		    Next
 		    Names.SortWith(Files)
 		    
@@ -450,8 +450,8 @@ Inherits Beacon.IntegrationEngine
 		    Var Files() As Beacon.FTPFileListing
 		    Var Names() As String
 		    For Each Info As CURLSFileInfoMBS In Infos
-		      Files.AddRow(New Beacon.FTPFileListing(Info.IsDirectory, Info.FileName))
-		      Names.AddRow(Info.FileName)
+		      Files.Add(New Beacon.FTPFileListing(Info.IsDirectory, Info.FileName))
+		      Names.Add(Info.FileName)
 		    Next
 		    Names.SortWith(Files)
 		    

@@ -77,6 +77,7 @@ Begin BeaconDialog ImporterWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Transparent     =   False
       Value           =   0.0

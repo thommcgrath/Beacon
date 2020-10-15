@@ -3,7 +3,7 @@ Protected Class Coordinator
 	#tag CompatibilityFlags = ( not TargetHasGUI and not TargetWeb and not TargetIOS ) or ( TargetWeb ) or ( TargetHasGUI ) or ( TargetIOS )
 	#tag Method, Flags = &h0
 		Sub AddTask(Task As AnimationKit.Task)
-		  Self.Tasks.AddRow(Task)
+		  Self.Tasks.Add(Task)
 		  RaiseEvent TaskAdded(Task)
 		  
 		  If Task.Threaded Then
@@ -60,7 +60,7 @@ Protected Class Coordinator
 		  Var AddedTasks(), RemovedTasks() As AnimationKit.Task
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
-		      RemovedTasks.AddRow(Self.Tasks(I))
+		      RemovedTasks.Add(Self.Tasks(I))
 		      Self.Tasks.RemoveRowAt(I)
 		    End If
 		  Next
@@ -79,12 +79,12 @@ Protected Class Coordinator
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    Var Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
-		      RemovedTasks.AddRow(Task)
+		      RemovedTasks.Add(Task)
 		      Self.Tasks.RemoveRowAt(I)
 		      
 		      If Task.NextTask <> Nil Then
 		        Self.AddTask(Task.NextTask)
-		        AddedTasks.AddRow(Task.NextTask)
+		        AddedTasks.Add(Task.NextTask)
 		      End If
 		    End If
 		  Next

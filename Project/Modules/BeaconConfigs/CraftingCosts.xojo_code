@@ -16,7 +16,7 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
-		    Values.AddRow(ConfigValue)
+		    Values.Add(ConfigValue)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -57,7 +57,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Costs() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mCosts
-		    Costs.AddRow(Beacon.CraftingCost(Entry.Value).Export)
+		    Costs.Add(Beacon.CraftingCost(Entry.Value).Export)
 		  Next
 		  Dict.Value("Costs") = Costs
 		End Sub
@@ -143,7 +143,7 @@ Inherits Beacon.ConfigGroup
 		Function Engrams() As Beacon.Engram()
 		  Var Results() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mCosts
-		    Results.AddRow(Beacon.CraftingCost(Entry.Value).Engram)
+		    Results.Add(Beacon.CraftingCost(Entry.Value).Engram)
 		  Next
 		  Return Results
 		End Function
@@ -165,7 +165,7 @@ Inherits Beacon.ConfigGroup
 		  If ValuesInfo.FullName = "Object()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then
-		    Overrides.AddRow(Values)
+		    Overrides.Add(Values)
 		  Else
 		    Return Nil
 		  End If

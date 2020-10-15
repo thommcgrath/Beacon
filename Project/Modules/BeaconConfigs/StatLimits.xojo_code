@@ -11,11 +11,11 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue("?", "ClampItemStats", "true"))
+		    Values.Add(New Beacon.ConfigValue("?", "ClampItemStats", "true"))
 		    Return
 		  Next
 		  
-		  Values.AddRow(New Beacon.ConfigValue("?", "ClampItemStats", "false"))
+		  Values.Add(New Beacon.ConfigValue("?", "ClampItemStats", "false"))
 		End Sub
 	#tag EndEvent
 
@@ -30,7 +30,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    Var Value As Double = Self.mValues(I)
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]", Value.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]", Value.PrettyText))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -45,11 +45,11 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "True"))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "True"))
 		    Return
 		  Next
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "False"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "False"))
 		End Sub
 	#tag EndEvent
 

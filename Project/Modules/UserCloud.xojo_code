@@ -103,7 +103,7 @@ Protected Module UserCloud
 		      
 		      Var Actions() As Dictionary
 		      For Each Dict As Dictionary In SyncActions
-		        Actions.AddRow(Dict)
+		        Actions.Add(Dict)
 		      Next
 		      NotificationKit.Post(Notification_SyncFinished, Actions)
 		      SyncActions.ResizeTo(-1)
@@ -150,7 +150,7 @@ Protected Module UserCloud
 		      While Not Files.AfterLastRow
 		        Var RemotePath As String = Files.Column("remote_path").StringValue
 		        If RemotePath.BeginsWith(Prefix) Then
-		          Results.AddRow(Files.Column("remote_path").StringValue)
+		          Results.Add(Files.Column("remote_path").StringValue)
 		        End If
 		        Files.MoveToNextRow
 		      Wend
@@ -232,7 +232,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "DELETE"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.AddRow(ActionDict)
+		  SyncActions.Add(ActionDict)
 		  
 		  If SetupIndexDatabase Then
 		    Try
@@ -280,7 +280,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.AddRow(ActionDict)
+		  SyncActions.Add(ActionDict)
 		End Sub
 	#tag EndMethod
 
@@ -510,7 +510,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.AddRow(ActionDict)
+		  SyncActions.Add(ActionDict)
 		End Sub
 	#tag EndMethod
 

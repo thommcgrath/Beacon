@@ -20,10 +20,10 @@ Inherits BeaconSubview
 		    Var View As BeaconSubview = Entry.Value
 		    
 		    If View = Nil Or View.Closed Then
-		      ViewsToRemove.AddRow(ID)
+		      ViewsToRemove.Add(ID)
 		    ElseIf View.ViewID <> ID Then
-		      ViewsToRemove.AddRow(ID)
-		      ViewsToAdd.AddRow(View)
+		      ViewsToRemove.Add(ID)
+		      ViewsToAdd.Add(View)
 		    End If
 		  Next
 		  

@@ -389,7 +389,7 @@ End
 		      Continue
 		    End If
 		    
-		    Paths.AddRow(Beacon.Engram(Self.List.RowTagAt(I)).Path)
+		    Paths.Add(Beacon.Engram(Self.List.RowTagAt(I)).Path)
 		  Next
 		  Self.UpdateList(Paths)
 		End Sub
@@ -399,7 +399,7 @@ End
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
 		  Var Paths() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Paths.AddRow(Engram.Path)
+		    Paths.Add(Engram.Path)
 		  Next
 		  Self.UpdateList(Paths) 
 		End Sub
@@ -546,7 +546,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    If IsNull(Engram) = False Then
-		      Engrams.AddRow(Engram)
+		      Engrams.Add(Engram)
 		    End If
 		  Next
 		  
@@ -612,7 +612,7 @@ End
 		      End If
 		      
 		      Var Size As UInt64 = Entry.Value
-		      SelectPaths.AddRow(Engram.Path)
+		      SelectPaths.Add(Engram.Path)
 		      Config.Override(Engram) = Size
 		    Next
 		    Self.Changed = True

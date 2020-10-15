@@ -103,7 +103,7 @@ Implements Iterable
 		    
 		    Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		    If Idx = -1 Then
-		      Self.mSources.AddRow(Source)
+		      Self.mSources.Add(Source)
 		      UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
 		    Else
 		      Self.mSources(Idx) = Source
@@ -118,7 +118,7 @@ Implements Iterable
 		  
 		  Var Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Contents.AddRow(Source.SaveData)
+		    Contents.Add(Source.SaveData)
 		  Next
 		  Dict.Value("Contents") = Contents
 		End Sub
@@ -127,7 +127,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Append(Source As Beacon.LootSource)
-		  Self.mSources.AddRow(Source)
+		  Self.mSources.Add(Source)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -162,33 +162,33 @@ Implements Iterable
 		  #endif
 		  
 		  Var Keys() As String
-		  Keys.AddRow("SupplyCrateClassString=""" + Source.ClassString + """")
+		  Keys.Add("SupplyCrateClassString=""" + Source.ClassString + """")
 		  
 		  If Source.AppendMode Then
-		    Keys.AddRow("bAppendItemSets=true")
+		    Keys.Add("bAppendItemSets=true")
 		  Else
 		    Var MinSets As Integer = Min(Source.MinItemSets, Source.MaxItemSets)
 		    Var MaxSets As Integer = Max(Source.MaxItemSets, Source.MinItemSets)
 		    
-		    Keys.AddRow("MinItemSets=" + MinSets.ToString)
-		    Keys.AddRow("MaxItemSets=" + MaxSets.ToString)
-		    Keys.AddRow("NumItemSetsPower=1.0")
-		    Keys.AddRow("bSetsRandomWithoutReplacement=" + if(Source.PreventDuplicates, "true", "false"))
+		    Keys.Add("MinItemSets=" + MinSets.ToString)
+		    Keys.Add("MaxItemSets=" + MaxSets.ToString)
+		    Keys.Add("NumItemSetsPower=1.0")
+		    Keys.Add("bSetsRandomWithoutReplacement=" + if(Source.PreventDuplicates, "true", "false"))
 		  End If
 		  
 		  Var GeneratedSets() As String
 		  For Each Set As Beacon.ItemSet In Source.ItemSets
-		    GeneratedSets.AddRow(Set.StringValue(Source.Multipliers, False, Difficulty))
+		    GeneratedSets.Add(Set.StringValue(Source.Multipliers, False, Difficulty))
 		  Next
 		  If Source.MandatoryItemSets.Count > 0 And Source.AppendMode = False Then
 		    For Each Set As Beacon.ItemSet In Source.MandatoryItemSets
-		      GeneratedSets.AddRow(Set.StringValue(Source.Multipliers, False, Difficulty))
+		      GeneratedSets.Add(Set.StringValue(Source.Multipliers, False, Difficulty))
 		    Next
 		  End If
 		  
-		  Keys.AddRow("ItemSets=(" + GeneratedSets.Join(",") + ")")
+		  Keys.Add("ItemSets=(" + GeneratedSets.Join(",") + ")")
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, "(" + Keys.Join(",") + ")"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, "(" + Keys.Join(",") + ")"))
 		End Sub
 	#tag EndMethod
 
@@ -216,7 +216,7 @@ Implements Iterable
 		    End If
 		    
 		    If Set.Count = 0 Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
+		      Issues.Add(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
 		    Else
 		      For Each Entry As Beacon.SetEntry In Set
 		        Self.DetectSetEntryIssues(Source, Set, Entry, ConfigName, Document, Issues)
@@ -235,7 +235,7 @@ Implements Iterable
 		    End If
 		    
 		    If Source.ItemSets.Count < Source.RequiredItemSetCount Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSetCount.ToString + " " + if(Source.RequiredItemSetCount = 1, "item set", "item sets") + " to work correctly.", Source))
+		      Issues.Add(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSetCount.ToString + " " + if(Source.RequiredItemSetCount = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source.ItemSets
 		        Self.DetectItemSetIssues(Source, Set, ConfigName, Document, Issues)
@@ -254,7 +254,7 @@ Implements Iterable
 		    End If
 		    
 		    If Entry.Count = 0 Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
+		      Issues.Add(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
 		    Else
 		      For Each Option As Beacon.SetEntryOption In Entry
 		        Self.DetectSetEntryOptionIssues(Source, Set, Entry, Option, ConfigName, Document, Issues)
@@ -273,13 +273,13 @@ Implements Iterable
 		    End If
 		    
 		    If Option.Engram = Nil Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		      Issues.Add(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    ElseIf Document.ModEnabled(Option.Engram.ModID) = False Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		      Issues.Add(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    ElseIf Option.Engram.IsTagged("Generic") Or Option.Engram.IsTagged("Blueprint") Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		      Issues.Add(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    Else
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		      Issues.Add(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    End If
 		  Catch Err As RuntimeException
 		  End Try
@@ -302,7 +302,7 @@ Implements Iterable
 		  
 		  Var Dicts() As Variant
 		  If Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
-		    Dicts.AddRow(Dictionary(Value.ObjectValue))
+		    Dicts.Add(Dictionary(Value.ObjectValue))
 		  ElseIf Value.IsArray And Value.ArrayElementType = Value.TypeObject Then
 		    Dicts = Value
 		  End If

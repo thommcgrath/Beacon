@@ -272,7 +272,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Add(Item As ShelfItem)
-		  Self.mItems.AddRow(Item)
+		  Self.mItems.Add(Item)
 		  Item.AddObserver(Self, "PulseAmount")
 		  Item.AddObserver(Self, "Loading")
 		  Self.Invalidate

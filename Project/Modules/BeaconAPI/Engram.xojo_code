@@ -4,7 +4,7 @@ Protected Class Engram
 		Function AsDictionary() As Dictionary
 		  Var Tags() As String
 		  If Self.CanBeBlueprint Then
-		    Tags.AddRow("blueprintable")
+		    Tags.Add("blueprintable")
 		  End If
 		  
 		  Var Dict As New Dictionary

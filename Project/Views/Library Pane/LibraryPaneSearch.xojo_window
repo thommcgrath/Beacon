@@ -114,6 +114,7 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin URLConnection SearchSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -379,8 +380,8 @@ End
 		  End Try
 		  
 		  For Each ResultDict As Dictionary In Results
-		    Self.mResultDicts.AddRow(ResultDict)
-		    Self.mResultRects.AddRow(Nil)
+		    Self.mResultDicts.Add(ResultDict)
+		    Self.mResultRects.Add(Nil)
 		  Next
 		End Sub
 	#tag EndEvent

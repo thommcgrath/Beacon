@@ -185,7 +185,7 @@ End
 		Private Sub ShowAddResources()
 		  Var Engrams() As Beacon.Engram
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Engrams.AddRow(Self.mTarget.Resource(I))
+		    Engrams.Add(Self.mTarget.Resource(I))
 		  Next
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
@@ -211,7 +211,7 @@ End
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Var Resource As Beacon.Engram = Self.List.RowTagAt(I)
-		      Paths.AddRow(Resource.Path)
+		      Paths.Add(Resource.Path)
 		    End If
 		  Next
 		  
@@ -348,7 +348,7 @@ End
 		      Continue
 		    End If
 		    
-		    EngramsToDelete.AddRow(Me.RowTagAt(I))
+		    EngramsToDelete.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(EngramsToDelete, "ingredient", "ingredients") = False Then
@@ -377,7 +377,7 @@ End
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
-		    Dicts.AddRow(Dict)
+		    Dicts.Add(Dict)
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)

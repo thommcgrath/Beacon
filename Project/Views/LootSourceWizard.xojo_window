@@ -45,6 +45,7 @@ Begin BeaconDialog LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -1036,6 +1037,7 @@ Begin BeaconDialog LootSourceWizard
          HasBackColor    =   False
          Height          =   118
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   130
          LockBottom      =   False
@@ -1194,6 +1196,7 @@ Begin BeaconDialog LootSourceWizard
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
+         Text            =   ""
          Tooltip         =   ""
          Top             =   20
          Transparent     =   False
@@ -1274,7 +1277,7 @@ End
 		    End If
 		    
 		    Var Source As Beacon.LootSource = Self.SourceList.RowTagAt(I)
-		    Selections.AddRow(Source.ClassString)
+		    Selections.Add(Source.ClassString)
 		  Next
 		  
 		  Var ScrollPosition As Integer = Self.SourceList.ScrollPosition
@@ -1324,7 +1327,7 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.AddRow(Source.Clone)
+		    Self.mDestinations.Add(Source.Clone)
 		  Next
 		  
 		  Self.ShowCustomize()
@@ -1589,15 +1592,15 @@ End
 		    End If
 		    
 		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
-		    AllowedPresets.AddRow(Preset.PresetID)
-		    AdditionalPresets.AddRow(Preset.PresetID)
+		    AllowedPresets.Add(Preset.PresetID)
+		    AdditionalPresets.Add(Preset.PresetID)
 		  Next
 		  
 		  Var SourceSets() As Beacon.ItemSet
 		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource.ItemSets
 		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
-		        SourceSets.AddRow(Set)
+		        SourceSets.Add(Set)
 		      End If
 		      
 		      Var Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)

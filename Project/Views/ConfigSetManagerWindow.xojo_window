@@ -425,7 +425,7 @@ End
 		  
 		  Var OriginalSetName As String = Me.RowTagAt(Me.SelectedRowIndex)
 		  If OriginalSetName.IsEmpty = False And Self.mDeletedSetNames.IndexOf(OriginalSetName) = -1 Then
-		    Self.mDeletedSetNames.AddRow(OriginalSetName)
+		    Self.mDeletedSetNames.Add(OriginalSetName)
 		  End If
 		  Me.RemoveRowAt(Me.SelectedRowIndex)
 		End Sub

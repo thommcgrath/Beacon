@@ -111,7 +111,7 @@ End
 		Sub Append(ParamArray Items() As SourceListItem)
 		  For Each Item As SourceListItem In Items
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
-		      Self.mItems.AddRow(Item)
+		      Self.mItems.Add(Item)
 		      Self.Content.Invalidate
 		    End If
 		  Next
@@ -392,7 +392,7 @@ End
 		  Var SelectedItem As SourceListItem = Self.Item(Self.SelectedRowIndex)
 		  
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
-		    Names.AddRow(Self.mItems(Idx).Caption)
+		    Names.Add(Self.mItems(Idx).Caption)
 		  Next
 		  
 		  If Self.mItemRects.LastRowIndex = Self.mItems.LastRowIndex Then

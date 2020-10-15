@@ -76,7 +76,7 @@ Inherits Beacon.IntegrationEngine
 		        FormData.Value("category") = Category
 		        FormData.Value("key") = Key
 		        FormData.Value("value") = NewValue
-		        GuidedChanges.AddRow(FormData)
+		        GuidedChanges.Add(FormData)
 		        
 		        App.Log("Need to change " + ConfigKey.NitradoPath.StringValue + " from `" + CurrentValue + "` to `" + NewValue + "`")
 		      End If
@@ -152,7 +152,7 @@ Inherits Beacon.IntegrationEngine
 		      FormData.Value("category") = Category
 		      FormData.Value("key") = Key
 		      FormData.Value("value") = NewValue
-		      GuidedChanges.AddRow(FormData)
+		      GuidedChanges.Add(FormData)
 		      
 		      App.Log("Need to change " + ConfigKey.NitradoPath.StringValue + " from `" + CurrentValue + "` to `" + NewValue + "`")
 		    End If
@@ -365,17 +365,17 @@ Inherits Beacon.IntegrationEngine
 		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
 		          Select Case ConfigKey.NitradoFormat
 		          Case Beacon.ConfigKey.NitradoFormats.Value
-		            TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Value))
+		            TargetArray.Add(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Value))
 		          Case Beacon.ConfigKey.NitradoFormats.Line
 		            Var Lines() As String = Value.Split(EndOfLine.UNIX)
 		            For Each Line As String In Lines
 		              Var Pos As Integer = Line.IndexOf("=")
 		              If Pos = -1 Then
-		                TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Line))
+		                TargetArray.Add(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Line))
 		                Continue
 		              End If
 		              
-		              TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, Line.Left(Pos), Line.Middle(Pos + 1)))
+		              TargetArray.Add(New Beacon.ConfigValue(ConfigKey.Header, Line.Left(Pos), Line.Middle(Pos + 1)))
 		            Next
 		          End Select
 		        Next
@@ -397,7 +397,7 @@ Inherits Beacon.IntegrationEngine
 		        // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
 		      End If
 		      
-		      Servers.AddRow(Server)
+		      Servers.Add(Server)
 		    Catch Err As RuntimeException
 		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
 		      Continue

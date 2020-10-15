@@ -286,6 +286,7 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter GameIniRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -297,6 +298,7 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter GameUserSettingsRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -308,6 +310,7 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter FileRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -319,6 +322,7 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter ClipboardRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1092,7 +1096,7 @@ End
 		    For Each Key As Variant In Keys
 		      Var Arr() As String = Dict.Value(Key)
 		      For Each Command As String In Arr
-		        Parameters.AddRow("-" + Command)
+		        Parameters.Add("-" + Command)
 		      Next
 		    Next
 		  End If
@@ -1110,7 +1114,7 @@ End
 		    Var EnabledSets() As String
 		    For Each State As Beacon.ConfigSetState In States
 		      If State.Enabled Then
-		        EnabledSets.AddRow(State.Name)
+		        EnabledSets.Add(State.Name)
 		      End If
 		    Next
 		    

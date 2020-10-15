@@ -31,7 +31,7 @@ Implements Beacon.NamedItem
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var LootSource As Beacon.LootSource = Entry.Key
 		    For Each Set As Beacon.ItemSet In LootSource.ItemSets
-		      Siblings.AddRow(Set.Label)
+		      Siblings.Add(Set.Label)
 		    Next
 		  Next
 		  
@@ -57,7 +57,7 @@ Implements Beacon.NamedItem
 		    Var SourceNames() As String
 		    Var Sources() As Beacon.LootSource = Self.Sources
 		    For Each Source As Beacon.LootSource In Sources
-		      SourceNames.AddRow(Source.Label)
+		      SourceNames.Add(Source.Label)
 		    Next
 		    SourceNames.Sort
 		    Self.mSubLabel = Language.EnglishOxfordList(SourceNames)
@@ -91,12 +91,12 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Matches(Values() As String) As Boolean
 		  Var PossibleValues() As String
-		  PossibleValues.AddRow(Self.mTemplate.ID)
-		  PossibleValues.AddRow(Self.mTemplate.Hash)
+		  PossibleValues.Add(Self.mTemplate.ID)
+		  PossibleValues.Add(Self.mTemplate.Hash)
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var Set As Beacon.ItemSet = Entry.Value
-		    PossibleValues.AddRow(Set.ID)
-		    PossibleValues.AddRow(Set.Hash)
+		    PossibleValues.Add(Set.ID)
+		    PossibleValues.Add(Set.Hash)
 		  Next
 		  
 		  For Each Value As String In Values
@@ -136,7 +136,7 @@ Implements Beacon.NamedItem
 		Function Sources() As Beacon.LootSource()
 		  Var Arr() As Beacon.LootSource
 		  For Each Entry As DictionaryEntry In Self.mSets
-		    Arr.AddRow(Entry.Key)
+		    Arr.Add(Entry.Key)
 		  Next
 		  Return Arr
 		End Function

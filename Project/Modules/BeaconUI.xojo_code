@@ -128,7 +128,7 @@ Protected Module BeaconUI
 		    Var Pics() As Picture
 		    For Scale As Double = 1.0 To 3.0
 		      If Scale = HorizontalScale And Scale = VerticalScale Then
-		        Pics.AddRow(WindowPic)
+		        Pics.Add(WindowPic)
 		        Continue
 		      End If
 		      
@@ -136,7 +136,7 @@ Protected Module BeaconUI
 		      Pic.HorizontalResolution = 72 * Scale
 		      Pic.VerticalResolution = 72 * Scale
 		      Pic.Graphics.DrawPicture(WindowPic, 0, 0, Pic.Width, Pic.Height, 0, 0, WindowPic.Width, WindowPic.Height)
-		      Pics.AddRow(Pic)
+		      Pics.Add(Pic)
 		    Next
 		    
 		    Return New Picture(Win.Width, Win.Height, Pics)
@@ -279,7 +279,7 @@ Protected Module BeaconUI
 		    End If
 		    
 		    Pic.ApplyMask(Mask)
-		    Bitmaps.AddRow(Pic)
+		    Bitmaps.Add(Pic)
 		  Next
 		  Return New Picture(Width, Height, Bitmaps)
 		End Function
@@ -512,7 +512,7 @@ Protected Module BeaconUI
 		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var Names() As String
 		  For Each Item As Beacon.NamedItem In Items
-		    Names.AddRow(Item.Label)
+		    Names.Add(Item.Label)
 		  Next
 		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
 		End Function
@@ -526,7 +526,7 @@ Protected Module BeaconUI
 		    If UniqueNames.IndexOf(Name) > -1 Then
 		      UseGenericNames = True
 		    Else
-		      UniqueNames.AddRow(Name)
+		      UniqueNames.Add(Name)
 		    End If
 		  Next
 		  UseGenericNames = UseGenericNames Or UniqueNames.Count > 8

@@ -322,9 +322,9 @@ Inherits ScrollCanvas
 			    For I As Integer = 0 To NewLines.LastRowIndex
 			      Var OldIdx As Integer = Dict.Lookup(NewLines(I), -1)
 			      If OldIdx = -1 Then
-			        NewContentLines.AddRow(New BeaconCodeLine(NewLines(I)))
+			        NewContentLines.Add(New BeaconCodeLine(NewLines(I)))
 			      Else
-			        NewContentLines.AddRow(Self.mContentLines(OldIdx))
+			        NewContentLines.Add(Self.mContentLines(OldIdx))
 			      End If
 			    Next
 			    Self.mContentLines = NewContentLines

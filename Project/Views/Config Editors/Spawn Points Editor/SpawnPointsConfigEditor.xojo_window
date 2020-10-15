@@ -194,10 +194,11 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   729
       Begin SpawnPointEditor Editor
@@ -212,6 +213,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   548
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   251
          LockBottom      =   True
@@ -305,7 +307,7 @@ End
 		  ConvertReplacements.Enabled = True
 		  ConvertReplacements.AutoEnabled = False
 		  ConvertReplacements.Name = "ConvertCreatureReplacementsToSpawnPointAdditions"
-		  Items.AddRow(ConvertReplacements)
+		  Items.Add(ConvertReplacements)
 		End Sub
 	#tag EndEvent
 
@@ -466,7 +468,7 @@ End
 		  Var Bound As Integer = Self.List.RowCount - 1
 		  For I As Integer = 0 To Bound
 		    If Self.List.Selected(I) Then
-		      SpawnPoints.AddRow(Self.List.RowTagAt(I))
+		      SpawnPoints.Add(Self.List.RowTagAt(I))
 		    End If
 		  Next
 		  Self.UpdateList(SpawnPoints)
@@ -605,7 +607,7 @@ End
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
 		    If Me.Selected(I) Then
-		      SpawnPoints.AddRow(Me.RowTagAt(I))
+		      SpawnPoints.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -630,7 +632,7 @@ End
 		      Continue
 		    End If
 		    
-		    Points.AddRow(Me.RowTagAt(I))
+		    Points.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Points, "spawn point", "spawn points") = False Then
@@ -660,7 +662,7 @@ End
 		    End If
 		    
 		    Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
-		    SaveData.AddRow(SpawnPoint.SaveData)
+		    SaveData.Add(SpawnPoint.SaveData)
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(SaveData, False)
@@ -678,7 +680,7 @@ End
 		    Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
 		    Var Value As Beacon.ConfigValue = BeaconConfigs.SpawnPoints.ConfigValueForSpawnPoint(SpawnPoint)
 		    If Value <> Nil Then
-		      Lines.AddRow(Value.Key + "=" + Value.Value)
+		      Lines.Add(Value.Key + "=" + Value.Value)
 		    End If
 		  Next
 		  
@@ -708,7 +710,7 @@ End
 		      For Each Dict As Dictionary In Parsed
 		        Var SpawnPoint As Beacon.SpawnPoint = Beacon.SpawnPoint.FromSaveData(Dict)
 		        If SpawnPoint <> Nil Then
-		          SpawnPoints.AddRow(SpawnPoint)
+		          SpawnPoints.Add(SpawnPoint)
 		        End If
 		      Next
 		      Self.HandlePastedSpawnPoints(SpawnPoints)

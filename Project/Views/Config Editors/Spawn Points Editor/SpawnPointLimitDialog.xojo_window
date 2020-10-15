@@ -378,19 +378,19 @@ End
 		      Continue
 		    End If
 		    
-		    SelectableCreatures.AddRow(Creature)
-		    CreatureLabels.AddRow(Creature.Label)
+		    SelectableCreatures.Add(Creature)
+		    CreatureLabels.Add(Creature.Label)
 		    Map.Value(Creature.Path) = Creature
 		  Next
 		  CreatureLabels.SortWith(SelectableCreatures)
 		  
 		  // Do this after the sort so the indexes match up
 		  If IsNull(Self.mSelectedCreature) = False Then
-		    SelectableCreatures.AddRow(Self.mSelectedCreature)
+		    SelectableCreatures.Add(Self.mSelectedCreature)
 		  End If
 		  
 		  If SelectableCreatures.Count > 0 Then
-		    SelectableCreatures.AddRow(Nil)
+		    SelectableCreatures.Add(Nil)
 		  End If
 		  
 		  Var AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", Mods, "")
@@ -399,7 +399,7 @@ End
 		      Continue
 		    End If
 		    
-		    SelectableCreatures.AddRow(Creature)
+		    SelectableCreatures.Add(Creature)
 		  Next
 		  
 		  Self.mSelectableCreatures = SelectableCreatures

@@ -118,37 +118,37 @@ End
 	#tag Method, Flags = &h1
 		Protected Sub RebuildMenu()
 		  Var Links() As Pair
-		  Links.AddRow("Check for Updates" : "beacon://action/checkforupdate")
+		  Links.Add("Check for Updates" : "beacon://action/checkforupdate")
 		  If Self.Watcher.OptionHeld Then
-		    Links.AddRow("Refresh Engrams" : "beacon://action/refreshengrams")
+		    Links.Add("Refresh Engrams" : "beacon://action/refreshengrams")
 		  Else
-		    Links.AddRow("Update Engrams" : "beacon://action/checkforengrams")
+		    Links.Add("Update Engrams" : "beacon://action/checkforengrams")
 		  End If
 		  If Preferences.OnlineEnabled Then
 		    If UserCloud.IsBusy Then
-		      Links.AddRow("Syncing Cloud Files…" : "")
+		      Links.Add("Syncing Cloud Files…" : "")
 		    Else
-		      Links.AddRow("Sync Cloud Files" : "beacon://syncusercloud")
+		      Links.Add("Sync Cloud Files" : "beacon://syncusercloud")
 		    End If
 		  End If
-		  Links.AddRow("Release Notes" : "beacon://releasenotes")
-		  Links.AddRow(Nil)
+		  Links.Add("Release Notes" : "beacon://releasenotes")
+		  Links.Add(Nil)
 		  
 		  If Not Preferences.OnlineEnabled Then
-		    Links.AddRow("Enable Cloud && Community" : "beacon://enableonline")
+		    Links.Add("Enable Cloud && Community" : "beacon://enableonline")
 		  Else
 		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.Username = "" Then
-		      Links.AddRow("Sign In" : "beacon://signin")
+		      Links.Add("Sign In" : "beacon://signin")
 		    Else
-		      Links.AddRow(App.IdentityManager.CurrentIdentity.Username : "")
-		      Links.AddRow("Manage Account" : "beacon://showaccount")
-		      Links.AddRow("Sign Out" : "beacon://signout")
+		      Links.Add(App.IdentityManager.CurrentIdentity.Username : "")
+		      Links.Add("Manage Account" : "beacon://showaccount")
+		      Links.Add("Sign Out" : "beacon://signout")
 		    End If
 		  End If
-		  Links.AddRow(Nil)
+		  Links.Add(Nil)
 		  
-		  Links.AddRow("Admin Spawn Codes" : "beacon://spawncodes")
-		  Links.AddRow("Report a Problem" : "beacon://reportproblem")
+		  Links.Add("Admin Spawn Codes" : "beacon://spawncodes")
+		  Links.Add("Report a Problem" : "beacon://reportproblem")
 		  
 		  Self.SetContents(Links)
 		End Sub

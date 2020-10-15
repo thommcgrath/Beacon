@@ -165,9 +165,10 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   451
       Begin LootSourceEditor Editor
@@ -182,6 +183,7 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -333,37 +335,37 @@ End
 		    Var AddLootSourceItem As New MenuItem("Add Loot Source…")
 		    AddLootSourceItem.Name = "DocumentAddBeacon"
 		    AddLootSourceItem.AutoEnabled = False
-		    Items.AddRow(AddLootSourceItem)
+		    Items.Add(AddLootSourceItem)
 		    
 		    Var DuplicateLootSourceItem As New MenuItem("Duplicate Loot Source")
 		    DuplicateLootSourceItem.Name = "DocumentDuplicateBeacon"
 		    DuplicateLootSourceItem.AutoEnabled = False
-		    Items.AddRow(DuplicateLootSourceItem)
+		    Items.Add(DuplicateLootSourceItem)
 		    
 		    Var RemoveLootSourceItem As New MenuItem("Remove Loot Source")
 		    RemoveLootSourceItem.Name = "DocumentRemoveBeacon"
 		    RemoveLootSourceItem.AutoEnabled = False
-		    Items.AddRow(RemoveLootSourceItem)
+		    Items.Add(RemoveLootSourceItem)
 		    
-		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    Items.Add(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Var AddItemSetItem As New MenuItem("Add Item Set")
 		    AddItemSetItem.Name = "DocumentAddItemSet"
 		    AddItemSetItem.AutoEnabled = False
-		    Items.AddRow(AddItemSetItem)
+		    Items.Add(AddItemSetItem)
 		    
 		    Var RemoveItemSetItem As New MenuItem("Remove Item Set")
 		    RemoveItemSetItem.Name = "DocumentRemoveItemSet"
 		    RemoveItemSetItem.AutoEnabled = False
-		    Items.AddRow(RemoveItemSetItem)
+		    Items.Add(RemoveItemSetItem)
 		    
-		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    Items.Add(New MenuItem(MenuItem.TextSeparator))
 		  #endif
 		  
 		  Var RebuildItem As New MenuItem("Rebuild Item Sets from Presets")
 		  RebuildItem.Name = "DocumentRebuildPresets"
 		  RebuildItem.AutoEnabled = False
-		  Items.AddRow(RebuildItem)
+		  Items.Add(RebuildItem)
 		End Sub
 	#tag EndEvent
 
@@ -407,7 +409,7 @@ End
 		      End If
 		    End If
 		    
-		    AddedSources.AddRow(Source)
+		    AddedSources.Add(Source)
 		    Config.Append(Source)
 		  Next
 		  
@@ -690,7 +692,7 @@ End
 		    Var NewSources() As Beacon.LootSource
 		    For Each Source As Beacon.LootSource In CurrentSources
 		      If Not Map.HasKey(Source.ClassString) Then
-		        NewSources.AddRow(Source)
+		        NewSources.Add(Source)
 		      End If
 		    Next
 		    Self.UpdateSourceList(NewSources)
@@ -709,13 +711,13 @@ End
 		  Var SelectedClasses() As String
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
-		      SelectedClasses.AddRow(Source.ClassString)
+		      SelectedClasses.Add(Source.ClassString)
 		    Next
 		  Else
 		    Var Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
 		      If Self.List.Selected(I) Then
-		        SelectedClasses.AddRow(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
+		        SelectedClasses.Add(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
 		      End If
 		    Next
 		  End If
@@ -730,7 +732,7 @@ End
 		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleSources(I).Path, VisibleSources(I).Label)
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      Self.List.Selected(I) = True
-		      Selection.AddRow(VisibleSources(I))
+		      Selection.Add(VisibleSources(I))
 		    Else
 		      Self.List.Selected(I) = False
 		    End If
@@ -942,7 +944,7 @@ End
 		      Continue
 		    End If
 		    
-		    Sources.AddRow(Self.List.RowTagAt(I))
+		    Sources.Add(Self.List.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Sources, "loot source", "loot sources") = False Then
@@ -969,7 +971,7 @@ End
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Var Source As Beacon.LootSource = Me.RowTagAt(I)
-		      Dicts.AddRow(Source.SaveData)
+		      Dicts.Add(Source.SaveData)
 		      If Source.IsValid(Self.Document) Then
 		        BeaconConfigs.LootDrops.BuildOverrides(Source, Configs, Self.Document.Difficulty)
 		      End If
@@ -978,7 +980,7 @@ End
 		  
 		  Var Lines() As String
 		  For Each Config As Beacon.ConfigValue In Configs
-		    Lines.AddRow(Config.Key + "=" + Config.Value)
+		    Lines.Add(Config.Key + "=" + Config.Value)
 		  Next
 		  
 		  Var RawData As String
@@ -1007,11 +1009,11 @@ End
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		    Var Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
-		      Dicts.AddRow(Parsed)
+		      Dicts.Add(Parsed)
 		    ElseIf Info.FullName = "Object()" Then
 		      Var Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
-		        Dicts.AddRow(Dict)
+		        Dicts.Add(Dict)
 		      Next
 		    Else
 		      System.Beep
@@ -1022,7 +1024,7 @@ End
 		    For Each Dict As Dictionary In Dicts
 		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(Dict)
 		      If (Source Is Nil) = False Then
-		        Sources.AddRow(Source)
+		        Sources.Add(Source)
 		      End If
 		    Next
 		    Self.AddLootSources(Sources)
@@ -1042,7 +1044,7 @@ End
 		  Var Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Sources.AddRow(Me.RowTagAt(I))
+		      Sources.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  

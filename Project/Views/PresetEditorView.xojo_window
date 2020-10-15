@@ -137,9 +137,10 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   61
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   740
       BeginSegmentedButton SegmentedButton MapSelector
@@ -914,7 +915,7 @@ End
 		    
 		    Var Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
 		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  Next
 		  
 		  If Entries.LastRowIndex = -1 Then
@@ -972,23 +973,23 @@ End
 		    End If
 		    Select Case I
 		    Case 0
-		      Maps.AddRow(Beacon.Maps.TheIsland)
+		      Maps.Add(Beacon.Maps.TheIsland)
 		    Case 1
-		      Maps.AddRow(Beacon.Maps.ScorchedEarth)
+		      Maps.Add(Beacon.Maps.ScorchedEarth)
 		    Case 2
-		      Maps.AddRow(Beacon.Maps.Aberration)
+		      Maps.Add(Beacon.Maps.Aberration)
 		    Case 3
-		      Maps.AddRow(Beacon.Maps.Extinction)
+		      Maps.Add(Beacon.Maps.Extinction)
 		    Case 4
-		      Maps.AddRow(Beacon.Maps.Genesis)
+		      Maps.Add(Beacon.Maps.Genesis)
 		    Case 5
-		      Maps.AddRow(Beacon.Maps.TheCenter)
+		      Maps.Add(Beacon.Maps.TheCenter)
 		    Case 6
-		      Maps.AddRow(Beacon.Maps.Ragnarok)
+		      Maps.Add(Beacon.Maps.Ragnarok)
 		    Case 7
-		      Maps.AddRow(Beacon.Maps.Valguero)
+		      Maps.Add(Beacon.Maps.Valguero)
 		    Case 8
-		      Maps.AddRow(Beacon.Maps.CrystalIsles)
+		      Maps.Add(Beacon.Maps.CrystalIsles)
 		    End Select
 		  Next
 		  Return Maps
@@ -1064,7 +1065,7 @@ End
 		  Var Entries() As Beacon.PresetEntry
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
 		    If Self.ContentsList.Selected(I) Then
-		      Entries.AddRow(Self.ContentsList.RowTagAt(I))
+		      Entries.Add(Self.ContentsList.RowTagAt(I))
 		    End If
 		  Next
 		  Return Entries
@@ -1144,7 +1145,7 @@ End
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.Selected(I) Then
 		      Var Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
-		      SelectedEntries.AddRow(Entry.UniqueID)
+		      SelectedEntries.Add(Entry.UniqueID)
 		    End If
 		  Next
 		  Self.ContentsList.RemoveAllRows()
@@ -1520,7 +1521,7 @@ End
 		        
 		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.ValidForMap(Map) Then
-		          Entries.AddRow(Entry)
+		          Entries.Add(Entry)
 		        End If
 		      Next
 		      

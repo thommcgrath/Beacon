@@ -29,7 +29,7 @@ Protected Class ConfigValue
 		    If Section.HasKey(SimplifiedKey) Then
 		      Arr = Section.Value(SimplifiedKey)
 		    End If
-		    Arr.AddRow(Value.Key + "=" + Value.Value)
+		    Arr.Add(Value.Key + "=" + Value.Value)
 		    Section.Value(SimplifiedKey) = Arr
 		    
 		    Dict.Value(Header) = Section

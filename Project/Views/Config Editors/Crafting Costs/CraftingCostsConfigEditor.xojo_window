@@ -223,9 +223,10 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -269,6 +270,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          HasBackColor    =   False
          Height          =   396
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -318,6 +320,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
    End
    Begin Thread FibercraftBuilderThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -329,6 +332,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -354,12 +358,12 @@ End
 		  Var CreateFibercraftItem As New MenuItem("Setup Fibercraft Server")
 		  CreateFibercraftItem.Name = "CreateFibercraftServer"
 		  CreateFibercraftItem.AutoEnabled = False
-		  Items.AddRow(CreateFibercraftItem)
+		  Items.Add(CreateFibercraftItem)
 		  
 		  Var AdjustCostsItem As New MenuItem("Adjust All Crafting Costs")
 		  AdjustCostsItem.Name = "AdjustCosts"
 		  AdjustCostsItem.AutoEnabled = False
-		  Items.AddRow(AdjustCostsItem)
+		  Items.Add(AdjustCostsItem)
 		End Sub
 	#tag EndEvent
 
@@ -385,7 +389,7 @@ End
 		  Var NewEngrams() As Beacon.Engram = OtherConfig.Engrams
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Config.Cost(Engram) = OtherConfig.Cost(Engram)
-		    NewCosts.AddRow(Config.Cost(Engram))
+		    NewCosts.Add(Config.Cost(Engram))
 		  Next
 		  
 		  Self.Changed = True
@@ -555,7 +559,7 @@ End
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Var Cost As New Beacon.CraftingCost(Engram, WithDefaults)
 		    Config.Add(Cost)
-		    NewCosts.AddRow(Cost)
+		    NewCosts.Add(Cost)
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
@@ -585,7 +589,7 @@ End
 		    Var Cost As New Beacon.CraftingCost(SourceCost)
 		    Cost.Engram = Engram
 		    Config.Add(Cost)
-		    NewCosts.AddRow(Cost)
+		    NewCosts.Add(Cost)
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
@@ -601,7 +605,7 @@ End
 		      Continue
 		    End If
 		    
-		    Arr.AddRow(Self.List.RowTagAt(I))
+		    Arr.Add(Self.List.RowTagAt(I))
 		  Next
 		  Self.UpdateList(Arr)
 		End Sub
@@ -614,7 +618,7 @@ End
 		  
 		  Var ObjectIDs() As String
 		  For Each Item As Beacon.CraftingCost In SelectItems
-		    ObjectIDs.AddRow(Item.ObjectID)
+		    ObjectIDs.Add(Item.ObjectID)
 		  Next
 		  
 		  Self.List.RemoveAllRows
@@ -638,7 +642,7 @@ End
 		Private Sub UpdateList(SelectItem As Beacon.CraftingCost)
 		  Var Arr() As Beacon.CraftingCost
 		  If SelectItem <> Nil Then
-		    Arr.AddRow(SelectItem)
+		    Arr.Add(SelectItem)
 		  End If
 		  Self.UpdateList(Arr)
 		  Self.List.EnsureSelectionIsVisible()
@@ -758,7 +762,7 @@ End
 		      Continue
 		    End If
 		    
-		    Costs.AddRow(Me.RowTagAt(I))
+		    Costs.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Costs, "crafting cost override", "crafting cost overrides") = False Then
@@ -801,8 +805,8 @@ End
 		    End If
 		    
 		    Var Cost As Beacon.CraftingCost = Me.RowTagAt(I)
-		    SelectedCosts.AddRow(Cost)
-		    Dicts.AddRow(Cost.Export)
+		    SelectedCosts.Add(Cost)
+		    Dicts.Add(Cost.Export)
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
@@ -819,7 +823,7 @@ End
 		    
 		    Var Config As Beacon.ConfigValue = BeaconConfigs.CraftingCosts.ConfigValueForCraftingCost(Cost)
 		    If (Config Is Nil) = False Then
-		      Lines.AddRow(Config.Key + "=" + Config.Value)
+		      Lines.Add(Config.Key + "=" + Config.Value)
 		    End If
 		  Next
 		  
@@ -850,7 +854,7 @@ End
 		        Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
 		          Config.Add(Cost)
-		          Costs.AddRow(Cost)
+		          Costs.Add(Cost)
 		        End If
 		      Next
 		      
@@ -979,7 +983,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByID(ObjectID)
 		    If (Engram Is Nil) = False Then
-		      Engrams.AddRow(Engram)
+		      Engrams.Add(Engram)
 		    End If
 		  Next
 		  

@@ -117,7 +117,7 @@ End
 		      Continue
 		    End If
 		    
-		    Filtered.AddRow(Mods(Idx))
+		    Filtered.Add(Mods(Idx))
 		    MaxWidth = Max(MaxWidth, Measure.Graphics.TextWidth(Mods(Idx).Name))
 		  Next
 		  Self.CheckboxesBound = Filtered.LastRowIndex

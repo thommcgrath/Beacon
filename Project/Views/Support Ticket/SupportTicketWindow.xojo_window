@@ -639,6 +639,7 @@ Begin BeaconWindow SupportTicketWindow
    End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1077,16 +1078,16 @@ End
 		  End Select
 		  
 		  Var Parts() As String
-		  Parts.AddRow("Content-Disposition: form-data; name=""name""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketName)
-		  Parts.AddRow("Content-Disposition: form-data; name=""email""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketEmail)
-		  Parts.AddRow("Content-Disposition: form-data; name=""platform""" + EndOfLine.Windows + EndOfLine.Windows + Platform)
-		  Parts.AddRow("Content-Disposition: form-data; name=""host""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketHost)
-		  Parts.AddRow("Content-Disposition: form-data; name=""body""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketBody)
-		  Parts.AddRow("Content-Disposition: form-data; name=""user""" + EndOfLine.Windows + EndOfLine.Windows + Self.mUserID)
-		  Parts.AddRow("Content-Disposition: form-data; name=""archive""; filename=""" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
-		  Parts.AddRow("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + SystemInformationMBS.OSVersionString)
-		  Parts.AddRow("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.ShortVersion)
-		  Parts.AddRow("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
+		  Parts.Add("Content-Disposition: form-data; name=""name""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketName)
+		  Parts.Add("Content-Disposition: form-data; name=""email""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketEmail)
+		  Parts.Add("Content-Disposition: form-data; name=""platform""" + EndOfLine.Windows + EndOfLine.Windows + Platform)
+		  Parts.Add("Content-Disposition: form-data; name=""host""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketHost)
+		  Parts.Add("Content-Disposition: form-data; name=""body""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketBody)
+		  Parts.Add("Content-Disposition: form-data; name=""user""" + EndOfLine.Windows + EndOfLine.Windows + Self.mUserID)
+		  Parts.Add("Content-Disposition: form-data; name=""archive""; filename=""" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
+		  Parts.Add("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + SystemInformationMBS.OSVersionString)
+		  Parts.Add("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.ShortVersion)
+		  Parts.Add("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
 		  
 		  Var PostBody As String = "--" + Boundary + EndOfLine.Windows + Parts.Join(EndOfLine.Windows + "--" + Boundary + EndOfLine.Windows) + EndOfLine.Windows + "--" + Boundary + "--"
 		  

@@ -148,11 +148,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.RebuildRecentMenu
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
-		  ConfigNames.AddRow("accounts")
-		  ConfigNames.AddRow("deployments")
+		  ConfigNames.Add("accounts")
+		  ConfigNames.Add("deployments")
 		  Var ConfigLabels() As String
 		  For Each ConfigName As String In ConfigNames
-		    ConfigLabels.AddRow(Language.LabelForConfig(ConfigName))
+		    ConfigLabels.Add(Language.LabelForConfig(ConfigName))
 		  Next
 		  ConfigLabels.SortWith(ConfigNames)
 		  For Each ConfigName As String In ConfigNames
@@ -171,17 +171,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    // Not critically important
 		  End Try
 		  
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckBetaExpiration)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupLogs)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_PrivacyCheck)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupDatabase)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CleanupConfigBackups)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_ShowMainWindow)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_RequestUser)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckUpdates)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_NewsletterPrompt)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_GettingStarted)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckScreenSize)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabase)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CleanupConfigBackups)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_NewsletterPrompt)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_GettingStarted)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -480,8 +480,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		        Var Second As Integer = Matches.SubExpressionString(6).ToInteger
 		        
 		        Var BackupTime As New DateTime(Year, Month, Day, Hour, Minute, Second, 0, Zone)
-		        Timestamps.AddRow(BackupTime.SecondsFrom1970)
-		        Folders.AddRow(BackupFolder)
+		        Timestamps.Add(BackupTime.SecondsFrom1970)
+		        Folders.Add(BackupFolder)
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -540,7 +540,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    
 		    If Char = BreakChar Then
-		      Args.AddRow(Arg)
+		      Args.Add(Arg)
 		      Arg = ""
 		    Else
 		      Arg = Arg + Char
@@ -548,7 +548,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Next
 		  
 		  If Arg <> "" Then
-		    Args.AddRow(Arg)
+		    Args.Add(Arg)
 		  End If
 		  
 		  If Args.LastRowIndex > 0 Then
@@ -589,7 +589,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
 		  If Self.mMainWindow Is Nil Then
-		    Self.mPendingURLs.AddRow(URL)
+		    Self.mPendingURLs.Add(URL)
 		    Return True
 		  End If
 		  
@@ -1363,12 +1363,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Function UserAgent() As String
 		  If Self.mUserAgent.IsEmpty Then
 		    Var Components() As String
-		    Components.AddRow("Language=Xojo/" + XojoVersionString)
-		    Components.AddRow("Platform=" + SystemInformationMBS.OSName + "/" + SystemInformationMBS.OSVersionString)
+		    Components.Add("Language=Xojo/" + XojoVersionString)
+		    Components.Add("Platform=" + SystemInformationMBS.OSName + "/" + SystemInformationMBS.OSVersionString)
 		    #if Target32Bit
-		      Components.AddRow("Architecture=32-bit " + If(TargetARM, "ARM", "Intel"))
+		      Components.Add("Architecture=32-bit " + If(TargetARM, "ARM", "Intel"))
 		    #else
-		      Components.AddRow("Architecture=64-bit " + If(TargetARM, "ARM", "Intel"))
+		      Components.Add("Architecture=64-bit " + If(TargetARM, "ARM", "Intel"))
 		    #endif
 		    
 		    Self.mUserAgent = "Beacon/" + Self.BuildVersion + " (" + Components.Join("; ") + ")"

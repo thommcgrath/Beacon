@@ -128,10 +128,11 @@ Begin BeaconAutopositionWindow DeployManager
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   499
       Begin Label OptionsMessageLabel
@@ -659,6 +660,7 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -826,7 +828,7 @@ End
 		  If ProfileProblems.KeyCount > 0 Then
 		    Var Problems() As String
 		    For Each Entry As DictionaryEntry In ProfileProblems
-		      Problems.AddRow("Problem with " + Entry.Key.StringValue + " is """ + Entry.Value.StringValue + """")
+		      Problems.Add("Problem with " + Entry.Key.StringValue + " is """ + Entry.Value.StringValue + """")
 		    Next
 		    
 		    Var Explanation As String = "The following problems were reported. Please report this issue." + EndOfLine + EndOfLine + Problems.Join(EndOfLine) + EndOfLine + EndOfLine + "Importing again may solve the problem, but the issue should still be reported."
@@ -983,7 +985,7 @@ End
 		      End If
 		    Next
 		    If FoundInQueue = False Then
-		      Self.AuthQueue.AddRow(Account)
+		      Self.AuthQueue.Add(Account)
 		      If Self.Authorizer.Busy = False And Self.AuthQueue.Count = 1 Then
 		        Self.RunNextAuth()
 		      End If
@@ -1045,7 +1047,7 @@ End
 		    
 		    Var UserData As Dictionary = Controller.UserData
 		    If UserData.Lookup("Account UUID", "").StringValue = AccountUUID Then
-		      Engines.AddRow(Engine)
+		      Engines.Add(Engine)
 		    End If
 		  Next
 		  Return Engines

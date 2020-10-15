@@ -11,7 +11,7 @@ Protected Module SimpleHTTP
 		  For Each Key As Variant In Keys
 		    Var Value As Variant = Fields.Value(Key)
 		    
-		    Parts.AddRow(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
+		    Parts.Add(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
 		  Next
 		  
 		  Return Parts.Join("&")
@@ -55,7 +55,7 @@ Protected Module SimpleHTTP
 		  Next
 		  
 		  Var Socket As New SimpleHTTP.SimpleHTTPSocket
-		  Sockets.AddRow(Socket)
+		  Sockets.Add(Socket)
 		  Return Socket
 		End Function
 	#tag EndMethod

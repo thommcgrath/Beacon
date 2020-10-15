@@ -47,6 +47,7 @@ Begin ContainerControl DocumentFilterControl
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       Tooltip         =   ""
       Top             =   20
       Transparent     =   False

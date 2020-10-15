@@ -11,7 +11,7 @@ Protected Class ServerProfile
 		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
 		  Var Clone() As Beacon.ConfigSetState
 		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    Clone.AddRow(State)
+		    Clone.Add(State)
 		  Next
 		  Return Clone
 		End Function
@@ -92,7 +92,7 @@ Protected Class ServerProfile
 		    For Each Set As Dictionary In Sets
 		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromDictionary(Set)
 		      If (State Is Nil) = False Then
-		        Self.mConfigSetStates.AddRow(State)
+		        Self.mConfigSetStates.Add(State)
 		      End If
 		    Next
 		  End If
@@ -237,7 +237,7 @@ Protected Class ServerProfile
 		  If Self.mConfigSetStates.Count > 0 Then
 		    Var Priorities() As Dictionary
 		    For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		      Priorities.AddRow(State.ToDictionary)
+		      Priorities.Add(State.ToDictionary)
 		    Next
 		    Dict.Value("Config Sets") = Priorities
 		  End If

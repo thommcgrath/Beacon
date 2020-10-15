@@ -403,12 +403,12 @@ End
 		    Var Bound As Integer = Self.EngramList.LastRowIndex
 		    For Idx As Integer = 0 To Bound
 		      If Self.EngramList.Selected(Idx) Then
-		        Selected.AddRow(Beacon.Engram(Self.EngramList.RowTagAt(Idx)).Path)
+		        Selected.Add(Beacon.Engram(Self.EngramList.RowTagAt(Idx)).Path)
 		      End If
 		    Next
 		  Else
 		    For Each Engram As Beacon.Engram In SelectEngrams
-		      Selected.AddRow(Engram.Path)
+		      Selected.Add(Engram.Path)
 		    Next
 		  End If
 		  
@@ -429,9 +429,9 @@ End
 		    If Not IsEnabled Then
 		      Var Hidden As NullableBoolean = Config.Hidden(Engram)
 		      If IsNull(Hidden) Then
-		        Behaviors.AddRow("Disabled by default")
+		        Behaviors.Add("Disabled by default")
 		      Else
-		        Behaviors.AddRow("Disabled")
+		        Behaviors.Add("Disabled")
 		      End If
 		      
 		      Self.EngramList.CellTagAt(Idx, 1) = 2147483647
@@ -453,21 +453,21 @@ End
 		      
 		      If Config.AutoUnlockAllEngrams Or (IsNull(AutoUnlock) = False And AutoUnlock.BooleanValue = True) Then
 		        If IsNull(RequiredLevel) = False And RequiredLevel.IntegerValue > 0 Then
-		          Behaviors.AddRow("Auto unlocks at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
+		          Behaviors.Add("Auto unlocks at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
 		        Else
-		          Behaviors.AddRow("Auto unlocks at spawn")
+		          Behaviors.Add("Auto unlocks at spawn")
 		        End If
 		      Else
 		        If ((Engram.RequiredPlayerLevel Is Nil) = False Or Beacon.Data.EngramIsCustom(Engram)) And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
-		          Behaviors.AddRow("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
+		          Behaviors.Add("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
-		          Behaviors.AddRow("Auto unlocks by special event")
+		          Behaviors.Add("Auto unlocks by special event")
 		        End If
 		      End If
 		      
 		      Var RemovePreq As NullableBoolean = Config.RemovePrerequisites(Engram)
 		      If IsNull(RemovePreq) = False And RemovePreq.BooleanValue Then
-		        Behaviors.AddRow("Prerequisites removed")
+		        Behaviors.Add("Prerequisites removed")
 		      End If
 		      
 		      If IsNull(RequiredLevel) = False Then
@@ -493,7 +493,7 @@ End
 		  Var Selected() As Integer
 		  For I As Integer = 0 To Self.PointsList.LastRowIndex
 		    If Self.PointsList.Selected(I) Then
-		      Selected.AddRow(Self.PointsList.RowTagAt(I).IntegerValue)
+		      Selected.Add(Self.PointsList.RowTagAt(I).IntegerValue)
 		    End If
 		  Next
 		  
@@ -702,7 +702,7 @@ End
 		  Var Members() As Beacon.Engram
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Members.AddRow(Me.RowTagAt(I))
+		      Members.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -799,7 +799,7 @@ End
 		      Continue
 		    End If
 		    
-		    Engrams.AddRow(Me.RowTagAt(I))
+		    Engrams.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
@@ -852,7 +852,7 @@ End
 		  Var Names() As String
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) Then
-		      Names.AddRow(Me.RowTagAt(Idx).IntegerValue.ToString)
+		      Names.Add(Me.RowTagAt(Idx).IntegerValue.ToString)
 		    End If
 		  Next
 		  
@@ -899,7 +899,7 @@ End
 		      Dict.Value("Points") = Points.IntegerValue
 		    End If
 		    
-		    Dicts.AddRow(Dict)
+		    Dicts.Add(Dict)
 		  Next
 		  
 		  Board.Text = Beacon.GenerateJSON(Dicts, True)
@@ -974,7 +974,7 @@ End
 		  Var Levels() As Integer
 		  For I As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(I) Then
-		      Levels.AddRow(Me.RowTagAt(I))
+		      Levels.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  

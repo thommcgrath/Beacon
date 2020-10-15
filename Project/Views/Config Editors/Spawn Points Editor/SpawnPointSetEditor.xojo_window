@@ -1341,12 +1341,12 @@ End
 		    For I As Integer = 0 To List.RowCount - 1
 		      If List.Selected(I) Then
 		        Var Entry As Beacon.SpawnPointSetEntry = List.RowTagAt(I)
-		        SelectedEntries.AddRow(Entry.ID)
+		        SelectedEntries.Add(Entry.ID)
 		      End If
 		    Next
 		  Else
 		    For Each Entry As Beacon.SpawnPointSetEntry In SelectEntries
-		      SelectedEntries.AddRow(Entry.ID)
+		      SelectedEntries.Add(Entry.ID)
 		    Next
 		  End If
 		  
@@ -1359,15 +1359,15 @@ End
 		    
 		    Var Figures() As String
 		    If Entry.Offset <> Nil Then
-		      Figures.AddRow("Offset: " + Entry.Offset.X.PrettyText + "," + Entry.Offset.Y.PrettyText + "," + Entry.Offset.Z.PrettyText)
+		      Figures.Add("Offset: " + Entry.Offset.X.PrettyText + "," + Entry.Offset.Y.PrettyText + "," + Entry.Offset.Z.PrettyText)
 		    End If
 		    If Entry.SpawnChance <> Nil Then
-		      Figures.AddRow("Weight: " + Entry.SpawnChance.DoubleValue.PrettyText)
+		      Figures.Add("Weight: " + Entry.SpawnChance.DoubleValue.PrettyText)
 		    End If
 		    If Entry.LevelCount > 0 Or Entry.MinLevelOffset <> Nil Or Entry.MaxLevelOffset <> Nil Or Entry.MinLevelMultiplier <> Nil Or Entry.MaxLevelMultiplier <> Nil Then
 		      Var Difficulty As Double = Self.Document.DifficultyValue
 		      Var LevelRange As Beacon.Range = Entry.LevelRangeForDifficulty(Difficulty, Set.LevelOffsetBeforeMultiplier)
-		      Figures.AddRow("Level Range Override: " + LevelRange.Min.PrettyText() + " to " + LevelRange.Max.PrettyText())
+		      Figures.Add("Level Range Override: " + LevelRange.Min.PrettyText() + " to " + LevelRange.Max.PrettyText())
 		    End If
 		    Figures.Sort
 		    
@@ -1396,12 +1396,12 @@ End
 		  If SelectCreatures = Nil Then
 		    For I As Integer = 0 To Self.ReplaceList.RowCount - 1
 		      If Self.ReplaceList.Selected(I) Then
-		        SelectedReplacements.AddRow(Self.ReplaceList.RowTagAt(I))
+		        SelectedReplacements.Add(Self.ReplaceList.RowTagAt(I))
 		      End If
 		    Next
 		  Else
 		    For Each Creature As Beacon.Creature In SelectCreatures
-		      SelectedReplacements.AddRow(Creature.Path)
+		      SelectedReplacements.Add(Creature.Path)
 		    Next
 		  End If
 		  
@@ -1428,7 +1428,7 @@ End
 		        Var Chance As Double = (Weight / TotalWeight) * 100
 		        Label = Label + " (" + Chance.PrettyText(2) + "%)"
 		      End If
-		      ReplacementCreatureNames.AddRow(Label)
+		      ReplacementCreatureNames.Add(Label)
 		    Next
 		    ReplacementCreatureNames.Sort
 		    
@@ -1590,7 +1590,7 @@ End
 		    End If
 		    
 		    Var Entry As Beacon.SpawnPointSetEntry = Me.RowTagAt(I)
-		    EntriesToDelete.AddRow(Entry)
+		    EntriesToDelete.Add(Entry)
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(EntriesToDelete, "creature", "creatures") = False Then
@@ -1618,7 +1618,7 @@ End
 		  Var Items() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Items.AddRow(Beacon.SpawnPointSetEntry(Me.RowTagAt(I)).SaveData)
+		      Items.Add(Beacon.SpawnPointSetEntry(Me.RowTagAt(I)).SaveData)
 		    End If
 		  Next
 		  
@@ -1653,7 +1653,7 @@ End
 		    End If
 		    
 		    Set.Append(Entry)
-		    SelectEntries.AddRow(Entry)
+		    SelectEntries.Add(Entry)
 		  Next
 		  
 		  Self.UpdateEntriesList(Set, SelectEntries)
@@ -1679,7 +1679,7 @@ End
 		      Continue
 		    End If
 		    
-		    Entries.AddRow(Me.RowTagAt(I))
+		    Entries.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
@@ -1766,7 +1766,7 @@ End
 		      Creature = Beacon.Creature.CreateFromPath(Me.RowTagAt(I))
 		    End If
 		    
-		    CreaturesToDelete.AddRow(Creature)
+		    CreaturesToDelete.Add(Creature)
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(CreaturesToDelete, "creature replacement", "creature replacements") = False Then
@@ -1816,7 +1816,7 @@ End
 		    Var Dict As New Dictionary
 		    Dict.Value("Creature") = FromCreature.Path
 		    Dict.Value("Replacements") = Map
-		    Items.AddRow(Dict)
+		    Items.Add(Dict)
 		  Next
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Items, True)
@@ -1867,7 +1867,7 @@ End
 		      Next
 		    Next
 		    
-		    SelectCreatures.AddRow(FromCreature)
+		    SelectCreatures.Add(FromCreature)
 		  Next
 		  
 		  Self.UpdateReplacementsList(Set, SelectCreatures)

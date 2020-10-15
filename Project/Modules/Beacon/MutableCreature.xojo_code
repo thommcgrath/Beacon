@@ -104,7 +104,7 @@ Implements Beacon.MutableBlueprint
 		  If Idx > -1 And Value = False Then
 		    Self.mTags.RemoveRowAt(Idx)
 		  ElseIf Idx = -1 And Value = True Then
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		    Self.mTags.Sort()
 		  End If
 		End Sub
@@ -171,7 +171,7 @@ Implements Beacon.MutableBlueprint
 		  
 		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		  Self.mTags.Sort
 		End Sub
@@ -201,7 +201,7 @@ Implements Beacon.MutableBlueprint
 		      Var Temp() As Object = Dict.Value("stats")
 		      For Each Obj As Object In Temp
 		        If (Obj Is Nil) = False And Obj IsA Dictionary Then
-		          Dicts.AddRow(Dictionary(Obj))
+		          Dicts.Add(Dictionary(Obj))
 		        End If
 		      Next
 		    End Select

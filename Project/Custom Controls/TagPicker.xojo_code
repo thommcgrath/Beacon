@@ -45,11 +45,11 @@ Inherits ControlCanvas
 		    
 		    If RequireIndex > -1 Then
 		      Self.mRequireTags.RemoveRowAt(RequireIndex)
-		      Self.mExcludeTags.AddRow(Tag)
+		      Self.mExcludeTags.Add(Tag)
 		    ElseIf ExcludeIndex > -1 Then
 		      Self.mExcludeTags.RemoveRowAt(ExcludeIndex)
 		    Else
-		      Self.mRequireTags.AddRow(Tag)
+		      Self.mRequireTags.Add(Tag)
 		    End If
 		    
 		    RaiseEvent TagsChanged
@@ -98,7 +98,7 @@ Inherits ControlCanvas
 		Private Shared Function ArrayToString(Source() As String) As String
 		  Var Clone() As String
 		  For Each Value As String In Source
-		    Clone.AddRow(Value)
+		    Clone.Add(Value)
 		  Next
 		  Clone.Sort
 		  Return Clone.Join(",")
@@ -169,7 +169,7 @@ Inherits ControlCanvas
 		Function ExcludedTags() As String()
 		  Var Tags() As String
 		  For Each Tag As String In Self.mExcludeTags
-		    Tags.AddRow(Tag)
+		    Tags.Add(Tag)
 		  Next
 		  Return Tags
 		End Function
@@ -283,7 +283,7 @@ Inherits ControlCanvas
 		Function RequiredTags() As String()
 		  Var Tags() As String
 		  For Each Tag As String In Self.mRequireTags
-		    Tags.AddRow(Tag)
+		    Tags.Add(Tag)
 		  Next
 		  Return Tags
 		End Function

@@ -39,6 +39,7 @@ Begin Window DocumentImportWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True

@@ -300,21 +300,21 @@ Protected Module Tests
 	#tag Method, Flags = &h21
 		Private Sub TestNamingThings()
 		  Var Siblings() As String
-		  Siblings.AddRow("New Item Set")
+		  Siblings.Add("New Item Set")
 		  
 		  // This is a test for proper incrementing
 		  Var Label As String = Beacon.FindUniqueLabel("New Item Set", Siblings)
 		  If Not Assert(Label = "New Item Set 2", "Name not unique, expected ""New Item Set 2"" but got """ + Label + """") Then
 		    Return
 		  End If
-		  Siblings.AddRow(Label)
+		  Siblings.Add(Label)
 		  
 		  // This test confirms the incrementing is sequential and will not return 2 again
 		  Label = Beacon.FindUniqueLabel("New Item Set", Siblings)
 		  If Not Assert(Label = "New Item Set 3", "Name not unique, expected ""New Item Set 3"" but got """ + Label + """") Then
 		    Return
 		  End If
-		  Siblings.AddRow(Label)
+		  Siblings.Add(Label)
 		  
 		  // This test confirms the sequence continues even if the desired label already has a trailing number
 		  Label = Beacon.FindUniqueLabel("New Item Set 3", Siblings)

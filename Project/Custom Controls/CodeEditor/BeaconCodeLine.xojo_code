@@ -19,7 +19,7 @@ Protected Class BeaconCodeLine
 		    Shape.Y = 0
 		    Shape.Width = BasedOn.TextWidth(Chunk)
 		    X = X + Shape.Width
-		    Self.mCachedObjects.AddRow(Shape)
+		    Self.mCachedObjects.Add(Shape)
 		  Next
 		End Sub
 	#tag EndMethod

@@ -65,7 +65,7 @@ Protected Class ArkML
 		      Body = Pieces.Join(EndOfLine)
 		    End If
 		    
-		    Parts.AddRow(Body)
+		    Parts.Add(Body)
 		  Next
 		  
 		  // The first <RichColor> on each line gets replaced with a space. Whatever Ark...
@@ -122,13 +122,13 @@ Protected Class ArkML
 		  While True
 		    Var Pos As Integer = Source.IndexOf(Offset, "<RichColor")
 		    If Pos = -1 Then
-		      Self.mParts.AddRow(Self.CreateDict(Source.Middle(Offset), &cFFFFFF00))
+		      Self.mParts.Add(Self.CreateDict(Source.Middle(Offset), &cFFFFFF00))
 		      Exit
 		    End If
 		    
 		    If Pos > Offset Then
 		      Var Unstyled As String = Source.Middle(Offset, Pos - Offset)
-		      Self.mParts.AddRow(Self.CreateDict(Unstyled, &cFFFFFF00))
+		      Self.mParts.Add(Self.CreateDict(Unstyled, &cFFFFFF00))
 		      If Unstyled.IndexOf(EndOfLine.UNIX) > -1 Then
 		        NewLine = True
 		      End If
@@ -154,11 +154,11 @@ Protected Class ArkML
 		      Var AlphaAmount As Integer = 255 - Round(255 * ColorParts(3).Trim.ToDouble)
 		      
 		      If NewLine Then
-		        Self.mParts.AddRow(Self.CreateDict(" ", &cFFFFFF00))
+		        Self.mParts.Add(Self.CreateDict(" ", &cFFFFFF00))
 		        NewLine = False
 		      End If
 		      
-		      Self.mParts.AddRow(Self.CreateDict(Chunk, Color.RGB(RedAmount, GreenAmount, BlueAmount, AlphaAmount)))
+		      Self.mParts.Add(Self.CreateDict(Chunk, Color.RGB(RedAmount, GreenAmount, BlueAmount, AlphaAmount)))
 		      
 		      If Chunk.IndexOf(EndOfLine.UNIX) > -1 Then
 		        NewLine = True
@@ -238,7 +238,7 @@ Protected Class ArkML
 		  Var Dicts() As Dictionary
 		  For Each Obj As Object In Source
 		    If Obj IsA Dictionary Then
-		      Dicts.AddRow(Dictionary(Obj))
+		      Dicts.Add(Dictionary(Obj))
 		    End If
 		  Next
 		  Return FromArray(Dicts)
@@ -569,7 +569,7 @@ Protected Class ArkML
 		    For Idx As Integer = 0 To Bound
 		      Var Run As StyleRun = Styles.StyleRun(Idx)
 		      
-		      Self.mParts.AddRow(Self.CreateDict(Run.Text, Run.TextColor))
+		      Self.mParts.Add(Self.CreateDict(Run.Text, Run.TextColor))
 		    Next
 		  Catch Err As RuntimeException
 		    Self.mParts.ResizeTo(-1)

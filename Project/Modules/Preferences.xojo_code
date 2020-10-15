@@ -135,7 +135,7 @@ Protected Module Preferences
 		        Var Objects() As Variant = Temp
 		        For Each Element As Variant In Objects
 		          Try
-		            StoredData.AddRow(Element.StringValue)
+		            StoredData.Add(Element.StringValue)
 		          Catch Err As RuntimeException
 		            Continue
 		          End Try
@@ -143,7 +143,7 @@ Protected Module Preferences
 		      End Select
 		    Else
 		      Try
-		        StoredData.AddRow(Temp.StringValue)
+		        StoredData.Add(Temp.StringValue)
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
@@ -152,7 +152,7 @@ Protected Module Preferences
 		  Var Values() As Beacon.DocumentURL
 		  For Each Value As String In StoredData
 		    Try
-		      Values.AddRow(New Beacon.DocumentURL(Value))
+		      Values.Add(New Beacon.DocumentURL(Value))
 		    Catch Err As RuntimeException
 		      
 		    End Try

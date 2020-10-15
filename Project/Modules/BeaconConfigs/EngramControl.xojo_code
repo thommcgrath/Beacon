@@ -21,11 +21,11 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
 		  Next
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams", If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams", If(Self.AutoUnlockAllEngrams, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams", If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams", If(Self.AutoUnlockAllEngrams, "True", "False")))
 		  
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As Beacon.ConfigValue
@@ -64,15 +64,15 @@ Inherits Beacon.ConfigGroup
 		      End If
 		      
 		      AutoUnlocked = True
-		      UnlockEntries.AddRow(EntryString)
-		      UnlockConfigs.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
+		      UnlockEntries.Add(EntryString)
+		      UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
 		    End If
 		    
 		    Var Arguments() As String
 		    If Behaviors.HasKey(Self.KeyHidden) Then
 		      Var Hidden As Boolean = Behaviors.Value(Self.KeyHidden).BooleanValue
 		      If Hidden <> Whitelisting Then
-		        Arguments.AddRow("EngramHidden=" + If(Hidden, "True", "False"))
+		        Arguments.Add("EngramHidden=" + If(Hidden, "True", "False"))
 		      End If
 		    End If
 		    
@@ -81,27 +81,27 @@ Inherits Beacon.ConfigGroup
 		        If Behaviors.HasKey(Self.KeyRemovePrerequisites) Then
 		          Var RemovePrereq As Boolean = Behaviors.Value(Self.KeyRemovePrerequisites).BooleanValue
 		          If RemovePrereq = True Then
-		            Arguments.AddRow("RemoveEngramPreReq=True")
+		            Arguments.Add("RemoveEngramPreReq=True")
 		          End If
 		        End If
 		        
 		        If Behaviors.HasKey(Self.KeyPlayerLevel) Then
 		          Var Level As Integer = Round(Behaviors.Value(Self.KeyPlayerLevel).DoubleValue)
-		          Arguments.AddRow("EngramLevelRequirement=" + Level.ToString)
+		          Arguments.Add("EngramLevelRequirement=" + Level.ToString)
 		        Else
 		          Var Level As NullableDouble = Engram.RequiredPlayerLevel
 		          If (Level Is Nil) = False Then
-		            Arguments.AddRow("EngramLevelRequirement=" + Level.IntegerValue.ToString)
+		            Arguments.Add("EngramLevelRequirement=" + Level.IntegerValue.ToString)
 		          End If
 		        End If
 		        
 		        If Behaviors.HasKey(Self.KeyUnlockPoints) Then
 		          Var Points As Integer = Round(Behaviors.Value(Self.KeyUnlockPoints).DoubleValue)
-		          Arguments.AddRow("EngramPointsCost=" + Points.ToString)
+		          Arguments.Add("EngramPointsCost=" + Points.ToString)
 		        Else
 		          Var Points As NullableDouble = Engram.RequiredUnlockPoints
 		          If (Points Is Nil) = False Then
-		            Arguments.AddRow("EngramPointsCost=" + Points.IntegerValue.ToString)
+		            Arguments.Add("EngramPointsCost=" + Points.IntegerValue.ToString)
 		          End If
 		        End If
 		      End If
@@ -109,8 +109,8 @@ Inherits Beacon.ConfigGroup
 		    
 		    If Arguments.LastRowIndex > -1 Then
 		      Arguments.AddRowAt(0, "EngramClassName=""" + EntryString + """")
-		      OverrideEntries.AddRow(EntryString)
-		      OverrideConfigs.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
+		      OverrideEntries.Add(EntryString)
+		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
 		    End If
 		  Next
 		  
@@ -118,10 +118,10 @@ Inherits Beacon.ConfigGroup
 		  OverrideEntries.SortWith(OverrideConfigs)
 		  
 		  For Each Config As Beacon.ConfigValue In UnlockConfigs
-		    Values.AddRow(Config)
+		    Values.Add(Config)
 		  Next
 		  For Each Config As Beacon.ConfigValue In OverrideConfigs
-		    Values.AddRow(Config)
+		    Values.Add(Config)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -147,12 +147,12 @@ Inherits Beacon.ConfigGroup
 		  // Include all the keys here to prevent them from going into Custom Config when
 		  // Beacon generates lines that are slightly different than imported.
 		  
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverrideEngramEntries"))
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverrideNamedEngramEntries"))
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams"))
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints"))
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams"))
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks"))
+		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverrideEngramEntries"))
+		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverrideNamedEngramEntries"))
+		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams"))
+		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints"))
+		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams"))
+		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks"))
 		End Sub
 	#tag EndEvent
 
@@ -427,7 +427,7 @@ Inherits Beacon.ConfigGroup
 		    If ParsedValue.IsArray Then
 		      Overrides = ParsedValue
 		    Else
-		      Overrides.AddRow(ParsedValue)
+		      Overrides.Add(ParsedValue)
 		    End If
 		    
 		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
@@ -448,7 +448,7 @@ Inherits Beacon.ConfigGroup
 		    If ParsedValue.IsArray Then
 		      Overrides = ParsedValue
 		    Else
-		      Overrides.AddRow(ParsedValue)
+		      Overrides.Add(ParsedValue)
 		    End If
 		    
 		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
@@ -471,7 +471,7 @@ Inherits Beacon.ConfigGroup
 		    If ParsedValue.IsArray Then
 		      Overrides = ParsedValue
 		    Else
-		      Overrides.AddRow(ParsedValue)
+		      Overrides.Add(ParsedValue)
 		    End If
 		    
 		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
@@ -492,7 +492,7 @@ Inherits Beacon.ConfigGroup
 		    If ParsedValue.IsArray Then
 		      Unlocks = ParsedValue
 		    Else
-		      Unlocks.AddRow(ParsedValue)
+		      Unlocks.Add(ParsedValue)
 		    End If
 		    
 		    For Idx As Integer = Unlocks.FirstRowIndex To Unlocks.LastRowIndex
@@ -598,7 +598,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Modified As Boolean = Self.Modified
 		  Do Until Self.mPointsPerLevel.LastRowIndex >= Idx
-		    Self.mPointsPerLevel.AddRow(Nil)
+		    Self.mPointsPerLevel.Add(Nil)
 		    Modified = True
 		  Loop
 		  
@@ -694,7 +694,7 @@ Inherits Beacon.ConfigGroup
 		      Engram = Beacon.Engram.CreateFromEntryString(Dict.Value(Self.KeyEntryString))
 		    End If
 		    If Engram <> Nil Then
-		      Engrams.AddRow(Engram)
+		      Engrams.Add(Engram)
 		    End If
 		  Next
 		  Return Engrams

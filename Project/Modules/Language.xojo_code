@@ -18,7 +18,7 @@ Protected Module Language
 		    Var LastItem As String = Items(Items.LastRowIndex)
 		    Items.RemoveRowAt(Items.LastRowIndex)
 		    Var List As String = Items.Join(", ") + ", and " + LastItem
-		    Items.AddRow(LastItem) // Gotta put it back
+		    Items.Add(LastItem) // Gotta put it back
 		    Return List
 		  End If
 		End Function

@@ -12,24 +12,24 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Behavior.ProhibitSpawning Then
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName="""")"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName="""")"))
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
 		    Else
 		      If Behavior.DamageMultiplier <> 1.0 Then
-		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.ResistanceMultiplier <> 1.0 Then
-		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.TamedDamageMultiplier <> 1.0 Then
-		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
-		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.PreventTaming Then
-		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetClass + """"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetClass + """"))
 		      End If
 		    End If
 		  Next
@@ -76,7 +76,7 @@ Inherits Beacon.ConfigGroup
 		  Var Dicts() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Var Behavior As Beacon.CreatureBehavior = Entry.Value
-		    Dicts.AddRow(Behavior.ToDictionary)
+		    Dicts.Add(Behavior.ToDictionary)
 		  Next
 		  
 		  Dict.Value("Creatures") = Dicts
@@ -95,7 +95,7 @@ Inherits Beacon.ConfigGroup
 		  Var Behaviors() As Beacon.CreatureBehavior
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Var Behavior As Beacon.CreatureBehavior = Entry.Value
-		    Behaviors.AddRow(New Beacon.CreatureBehavior(Behavior))
+		    Behaviors.Add(New Beacon.CreatureBehavior(Behavior))
 		  Next
 		  Return Behaviors
 		End Function

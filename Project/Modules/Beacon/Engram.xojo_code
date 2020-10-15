@@ -73,7 +73,7 @@ Implements Beacon.Blueprint
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		  
 		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
@@ -127,7 +127,7 @@ Implements Beacon.Blueprint
 		  Engram.mModName = LocalData.UserModName
 		  Engram.mPath = Path
 		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path.Lowercase)
-		  Engram.mTags.AddRow("blueprintable")
+		  Engram.mTags.Add("blueprintable")
 		  Return Engram
 		End Function
 	#tag EndMethod
@@ -307,7 +307,7 @@ Implements Beacon.Blueprint
 		  Else
 		    Var Ingredients() As Dictionary
 		    For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
-		      Ingredients.AddRow(Ingredient.ToDictionary)
+		      Ingredients.Add(Ingredient.ToDictionary)
 		    Next
 		    Dict.Value("recipe") = Ingredients
 		  End If
@@ -334,7 +334,7 @@ Implements Beacon.Blueprint
 		  
 		  Var Ingredients() As Beacon.RecipeIngredient
 		  For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
-		    Ingredients.AddRow(Ingredient)
+		    Ingredients.Add(Ingredient)
 		  Next
 		  Return Ingredients
 		End Function

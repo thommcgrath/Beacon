@@ -565,7 +565,7 @@ End
 		      Continue
 		    End If
 		    
-		    Creatures.AddRow(Me.RowTagAt(I))
+		    Creatures.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Creatures, "replacement", "replacements") = False Then

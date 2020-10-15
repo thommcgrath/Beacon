@@ -3,7 +3,7 @@ Protected Class MutablePreset
 Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.PresetEntry)
-		  Self.mContents.AddRow(Item)
+		  Self.mContents.Add(Item)
 		End Sub
 	#tag EndMethod
 

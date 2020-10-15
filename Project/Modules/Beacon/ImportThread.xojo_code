@@ -93,9 +93,9 @@ Inherits Beacon.Thread
 		        If ExistingValue.IsArray Then
 		          ValueArray = ExistingValue
 		        Else
-		          ValueArray.AddRow(ExistingValue)
+		          ValueArray.Add(ExistingValue)
 		        End If
-		        ValueArray.AddRow(Value)
+		        ValueArray.Add(Value)
 		        ParsedData.Value(Key) = ValueArray
 		      Else
 		        ParsedData.Value(Key) = Value
@@ -264,9 +264,9 @@ Inherits Beacon.Thread
 		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
 		      Select Case Key.File
 		      Case "Game.ini"
-		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		        GameIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
 		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		        GameUserSettingsIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
 		      End Select
 		    Next
 		    
@@ -431,7 +431,7 @@ Inherits Beacon.Thread
 		    Else
 		      Var Items() As Variant
 		      For Each Item As Variant In ArrayValue
-		        Items.AddRow(ToXojoType(Item))
+		        Items.Add(ToXojoType(Item))
 		      Next
 		      Return Items
 		    End If

@@ -80,8 +80,8 @@ Protected Class ColorProfile
 		      End If
 		      
 		      Var Difference As Double = Abs(TestGray - DesiredGray)
-		      Grays.AddRow(TestGray)
-		      Differences.AddRow(Difference)
+		      Grays.Add(TestGray)
+		      Differences.Add(Difference)
 		    Next
 		    
 		    If Grays.LastRowIndex = -1 Then

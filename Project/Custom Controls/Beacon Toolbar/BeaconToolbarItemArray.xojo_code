@@ -26,7 +26,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    End If
 		  Next
 		  
-		  Refs.AddRow(New WeakRef(Observer))
+		  Refs.Add(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
@@ -34,7 +34,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Append(Item As BeaconToolbarItem)
-		  Self.mItems.AddRow(Item)
+		  Self.mItems.Add(Item)
 		  
 		  If Item <> Nil Then
 		    Item.AddObserver(Self, BeaconToolbarItem.KeyChanged)

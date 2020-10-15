@@ -400,7 +400,7 @@ End
 		  Var Results() As Beacon.LootSource
 		  For I As Integer = 0 To Self.mSources.LastRowIndex
 		    If Self.mSources(I).Value <> Nil Then
-		      Results.AddRow(Beacon.LootSource(Self.mSources(I).Value))
+		      Results.Add(Beacon.LootSource(Self.mSources(I).Value))
 		    End If
 		  Next
 		  Return Results

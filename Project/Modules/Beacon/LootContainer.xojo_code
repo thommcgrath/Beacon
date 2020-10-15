@@ -231,7 +231,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Var AllowedMaps() As Beacon.Map
 		  For Each Map As Beacon.Map In AllMaps
 		    If Self.ValidForMap(Map) Then
-		      AllowedMaps.AddRow(Map)
+		      AllowedMaps.Add(Map)
 		    End If
 		  Next
 		  Return AllowedMaps

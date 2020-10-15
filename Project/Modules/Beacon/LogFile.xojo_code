@@ -31,7 +31,7 @@ Protected Class LogFile
 		    For Each Char As String In Chars
 		      If Char = """" Then
 		        If InQuotes Then
-		          Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
+		          Params.Add(Buffer.ToString.DefineEncoding(Encoding))
 		          Buffer = New MemoryBlock(0)
 		          InQuotes = False
 		        Else
@@ -40,7 +40,7 @@ Protected Class LogFile
 		        Continue
 		      ElseIf Char = " " Then
 		        If InQuotes = False Then
-		          Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
+		          Params.Add(Buffer.ToString.DefineEncoding(Encoding))
 		          Buffer = New MemoryBlock(0)
 		        End If
 		      ElseIf Char = "-" And Buffer.Size = 0 Then
@@ -50,7 +50,7 @@ Protected Class LogFile
 		      End If
 		    Next
 		    If Buffer.Size > 0 Then
-		      Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
+		      Params.Add(Buffer.ToString.DefineEncoding(Encoding))
 		      Buffer = New MemoryBlock(0)
 		    End If
 		    
@@ -64,10 +64,10 @@ Protected Class LogFile
 		    
 		    Var Merged() As String
 		    For Each Param As String In StartupParams
-		      Merged.AddRow(Param)
+		      Merged.Add(Param)
 		    Next
 		    For Each Param As String In Params
-		      Merged.AddRow(Param)
+		      Merged.Add(Param)
 		    Next
 		    Params.ResizeTo(-1)
 		    StartupParams.ResizeTo(-1)

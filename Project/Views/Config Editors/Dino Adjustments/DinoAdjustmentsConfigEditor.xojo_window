@@ -163,7 +163,7 @@ End
 		  ConvertReplacements.Enabled = True
 		  ConvertReplacements.AutoEnabled = False
 		  ConvertReplacements.Name = "ConvertCreatureReplacementsToSpawnPointAdditions"
-		  Items.AddRow(ConvertReplacements)
+		  Items.Add(ConvertReplacements)
 		End Sub
 	#tag EndEvent
 
@@ -183,7 +183,7 @@ End
 		  Var Paths() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Config.Add(Behavior)
-		    Paths.AddRow(Behavior.TargetCreature.Path)
+		    Paths.Add(Behavior.TargetCreature.Path)
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Paths)
@@ -299,7 +299,7 @@ End
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Var Creature As Beacon.Creature = Behavior.TargetCreature
 		    If Creature <> Nil Then
-		      CurrentCreatures.AddRow(Creature)
+		      CurrentCreatures.Add(Creature)
 		    End If
 		  Next
 		  
@@ -312,7 +312,7 @@ End
 		  For Each Creature As Beacon.Creature In Creatures
 		    Var Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature)
 		    Config.Add(Behavior)
-		    SelectPaths.AddRow(Behavior.TargetCreature.Path)
+		    SelectPaths.Add(Behavior.TargetCreature.Path)
 		  Next
 		  Self.UpdateList(SelectPaths)
 		  Self.Changed = True
@@ -324,7 +324,7 @@ End
 		  Var Paths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Paths.AddRow(Beacon.Creature(Self.List.RowTagAt(I)).Path)
+		      Paths.Add(Beacon.Creature(Self.List.RowTagAt(I)).Path)
 		    End If
 		  Next
 		  Self.UpdateList(Paths)
@@ -335,7 +335,7 @@ End
 		Private Sub UpdateList(SelectCreatures() As Beacon.Creature)
 		  Var Paths() As String
 		  For Each Creature As Beacon.Creature In SelectCreatures
-		    Paths.AddRow(Creature.Path)
+		    Paths.Add(Creature.Path)
 		  Next
 		  Self.UpdateList(Paths)
 		End Sub
@@ -462,7 +462,7 @@ End
 		    End If
 		    
 		    Var Creature As Beacon.Creature = Me.RowTagAt(I)
-		    Creatures.AddRow(Creature)
+		    Creatures.Add(Creature)
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Creatures, "creature adjustment", "creature adjustments") = False Then
@@ -495,7 +495,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dicts.AddRow(Behavior.ToDictionary)
+		    Dicts.Add(Behavior.ToDictionary)
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
@@ -523,7 +523,7 @@ End
 		        Continue
 		      End If
 		      
-		      SelectPaths.AddRow(Behavior.TargetCreature.Path)
+		      SelectPaths.Add(Behavior.TargetCreature.Path)
 		      Config.Add(Behavior)
 		    Next
 		    Self.Changed = True

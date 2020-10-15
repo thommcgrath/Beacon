@@ -393,6 +393,7 @@ Begin BeaconDialog EngramSelectorDialog
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
@@ -433,7 +434,7 @@ End
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
 		    If Blueprint <> Nil Then
-		      Self.mExcluded.AddRow(Blueprint.Path)
+		      Self.mExcluded.Add(Blueprint.Path)
 		    End If
 		  Next
 		  Self.mMods = Mods
@@ -478,7 +479,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
-		        Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		        Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
 		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
@@ -486,7 +487,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
-		      Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
+		      Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
@@ -506,14 +507,14 @@ End
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Creature()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
-		    ExcludeBlueprints.AddRow(Creature)
+		    ExcludeBlueprints.Add(Creature)
 		  Next
 		  
 		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, SelectMode, WithDefaults)
 		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.AddRow(Beacon.Creature(Blueprint))
+		      Creatures.Add(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -531,14 +532,14 @@ End
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Engram()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
-		    ExcludeBlueprints.AddRow(Engram)
+		    ExcludeBlueprints.Add(Engram)
 		  Next
 		  
 		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, SelectMode, WithDefaults)
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.AddRow(Beacon.Engram(Blueprint))
+		      Engrams.Add(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -571,7 +572,7 @@ End
 		  End If
 		  
 		  For I As Integer = 0 To Win.SelectedList.RowCount - 1
-		    Blueprints.AddRow(Win.SelectedList.RowTagAt(I))
+		    Blueprints.Add(Win.SelectedList.RowTagAt(I))
 		  Next
 		  
 		  WithDefaults = Win.WithDefaultsCheck.Value
@@ -603,7 +604,7 @@ End
 		    If Idx > -1 Then
 		      Self.mExcluded.RemoveRowAt(Idx)
 		    End If
-		    SelectPaths.AddRow(Blueprint.Path)
+		    SelectPaths.Add(Blueprint.Path)
 		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0

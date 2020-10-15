@@ -17,14 +17,14 @@ Inherits BeaconSubview
 		  RaiseEvent GetEditorMenuItems(Items)
 		  If Items.Count > PreCount Then
 		    // Something was added, so we need another separator
-		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    Items.Add(New MenuItem(MenuItem.TextSeparator))
 		  End If
 		  
 		  Var RestoreItem As New MenuItem("Restore """ + Self.ConfigLabel + """ to Default", "restore")
 		  RestoreItem.Name = "DocumentRestoreConfigToDefault"
 		  RestoreItem.AutoEnabled = False
 		  RestoreItem.Enabled = Self.SupportsRestore()
-		  Items.AddRow(RestoreItem)
+		  Items.Add(RestoreItem)
 		End Sub
 	#tag EndEvent
 

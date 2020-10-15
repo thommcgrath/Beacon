@@ -43,9 +43,10 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   50
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   627
       Begin LogoFillCanvas LogoFillCanvas1
@@ -280,6 +281,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   441
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -575,7 +577,7 @@ End
 		      Var Key As Variant = Self.mEditorRefs.Key(I)
 		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
 		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
-		        OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
+		        OtherDocuments.Add(DocumentEditorView(Ref.Value).Document)
 		      End If
 		    Next
 		    
@@ -657,7 +659,7 @@ End
 		  
 		  Var HumanNames() As String
 		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
-		    HumanNames.AddRow("""" + Language.LabelForConfig(Config) + """")
+		    HumanNames.Add("""" + Language.LabelForConfig(Config) + """")
 		  Next
 		  HumanNames.Sort
 		  
@@ -1082,17 +1084,17 @@ End
 		  If IsBase Then
 		    // Show everything
 		    #if DeployEnabled
-		      Labels.AddRow("Servers")
-		      Tags.AddRow("deployments")
+		      Labels.Add("Servers")
+		      Tags.Add("deployments")
 		    #endif
-		    Labels.AddRow("Accounts")
-		    Tags.AddRow("accounts")
+		    Labels.Add("Accounts")
+		    Tags.Add("accounts")
 		  End If
 		  
 		  Var Names() As String = BeaconConfigs.AllConfigNames
 		  For Each Name As String In Names
-		    Labels.AddRow(Language.LabelForConfig(Name))
-		    Tags.AddRow(Name)
+		    Labels.Add(Language.LabelForConfig(Name))
+		    Tags.Add(Name)
 		  Next
 		  
 		  Labels.SortWith(Tags)
@@ -1108,7 +1110,7 @@ End
 		      
 		      Item.Unemphasized = Self.Document.HasConfigGroup(Tags(I), ActiveConfigSet) = False
 		    End If
-		    SourceItems.AddRow(Item)
+		    SourceItems.Add(Item)
 		  Next
 		  
 		  Self.ConfigList.ReplaceContents(SourceItems)

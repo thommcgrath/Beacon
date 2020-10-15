@@ -3,7 +3,7 @@ Protected Class SetEntry
 Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.SetEntryOption)
-		  Self.mOptions.AddRow(Item)
+		  Self.mOptions.Add(Item)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -29,9 +29,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Var Labels() As String
 		    For I As Integer = 0 To Self.mOptions.LastRowIndex - 1
-		      Labels.AddRow(Self.mOptions(I).Engram.ClassString)
+		      Labels.Add(Self.mOptions(I).Engram.ClassString)
 		    Next
-		    Labels.AddRow("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.ClassString)
+		    Labels.Add("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.ClassString)
 		    
 		    Return Labels.Join("")
 		  End If
@@ -136,7 +136,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Options.HasKey(Key) Then
 		        Arr = Options.Value(Key)
 		      End If
-		      Arr.AddRow(Option)
+		      Arr.Add(Option)
 		      Options.Value(Key) = Arr
 		    Next
 		  Next
@@ -179,7 +179,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function Export() As Dictionary
 		  Var Children() As Dictionary
 		  For Each Item As Beacon.SetEntryOption In Self.mOptions
-		    Children.AddRow(Item.Export)
+		    Children.Add(Item.Export)
 		  Next
 		  
 		  Var Keys As New Dictionary
@@ -364,9 +364,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    For Each ClassString As String In ClassStrings
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram <> Nil Then
-		        Engrams.AddRow(Engram)
+		        Engrams.Add(Engram)
 		      Else
-		        Engrams.AddRow(Beacon.Engram.CreateFromClass(ClassString))
+		        Engrams.Add(Beacon.Engram.CreateFromClass(ClassString))
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
@@ -387,14 +387,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Engram = Nil Then
 		        Engram = Beacon.Engram.CreateFromPath(Path)
 		      End If
-		      Engrams.AddRow(Engram)
+		      Engrams.Add(Engram)
 		    Next
 		  End If
 		  
 		  If ClassWeights.LastRowIndex < Engrams.LastRowIndex Then
 		    // Add more values
 		    While ClassWeights.LastRowIndex < Engrams.LastRowIndex
-		      ClassWeights.AddRow(1)
+		      ClassWeights.Add(1)
 		    Wend
 		  ElseIf ClassWeights.LastRowIndex > Engrams.LastRowIndex Then
 		    // Just truncate
@@ -460,7 +460,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Shared Function Join(Entries() As Beacon.SetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Var Values() As String
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.AddRow(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
+		    Values.Add(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  Return Values.Join(Separator)
 		End Function
@@ -477,9 +477,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Var Labels() As String
 		    For I As Integer = 0 To Self.mOptions.LastRowIndex - 1
-		      Labels.AddRow(Self.mOptions(I).Engram.Label)
+		      Labels.Add(Self.mOptions(I).Engram.Label)
 		    Next
-		    Labels.AddRow("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.Label)
+		    Labels.Add("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.Label)
 		    
 		    Return Labels.Join(", ")
 		  End If
@@ -531,7 +531,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Options.HasKey(Key) Then
 		        Arr = Options.Value(Key)
 		      End If
-		      Arr.AddRow(Option)
+		      Arr.Add(Option)
 		      Options.Value(Key) = Arr
 		    Next
 		  Next
@@ -674,7 +674,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Return Selections
 		    End If
 		    Sum = Sum + Entry.Weight
-		    Weights.AddRow(Sum * 100000)
+		    Weights.Add(Sum * 100000)
 		    WeightLookup.Value(Sum * 100000) = Entry
 		  Next
 		  Weights.Sort
@@ -699,7 +699,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
 		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
-		    Selections.AddRow(Selection)
+		    Selections.Add(Selection)
 		  Next
 		  
 		  Return Selections
@@ -711,7 +711,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Var Replacements() As Beacon.SetEntry
 		  For Each Entry As Beacon.SetEntry In Entries
 		    If Entry.Count = 1 Then
-		      Replacements.AddRow(New Beacon.SetEntry(Entry))
+		      Replacements.Add(New Beacon.SetEntry(Entry))
 		      Continue
 		    End If
 		    
@@ -719,7 +719,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Var Replacement As New Beacon.SetEntry(Entry)
 		      Replacement.ResizeTo(0)
 		      Replacement(0) = New Beacon.SetEntryOption(Option)
-		      Replacements.AddRow(Replacement)
+		      Replacements.Add(Replacement)
 		    Next
 		  Next
 		  Return Replacements
@@ -749,17 +749,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Var EntryWeight As Integer = Self.mWeight
 		  
 		  Var Values() As String
-		  Values.AddRow("EntryWeight=" + EntryWeight.ToString)
+		  Values.Add("EntryWeight=" + EntryWeight.ToString)
 		  If UseBlueprints Then
-		    Values.AddRow("Items=(" + Paths.Join(",") + ")")
+		    Values.Add("Items=(" + Paths.Join(",") + ")")
 		  Else
-		    Values.AddRow("ItemClassStrings=(" + Classes.Join(",") + ")")
+		    Values.Add("ItemClassStrings=(" + Classes.Join(",") + ")")
 		  End If
-		  Values.AddRow("ItemsWeights=(" + Weights.Join(",") + ")")
-		  Values.AddRow("MinQuantity=" + Self.MinQuantity.ToString)
-		  Values.AddRow("MaxQuantity=" + Self.MaxQuantity.ToString)
-		  Values.AddRow("MinQuality=" + MinQuality.PrettyText)
-		  Values.AddRow("MaxQuality=" + MaxQuality.PrettyText)
+		  Values.Add("ItemsWeights=(" + Weights.Join(",") + ")")
+		  Values.Add("MinQuantity=" + Self.MinQuantity.ToString)
+		  Values.Add("MaxQuantity=" + Self.MaxQuantity.ToString)
+		  Values.Add("MinQuality=" + MinQuality.PrettyText)
+		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
 		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
@@ -771,12 +771,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  // 2017-07-07: As of 261.0, it appears ChanceToActuallyGiveItem does something else. It will
 		  // now be left off.
 		  If Chance < 1 Then
-		    Values.AddRow("bForceBlueprint=false")
+		    Values.Add("bForceBlueprint=false")
 		  Else
-		    Values.AddRow("bForceBlueprint=true")
+		    Values.Add("bForceBlueprint=true")
 		  End If
-		  //Values.AddRow("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
-		  Values.AddRow("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
+		  //Values.Add("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
+		  Values.Add("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
 		  
 		  Return "(" + Values.Join(",") + ")"
 		End Function

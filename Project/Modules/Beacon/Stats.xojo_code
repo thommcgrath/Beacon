@@ -45,7 +45,7 @@ Protected Module Stats
 		  Var Results() As Beacon.Stat
 		  For Each Stat As Beacon.Stat In Arr
 		    If (Mask And Stat.Mask) = Stat.Mask Then
-		      Results.AddRow(Stat)
+		      Results.Add(Stat)
 		    End If
 		  Next
 		  Return Results

@@ -483,7 +483,7 @@ End
 		  
 		  If Radius = 0 Then
 		    // We only need one entry and no parameters
-		    Entries.AddRow(New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature))
+		    Entries.Add(New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature))
 		  Else
 		    // We'll create five entries to create a proper spread
 		    Const SpreadMultiplierHigh = 1.046153846
@@ -493,27 +493,27 @@ End
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.7
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 1.0
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierHigh), 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.2
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierLow), 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.25
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierLow) * -1, 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.6
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierHigh) * -1, 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  End If
 		  
 		  Select Case TemplateIdx

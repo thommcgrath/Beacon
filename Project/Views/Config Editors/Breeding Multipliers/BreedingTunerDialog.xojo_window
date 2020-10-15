@@ -448,7 +448,7 @@ End
 		  Var Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
 		    If Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) Then
-		      Creatures.AddRow(Self.CreaturesList.RowTagAt(I))
+		      Creatures.Add(Self.CreaturesList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -484,7 +484,7 @@ End
 		  Var Classes() As String
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
 		    If Self.CreaturesList.CellCheckBoxValueAt(I, Column) Then
-		      Classes.AddRow(Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString)
+		      Classes.Add(Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString)
 		    End If
 		  Next
 		  Self.mLastCheckedList = Classes.Join(",")

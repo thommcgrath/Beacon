@@ -137,9 +137,10 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin ItemSetEditor Editor
@@ -154,6 +155,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -271,6 +273,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -328,6 +331,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -387,6 +391,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   76
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -498,11 +503,11 @@ End
 		    If Groups.HasKey(Preset.Grouping) Then
 		      Arr = Groups.Value(Preset.Grouping)
 		    End If
-		    Arr.AddRow(Preset)
+		    Arr.Add(Preset)
 		    Groups.Value(Preset.Grouping) = Arr
 		    
 		    If GroupNames.IndexOf(Preset.Grouping) = -1 Then
-		      GroupNames.AddRow(Preset.Grouping)
+		      GroupNames.Add(Preset.Grouping)
 		    End If
 		  Next
 		  GroupNames.Sort
@@ -523,8 +528,8 @@ End
 		    Var Items() As Beacon.Preset
 		    For Each Preset As Beacon.Preset In Arr
 		      If Preset.ValidForMask(Self.Document.MapCompatibility) Then
-		        Names.AddRow(Preset.Label)
-		        Items.AddRow(Preset)
+		        Names.Add(Preset.Label)
+		        Items.Add(Preset)
 		      End If
 		    Next
 		    If Names.LastRowIndex = -1 Then
@@ -609,7 +614,7 @@ End
 		      Set = New Beacon.ItemSet()
 		    End If
 		    
-		    NewItemSets.AddRow(Source.ItemSets.Append(Set))
+		    NewItemSets.Add(Source.ItemSets.Append(Set))
 		  Next
 		  
 		  Self.UpdateUI(NewItemSets)
@@ -656,7 +661,7 @@ End
 		  Var NewItemSets() As Beacon.ItemSet
 		  For Each SourceDrop As Beacon.LootSource In Drops
 		    For Each ItemSet As Beacon.ItemSet In SourceDrop.ItemSets
-		      NewItemSets.AddRow(ItemSet)
+		      NewItemSets.Add(ItemSet)
 		    Next
 		  Next
 		  Self.AddSets(NewItemSets)
@@ -667,7 +672,7 @@ End
 		    Try
 		      Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		    Catch Err As TypeMismatchException
-		      Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		      Dicts.Add(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
@@ -677,14 +682,14 @@ End
 		    For Each ConfigDict As Dictionary In Dicts
 		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		      If Source <> Nil Then
-		        SourceLootSources.AddRow(Source)
+		        SourceLootSources.Add(Source)
 		      End If
 		    Next
 		    
 		    Var NewItemSets() As Beacon.ItemSet
 		    For Each Source As Beacon.LootSource In SourceLootSources
 		      For Each Set As Beacon.ItemSet In Source
-		        NewItemSets.AddRow(Set)
+		        NewItemSets.Add(Set)
 		      Next
 		    Next
 		    Self.AddSets(NewItemSets)
@@ -808,7 +813,7 @@ End
 		  // Clone the array, but not the items
 		  Var Results() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Results.AddRow(Source)
+		    Results.Add(Source)
 		  Next
 		  Return Results
 		End Function
@@ -900,12 +905,12 @@ End
 		    If SelectSets = Nil Then
 		      For I As Integer = 0 To Self.SetList.RowCount - 1
 		        If Self.SetList.Selected(I) Then
-		          SelectedSets.AddRow(ItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.ID)
+		          SelectedSets.Add(ItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.ID)
 		        End If
 		      Next
 		    Else
 		      For Each Set As Beacon.ItemSet In SelectSets
-		        SelectedSets.AddRow(Set.Hash)
+		        SelectedSets.Add(Set.Hash)
 		      Next
 		    End If
 		    
@@ -1040,7 +1045,7 @@ End
 		      Continue
 		    End If
 		    
-		    Organizers.AddRow(Me.RowTagAt(I))
+		    Organizers.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Organizers, "item set", "item sets") = False Then
@@ -1070,7 +1075,7 @@ End
 		    Var Organizer As ItemSetOrganizer = Me.RowTagAt(I)
 		    Var Dict As Dictionary = Organizer.Template.Export
 		    If Dict <> Nil Then
-		      Dicts.AddRow(Dict)
+		      Dicts.Add(Dict)
 		    End If
 		  Next
 		  If Dicts.LastRowIndex = -1 Then
@@ -1106,11 +1111,11 @@ End
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		    Var Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
-		      Dicts.AddRow(Parsed)
+		      Dicts.Add(Parsed)
 		    ElseIf Info.FullName = "Object()" Then
 		      Var Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
-		        Dicts.AddRow(Dict)
+		        Dicts.Add(Dict)
 		      Next
 		    Else
 		      System.Beep
@@ -1124,7 +1129,7 @@ End
 		        Continue
 		      End If
 		      
-		      NewItemSets.AddRow(Set)
+		      NewItemSets.Add(Set)
 		    Next
 		    Self.AddSets(NewItemSets)
 		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
@@ -1139,7 +1144,7 @@ End
 		    
 		    Var Lines() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      Lines.AddRow("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
+		      Lines.Add("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
 		    Next
 		    Self.Import(Lines.Join(EndOfLine), "Clipboard")
 		  End
@@ -1158,11 +1163,11 @@ End
 		    If Idx = -1 Then
 		      Return False
 		    End If
-		    Targets.AddRow(Me.RowTagAt(Idx))
+		    Targets.Add(Me.RowTagAt(Idx))
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Targets.AddRow(Me.RowTagAt(I))
+		        Targets.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		  End If
@@ -1244,7 +1249,7 @@ End
 		        End If
 		        
 		        If Set.ReconfigureWithPreset(NewPreset, Source, Self.Document) Then
-		          AffectedItemSets.AddRow(Set)
+		          AffectedItemSets.Add(Set)
 		        End If
 		      Next
 		      
@@ -1276,7 +1281,7 @@ End
 		        Var Preset As Beacon.Preset = Presets.Value(Set.SourcePresetID)
 		        
 		        If Set.ReconfigureWithPreset(Preset, Source, Self.Document) Then
-		          AffectedItemSets.AddRow(Set)
+		          AffectedItemSets.Add(Set)
 		        End If
 		      Next
 		    Next
@@ -1305,7 +1310,7 @@ End
 		    Else
 		      Var Arr() As Dictionary
 		      For Each Organizer As ItemSetOrganizer In Targets
-		        Arr.AddRow(Organizer.Template.Export())
+		        Arr.Add(Organizer.Template.Export())
 		      Next
 		      Var Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Arr, True)
@@ -1322,7 +1327,7 @@ End
 		    
 		    Var Parts() As String
 		    For Each Organizer As ItemSetOrganizer In Targets
-		      Parts.AddRow(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty))
+		      Parts.Add(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
 		    Var Board As New Clipboard

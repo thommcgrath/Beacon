@@ -1169,7 +1169,7 @@ End
 		  ElseIf Self.mMultiEditMode Then
 		    Var Names() As String
 		    For Each Entry As Beacon.MutableSpawnPointSetEntry In Self.mEntries
-		      Names.AddRow(Entry.Label)
+		      Names.Add(Entry.Label)
 		    Next
 		    Names.Sort
 		    Self.CreatureNameLabel.Value = Language.EnglishOxfordList(Names)
@@ -1307,7 +1307,7 @@ End
 		Shared Function Present(Parent As Window, Document As Beacon.Document, Set As Beacon.SpawnPointSet, Entry As Beacon.MutableSpawnPointSetEntry = Nil) As Beacon.MutableSpawnPointSetEntry
 		  Var Entries() As Beacon.MutableSpawnPointSetEntry
 		  If Entry <> Nil Then
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  End If
 		  
 		  Var Results() As Beacon.MutableSpawnPointSetEntry = Present(Parent, Document, Set, Entries)
@@ -1437,7 +1437,7 @@ End
 		  End If
 		  
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1488,7 +1488,7 @@ End
 		  End If
 		  
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1506,7 +1506,7 @@ End
 		  End If
 		  
 		  If Self.mEntries.LastRowIndex = -1 Then
-		    Self.mEntries.AddRow(New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature))
+		    Self.mEntries.Add(New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature))
 		  End If
 		  
 		  For Each Entry As Beacon.MutableSpawnPointSetEntry In Self.mEntries
@@ -1670,7 +1670,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1703,7 +1703,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1736,7 +1736,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1769,7 +1769,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1802,7 +1802,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1835,7 +1835,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent

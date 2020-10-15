@@ -24,7 +24,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		          Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
 		        If InQuotes Then
@@ -32,33 +32,33 @@ Inherits Beacon.Thread
 		          If Character = """" Then
 		            InQuotes = False
 		          Else
-		            ColumnBuffer.AddRow(Character)
+		            ColumnBuffer.Add(Character)
 		          End If
 		        Else
 		          If Character = """" Then
 		            InQuotes = True
 		            If Started Then
-		              ColumnBuffer.AddRow(Character)
+		              ColumnBuffer.Add(Character)
 		            End If
 		          ElseIf Character = "," Then
-		            Columns.AddRow(ColumnBuffer.Join(""))
+		            Columns.Add(ColumnBuffer.Join(""))
 		            ColumnBuffer.ResizeTo(-1)
 		            Started = False
 		          ElseIf Character = CarriageReturn Then
 		            // Next line
-		            Columns.AddRow(ColumnBuffer.Join(""))
-		            Lines.AddRow(Columns)
+		            Columns.Add(ColumnBuffer.Join(""))
+		            Lines.Add(Columns)
 		            ColumnBuffer.ResizeTo(-1)
 		            Columns = Array("") // To create a new array
 		            Columns.ResizeTo(-1)
 		            Started = False
 		          Else
-		            ColumnBuffer.AddRow(Character)
+		            ColumnBuffer.Add(Character)
 		          End If
 		        End If
 		      Next
-		      Columns.AddRow(ColumnBuffer.Join(""))
-		      Lines.AddRow(Columns)
+		      Columns.Add(ColumnBuffer.Join(""))
+		      Lines.Add(Columns)
 		      
 		      Var LastPushTime As Double = System.Microseconds
 		      Var FoundSinceLastPush As Boolean
@@ -90,7 +90,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		          Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
 		        Var Path As String = Columns(PathColumnIdx)
@@ -107,7 +107,7 @@ Inherits Beacon.Thread
 		        ElseIf BlueprintColumnIdx > -1 Then
 		          Var CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
 		          If CanBlueprint Then
-		            Tags.AddRow("blueprintable")
+		            Tags.Add("blueprintable")
 		          End If
 		        End If
 		        
@@ -134,21 +134,21 @@ Inherits Beacon.Thread
 		        If Self.ShouldStop Then
 		          Return
 		        End If
-		        Self.mBlueprints.AddRow(Blueprint.Clone)
+		        Self.mBlueprints.Add(Blueprint.Clone)
 		        Self.mBlueprintsLock.Leave
 		        FoundSinceLastPush = True
 		        
 		        If System.Microseconds - LastPushTime > 1000000 Then
-		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		          Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		          LastPushTime = System.Microseconds
 		          FoundSinceLastPush = False
 		        End If
 		      Next
 		      
 		      If Self.mBlueprints.LastRowIndex > -1 Then
-		        Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		        Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      End If
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		      Return
 		    Catch Err As RuntimeException
 		      // Probably not a CSV
@@ -174,7 +174,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
 		    Var Command As String = Match.SubExpressionString(1)
@@ -201,7 +201,7 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If Paths.KeyCount = 0 Then
-		    Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
+		    Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		    Return
 		  End If
 		  
@@ -215,7 +215,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
 		    Var Command As String = Paths.Value(Key)
@@ -242,12 +242,12 @@ Inherits Beacon.Thread
 		    If Self.ShouldStop Then
 		      Return
 		    End If
-		    Self.mBlueprints.AddRow(Blueprint)
+		    Self.mBlueprints.Add(Blueprint)
 		    Self.mBlueprintsLock.Leave
 		    FoundSinceLastPush = True
 		    
 		    If System.Microseconds - LastPushTime > 1000000 Then
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      LastPushTime = System.Microseconds
 		      FoundSinceLastPush = False
 		    End If
@@ -258,10 +258,10 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If FoundSinceLastPush Then
-		    Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		    Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		  End If
 		  
-		  Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
+		  Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 

@@ -43,6 +43,7 @@ Begin BeaconContainer ModDetailView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -244,6 +245,7 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   199
          Transparent     =   False
          Value           =   0.0
@@ -451,6 +453,7 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -486,6 +489,7 @@ Begin BeaconContainer ModDetailView
    End
    Begin Beacon.EngramSearcherThread Searcher
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -620,7 +624,7 @@ End
 		  
 		  Var EngramIDs() As String
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
-		    EngramIDs.AddRow(Engram.ID)
+		    EngramIDs.Add(Engram.ID)
 		  Next
 		  
 		  Var Request As New BeaconAPI.Request("engram", "DELETE", EngramIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
@@ -703,7 +707,7 @@ End
 		  For I As Integer = 0 To Self.EngramList.RowCount - 1
 		    Var Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
 		    If Self.EngramList.Selected(I) Then
-		      Selected.AddRow(Engram.ID)
+		      Selected.Add(Engram.ID)
 		    End If
 		  Next
 		  
@@ -727,7 +731,7 @@ End
 		  
 		  Var Dicts() As Dictionary
 		  For Each Engram As BeaconAPI.Engram In NewEngrams
-		    Dicts.AddRow(Engram.AsDictionary)
+		    Dicts.Add(Engram.AsDictionary)
 		  Next
 		  
 		  Var Content As String = Beacon.GenerateJSON(Dicts, False)

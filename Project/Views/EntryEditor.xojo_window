@@ -199,6 +199,7 @@ Begin BeaconDialog EntryEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          Tooltip         =   ""
          Top             =   56
          Transparent     =   False
@@ -246,6 +247,7 @@ Begin BeaconDialog EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -841,7 +843,7 @@ End
 		  
 		  Var Options() As Beacon.SetEntryOption
 		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
-		    Options.AddRow(Entry.Value)
+		    Options.Add(Entry.Value)
 		  Next
 		  
 		  Var Entries() As Beacon.SetEntry
@@ -851,7 +853,7 @@ End
 		    For Each Option As Beacon.SetEntryOption In Options
 		      Entry.Append(Option)
 		    Next
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  ElseIf Options.LastRowIndex > 0 Then
 		    If SingleEntryCheck.Value Then
 		      // Merge all into one
@@ -859,19 +861,19 @@ End
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Entry.Append(Option)
 		      Next
-		      Entries.AddRow(Entry)
+		      Entries.Add(Entry)
 		    Else
 		      // Multiple entries
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Var Entry As New Beacon.SetEntry
 		        Entry.Append(Option)    
-		        Entries.AddRow(Entry)
+		        Entries.Add(Entry)
 		      Next
 		    End If
 		  ElseIf Options.LastRowIndex = 0 Then
 		    Var Entry As New Beacon.SetEntry
 		    Entry.Append(Options(0))
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  Else
 		    System.Beep
 		    Return

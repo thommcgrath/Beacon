@@ -570,7 +570,7 @@ End
 		  Var ConvertGlobalItem As New MenuItem("Convert Global Harvest Rate to Individual Rates")
 		  ConvertGlobalItem.AutoEnabled = False
 		  ConvertGlobalItem.Name = "ConvertGlobalHarvestRate"
-		  Items.AddRow(ConvertGlobalItem)
+		  Items.Add(ConvertGlobalItem)
 		End Sub
 	#tag EndEvent
 
@@ -741,7 +741,7 @@ End
 		      Continue
 		    End If
 		    
-		    Paths.AddRow(Beacon.Engram(Self.List.RowTagAt(I)).Path)
+		    Paths.Add(Beacon.Engram(Self.List.RowTagAt(I)).Path)
 		  Next
 		  Self.UpdateList(Paths)
 		End Sub
@@ -751,7 +751,7 @@ End
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
 		  Var Paths() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Paths.AddRow(Engram.Path)
+		    Paths.Add(Engram.Path)
 		  Next
 		  Self.UpdateList(Paths) 
 		End Sub
@@ -965,7 +965,7 @@ End
 		      End If
 		      
 		      Var Rate As Double = Entry.Value
-		      SelectEngrams.AddRow(Engram)
+		      SelectEngrams.Add(Engram)
 		      Config.Override(Engram) = Rate
 		    Next
 		    Self.Changed = True

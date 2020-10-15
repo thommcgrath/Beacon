@@ -4,12 +4,12 @@ Inherits Global.Thread
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
-		  Self.mTriggers.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
+		  Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
 		  Var Errored As Boolean
 		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, If(Self.mDocument.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
-		  Self.mTriggers.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
+		  Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 
@@ -176,7 +176,7 @@ Inherits Global.Thread
 		      If SectionDict.HasKey(Key) Then
 		        ConfigLines = SectionDict.Value(Key)
 		      End If
-		      ConfigLines.AddRow(Line)
+		      ConfigLines.Add(Line)
 		      SectionDict.Value(Key) = ConfigLines
 		      UntouchedConfigs.Value(LastGroupHeader) = SectionDict
 		    Next
@@ -184,12 +184,12 @@ Inherits Global.Thread
 		    Var AllSectionHeaders() As String
 		    Var UntouchedKeys() As Variant = UntouchedConfigs.Keys
 		    For Each UntouchedKey As String In UntouchedKeys
-		      AllSectionHeaders.AddRow(UntouchedKey)
+		      AllSectionHeaders.Add(UntouchedKey)
 		    Next
 		    Var NewKeys() As Variant = ConfigDict.Keys
 		    For Each NewKey As String In NewKeys
 		      If AllSectionHeaders.IndexOf(NewKey) = -1 Then
-		        AllSectionHeaders.AddRow(NewKey)
+		        AllSectionHeaders.Add(NewKey)
 		      End If
 		    Next
 		    
@@ -320,7 +320,7 @@ Inherits Global.Thread
 		        Var Entries() As Variant = Dict.Keys
 		        For Each Entry As String In Entries
 		          If Keys.IndexOf(Entry) = -1 Then
-		            Keys.AddRow(Entry)
+		            Keys.Add(Entry)
 		          End If
 		        Next
 		        
@@ -335,13 +335,13 @@ Inherits Global.Thread
 		          If BeaconDict.HasKey("ManagedKeys") Then
 		            SectionLines = BeaconDict.Value("ManagedKeys")
 		          End If
-		          SectionLines.AddRow("ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))")
+		          SectionLines.Add("ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))")
 		          BeaconDict.Value("ManagedKeys") = SectionLines
 		        Next
 		        BeaconDict.Value("Build") = Array("Build=" + Str(App.BuildNumber, "0"))
 		        BeaconDict.Value("Trust") = Array("Trust=" + TrustKey)
 		        BeaconDict.Value("LastUpdated") = Array("LastUpdated=""" + DateTime.Now.SQLDateTimeWithOffset + """")
-		        AllSectionHeaders.AddRow("Beacon")
+		        AllSectionHeaders.Add("Beacon")
 		        ConfigDict.Value("Beacon") = BeaconDict
 		      End If
 		    End If
@@ -376,7 +376,7 @@ Inherits Global.Thread
 		        Var SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
 		          If SectionConfigs.IndexOf(Key) = -1 Then
-		            SectionConfigs.AddRow(Key)
+		            SectionConfigs.Add(Key)
 		          End If
 		        Next
 		      End If
@@ -386,7 +386,7 @@ Inherits Global.Thread
 		        Var SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
 		          If SectionConfigs.IndexOf(Key) = -1 Then
-		            SectionConfigs.AddRow(Key)
+		            SectionConfigs.Add(Key)
 		          End If
 		        Next
 		      End If
@@ -394,16 +394,16 @@ Inherits Global.Thread
 		      SectionConfigs.Sort
 		      
 		      If NewLines.LastRowIndex > -1 Then
-		        NewLines.AddRow("")
+		        NewLines.Add("")
 		      End If
-		      NewLines.AddRow("[" + Header + "]")
+		      NewLines.Add("[" + Header + "]")
 		      
 		      For Each ConfigKey As String In SectionConfigs
 		        If HasUntouched Then
 		          If SectionUntouched.HasKey(ConfigKey) Then
 		            Var Values() As String = SectionUntouched.Value(ConfigKey)
 		            For Each Line As String In Values
-		              NewLines.AddRow(Line)
+		              NewLines.Add(Line)
 		            Next
 		          End If
 		        End If
@@ -411,7 +411,7 @@ Inherits Global.Thread
 		          If SectionConfig.HasKey(ConfigKey) Then
 		            Var Values() As String = SectionConfig.Value(ConfigKey)
 		            For Each Line As String In Values
-		              NewLines.AddRow(Line)
+		              NewLines.Add(Line)
 		            Next
 		          End If
 		        End If

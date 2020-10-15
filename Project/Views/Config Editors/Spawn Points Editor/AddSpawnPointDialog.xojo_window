@@ -421,6 +421,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
@@ -514,7 +515,7 @@ End
 		      Next
 		      
 		      For Each Entry As DictionaryEntry In UniqueSpawnPoints
-		        SpawnPoints.AddRow(Beacon.SpawnPoint(Entry.Value))
+		        SpawnPoints.Add(Beacon.SpawnPoint(Entry.Value))
 		      Next
 		    End Select
 		  End If
@@ -639,7 +640,7 @@ End
 		    End If
 		    
 		    MutableSpawnPoint.Mode = Mode
-		    Self.mSelectedPoints.AddRow(MutableSpawnPoint)
+		    Self.mSelectedPoints.Add(MutableSpawnPoint)
 		  Next
 		  
 		  Self.Hide

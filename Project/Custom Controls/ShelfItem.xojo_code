@@ -26,7 +26,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.AddRow(New WeakRef(Observer))
+		  Refs.Add(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		End Sub
 	#tag EndMethod

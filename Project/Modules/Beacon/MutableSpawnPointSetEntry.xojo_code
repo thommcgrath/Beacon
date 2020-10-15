@@ -5,7 +5,7 @@ Inherits Beacon.SpawnPointSetEntry
 		Sub Append(Level As Beacon.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
 		  If Idx = -1 Then
-		    Self.mLevels.AddRow(New Beacon.SpawnPointLevel(Level))
+		    Self.mLevels.Add(New Beacon.SpawnPointLevel(Level))
 		    Self.Modified = True
 		  End If
 		End Sub

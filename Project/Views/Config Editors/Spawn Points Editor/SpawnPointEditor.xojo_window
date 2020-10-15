@@ -140,10 +140,11 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   705
       Begin SpawnPointSetEditor SetEditor
@@ -158,6 +159,7 @@ Begin BeaconContainer SpawnPointEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   664
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
          LockBottom      =   True
@@ -498,7 +500,7 @@ End
 		    For Each Entry As DictionaryEntry In Limits
 		      Var Creature As Beacon.Creature = Entry.Key
 		      If DefinedCreatures.IndexOf(Creature) = -1 Then
-		        DefinedCreatures.AddRow(Creature)
+		        DefinedCreatures.Add(Creature)
 		      End If
 		      If SelectedCreatures.IndexOf(Creature) > -1 Then
 		        Var CreatureLimit As Double = Entry.Value
@@ -525,7 +527,7 @@ End
 		  
 		  Var CreaturesInSpawnPoint() As Beacon.Creature
 		  For Each Entry As DictionaryEntry In CreatureFilter
-		    CreaturesInSpawnPoint.AddRow(Entry.Value)
+		    CreaturesInSpawnPoint.Add(Entry.Value)
 		  Next
 		  
 		  If CommonLimit <> Nil And CommonLimit = -1.0 Then
@@ -642,12 +644,12 @@ End
 		    Var SelectedCreatures() As String
 		    If SelectCreatures <> Nil Then
 		      For Each Creature As Beacon.Creature In SelectCreatures
-		        SelectedCreatures.AddRow(Creature.Path)
+		        SelectedCreatures.Add(Creature.Path)
 		      Next
 		    Else
 		      For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		        If Self.LimitsList.Selected(I) Then
-		          SelectedCreatures.AddRow(Self.LimitsList.RowTagAt(I))
+		          SelectedCreatures.Add(Self.LimitsList.RowTagAt(I))
 		        End If
 		      Next
 		    End If
@@ -710,12 +712,12 @@ End
 		    If SelectSets = Nil Then
 		      For I As Integer = 0 To Self.SetsList.RowCount - 1
 		        If Self.SetsList.Selected(I) Then
-		          SelectedSets.AddRow(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
+		          SelectedSets.Add(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
 		        End If
 		      Next
 		    Else
 		      For Each Set As Beacon.SpawnPointSet In SelectSets
-		        SelectedSets.AddRow(Set.Hash)
+		        SelectedSets.Add(Set.Hash)
 		      Next
 		    End If
 		    
@@ -806,7 +808,7 @@ End
 		    Var SelectedCreatures() As Beacon.Creature
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		      If Self.LimitsList.Selected(I) Then
-		        SelectedCreatures.AddRow(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
+		        SelectedCreatures.Add(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
 		      End If
 		    Next
 		    Self.PresentLimitsDialog(SelectedCreatures)
@@ -938,7 +940,7 @@ End
 		      Continue
 		    End If
 		    
-		    Organizers.AddRow(Me.RowTagAt(I))
+		    Organizers.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Organizers, "spawn set", "spawn sets") = False Then
@@ -1012,7 +1014,7 @@ End
 		    End If
 		    
 		    Var Organizer As SpawnSetOrganizer = Me.RowTagAt(I)
-		    Items.AddRow(Organizer.Template.SaveData)
+		    Items.Add(Organizer.Template.SaveData)
 		  Next
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Items, True)
@@ -1048,7 +1050,7 @@ End
 		      Point.AddSet(Set)
 		    Next
 		    
-		    SelectSets.AddRow(Set)
+		    SelectSets.Add(Set)
 		  Next
 		  
 		  RaiseEvent Changed
@@ -1072,7 +1074,7 @@ End
 		  Var SelectedCreatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		    If Self.LimitsList.Selected(I) Then
-		      SelectedCreatures.AddRow(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
+		      SelectedCreatures.Add(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
 		    End If
 		  Next
 		  Self.PresentLimitsDialog(SelectedCreatures)
@@ -1096,7 +1098,7 @@ End
 		      Creature = Beacon.Creature.CreateFromPath(Me.RowTagAt(I).StringValue)
 		    End If
 		    
-		    Creatures.AddRow(Creature)
+		    Creatures.Add(Creature)
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Creatures, "creature limit", "creature limits") = False Then
@@ -1193,7 +1195,7 @@ End
 		    If Creature = Nil Then
 		      Creature = Beacon.Creature.CreateFromPath(Path)
 		    End If
-		    SelectCreatures.AddRow(Creature)
+		    SelectCreatures.Add(Creature)
 		    
 		    Var Limit As Double = Entry.Value
 		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints

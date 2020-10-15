@@ -101,7 +101,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  For Each LevelData As Dictionary In Levels
 		    Var Level As Beacon.SpawnPointLevel = Beacon.SpawnPointLevel.FromSaveData(LevelData)
 		    If Level <> Nil Then
-		      Entry.mLevels.AddRow(Level)
+		      Entry.mLevels.Add(Level)
 		    End If
 		  Next
 		  

@@ -160,7 +160,7 @@ Protected Class IntegrationEngine
 		  If ReplaceLast And Self.mLogMessages.Count > 0 Then
 		    Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message
 		  Else
-		    Self.mLogMessages.AddRow(Message)
+		    Self.mLogMessages.Add(Message)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -391,7 +391,7 @@ Protected Class IntegrationEngine
 		      
 		      Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.Document, Self.Identity, Self.mProfile)
 		      For Each Option As Beacon.ConfigValue In Options
-		        CommandLine.AddRow(Option)
+		        CommandLine.Add(Option)
 		      Next
 		    Next
 		  End If
@@ -503,7 +503,7 @@ Protected Class IntegrationEngine
 		  Self.Finished = True
 		  
 		  // Need this to fire on the main thread
-		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData))
+		  Self.mPendingCalls.Add(CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData))
 		  
 		  RaiseEvent Finished
 		End Sub
@@ -702,7 +702,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Self.mActiveWaitController = Controller
-		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
+		  Self.mPendingCalls.Add(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
 		  
 		  While Not Controller.ShouldResume
 		    App.CurrentThread.Sleep(100, False)

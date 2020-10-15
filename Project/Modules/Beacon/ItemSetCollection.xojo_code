@@ -25,7 +25,7 @@ Implements Beacon.Countable
 		  
 		  Set.Label = Beacon.FindUniqueLabel(Set.Label, Labels)
 		  
-		  Self.mItemSets.AddRow(Set)
+		  Self.mItemSets.Add(Set)
 		  Self.mModified = True
 		  
 		  Return Set
@@ -144,7 +144,7 @@ Implements Beacon.Countable
 		  
 		  Var Sets() As Variant
 		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    Sets.AddRow(Set)
+		    Sets.Add(Set)
 		  Next
 		  Return New Beacon.GenericIterator(Sets)
 		End Function
@@ -200,7 +200,7 @@ Implements Beacon.Countable
 		    If Dict Is Nil Then
 		      Continue
 		    End If
-		    Sets.AddRow(Dict)
+		    Sets.Add(Dict)
 		  Next
 		  Return Sets
 		End Function

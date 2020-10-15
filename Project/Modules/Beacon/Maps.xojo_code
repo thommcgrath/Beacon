@@ -41,7 +41,7 @@ Protected Module Maps
 		  Var Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If (Map.Mask And Mask) > CType(0, UInt64) Then
-		      Matches.AddRow(Map)
+		      Matches.Add(Map)
 		    End If
 		  Next
 		  

@@ -405,7 +405,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Var CreatureUUID As String = Entry.Key
 		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(CreatureUUID)
 		    If (Creature Is Nil) = False Then
-		      Arr.AddRow(Creature)
+		      Arr.Add(Creature)
 		    End If
 		  Next
 		  Return Arr
@@ -428,7 +428,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  For Each Entry As DictionaryEntry In Options
 		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(Entry.Key.StringValue)
 		    If (Creature Is Nil) = False Then
-		      Arr.AddRow(Creature)
+		      Arr.Add(Creature)
 		    End If
 		  Next
 		  
@@ -446,7 +446,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		Function SaveData() As Dictionary
 		  Var Entries() As Variant
 		  For Each Entry As Beacon.SpawnPointSetEntry In Self.mEntries
-		    Entries.AddRow(Entry.SaveData)
+		    Entries.Add(Entry.SaveData)
 		  Next
 		  
 		  Var SaveData As New Dictionary

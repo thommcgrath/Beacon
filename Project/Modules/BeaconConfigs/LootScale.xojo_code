@@ -7,9 +7,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", "0.001"))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", "0.001"))
 		  Else
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
 		  End If
 		End Sub
 	#tag EndEvent

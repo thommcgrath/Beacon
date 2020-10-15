@@ -750,7 +750,7 @@ End
 		  If Win <> Nil Then
 		    Var Classes() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      Classes.AddRow(Source.ClassString)
+		      Classes.Add(Source.ClassString)
 		    Next
 		    
 		    Var Editors() As DocumentEditorView = Win.DocumentEditors
@@ -763,8 +763,8 @@ End
 		        For X As Integer = 0 To SourcesBound
 		          Var Source As Beacon.LootSource = Sources(X)
 		          If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
-		            Classes.AddRow(Source.ClassString)
-		            Self.mSources.AddRow(Source)
+		            Classes.Add(Source.ClassString)
+		            Self.mSources.Add(Source)
 		          End If
 		        Next
 		      End If

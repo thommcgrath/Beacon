@@ -6,9 +6,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "1.0"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayTimeSpeedScale", Self.DaySpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "NightTimeSpeedScale", Self.NightSpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "1.0"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayTimeSpeedScale", Self.DaySpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "NightTimeSpeedScale", Self.NightSpeedMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 

@@ -22,7 +22,7 @@ Implements ObservationKit.Observable
 		Sub AddConfigSet(SetName As String)
 		  If Self.mConfigSets.HasKey(SetName) = False Then
 		    Self.mConfigSets.Value(SetName) = New Dictionary
-		    Self.mConfigSetStates.AddRow(New Beacon.ConfigSetState(SetName, False))
+		    Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
 		    Self.mModified = True
 		  End If
 		End Sub
@@ -58,7 +58,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.AddRow(New WeakRef(Observer))
+		  Refs.Add(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		End Sub
 	#tag EndMethod
@@ -77,7 +77,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Self.mServerProfiles.AddRow(Profile.Clone)
+		  Self.mServerProfiles.Add(Profile.Clone)
 		  If Profile.IsConsole Then
 		    Self.ConsoleMode = True
 		    
@@ -106,7 +106,7 @@ Implements ObservationKit.Observable
 		  Var Names() As String
 		  For Each State As Beacon.ConfigSetState In States
 		    If State.Enabled Then
-		      Names.AddRow(State.Name)
+		      Names.Add(State.Name)
 		    End If
 		  Next
 		  Return Self.CombinedConfigs(Names, Identity)
@@ -141,7 +141,7 @@ Implements ObservationKit.Observable
 		  Next
 		  
 		  For Each Entry As DictionaryEntry In Clones
-		    Combined.AddRow(Entry.Value)
+		    Combined.Add(Entry.Value)
 		  Next
 		  
 		  Return Combined
@@ -200,7 +200,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Self.mConfigSetStates.AddRow(New Beacon.ConfigSetState(SetName, False))
+		    Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
 		  End If
 		  Self.mConfigSets.Value(SetName) = Dict
 		  Self.mModified = True
@@ -217,7 +217,7 @@ Implements ObservationKit.Observable
 		Function ConfigSetNames() As String()
 		  Var Names() As String
 		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Names.AddRow(Entry.Key)
+		    Names.Add(Entry.Key)
 		  Next
 		  Return Names
 		End Function
@@ -234,14 +234,14 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Clone.AddRow(State)
-		    Names.AddRow(State.Name)
+		    Clone.Add(State)
+		    Names.Add(State.Name)
 		  Next
 		  
 		  // Make sure any new sets have a state
 		  For Each Entry As DictionaryEntry In Self.mConfigSets
 		    If Names.IndexOf(Entry.Key.StringValue) = -1 Then
-		      Clone.AddRow(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
+		      Clone.Add(New Beacon.ConfigSetState(Entry.Key.StringValue, False))
 		    End If
 		  Next
 		  
@@ -379,7 +379,7 @@ Implements ObservationKit.Observable
 		          End If
 		        Next
 		        If NewSet <> Nil Then
-		          NewSets.AddRow(NewSet)
+		          NewSets.Add(NewSet)
 		        End If
 		      Next
 		      
@@ -535,13 +535,13 @@ Implements ObservationKit.Observable
 		                Components.RemoveRowAt(Components.LastRowIndex)
 		              End If
 		            End If
-		            Components.AddRow("Game.ini")
+		            Components.Add("Game.ini")
 		            Profile.GameIniPath = Components.Join("/")
 		            
 		            Components(Components.LastRowIndex) = "GameUserSettings.ini"
 		            Profile.GameUserSettingsIniPath = Components.Join("/")
 		            
-		            Doc.mServerProfiles.AddRow(Profile)
+		            Doc.mServerProfiles.Add(Profile)
 		          End If
 		        Next
 		      End If
@@ -572,7 +572,7 @@ Implements ObservationKit.Observable
 		                // Here's a hack to make assigning a preset possible: save current entries
 		                Var Entries() As Beacon.SetEntry
 		                For Each Entry As Beacon.SetEntry In Set
-		                  Entries.AddRow(New Beacon.SetEntry(Entry))
+		                  Entries.Add(New Beacon.SetEntry(Entry))
 		                Next
 		                
 		                // Reconfigure
@@ -639,7 +639,7 @@ Implements ObservationKit.Observable
 		      
 		      Var MergedIdentity As Beacon.Identity = IdentityManager.FindMergedIdentity(UserID)
 		      If MergedIdentity <> Nil Then
-		        PossibleIdentities.AddRow(MergedIdentity)
+		        PossibleIdentities.Add(MergedIdentity)
 		      End If
 		    Next
 		    
@@ -678,7 +678,7 @@ Implements ObservationKit.Observable
 		    Doc.mConfigSetStates.ResizeTo(-1)
 		    Var States() As Variant = Dict.Value("Config Set Priorities")
 		    For Each State As Dictionary In States
-		      Doc.mConfigSetStates.AddRow(Beacon.ConfigSetState.FromDictionary(State))
+		      Doc.mConfigSetStates.Add(Beacon.ConfigSetState.FromDictionary(State))
 		    Next
 		  ElseIf Dict.HasKey("Configs") Then
 		    Doc.ConfigSet(BaseConfigSetName) = LoadConfigSet(Dict.Value("Configs"), Identity, Doc)
@@ -801,7 +801,7 @@ Implements ObservationKit.Observable
 		Function GetUsers() As String()
 		  Var Users() As String
 		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Users.AddRow(Entry.Key)
+		    Users.Add(Entry.Key)
 		  Next
 		  Return Users
 		End Function
@@ -828,7 +828,7 @@ Implements ObservationKit.Observable
 		  Var Groups() As Beacon.ConfigGroup
 		  If (SetDict Is Nil) = False Then
 		    For Each Entry As DictionaryEntry In SetDict
-		      Groups.AddRow(Entry.Value)
+		      Groups.Add(Entry.Value)
 		    Next
 		  End If
 		  Return Groups
@@ -901,7 +901,7 @@ Implements ObservationKit.Observable
 		        End If
 		      End If
 		      
-		      Document.mServerProfiles.AddRow(Profile)
+		      Document.mServerProfiles.Add(Profile)
 		    End If
 		  Next
 		End Sub
@@ -913,7 +913,7 @@ Implements ObservationKit.Observable
 		  Var Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If Map.Matches(Self.mMapCompatibility) Then
-		      Matches.AddRow(Map)
+		      Matches.Add(Map)
 		    End If
 		  Next
 		  Return Matches
@@ -1334,7 +1334,7 @@ Implements ObservationKit.Observable
 		  
 		  Var States() As Dictionary
 		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    States.AddRow(State.ToDictionary)
+		    States.Add(State.ToDictionary)
 		  Next
 		  Document.Value("Config Set Priorities") = States
 		  
@@ -1345,7 +1345,7 @@ Implements ObservationKit.Observable
 		  Var EncryptedData As New Dictionary
 		  Var Profiles() As Dictionary
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
-		    Profiles.AddRow(Profile.ToDictionary)
+		    Profiles.Add(Profile.ToDictionary)
 		  Next
 		  EncryptedData.Value("Servers") = Profiles
 		  If Self.mAccounts.Count > 0 Then
@@ -1371,7 +1371,7 @@ Implements ObservationKit.Observable
 		  Var ExcludedConfigs() As Beacon.ConfigGroup
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    If Config.Purchased(OmniVersion) = False Then
-		      ExcludedConfigs.AddRow(Config)
+		      ExcludedConfigs.Add(Config)
 		    End If
 		  Next
 		  Return ExcludedConfigs

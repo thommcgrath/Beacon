@@ -193,6 +193,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
    End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

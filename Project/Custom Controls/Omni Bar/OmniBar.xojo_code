@@ -160,7 +160,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		    
 		    If Item.Type = OmniBarItem.Types.FlexSpace Then
-		      FlexSpaceIndexes.AddRow(Idx)
+		      FlexSpaceIndexes.Add(Idx)
 		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
 		    Else
 		      Var ItemWidth As Double = Item.Width(G)
@@ -254,7 +254,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  For Each Item As OmniBarItem In Items
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
 		      Item.AddObserver(Self, "MinorChange", "MajorChange")
-		      Self.mItems.AddRow(Item)
+		      Self.mItems.Add(Item)
 		      Self.Invalidate
 		    End If
 		  Next

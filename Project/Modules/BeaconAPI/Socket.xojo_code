@@ -135,7 +135,7 @@ Protected Class Socket
 
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
-		  Self.Queue.AddRow(Request)
+		  Self.Queue.Add(Request)
 		  If Self.Queue.LastRowIndex = 0 And Self.Working = False Then
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		    Self.Working = True

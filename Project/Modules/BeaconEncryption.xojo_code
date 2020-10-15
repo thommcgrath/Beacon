@@ -95,13 +95,13 @@ Protected Module BeaconEncryption
 		  Var Base64 As String = EncodeBase64(Crypto.DEREncodePrivateKey(Key), 0)
 		  Var Lines() As String = Array("-----BEGIN PRIVATE KEY-----")
 		  While Base64.Length > 64
-		    Lines.AddRow(Base64.Left(64))
+		    Lines.Add(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
 		  Wend
 		  If Base64.Length > 0 Then
-		    Lines.AddRow(Base64)
+		    Lines.Add(Base64)
 		  End If
-		  Lines.AddRow("-----END PRIVATE KEY-----")
+		  Lines.Add("-----END PRIVATE KEY-----")
 		  Return Lines.Join(Encodings.UTF8.Chr(10))
 		End Function
 	#tag EndMethod
@@ -111,13 +111,13 @@ Protected Module BeaconEncryption
 		  Var Base64 As String = EncodeBase64(DecodeHex(Key), 0)
 		  Var Lines() As String = Array("-----BEGIN PUBLIC KEY-----")
 		  While Base64.Length > 64
-		    Lines.AddRow(Base64.Left(64))
+		    Lines.Add(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
 		  Wend
 		  If Base64.Length > 0 Then
-		    Lines.AddRow(Base64)
+		    Lines.Add(Base64)
 		  End If
-		  Lines.AddRow("-----END PUBLIC KEY-----")
+		  Lines.Add("-----END PUBLIC KEY-----")
 		  Return Lines.Join(Encodings.UTF8.Chr(10))
 		End Function
 	#tag EndMethod

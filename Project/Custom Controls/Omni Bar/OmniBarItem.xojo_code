@@ -53,7 +53,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.AddRow(New WeakRef(Observer))
+		  Refs.Add(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
@@ -436,26 +436,26 @@ Implements ObservationKit.Observable
 		  Var Segments() As Double
 		  Select Case Self.mType
 		  Case OmniBarItem.Types.Space
-		    Segments.AddRow(20)
+		    Segments.Add(20)
 		  Case OmniBarItem.Types.FlexSpace
-		    Segments.AddRow(0)
+		    Segments.Add(0)
 		  Case OmniBarItem.Types.Separator
-		    Segments.AddRow(32)
+		    Segments.Add(32)
 		  Case OmniBarItem.Types.Button
-		    Segments.AddRow(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
+		    Segments.Add(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
 		  Case OmniBarItem.Types.Tab
 		    If Self.Caption.IsEmpty = False Then
-		      Segments.AddRow(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth))
+		      Segments.Add(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth))
 		    End If
 		    If (Self.Icon Is Nil) = False Then
 		      If Self.Caption.IsEmpty Then
-		        Segments.AddRow(Self.IconSize + (Self.ButtonPadding * 2))
+		        Segments.Add(Self.IconSize + (Self.ButtonPadding * 2))
 		      Else
-		        Segments.AddRow(Self.IconSize)
+		        Segments.Add(Self.IconSize)
 		      End If
 		    End If
 		    If Self.CanBeClosed Or Self.HasUnsavedChanges Then
-		      Segments.AddRow(Self.CloseIconSize)
+		      Segments.Add(Self.CloseIconSize)
 		    End If
 		  End Select
 		  Return NearestMultiple(Segments.Sum(Self.ElementSpacing), 1.0) // Yes, round to nearest whole

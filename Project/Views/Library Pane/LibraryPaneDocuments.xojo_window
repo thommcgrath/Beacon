@@ -85,6 +85,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -218,7 +219,7 @@ End
 		    For Each Dict As Dictionary In Dicts
 		      Var Document As New BeaconAPI.Document(Dict)
 		      Var URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
-		      Self.mCloudDocuments.AddRow(URL)
+		      Self.mCloudDocuments.Add(URL)
 		    Next
 		  ElseIf Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
 		    // The user is not authenticated
@@ -249,7 +250,7 @@ End
 		    Var Dicts() As Variant = Response.JSON
 		    For Each Dict As Dictionary In Dicts
 		      Var Document As New BeaconAPI.Document(Dict)
-		      Self.mCommunityDocuments.AddRow(Document.ResourceURL)
+		      Self.mCommunityDocuments.Add(Document.ResourceURL)
 		    Next
 		  End If
 		  
@@ -514,7 +515,7 @@ End
 		  Var Files() As FolderItem
 		  For Each Child As FolderItem In AutosaveFolder.Children
 		    If Child.Name.EndsWith(Extension) Then
-		      Files.AddRow(Child)
+		      Files.Add(Child)
 		    End If
 		  Next
 		  
@@ -565,7 +566,7 @@ End
 		  Var Documents() As Beacon.DocumentURL
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Documents.AddRow(Self.List.RowTagAt(I))
+		      Documents.Add(Self.List.RowTagAt(I))
 		    End If
 		  Next
 		  Return Documents
@@ -576,7 +577,7 @@ End
 		Sub SelectedDocuments(Assigns Documents() As Beacon.DocumentURL)
 		  Var Selected() As String
 		  For Each URL As Beacon.DocumentURL In Documents
-		    Selected.AddRow(URL)
+		    Selected.Add(URL)
 		  Next
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
@@ -651,7 +652,7 @@ End
 		  For I As Integer = 0 To RowBound
 		    If Self.List.Selected(I) Then
 		      Var URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
-		      SelectedURLs.AddRow(URL)
+		      SelectedURLs.Add(URL)
 		    End If
 		  Next
 		  
@@ -822,7 +823,7 @@ End
 		    Var URL As Beacon.DocumentURL = Me.RowTagAt(I)
 		    Var Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
 		    If Controller.CanWrite() Then
-		      Controllers.AddRow(Controller)
+		      Controllers.Add(Controller)
 		    End If
 		  Next
 		  

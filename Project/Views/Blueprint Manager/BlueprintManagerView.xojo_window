@@ -106,9 +106,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   510
       Begin FadedSeparator EditorHeaderSeparator
@@ -264,6 +265,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    End
    Begin Beacon.EngramSearcherThread Searcher
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -397,13 +399,13 @@ End
 		    Var Points() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, "")
 		    Var Blueprints() As Beacon.Blueprint
 		    For Each Engram As Beacon.Blueprint In Engrams
-		      Blueprints.AddRow(Engram)
+		      Blueprints.Add(Engram)
 		    Next
 		    For Each Creature As Beacon.Blueprint In Creatures
-		      Blueprints.AddRow(Creature)
+		      Blueprints.Add(Creature)
 		    Next
 		    For Each Point As Beacon.Blueprint In Points
-		      Blueprints.AddRow(Point)
+		      Blueprints.Add(Point)
 		    Next
 		    
 		    Var CSV As String = Beacon.CreateCSV(Blueprints)
@@ -482,23 +484,23 @@ End
 		  Var Blueprints() As Beacon.Blueprint
 		  Var Labels() As String
 		  For Each Engram As Beacon.Engram In Engrams
-		    Blueprints.AddRow(Engram)
-		    Labels.AddRow(Engram.Label)
+		    Blueprints.Add(Engram)
+		    Labels.Add(Engram.Label)
 		  Next
 		  For Each Creature As Beacon.Creature In Creatures
-		    Blueprints.AddRow(Creature)
-		    Labels.AddRow(Creature.Label)
+		    Blueprints.Add(Creature)
+		    Labels.Add(Creature.Label)
 		  Next
 		  For Each Point As Beacon.SpawnPoint In Points
-		    Blueprints.AddRow(Point)
-		    Labels.AddRow(Point.Label)
+		    Blueprints.Add(Point)
+		    Labels.Add(Point.Label)
 		  Next
 		  Labels.SortWith(Blueprints)
 		  
 		  Var SelectedPaths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      SelectedPaths.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		      SelectedPaths.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
 		    End If
 		  Next
 		  
@@ -543,7 +545,7 @@ End
 		    Var Blueprints() As Beacon.Blueprint
 		    For I As Integer = 0 To Self.List.RowCount - 1
 		      If Self.List.Selected(I) Then
-		        Blueprints.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)))
+		        Blueprints.Add(Beacon.Blueprint(Self.List.RowTagAt(I)))
 		      End If
 		    Next
 		    
@@ -646,7 +648,7 @@ End
 		  Var Objects() As Beacon.Blueprint
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Objects.AddRow(Beacon.Blueprint(Me.RowTagAt(I)))
+		      Objects.Add(Beacon.Blueprint(Me.RowTagAt(I)))
 		    End If
 		  Next
 		  
@@ -667,17 +669,17 @@ End
 		  
 		  Var Messages() As String
 		  If ImportedCount = 1 Then
-		    Messages.AddRow("1 object was added.")
+		    Messages.Add("1 object was added.")
 		  ElseIf ImportedCount > 1 Then
-		    Messages.AddRow(Str(ImportedCount, "-0") + " objects were added.")
+		    Messages.Add(Str(ImportedCount, "-0") + " objects were added.")
 		  End If
 		  If SkippedCount = 1 Then
-		    Messages.AddRow("1 object was skipped because it already exists in the database.")
+		    Messages.Add("1 object was skipped because it already exists in the database.")
 		  ElseIf SkippedCount > 1 Then
-		    Messages.AddRow(Str(SkippedCount, "-0") + " objects were skipped because they already exist in the database.")
+		    Messages.Add(Str(SkippedCount, "-0") + " objects were skipped because they already exist in the database.")
 		  End If
 		  If ImportedCount = 0 And SkippedCount = 0 Then
-		    Messages.AddRow("No objects were found to import.")
+		    Messages.Add("No objects were found to import.")
 		  End If
 		  
 		  Self.ShowAlert("Object import has finished", Messages.Join(" "))

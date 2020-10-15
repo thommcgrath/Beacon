@@ -541,6 +541,7 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -628,7 +629,7 @@ End
 		    Var Dicts() As Variant
 		    Var Parsed As Variant = Response.JSON
 		    If IsNull(Parsed) = False And Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
-		      Dicts.AddRow(Parsed)
+		      Dicts.Add(Parsed)
 		    Else
 		      Dicts = Parsed
 		    End If

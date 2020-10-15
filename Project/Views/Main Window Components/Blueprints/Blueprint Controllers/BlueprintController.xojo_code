@@ -24,7 +24,7 @@ Protected Class BlueprintController
 		Function Blueprints() As Beacon.Blueprint()
 		  Var Results() As Beacon.Blueprint
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    Results.AddRow(Entry.Value)
+		    Results.Add(Entry.Value)
 		  Next
 		  Return Results
 		End Function
@@ -59,7 +59,7 @@ Protected Class BlueprintController
 		  Var Results() As Beacon.Creature
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
 		    If Entry.Value IsA Beacon.Creature Then
-		      Results.AddRow(Entry.Value)
+		      Results.Add(Entry.Value)
 		    End If
 		  Next
 		  Return Results
@@ -124,7 +124,7 @@ Protected Class BlueprintController
 		  Var Results() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
 		    If Entry.Value IsA Beacon.Engram Then
-		      Results.AddRow(Entry.Value)
+		      Results.Add(Entry.Value)
 		    End If
 		  Next
 		  Return Results
@@ -187,10 +187,10 @@ Protected Class BlueprintController
 		  If IsEventImplemented("Publish") Then 
 		    Var BlueprintsToSave(), BlueprintsToDelete() As Beacon.Blueprint
 		    For Each Entry As DictionaryEntry In Self.mBlueprintsToSave
-		      BlueprintsToSave.AddRow(Entry.Value)
+		      BlueprintsToSave.Add(Entry.Value)
 		    Next
 		    For Each Entry As DictionaryEntry In Self.mBlueprintsToDelete
-		      BlueprintsToDelete.AddRow(Entry.Value)
+		      BlueprintsToDelete.Add(Entry.Value)
 		    Next
 		    
 		    RaiseEvent Publish(BlueprintsToSave, BlueprintsToDelete)
@@ -228,7 +228,7 @@ Protected Class BlueprintController
 		  Var Results() As Beacon.SpawnPoint
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
 		    If Entry.Value IsA Beacon.SpawnPoint Then
-		      Results.AddRow(Entry.Value)
+		      Results.Add(Entry.Value)
 		    End If
 		  Next
 		  Return Results

@@ -682,11 +682,11 @@ End
 		        DoesAutoUnlock = IsNull(Self.mConfig.AutoUnlockEngram(Engram)) = False And NullableBoolean(Self.mConfig.AutoUnlockEngram(Engram)).BooleanValue = True
 		      End If
 		      
-		      AutoUnlocks.AddRow(DoesAutoUnlock)
-		      Hiddens.AddRow(Self.mConfig.EffectivelyHidden(Engram))
-		      RequiredLevels.AddRow(LevelRequirement)
-		      RequiredPointses.AddRow(PointRequirement)
-		      RemovePrereqs.AddRow(Self.mConfig.RemovePrerequisites(Engram))
+		      AutoUnlocks.Add(DoesAutoUnlock)
+		      Hiddens.Add(Self.mConfig.EffectivelyHidden(Engram))
+		      RequiredLevels.Add(LevelRequirement)
+		      RequiredPointses.Add(PointRequirement)
+		      RemovePrereqs.Add(Self.mConfig.RemovePrerequisites(Engram))
 		    Next
 		    
 		    If Beacon.AreElementsEqual(AutoUnlocks) Then
@@ -886,7 +886,7 @@ End
 		    If IsNull(Engram) Then
 		      Engram = Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Value)
 		    End If
-		    Engrams.AddRow(Engram)
+		    Engrams.Add(Engram)
 		  Else
 		    Engrams = Self.mEngrams
 		  End If

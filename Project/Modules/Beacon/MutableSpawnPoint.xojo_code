@@ -6,7 +6,7 @@ Implements Beacon.MutableBlueprint
 		Sub AddSet(Set As Beacon.SpawnPointSet, Replace As Boolean = False)
 		  Var Idx As Integer = Self.IndexOf(Set)
 		  If Idx = -1 Then
-		    Self.mSets.AddRow(Set.ImmutableVersion)
+		    Self.mSets.Add(Set.ImmutableVersion)
 		    Self.Modified = True
 		  ElseIf Replace Then
 		    Self.mSets(Idx) = Set.ImmutableVersion
@@ -57,7 +57,7 @@ Implements Beacon.MutableBlueprint
 		    Self.mTags.RemoveRowAt(Idx)
 		    Self.Modified = True
 		  ElseIf Idx = -1 And Value = True Then
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		    Self.mTags.Sort()
 		    Self.Modified = True
 		  End If
@@ -184,7 +184,7 @@ Implements Beacon.MutableBlueprint
 		  For Each SaveData As Dictionary In Children
 		    Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(SaveData)
 		    If Set <> Nil Then
-		      Self.mSets.AddRow(Set)
+		      Self.mSets.Add(Set)
 		    End If
 		  Next
 		  
@@ -199,7 +199,7 @@ Implements Beacon.MutableBlueprint
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		  Self.mTags.Sort
 		  Self.Modified = True
@@ -229,7 +229,7 @@ Implements Beacon.MutableBlueprint
 		        Var Temp() As Object = Groups
 		        For Each Obj As Object In Temp
 		          If (Obj Is Nil) = False And Obj IsA Dictionary Then
-		            SpawnDicts.AddRow(Dictionary(Obj))
+		            SpawnDicts.Add(Dictionary(Obj))
 		          End If
 		        Next
 		      End Select
@@ -244,7 +244,7 @@ Implements Beacon.MutableBlueprint
 		          Case Variant.TypeObject
 		            Var Temp() As Variant = Arr
 		            For Each Path As String In Temp
-		              Creatures.AddRow(Path)
+		              Creatures.Add(Path)
 		            Next
 		          End Select
 		        End If
@@ -257,7 +257,7 @@ Implements Beacon.MutableBlueprint
 		          Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
 		          Set.Append(New Beacon.MutableSpawnPointSetEntry(Creature))
 		        Next
-		        Self.mSets.AddRow(Set)
+		        Self.mSets.Add(Set)
 		      Next
 		    End If
 		  End If

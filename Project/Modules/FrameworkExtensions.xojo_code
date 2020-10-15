@@ -20,7 +20,7 @@ Protected Module FrameworkExtensions
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
 		  Var Words() As String = Title.Split(" ")
 		  If Words.LastRowIndex >= 0 And Words(Words.LastRowIndex) = Suffix Then
-		    Words.AddRow("2")
+		    Words.Add("2")
 		  ElseIf Words.LastRowIndex >= 1 And Words(Words.LastRowIndex - 1) = Suffix Then
 		    Var CopyNum As Integer
 		    #Pragma BreakOnExceptions Off
@@ -28,11 +28,11 @@ Protected Module FrameworkExtensions
 		      CopyNum = Integer.FromString(Words(Words.LastRowIndex), Locale.Raw) + 1
 		      Words(Words.LastRowIndex) = CopyNum.ToString(Locale.Raw, "0")
 		    Catch Err As RuntimeException
-		      Words.AddRow(Suffix)
+		      Words.Add(Suffix)
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		  Else
-		    Words.AddRow(Suffix)
+		    Words.Add(Suffix)
 		  End If
 		  Return Words.Join(" ")
 		End Function
@@ -559,7 +559,7 @@ Protected Module FrameworkExtensions
 		    Var Possibles() As Double
 		    For Each Possible As Variant In Elements
 		      Var Decoded As Double = VariantToDouble(Possible, ResolveWithFirst)
-		      Possibles.AddRow(Decoded)
+		      Possibles.Add(Decoded)
 		    Next
 		    If Possibles.LastRowIndex = -1 Then
 		      Return 0

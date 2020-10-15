@@ -400,7 +400,7 @@ End
 		      Return
 		    End If
 		    
-		    Levels.AddRow(Level)
+		    Levels.Add(Level)
 		  Else
 		    Levels = Self.mLevels
 		  End If

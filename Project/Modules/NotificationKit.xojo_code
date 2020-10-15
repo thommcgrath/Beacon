@@ -61,7 +61,7 @@ Protected Module NotificationKit
 		  
 		  For Each Ref As WeakRef In Refs
 		    Var Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Ref.Value)
-		    mPendingNotifications.AddRow(New NotificationKit.Invocation(Notification, Receiver))
+		    mPendingNotifications.Add(New NotificationKit.Invocation(Notification, Receiver))
 		  Next
 		  
 		  If mQueueTimer = Nil Then
@@ -101,7 +101,7 @@ Protected Module NotificationKit
 		      End If
 		    Next
 		    
-		    Refs.AddRow(New WeakRef(Receiver))
+		    Refs.Add(New WeakRef(Receiver))
 		    
 		    mReceivers.Value(Key) = Refs
 		  Next

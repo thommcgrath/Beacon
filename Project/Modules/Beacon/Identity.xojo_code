@@ -449,7 +449,7 @@ Protected Class Identity
 		      Var Now As DateTime = DateTime.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired
-		        Fields.AddRow(Self.mExpirationString)
+		        Fields.Add(Self.mExpirationString)
 		      End If
 		    End If
 		    

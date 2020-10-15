@@ -150,7 +150,7 @@ End
 		  Var SelectedBlueprints() As String
 		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
 		    If Self.BlueprintList.Selected(Row) Then
-		      SelectedBlueprints.AddRow(Self.BlueprintList.RowTagAt(Row))
+		      SelectedBlueprints.Add(Self.BlueprintList.RowTagAt(Row))
 		    End If
 		  Next
 		  
@@ -312,7 +312,7 @@ End
 		      Continue
 		    End If
 		    
-		    Blueprints.AddRow(Blueprint)
+		    Blueprints.Add(Blueprint)
 		  Next
 		  
 		  If Warn And Not Self.ShowDeleteConfirmation(Blueprints, "blueprint", "blueprints") Then
@@ -345,7 +345,7 @@ End
 		    Var Blueprints() As Beacon.Blueprint
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(Row) Then
-		        Blueprints.AddRow(Self.mController.Blueprint(Me.RowTagAt(Row).StringValue))
+		        Blueprints.Add(Self.mController.Blueprint(Me.RowTagAt(Row).StringValue))
 		      End If
 		    Next
 		    

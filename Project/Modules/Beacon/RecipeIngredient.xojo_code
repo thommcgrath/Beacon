@@ -50,7 +50,7 @@ Protected Class RecipeIngredient
 		    // It's just a dictionary
 		    Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Value)
 		    If (Ingredient Is Nil) = False Then
-		      Ingredients.AddRow(Ingredient)
+		      Ingredients.Add(Ingredient)
 		    End If
 		  ElseIf Value.Type = Variant.TypeString Then
 		    // Treat it as JSON
@@ -59,7 +59,7 @@ Protected Class RecipeIngredient
 		      For Each Dict As Dictionary In Parsed
 		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict)
 		        If (Ingredient Is Nil) = False Then
-		          Ingredients.AddRow(Ingredient)
+		          Ingredients.Add(Ingredient)
 		        End If
 		      Next
 		    Catch Err As RuntimeException
@@ -75,7 +75,7 @@ Protected Class RecipeIngredient
 		      Var Values() As Variant = Value
 		      For Each Obj As Variant In Values
 		        If Obj IsA Dictionary Then
-		          Dicts.AddRow(Dictionary(Obj))
+		          Dicts.Add(Dictionary(Obj))
 		        End If
 		      Next
 		    End Try
@@ -84,7 +84,7 @@ Protected Class RecipeIngredient
 		      Try
 		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict)
 		        If (Ingredient Is Nil) = False Then
-		          Ingredients.AddRow(Ingredient)
+		          Ingredients.Add(Ingredient)
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -122,7 +122,7 @@ Protected Class RecipeIngredient
 		Shared Function ToJSON(Ingredients() As Beacon.RecipeIngredient, Pretty As Boolean = False) As String
 		  Var Dicts() As Dictionary
 		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
-		    Dicts.AddRow(Ingredient.ToDictionary)
+		    Dicts.Add(Ingredient.ToDictionary)
 		  Next
 		  Return Beacon.GenerateJSON(Dicts, Pretty)
 		End Function

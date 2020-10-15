@@ -907,12 +907,12 @@ End
 		  Var TotalWeight, TotalChance As Double
 		  Var CanBeBlueprint As Boolean
 		  For Each Entry As Beacon.SetEntry In Entries
-		    MinQuantities.AddRow(Entry.MinQuantity)
-		    MaxQuantities.AddRow(Entry.MaxQuantity)
+		    MinQuantities.Add(Entry.MinQuantity)
+		    MaxQuantities.Add(Entry.MaxQuantity)
 		    TotalWeight = TotalWeight + Entry.RawWeight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
-		    MinQualities.AddRow(Entry.MinQuality.BaseValue)
-		    MaxQualities.AddRow(Entry.MaxQuality.BaseValue)
+		    MinQualities.Add(Entry.MinQuality.BaseValue)
+		    MaxQualities.Add(Entry.MaxQuality.BaseValue)
 		    CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
 		  Next
 		  

@@ -14,7 +14,7 @@ Inherits Beacon.ConfigGroup
 		    
 		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var StackSize As UInt64 = Min(Entry.Value, Self.MaximumQuantity)
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If
 		  Next
 		  
@@ -26,7 +26,7 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If
 		      
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + Self.MaximumQuantity.ToString + ",bIgnoreMultiplier=true))"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + Self.MaximumQuantity.ToString + ",bIgnoreMultiplier=true))"))
 		    Next
 		  End If
 		End Sub
@@ -38,9 +38,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  If Self.mGlobalMultiplier >= Self.MaximumQuantity Then
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", "1.0"))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", "1.0"))
 		  Else
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -133,7 +133,7 @@ Inherits Beacon.ConfigGroup
 		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
 		    End If
 		    If IsNull(Engram) = False Then
-		      Results.AddRow(Engram)
+		      Results.Add(Engram)
 		    End If
 		  Next
 		  Return Results
@@ -159,11 +159,11 @@ Inherits Beacon.ConfigGroup
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
-		      Dicts.AddRow(AutoValue)
+		      Dicts.Add(AutoValue)
 		    Case "Object()"
 		      Var ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
-		        Dicts.AddRow(Dict)
+		        Dicts.Add(Dict)
 		      Next
 		    End Select
 		    
