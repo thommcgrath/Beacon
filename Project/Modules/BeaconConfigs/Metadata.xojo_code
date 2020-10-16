@@ -131,7 +131,6 @@ Implements ObservationKit.Observable
 		  Var Styles As New StyledText
 		  While True
 		    Var Pos As Integer = ArkData.IndexOf(Offset, "<RichColor")
-		    System.DebugLog("Offset: " + Offset.ToString + "  Pos: " + Pos.ToString)
 		    If Pos = -1 Then
 		      Var Run As New StyleRun(ArkData.Middle(Offset))
 		      Run.TextColor = &cFFFFFF00
