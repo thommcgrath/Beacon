@@ -131,6 +131,7 @@ Implements ObservationKit.Observable
 		  Var Styles As New StyledText
 		  While True
 		    Var Pos As Integer = ArkData.IndexOf(Offset, "<RichColor")
+		    System.DebugLog("Offset: " + Offset.ToString + "  Pos: " + Pos.ToString)
 		    If Pos = -1 Then
 		      Var Run As New StyleRun(ArkData.Middle(Offset))
 		      Run.TextColor = &cFFFFFF00
@@ -148,7 +149,14 @@ Implements ObservationKit.Observable
 		      End If
 		    End If
 		    
-		    Var EndPos As Integer = ArkData.IndexOf(Offset, "</>") + 3
+		    Var EndPos As Integer = ArkData.IndexOf(Offset, "</>")
+		    If EndPos = -1 Then
+		      // Tag was never closed
+		      ArkData = ArkData + "</>"
+		      EndPos = ArkData.Length
+		    Else
+		      EndPos = EndPos + 3
+		    End If
 		    Var Chunk As String = ArkData.Middle(Offset, EndPos - Offset)
 		    
 		    Var ColorStartPos As Integer = Chunk.IndexOf("=") + 1
