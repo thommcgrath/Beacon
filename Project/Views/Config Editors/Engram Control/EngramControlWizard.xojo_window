@@ -258,13 +258,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Cancel()
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Self.mCancelled = True
 		    Self.Hide
 		  Else
 		    Var Dict As New Dictionary
 		    Dict.Value("Action") = "Cancel"
-		    App.CurrentThread.AddUserInterfaceUpdate(Dict)
+		    Thread.Current.AddUserInterfaceUpdate(Dict)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -283,12 +283,12 @@ End
 		  If Self.mProgressShown = False And System.Microseconds - Self.mStartTime >= 500000 Then
 		    Self.mProgressShown = True
 		    
-		    If App.CurrentThread = Nil Then
+		    If Thread.Current = Nil Then
 		      Self.mProgress.ShowWithin(Self)
 		    Else
 		      Var Dict As New Dictionary
 		      Dict.Value("Action") = "ShowProgress"
-		      App.CurrentThread.AddUserInterfaceUpdate(Dict)
+		      Thread.Current.AddUserInterfaceUpdate(Dict)
 		    End If
 		  End If
 		  

@@ -119,6 +119,7 @@ Begin DocumentsComponentView RecentDocumentsComponent
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
+      ConsoleSafe     =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
@@ -131,6 +132,8 @@ Begin DocumentsComponentView RecentDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Mask            =   ""
+      RequireAllMaps  =   False
       Scope           =   2
       ShowFullControls=   False
       TabIndex        =   2

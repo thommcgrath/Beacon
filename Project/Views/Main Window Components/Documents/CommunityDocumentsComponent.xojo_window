@@ -32,6 +32,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       AllowTabs       =   True
       Backdrop        =   0
       BackgroundColor =   &cFFFFFF00
+      ConsoleSafe     =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
@@ -44,6 +45,8 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Mask            =   ""
+      RequireAllMaps  =   False
       Scope           =   2
       ShowFullControls=   True
       TabIndex        =   0

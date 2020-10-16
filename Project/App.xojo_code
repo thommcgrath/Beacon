@@ -578,7 +578,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If Self.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Self.PresentException(Error)
 		  Else
 		    Call CallLater.Schedule(0, AddressOf PresentException, Error)

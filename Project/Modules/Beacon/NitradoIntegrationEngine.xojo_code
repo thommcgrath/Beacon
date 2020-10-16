@@ -184,7 +184,7 @@ Inherits Beacon.IntegrationEngine
 		    End Try
 		    
 		    // So we don't go nuts
-		    App.SleepCurrentThread(50)
+		    Thread.SleepCurrent(50)
 		  Next
 		  
 		  Return True

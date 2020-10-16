@@ -623,7 +623,7 @@ Protected Module FrameworkExtensions
 		      Stream = BinaryStream.Create(File, True)
 		    End If
 		    
-		    Var CurrentThread As Thread = App.CurrentThread
+		    Var CurrentThread As Thread = Thread.Current
 		    If CurrentThread = Nil Then
 		      Stream.Write(Contents)
 		    Else

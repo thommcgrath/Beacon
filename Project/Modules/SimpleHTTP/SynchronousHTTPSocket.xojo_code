@@ -58,7 +58,7 @@ Inherits URLConnection
 
 	#tag Method, Flags = &h0
 		Sub Send(Method As String, URL As String)
-		  Self.mOriginThread = App.CurrentThread
+		  Self.mOriginThread = Thread.Current
 		  Self.RequestHeader("User-Agent") = App.UserAgent
 		  Super.Send(Method, URL)
 		  If Self.mOriginThread <> Nil Then

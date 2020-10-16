@@ -260,7 +260,7 @@ End
 			  
 			  Self.mConsoleSafe = Value
 			  
-			  If App.CurrentThread = Nil Then
+			  If Thread.Current = Nil Then
 			    Self.UpdateUI()
 			  Else
 			    Call CallLater.Schedule(1, AddressOf UpdateUI)
@@ -318,7 +318,7 @@ End
 			  
 			  Self.mRequireAllMaps = Value
 			  
-			  If App.CurrentThread = Nil Then
+			  If Thread.Current = Nil Then
 			    Self.UpdateUI()
 			  Else
 			    Call CallLater.Schedule(1, AddressOf UpdateUI)

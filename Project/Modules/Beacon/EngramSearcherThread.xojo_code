@@ -296,7 +296,7 @@ Inherits Beacon.Thread
 		  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.Stop
 		    Do Until Self.ThreadState = Thread.ThreadStates.NotRunning
-		      App.YieldToNextThread()
+		      Thread.YieldToNext()
 		    Loop
 		  End If
 		End Sub

@@ -1781,7 +1781,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(LoginOnly As Boolean)
-		  If (mInstance Is Nil) = False Or (App.CurrentThread Is Nil) = False Then
+		  If (mInstance Is Nil) = False Or (Thread.Current Is Nil) = False Then
 		    Return
 		  End If
 		  

@@ -172,7 +172,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Close()
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Super.Close()
 		  Else
 		    Self.mShouldClose = True

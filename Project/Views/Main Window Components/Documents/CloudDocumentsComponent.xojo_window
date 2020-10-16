@@ -45,7 +45,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -201,6 +201,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
+         ConsoleSafe     =   False
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
@@ -213,6 +214,8 @@ Begin DocumentsComponentView CloudDocumentsComponent
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Mask            =   ""
+         RequireAllMaps  =   False
          Scope           =   2
          ShowFullControls=   True
          TabIndex        =   0

@@ -342,7 +342,7 @@ Inherits ControlCanvas
 		  Self.mRequireTags = RequiredTags.Clone
 		  Self.mExcludeTags = ExcludedTags.Clone
 		  
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    RaiseEvent TagsChanged
 		    Self.Invalidate
 		  Else
@@ -396,7 +396,7 @@ Inherits ControlCanvas
 		    Next
 		    
 		    If FireChangeEvent Then
-		      If App.CurrentThread = Nil Then
+		      If Thread.Current = Nil Then
 		        RaiseEvent TagsChanged
 		      Else
 		        Call CallLater.Schedule(0, AddressOf TriggerChange)

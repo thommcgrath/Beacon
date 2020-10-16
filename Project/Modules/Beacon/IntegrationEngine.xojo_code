@@ -240,8 +240,8 @@ Protected Class IntegrationEngine
 		  
 		  Const WaitTime = 3.0
 		  If SecondsSinceLastRefresh < WaitTime Then
-		    If App.CurrentThread <> Nil Then
-		      App.CurrentThread.Sleep((WaitTime - SecondsSinceLastRefresh) * 1000, False)
+		    If Thread.Current <> Nil Then
+		      Thread.Current.Sleep((WaitTime - SecondsSinceLastRefresh) * 1000, False)
 		    Else
 		      Var Err As New UnsupportedOperationException
 		      Err.Message = "Cannot sleep the main thread"
@@ -694,7 +694,7 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Controller As Beacon.TaskWaitController)
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wait cannot be called on the main thread."
 		    Raise Err
@@ -705,7 +705,7 @@ Protected Class IntegrationEngine
 		  Self.mPendingCalls.Add(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
 		  
 		  While Not Controller.ShouldResume
-		    App.CurrentThread.Sleep(100, False)
+		    Thread.Current.Sleep(100, False)
 		  Wend
 		  Self.mActiveWaitController = Nil
 		  
@@ -717,14 +717,14 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Milliseconds As Double)
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wait cannot be called on the main thread."
 		    Raise Err
 		    Return
 		  End If
 		  
-		  App.CurrentThread.Sleep(Milliseconds, False)
+		  Thread.Current.Sleep(Milliseconds, False)
 		End Sub
 	#tag EndMethod
 

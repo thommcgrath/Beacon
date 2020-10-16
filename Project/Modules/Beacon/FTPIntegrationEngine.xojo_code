@@ -280,7 +280,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Sub ListFiles(Path As String)
-		  If App.CurrentThread <> Nil Then
+		  If Thread.Current <> Nil Then
 		    Var Files() As Beacon.FTPFileListing = Self.PrivateListFiles(Self.BaseURL + Path)
 		    Var Params(1) As Variant
 		    Params(0) = Path

@@ -191,7 +191,7 @@ Implements AnimationKit.ValueAnimator
 		  
 		  System.DebugLog(Identifier + " is now " + Value.ToString)
 		  
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Self.Invalidate
 		  Else
 		    If Self.mInvalidateCallback <> "" Then
