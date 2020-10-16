@@ -75,7 +75,7 @@ Begin BeaconDialog EntryEditor
          LockTop         =   False
          Scope           =   2
          State           =   0
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -109,7 +109,7 @@ Begin BeaconDialog EntryEditor
          Scope           =   2
          ScrollSpeed     =   20
          Spec            =   ""
-         TabIndex        =   4
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Top             =   90
@@ -160,7 +160,7 @@ Begin BeaconDialog EntryEditor
          SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -196,7 +196,7 @@ Begin BeaconDialog EntryEditor
          MaximumRecentItems=   -1
          RecentItemsValue=   "Recent Searches"
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""

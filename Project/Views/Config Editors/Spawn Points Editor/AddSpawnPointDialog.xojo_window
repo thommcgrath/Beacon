@@ -418,7 +418,7 @@ Begin BeaconDialog AddSpawnPointDialog
       MaximumRecentItems=   -1
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""

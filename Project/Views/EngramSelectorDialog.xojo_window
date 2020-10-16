@@ -104,7 +104,7 @@ Begin BeaconDialog EngramSelectorDialog
       SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -141,7 +141,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -173,7 +173,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -227,7 +227,7 @@ Begin BeaconDialog EngramSelectorDialog
       SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -264,7 +264,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -296,7 +296,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -329,7 +329,7 @@ Begin BeaconDialog EngramSelectorDialog
       Scope           =   2
       ScrollSpeed     =   20
       Spec            =   ""
-      TabIndex        =   8
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   86
@@ -359,7 +359,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -390,7 +390,7 @@ Begin BeaconDialog EngramSelectorDialog
       MaximumRecentItems=   -1
       RecentItemsValue=   "Recent Searches"
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""

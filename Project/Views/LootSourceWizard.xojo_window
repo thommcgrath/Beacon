@@ -47,7 +47,7 @@ Begin BeaconDialog LootSourceWizard
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -70,7 +70,7 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -102,7 +102,7 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -169,7 +169,7 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   False
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -399,7 +399,7 @@ Begin BeaconDialog LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   9
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Max Multiplier:"
@@ -434,7 +434,7 @@ Begin BeaconDialog LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Min Multiplier:"
@@ -548,7 +548,7 @@ Begin BeaconDialog LootSourceWizard
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -592,7 +592,7 @@ Begin BeaconDialog LootSourceWizard
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -974,7 +974,7 @@ Begin BeaconDialog LootSourceWizard
          LockTop         =   False
          Scope           =   2
          State           =   0
-         TabIndex        =   5
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -1007,7 +1007,7 @@ Begin BeaconDialog LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   13
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          TextAlign       =   2
@@ -1045,7 +1045,7 @@ Begin BeaconDialog LootSourceWizard
          LockTop         =   True
          Mask            =   ""
          Scope           =   2
-         TabIndex        =   14
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   184
@@ -1096,7 +1096,7 @@ Begin BeaconDialog LootSourceWizard
          SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "SmallSystem"
@@ -1191,7 +1191,7 @@ Begin BeaconDialog LootSourceWizard
          MaximumRecentItems=   -1
          RecentItemsValue=   "Recent Searches"
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
