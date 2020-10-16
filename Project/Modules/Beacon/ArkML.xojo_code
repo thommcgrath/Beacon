@@ -134,7 +134,14 @@ Protected Class ArkML
 		      End If
 		    End If
 		    
-		    Var EndPos As Integer = Source.IndexOf(Offset, "</>") + 3
+		    Var EndPos As Integer = Source.IndexOf(Offset, "</>")
+		    If EndPos = -1 Then
+		      // Tag was never closed
+		      Source = Source + "</>"
+		      EndPos = Source.Length
+		    Else
+		      EndPos = EndPos + 3
+		    End If
 		    Var Chunk As String = Source.Middle(Offset, EndPos - Offset)
 		    
 		    Var ColorStartPos As Integer = Chunk.IndexOf("=") + 1
