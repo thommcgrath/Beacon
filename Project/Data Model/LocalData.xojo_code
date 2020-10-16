@@ -2788,11 +2788,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
 		      For I As Integer = 0 To ExtraClauses.LastIndex
-		        Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
-		        Var Value As Variant = ExtraValues(I)
-		        Clauses.Add(Clause)
-		        Values.Value(NextPlaceholder) = Value
-		        NextPlaceholder = NextPlaceholder + 1
+		        If ExtraClauses(I).IndexOf(":placeholder:") > -1 Then
+		          Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
+		          Var Value As Variant = ExtraValues(I)
+		          Clauses.Add(Clause)
+		          Values.Value(NextPlaceholder) = Value
+		          NextPlaceholder = NextPlaceholder + 1
+		        Else
+		          Clauses.Add(ExtraClauses(I))
+		        End If
 		      Next
 		    End If
 		    
