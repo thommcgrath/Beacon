@@ -8,6 +8,12 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub NewDocument()
+		  RaiseEvent NewDocument()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub OpenDocument(URL As Beacon.DocumentURL)
 		  RaiseEvent OpenDocument(URL)
 		End Sub
@@ -16,6 +22,10 @@ Inherits BeaconSubview
 
 	#tag Hook, Flags = &h0
 		Event CloseDocument(URL As Beacon.DocumentURL) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event NewDocument()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

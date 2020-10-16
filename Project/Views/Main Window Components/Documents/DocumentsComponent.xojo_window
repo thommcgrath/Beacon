@@ -76,7 +76,7 @@ Begin BeaconPagedSubview DocumentsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   896
       Begin RecentDocumentsComponent RecentDocumentsComponent1
@@ -510,6 +510,11 @@ End
 		  Self.OpenDocument(URL)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub NewDocument()
+		  Self.NewDocument()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events CloudDocumentsComponent1
 	#tag Event
@@ -517,11 +522,21 @@ End
 		  Self.OpenDocument(URL)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub NewDocument()
+		  Self.NewDocument()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events CommunityDocumentsComponent1
 	#tag Event
 		Sub OpenDocument(URL As Beacon.DocumentURL)
 		  Self.OpenDocument(URL)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub NewDocument()
+		  Self.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

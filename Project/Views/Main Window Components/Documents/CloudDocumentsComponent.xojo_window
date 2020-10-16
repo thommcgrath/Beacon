@@ -45,7 +45,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   3
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -63,7 +63,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          LockTop         =   True
          MaximumValue    =   0
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   1
          Tooltip         =   ""
          Top             =   256
@@ -94,7 +94,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          TextAlignment   =   2
@@ -152,7 +152,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          RowSelectionType=   1
          Scope           =   2
          SelectionChangeBlocked=   False
-         TabIndex        =   0
+         TabIndex        =   2
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
@@ -185,7 +185,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          LockTop         =   True
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
@@ -194,7 +194,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Visible         =   True
          Width           =   804
       End
-      Begin DocumentFilterControl DocumentFilterControl1
+      Begin DocumentFilterControl FilterBar
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -214,7 +214,8 @@ Begin DocumentsComponentView CloudDocumentsComponent
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   3
+         ShowFullControls=   True
+         TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
@@ -323,17 +324,27 @@ End
 		    End If
 		  Next
 		  
-		  Var SearchText As String = Self.DocumentFilterControl1.SearchText
+		  Var SearchText As String = Self.FilterBar.SearchText
+		  Var Mask As UInt64 = Self.FilterBar.Mask
+		  Var ConsoleSafe As Boolean = Self.FilterBar.ConsoleSafe
+		  Var RequireAllMaps As Boolean = Self.FilterBar.RequireAllMaps
 		  Var FilteredDocuments() As BeaconAPI.Document
-		  If SearchText.IsEmpty Then
-		    FilteredDocuments = Self.mDocuments
-		  Else
-		    For Each Document As BeaconAPI.Document In Self.mDocuments
-		      If Document.Name.IndexOf(SearchText) > -1 Then
-		        FilteredDocuments.Add(Document)
-		      End If
-		    Next
-		  End If
+		  
+		  For Each Document As BeaconAPI.Document In Self.mDocuments
+		    If ConsoleSafe = True And Document.ConsoleSafe = False Then
+		      Continue
+		    End If
+		    
+		    If (RequireAllMaps And (Document.MapMask And Mask) <> Mask) Or (RequireAllMaps = False And (Document.MapMask And Mask) = CType(0, UInt64)) Then
+		      Continue
+		    End If
+		    
+		    If Document.Name.IndexOf(SearchText) = -1 Then
+		      Continue
+		    End If
+		    
+		    FilteredDocuments.Add(Document)
+		  Next
 		  
 		  Self.List.RowCount = FilteredDocuments.Count
 		  
@@ -507,10 +518,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DocumentFilterControl1
+#tag Events FilterBar
 	#tag Event
 		Sub Changed()
 		  Self.UpdateFilter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Mask = Beacon.Maps.All.Mask
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub NewDocument()
+		  Self.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

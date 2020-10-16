@@ -146,6 +146,12 @@ Protected Class PopoverController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Show(Parent As RectControl)
+		  Self.Show(Parent, New Rect(0, 0, Parent.Width, Parent.Height))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Show(Parent As RectControl, InsetRect As Rect)
 		  If Self.Visible Or Parent Is Nil Or Parent.Window Is Nil Then
 		    Return
@@ -256,14 +262,6 @@ Protected Class PopoverController
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPopover"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

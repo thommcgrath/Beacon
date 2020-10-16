@@ -54,7 +54,7 @@ Begin DocumentsComponentView RecentDocumentsComponent
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   374
+      Height          =   311
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -74,7 +74,7 @@ Begin DocumentsComponentView RecentDocumentsComponent
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   63
       Transparent     =   False
       TypeaheadColumn =   1
       Underline       =   False
@@ -84,6 +84,64 @@ Begin DocumentsComponentView RecentDocumentsComponent
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
+   Begin FadedSeparator FadedSeparator1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   62
+      Transparent     =   True
+      Visible         =   True
+      Width           =   788
+   End
+   Begin DocumentFilterControl FilterBar
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   62
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ShowFullControls=   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   788
+   End
 End
 #tag EndWindow
 
@@ -92,6 +150,14 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
+		  Self.UpdateList()
+		  Self.List.SetFocus
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h1
+		Protected Sub UpdateList()
 		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  
 		  Var SelectedURLs() As String
@@ -102,18 +168,34 @@ End
 		    End If
 		  Next
 		  
-		  Self.List.RowCount = Recents.Count
+		  Var Filter As String = Self.FilterBar.SearchText
+		  If Filter.IsEmpty Then
+		    Self.List.RowCount = Recents.Count
+		    
+		    For Idx As Integer = 0 To Recents.LastIndex
+		      Var URL As Beacon.DocumentURL = Recents(Idx)
+		      Self.List.CellValueAt(Idx, Self.ColumnName) = URL.Name
+		      Self.List.RowTagAt(Idx) = URL
+		      Self.List.Selected(Idx) = SelectedURLs.IndexOf(URL) > -1
+		    Next
+		  Else
+		    Self.List.RowCount = 0
+		    For Each URL As Beacon.DocumentURL In Recents
+		      If URL.Name.IndexOf(Filter) = -1 Then
+		        Continue
+		      End If
+		      
+		      Self.List.AddRow("", URL.Name)
+		      Var Idx As Integer = Self.List.LastAddedRowIndex
+		      Self.List.RowTagAt(Idx) = URL
+		      Self.List.Selected(Idx) = SelectedURLs.IndexOf(URL) > -1
+		    Next
+		  End If
 		  
-		  For I As Integer = 0 To Recents.LastIndex
-		    Var URL As Beacon.DocumentURL = Recents(I)
-		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
-		    Self.List.RowTagAt(I) = URL
-		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
-		  Next
 		  
-		  Self.List.SetFocus
+		  
 		End Sub
-	#tag EndEvent
+	#tag EndMethod
 
 
 	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -230,6 +312,18 @@ End
 		    Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
 		    Self.OpenDocument(URL)
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterBar
+	#tag Event
+		Sub NewDocument()
+		  Self.NewDocument()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Changed()
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

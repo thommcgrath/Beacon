@@ -10,7 +10,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   520
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -24,13 +24,50 @@ Begin DocumentsComponentView CommunityDocumentsComponent
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   776
+   Begin DocumentFilterControl FilterBar
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   62
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ShowFullControls=   True
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   776
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 #tag EndWindowCode
 
+#tag Events FilterBar
+	#tag Event
+		Sub Open()
+		  Me.Mask = Beacon.Maps.All.Mask
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="ViewTitle"
