@@ -87,7 +87,9 @@ case 'HEAD':
 	break;
 case 'GET':
 	BeaconAPI::Authorize(true);
-	$user_id = BeaconAPI::UserID();
+	if (BeaconAPI::Authenticated()) {
+		$user_id = BeaconAPI::UserID();
+	}
 	
 	if ($document_id === null) {
 		// query documents
@@ -98,10 +100,29 @@ case 'GET':
 			$params['limit_user_id'] = $_GET['user_id'];
 		}
 		if (isset($user_id)) {
-			$clauses[] = '(user_id = ::current_user_id:: OR published = \'Approved\')';
+			$clauses[] = '(user_id = ::current_user_id:: OR (published = \'Approved\' AND role = \'Owner\'))';
 			$params['current_user_id'] = $user_id;
 		} else {
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
+		}
+		if (isset($_GET['console_only'])) {
+			$clauses[] = 'console_safe = TRUE';
+		}
+		if (isset($_GET['mask'])) {
+			$require_all = isset($_GET['mask_require_all']);
+			if ($require_all) {
+				$clauses[] = '(map & ::mask::) = ::mask::';
+			} else {
+				$clauses[] = '(map & ::mask::) > 0';
+			}
+			$params['mask'] = $_GET['mask'];
+		}
+		if (isset($_GET['search'])) {
+			$clauses[] = 'document_id IN (SELECT id FROM search_contents, to_tsquery(::query::) AS keywords WHERE keywords @@ lexemes AND type = \'Document\')';
+			$query = preg_replace('/[^a-z ]/', '', strtolower($_GET['search']));
+			$query = preg_replace('/\s+/', ' | ', trim($query));
+			$query = preg_replace('/(\w+)/', '$1:*', $query);
+			$params['query'] = $query;
 		}
 		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM allowed_documents WHERE ' . implode(' AND ', $clauses);
 		
@@ -111,6 +132,18 @@ case 'GET':
 			switch ($_GET['sort']) {
 			case 'download_count':
 				$sort_column = 'download_count';
+				break;
+			case 'name':
+				$sort_column = 'title';
+				break;
+			case 'console_safe':
+				$sort_column = 'console_safe';
+				break;
+			case 'description':
+				$sort_column = 'description';
+				break;
+			case 'map':
+				$sort_column = 'map';
 				break;
 			}
 		}

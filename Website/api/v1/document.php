@@ -72,7 +72,9 @@ case 'HEAD':
 	break;
 case 'GET':
 	BeaconAPI::Authorize(true);
-	$user_id = BeaconAPI::UserID();
+	if (BeaconAPI::Authenticated()) {
+		$user_id = BeaconAPI::UserID();
+	}
 	
 	if ($document_id === null) {
 		// query documents
@@ -83,7 +85,7 @@ case 'GET':
 			$params['limit_user_id'] = $_GET['user_id'];
 		}
 		if (isset($user_id)) {
-			$clauses[] = '(user_id = ::current_user_id:: OR published = \'Approved\')';
+			$clauses[] = '(user_id = ::current_user_id:: OR (published = \'Approved\' AND role = \'Owner\'))';
 			$params['current_user_id'] = $user_id;
 		} else {
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
