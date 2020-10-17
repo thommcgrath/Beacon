@@ -26,6 +26,7 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
    Visible         =   True
    Width           =   300
    Begin BeaconListbox ToolsList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

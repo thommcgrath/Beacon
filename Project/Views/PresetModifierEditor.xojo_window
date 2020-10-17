@@ -408,6 +408,7 @@ Begin BeaconDialog PresetModifierEditor
       Width           =   180
    End
    Begin BeaconListbox MatchesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

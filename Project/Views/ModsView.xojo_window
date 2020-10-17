@@ -26,6 +26,7 @@ Begin BeaconSubview ModsView
    Visible         =   False
    Width           =   1100
    Begin BeaconListbox ModList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

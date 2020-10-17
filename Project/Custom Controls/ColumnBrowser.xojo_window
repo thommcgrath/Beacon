@@ -55,6 +55,7 @@ Begin BeaconContainer ColumnBrowser
       Width           =   300
    End
    Begin BeaconListbox Lists
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

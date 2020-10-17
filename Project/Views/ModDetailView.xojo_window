@@ -391,6 +391,7 @@ Begin BeaconContainer ModDetailView
          Width           =   864
       End
       Begin BeaconListbox EngramList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False

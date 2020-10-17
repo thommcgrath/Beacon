@@ -612,6 +612,7 @@ Begin ContainerControl DocumentImportView
          Width           =   560
       End
       Begin BeaconListbox StatusList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -671,6 +672,7 @@ Begin ContainerControl DocumentImportView
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox OtherDocsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False

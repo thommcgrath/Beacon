@@ -89,6 +89,7 @@ Begin ConfigEditor LootConfigEditor
       Width           =   1
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

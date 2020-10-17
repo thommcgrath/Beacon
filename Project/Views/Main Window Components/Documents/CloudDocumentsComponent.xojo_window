@@ -45,7 +45,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -107,65 +107,6 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Visible         =   True
          Width           =   250
       End
-      Begin BeaconListbox List
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   False
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   5
-         ColumnWidths    =   "46,2*,*,100,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   26
-         DefaultSortColumn=   "#ColumnUpdated"
-         DefaultSortDirection=   -1
-         DropIndicatorVisible=   False
-         EditCaption     =   "Open"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
-         HasBorder       =   False
-         HasHeader       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   445
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   " 	Name	Map	Console Safe	Last Updated"
-         Italic          =   False
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         PreferencesKey  =   "Cloud Documents"
-         RequiresSelection=   False
-         RowSelectionType=   1
-         Scope           =   2
-         SelectionChangeBlocked=   False
-         TabIndex        =   2
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   63
-         Transparent     =   False
-         TypeaheadColumn =   "#ColumnName"
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   804
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin FadedSeparator FadedSeparator1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -226,6 +167,66 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Transparent     =   True
          Visible         =   True
          Width           =   804
+      End
+      Begin BeaconListbox List
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   False
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   5
+         ColumnWidths    =   "46,2*,*,100,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         DefaultSortColumn=   "#ColumnUpdated"
+         DefaultSortDirection=   -1
+         DropIndicatorVisible=   False
+         EditCaption     =   "Open"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
+         HasBorder       =   False
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   445
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   " 	Name	Map	Console Safe	Last Updated"
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PreferencesKey  =   "Cloud Documents"
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   63
+         Transparent     =   False
+         TypeaheadColumn =   "#ColumnName"
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   804
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin BeaconAPI.Socket APISocket
@@ -430,6 +431,23 @@ End
 
 #tag EndWindowCode
 
+#tag Events FilterBar
+	#tag Event
+		Sub Changed()
+		  Self.UpdateFilter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Mask = Beacon.Maps.All.Mask
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub NewDocument()
+		  Self.NewDocument()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
@@ -518,23 +536,6 @@ End
 		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
 		    Self.OpenDocument(Self.URLForDocument(Document))
 		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FilterBar
-	#tag Event
-		Sub Changed()
-		  Self.UpdateFilter
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.Mask = Beacon.Maps.All.Mask
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub NewDocument()
-		  Self.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

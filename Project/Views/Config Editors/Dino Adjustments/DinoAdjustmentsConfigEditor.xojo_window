@@ -89,6 +89,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Width           =   730
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

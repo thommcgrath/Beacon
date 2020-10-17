@@ -1054,7 +1054,37 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   400
       End
+      Begin DelayedSearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         ClearMenuItemValue=   "Clear"
+         Enabled         =   True
+         Height          =   22
+         Hint            =   "Search Loot Sources"
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   281
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Visible         =   True
+         Width           =   249
+      End
       Begin BeaconListbox SourceList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -1114,6 +1144,7 @@ Begin BeaconDialog LootSourceWizard
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox CustomizePresetsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -1171,35 +1202,6 @@ Begin BeaconDialog LootSourceWizard
          Width           =   394
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
-      End
-      Begin DelayedSearchField FilterField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowRecentItems=   False
-         ClearMenuItemValue=   "Clear"
-         Enabled         =   True
-         Height          =   22
-         Hint            =   "Search Loot Sources"
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   281
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MaximumRecentItems=   -1
-         RecentItemsValue=   "Recent Searches"
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         Tooltip         =   ""
-         Top             =   20
-         Transparent     =   False
-         Visible         =   True
-         Width           =   249
       End
    End
 End
@@ -1700,6 +1702,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.BuildSourceList
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events SourceList
 	#tag Event
 		Sub Change()
@@ -1756,13 +1765,6 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = 1
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChanged()
-		  Self.BuildSourceList
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -452,6 +452,10 @@ Inherits Listbox
 		  
 		  Super.Constructor
 		  
+		  Self.mScrollWatchTimer = New Timer
+		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
+		  Self.mScrollWatchTimer.Period = 100
+		  AddHandler mScrollWatchTimer.Action, WeakAddressOf mScrollWatchTimer_Action
 		End Sub
 	#tag EndMethod
 
@@ -578,6 +582,45 @@ Inherits Listbox
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub InvalidateScrollPosition()
+		  Self.mLastScrollPosition = -1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mScrollWatchTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  Var RangeLength As Integer = Self.VisibleRowCount
+		  
+		  If Self.ScrollPosition = Self.mLastScrollPosition And RangeLength = Self.mLastViewportHeight Then
+		    Return
+		  End If
+		  
+		  Const LoadAheadFactor = 2 // Number of pages ahead of the viewport to load
+		  Const MinPreloadFactor = 1 // Minimum number of pages ahead of the viewport that should be loaded
+		  
+		  // Once there is less than a full page of results below the scroll position, request more
+		  Var RangeStart As Integer = Self.ScrollPosition
+		  Var RangeEnd As Integer = RangeStart + RangeLength
+		  
+		  Self.mLastScrollPosition = RangeStart
+		  Self.mLastViewportHeight = RangeLength
+		  
+		  Var MinLoadedRows As Integer = RangeEnd + (RangeLength * MinPreloadFactor)
+		  
+		  If Self.mUpperRequestedBound < MinLoadedRows Then
+		    Var NewUpperBound As Integer = RangeEnd + (RangeLength * LoadAheadFactor)
+		    If NewUpperBound > Self.mUpperRequestedBound Then
+		      Var LoadRowCount As Integer = NewUpperBound - Self.mUpperRequestedBound
+		      RaiseEvent LoadMoreRows(Self.mUpperRequestedBound, LoadRowCount)
+		      Self.mUpperRequestedBound = NewUpperBound
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mTypeaheadTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
@@ -590,6 +633,22 @@ Inherits Listbox
 		Private Sub PostOpenInvalidate()
 		  Self.ScrollPosition = Self.ScrollPosition
 		  Self.Invalidate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveAllRows()
+		  Self.mLastScrollPosition = -1
+		  Self.mUpperRequestedBound = 0
+		  Super.RemoveAllRows()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveRowAt(index As Integer)
+		  Self.mLastScrollPosition = -1
+		  Self.mUpperRequestedBound = Xojo.Max(Self.mUpperRequestedBound - 1, 0)
+		  Super.RemoveRowAt(index)
 		End Sub
 	#tag EndMethod
 
@@ -701,6 +760,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event LoadMoreRows(Offset As Integer, RowCount As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -728,6 +791,29 @@ Inherits Listbox
 		Event Typeahead(Buffer As String) As Boolean
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.AllowInfiniteScroll Then
+			    Return
+			  End If
+			  
+			  If Value Then
+			    Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+			    Self.mLastScrollPosition = Self.ScrollPosition
+			  Else
+			    Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
+			  End If
+			End Set
+		#tag EndSetter
+		AllowInfiniteScroll As Boolean
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		DefaultSortColumn As Integer
@@ -774,6 +860,14 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLastScrollPosition As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastViewportHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpened As Boolean
 	#tag EndProperty
 
@@ -786,11 +880,19 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mScrollWatchTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTypeaheadBuffer As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mTypeaheadTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpperRequestedBound As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -1161,61 +1263,6 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FontName"
-			Visible=true
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontUnit"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Bold"
-			Visible=true
-			Group="Font"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Italic"
-			Visible=true
-			Group="Font"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Underline"
-			Visible=true
-			Group="Font"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DataField"
 			Visible=true
 			Group="Database Binding"
@@ -1342,6 +1389,69 @@ Inherits Listbox
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowInfiniteScroll"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontName"
+			Visible=true
+			Group="Font"
+			InitialValue="System"
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontSize"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="Single"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontUnit"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="FontUnits"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Underline"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

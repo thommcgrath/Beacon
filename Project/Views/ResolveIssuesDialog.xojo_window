@@ -95,6 +95,7 @@ Begin BeaconDialog ResolveIssuesDialog
       Width           =   80
    End
    Begin BeaconListbox IssuesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

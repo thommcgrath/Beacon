@@ -71,8 +71,8 @@ Begin ContainerControl DocumentFilterControl
       Left            =   157
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
@@ -135,8 +135,8 @@ Begin ContainerControl DocumentFilterControl
       Left            =   249
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
@@ -167,8 +167,8 @@ Begin ContainerControl DocumentFilterControl
       Left            =   411
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
@@ -186,36 +186,17 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Resized()
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h21
 		Private Sub mMapSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Self.mMask = MapSelectionGrid(Sender.Container).Mask
-		    RaiseEvent Changed()
+		    Var NewMask As UInt64 = MapSelectionGrid(Sender.Container).Mask
+		    If Self.mMask <> NewMask Then
+		      Self.mMask = NewMask
+		      RaiseEvent Changed()
+		    End If
 		  End If
 		  
 		  Self.mMapSelectionController = Nil
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Resize()
-		  If Self.ShowFullControls Then
-		    Var Group As New ControlGroup(Self.MapPickerButton, Self.OperatorMenu, Self.ModRestrictionMenu)
-		    Group.Left = (Self.Width - Group.Width) / 2
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -230,7 +211,15 @@ End
 		  Var InitialSilence As Boolean = Self.mSilenceChangeEvents
 		  Self.mSilenceChangeEvents = True
 		  
-		  // Stuff
+		  Var ConsoleSafeIndex As Integer = If(Self.mConsoleSafe, 1, 0)
+		  If Self.ModRestrictionMenu.SelectedRowIndex <> ConsoleSafeIndex Then
+		    Self.ModRestrictionMenu.SelectedRowIndex = ConsoleSafeIndex
+		  End If
+		  
+		  Var OperatorIndex As Integer = If(Self.mRequireAllMaps, 1, 0)
+		  If Self.OperatorMenu.SelectedRowIndex <> OperatorIndex Then
+		    Self.OperatorMenu.SelectedRowIndex = OperatorIndex
+		  End If
 		  
 		  Self.mSilenceChangeEvents = InitialSilence
 		End Sub
@@ -395,8 +384,11 @@ End
 		    Return
 		  End If
 		  
-		  Self.mRequireAllMaps = Me.SelectedRowIndex = 1
-		  RaiseEvent Changed()
+		  Var NewValue As Boolean = Me.SelectedRowIndex = 1
+		  If Self.mRequireAllMaps <> NewValue Then
+		    Self.mRequireAllMaps = NewValue
+		    RaiseEvent Changed()
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -407,8 +399,11 @@ End
 		    Return
 		  End If
 		  
-		  Self.mConsoleSafe = Me.SelectedRowIndex = 1
-		  RaiseEvent Changed()
+		  Var NewValue As Boolean = Me.SelectedRowIndex = 1
+		  If Self.mConsoleSafe <> NewValue Then
+		    Self.mConsoleSafe = NewValue
+		    RaiseEvent Changed()
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

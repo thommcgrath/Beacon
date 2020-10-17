@@ -63,6 +63,7 @@ Begin BeaconDialog DocumentMergerWindow
       Width           =   560
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

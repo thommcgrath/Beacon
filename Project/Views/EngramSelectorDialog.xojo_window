@@ -63,6 +63,7 @@ Begin BeaconDialog EngramSelectorDialog
       Width           =   560
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -186,6 +187,7 @@ Begin BeaconDialog EngramSelectorDialog
       Width           =   80
    End
    Begin BeaconListbox SelectedList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

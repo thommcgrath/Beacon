@@ -293,6 +293,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          AllowAutoHideScrollbars=   True
          AllowExpandableRows=   False
          AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
          AllowResizableColumns=   False
          AllowRowDragging=   False
          AllowRowReordering=   False

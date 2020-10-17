@@ -26,6 +26,7 @@ Begin BeaconContainer SimulatorView
    Visible         =   True
    Width           =   250
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

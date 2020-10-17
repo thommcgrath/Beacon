@@ -26,6 +26,7 @@ Begin ConfigEditor ServersConfigEditor
    Visible         =   True
    Width           =   856
    Begin BeaconListbox ServerList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

@@ -143,6 +143,7 @@ Begin BeaconDialog SharingDialog
          Width           =   16
       End
       Begin BeaconListbox UserList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False

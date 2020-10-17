@@ -119,6 +119,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Width           =   250
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

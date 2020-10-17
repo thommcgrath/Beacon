@@ -594,65 +594,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
-      Begin BeaconListbox EngramCraftingCostList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   3
-         ColumnWidths    =   "*,75,75"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   -1
-         DefaultSortColumn=   0
-         DefaultSortDirection=   0
-         DropIndicatorVisible=   False
-         EditCaption     =   "Edit Quantity"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
-         HasBorder       =   True
-         HasHeader       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   214
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   "Ingredient	Quantity	No Subst."
-         Italic          =   False
-         Left            =   196
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         PreferencesKey  =   ""
-         RequiresSelection=   False
-         RowSelectionType=   1
-         Scope           =   2
-         SelectionChangeBlocked=   False
-         TabIndex        =   9
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   194
-         Transparent     =   False
-         TypeaheadColumn =   0
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   324
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin PushButton EngramAddIngredient
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -1240,65 +1181,6 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   131
       End
-      Begin BeaconListbox CreatureStatsList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   6
-         ColumnWidths    =   "*,70,70,70,70,70"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   -1
-         DefaultSortColumn=   0
-         DefaultSortDirection=   0
-         DropIndicatorVisible=   False
-         EditCaption     =   "Edit"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLinesHorizontalStyle=   0
-         GridLinesVerticalStyle=   0
-         HasBorder       =   True
-         HasHeader       =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   0
-         Height          =   214
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   "Stat	Base	Wild	Tamed	Add	Affinity"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         PreferencesKey  =   ""
-         RequiresSelection=   False
-         RowSelectionType=   1
-         Scope           =   2
-         SelectionChangeBlocked=   False
-         TabIndex        =   8
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   194
-         Transparent     =   False
-         TypeaheadColumn =   0
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   500
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton CreatureAddStatButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -1394,6 +1276,126 @@ Begin BeaconDialog BlueprintEditorDialog
          Underline       =   False
          Visible         =   True
          Width           =   80
+      End
+      Begin BeaconListbox EngramCraftingCostList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   3
+         ColumnWidths    =   "*,75,75"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit Quantity"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   214
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Ingredient	Quantity	No Subst."
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   9
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   324
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin BeaconListbox CreatureStatsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   6
+         ColumnWidths    =   "*,70,70,70,70,70"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   0
+         Height          =   214
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Stat	Base	Wild	Tamed	Add	Affinity"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   8
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   500
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin OmniBar PageSelector
@@ -2037,6 +2039,114 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events EngramAddIngredient
+	#tag Event
+		Sub Action()
+		  Var Engrams() As Beacon.Engram
+		  For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
+		    Engrams.Add(Beacon.RecipeIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
+		  Next
+		  
+		  Var Mods As New Beacon.StringList
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
+		    Return
+		  End If
+		  
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    If (Engram Is Nil) = False Then
+		      Var Ingredient As New Beacon.RecipeIngredient(Engram, 1, False)
+		      Self.EngramCraftingCostList.AddRow(Engram.Label, "1")
+		      Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
+		    End If
+		  Next
+		  
+		  Self.EngramCraftingCostList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramEditIngredientButton
+	#tag Event
+		Sub Action()
+		  If Self.EngramCraftingCostList.CanEdit Then
+		    Self.EngramCraftingCostList.DoEdit
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramRemoveIngredientButton
+	#tag Event
+		Sub Action()
+		  If Self.EngramCraftingCostList.CanDelete Then
+		    Self.EngramCraftingCostList.DoClear
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureIncubationTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureMatureTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureIntervalMinTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureIntervalMaxTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureAddStatButton
+	#tag Event
+		Sub Action()
+		  Var UsedStats As UInt16
+		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
+		    Var Values As Beacon.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
+		    UsedStats = UsedStats Or Values.Mask
+		  Next
+		  
+		  Var NewStat As Beacon.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats)
+		  If NewStat Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.CreatureStatsList.AddRow("")
+		  Self.ShowStatInRow(Self.CreatureStatsList.LastAddedRowIndex, NewStat)
+		  Self.CreatureStatsList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureEditStatButton
+	#tag Event
+		Sub Action()
+		  Self.CreatureStatsList.DoEdit
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureDeleteStatButton
+	#tag Event
+		Sub Action()
+		  Self.CreatureStatsList.DoClear
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EngramCraftingCostList
 	#tag Event
 		Sub Change()
@@ -2114,79 +2224,6 @@ End
 		  Case 2
 		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EngramAddIngredient
-	#tag Event
-		Sub Action()
-		  Var Engrams() As Beacon.Engram
-		  For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
-		    Engrams.Add(Beacon.RecipeIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
-		  Next
-		  
-		  Var Mods As New Beacon.StringList
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
-		    Return
-		  End If
-		  
-		  For Each Engram As Beacon.Engram In NewEngrams
-		    If (Engram Is Nil) = False Then
-		      Var Ingredient As New Beacon.RecipeIngredient(Engram, 1, False)
-		      Self.EngramCraftingCostList.AddRow(Engram.Label, "1")
-		      Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
-		    End If
-		  Next
-		  
-		  Self.EngramCraftingCostList.Sort
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EngramEditIngredientButton
-	#tag Event
-		Sub Action()
-		  If Self.EngramCraftingCostList.CanEdit Then
-		    Self.EngramCraftingCostList.DoEdit
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EngramRemoveIngredientButton
-	#tag Event
-		Sub Action()
-		  If Self.EngramCraftingCostList.CanDelete Then
-		    Self.EngramCraftingCostList.DoClear
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureIncubationTimeField
-	#tag Event
-		Sub TextChange()
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureMatureTimeField
-	#tag Event
-		Sub TextChange()
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureIntervalMinTimeField
-	#tag Event
-		Sub TextChange()
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureIntervalMaxTimeField
-	#tag Event
-		Sub TextChange()
-		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2271,41 +2308,6 @@ End
 		  Next
 		  
 		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureAddStatButton
-	#tag Event
-		Sub Action()
-		  Var UsedStats As UInt16
-		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
-		    Var Values As Beacon.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
-		    UsedStats = UsedStats Or Values.Mask
-		  Next
-		  
-		  Var NewStat As Beacon.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats)
-		  If NewStat Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.CreatureStatsList.AddRow("")
-		  Self.ShowStatInRow(Self.CreatureStatsList.LastAddedRowIndex, NewStat)
-		  Self.CreatureStatsList.Sort
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureEditStatButton
-	#tag Event
-		Sub Action()
-		  Self.CreatureStatsList.DoEdit
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CreatureDeleteStatButton
-	#tag Event
-		Sub Action()
-		  Self.CreatureStatsList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents

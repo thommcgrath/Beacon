@@ -26,6 +26,7 @@ Begin BeaconContainer ItemSetEditor
    Visible         =   True
    Width           =   560
    Begin BeaconListbox EntryList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

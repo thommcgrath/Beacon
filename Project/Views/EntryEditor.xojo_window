@@ -118,7 +118,37 @@ Begin BeaconDialog EntryEditor
          Visible         =   True
          Width           =   340
       End
+      Begin DelayedSearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         ClearMenuItemValue=   "Clear"
+         Enabled         =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         Visible         =   True
+         Width           =   340
+      End
       Begin BeaconListbox EngramList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -176,35 +206,6 @@ Begin BeaconDialog EntryEditor
          Width           =   340
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
-      End
-      Begin DelayedSearchField FilterField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowRecentItems=   False
-         ClearMenuItemValue=   "Clear"
-         Enabled         =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumRecentItems=   -1
-         RecentItemsValue=   "Recent Searches"
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         Tooltip         =   ""
-         Top             =   56
-         Transparent     =   False
-         Visible         =   True
-         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -326,6 +327,7 @@ Begin BeaconDialog EntryEditor
          Width           =   80
       End
       Begin BeaconListbox SimulatedResultsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -725,6 +727,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateFilter()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
@@ -809,13 +818,6 @@ End
 		  
 		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChanged()
-		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

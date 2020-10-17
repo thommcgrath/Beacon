@@ -162,6 +162,7 @@ Begin BeaconDialog BreedingTunerDialog
       Width           =   80
    End
    Begin BeaconListbox CreaturesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

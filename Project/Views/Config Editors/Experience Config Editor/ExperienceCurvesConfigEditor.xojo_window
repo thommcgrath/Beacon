@@ -120,6 +120,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Width           =   710
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

@@ -167,6 +167,7 @@ Begin ConfigEditor StackSizesConfigEditor
       Width           =   764
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

@@ -650,6 +650,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Width           =   231
    End
    Begin BeaconListbox CreaturesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

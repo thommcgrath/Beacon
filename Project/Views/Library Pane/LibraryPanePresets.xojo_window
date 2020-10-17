@@ -61,6 +61,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Width           =   300
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

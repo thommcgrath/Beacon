@@ -26,6 +26,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Visible         =   True
    Width           =   598
    Begin BeaconListbox SetList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

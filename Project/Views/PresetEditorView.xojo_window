@@ -660,6 +660,7 @@ Begin BeaconSubview PresetEditorView
          Width           =   80
       End
       Begin BeaconListbox ContentsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -719,6 +720,7 @@ Begin BeaconSubview PresetEditorView
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox ModifiersList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
