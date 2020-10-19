@@ -424,12 +424,13 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromString(Contents As String, Identity As Beacon.Identity) As Beacon.Document
+		Shared Function FromString(Contents As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Document
 		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
-		    App.Log("Unable to load document due to JSON parsing error: " + Err.Message)
+		    FailureReason = "Unable to load document due to JSON parsing error: " + Err.Message
+		    App.Log(FailureReason)
 		    Return Nil
 		  End Try
 		  
@@ -445,7 +446,11 @@ Implements ObservationKit.Observable
 		      Doc.mIdentifier = New v4UUID
 		    End If
 		  End If
-		  If Version < 3 Then
+		  If Version > DocumentVersion Then
+		    FailureReason = "Unable to load document because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + DocumentVersion.ToString + "."
+		    App.Log(FailureReason)
+		    Return Nil
+		  ElseIf Version < 3 Then
 		    Return Beacon.Document.FromLegacy(Parsed, Identity)
 		  End If
 		  
