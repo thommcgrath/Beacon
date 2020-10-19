@@ -35,8 +35,6 @@ Protected Module Preferences
 		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  If Dict.HasKey(DocumentID) Then
 		    Return Dict.Value(DocumentID)
-		  Else
-		    Return BeaconConfigs.LootDrops.ConfigName
 		  End If
 		End Function
 	#tag EndMethod

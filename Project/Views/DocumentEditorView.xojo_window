@@ -416,7 +416,16 @@ End
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
 		    Var DocumentID As String = Self.mController.Document.DocumentID
-		    Self.CurrentConfigName = Preferences.LastUsedConfigName(DocumentID)
+		    Var LastConfig As String = Preferences.LastUsedConfigName(DocumentID)
+		    If LastConfig.IsEmpty Then
+		      If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeWeb Then
+		        LastConfig = BeaconConfigs.Metadata.ConfigName
+		      Else
+		        LastConfig = BeaconConfigs.LootDrops.ConfigName
+		      End If
+		    End If
+		    Self.CurrentConfigName = LastConfig
+		    
 		    Self.mController.Document.AddObserver(Self, "Title")
 		  End If
 		  
