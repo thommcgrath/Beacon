@@ -49,7 +49,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByClass(ClassString As String) As Beacon.Creature
+		Attributes( Deprecated )  Function GetCreatureByClass(ClassString As String) As Beacon.Creature
 		  
 		End Function
 	#tag EndMethod
@@ -61,7 +61,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByPath(Path As String) As Beacon.Creature
+		Attributes( Deprecated )  Function GetCreatureByPath(Path As String) As Beacon.Creature
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByClass(ClassString As String) As Beacon.Creature()
 		  
 		End Function
 	#tag EndMethod
@@ -73,13 +79,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByClass(ClassString As String) As Beacon.Engram
+		Attributes( Deprecated )  Function GetEngramByClass(ClassString As String) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
+		Attributes( Deprecated )  Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
@@ -97,7 +103,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByPath(Path As String) As Beacon.Engram
+		Attributes( Deprecated )  Function GetEngramByPath(Path As String) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByClass(ClassString As String) As Beacon.Engram()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByEntryString(EntryString As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
@@ -139,7 +157,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
+		Attributes( Deprecated )  Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
 		  
 		End Function
 	#tag EndMethod
@@ -151,7 +169,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
+		Attributes( Deprecated )  Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByClass(ClassString As String) As Beacon.SpawnPoint()
 		  
 		End Function
 	#tag EndMethod

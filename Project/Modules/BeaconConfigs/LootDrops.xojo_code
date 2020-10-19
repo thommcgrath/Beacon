@@ -23,7 +23,7 @@ Implements Iterable
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
 		    Var Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, False)
 		    
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass("PrimalItemConsumable_DinoPoopSmall_C")
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByID("1b4d42f4-86ab-4277-a73e-dd688635b324")
 		    
 		    Var Entry As New Beacon.SetEntry
 		    Entry.Append(New Beacon.SetEntryOption(Engram, 1.0))
