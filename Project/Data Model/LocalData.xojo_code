@@ -235,8 +235,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
 		  For Each Category As String In Categories
-		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
-		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
+		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(mod_id, path);")
 		  Next
 		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
@@ -678,7 +677,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		Function GetBlueprintByID(ObjectID As v4UUID) As Beacon.Blueprint
 		  Var Results As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
 		  If Results.RowCount <> 1 Then
 		    Return Nil
@@ -692,6 +691,45 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Case Beacon.CategorySpawnPoints
 		    Return Self.GetSpawnPointByID(ObjectID)
 		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "GetBlueprintByID" )  Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		  Return Self.GetBlueprintByID(ObjectID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String) As Beacon.Blueprint()
+		  // This is not the most efficient method, but there shouldn't be a lot
+		  // of items with duplicate paths, so it probably won't matter.
+		  
+		  Var Blueprints() As Beacon.Blueprint
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, category FROM blueprints WHERE LOWER(path) = ?1;", Path.Lowercase)
+		  If Results.RowCount = 0 Then
+		    Return Blueprints
+		  End If
+		  
+		  For Each Result As DatabaseRow In Results
+		    Var Blueprint As Beacon.Blueprint
+		    Var ObjectID As String = Result.Column("object_id").StringValue
+		    
+		    Select Case Result.Column("category").StringValue
+		    Case Beacon.CategoryEngrams
+		      Blueprint = Self.GetEngramByID(ObjectID)
+		    Case Beacon.CategoryCreatures
+		      Blueprint = Self.GetCreatureByID(ObjectID)
+		    Case Beacon.CategorySpawnPoints
+		      Blueprint = Self.GetSpawnPointByID(ObjectID)
+		    End Select
+		    If (Blueprint Is Nil) = False Then
+		      Blueprints.Add(Blueprint)
+		    End If
+		  Next
+		  
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 
@@ -868,7 +906,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Self.mEngramCache.HasKey(EngramID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID.StringValue)
-		      If Results.RowCount = 0 Then
+		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
 		      
@@ -1115,7 +1153,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Self.mSpawnPointCache.HasKey(SpawnPointID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID.StringValue)
-		      If Results.RowCount = 0 Then
+		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
 		      
