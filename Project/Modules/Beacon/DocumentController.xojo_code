@@ -279,9 +279,10 @@ Protected Class DocumentController
 		    End If
 		  End If
 		  
-		  Var Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity)
+		  Var FailureReason As String
+		  Var Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity, FailureReason)
 		  If Document = Nil Then
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to parse document")
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, FailureReason)
 		    Return
 		  End If
 		  
