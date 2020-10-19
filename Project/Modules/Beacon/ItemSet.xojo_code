@@ -335,7 +335,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.ItemSet
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Beacon.ItemSet
 		  Var Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
@@ -355,7 +355,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Children = Dict.Value("ItemEntries")
 		  End If
 		  For Each Child As Dictionary In Children
-		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, Difficulty)
+		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, Difficulty, Mods)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If

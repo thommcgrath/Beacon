@@ -384,30 +384,30 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Paths() As String
+		  Var Engrams() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Paths.Add(Beacon.Engram(Self.List.RowTagAt(I)).Path)
+		    Engrams.Add(Beacon.Engram(Self.List.RowTagAt(I)).ObjectID)
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Engrams)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Var Paths() As String
+		  Var Engrams() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Paths.Add(Engram.Path)
+		    Engrams.Add(Engram.ObjectID)
 		  Next
-		  Self.UpdateList(Paths) 
+		  Self.UpdateList(Engrams) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectPaths() As String)
+		Private Sub UpdateList(SelectEngrams() As String)
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  
@@ -419,7 +419,7 @@ End
 		    Var Size As UInt64 = Config.Override(Engram)
 		    Self.List.AddRow(Engram.Label, Format(Size, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.List.SortingColumn = 0
@@ -574,7 +574,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Size As UInt64 = Config.Override(Engram)
-		    Items.Value(Engram.Path) = Size
+		    Items.Value(Engram.ObjectID.StringValue) = Size
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
@@ -596,28 +596,17 @@ End
 		    End If
 		    
 		    Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		    Var SelectPaths() As String
+		    Var SelectEngrams() As String
 		    For Each Entry As DictionaryEntry In Items
-		      Var Path As String = Entry.Key
-		      Var Engram As Beacon.Engram
-		      If Path.BeginsWith("/Game/") Then
-		        Engram = Beacon.Data.GetEngramByPath(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromPath(Path)
-		        End If
-		      Else
-		        Engram = Beacon.Data.GetEngramByClass(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(Path)
-		        End If
-		      End If
+		      Var UUID As String = Entry.Key
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
 		      
 		      Var Size As UInt64 = Entry.Value
-		      SelectPaths.Add(Engram.Path)
+		      SelectEngrams.Add(UUID)
 		      Config.Override(Engram) = Size
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectPaths)
+		    Self.UpdateList(SelectEngrams)
 		    Return
 		  End If
 		  

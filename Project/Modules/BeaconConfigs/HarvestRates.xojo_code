@@ -15,11 +15,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
-		    End If
-		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(Entry.Key.StringValue)
+		    If (Engram Is Nil) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var ClassString As String = Engram.ClassString
 		      Var Rate As Double = Entry.Value
 		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
@@ -71,20 +68,25 @@ Inherits Beacon.ConfigGroup
 		  Self.mPlayerHarvestingDamageMultiplier = Dict.DoubleValue("Player Harvesting Damage Multiplier", 1.0)
 		  Self.mDinoHarvestingDamageMultiplier = Dict.DoubleValue("Dino Harvesting Damage Multiplier", 1.0)
 		  
-		  If Dict.HasKey("Rates") Then
-		    Self.mOverrides = Dict.DictionaryValue("Rates", New Dictionary)
+		  If Dict.HasKey("Values") Then
+		    Self.mOverrides = Dict.DictionaryValue("Values", New Dictionary)
+		  ElseIf Dict.HasKey("Rates") Then
+		    Self.mOverrides = New Dictionary
+		    Var Rates As Dictionary = Dict.DictionaryValue("Rates", New Dictionary)
+		    For Each Entry As DictionaryEntry In Rates
+		      Try
+		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Entry.Key, "", Nil)
+		        Self.mOverrides.Value(Engram.ObjectID.StringValue) = Entry.Value.DoubleValue
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
 		  Else
 		    Self.mOverrides = New Dictionary
 		    Var Rates As Dictionary = Dict.DictionaryValue("Overrides", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(Entry.Key)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(Entry.Key)
-		        End If
-		        If IsNull(Engram) = False Then
-		          Self.mOverrides.Value(Engram.Path) = Entry.Value.DoubleValue
-		        End If
+		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", Entry.Key, Nil)
+		        Self.mOverrides.Value(Engram.ObjectID.StringValue) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -96,25 +98,18 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
 		  #Pragma Unused Document
 		  
-		  Var LegacyOverrides As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
-		    End If
-		    If IsNull(Engram) = False Then
-		      LegacyOverrides.Value(Engram.ClassString) = Entry.Value
-		    End If
-		  Next
-		  
 		  Dict.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
 		  Dict.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier
-		  Dict.Value("Rates") = Self.mOverrides
-		  Dict.Value("Overrides") = LegacyOverrides
+		  Dict.Value("Values") = Self.mOverrides
 		  Dict.Value("Use Optimized Rates") = Self.mUseOptimizedRates
 		  Dict.Value("Clamp Resource Harvest Damage") = Self.mClampResourceHarvestDamage
 		  Dict.Value("Player Harvesting Damage Multiplier") = Self.mPlayerHarvestingDamageMultiplier
 		  Dict.Value("Dino Harvesting Damage Multiplier") = Self.mDinoHarvestingDamageMultiplier
+		  
+		  Var Engrams() As Beacon.Engram = Self.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    BlueprintsMap.Value(Engram.ObjectID.StringValue) = Engram
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -148,11 +143,8 @@ Inherits Beacon.ConfigGroup
 		Function Engrams() As Beacon.Engram()
 		  Var Results() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
-		    End If
-		    If IsNull(Engram) = False Then
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(Entry.Key.StringValue)
+		    If (Engram Is Nil) = False Then
 		      Results.Add(Engram)
 		    End If
 		  Next
@@ -208,11 +200,8 @@ Inherits Beacon.ConfigGroup
 		      Var ClassString As String = Dict.Value("ClassName")
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(ClassString)
-		        End If
-		        Overrides.Value(Engram.Path) = Multiplier
+		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", ClassString, Mods)
+		        Overrides.Value(Engram.ObjectID.StringValue) = Multiplier
 		      End If
 		    Next
 		  End If
@@ -238,7 +227,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function Override(Engram As Beacon.Engram) As Double
 		  If Engram <> Nil Then
-		    Return Self.mOverrides.Lookup(Engram.Path, 1.0)
+		    Return Self.mOverrides.Lookup(Engram.ObjectID.StringValue, 1.0)
 		  End If
 		End Function
 	#tag EndMethod
@@ -249,11 +238,11 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.Path) Then
-		    Self.mOverrides.Remove(Engram.Path)
+		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.ObjectID.StringValue) Then
+		    Self.mOverrides.Remove(Engram.ObjectID.StringValue)
 		    Self.Modified = True
-		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.Path, 0) <> Rate Then
-		    Self.mOverrides.Value(Engram.Path) = Rate
+		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.ObjectID.StringValue, 0) <> Rate Then
+		    Self.mOverrides.Value(Engram.ObjectID.StringValue) = Rate
 		    Self.Modified = True
 		  End If
 		End Sub

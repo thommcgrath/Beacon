@@ -263,7 +263,6 @@ Begin BeaconDialog ShareWithUserDialog
    End
    Begin URLConnection UserLookupSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

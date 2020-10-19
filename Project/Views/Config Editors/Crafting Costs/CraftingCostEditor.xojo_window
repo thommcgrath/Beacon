@@ -375,6 +375,7 @@ End
 		    Var Idx As Integer = Self.mTarget.IndexOf(Engram)
 		    
 		    Var Dict As New Dictionary
+		    Dict.Value("UUID") = Engram.ObjectID.StringValue
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
@@ -396,12 +397,7 @@ End
 		    Dicts = Beacon.ParseJSON(Contents)
 		    
 		    For Each Dict As Dictionary In Dicts
-		      Var ClassString As String = Dict.Value("Class")
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateFromClass(ClassString)
-		      End If
-		      
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "", "Class", Nil)
 		      Var Quantity As Integer = Dict.Value("Quantity")
 		      Var Exact As Boolean = Dict.Value("Exact")
 		      Self.mTarget.Append(Engram, Quantity, Exact)

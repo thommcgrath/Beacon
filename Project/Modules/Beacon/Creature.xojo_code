@@ -103,7 +103,7 @@ Implements Beacon.Blueprint
 		  Var Creature As New Beacon.Creature
 		  Creature.mClassString = Beacon.ClassStringFromPath(Path)
 		  Creature.mPath = Path
-		  Creature.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mPath.Lowercase)
+		  Creature.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LocalData.UserModID.Lowercase + ":" + Creature.mPath.Lowercase)
 		  Creature.mLabel = Beacon.LabelFromClassString(Creature.mClassString)
 		  Creature.mModID = LocalData.UserModID
 		  Creature.mModName = LocalData.UserModName

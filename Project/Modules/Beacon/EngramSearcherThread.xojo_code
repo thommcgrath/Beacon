@@ -223,15 +223,9 @@ Inherits Beacon.Thread
 		    Var Blueprint As Beacon.Blueprint
 		    Select Case Command
 		    Case "giveitem"
-		      Blueprint = Beacon.Data.GetEngramByPath(Path)
-		      If Blueprint = Nil Then
-		        Blueprint = Beacon.Engram.CreateFromPath(Path)
-		      End If
+		      Blueprint = Beacon.ResolveEngram("", Path, "", New Beacon.StringList(LocalData.UserModID))
 		    Case "spawndino"
-		      Blueprint = Beacon.Data.GetCreatureByPath(Path)
-		      If Blueprint = Nil Then
-		        Blueprint = Beacon.Creature.CreateFromPath(Path)
-		      End If
+		      Blueprint = Beacon.ResolveCreature("", Path, "", New Beacon.StringList(LocalData.UserModID))
 		    End Select
 		    
 		    If Blueprint = Nil Then

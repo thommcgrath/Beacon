@@ -672,6 +672,36 @@ Implements ObservationKit.Observable
 		    Next
 		  End If
 		  
+		  // Custom Blueprints
+		  If Dict.HasKey("Custom Blueprints") Then
+		    Var Definitions() As Variant
+		    Try
+		      Definitions = Dict.Value("Custom Blueprints")
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Var BlueprintsToSave() As Beacon.Blueprint
+		    For Idx As Integer = 0 To Definitions.LastIndex
+		      If (Definitions(Idx) IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      Try
+		        Var Definition As Dictionary = Definitions(Idx)
+		        Var BlueprintUUID As String = Definition.Value("id")
+		        Var Blueprint As Beacon.Blueprint = Beacon.Data.GetBlueprintByID(BlueprintUUID)
+		        If Blueprint Is Nil Then
+		          Blueprint = Beacon.UnpackBlueprint(Definition)
+		          If (Blueprint Is Nil) = False Then
+		            BlueprintsToSave.Add(Blueprint)
+		          End If
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    Call Beacon.Data.SaveBlueprints(BlueprintsToSave, False)
+		  End If
+		  
 		  // New config system
 		  If Dict.HasKey("Config Sets") Then
 		    Var Sets As Dictionary = Dict.Value("Config Sets")
@@ -1517,6 +1547,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mConsoleMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCustomBlueprints As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

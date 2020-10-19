@@ -6,13 +6,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Path As String = Entry.Key
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Path)
-		    End If
+		    Var UUID As String = Entry.Key
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
 		    
-		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
+		    If Engram.ValidForDocument(SourceDocument) Then
 		      Var StackSize As UInt64 = Min(Entry.Value, Self.MaximumQuantity)
 		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If
@@ -22,7 +19,7 @@ Inherits Beacon.ConfigGroup
 		  If Self.mGlobalMultiplier <> 1.0 Then
 		    Var AllEngrams() As Beacon.Engram = Beacon.Data.SearchForEngrams("", SourceDocument.Mods)
 		    For Each Engram As Beacon.Engram In AllEngrams
-		      If Self.mOverrides.HasKey(Engram.Path) Or Engram.StackSize Is Nil Or Engram.StackSize.DoubleValue = 1 Or Engram.StackSize.DoubleValue * Self.mGlobalMultiplier < Self.MaximumQuantity Then
+		      If Self.mOverrides.HasKey(Engram.ObjectID.StringValue) Or Engram.StackSize Is Nil Or Engram.StackSize.DoubleValue = 1 Or Engram.StackSize.DoubleValue * Self.mGlobalMultiplier < Self.MaximumQuantity Then
 		        Continue
 		      End If
 		      
@@ -69,13 +66,8 @@ Inherits Beacon.ConfigGroup
 		    Var Rates As Dictionary = Dict.DictionaryValue("Overrides", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(Entry.Key)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(Entry.Key)
-		        End If
-		        If IsNull(Engram) = False Then
-		          Self.mOverrides.Value(Engram.Path) = Entry.Value.UInt64Value
-		        End If
+		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", Entry.Key, Nil)
+		        Self.mOverrides.Value(Engram.ObjectID.StringValue) = Entry.Value.UInt64Value
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -87,20 +79,8 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
 		  #Pragma Unused Document
 		  
-		  Var LegacyOverrides As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
-		    End If
-		    If IsNull(Engram) = False Then
-		      LegacyOverrides.Value(Engram.ClassString) = Entry.Value
-		    End If
-		  Next
-		  
 		  Dict.Value("Global") = Self.mGlobalMultiplier
 		  Dict.Value("Rates") = Self.mOverrides
-		  Dict.Value("Overrides") = LegacyOverrides
 		End Sub
 	#tag EndEvent
 
@@ -128,13 +108,7 @@ Inherits Beacon.ConfigGroup
 		Function Engrams() As Beacon.Engram()
 		  Var Results() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
-		    End If
-		    If IsNull(Engram) = False Then
-		      Results.Add(Engram)
-		    End If
+		    Results.Add(Beacon.Data.GetEngramByID(Entry.Key.StringValue))
 		  Next
 		  Return Results
 		End Function
@@ -177,11 +151,8 @@ Inherits Beacon.ConfigGroup
 		      Var StackSize As UInt64 = Quantity.Lookup("MaxItemQuantity", CType(0, UInt64))
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And StackSize > CType(0, UInt64) Then
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(ClassString)
-		        End If
-		        Overrides.Value(Engram.Path) = StackSize
+		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", ClassString, Mods)
+		        Overrides.Value(Engram.ObjectID.StringValue) = StackSize
 		      End If
 		    Next
 		  End If
@@ -204,7 +175,7 @@ Inherits Beacon.ConfigGroup
 		  Var Zero As UInt64 = 0
 		  
 		  If Engram <> Nil Then
-		    Return Self.mOverrides.Lookup(Engram.Path, Zero)
+		    Return Self.mOverrides.Lookup(Engram.ObjectID.StringValue, Zero)
 		  End If
 		End Function
 	#tag EndMethod
@@ -217,11 +188,11 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  If StackSize <= Zero And Self.mOverrides.HasKey(Engram.Path) Then
-		    Self.mOverrides.Remove(Engram.Path)
+		  If StackSize <= Zero And Self.mOverrides.HasKey(Engram.ObjectID.StringValue) Then
+		    Self.mOverrides.Remove(Engram.ObjectID.StringValue)
 		    Self.Modified = True
-		  ElseIf StackSize > Zero And Self.mOverrides.Lookup(Engram.Path, Zero) <> StackSize Then
-		    Self.mOverrides.Value(Engram.Path) = StackSize
+		  ElseIf StackSize > Zero And Self.mOverrides.Lookup(Engram.ObjectID.StringValue, Zero) <> StackSize Then
+		    Self.mOverrides.Value(Engram.ObjectID.StringValue) = StackSize
 		    Self.Modified = True
 		  End If
 		End Sub

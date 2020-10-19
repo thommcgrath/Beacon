@@ -927,7 +927,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Rate As Double = Config.Override(Engram)
-		    Items.Value(Engram.Path) = Rate
+		    Items.Value(Engram.ObjectID.StringValue) = Rate
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
@@ -951,18 +951,10 @@ End
 		    Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		    Var SelectEngrams() As Beacon.Engram
 		    For Each Entry As DictionaryEntry In Items
-		      Var Path As String = Entry.Key
-		      Var Engram As Beacon.Engram
-		      If Path.BeginsWith("/Game/") Then
-		        Engram = Beacon.Data.GetEngramByPath(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromPath(Path)
-		        End If
-		      Else
-		        Engram = Beacon.Data.GetEngramByClass(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(Path)
-		        End If
+		      Var UUID As String = Entry.Key
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
+		      If Engram Is Nil Then
+		        Continue
 		      End If
 		      
 		      Var Rate As Double = Entry.Value

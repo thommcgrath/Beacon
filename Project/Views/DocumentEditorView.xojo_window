@@ -43,10 +43,9 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   50
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   627
       Begin LogoFillCanvas LogoFillCanvas1
@@ -281,7 +280,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   441
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True

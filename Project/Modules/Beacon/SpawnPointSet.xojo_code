@@ -150,7 +150,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  ElseIf SaveData.HasKey("creatures") Then
 		    Var Paths() As Variant = SaveData.Value("creatures")
 		    For Each Path As String In Paths
-		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		      Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Path, "", Nil)
 		      If Creature = Nil Then
 		        Continue
 		      End If

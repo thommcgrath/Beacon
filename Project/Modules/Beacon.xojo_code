@@ -1573,6 +1573,14 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SaveBlueprint(Extends Source As Beacon.DataSource, Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
+		  Var Arr(0) As Beacon.Blueprint
+		  Arr(0) = Blueprint
+		  Return (Source.SaveBlueprints(Arr, Replace) = 1)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData(Extends Source As Beacon.LootSource) As Dictionary
 		  // Mandatory item sets should not be part of this.
 		  

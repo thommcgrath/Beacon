@@ -737,7 +737,7 @@ End
 		    End If
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(Idx)
-		    Dict.Value(Engram.Path) = Config.BehaviorDict(Engram)
+		    Dict.Value(Engram.ObjectID.StringValue) = Config.BehaviorDict(Engram)
 		  Next
 		  
 		  Board.Text = Beacon.GenerateJSON(Dict, True)
@@ -769,10 +769,10 @@ End
 		  
 		  For Each Entry As DictionaryEntry In Dict
 		    Try
-		      Var Path As String = Entry.Key
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateFromPath(Path)
+		      Var UUID As String = Entry.Key
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
+		      If Engram Is Nil Then
+		        Continue
 		      End If
 		      
 		      If Config = Nil Then

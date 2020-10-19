@@ -228,7 +228,6 @@ Begin BeaconDialog DeveloperImportURLDialog
    End
    Begin URLConnection Socket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

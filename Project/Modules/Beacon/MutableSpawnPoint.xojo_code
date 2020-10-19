@@ -254,7 +254,7 @@ Implements Beacon.MutableBlueprint
 		        Set.ID = SpawnDict.Lookup("group_id", v4UUID.Create.StringValue).StringValue
 		        Set.Weight = SpawnDict.Lookup("weight", 0.1).DoubleValue
 		        For Each Path As String In Creatures
-		          Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		          Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Path, "", Nil)
 		          Set.Append(New Beacon.MutableSpawnPointSetEntry(Creature))
 		        Next
 		        Self.mSets.Add(Set)

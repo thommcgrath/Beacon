@@ -126,7 +126,7 @@ Implements Beacon.Blueprint
 		  Engram.mModID = LocalData.UserModID
 		  Engram.mModName = LocalData.UserModName
 		  Engram.mPath = Path
-		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path.Lowercase)
+		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LocalData.UserModID.Lowercase + ":" + Path.Lowercase)
 		  Engram.mTags.Add("blueprintable")
 		  Return Engram
 		End Function

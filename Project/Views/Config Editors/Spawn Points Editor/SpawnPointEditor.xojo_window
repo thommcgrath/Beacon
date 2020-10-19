@@ -140,11 +140,10 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   705
       Begin SpawnPointSetEditor SetEditor
@@ -159,7 +158,6 @@ Begin BeaconContainer SpawnPointEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   664
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
          LockBottom      =   True
@@ -520,8 +518,8 @@ End
 		      Var Entries() As Beacon.SpawnPointSetEntry = Set.Entries
 		      For Each Entry As Beacon.SpawnpointSetEntry In Entries
 		        Var Creature As Beacon.Creature = Entry.Creature
-		        If IsNull(Creature) = False THen
-		          CreatureFilter.Value(Creature.Path) = Creature
+		        If (Creature Is Nil) = False THen
+		          CreatureFilter.Value(Creature.ObjectID.StringValue) = Creature
 		        End If
 		      Next
 		    Next
@@ -626,17 +624,17 @@ End
 		      For Each Entry As DictionaryEntry In PointLimits
 		        Var Creature As Beacon.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
-		        CombinedLimits.Value(Creature.Path) = Limit
+		        CombinedLimits.Value(Creature.ObjectID.StringValue) = Limit
 		      Next
 		    Else
 		      For Each Entry As DictionaryEntry In PointLimits
 		        Var Creature As Beacon.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
 		        
-		        If CombinedLimits.HasKey(Creature.Path) = False Then
-		          CombinedLimits.Value(Creature.Path) = Limit
-		        ElseIf CombinedLimits.Value(Creature.Path).DoubleValue <> Limit Then
-		          CombinedLimits.Value(Creature.Path) = MixedLimitValue
+		        If CombinedLimits.HasKey(Creature.ObjectID.StringValue) = False Then
+		          CombinedLimits.Value(Creature.ObjectID.StringValue) = Limit
+		        ElseIf CombinedLimits.Value(Creature.ObjectID.StringValue).DoubleValue <> Limit Then
+		          CombinedLimits.Value(Creature.ObjectID.StringValue) = MixedLimitValue
 		        End If
 		      Next
 		    End If
@@ -646,7 +644,7 @@ End
 		    Var SelectedCreatures() As String
 		    If SelectCreatures <> Nil Then
 		      For Each Creature As Beacon.Creature In SelectCreatures
-		        SelectedCreatures.Add(Creature.Path)
+		        SelectedCreatures.Add(Creature.ObjectID)
 		      Next
 		    Else
 		      For I As Integer = 0 To Self.LimitsList.RowCount - 1
@@ -658,13 +656,13 @@ End
 		    
 		    Self.LimitsList.RowCount = CombinedLimits.KeyCount
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
-		      Var Path As String = CombinedLimits.Key(RowIndex)
-		      Var Limit As Double = CombinedLimits.Value(Path)
+		      Var UUID As String = CombinedLimits.Key(RowIndex)
+		      Var Limit As Double = CombinedLimits.Value(UUID)
 		      
-		      Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByPath(Path).Label
+		      Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByID(UUID).Label
 		      Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
-		      Self.LimitsList.RowTagAt(RowIndex) = Path
-		      Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(Path) > -1
+		      Self.LimitsList.RowTagAt(RowIndex) = UUID
+		      Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(UUID) > -1
 		    Next
 		  Else
 		    Self.LimitsList.RowCount = 0
@@ -810,7 +808,7 @@ End
 		    Var SelectedCreatures() As Beacon.Creature
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		      If Self.LimitsList.Selected(I) Then
-		        SelectedCreatures.Add(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
+		        SelectedCreatures.Add(Beacon.Data.GetCreatureByID(Self.LimitsList.RowTagAt(I).StringValue))
 		      End If
 		    Next
 		    Self.PresentLimitsDialog(SelectedCreatures)
@@ -1076,7 +1074,7 @@ End
 		  Var SelectedCreatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		    If Self.LimitsList.Selected(I) Then
-		      SelectedCreatures.Add(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
+		      SelectedCreatures.Add(Beacon.Data.GetCreatureByID(Self.LimitsList.RowTagAt(I).StringValue))
 		    End If
 		  Next
 		  Self.PresentLimitsDialog(SelectedCreatures)
@@ -1095,9 +1093,9 @@ End
 		      Continue
 		    End If
 		    
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Me.RowTagAt(I).StringValue)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromPath(Me.RowTagAt(I).StringValue)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(Me.RowTagAt(I).StringValue)
+		    If Creature Is Nil Then
+		      Continue
 		    End If
 		    
 		    Creatures.Add(Creature)
@@ -1135,10 +1133,10 @@ End
 		      Continue
 		    End If
 		    
-		    Var Path As String = Me.RowTagAt(I)
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    Var UUID As String = Me.RowTagAt(I)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(UUID)
+		    If Creature Is Nil Then
+		      Continue
 		    End If
 		    
 		    Var CommonLimit As NullableDouble
@@ -1156,7 +1154,7 @@ End
 		    Next
 		    
 		    If CommonLimit <> Nil Then
-		      Limits.Value(Creature.Path) = CommonLimit.IntegerValue
+		      Limits.Value(Creature.ObjectID.StringValue) = CommonLimit.IntegerValue
 		    End If
 		  Next
 		  
@@ -1192,10 +1190,10 @@ End
 		      Continue
 		    End If
 		    
-		    Var Path As String = Entry.Key
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    Var UUID As String = Entry.Key
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(UUID)
+		    If Creature Is Nil Then
+		      Continue
 		    End If
 		    SelectCreatures.Add(Creature)
 		    

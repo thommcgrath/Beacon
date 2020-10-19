@@ -773,17 +773,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetCreatureByPath(Path As String) As Beacon.Creature
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var Creatures() As Beacon.Creature = Self.GetCreaturesByPath(Path, Nil)
-		  If Creatures.Count > 0 Then
-		    Return Creatures(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
 		    Var RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
@@ -807,28 +796,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return Results.Column("value").DoubleValue
 		  Else
 		    Return Default
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetEngramByClass(ClassString As String) As Beacon.Engram
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var Engrams() As Beacon.Engram = Self.GetEngramsByClass(ClassString, Nil)
-		  If Engrams.Count > 0 Then
-		    Return Engrams(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var Engrams() As Beacon.Engram = Self.GetEngramsByEntryString(EntryString)
-		  If Engrams.Count > 0 Then
-		    Return Engrams(0)
 		  End If
 		End Function
 	#tag EndMethod
@@ -875,18 +842,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetEngramByPath(Path As String) As Beacon.Engram
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var Engrams() As Beacon.Engram = Self.GetEngramsByPath(Path, Nil)
-		  If Engrams.Count > 0 Then
-		    Return Engrams(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramsByEntryString(EntryString As String) As Beacon.Engram()
+		Function GetEngramsByEntryString(EntryString As String, Mods As Beacon.StringList) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  If EntryString.Length < 2 Or EntryString.Right(2) <> "_C" Then
@@ -897,8 +853,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Self.mEngramCache.HasKey(EntryString) Then
 		    Engrams = Self.mEngramCache.Value(EntryString)
 		  Else
+		    Var SQL As String = Self.EngramSelectSQL + " WHERE LOWER(entry_string) = ?1;"
+		    If (Mods Is Nil) = False Then
+		      SQL = SQL.Left(SQL.Length - 1) + " AND LOWER(mod_id) IN (" + Mods.SQLValue.Lowercase + ");"
+		    End If
+		    
 		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(entry_string) = ?1;", EntryString.Lowercase)
+		      Var Results As RowSet = Self.SQLSelect(SQL, EntryString.Lowercase)
 		      If Results.RowCount = 0 Then
 		        Return Engrams
 		      End If
@@ -1034,17 +995,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var SpawnPoints() As Beacon.SpawnPoint = Self.GetSpawnPointsByClass(ClassString, Nil)
-		  If SpawnPoints.Count > 0 Then
-		    Return SpawnPoints(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
 		  // Part of the Beacon.DataSource interface.
 		  
@@ -1062,17 +1012,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  Return Self.mSpawnPointCache.Value(SpawnPointID.StringValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var SpawnPoints() As Beacon.SpawnPoint = Self.GetSpawnPointsByPath(Path, Nil)
-		  If SpawnPoints.Count > 0 Then
-		    Return SpawnPoints(0)
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -1268,9 +1207,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function ImportCloudEngrams() As Boolean
 		  Var EngramsUpdated As Boolean = False
-		  Var EngramsContent As MemoryBlock = UserCloud.Read("/Engrams.json")
-		  If EngramsContent = Nil Then
-		    Return False
+		  Var EngramsContent As MemoryBlock = UserCloud.Read("/Blueprints.json")
+		  Var LegacyMode As Boolean
+		  If EngramsContent Is Nil Then
+		    EngramsContent = UserCloud.Read("/Engrams.json")
+		    If EngramsContent Is Nil Then
+		      Return False
+		    End If
+		    LegacyMode = True
 		  End If
 		  Var Blueprints() As Variant
 		  Try
@@ -1281,26 +1225,40 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End Try
 		  Self.BeginTransaction()
 		  Self.DeleteDataForMod(Self.UserModID)
-		  For Each Dict As Dictionary In Blueprints
-		    Try
-		      Var Category As String = Dict.Value("category")
-		      Var Path As String = Dict.Value("path") 
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		      If Results.RowCount <> 0 Then
-		        Continue
-		      End If
-		      
-		      Var ObjectID As v4UUID = Dict.Value("object_id").StringValue
-		      Var ClassString As String = Dict.Value("class_string")
-		      Var Label As String = Dict.Value("label")         
-		      Var Availability As UInt64 = Dict.Value("availability")
-		      Var Tags As String = Dict.Value("tags")
-		      Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
-		      EngramsUpdated = True
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
+		  If Not LegacyMode Then
+		    Var Unpacked() As Beacon.Blueprint
+		    For Each Dict As Dictionary In Blueprints
+		      Try
+		        Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Dict)
+		        If (Blueprint Is Nil) = False Then
+		          Unpacked.Add(Blueprint)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    Call Self.SaveBlueprints(Unpacked, True)
+		  Else
+		    For Each Dict As Dictionary In Blueprints
+		      Try
+		        Var Category As String = Dict.Value("category")
+		        Var Path As String = Dict.Value("path") 
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		        If Results.RowCount <> 0 Then
+		          Continue
+		        End If
+		        
+		        Var ObjectID As v4UUID = Dict.Value("object_id").StringValue
+		        Var ClassString As String = Dict.Value("class_string")
+		        Var Label As String = Dict.Value("label")         
+		        Var Availability As UInt64 = Dict.Value("availability")
+		        Var Tags As String = Dict.Value("tags")
+		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
+		        EngramsUpdated = True
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  End If
 		  Self.Commit()
 		  Return EngramsUpdated
 		End Function
@@ -1334,7 +1292,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var EngramsUpdated, PresetsUpdated As Boolean
 		  For Each Action As Dictionary In Actions
 		    Var RemotePath As String = Action.Value("Path")
-		    If RemotePath = "/Engrams.json" Then
+		    If RemotePath = "/Engrams.json" Or RemotePath = "/Blueprints.json" Then
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.DeleteDataForMod(Self.UserModID)
@@ -2540,14 +2498,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
-		  Var Arr(0) As Beacon.Blueprint
-		  Arr(0) = Blueprint
-		  Return (Self.SaveBlueprints(Arr, Replace) = 1)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
 		  Var CountSaved As Integer
 		  
@@ -3190,28 +3140,49 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
-		  Var Dicts() As Dictionary
-		  While Not Results.AfterLastRow
-		    Var Dict As New Dictionary  
-		    Dict.Value("class_string") = Results.Column("class_string").StringValue  
-		    Dict.Value("path") = Results.Column("path").StringValue  
-		    Dict.Value("tags") = Results.Column("tags").StringValue
-		    Dict.Value("object_id") = Results.Column("object_id").StringValue
-		    Dict.Value("label") = Results.Column("label").StringValue
-		    Dict.Value("availability") = Results.Column("availability").IntegerValue
-		    Dict.Value("category") = Results.Column("category").StringValue
-		    Dicts.Add(Dict)
+		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints("", "", New Beacon.StringList(Self.UserModID), "")
+		  Break
+		  Return
+		  Var Packed() As Dictionary
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    Var Dict As Dictionary = Blueprint.Pack
+		    If (Dict Is Nil) = False Then
+		      Continue
+		    End If
 		    
-		    Results.MoveToNextRow()
-		  Wend
-		  
-		  If Dicts.Count > 0 Then
-		    Var Content As String = Beacon.GenerateJSON(Dicts, False)
-		    Call UserCloud.Write("Engrams.json", Content)
+		    Packed.Add(Dict)
+		  Next
+		  If Packed.Count > 0 Then
+		    Var Content As String = Beacon.GenerateJSON(Packed, False)
+		    Call UserCloud.Write("Blueprints.json", Content)
 		  Else
-		    Call UserCloud.Delete("Engrams.json")
+		    Call UserCloud.Delete("Blueprints.json")
 		  End If
+		  
+		  #if false
+		    Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
+		    Var Dicts() As Dictionary
+		    While Not Results.AfterLastRow
+		      Var Dict As New Dictionary  
+		      Dict.Value("class_string") = Results.Column("class_string").StringValue  
+		      Dict.Value("path") = Results.Column("path").StringValue  
+		      Dict.Value("tags") = Results.Column("tags").StringValue
+		      Dict.Value("object_id") = Results.Column("object_id").StringValue
+		      Dict.Value("label") = Results.Column("label").StringValue
+		      Dict.Value("availability") = Results.Column("availability").IntegerValue
+		      Dict.Value("category") = Results.Column("category").StringValue
+		      Dicts.Add(Dict)
+		      
+		      Results.MoveToNextRow()
+		    Wend
+		    
+		    If Dicts.Count > 0 Then
+		      Var Content As String = Beacon.GenerateJSON(Dicts, False)
+		      Call UserCloud.Write("Engrams.json", Content)
+		    Else
+		      Call UserCloud.Delete("Engrams.json")
+		    End If
+		  #endif
 		End Sub
 	#tag EndMethod
 

@@ -39,7 +39,6 @@ Begin Window EntryMultiEditor
       HasBackColor    =   False
       Height          =   209
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   10
       LockBottom      =   True

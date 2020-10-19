@@ -67,25 +67,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetCreatureByPath(Path As String) As Beacon.Creature
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetEngramByClass(ClassString As String) As Beacon.Engram
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
@@ -103,13 +85,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetEngramByPath(Path As String) As Beacon.Engram
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramsByEntryString(EntryString As String) As Beacon.Engram()
+		Function GetEngramsByEntryString(EntryString As String, Mods As Beacon.StringList) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
@@ -151,19 +127,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
 		  
 		End Function
 	#tag EndMethod
@@ -218,6 +182,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function ResolvePathFromClassString(ClassString As String) As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
 		  
 		End Function
 	#tag EndMethod

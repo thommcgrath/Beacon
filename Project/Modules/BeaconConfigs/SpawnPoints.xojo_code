@@ -382,10 +382,7 @@ Implements Iterable
 		      If SpawnClasses.HasKey(ClassString) Then
 		        SpawnPoint = SpawnPoints.mSpawnPoints.Value(SpawnClasses.Value(ClassString))
 		      Else
-		        SpawnPoint = Beacon.Data.GetSpawnPointByClass(ClassString)
-		        If SpawnPoint = Nil Then
-		          SpawnPoint = Beacon.SpawnPoint.CreateFromClass(ClassString)
-		        End If
+		        SpawnPoint = Beacon.ResolveSpawnPoint("", "", ClassString, Mods)
 		        
 		        Var Mutable As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
 		        Mutable.Mode = Mode
@@ -450,11 +447,7 @@ Implements Iterable
 		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
 		            
 		            For I As Integer = 0 To Classes.LastIndex
-		              Var CreaturePath As String = Beacon.NormalizeBlueprintPath(Classes(I), "Creatures")
-		              Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(CreaturePath)
-		              If Creature = Nil Then
-		                Creature = Beacon.Creature.CreateFromPath(CreaturePath)
-		              End If
+		              Var Creature As Beacon.Creature = Beacon.ResolveCreature("", "", Classes(I), Mods)
 		              
 		              Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
 		              If LevelMembers.LastIndex >= I Then
@@ -533,22 +526,13 @@ Implements Iterable
 		                End If
 		                
 		                Var FromClassValue As String = Replacement.Value("FromClass")
-		                Var FromCreaturePath As String = Beacon.NormalizeBlueprintPath(FromClassValue, "Creatures")
-		                Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromCreaturePath)
-		                If FromCreature = Nil Then
-		                  FromCreature = Beacon.Creature.CreateFromPath(FromCreaturePath)
-		                End If
+		                Var FromCreature As Beacon.Creature = Beacon.ResolveCreature("", "", FromClassValue, Mods)
 		                
 		                Var ToWeights() As Variant = Replacement.Value("Weights")
 		                Var ToClassValues() As Variant = Replacement.Value("ToClasses")
 		                For I As Integer = 0 To ToClassValues.LastIndex
 		                  Var ToWeight As Double = If(I <= ToWeights.LastIndex, ToWeights(I), 1.0)
-		                  Var ToClassValue As String = ToClassValues(I)
-		                  Var ToCreaturePath As String = Beacon.NormalizeBlueprintPath(ToClassValue, "Creatures")
-		                  Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToCreaturePath)
-		                  If ToCreature = Nil Then
-		                    ToCreature = Beacon.Creature.CreateFromPath(ToCreaturePath)
-		                  End If
+		                  Var ToCreature As Beacon.Creature = Beacon.ResolveCreature("", "", ToClassValues(I), Mods)
 		                  
 		                  Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
 		                Next

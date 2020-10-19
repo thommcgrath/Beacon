@@ -42,11 +42,10 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   1122
       Begin UITweaks.ResizedLabel PlayerBaseLabel
@@ -2557,7 +2556,6 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
-         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   104
          LockBottom      =   False
@@ -2588,7 +2586,6 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
-         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   355
          LockBottom      =   False
@@ -2619,7 +2616,6 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
-         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   606
          LockBottom      =   False
@@ -2650,7 +2646,6 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   464
-         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   857
          LockBottom      =   False

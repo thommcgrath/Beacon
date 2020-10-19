@@ -882,11 +882,13 @@ End
 		      Return
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(Self.EntryStringField.Text)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Text)
+		    Var ExistingEngrams() As Beacon.Engram = Beacon.Data.GetEngramsByEntryString(Self.EntryStringField.Text, Nil)
+		    If ExistingEngrams.Count = 0 Then
+		      ExistingEngrams.Add(Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Text))
 		    End If
-		    Engrams.Add(Engram)
+		    For Each Engram As Beacon.Engram In ExistingEngrams
+		      Engrams.Add(Engram)
+		    Next
 		  Else
 		    Engrams = Self.mEngrams
 		  End If

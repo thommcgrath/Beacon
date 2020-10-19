@@ -117,7 +117,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Continue
 		      End If
 		      
-		      Var Key As String = Option.Engram.Path
+		      Var Key As String = Option.Engram.ObjectID
 		      If Key = "" Then
 		        Continue
 		      End If
@@ -147,7 +147,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Var BlueprintEntry As New Beacon.SetEntry
 		  For Each Entry As DictionaryEntry In Options
-		    Var Path As String = Entry.Key
+		    Var UUID As String = Entry.Key
 		    Var Arr() As Beacon.SetEntryOption = Entry.Value
 		    Var Count As Integer = Arr.LastIndex + 1
 		    Var WeightSum As Double
@@ -156,9 +156,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    Var AverageWeight As Double = WeightSum / Count
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateFromPath(Path)
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
+		    If Engram Is Nil Then
+		      Continue
 		    End If
 		    
 		    BlueprintEntry.Append(New Beacon.SetEntryOption(Engram, AverageWeight))
@@ -318,7 +318,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.SetEntry
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Beacon.SetEntry
 		  Var Entry As New Beacon.SetEntry
 		  Entry.RawWeight = Dict.Lookup("EntryWeight", 1.0)
 		  
@@ -362,12 +362,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Dict.HasKey("ItemClassStrings") Then
 		    Var ClassStrings() As Variant = Dict.Value("ItemClassStrings")
 		    For Each ClassString As String In ClassStrings
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		      If Engram <> Nil Then
-		        Engrams.Add(Engram)
-		      Else
-		        Engrams.Add(Beacon.Engram.CreateFromClass(ClassString))
-		      End If
+		      Engrams.Add(Beacon.ResolveEngram("", "", ClassString, Mods))
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
 		    Var Paths() As Variant = Dict.Value("Items")
@@ -383,7 +378,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Continue
 		      End If
 		      
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Path, "", Mods)
 		      If Engram = Nil Then
 		        Engram = Beacon.Engram.CreateFromPath(Path)
 		      End If

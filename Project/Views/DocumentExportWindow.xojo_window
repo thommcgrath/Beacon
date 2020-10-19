@@ -286,7 +286,6 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter GameIniRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -298,7 +297,6 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter GameUserSettingsRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -310,7 +308,6 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter FileRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -322,7 +319,6 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter ClipboardRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

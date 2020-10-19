@@ -32,16 +32,15 @@ Inherits Beacon.ConfigGroup
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Var Behaviors As Dictionary = Entry.Value
+		    Var UUID As String = Entry.Key
 		    
 		    // Get the entry string from the engram if available, or use the backup if not available.
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
-		    End If
-		    If Engram <> Nil And SourceDocument.ModEnabled(Engram.ModID) = False Then
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
+		    If (Engram Is Nil) Or SourceDocument.ModEnabled(Engram.ModID) = False Then
 		      // Don't include items for disabled mods
 		      Continue
 		    End If
+		    
 		    Var EntryString As String
 		    If Engram <> Nil And Engram.HasUnlockDetails Then
 		      EntryString = Engram.EntryString
@@ -230,33 +229,34 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h21
-		Private Shared Sub AddOverrideToConfig(Config As BeaconConfigs.EngramControl, Details As Dictionary)
+		Private Shared Sub AddOverrideToConfig(Config As BeaconConfigs.EngramControl, Details As Dictionary, Mods As Beacon.StringList)
 		  If Not Details.HasKey("EngramClassName") Then
 		    Return
 		  End If
 		  
 		  Try
 		    Var EntryString As String = Details.Value("EngramClassName")
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(EntryString)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateFromEntryString(EntryString)
+		    Var Engrams() As Beacon.Engram = Beacon.Data.GetEngramsByEntryString(EntryString, Mods)
+		    If Engrams.Count = 0 Then
+		      Engrams.Add(Beacon.Engram.CreateFromEntryString(EntryString))
 		    End If
-		    
-		    If Details.HasKey("EngramHidden") Then
-		      Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
-		    End If
-		    
-		    If Details.HasKey("RemoveEngramPreReq") Then
-		      Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
-		    End If
-		    
-		    If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
-		      Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
-		    End If
-		    
-		    If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
-		      Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
-		    End If
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Details.HasKey("EngramHidden") Then
+		        Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
+		      End If
+		      
+		      If Details.HasKey("RemoveEngramPreReq") Then
+		        Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
+		      End If
+		      
+		      If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
+		        Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
+		      End If
+		      
+		      If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
+		        Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
+		      End If
+		    Next
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -472,7 +472,7 @@ Inherits Beacon.ConfigGroup
 		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByItemID(ItemID)
 		        If (Engram Is Nil) = False And Engram.EntryString.IsEmpty = False Then
 		          Details.Value("EngramClassName") = Engram.EntryString
-		          AddOverrideToConfig(Config, Details)
+		          AddOverrideToConfig(Config, Details, Mods)
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -496,7 +496,7 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End Try
 		      
-		      AddOverrideToConfig(Config, Details)
+		      AddOverrideToConfig(Config, Details, Mods)
 		    Next
 		  End If
 		  
@@ -525,13 +525,14 @@ Inherits Beacon.ConfigGroup
 		        Var EntryString As String = Details.Value("EngramClassName")
 		        Var Level As Integer = Details.Value("LevelToAutoUnlock")
 		        
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(EntryString)
-		        If Engram = Nil Then
-		          Engram = Beacon.Engram.CreateFromEntryString(EntryString)
+		        Var Engrams() As Beacon.Engram = Beacon.Data.GetEngramsByEntryString(EntryString, Mods)
+		        If Engrams.Count = 0 Then
+		          Engrams.Add(Beacon.Engram.CreateFromEntryString(EntryString))
 		        End If
-		        
-		        Config.AutoUnlockEngram(Engram) = True
-		        Config.RequiredPlayerLevel(Engram) = Level
+		        For Each Engram As Beacon.Engram In Engrams
+		          Config.AutoUnlockEngram(Engram) = True
+		          Config.RequiredPlayerLevel(Engram) = Level
+		        Next
 		      Catch Err As RuntimeException
 		      End Try
 		    Next

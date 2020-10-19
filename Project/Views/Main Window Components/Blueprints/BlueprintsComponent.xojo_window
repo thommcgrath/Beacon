@@ -37,7 +37,6 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   486
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -100,7 +99,6 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   486
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -251
       LockBottom      =   True

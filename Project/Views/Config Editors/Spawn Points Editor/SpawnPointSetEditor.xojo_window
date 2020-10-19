@@ -1403,7 +1403,7 @@ End
 		    Next
 		  Else
 		    For Each Creature As Beacon.Creature In SelectCreatures
-		      SelectedReplacements.Add(Creature.Path)
+		      SelectedReplacements.Add(Creature.ObjectID)
 		    Next
 		  End If
 		  
@@ -1435,8 +1435,8 @@ End
 		    ReplacementCreatureNames.Sort
 		    
 		    Self.ReplaceList.CellValueAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
-		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.Path
-		    Self.ReplaceList.Selected(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.Path) > -1
+		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.ObjectID.StringValue
+		    Self.ReplaceList.Selected(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.ObjectID) > -1
 		  Next
 		  Self.ReplaceList.SortingColumn = 0
 		  Self.ReplaceList.Sort
@@ -1763,9 +1763,9 @@ End
 		      Continue
 		    End If
 		    
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Me.RowTagAt(I))
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromPath(Me.RowTagAt(I))
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(Me.RowTagAt(I))
+		    If Creature Is Nil Then
+		      Continue
 		    End If
 		    
 		    CreaturesToDelete.Add(Creature)
@@ -1802,21 +1802,21 @@ End
 		      Continue
 		    End If
 		    
-		    Var Path As String = Me.RowTagAt(I)
-		    Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
-		    If FromCreature = Nil Then
-		      FromCreature = Beacon.Creature.CreateFromPath(Path)
+		    Var FromUUID As String = Me.RowTagAt(I)
+		    Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(FromUUID)
+		    If FromCreature Is Nil Then
+		      Continue
 		    End If
 		    
 		    Var Replacements() As Beacon.Creature = Set.ReplacementCreatures(FromCreature)
 		    Var Map As New Dictionary
 		    For Each ToCreature As Beacon.Creature In Replacements
 		      Var Weight As Double = Set.CreatureReplacementWeight(FromCreature, ToCreature)
-		      Map.Value(ToCreature.Path) = Weight
+		      Map.Value(ToCreature.ObjectID.StringValue) = Weight
 		    Next
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("Creature") = FromCreature.Path
+		    Dict.Value("Creature") = FromCreature.ObjectID.StringValue
 		    Dict.Value("Replacements") = Map
 		    Items.Add(Dict)
 		  Next
@@ -1850,19 +1850,19 @@ End
 		      Continue
 		    End If
 		    
-		    Var FromPath As String = Item.Value("Creature")
-		    Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromPath)
-		    If FromCreature = Nil Then
-		      FromCreature = Beacon.Creature.CreateFromPath(FromPath)
+		    Var FromUUID As String = Item.Value("Creature")
+		    Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(FromUUID)
+		    If FromCreature Is Nil Then
+		      Continue
 		    End If
 		    
 		    Var Maps() As Variant = Item.Value("Replacements")
 		    For Each Map As Dictionary In Maps
 		      For Each MapEntry As DictionaryEntry In Map
-		        Var ToPath As String = MapEntry.Key
-		        Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToPath)
-		        If ToCreature = Nil Then
-		          ToCreature = Beacon.Creature.CreateFromPath(ToPath)
+		        Var ToUUID As String = MapEntry.Key
+		        Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(ToUUID)
+		        If ToCreature Is Nil Then
+		          Continue
 		        End If
 		        Var Weight As Double = MapEntry.Value
 		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
@@ -1883,10 +1883,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Var TargetPath As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
-		  Var TargetCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(TargetPath)
-		  If TargetCreature = Nil Then
-		    TargetCreature = Beacon.Creature.CreateFromPath(TargetPath)
+		  Var TargetUUID As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
+		  Var TargetCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(TargetUUID)
+		  If TargetCreature Is Nil Then
+		    Return
 		  End If
 		  
 		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet, TargetCreature)

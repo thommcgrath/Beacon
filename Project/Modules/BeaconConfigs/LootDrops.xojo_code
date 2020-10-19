@@ -317,7 +317,7 @@ Implements Iterable
 		    
 		    Var Source As Beacon.LootSource
 		    Try
-		      Source = Beacon.LootContainer.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty)
+		      Source = Beacon.LootContainer.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty, Mods)
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try

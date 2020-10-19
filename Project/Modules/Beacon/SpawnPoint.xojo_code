@@ -110,7 +110,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Var SpawnPoint As New Beacon.SpawnPoint
 		  SpawnPoint.mClassString = Beacon.ClassStringFromPath(Path)
 		  SpawnPoint.mPath = Path
-		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SpawnPoint.mPath.Lowercase)
+		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LocalData.UserModID.Lowercase + ":" + SpawnPoint.mPath.Lowercase)
 		  SpawnPoint.mLabel = Beacon.LabelFromClassString(SpawnPoint.mClassString)
 		  SpawnPoint.mModID = LocalData.UserModID
 		  SpawnPoint.mModName = LocalData.UserModName
@@ -218,8 +218,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Function Limits() As Dictionary
 		  Var Limits As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mLimits
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Entry.Key)
-		    If Creature <> Nil Then
+		    Var Creature As Beacon.Creature = Beacon.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
+		    If (Creature Is Nil) = False Then
 		      Limits.Value(Creature) = Entry.Value
 		    End If
 		  Next

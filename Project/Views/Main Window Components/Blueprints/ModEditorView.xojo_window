@@ -145,6 +145,109 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Export()
+		  Var Dialog As New SaveFileDialog
+		  Dialog.SuggestedFileName = "Exported Blueprints.json"
+		  Dialog.Filter = BeaconFileTypes.JsonFile
+		  
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Packed() As Dictionary
+		  Var SelectAll As Boolean = Self.BlueprintList.SelectedRowCount = 0
+		  For Idx As Integer = 0 To Self.BlueprintList.LastRowIndex
+		    If SelectAll Or Self.BlueprintList.Selected(Idx) Then
+		      Var ObjectID As String = Self.BlueprintList.RowTagAt(Idx)
+		      Var Blueprint As Beacon.Blueprint = Self.mController.Blueprint(ObjectID)
+		      If Blueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Blueprint.Pack)
+		    End If
+		  Next
+		  
+		  Var JSON As String
+		  Try
+		    JSON = Beacon.GenerateJSON(Packed, True)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Could not export blueprints", "There was an error while generating the JSON content: " + Err.Message)
+		    Return
+		  End Try
+		  
+		  If Not File.Write(JSON) Then
+		    Self.ShowAlert("Could not export blueprints", "Beacon was unable to save the JSON file to disk.")
+		    Return
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Import()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.JsonFile + BeaconFileTypes.Text
+		  
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Contents As String
+		  Try
+		    Contents = File.Read
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Could not open file", "Beacon was unable to open the selected file: " + Err.Message)
+		    Return
+		  End Try
+		  
+		  If Self.ImportAsJSON(Contents) Then
+		    Return
+		  End If
+		  
+		  Self.ImportAsPlain(Contents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ImportAsJSON(Contents As String) As Boolean
+		  Var Parsed As Variant
+		  Try
+		    Parsed = Beacon.ParseJSON(Contents)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  Var Dictionaries() As Variant
+		  Try
+		    Dictionaries = Parsed
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  Var Blueprints() As Beacon.Blueprint
+		  For Idx As Integer = 0 To Dictionaries.LastIndex
+		    Try
+		      Var Dict As Dictionary = Dictionaries(Idx)
+		      Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Dict)
+		      If (Blueprint Is Nil) = False Then
+		        Blueprints.Add(Blueprint)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Var Added As Integer = Beacon.Data.SaveBlueprints(Blueprints, False)
+		  Break
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportAsPlain(Contents As String)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mController_BlueprintsLoaded(Sender As BlueprintController)
 		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints
@@ -181,6 +284,7 @@ End
 		  Self.BlueprintList.Sort
 		  Self.BlueprintList.EnsureSelectionIsVisible
 		  Self.BlueprintList.SelectionChangeBlocked = False
+		  Self.BlueprintHeader.ExportButton.Enabled = Self.BlueprintList.RowCount > 0
 		End Sub
 	#tag EndMethod
 
@@ -375,6 +479,9 @@ End
 		  Var ImportClipboardButton As New BeaconToolbarItem("ImportClipboard", IconToolbarCopied, Self.ClipboardHasCodes, "Import from copied text")
 		  Me.LeftItems.Append(ImportClipboardButton)
 		  
+		  Var ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.BlueprintList.RowCount > 0, "Export blueprints to JSON")
+		  Me.LeftItems.Append(ExportButton)
+		  
 		  Self.mPublishButton = New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Make changes live")
 		  Self.mRevertButton = New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Cancel changes and revert to the blueprints on the server.")
 		  
@@ -395,7 +502,7 @@ End
 		      Self.mController.SaveBlueprint(Blueprint)
 		    End If
 		  Case "ImportFile"
-		    
+		    Self.Import()
 		  Case "ImportURL"
 		    
 		  Case "ImportClipboard"
@@ -404,6 +511,8 @@ End
 		    Self.mController.Publish()
 		  Case "RevertButton"
 		    Self.mController.DiscardChanges()
+		  Case "ExportButton"
+		    Self.Export()
 		  End Select
 		End Sub
 	#tag EndEvent

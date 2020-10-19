@@ -73,11 +73,10 @@ Begin BeaconPagedSubview PresetsComponent
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   300
       Begin ListPresetsComponent PresetsList
@@ -92,7 +91,6 @@ Begin BeaconPagedSubview PresetsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   262
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
