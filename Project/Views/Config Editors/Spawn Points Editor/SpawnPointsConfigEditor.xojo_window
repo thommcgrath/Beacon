@@ -195,10 +195,11 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   729
       Begin SpawnPointEditor Editor
@@ -213,6 +214,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   548
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   251
          LockBottom      =   True

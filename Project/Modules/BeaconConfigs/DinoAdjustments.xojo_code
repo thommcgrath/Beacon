@@ -12,24 +12,24 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Behavior.ProhibitSpawning Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName="""")"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName="""")"))
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
 		    Else
 		      If Behavior.DamageMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.ResistanceMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.TamedDamageMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.PreventTaming Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetClass + """"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetCreature.ClassString + """"))
 		      End If
 		    End If
 		  Next
@@ -70,7 +70,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
 		  #Pragma Unused Document
 		  
 		  Var Dicts() As Dictionary
@@ -134,7 +134,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.DinoAdjustments
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.DinoAdjustments
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
@@ -149,18 +149,11 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If
 		      
-		      Var TargetClass As String = Dict.Value("FromClassName")
-		      Var ReplacementClass As String = Dict.Value("ToClassName")
-		      
-		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
-		      If ReplacementClass = "" Then
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature(Dict, "", "", "FromClassName", Mods))
+		      If Dict.Value("ToClassName").StringValue.IsEmpty Then
 		        Behavior.ProhibitSpawning = True
 		      Else
-		        Var Replacement As Beacon.Creature = Beacon.Data.GetCreatureByClass(ReplacementClass)
-		        If IsNull(Replacement) Then
-		          Replacement = Beacon.Creature.CreateFromClass(ReplacementClass)
-		        End If
-		        Behavior.ReplacementCreature = Replacement
+		        Behavior.ReplacementCreature = Beacon.ResolveCreature(Dict, "", "", "ToClassName", Mods)
 		      End If
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -178,7 +171,7 @@ Inherits Beacon.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
 		      Behavior.DamageMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -196,7 +189,7 @@ Inherits Beacon.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
 		      Behavior.ResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -214,7 +207,7 @@ Inherits Beacon.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
 		      Behavior.TamedDamageMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -232,7 +225,7 @@ Inherits Beacon.ConfigGroup
 		      Var TargetClass As String = Dict.Value("ClassName")
 		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
 		      Behavior.TamedResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -243,7 +236,7 @@ Inherits Beacon.ConfigGroup
 		  For Each Entry As Variant In PreventTamedDinos
 		    Try
 		      Var TargetClass As String = Entry
-		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
 		      Behavior.PreventTaming = True
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
@@ -292,16 +285,6 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Return New Beacon.MutableCreatureBehavior(Creature)
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Shared Function MutableBehavior(Config As BeaconConfigs.DinoAdjustments, ClassString As String) As Beacon.MutableCreatureBehavior
-		  Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
-		  If IsNull(Creature) Then
-		    Creature = Beacon.Creature.CreateFromClass(ClassString)
-		  End If
-		  Return MutableBehavior(Config, Creature)
 		End Function
 	#tag EndMethod
 

@@ -121,7 +121,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPoint
 		  Try
-		    Var SpawnPoint As Beacon.SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class")
+		    Var SpawnPoint As Beacon.SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil)
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    If Dict.HasKey("Limits") Then

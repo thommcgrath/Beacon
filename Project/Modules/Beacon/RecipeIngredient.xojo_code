@@ -21,13 +21,13 @@ Protected Class RecipeIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.RecipeIngredient
+		Shared Function FromDictionary(Dict As Dictionary, Mods As Beacon.StringList) As Beacon.RecipeIngredient
 		  If Dict Is Nil Or (Dict.HasKey("object_id") = False And Dict.HasKey("path") = False) Or Dict.HasKey("quantity") = False Or Dict.HasKey("exact") = False Then
 		    Return Nil
 		  End If
 		  
 		  Try
-		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "object_id", "", "path")
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "object_id", "", "path", Mods)
 		    Var Quantity As Integer = Dict.Value("quantity")
 		    Var Exact As Boolean = Dict.Value("exact")
 		    
@@ -39,7 +39,7 @@ Protected Class RecipeIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromVariant(Value As Variant) As Beacon.RecipeIngredient()
+		Shared Function FromVariant(Value As Variant, Mods As Beacon.StringList) As Beacon.RecipeIngredient()
 		  Var Ingredients() As Beacon.RecipeIngredient
 		  
 		  If IsNull(Value) Then
@@ -48,7 +48,7 @@ Protected Class RecipeIngredient
 		  
 		  If Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
 		    // It's just a dictionary
-		    Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Value)
+		    Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Value, Mods)
 		    If (Ingredient Is Nil) = False Then
 		      Ingredients.Add(Ingredient)
 		    End If
@@ -57,7 +57,7 @@ Protected Class RecipeIngredient
 		    Try
 		      Var Parsed() As Variant = Beacon.ParseJSON(Value.StringValue)
 		      For Each Dict As Dictionary In Parsed
-		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict)
+		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict, Mods)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.Add(Ingredient)
 		        End If
@@ -82,7 +82,7 @@ Protected Class RecipeIngredient
 		    
 		    For Each Dict As Dictionary In Dicts
 		      Try
-		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict)
+		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict, Mods)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.Add(Ingredient)
 		        End If

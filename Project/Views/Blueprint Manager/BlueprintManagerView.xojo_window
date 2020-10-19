@@ -106,9 +106,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   510
       Begin FadedSeparator EditorHeaderSeparator
@@ -265,6 +266,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    End
    Begin Beacon.EngramSearcherThread Searcher
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

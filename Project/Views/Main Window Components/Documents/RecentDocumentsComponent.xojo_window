@@ -126,6 +126,7 @@ Begin DocumentsComponentView RecentDocumentsComponent
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   62
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False

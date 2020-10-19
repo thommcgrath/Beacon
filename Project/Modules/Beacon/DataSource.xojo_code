@@ -43,25 +43,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "GetBlueprintByID" )  Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		Function GetBlueprintsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Blueprint()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintsByPath(Path As String) As Beacon.Blueprint()
+		Function GetBlueprintsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Blueprint()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetCreatureByClass(ClassString As String) As Beacon.Creature
 		  
 		End Function
 	#tag EndMethod
@@ -74,12 +68,6 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Function GetCreatureByPath(Path As String) As Beacon.Creature
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetCreaturesByClass(ClassString As String) As Beacon.Creature()
 		  
 		End Function
 	#tag EndMethod
@@ -116,12 +104,6 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Function GetEngramByPath(Path As String) As Beacon.Engram
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramsByClass(ClassString As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
@@ -182,12 +164,6 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetSpawnPointsByClass(ClassString As String) As Beacon.SpawnPoint()
 		  
 		End Function
 	#tag EndMethod

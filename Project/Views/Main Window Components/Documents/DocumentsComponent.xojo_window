@@ -73,10 +73,11 @@ Begin BeaconPagedSubview DocumentsComponent
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   896
       Begin RecentDocumentsComponent RecentDocumentsComponent1
@@ -91,6 +92,7 @@ Begin BeaconPagedSubview DocumentsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -125,6 +127,7 @@ Begin BeaconPagedSubview DocumentsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -159,6 +162,7 @@ Begin BeaconPagedSubview DocumentsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   532
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True

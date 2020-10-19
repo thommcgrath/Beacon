@@ -2,7 +2,8 @@
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function Clone(Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
-		  Var Dict As Dictionary = Self.ToDictionary(Document)
+		  Var Map As New Dictionary
+		  Var Dict As Dictionary = Self.ToDictionary(Document, Map)
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If
@@ -177,10 +178,10 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary(Document As Beacon.Document) As Dictionary
+		Function ToDictionary(Document As Beacon.Document, BlueprintsMap As Dictionary) As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("Implicit") = Self.mIsImplicit
-		  RaiseEvent WriteDictionary(Dict, Document)
+		  RaiseEvent WriteDictionary(Dict, Document, BlueprintsMap)
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -231,7 +232,7 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		Event WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
 	#tag EndHook
 
 

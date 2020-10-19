@@ -69,10 +69,10 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  Var Entry As New Beacon.SpawnPointSetEntry
 		  If Dict.HasKey("creature_id") Then
 		    Var CreatureUUID As String = Dict.Value("creature_id")
-		    Entry.mCreature = Beacon.ResolveCreature(CreatureUUID, "", "")
+		    Entry.mCreature = Beacon.ResolveCreature(CreatureUUID, "", "", Nil)
 		  Else
 		    Var CreaturePath As String = Dict.Value("Creature")
-		    Entry.mCreature = Beacon.ResolveCreature("", CreaturePath, "")
+		    Entry.mCreature = Beacon.ResolveCreature("", CreaturePath, "", Nil)
 		  End If
 		  If Entry.mCreature Is Nil Then
 		    Return Nil

@@ -212,12 +212,12 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    If (Replacements Is Nil) = False Then
 		      For Each Entry As DictionaryEntry In Replacements
 		        Var FromUUID As String = Entry.Key
-		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature(FromUUID, "", "")
+		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature(FromUUID, "", "", Nil)
 		        Var ToDict As Dictionary = Entry.Value
 		        For Each SubEntry As DictionaryEntry In ToDict
 		          Var ToUUID As String = SubEntry.Key
 		          Var Weight As Double = SubEntry.Value
-		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature(ToUUID, "", "")
+		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature(ToUUID, "", "", Nil)
 		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		        Next
 		      Next
@@ -227,12 +227,12 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    If (Replacements Is Nil) = False Then
 		      For Each Entry As DictionaryEntry In Replacements
 		        Var FromPath As String = Entry.Key
-		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature("", FromPath, "")
+		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature("", FromPath, "", Nil)
 		        Var ToDict As Dictionary = Entry.Value
 		        For Each SubEntry As DictionaryEntry In ToDict
 		          Var ToPath As String = SubEntry.Key
 		          Var Weight As Double = SubEntry.Value
-		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature("", ToPath, "")
+		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature("", ToPath, "", Nil)
 		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		        Next
 		      Next

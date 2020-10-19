@@ -64,7 +64,7 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
 		  #Pragma Unused Document
 		  
 		  Var Points() As Dictionary
@@ -308,15 +308,15 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.SpawnPoints
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.SpawnPoints
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
 		  Var SpawnPoints As New BeaconConfigs.SpawnPoints
-		  HandleConfig(SpawnPoints, ParsedData, "ConfigOverrideNPCSpawnEntriesContainer")
-		  HandleConfig(SpawnPoints, ParsedData, "ConfigAddNPCSpawnEntriesContainer")
-		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer")
+		  HandleConfig(SpawnPoints, ParsedData, "ConfigOverrideNPCSpawnEntriesContainer", Mods)
+		  HandleConfig(SpawnPoints, ParsedData, "ConfigAddNPCSpawnEntriesContainer", Mods)
+		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer", Mods)
 		  If SpawnPoints.Count > 0 Then
 		    Return SpawnPoints
 		  End If
@@ -341,7 +341,7 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub HandleConfig(SpawnPoints As BeaconConfigs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String)
+		Private Shared Sub HandleConfig(SpawnPoints As BeaconConfigs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String, Mods As Beacon.StringList)
 		  If Not ParsedData.HasKey(ConfigKey) Then
 		    Return
 		  End If
@@ -571,8 +571,8 @@ Implements Iterable
 		            Continue
 		          End If
 		          
-		          Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Limit.Value("NPCClassString"))
-		          If Creature <> Nil Then
+		          Var Creature As Beacon.Creature = Beacon.ResolveCreature(Limit, "", "", "NPCClassString", Mods)
+		          If (Creature Is Nil) = False Then
 		            Clone.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
 		          End If
 		        Next

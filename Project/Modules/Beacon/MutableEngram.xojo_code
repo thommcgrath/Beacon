@@ -164,7 +164,7 @@ Implements Beacon.MutableBlueprint
 		  End If
 		  
 		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
-		    Self.mIngredients = Beacon.RecipeIngredient.FromVariant(Dict.Value("recipe"))
+		    Self.mIngredients = Beacon.RecipeIngredient.FromVariant(Dict.Value("recipe"), Nil)
 		    Self.mHasLoadedIngredients = True
 		  Else
 		    Self.mIngredients.ResizeTo(-1)

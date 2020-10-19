@@ -491,6 +491,58 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetCreaturesByClass(Extends Source As Beacon.DataSource, ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByClass(ClassString, Mods)
+		  Var Creatures() As Beacon.Creature
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Creature Then
+		      Creatures.Add(Beacon.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByPath(Extends Source As Beacon.DataSource, Path As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByPath(Path, Mods)
+		  Var Creatures() As Beacon.Creature
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Creature Then
+		      Creatures.Add(Beacon.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByClass(Extends Source As Beacon.DataSource, ClassString As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByClass(ClassString, Mods)
+		  Var Engrams() As Beacon.Engram
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Engram Then
+		      Engrams.Add(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByPath(Extends Source As Beacon.DataSource, Path As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByPath(Path, Mods)
+		  Var Engrams() As Beacon.Engram
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Engram Then
+		      Engrams.Add(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastIndex DownTo 0
@@ -500,6 +552,32 @@ Protected Module Beacon
 		    End If
 		  Next
 		  Return Default
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByClass(Extends Source As Beacon.DataSource, ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
+		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByClass(ClassString, Mods)
+		  Var SpawnPoints() As Beacon.SpawnPoint
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.SpawnPoint Then
+		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
+		    End If
+		  Next
+		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByPath(Extends Source As Beacon.DataSource, Path As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
+		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByPath(Path, Mods)
+		  Var SpawnPoints() As Beacon.SpawnPoint
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.SpawnPoint Then
+		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
+		    End If
+		  Next
+		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -1241,7 +1319,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String) As Beacon.Creature
+		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Beacon.Creature
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -1256,12 +1334,12 @@ Protected Module Beacon
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Beacon.ResolveCreature(ObjectID, Path, ClassString)
+		  Return Beacon.ResolveCreature(ObjectID, Path, ClassString, Mods)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String) As Beacon.Creature
+		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Beacon.Creature
 		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(ObjectID)
@@ -1274,9 +1352,9 @@ Protected Module Beacon
 		  
 		  If Path.IsEmpty = False Then
 		    Try
-		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
-		      If (Creature Is Nil) = False Then
-		        Return Creature
+		      Var Creatures() As Beacon.Creature = Beacon.Data.GetCreaturesByPath(Path, Mods)
+		      If Creatures.Count > 0 Then
+		        Return Creatures(0)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -1284,9 +1362,9 @@ Protected Module Beacon
 		  
 		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
-		      If (Creature Is Nil) = False Then
-		        Return Creature
+		      Var Creatures() As Beacon.Creature = Beacon.Data.GetCreaturesByClass(ClassString, Mods)
+		      If Creatures.Count > 0 Then
+		        Return Creatures(0)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -1305,11 +1383,28 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, ClassKey As String, PathKey As String) As Beacon.Engram
+		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, ClassKey As String, PathKey As String, Mods As Beacon.StringList) As Beacon.Engram
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
 		    ObjectID = Dict.Value(ObjectIDKey)
+		  End If
+		  
+		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
+		    Path = Dict.Value(PathKey)
+		  End If
+		  
+		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
+		    ClassString = Dict.Value(ClassKey)
+		  End If
+		  
+		  Return Beacon.ResolveEngram(ObjectID, Path, ClassString, Mods)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Beacon.Engram
+		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(ObjectID)
 		      If (Engram Is Nil) = False Then
@@ -1319,23 +1414,21 @@ Protected Module Beacon
 		    End Try
 		  End If
 		  
-		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
-		    Path = Dict.Value(PathKey)
+		  If Path.IsEmpty = False Then
 		    Try
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		      If (Engram Is Nil) = False Then
-		        Return Engram
+		      Var Engrams() As Beacon.Engram = Beacon.Data.GetEngramsByPath(Path, Mods)
+		      If Engrams.Count > 0 Then
+		        Return Engrams(0)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
 		  
-		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
-		    ClassString = Dict.Value(ClassKey)
+		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		      If (Engram Is Nil) = False Then
-		        Return Engram
+		      Var Engrams() As Beacon.Engram = Beacon.Data.GetEngramsByClass(ClassString, Mods)
+		      If Engrams.Count > 0 Then
+		        Return Engrams(0)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -1354,7 +1447,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String) As Beacon.SpawnPoint
+		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Beacon.SpawnPoint
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -1369,12 +1462,12 @@ Protected Module Beacon
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Beacon.ResolveSpawnPoint(ObjectID, Path, ClassString)
+		  Return Beacon.ResolveSpawnPoint(ObjectID, Path, ClassString, Mods)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String) As Beacon.SpawnPoint
+		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint
 		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByID(ObjectID)
@@ -1387,9 +1480,9 @@ Protected Module Beacon
 		  
 		  If Path.IsEmpty = False Then
 		    Try
-		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByPath(Path)
-		      If (SpawnPoint Is Nil) = False Then
-		        Return SpawnPoint
+		      Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsByPath(Path, Mods)
+		      If SpawnPoints.Count > 0 Then
+		        Return SpawnPoints(0)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
@@ -1397,9 +1490,9 @@ Protected Module Beacon
 		  
 		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByClass(ClassString)
-		      If (SpawnPoint Is Nil) = False Then
-		        Return SpawnPoint
+		      Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsByClass(ClassString, Mods)
+		      If SpawnPoints.Count > 0 Then
+		        Return SpawnPoints(0)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try

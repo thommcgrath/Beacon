@@ -125,7 +125,7 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(GroupName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As Beacon.ConfigGroup
+		Protected Function CreateInstance(GroupName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, Document As Beacon.Document) As Beacon.ConfigGroup
 		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info Is Nil Then
 		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
@@ -135,15 +135,20 @@ Protected Module BeaconConfigs
 		    Return Nil
 		  End If
 		  
+		  Var MapCompatibility As UInt64 = Document.MapCompatibility
+		  Var Difficulty As BeaconConfigs.Difficulty = Document.Difficulty
+		  Var Mods As Beacon.StringList = Document.Mods
+		  
 		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
 		  For Each Signature As Introspection.MethodInfo In Methods
 		    Try
-		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
-		        Var Params(3) As Variant
+		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastIndex = 4 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
+		        Var Params(4) As Variant
 		        Params(0) = ParsedData
 		        Params(1) = CommandLineOptions
 		        Params(2) = MapCompatibility
 		        Params(3) = Difficulty
+		        Params(4) = Mods
 		        Return Signature.Invoke(Nil, Params)
 		      End If
 		    Catch Err As RuntimeException

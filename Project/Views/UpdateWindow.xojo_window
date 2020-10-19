@@ -45,9 +45,10 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel
@@ -103,6 +104,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -321,6 +323,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -428,6 +431,7 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -435,6 +439,7 @@ Begin BeaconWindow UpdateWindow
    End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

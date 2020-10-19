@@ -41,10 +41,11 @@ Begin BeaconDialog BlueprintEditorDialog
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -61,6 +62,7 @@ Begin BeaconDialog BlueprintEditorDialog
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   254
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   146
          LockBottom      =   True

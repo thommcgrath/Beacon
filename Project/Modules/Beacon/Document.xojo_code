@@ -1305,14 +1305,13 @@ Implements ObservationKit.Observable
 		  Document.Value("Trust") = Self.TrustKey
 		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords
 		  
-		  Var ModsList() As String = Self.Mods
 		  Document.Value("ModSelections") = Self.mMods
-		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
 		  Document.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
 		  Document.Value("AllowUCS") = Self.AllowUCS
 		  Document.Value("IsConsole") = Self.ConsoleMode
 		  
+		  Var BlueprintsMap As New Dictionary
 		  Var Sets As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigSets
 		    Var SetName As String = Entry.Key
@@ -1320,7 +1319,7 @@ Implements ObservationKit.Observable
 		    Var Groups As New Dictionary
 		    For Each GroupEntry As DictionaryEntry In SetDict
 		      Var Group As Beacon.ConfigGroup = GroupEntry.Value
-		      Var GroupData As Dictionary = Group.ToDictionary(Self)
+		      Var GroupData As Dictionary = Group.ToDictionary(Self, BlueprintsMap)
 		      If GroupData = Nil Then
 		        GroupData = New Dictionary
 		      End If
@@ -1331,6 +1330,30 @@ Implements ObservationKit.Observable
 		    Sets.Value(SetName) = Groups
 		  Next
 		  Document.Value("Config Sets") = Sets
+		  
+		  Var CustomBlueprints() As Dictionary
+		  For Each Entry As DictionaryEntry In BlueprintsMap
+		    Try
+		      Var BlueprintUUID As String = Entry.Key
+		      Var Blueprint As Beacon.Blueprint = Entry.Value
+		      If Blueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      If Blueprint.ModID <> LocalData.UserModID Then
+		        Continue
+		      End If
+		      
+		      Var Packed As Dictionary = Blueprint.Pack
+		      If Packed Is Nil Then
+		        Continue
+		      End If
+		      
+		      CustomBlueprints.Add(Packed)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  Document.Value("Custom Blueprints") = CustomBlueprints
 		  
 		  Var States() As Dictionary
 		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates

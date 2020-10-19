@@ -181,18 +181,32 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("Engrams") Then
-		    Self.mBehaviors = Dict.Value("Engrams")
+		  If Dict.HasKey("Behaviors") Then
+		    Self.mBehaviors = Dict.Value("Behaviors")
+		  ElseIf Dict.HasKey("Engrams") Then
+		    Var Behaviors As Dictionary = Dict.Value("Engrams")
+		    Var Mods As Beacon.StringList = Document.Mods
+		    For Each Entry As DictionaryEntry In Behaviors
+		      Var Path As String = Entry.Key
+		      Var BehaviorDict As Dictionary = Entry.Value
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Path, "", Mods)
+		      Self.BehaviorDict(Engram) = BehaviorDict
+		    Next
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
 		  #Pragma Unused Document
 		  
 		  If Self.mBehaviors.KeyCount > 0 Then
-		    Dict.Value("Engrams") = Self.mBehaviors
+		    Dict.Value("Behaviors") = Self.mBehaviors
+		    
+		    Var Engrams() As Beacon.Engram = Self.SpecifiedEngrams
+		    For Each Engram As Beacon.Engram In Engrams
+		      BlueprintsMap.Value(Engram.ObjectID.StringValue) = Engram
+		    Next
 		  End If
 		  
 		  If Self.mPointsPerLevel.LastIndex > -1 Then
@@ -271,8 +285,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function BehaviorDict(Engram As Beacon.Engram) As Dictionary
-		  If Self.mBehaviors.HasKey(Engram.Path) Then
-		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.Path)
+		  If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
+		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
 		    Return Dict.Clone
 		  End If
 		End Function
@@ -281,8 +295,8 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub BehaviorDict(Engram As Beacon.Engram, Assigns Dict As Dictionary)
 		  If IsNull(Dict) Or Dict.HasKey(Self.KeyEntryString) = False Then
-		    If Self.mBehaviors.HasKey(Engram.Path) Then
-		      Self.mBehaviors.Remove(Engram.Path)
+		    If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
+		      Self.mBehaviors.Remove(Engram.ObjectID.StringValue)
 		      Self.Modified = True
 		    End If
 		    Return
@@ -306,18 +320,18 @@ Inherits Beacon.ConfigGroup
 		    Behavior.Value(Self.KeyUnlockPoints) = Dict.Value(Self.KeyUnlockPoints).IntegerValue
 		  End If
 		  
-		  Self.mBehaviors.Value(Engram.Path) = Behavior
+		  Self.mBehaviors.Value(Engram.ObjectID.StringValue) = Behavior
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function BehaviorForEngram(Engram As Beacon.Engram, Key As String) As Variant
-		  If Not Self.mBehaviors.HasKey(Engram.Path) Then
+		  If Not Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
 		    Return Nil
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mBehaviors.Value(Engram.Path)
+		  Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
 		  If Dict.HasKey(Key) Then
 		    Return Dict.Value(Key)
 		  Else
@@ -329,11 +343,11 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Sub BehaviorForEngram(Engram As Beacon.Engram, Key As String, Assigns Value As Variant)
 		  If IsNull(Value) Then
-		    If Self.mBehaviors.HasKey(Engram.Path) = False Then
+		    If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) = False Then
 		      Return
 		    End If
 		    
-		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.Path)
+		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
 		    If Dict.HasKey(Key) = False Then
 		      Return
 		    End If
@@ -342,15 +356,15 @@ Inherits Beacon.ConfigGroup
 		    If Engram.HasUnlockDetails Then
 		      Dict.Value(Self.KeyEntryString) = Engram.EntryString
 		    End If
-		    Self.mBehaviors.Value(Engram.Path) = Dict
+		    Self.mBehaviors.Value(Engram.ObjectID.StringValue) = Dict
 		    Self.Modified = True
 		    
 		    Return
 		  End If
 		  
 		  Var Dict As Dictionary
-		  If Self.mBehaviors.HasKey(Engram.Path) Then
-		    Dict = Self.mBehaviors.Value(Engram.Path)
+		  If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
+		    Dict = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
 		  Else
 		    Dict = New Dictionary
 		  End If
@@ -359,7 +373,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value(Self.KeyEntryString) = Engram.EntryString
 		  End If
 		  Dict.Value(Key) = Value
-		  Self.mBehaviors.Value(Engram.Path) = Dict
+		  Self.mBehaviors.Value(Engram.ObjectID.StringValue) = Dict
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -405,14 +419,14 @@ Inherits Beacon.ConfigGroup
 		Function EntryString(ForEngram As Beacon.Engram) As String
 		  If ForEngram.HasUnlockDetails Then
 		    Return ForEngram.EntryString
-		  ElseIf Self.mBehaviors.HasKey(ForEngram.Path) Then
-		    Return Dictionary(Self.mBehaviors.Value(ForEngram.Path)).Lookup(Self.KeyEntryString, "").StringValue
+		  ElseIf Self.mBehaviors.HasKey(ForEngram.ObjectID.StringValue) Then
+		    Return Dictionary(Self.mBehaviors.Value(ForEngram.ObjectID.StringValue)).Lookup(Self.KeyEntryString, "").StringValue
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.EngramControl
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.EngramControl
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
@@ -612,11 +626,11 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Remove(Engram As Beacon.Engram)
-		  If Not Self.mBehaviors.HasKey(Engram.Path) Then
+		  If Not Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
 		    Return
 		  End If
 		  
-		  Self.mBehaviors.Remove(Engram.Path)
+		  Self.mBehaviors.Remove(Engram.ObjectID.StringValue)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -688,7 +702,7 @@ Inherits Beacon.ConfigGroup
 		Function SpecifiedEngrams() As Beacon.Engram()
 		  Var Engrams() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(Entry.Key.StringValue)
 		    If Engram = Nil Then
 		      Var Dict As Dictionary = Entry.Value
 		      Engram = Beacon.Engram.CreateFromEntryString(Dict.Value(Self.KeyEntryString))

@@ -82,7 +82,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "Engram", ""))
+		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "Engram", "", Nil))
 		  
 		  If Dict.HasKey("Resources") Then
 		    Var Resources() As Variant = Dict.Value("Resources")
@@ -90,7 +90,7 @@ Implements Beacon.NamedItem
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
 		      
-		      Cost.mIngredients.Add(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""), Quantity, RequireExact))
+		      Cost.mIngredients.Add(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "Class", "", Nil), Quantity, RequireExact))
 		    Next
 		  End If
 		  
@@ -99,30 +99,19 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary) As Beacon.CraftingCost
+		Shared Function ImportFromConfig(Dict As Dictionary, Mods As Beacon.StringList) As Beacon.CraftingCost
 		  Try
 		    Var ClassString As String = Dict.Lookup("ItemClassString", "")
 		    If ClassString = "" Then
 		      Return Nil
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateFromClass(ClassString)
-		    End If
-		    
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "", "ItemClassString", "", Mods)
 		    Var Cost As New Beacon.CraftingCost(Engram)
 		    If Dict.HasKey("BaseCraftingResourceRequirements") Then
 		      Var Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
 		      For Each Resource As Dictionary In Resources
-		        Var ResourceClass As String = Resource.Lookup("ResourceItemTypeString", "")
-		        If ResourceClass = "" Then
-		          Continue
-		        End If
-		        Var ResourceEngram As Beacon.Engram = Beacon.Data.GetEngramByClass(ResourceClass)
-		        If ResourceEngram = Nil Then
-		          ResourceEngram = Beacon.Engram.CreateFromClass(ResourceClass)
-		        End If
+		        Var ResourceEngram As Beacon.Engram = Beacon.ResolveEngram(Resource, "", "ResourceItemTypeString", "", Mods)
 		        Var Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
 		        Var RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
 		        Cost.Append(ResourceEngram, Quantity, RequireExact)

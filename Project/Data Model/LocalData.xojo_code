@@ -254,23 +254,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub Cache(Creatures() As Beacon.Creature)
 		  For Each Creature As Beacon.Creature In Creatures
 		    Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
-		    
-		    Var SimilarCreatures() As Beacon.Creature
-		    If Self.mCreatureCache.HasKey(Creature.ClassString) Then
-		      SimilarCreatures = Self.mCreatureCache.Value(Creature.ClassString)
-		    End If
-		    Var Found As Boolean
-		    For Idx As Integer = 0 To SimilarCreatures.LastIndex
-		      If SimilarCreatures(Idx).ObjectID = Creature.ObjectID Then
-		        SimilarCreatures(Idx) = Creature
-		        Found = True
-		        Exit For Idx
-		      End If
-		    Next
-		    If Not Found Then
-		      SimilarCreatures.Add(Creature)
-		    End If
-		    Self.mCreatureCache.Value(Creature.ClassString) = SimilarCreatures
 		  Next
 		End Sub
 	#tag EndMethod
@@ -288,32 +271,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  For Each Engram As Beacon.Engram In Engrams
 		    Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
 		    
-		    Var SimilarEngrams() As Beacon.Engram
-		    If Self.mEngramCache.HasKey(Engram.ClassString) Then
-		      SimilarEngrams = Self.mEngramCache.Value(Engram.ClassString)
-		    End If
-		    Var Found As Boolean
-		    For Idx As Integer = 0 To SimilarEngrams.LastIndex
-		      If SimilarEngrams(Idx).ObjectID = Engram.ObjectID Then
-		        SimilarEngrams(Idx) = Engram
-		        Found = True
-		        Exit For Idx
-		      End If
-		    Next
-		    If Not Found Then
-		      SimilarEngrams.Add(Engram)
-		    End If
-		    Self.mEngramCache.Value(Engram.ClassString) = SimilarEngrams
-		    
 		    If Engram.HasUnlockDetails Then
+		      Var SimilarEngrams() As Beacon.Engram
 		      If Self.mEngramCache.HasKey(Engram.EntryString) Then
 		        SimilarEngrams = Self.mEngramCache.Value(Engram.EntryString)
-		      Else
-		        Var Temp() As Beacon.Engram
-		        SimilarEngrams = Temp
 		      End If
 		      
-		      Found = False
+		      Var Found As Boolean
 		      For Idx As Integer = 0 To SimilarEngrams.LastIndex
 		        If SimilarEngrams(Idx).ObjectID = Engram.ObjectID Then
 		          SimilarEngrams(Idx) = Engram
@@ -342,23 +306,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub Cache(SpawnPoints() As Beacon.SpawnPoint)
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		    Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
-		    
-		    Var SimilarSpawnPoints() As Beacon.SpawnPoint
-		    If Self.mSpawnPointCache.HasKey(SpawnPoint.ClassString) Then
-		      SimilarSpawnPoints = Self.mSpawnPointCache.Value(SpawnPoint.ClassString)
-		    End If
-		    Var Found As Boolean
-		    For Idx As Integer = 0 To SimilarSpawnPoints.LastIndex
-		      If SimilarSpawnPoints(Idx).ObjectID = SpawnPoint.ObjectID Then
-		        SimilarSpawnPoints(Idx) = SpawnPoint
-		        Found = True
-		        Exit For Idx
-		      End If
-		    Next
-		    If Not Found Then
-		      SimilarSpawnPoints.Add(SpawnPoint)
-		    End If
-		    Self.mSpawnPointCache.Value(SpawnPoint.ClassString) = SimilarSpawnPoints
 		  Next
 		End Sub
 	#tag EndMethod
@@ -695,19 +642,56 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "GetBlueprintByID" )  Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
-		  Return Self.GetBlueprintByID(ObjectID)
+		Function GetBlueprintsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Blueprint()
+		  // This is not the most efficient method, but there shouldn't be a lot
+		  // of items with duplicate classes, so it probably won't matter.
+		  
+		  Var Blueprints() As Beacon.Blueprint
+		  
+		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE LOWER(class_string) = ?1;"
+		  If (Mods Is Nil) = False Then
+		    SQL = SQL.Left(SQL.Length - 1) + " AND LOWER(mod_id) IN (" + Mods.SQLValue.Lowercase + ");"
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, ClassString.Lowercase)
+		  If Results.RowCount = 0 Then
+		    Return Blueprints
+		  End If
+		  
+		  For Each Result As DatabaseRow In Results
+		    Var Blueprint As Beacon.Blueprint
+		    Var ObjectID As String = Result.Column("object_id").StringValue
+		    
+		    Select Case Result.Column("category").StringValue
+		    Case Beacon.CategoryEngrams
+		      Blueprint = Self.GetEngramByID(ObjectID)
+		    Case Beacon.CategoryCreatures
+		      Blueprint = Self.GetCreatureByID(ObjectID)
+		    Case Beacon.CategorySpawnPoints
+		      Blueprint = Self.GetSpawnPointByID(ObjectID)
+		    End Select
+		    If (Blueprint Is Nil) = False Then
+		      Blueprints.Add(Blueprint)
+		    End If
+		  Next
+		  
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintsByPath(Path As String) As Beacon.Blueprint()
+		Function GetBlueprintsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Blueprint()
 		  // This is not the most efficient method, but there shouldn't be a lot
 		  // of items with duplicate paths, so it probably won't matter.
 		  
 		  Var Blueprints() As Beacon.Blueprint
 		  
-		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, category FROM blueprints WHERE LOWER(path) = ?1;", Path.Lowercase)
+		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE LOWER(path) = ?1;"
+		  If (Mods Is Nil) = False Then
+		    SQL = SQL.Left(SQL.Length - 1) + " AND LOWER(mod_id) IN (" + Mods.SQLValue.Lowercase + ");"
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, Path.Lowercase)
 		  If Results.RowCount = 0 Then
 		    Return Blueprints
 		  End If
@@ -765,17 +749,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function GetCreatureByClass(ClassString As String) As Beacon.Creature
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Var Creatures() As Beacon.Creature = Self.GetCreaturesByClass(ClassString)
-		  If Creatures.Count > 0 Then
-		    Return Creatures(0)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
@@ -803,49 +776,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Attributes( Deprecated )  Function GetCreatureByPath(Path As String) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		    If Results.RowCount = 0 Then
-		      Return Nil
-		    End If
-		    
-		    Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
-		    Self.Cache(Creatures)
+		  Var Creatures() As Beacon.Creature = Self.GetCreaturesByPath(Path, Nil)
+		  If Creatures.Count > 0 Then
 		    Return Creatures(0)
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetCreaturesByClass(ClassString As String) As Beacon.Creature()
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		    ClassString = ClassString + "_C"
 		  End If
-		  
-		  Var Creatures() As Beacon.Creature
-		  If Self.mCreatureCache.HasKey(ClassString) Then
-		    Creatures = Self.mCreatureCache.Value(ClassString)
-		  Else
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Creatures
-		      End If
-		      
-		      Creatures = Self.RowSetToCreature(Results)
-		      Self.mCreatureCache.Value(ClassString) = Creatures
-		      For Each Creature As Beacon.Creature In Creatures
-		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
-		      Next
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Return Creatures
 		End Function
 	#tag EndMethod
 
@@ -881,7 +815,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Attributes( Deprecated )  Function GetEngramByClass(ClassString As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Var Engrams() As Beacon.Engram = Self.GetEngramsByClass(ClassString)
+		  Var Engrams() As Beacon.Engram = Self.GetEngramsByClass(ClassString, Nil)
 		  If Engrams.Count > 0 Then
 		    Return Engrams(0)
 		  End If
@@ -944,46 +878,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Attributes( Deprecated )  Function GetEngramByPath(Path As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		    If Results.RowCount = 0 Then
-		      Return Nil
-		    End If
-		    
-		    Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		    Self.Cache(Engrams)
+		  Var Engrams() As Beacon.Engram = Self.GetEngramsByPath(Path, Nil)
+		  If Engrams.Count > 0 Then
 		    Return Engrams(0)
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramsByClass(ClassString As String) As Beacon.Engram()
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		    ClassString = ClassString + "_C"
 		  End If
-		  
-		  Var Engrams() As Beacon.Engram
-		  If Self.mEngramCache.HasKey(ClassString) Then
-		    Engrams = Self.mEngramCache.Value(ClassString)
-		  Else
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Engrams
-		      End If
-		      
-		      Engrams = Self.RowSetToEngram(Results)
-		      Self.Cache(Engrams)
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -1139,7 +1037,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Attributes( Deprecated )  Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Var SpawnPoints() As Beacon.SpawnPoint = Self.GetSpawnPointsByClass(ClassString)
+		  Var SpawnPoints() As Beacon.SpawnPoint = Self.GetSpawnPointsByClass(ClassString, Nil)
 		  If SpawnPoints.Count > 0 Then
 		    Return SpawnPoints(0)
 		  End If
@@ -1171,46 +1069,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Attributes( Deprecated )  Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		    If Results.RowCount = 0 Then
-		      Return Nil
-		    End If
-		    
-		    Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		    Self.Cache(SpawnPoints)
+		  Var SpawnPoints() As Beacon.SpawnPoint = Self.GetSpawnPointsByPath(Path, Nil)
+		  If SpawnPoints.Count > 0 Then
 		    Return SpawnPoints(0)
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetSpawnPointsByClass(ClassString As String) As Beacon.SpawnPoint()
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		    ClassString = ClassString + "_C"
 		  End If
-		  
-		  Var SpawnPoints() As Beacon.SpawnPoint
-		  If Self.mSpawnPointCache.HasKey(ClassString) Then
-		    SpawnPoints = Self.mSpawnPointCache.Value(ClassString)
-		  Else
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return SpawnPoints
-		      End If
-		      
-		      SpawnPoints = Self.RowSetToSpawnPoint(Results)
-		      Self.Cache(SpawnPoints)
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -2022,7 +1884,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If (Engram Is Nil) = False Then
 		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
 		    If Results.RowCount = 1 Then
-		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value)
+		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value, Nil)
 		    End If
 		  End If
 		  Return Ingredients
@@ -2830,7 +2692,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If CacheDict.HasKey(Blueprint.ClassString) Then
 		          CacheDict.Remove(Blueprint.ClassString)
 		        End If
-		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails Then
+		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails And CacheDict.HasKey(Beacon.Engram(Blueprint).EntryString) Then
 		          CacheDict.Remove(Beacon.Engram(Blueprint).EntryString)
 		        End If
 		      End If

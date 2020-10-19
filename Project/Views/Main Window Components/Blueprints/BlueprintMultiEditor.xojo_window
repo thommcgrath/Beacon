@@ -173,6 +173,7 @@ Begin BeaconDialog BlueprintMultiEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   188
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   146
       LockBottom      =   False

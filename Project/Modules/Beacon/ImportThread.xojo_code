@@ -241,7 +241,7 @@ Inherits Beacon.Thread
 		    Self.Status = "Building Beacon document… (" + Language.LabelForConfig(ConfigName) + ")"
 		    Var Group As Beacon.ConfigGroup
 		    Try
-		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
+		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document)
 		    Catch Err As RuntimeException
 		    End Try
 		    If Group <> Nil Then

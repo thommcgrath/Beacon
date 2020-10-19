@@ -21,8 +21,14 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Bound As Integer = -1)
+		Sub Constructor(Bound As Integer)
 		  Self.mItems.ResizeTo(Bound)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(ParamArray Values() As String)
+		  Self.Constructor(Values)
 		End Sub
 	#tag EndMethod
 
@@ -182,6 +188,16 @@ Implements Iterable
 		  Self.mItems.Sort
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SQLValue() As String
+		  Var Items() As String
+		  For Each Item As String In Self.mItems
+		    Items.Add("'" + Item.ReplaceAll("'", "''") + "'")
+		  Next
+		  Return String.FromArray(Items, ",")
+		End Function
 	#tag EndMethod
 
 
