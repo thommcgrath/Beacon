@@ -135,7 +135,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As v4UUID)
+		Sub ModID(Assigns Value As String)
 		  Self.mModID = Value
 		End Sub
 	#tag EndMethod

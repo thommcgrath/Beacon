@@ -556,7 +556,7 @@ End
 		Private Sub SetupUI(Prefilter As String = "")
 		  If Self.mOriginalEntry <> Nil Then
 		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
-		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
+		      Self.mSelectedEngrams.Value(Option.Engram.ObjectID) = Option
 		    Next
 		  End If
 		  
@@ -587,15 +587,15 @@ End
 		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Var Weight As String = ""
-		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
+		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
+		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.ObjectID)).Weight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
-		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    Self.mEngramRowIndexes.Value(Engram.ObjectID) = EngramList.LastAddedRowIndex
+		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.ObjectID)
 		  Next
 		  
 		  Self.ListUnknownEngrams()
@@ -743,7 +743,7 @@ End
 		  Case Self.ColumnIncluded
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    If Checked Then
-		      If Self.mSelectedEngrams.HasKey(Engram.Path) = False Then
+		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = False Then
 		        Var WeightString As String = Me.CellValueAt(Row, Self.ColumnWeight)
 		        If WeightString = "" Then
 		          WeightString = "50"
@@ -752,21 +752,21 @@ End
 		        
 		        Var Weight As Double = Abs(CDbl(WeightString)) / 100
 		        Var Option As New Beacon.SetEntryOption(Engram, Weight)
-		        Self.mSelectedEngrams.Value(Engram.Path) = Option
+		        Self.mSelectedEngrams.Value(Engram.ObjectID) = Option
 		      Else
 		        Return
 		      End If
 		    Else
-		      If Self.mSelectedEngrams.HasKey(Engram.Path) = True Then
-		        Self.mSelectedEngrams.Remove(Engram.Path)
+		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = True Then
+		        Self.mSelectedEngrams.Remove(Engram.ObjectID)
 		      Else
 		        Return
 		      End If
 		    End If
 		  Case Self.ColumnWeight
-		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
+		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
 		      Var Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
-		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
+		      Self.mSelectedEngrams.Value(Engram.ObjectID) = New Beacon.SetEntryOption(Engram, Weight)
 		    End If
 		  Else
 		    Return

@@ -35,7 +35,7 @@ Protected Class BlueprintController
 		  Self.mBlueprints.RemoveAll
 		  
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    Self.mBlueprints.Value(Blueprint.ObjectID.StringValue) = Blueprint
+		    Self.mBlueprints.Value(Blueprint.ObjectID) = Blueprint
 		  Next
 		  
 		  Self.mOriginalBlueprints = Self.mBlueprints.Clone

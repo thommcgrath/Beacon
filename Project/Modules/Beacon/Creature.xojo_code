@@ -154,7 +154,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
@@ -178,20 +178,22 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Creature) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Var SelfPath As String = Self.Path
-		  Var OtherPath As String = Other.Path
-		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
+		  If Self.ObjectID = Other.ObjectID Then
+		    Return 0
+		  End If
+		  
+		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 

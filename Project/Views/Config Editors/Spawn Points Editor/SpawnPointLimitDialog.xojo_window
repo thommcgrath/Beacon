@@ -361,26 +361,26 @@ End
 		  
 		  Var SelectableCreatures() As Beacon.Creature
 		  Var Map As New Dictionary
-		  If IsNull(Self.mSelectedCreature) = False Then
-		    Map.Value(Self.mSelectedCreature.Path) = Self.mSelectedCreature
+		  If (Self.mSelectedCreature Is Nil) = False Then
+		    Map.Value(Self.mSelectedCreature.ObjectID) = Self.mSelectedCreature
 		  End If 
 		  For Each Creature As Beacon.Creature In DefinedCreatures
-		    If IsNull(Creature) Then
+		    If Creature Is Nil Then
 		      Continue
 		    End If
 		    
-		    Map.Value(Creature.Path) = Creature
+		    Map.Value(Creature.ObjectID) = Creature
 		  Next
 		  
 		  Var CreatureLabels() As String
 		  For Each Creature As Beacon.Creature In CreaturesInSpawnPoint
-		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
+		    If Creature Is Nil Or Map.HasKey(Creature.ObjectID) Then
 		      Continue
 		    End If
 		    
 		    SelectableCreatures.Add(Creature)
 		    CreatureLabels.Add(Creature.Label)
-		    Map.Value(Creature.Path) = Creature
+		    Map.Value(Creature.ObjectID) = Creature
 		  Next
 		  CreatureLabels.SortWith(SelectableCreatures)
 		  
@@ -395,7 +395,7 @@ End
 		  
 		  Var AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", Mods, "")
 		  For Each Creature As Beacon.Creature In AllCreatures
-		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
+		    If IsNull(Creature) Or Map.HasKey(Creature.ObjectID) Then
 		      Continue
 		    End If
 		    
@@ -468,7 +468,7 @@ End
 		    Me.Enabled = False
 		  Else
 		    For Each Creature As Beacon.Creature In Self.mSelectableCreatures
-		      If IsNull(Creature) Then
+		      If Creature Is Nil Then
 		        #if TargetMacOS
 		          Me.AddSeparator
 		        #endif
@@ -477,7 +477,7 @@ End
 		      
 		      Me.AddRow(Creature.Label, Creature)
 		      
-		      If Self.mSelectedCreature <> Nil And Self.mSelectedCreature.Path = Creature.Path Then
+		      If (Self.mSelectedCreature Is Nil) = False And Self.mSelectedCreature = Creature Then
 		        Me.SelectedRowIndex = Me.RowCount - 1
 		      End If
 		    Next

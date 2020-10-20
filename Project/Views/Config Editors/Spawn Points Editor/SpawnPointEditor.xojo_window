@@ -519,7 +519,7 @@ End
 		      For Each Entry As Beacon.SpawnpointSetEntry In Entries
 		        Var Creature As Beacon.Creature = Entry.Creature
 		        If (Creature Is Nil) = False THen
-		          CreatureFilter.Value(Creature.ObjectID.StringValue) = Creature
+		          CreatureFilter.Value(Creature.ObjectID) = Creature
 		        End If
 		      Next
 		    Next
@@ -624,17 +624,17 @@ End
 		      For Each Entry As DictionaryEntry In PointLimits
 		        Var Creature As Beacon.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
-		        CombinedLimits.Value(Creature.ObjectID.StringValue) = Limit
+		        CombinedLimits.Value(Creature.ObjectID) = Limit
 		      Next
 		    Else
 		      For Each Entry As DictionaryEntry In PointLimits
 		        Var Creature As Beacon.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
 		        
-		        If CombinedLimits.HasKey(Creature.ObjectID.StringValue) = False Then
-		          CombinedLimits.Value(Creature.ObjectID.StringValue) = Limit
-		        ElseIf CombinedLimits.Value(Creature.ObjectID.StringValue).DoubleValue <> Limit Then
-		          CombinedLimits.Value(Creature.ObjectID.StringValue) = MixedLimitValue
+		        If CombinedLimits.HasKey(Creature.ObjectID) = False Then
+		          CombinedLimits.Value(Creature.ObjectID) = Limit
+		        ElseIf CombinedLimits.Value(Creature.ObjectID).DoubleValue <> Limit Then
+		          CombinedLimits.Value(Creature.ObjectID) = MixedLimitValue
 		        End If
 		      Next
 		    End If
@@ -1154,7 +1154,7 @@ End
 		    Next
 		    
 		    If CommonLimit <> Nil Then
-		      Limits.Value(Creature.ObjectID.StringValue) = CommonLimit.IntegerValue
+		      Limits.Value(Creature.ObjectID) = CommonLimit.IntegerValue
 		    End If
 		  Next
 		  

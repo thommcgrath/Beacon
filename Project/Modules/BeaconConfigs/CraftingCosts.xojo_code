@@ -44,7 +44,7 @@ Inherits Beacon.ConfigGroup
 		    For Each CostData As Dictionary In Costs
 		      Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
-		        Self.mCosts.Value(Cost.Engram.Path) = Cost
+		        Self.mCosts.Value(Cost.Engram.ObjectID) = Cost
 		      End If
 		    Next
 		  End If
@@ -103,8 +103,8 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  If Self.mCosts.HasKey(Engram.Path) Then
-		    Return Self.mCosts.Value(Engram.Path)
+		  If Self.mCosts.HasKey(Engram.ObjectID) Then
+		    Return Self.mCosts.Value(Engram.ObjectID)
 		  End If
 		End Function
 	#tag EndMethod
@@ -116,14 +116,14 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If Cost = Nil Then
-		    If Self.mCosts.HasKey(Engram.Path) Then
-		      Self.mCosts.Remove(Engram.Path)
+		    If Self.mCosts.HasKey(Engram.ObjectID) Then
+		      Self.mCosts.Remove(Engram.ObjectID)
 		      Self.Modified = True
 		    End If
 		    Return
 		  End If
 		  
-		  Var Key As String = Cost.Engram.Path
+		  Var Key As String = Cost.Engram.ObjectID
 		  If Self.mCosts.HasKey(Key) And Beacon.CraftingCost(Self.mCosts.Value(Key)) = Cost Then
 		    Return
 		  End If

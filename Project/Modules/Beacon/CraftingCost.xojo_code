@@ -61,14 +61,14 @@ Implements Beacon.NamedItem
 		  
 		  If Self.mEngram <> Nil Then
 		    Dict.Value("Engram") = Self.mEngram.ClassString
-		    Dict.Value("EngramID") = Self.mEngram.ObjectID.StringValue
+		    Dict.Value("EngramID") = Self.mEngram.ObjectID
 		  End If
 		  
 		  Var Ingredients() As Dictionary
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Var Resource As New Dictionary
 		    Resource.Value("Class") = Self.mIngredients(Idx).Engram.ClassString
-		    Resource.Value("EngramID") = Self.mIngredients(Idx).Engram.ObjectID.StringValue
+		    Resource.Value("EngramID") = Self.mIngredients(Idx).Engram.ObjectID
 		    Resource.Value("Quantity") = Self.mIngredients(Idx).Quantity
 		    Resource.Value("Exact") = Self.mIngredients(Idx).RequireExact
 		    

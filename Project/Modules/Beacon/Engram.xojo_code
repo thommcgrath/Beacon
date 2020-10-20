@@ -97,7 +97,8 @@ Implements Beacon.Blueprint
 		    Base = Base.Middle(12)
 		  End If
 		  
-		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base + "_C"))
+		  // Base probably already includes _C, so don't add it again. UnknownBlueprintPath will handle it if missing.
+		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base))
 		  Engram.mEngramEntryString = EntryString
 		  Return Engram
 		End Function
@@ -135,26 +136,6 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function EntryString() As String
 		  Return Self.mEngramEntryString
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Shared Function FromDictionary(Dict As Dictionary) As Beacon.Engram
-		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryEngrams Then
-		    Return Nil
-		  End If
-		  
-		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName") Then
-		    Return Nil
-		  End If
-		  
-		  Var Engram As New Beacon.MutableEngram(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
-		  Engram.Label = Dict.Value("Label").StringValue
-		  Engram.Availability = Dict.Value("Availability").UInt64Value
-		  Engram.Tags = Dict.Value("Tags")
-		  Engram.ModID = Dict.Value("ModID").StringValue
-		  Engram.ModName = Dict.Value("ModName").StringValue
-		  Return New Beacon.Engram(Engram)
 		End Function
 	#tag EndMethod
 
@@ -205,7 +186,11 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
+		  If Self.mModID Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
@@ -256,20 +241,26 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Engram) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Var SelfPath As String = If(Self.IsValid, Self.Path, Self.ClassString)
-		  Var OtherPath As String = If(Other.IsValid, Other.Path, Other.ClassString)
-		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
+		  Var SelfID As String = Self.ObjectID
+		  Var OtherID As String = Other.ObjectID
+		  If SelfID = OtherID Then
+		    Return 0
+		  End If
+		  
+		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseSensitive)
+		  
+		  
 		End Function
 	#tag EndMethod
 

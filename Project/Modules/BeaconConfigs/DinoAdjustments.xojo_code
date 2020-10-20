@@ -64,7 +64,7 @@ Inherits Beacon.ConfigGroup
 		      Return
 		    End If
 		    
-		    Self.mBehaviors.Value(Behavior.TargetCreature.Path) = Behavior
+		    Self.mBehaviors.Value(Behavior.TargetCreature.ObjectID) = Behavior
 		  Next
 		End Sub
 	#tag EndEvent
@@ -103,18 +103,18 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Behavior(Creature As Beacon.Creature) As Beacon.CreatureBehavior
-		  If Not Self.mBehaviors.HasKey(Creature.Path) Then
+		  If Not Self.mBehaviors.HasKey(Creature.ObjectID) Then
 		    Return Nil
 		  End If
 		  
-		  Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior(Self.mBehaviors.Value(Creature.Path))
+		  Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior(Self.mBehaviors.Value(Creature.ObjectID))
 		  Return New Beacon.CreatureBehavior(Behavior)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Behavior(Creature As Beacon.Creature, Assigns Behavior As Beacon.CreatureBehavior)
-		  Self.mBehaviors.Value(Creature.Path) = New Beacon.CreatureBehavior(Behavior)
+		  Self.mBehaviors.Value(Creature.ObjectID) = New Beacon.CreatureBehavior(Behavior)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -290,8 +290,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RemoveBehavior(Creature As Beacon.Creature)
-		  If Self.mBehaviors.HasKey(Creature.Path) Then
-		    Self.mBehaviors.Remove(Creature.Path)
+		  If Self.mBehaviors.HasKey(Creature.ObjectID) Then
+		    Self.mBehaviors.Remove(Creature.ObjectID)
 		    Self.Modified = True
 		  End If
 		End Sub

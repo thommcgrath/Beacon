@@ -45,13 +45,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Var Path As String = Self.Engram.Path
-		  
 		  Var Keys As New Dictionary
-		  If Path <> "" Then
-		    Keys.Value("Path") = Path
-		  End If
-		  Keys.Value("Class") = Self.Engram.ClassString
+		  Keys.Value("UUID") = Self.Engram.ObjectID
 		  Keys.Value("Weight") = Self.Weight
 		  Return Keys
 		End Function
@@ -60,14 +55,7 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.HashIsStale Then
-		    Var Path As String
-		    If Self.mEngram = Nil Then
-		      Path = ""
-		    Else
-		      Path = If(Self.mEngram.Path <> "", Self.mEngram.Path, Self.mEngram.ClassString)
-		    End If
-		    
-		    Self.mHash = Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000")).Lowercase
+		    Self.mHash = Beacon.MD5(Self.mEngram.ObjectID.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000")).Lowercase
 		    Self.mLastHashTime = System.Microseconds
 		  End If
 		  
@@ -90,7 +78,7 @@ Implements Beacon.DocumentItem
 		    App.Log(Err, CurrentMethodName, "Reading Weight value")
 		  End Try
 		  
-		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "", "Class", "Path", Nil)
+		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "Class", "Path", Nil)
 		  
 		  Var Option As New Beacon.SetEntryOption(Engram, Weight)
 		  Option.Modified = False
@@ -142,7 +130,7 @@ Implements Beacon.DocumentItem
 		Private Sub SetEngram(Engram As Beacon.Engram)
 		  If (Engram Is Nil) = False Then
 		    Self.mEngram = New Beacon.Engram(Engram)
-		    Self.mEngramIsValid = Self.mEngram.IsValid And Self.mEngram.ModID <> Nil And Self.mEngram.IsTagged("Generic") = False And Self.mEngram.IsTagged("Blueprint") = False
+		    Self.mEngramIsValid = Self.mEngram.IsValid And Self.mEngram.ModID.IsEmpty = False And Self.mEngram.IsTagged("Generic") = False And Self.mEngram.IsTagged("Blueprint") = False
 		  Else
 		    Self.mEngram = Beacon.Engram.CreateFromClass("Beacon_Invalid_Engram_C")
 		    Self.mEngramIsValid = False

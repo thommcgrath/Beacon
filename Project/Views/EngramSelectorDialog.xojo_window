@@ -436,7 +436,7 @@ End
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
 		    If Blueprint <> Nil Then
-		      Self.mExcluded.Add(Blueprint.Path)
+		      Self.mExcluded.Add(Blueprint.ObjectID)
 		    End If
 		  Next
 		  Self.mMods = Mods
@@ -481,7 +481,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
-		        Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		        Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).ObjectID)
 		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
@@ -489,7 +489,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
-		      Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
+		      Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).ObjectID)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
@@ -595,18 +595,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UnmakeSelection()
-		  Var SelectPaths() As String
+		  Var Selections() As String
 		  For I As Integer = Self.SelectedList.RowCount - 1 DownTo 0
 		    If Not Self.SelectedList.Selected(I) Then
 		      Continue
 		    End If
 		    
 		    Var Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
-		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
+		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.ObjectID)
 		    If Idx > -1 Then
 		      Self.mExcluded.RemoveAt(Idx)
 		    End If
-		    SelectPaths.Add(Blueprint.Path)
+		    Selections.Add(Blueprint.ObjectID)
 		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
@@ -615,7 +615,7 @@ End
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Var Blueprint As Beacon.Blueprint = Self.List.RowTagAt(I)
-		    Self.List.Selected(I) = SelectPaths.IndexOf(Blueprint.Path) > -1
+		    Self.List.Selected(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
@@ -631,7 +631,7 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Self.mExcluded.IndexOf(Blueprint.Path) > -1 Then
+		    If Self.mExcluded.IndexOf(Blueprint.ObjectID) > -1 Then
 		      Continue
 		    End If
 		    

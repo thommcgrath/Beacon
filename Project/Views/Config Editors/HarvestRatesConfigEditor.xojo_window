@@ -666,16 +666,16 @@ End
 		  
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Var GlobalRate As Double = Config.HarvestAmountMultiplier
-		  Var SkipPaths As New Dictionary
+		  Var SkippedEngrams As New Dictionary
 		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
-		    SkipPaths.Value(Engram.Path) = True
+		    SkippedEngrams.Value(Engram.ObjectID) = True
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
 		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "harvestable")
 		  For Each Engram As Beacon.Engram In Engrams
-		    If SkipPaths.HasKey(Engram.Path) Then
+		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
 		      Continue
 		    End If
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
@@ -736,30 +736,30 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Paths() As String
+		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Paths.Add(Beacon.Engram(Self.List.RowTagAt(I)).Path)
+		    Selections.Add(Beacon.Engram(Self.List.RowTagAt(I)).ObjectID)
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Var Paths() As String
+		  Var Selections() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Paths.Add(Engram.Path)
+		    Selections.Add(Engram.ObjectID)
 		  Next
-		  Self.UpdateList(Paths) 
+		  Self.UpdateList(Selections) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectPaths() As String)
+		Private Sub UpdateList(Selections() As String)
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  
@@ -772,7 +772,7 @@ End
 		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(Engram.Label, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -927,7 +927,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Rate As Double = Config.Override(Engram)
-		    Items.Value(Engram.ObjectID.StringValue) = Rate
+		    Items.Value(Engram.ObjectID) = Rate
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)

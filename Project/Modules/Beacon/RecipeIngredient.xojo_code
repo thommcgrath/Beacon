@@ -110,8 +110,7 @@ Protected Class RecipeIngredient
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("object_id") = Self.mEngram.ObjectID.StringValue
-		  Dict.Value("path") = Self.mEngram.Path
+		  Dict.Value("object_id") = Self.mEngram.ObjectID
 		  Dict.Value("quantity") = Self.mQuantity
 		  Dict.Value("exact") = Self.mRequireExact
 		  Return Dict

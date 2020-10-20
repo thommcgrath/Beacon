@@ -324,8 +324,8 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPoint(Path As String, Mode As Integer) As Beacon.SpawnPoint
-		  Var Key As String = Path
+		Function GetSpawnPoint(ObjectID As String, Mode As Integer) As Beacon.SpawnPoint
+		  Var Key As String = ObjectID
 		  Select Case Mode
 		  Case Beacon.SpawnPoint.ModeOverride
 		    Key = Key + ":Override"

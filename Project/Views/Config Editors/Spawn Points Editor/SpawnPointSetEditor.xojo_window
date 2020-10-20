@@ -1435,7 +1435,7 @@ End
 		    ReplacementCreatureNames.Sort
 		    
 		    Self.ReplaceList.CellValueAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
-		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.ObjectID.StringValue
+		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.ObjectID
 		    Self.ReplaceList.Selected(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.ObjectID) > -1
 		  Next
 		  Self.ReplaceList.SortingColumn = 0
@@ -1812,11 +1812,11 @@ End
 		    Var Map As New Dictionary
 		    For Each ToCreature As Beacon.Creature In Replacements
 		      Var Weight As Double = Set.CreatureReplacementWeight(FromCreature, ToCreature)
-		      Map.Value(ToCreature.ObjectID.StringValue) = Weight
+		      Map.Value(ToCreature.ObjectID) = Weight
 		    Next
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("Creature") = FromCreature.ObjectID.StringValue
+		    Dict.Value("Creature") = FromCreature.ObjectID
 		    Dict.Value("Replacements") = Map
 		    Items.Add(Dict)
 		  Next

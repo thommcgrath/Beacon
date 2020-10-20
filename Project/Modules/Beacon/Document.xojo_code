@@ -388,9 +388,9 @@ Implements ObservationKit.Observable
 		          SpawnConfig = BeaconConfigs.SpawnPoints(Self.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, True))
 		        End If
 		        
-		        Var Override As Beacon.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeAppend)
+		        Var Override As Beacon.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Beacon.SpawnPoint.ModeAppend)
 		        If Override = Nil Then
-		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeOverride)
+		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Beacon.SpawnPoint.ModeOverride)
 		        End If
 		        If Override = Nil Then
 		          Override = New Beacon.MutableSpawnPoint(SpawnPoint)

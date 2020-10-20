@@ -204,7 +204,7 @@ Inherits Beacon.ConfigGroup
 		    
 		    Var Engrams() As Beacon.Engram = Self.SpecifiedEngrams
 		    For Each Engram As Beacon.Engram In Engrams
-		      BlueprintsMap.Value(Engram.ObjectID.StringValue) = Engram
+		      BlueprintsMap.Value(Engram.ObjectID) = Engram
 		    Next
 		  End If
 		  
@@ -285,8 +285,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function BehaviorDict(Engram As Beacon.Engram) As Dictionary
-		  If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
-		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
+		  If Self.mBehaviors.HasKey(Engram.ObjectID) Then
+		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID)
 		    Return Dict.Clone
 		  End If
 		End Function
@@ -295,8 +295,8 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub BehaviorDict(Engram As Beacon.Engram, Assigns Dict As Dictionary)
 		  If IsNull(Dict) Or Dict.HasKey(Self.KeyEntryString) = False Then
-		    If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
-		      Self.mBehaviors.Remove(Engram.ObjectID.StringValue)
+		    If Self.mBehaviors.HasKey(Engram.ObjectID) Then
+		      Self.mBehaviors.Remove(Engram.ObjectID)
 		      Self.Modified = True
 		    End If
 		    Return
@@ -320,18 +320,18 @@ Inherits Beacon.ConfigGroup
 		    Behavior.Value(Self.KeyUnlockPoints) = Dict.Value(Self.KeyUnlockPoints).IntegerValue
 		  End If
 		  
-		  Self.mBehaviors.Value(Engram.ObjectID.StringValue) = Behavior
+		  Self.mBehaviors.Value(Engram.ObjectID) = Behavior
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function BehaviorForEngram(Engram As Beacon.Engram, Key As String) As Variant
-		  If Not Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
+		  If Not Self.mBehaviors.HasKey(Engram.ObjectID) Then
 		    Return Nil
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
+		  Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID)
 		  If Dict.HasKey(Key) Then
 		    Return Dict.Value(Key)
 		  Else
@@ -343,11 +343,11 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Sub BehaviorForEngram(Engram As Beacon.Engram, Key As String, Assigns Value As Variant)
 		  If IsNull(Value) Then
-		    If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) = False Then
+		    If Self.mBehaviors.HasKey(Engram.ObjectID) = False Then
 		      Return
 		    End If
 		    
-		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
+		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID)
 		    If Dict.HasKey(Key) = False Then
 		      Return
 		    End If
@@ -356,15 +356,15 @@ Inherits Beacon.ConfigGroup
 		    If Engram.HasUnlockDetails Then
 		      Dict.Value(Self.KeyEntryString) = Engram.EntryString
 		    End If
-		    Self.mBehaviors.Value(Engram.ObjectID.StringValue) = Dict
+		    Self.mBehaviors.Value(Engram.ObjectID) = Dict
 		    Self.Modified = True
 		    
 		    Return
 		  End If
 		  
 		  Var Dict As Dictionary
-		  If Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
-		    Dict = Self.mBehaviors.Value(Engram.ObjectID.StringValue)
+		  If Self.mBehaviors.HasKey(Engram.ObjectID) Then
+		    Dict = Self.mBehaviors.Value(Engram.ObjectID)
 		  Else
 		    Dict = New Dictionary
 		  End If
@@ -373,7 +373,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value(Self.KeyEntryString) = Engram.EntryString
 		  End If
 		  Dict.Value(Key) = Value
-		  Self.mBehaviors.Value(Engram.ObjectID.StringValue) = Dict
+		  Self.mBehaviors.Value(Engram.ObjectID) = Dict
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -419,8 +419,8 @@ Inherits Beacon.ConfigGroup
 		Function EntryString(ForEngram As Beacon.Engram) As String
 		  If ForEngram.HasUnlockDetails Then
 		    Return ForEngram.EntryString
-		  ElseIf Self.mBehaviors.HasKey(ForEngram.ObjectID.StringValue) Then
-		    Return Dictionary(Self.mBehaviors.Value(ForEngram.ObjectID.StringValue)).Lookup(Self.KeyEntryString, "").StringValue
+		  ElseIf Self.mBehaviors.HasKey(ForEngram.ObjectID) Then
+		    Return Dictionary(Self.mBehaviors.Value(ForEngram.ObjectID)).Lookup(Self.KeyEntryString, "").StringValue
 		  End If
 		End Function
 	#tag EndMethod
@@ -627,11 +627,11 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Remove(Engram As Beacon.Engram)
-		  If Not Self.mBehaviors.HasKey(Engram.ObjectID.StringValue) Then
+		  If Not Self.mBehaviors.HasKey(Engram.ObjectID) Then
 		    Return
 		  End If
 		  
-		  Self.mBehaviors.Remove(Engram.ObjectID.StringValue)
+		  Self.mBehaviors.Remove(Engram.ObjectID)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

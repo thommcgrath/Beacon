@@ -407,7 +407,7 @@ End
 		      Blueprints.Add(Point)
 		    Next
 		    
-		    Var CSV As String = Beacon.CreateCSV(Blueprints)
+		    Var CSV As String// = Beacon.CreateCSV(Blueprints)
 		    Var Stream As TextOutputStream = TextOutputStream.Create(File)
 		    Stream.Write(CSV)
 		    Stream.Close
@@ -496,10 +496,10 @@ End
 		  Next
 		  Labels.SortWith(Blueprints)
 		  
-		  Var SelectedPaths() As String
+		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      SelectedPaths.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		      Selections.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).ObjectID)
 		    End If
 		  Next
 		  
@@ -510,7 +510,7 @@ End
 		    
 		    Self.List.RowTagAt(I) = Blueprint
 		    Self.List.CellValueAt(I, 0) = Blueprint.Label
-		    Self.List.Selected(I) = SelectedPaths.IndexOf(Blueprint.Path) > -1
+		    Self.List.Selected(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible()
 		  Self.mSettingUp = False

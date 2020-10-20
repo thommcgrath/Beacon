@@ -501,7 +501,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Continue
 		      End If
 		      
-		      Var Key As String = Option.Engram.Path
+		      Var Key As String = Option.Engram.ObjectID
 		      If Key = "" Then
 		        Continue
 		      End If

@@ -283,31 +283,6 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function CreateCSV(Blueprints() As Beacon.Blueprint) As String
-		  Var Columns(4) As String
-		  Columns(0) = """Path"""
-		  Columns(1) = """Label"""
-		  Columns(2) = """Availability Mask"""
-		  Columns(3) = """Tags"""
-		  Columns(4) = """Group"""
-		  
-		  Var Lines(0) As String
-		  Lines(0) = Columns.Join(",")
-		  
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    Columns(0) = """" + Blueprint.Path + """"
-		    Columns(1) = """" + Blueprint.Label + """"
-		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw, "#")
-		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
-		    Columns(4) = """" + Blueprint.Category + """"
-		    Lines.Add(Columns.Join(","))
-		  Next
-		  
-		  Return Lines.Join(Encodings.ASCII.Chr(13) + Encodings.ASCII.Chr(10))
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Creatures(Extends Blueprints() As Beacon.Blueprint) As Beacon.Creature()
 		  Var Creatures() As Beacon.Creature
@@ -982,10 +957,10 @@ Protected Module Beacon
 		Protected Function Merge(Array1() As Beacon.Engram, Array2() As Beacon.Engram) As Beacon.Engram()
 		  Var Unique As New Dictionary
 		  For Each Engram As Beacon.Engram In Array1
-		    Unique.Value(Engram.Path) = Engram
+		    Unique.Value(Engram.ObjectID) = Engram
 		  Next
 		  For Each Engram As Beacon.Engram In Array2
-		    Unique.Value(Engram.Path) = Engram
+		    Unique.Value(Engram.ObjectID) = Engram
 		  Next
 		  Var Merged() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Unique
@@ -1116,10 +1091,10 @@ Protected Module Beacon
 		  End Select
 		  
 		  Var ModInfo As New Dictionary
-		  ModInfo.Value("id") = Blueprint.ModID.StringValue
+		  ModInfo.Value("id") = Blueprint.ModID
 		  ModInfo.Value("name") = Blueprint.ModName
 		  
-		  Dict.Value("id") = Blueprint.ObjectID.StringValue
+		  Dict.Value("id") = Blueprint.ObjectID
 		  Dict.Value("label") = Blueprint.Label
 		  Dict.Value("alternate_label") = Blueprint.AlternateLabel
 		  Dict.Value("mod") = ModInfo

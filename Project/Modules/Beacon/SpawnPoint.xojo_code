@@ -206,8 +206,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Limit(Creature As Beacon.Creature) As Double
-		  If Self.mLimits.HasKey(Creature.Path) Then
-		    Return Self.mLimits.Value(Creature.Path)
+		  If Self.mLimits.HasKey(Creature.ObjectID) Then
+		    Return Self.mLimits.Value(Creature.ObjectID)
 		  Else
 		    Return 1.0
 		  End If
@@ -244,7 +244,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mModID
@@ -300,7 +300,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function ObjectID() As String
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mObjectID
@@ -313,7 +313,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
 		    Var Creatures() As String
 		    For Each Entry As Beacon.SpawnPointSetEntry In Set
-		      Creatures.Add(Entry.Creature.Path)
+		      Creatures.Add(Entry.Creature.ObjectID)
 		    Next
 		    
 		    Var PackedSet As New Dictionary
@@ -345,7 +345,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("UUID") = Self.ObjectID.StringValue
+		  Keys.Value("UUID") = Self.ObjectID
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
 		  Keys.Value("Mode") = Self.Mode
@@ -396,7 +396,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function UniqueKey() As String
-		  Var Key As String = Self.Path
+		  Var Key As String = Self.ObjectID
 		  Select Case Self.Mode
 		  Case Beacon.SpawnPoint.ModeOverride
 		    Key = Key + ":Override"

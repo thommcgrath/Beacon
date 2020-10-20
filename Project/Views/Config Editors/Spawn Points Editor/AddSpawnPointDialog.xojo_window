@@ -511,7 +511,7 @@ End
 		      For Each Creature As Beacon.Creature In Creatures
 		        Var CreatureSpawnPoints() As Beacon.SpawnPoint = LocalData.SharedInstance.GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		        For Each SpawnPoint As Beacon.SpawnPoint In CreatureSpawnPoints
-		          UniqueSpawnPoints.Value(SpawnPoint.Path) = SpawnPoint
+		          UniqueSpawnPoints.Value(SpawnPoint.ObjectID) = SpawnPoint
 		        Next
 		      Next
 		      
@@ -529,11 +529,11 @@ End
 		      Continue
 		    End If
 		    
-		    If Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Remove")) Then
+		    If Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Remove")) Then
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(Labels.Lookup(SpawnPoint.ObjectID.StringValue, SpawnPoint.Label).StringValue)
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.ObjectID, SpawnPoint.Label).StringValue)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
@@ -666,14 +666,14 @@ End
 		    
 		    Var DefinedModes As Integer
 		    Var Point As Beacon.SpawnPoint = Me.RowTagAt(I)
-		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Override") Then
+		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Override") Then
 		      // Include Append and Remove here so they cannot be selected if Override is already defined
 		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend Or Beacon.SpawnPoint.ModeRemove
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Append") Then
+		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Append") Then
 		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Remove") Then
+		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Remove") Then
 		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeRemove
 		    End If
 		    

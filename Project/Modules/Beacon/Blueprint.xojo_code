@@ -44,7 +44,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
 		  
 		End Function
 	#tag EndMethod
@@ -68,7 +68,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function ObjectID() As String
 		  
 		End Function
 	#tag EndMethod

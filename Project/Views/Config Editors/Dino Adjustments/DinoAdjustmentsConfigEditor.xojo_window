@@ -181,13 +181,13 @@ End
 		  
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  Var Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
-		  Var Paths() As String
+		  Var Selections() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Config.Add(Behavior)
-		    Paths.Add(Behavior.TargetCreature.Path)
+		    Selections.Add(Behavior.TargetCreature.ObjectID)
 		  Next
 		  Self.Changed = True
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		  Return True
 		End Function
 	#tag EndEvent
@@ -309,41 +309,41 @@ End
 		    Return
 		  End If
 		  Config = Self.Config(True)
-		  Var SelectPaths() As String
+		  Var Selections() As String
 		  For Each Creature As Beacon.Creature In Creatures
 		    Var Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature)
 		    Config.Add(Behavior)
-		    SelectPaths.Add(Behavior.TargetCreature.Path)
+		    Selections.Add(Behavior.TargetCreature.ObjectID)
 		  Next
-		  Self.UpdateList(SelectPaths)
+		  Self.UpdateList(Selections)
 		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Paths() As String
+		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Paths.Add(Beacon.Creature(Self.List.RowTagAt(I)).Path)
+		      Selections.Add(Beacon.Creature(Self.List.RowTagAt(I)).ObjectID)
 		    End If
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectCreatures() As Beacon.Creature)
-		  Var Paths() As String
+		  Var Selections() As String
 		  For Each Creature As Beacon.Creature In SelectCreatures
-		    Paths.Add(Creature.Path)
+		    Selections.Add(Creature.ObjectID)
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectPaths() As String)
+		Private Sub UpdateList(Selections() As String)
 		  Self.List.RemoveAllRows
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
@@ -364,10 +364,7 @@ End
 		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
 		    End If
 		    
-		    If SelectPaths.IndexOf(Behavior.TargetCreature.Path) > -1 Then
-		      Self.List.Selected(Self.List.LastAddedRowIndex) = True
-		    End If
-		    
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  
@@ -517,18 +514,18 @@ End
 		    End If
 		    
 		    Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		    Var SelectPaths() As String
+		    Var Selections() As String
 		    For Each Entry As Dictionary In Items
 		      Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
 		      If Behavior = Nil Then
 		        Continue
 		      End If
 		      
-		      SelectPaths.Add(Behavior.TargetCreature.Path)
+		      Selections.Add(Behavior.TargetCreature.ObjectID)
 		      Config.Add(Behavior)
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectPaths)
+		    Self.UpdateList(Selections)
 		    Return
 		  End If
 		  

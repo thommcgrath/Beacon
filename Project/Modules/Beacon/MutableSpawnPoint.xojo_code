@@ -77,16 +77,16 @@ Implements Beacon.MutableBlueprint
 		Sub Limit(Creature As Beacon.Creature, Assigns Value As Double)
 		  Value = Min(Abs(Value), 1.0)
 		  
-		  Var Exists As Boolean = Self.mLimits.HasKey(Creature.Path)
+		  Var Exists As Boolean = Self.mLimits.HasKey(Creature.ObjectID)
 		  
 		  If Exists And Value = 1.0 Then
-		    Self.mLimits.Remove(Creature.Path)
+		    Self.mLimits.Remove(Creature.ObjectID)
 		    Self.Modified = True
 		    Return
 		  End If
 		  
-		  If Exists = False Or Self.mLimits.Value(Creature.Path).DoubleValue <> Value Then
-		    Self.mLimits.Value(Creature.Path) = Value
+		  If Exists = False Or Self.mLimits.Value(Creature.ObjectID).DoubleValue <> Value Then
+		    Self.mLimits.Value(Creature.ObjectID) = Value
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -112,7 +112,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As v4UUID)
+		Sub ModID(Assigns Value As String)
 		  // Part of the Beacon.MutableBlueprint interface.
 		  
 		  Self.mModID = Value

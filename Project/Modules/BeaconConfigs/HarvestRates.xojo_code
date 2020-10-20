@@ -76,7 +76,7 @@ Inherits Beacon.ConfigGroup
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
 		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Entry.Key, "", Nil)
-		        Self.mOverrides.Value(Engram.ObjectID.StringValue) = Entry.Value.DoubleValue
+		        Self.mOverrides.Value(Engram.ObjectID) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -86,7 +86,7 @@ Inherits Beacon.ConfigGroup
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
 		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", Entry.Key, Nil)
-		        Self.mOverrides.Value(Engram.ObjectID.StringValue) = Entry.Value.DoubleValue
+		        Self.mOverrides.Value(Engram.ObjectID) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -108,7 +108,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Engrams() As Beacon.Engram = Self.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
-		    BlueprintsMap.Value(Engram.ObjectID.StringValue) = Engram
+		    BlueprintsMap.Value(Engram.ObjectID) = Engram
 		  Next
 		End Sub
 	#tag EndEvent
@@ -201,7 +201,7 @@ Inherits Beacon.ConfigGroup
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
 		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", ClassString, Mods)
-		        Overrides.Value(Engram.ObjectID.StringValue) = Multiplier
+		        Overrides.Value(Engram.ObjectID) = Multiplier
 		      End If
 		    Next
 		  End If
@@ -227,7 +227,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function Override(Engram As Beacon.Engram) As Double
 		  If Engram <> Nil Then
-		    Return Self.mOverrides.Lookup(Engram.ObjectID.StringValue, 1.0)
+		    Return Self.mOverrides.Lookup(Engram.ObjectID, 1.0)
 		  End If
 		End Function
 	#tag EndMethod
@@ -238,11 +238,11 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.ObjectID.StringValue) Then
-		    Self.mOverrides.Remove(Engram.ObjectID.StringValue)
+		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.ObjectID) Then
+		    Self.mOverrides.Remove(Engram.ObjectID)
 		    Self.Modified = True
-		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.ObjectID.StringValue, 0) <> Rate Then
-		    Self.mOverrides.Value(Engram.ObjectID.StringValue) = Rate
+		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.ObjectID, 0) <> Rate Then
+		    Self.mOverrides.Value(Engram.ObjectID) = Rate
 		    Self.Modified = True
 		  End If
 		End Sub

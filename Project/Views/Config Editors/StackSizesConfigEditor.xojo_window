@@ -574,7 +574,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Size As UInt64 = Config.Override(Engram)
-		    Items.Value(Engram.ObjectID.StringValue) = Size
+		    Items.Value(Engram.ObjectID) = Size
 		  Next
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)

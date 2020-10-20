@@ -87,12 +87,6 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function ReplacementClass() As String
-		  Return Self.mReplacementCreature.ClassString
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ReplacementCreature() As Beacon.Creature
 		  Return Self.mReplacementCreature
 		End Function
@@ -117,12 +111,6 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function TargetClass() As String
-		  Return Self.mTargetCreature.ClassString
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function TargetCreature() As Beacon.Creature
 		  Return Self.mTargetCreature
 		End Function
@@ -131,13 +119,13 @@ Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("UUID") = Self.mTargetCreature.ObjectID.StringValue
+		  Dict.Value("UUID") = Self.mTargetCreature.ObjectID
 		  Dict.Value("Class") = Self.mTargetCreature.ClassString
 		  Dict.Value("Path") = Self.mTargetCreature.Path
 		  If Self.mProhibitSpawning Then
 		    Dict.Value("Prohibit Spawning") = True
 		  ElseIf IsNull(Self.mReplacementCreature) = False Then
-		    Dict.Value("Replacement UUID") = Self.mReplacementCreature.ObjectID.StringValue
+		    Dict.Value("Replacement UUID") = Self.mReplacementCreature.ObjectID
 		    Dict.Value("Replacement Class") = Self.mReplacementCreature.ClassString
 		    Dict.Value("Replacement Path") = Self.mReplacementCreature.Path
 		  Else

@@ -253,7 +253,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub Cache(Creatures() As Beacon.Creature)
 		  For Each Creature As Beacon.Creature In Creatures
-		    Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
+		    Self.mCreatureCache.Value(Creature.ObjectID) = Creature
 		  Next
 		End Sub
 	#tag EndMethod
@@ -269,7 +269,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub Cache(Engrams() As Beacon.Engram)
 		  For Each Engram As Beacon.Engram In Engrams
-		    Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
+		    Self.mEngramCache.Value(Engram.ObjectID) = Engram
 		    
 		    If Engram.HasUnlockDetails Then
 		      Var SimilarEngrams() As Beacon.Engram
@@ -305,7 +305,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub Cache(SpawnPoints() As Beacon.SpawnPoint)
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		    Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
+		    Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
 		  Next
 		End Sub
 	#tag EndMethod
@@ -1020,7 +1020,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  Clauses.Add("LOWER(spawn_points.sets) LIKE :placeholder:")
-		  Values.Add("%" + Creature.Path.Lowercase + "%")
+		  Values.Add("%" + Creature.ObjectID + "%")
 		  
 		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, Tags, Clauses, Values)
 		  Var SpawnPoints() As Beacon.SpawnPoint
@@ -1826,7 +1826,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID.StringValue)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID)
 		  If Rows.RowCount = 0 Then
 		    Return
 		  End If
@@ -1840,7 +1840,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
 		  Var Ingredients() As Beacon.RecipeIngredient
 		  If (Engram Is Nil) = False Then
-		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
+		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID)
 		    If Results.RowCount = 1 Then
 		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value, Nil)
 		    End If
@@ -2505,8 +2505,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Try
 		      Var Update As Boolean
-		      Var ObjectID As v4UUID
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID.StringValue, Blueprint.Path.Lowercase)
+		      Var ObjectID As String
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR (LOWER(mod_id) = ?2 AND LOWER(path) = ?3);", Blueprint.ObjectID, Self.UserModID, Blueprint.Path.Lowercase)
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
 		        ObjectID = Results.Column("object_id").StringValue
@@ -2515,7 +2515,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Continue
 		        End If
 		        
-		        Var ModID As v4UUID = Results.Column("mod_id").StringValue
+		        Var ModID As String = Results.Column("mod_id").StringValue
 		        If ModID <> Self.UserModID Then
 		          Continue
 		        End If
@@ -2535,7 +2535,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Var Category As String = Blueprint.Category
 		      Var Columns As New Dictionary
-		      Columns.Value("object_id") = ObjectID.StringValue
+		      Columns.Value("object_id") = ObjectID
 		      Columns.Value("path") = Blueprint.Path
 		      Columns.Value("class_string") = Blueprint.ClassString
 		      Columns.Value("label") = Blueprint.Label
@@ -2616,7 +2616,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID.StringValue, Blueprint.TagString)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
 		      Else
 		        Var ColumnNames(), Placeholders() As String
 		        Var Values() As Variant
@@ -2629,12 +2629,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID.StringValue, Blueprint.TagString)
+		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
 		      End If
 		      
 		      If CacheDict <> Nil Then
-		        If CacheDict.HasKey(Blueprint.ObjectID.StringValue) Then
-		          CacheDict.Remove(Blueprint.ObjectID.StringValue)
+		        If CacheDict.HasKey(Blueprint.ObjectID) Then
+		          CacheDict.Remove(Blueprint.ObjectID)
 		        End If
 		        If CacheDict.HasKey(Blueprint.Path) Then
 		          CacheDict.Remove(Blueprint.Path)
@@ -3018,7 +3018,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Label = Label + " (" + Maps.Label + ")"
 		      End If
 		      
-		      Dict.Value(Points(I).ObjectID.StringValue) = Label
+		      Dict.Value(Points(I).ObjectID) = Label
 		    Next
 		    
 		    Self.mSpawnLabelCacheDict = Dict

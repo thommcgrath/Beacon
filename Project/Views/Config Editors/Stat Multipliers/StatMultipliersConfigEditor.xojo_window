@@ -2976,7 +2976,7 @@ End
 		    End If
 		    
 		    Menu.AddRow(Creature.Label, Creature)
-		    If (SelectedCreature Is Nil) = False And Creature.Path = SelectedCreature.Path Then
+		    If (SelectedCreature Is Nil) = False And Creature = SelectedCreature Then
 		      SelectedIndex = Menu.LastRowIndex
 		    End If
 		  Next

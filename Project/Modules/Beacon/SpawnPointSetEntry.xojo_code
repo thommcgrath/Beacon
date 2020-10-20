@@ -405,7 +405,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("creature_id") = Self.mCreature.ObjectID.StringValue
+		  Dict.Value("creature_id") = Self.mCreature.ObjectID
 		  Dict.Value("type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
 		    Dict.Value("weight") = Self.mChance.DoubleValue

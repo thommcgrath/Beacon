@@ -377,26 +377,26 @@ Protected Module Tests
 		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
 		  
 		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  Engram = Beacon.ResolveEngram(ObjectData, "", "Class", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  Engram = Beacon.ResolveEngram(ObjectData, "", "", "Path", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  // Now use faulty data and see how it resolves
 		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
 		  ObjectData.Value("ObjectID") = BadEngramID
 		  
 		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID.StringValue)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID)
 		End Sub
 	#tag EndMethod
 

@@ -1264,7 +1264,7 @@ End
 		    
 		    Var CommonCreature As Beacon.Creature = Entries(0).Creature
 		    For I As Integer = 1 To Entries.LastIndex
-		      If Entries(I).Creature.Path <> CommonCreature.Path Then
+		      If Entries(I).Creature <> CommonCreature Then
 		        CommonCreature = Nil
 		        Exit For I
 		      End If

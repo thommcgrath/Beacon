@@ -208,11 +208,11 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  Var Paths() As String
+		  Var Selected() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Var Resource As Beacon.Engram = Self.List.RowTagAt(I)
-		      Paths.Add(Resource.Path)
+		      Selected.Add(Resource.ObjectID)
 		    End If
 		  Next
 		  
@@ -220,7 +220,7 @@ End
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
 		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Str(Self.mTarget.Quantity(I), "-0"))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = Paths.IndexOf(Self.mTarget.Resource(I).Path) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Self.mTarget.Resource(I).ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Self.mTarget.Resource(I)
 		  Next
 		  Self.List.Sort
@@ -375,7 +375,7 @@ End
 		    Var Idx As Integer = Self.mTarget.IndexOf(Engram)
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("UUID") = Engram.ObjectID.StringValue
+		    Dict.Value("UUID") = Engram.ObjectID
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)

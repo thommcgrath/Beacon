@@ -898,7 +898,7 @@ End
 		      Return
 		    End If
 		    
-		    EngramDict.Value(Engram.Path) = Engram
+		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
 		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
@@ -909,7 +909,7 @@ End
 		      Return
 		    End If
 		    
-		    EngramDict.Value(Engram.Path) = Engram
+		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
 		  Config = New BeaconConfigs.CraftingCosts
@@ -969,7 +969,7 @@ End
 		  Var Engrams() As Beacon.Engram = OriginalConfig.Engrams
 		  Var Filter As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
-		    Filter.Value(Engram.ObjectID.StringValue) = True
+		    Filter.Value(Engram.ObjectID) = True
 		  Next
 		  
 		  Var ObjectIDs() As String = LocalData.SharedInstance.GetObjectIDsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)

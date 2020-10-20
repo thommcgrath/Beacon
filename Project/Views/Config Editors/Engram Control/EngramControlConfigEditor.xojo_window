@@ -405,12 +405,12 @@ End
 		    Var Bound As Integer = Self.EngramList.LastRowIndex
 		    For Idx As Integer = 0 To Bound
 		      If Self.EngramList.Selected(Idx) Then
-		        Selected.Add(Beacon.Engram(Self.EngramList.RowTagAt(Idx)).Path)
+		        Selected.Add(Beacon.Engram(Self.EngramList.RowTagAt(Idx)).ObjectID)
 		      End If
 		    Next
 		  Else
 		    For Each Engram As Beacon.Engram In SelectEngrams
-		      Selected.Add(Engram.Path)
+		      Selected.Add(Engram.ObjectID)
 		    Next
 		  End If
 		  
@@ -480,7 +480,7 @@ End
 		    End If
 		    
 		    Self.EngramList.CellValueAt(Idx, 1) = Behaviors.Join("; ")
-		    Self.EngramList.Selected(Idx) = Selected.IndexOf(Engram.Path) > -1
+		    Self.EngramList.Selected(Idx) = Selected.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.EngramList.Sort()
@@ -737,7 +737,7 @@ End
 		    End If
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(Idx)
-		    Dict.Value(Engram.ObjectID.StringValue) = Config.BehaviorDict(Engram)
+		    Dict.Value(Engram.ObjectID) = Config.BehaviorDict(Engram)
 		  Next
 		  
 		  Board.Text = Beacon.GenerateJSON(Dict, True)
