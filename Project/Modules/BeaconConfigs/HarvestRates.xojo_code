@@ -14,11 +14,11 @@ Inherits Beacon.ConfigGroup
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
 		  
-		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(Entry.Key.StringValue)
-		    If (Engram Is Nil) = False And Engram.ValidForDocument(SourceDocument) Then
+		  Var Engrams() As Beacon.Engram = Self.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Engram.ValidForDocument(SourceDocument) Then
 		      Var ClassString As String = Engram.ClassString
-		      Var Rate As Double = Entry.Value
+		      Var Rate As Double = Self.mOverrides.Value(Engram, Self.RateAttribute)
 		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
 		    End If
 		  Next
@@ -68,25 +68,26 @@ Inherits Beacon.ConfigGroup
 		  Self.mPlayerHarvestingDamageMultiplier = Dict.DoubleValue("Player Harvesting Damage Multiplier", 1.0)
 		  Self.mDinoHarvestingDamageMultiplier = Dict.DoubleValue("Dino Harvesting Damage Multiplier", 1.0)
 		  
-		  If Dict.HasKey("Values") Then
-		    Self.mOverrides = Dict.DictionaryValue("Values", New Dictionary)
+		  If Dict.HasKey("Multipliers") Then
+		    Var Overrides As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(Dict.Value("Multipliers"))
+		    If (Overrides Is Nil) = False Then
+		      Self.mOverrides = Overrides
+		    End If
 		  ElseIf Dict.HasKey("Rates") Then
-		    Self.mOverrides = New Dictionary
 		    Var Rates As Dictionary = Dict.DictionaryValue("Rates", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
 		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Entry.Key, "", Nil)
-		        Self.mOverrides.Value(Engram.ObjectID) = Entry.Value.DoubleValue
+		        Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
 		  Else
-		    Self.mOverrides = New Dictionary
 		    Var Rates As Dictionary = Dict.DictionaryValue("Overrides", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates
 		      Try
 		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", Entry.Key, Nil)
-		        Self.mOverrides.Value(Engram.ObjectID) = Entry.Value.DoubleValue
+		        Self.mOverrides.Value(Engram, Self.RateAttribute) = Entry.Value.DoubleValue
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
@@ -100,16 +101,11 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dict.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
 		  Dict.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier
-		  Dict.Value("Values") = Self.mOverrides
+		  Dict.Value("Multipliers") = Self.mOverrides.SaveData
 		  Dict.Value("Use Optimized Rates") = Self.mUseOptimizedRates
 		  Dict.Value("Clamp Resource Harvest Damage") = Self.mClampResourceHarvestDamage
 		  Dict.Value("Player Harvesting Damage Multiplier") = Self.mPlayerHarvestingDamageMultiplier
 		  Dict.Value("Dino Harvesting Damage Multiplier") = Self.mDinoHarvestingDamageMultiplier
-		  
-		  Var Engrams() As Beacon.Engram = Self.Engrams
-		  For Each Engram As Beacon.Engram In Engrams
-		    BlueprintsMap.Value(Engram.ObjectID) = Engram
-		  Next
 		End Sub
 	#tag EndEvent
 
@@ -129,23 +125,28 @@ Inherits Beacon.ConfigGroup
 		  Self.mHarvestHealthMultiplier = 1.0
 		  Self.mPlayerHarvestingDamageMultiplier = 1.0
 		  Self.mUseOptimizedRates = False
-		  Self.mOverrides = New Dictionary
+		  Self.mOverrides = New Beacon.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return CType(Self.mOverrides.KeyCount, UInteger)
+		  Return CType(Self.mOverrides.Count, UInteger)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Engrams() As Beacon.Engram()
+		  Var References() As Beacon.BlueprintReference = Self.mOverrides.References
 		  Var Results() As Beacon.Engram
-		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(Entry.Key.StringValue)
-		    If (Engram Is Nil) = False Then
-		      Results.Add(Engram)
+		  For Each Reference As Beacon.BlueprintReference In References
+		    If Not Reference.IsEngram Then
+		      Continue
+		    End If
+		    
+		    Var Blueprint As Beacon.Blueprint = Reference.Resolve
+		    If (Blueprint Is Nil = False) And Blueprint IsA Beacon.Engram Then
+		      Results.Add(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Results
@@ -168,7 +169,7 @@ Inherits Beacon.ConfigGroup
 		  Var DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
 		  Var ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
 		  Var UseOptimizedRates As Boolean = False
-		  Var Overrides As New Dictionary
+		  Var Overrides As New Beacon.BlueprintAttributeManager
 		  
 		  If (CommandLineOptions Is Nil) = False And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
 		    Try
@@ -201,7 +202,7 @@ Inherits Beacon.ConfigGroup
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
 		        Var Engram As Beacon.Engram = Beacon.ResolveEngram("", "", ClassString, Mods)
-		        Overrides.Value(Engram.ObjectID) = Multiplier
+		        Overrides.Value(Engram, RateAttribute) = Multiplier
 		      End If
 		    Next
 		  End If
@@ -220,29 +221,31 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mOverrides.KeyCount - 1
+		  Return Self.mOverrides.Count - 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Override(Engram As Beacon.Engram) As Double
-		  If Engram <> Nil Then
-		    Return Self.mOverrides.Lookup(Engram.ObjectID, 1.0)
+		  Var Multiplier As Variant = Self.mOverrides.Value(Engram, Self.RateAttribute)
+		  If Multiplier.IsNull Then
+		    Return 1.0
 		  End If
+		  Return Multiplier.DoubleValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Override(Engram As Beacon.Engram, Assigns Rate As Double)
-		  If IsNull(Engram) Then
+		  If Engram Is Nil Then
 		    Return
 		  End If
 		  
-		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.ObjectID) Then
-		    Self.mOverrides.Remove(Engram.ObjectID)
+		  If Rate <= 0 And Self.mOverrides.HasBlueprint(Engram) Then
+		    Self.mOverrides.Remove(Engram)
 		    Self.Modified = True
-		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.ObjectID, 0) <> Rate Then
-		    Self.mOverrides.Value(Engram.ObjectID) = Rate
+		  ElseIf Rate > 0 And Self.Override(Engram) <> Rate Then
+		    Self.mOverrides.Value(Engram, Self.RateAttribute) = Rate
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -340,7 +343,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOverrides As Dictionary
+		Private mOverrides As Beacon.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -384,6 +387,10 @@ Inherits Beacon.ConfigGroup
 		#tag EndSetter
 		UseOptimizedRates As Boolean
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = RateAttribute, Type = String, Dynamic = False, Default = \"Multiplier", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

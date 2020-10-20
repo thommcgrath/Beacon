@@ -58,7 +58,10 @@ Inherits Beacon.ConfigGroup
 		  Self.mGlobalMultiplier = Dict.DoubleValue("Global", 1.0)
 		  
 		  If Dict.HasKey("Sizes") Then
-		    Self.mOverrides = Beacon.BlueprintAttributeManager.FromSaveData(Dict.Value("Sizes"))
+		    Var Overrides As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(Dict.Value("Sizes"))
+		    If (Overrides Is Nil) = False Then
+		      Self.mOverrides = Overrides
+		    End If
 		  ElseIf Dict.HasKey("Rates") Then
 		    Var Rates As Dictionary = Dict.DictionaryValue("Rates", New Dictionary)
 		    For Each Entry As DictionaryEntry In Rates

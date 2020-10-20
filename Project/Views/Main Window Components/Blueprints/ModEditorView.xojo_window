@@ -191,6 +191,10 @@ End
 		  Dialog.Filter = BeaconFileTypes.JsonFile + BeaconFileTypes.Text
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File Is Nil Then
+		    Return
+		  End If
+		  
 		  Var Contents As String
 		  Try
 		    Contents = File.Read
