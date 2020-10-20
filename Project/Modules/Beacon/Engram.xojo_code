@@ -124,10 +124,10 @@ Implements Beacon.Blueprint
 		    End If
 		    Engram.mIsValid = True
 		  End If
-		  Engram.mModID = LocalData.UserModID
-		  Engram.mModName = LocalData.UserModName
+		  Engram.mModID = Beacon.UserModID
+		  Engram.mModName = Beacon.UserModName
 		  Engram.mPath = Path
-		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LocalData.UserModID.Lowercase + ":" + Path.Lowercase)
+		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Beacon.UserModID.Lowercase + ":" + Path.Lowercase)
 		  Engram.mTags.Add("blueprintable")
 		  Return Engram
 		End Function
@@ -197,7 +197,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ModName() As String
-		  If IsNull(Self.mModID) = False And Self.mModID <> LocalData.UserModID Then
+		  If IsNull(Self.mModID) = False And Self.mModID <> Beacon.UserModID Then
 		    Return Self.mModName
 		  End If
 		  

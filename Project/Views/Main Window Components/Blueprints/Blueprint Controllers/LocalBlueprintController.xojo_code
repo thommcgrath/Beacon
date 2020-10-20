@@ -17,7 +17,7 @@ Inherits BlueprintController
 	#tag Event
 		Sub RefreshBlueprints()
 		  Var Mods As New Beacon.StringList(0)
-		  Mods(0) = LocalData.UserModID
+		  Mods(0) = Beacon.UserModID
 		  
 		  Var Engrams() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
 		  Var Creatures() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")

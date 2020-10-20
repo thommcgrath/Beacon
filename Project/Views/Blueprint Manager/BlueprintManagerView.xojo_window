@@ -391,7 +391,7 @@ End
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    Var Mods As New Beacon.StringList
-		    Mods.Append(LocalData.UserModID)
+		    Mods.Append(Beacon.UserModID)
 		    
 		    Var Engrams() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
 		    Var Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
@@ -475,7 +475,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
 		  Var Mods As New Beacon.StringList(0)
-		  Mods(0) = LocalData.UserModID
+		  Mods(0) = Beacon.UserModID
 		  
 		  Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngrams("", Mods)
 		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Mods)

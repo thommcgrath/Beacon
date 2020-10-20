@@ -113,7 +113,7 @@ End
 		  Var Filtered() As Beacon.ModDetails
 		  Var MaxWidth As Double
 		  For Idx As Integer = 0 To Mods.LastIndex
-		    If (ConsoleOnly <> Mods(Idx).ConsoleSafe) Or Mods(Idx).ModID = LocalData.UserModID Then
+		    If (ConsoleOnly <> Mods(Idx).ConsoleSafe) Or Mods(Idx).ModID = Beacon.UserModID Then
 		      Continue
 		    End If
 		    
@@ -180,7 +180,7 @@ End
 	#tag Method, Flags = &h1
 		Protected Sub EnabledMods(Assigns List As Beacon.StringList)
 		  Self.mModStates = New Dictionary
-		  Self.mModStates.Value(LocalData.UserModID) = True
+		  Self.mModStates.Value(Beacon.UserModID) = True
 		  
 		  For Each ModID As String In List
 		    Self.mModStates.Value(ModID) = True
@@ -196,7 +196,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub ModEnabled(ModID As String, Assigns Value As Boolean)
-		  Self.mModStates.Value(ModID) = Value Or ModID = LocalData.UserModID
+		  Self.mModStates.Value(ModID) = Value Or ModID = Beacon.UserModID
 		End Sub
 	#tag EndMethod
 

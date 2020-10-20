@@ -92,11 +92,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.BeginTransaction()
 		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
 		  If Results.RowCount = 1 Then
-		    If Results.Column("mod_id").StringValue = Self.UserModID Then
+		    If Results.Column("mod_id").StringValue = Beacon.UserModID Then
 		      Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3 WHERE object_id = ?1;", Modifier.ModifierID, Modifier.Label, Modifier.Pattern)
 		    End If
 		  Else
-		    Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern) VALUES (?1, ?2, ?3, ?4);", Modifier.ModifierID, Self.UserModID, Modifier.Label, Modifier.Pattern)
+		    Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern) VALUES (?1, ?2, ?3, ?4);", Modifier.ModifierID, Beacon.UserModID, Modifier.Label, Modifier.Pattern)
 		  End If
 		  Self.Commit()
 		End Sub
@@ -235,7 +235,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
 		  For Each Category As String In Categories
-		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(mod_id, path);")
+		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
 		  Next
 		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
@@ -243,7 +245,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
 		  
-		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id) VALUES (?1, ?2, ?3, ?4, ?5);", Self.UserModID, Self.UserModName, True, True, Self.UserModWorkshopID)
+		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id) VALUES (?1, ?2, ?3, ?4, ?5);", Beacon.UserModID, Beacon.UserModName, True, True, Beacon.UserModWorkshopID)
 		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -513,7 +515,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  // Careful removing this, the commit updates the mLastCommitTime property
 		  Self.BeginTransaction()
-		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Self.UserModID, True)
+		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Beacon.UserModID, True)
 		  Self.Commit()
 		  
 		  Var Migrated As Boolean
@@ -556,7 +558,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Next
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = '" + Self.UserModID + "' AND object_id IN (" + ObjectIDs.Join(",") + ");")
+		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = '" + Beacon.UserModID + "' AND object_id IN (" + ObjectIDs.Join(",") + ");")
 		  Self.Commit()
 		  
 		  Self.SyncUserEngrams()
@@ -608,18 +610,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return True
 		  End If
 		  
-		  If Engram.ModID = Self.UserModID Then
+		  If Engram.ModID = Beacon.UserModID Then
 		    Return True
 		  End If
 		  
 		  Var ObjectID As String = Engram.ObjectID
 		  
 		  If Self.mEngramCache.HasKey(ObjectID) Then
-		    Return Beacon.Engram(Self.mEngramCache.Value(ObjectID)).ModID = Self.UserModID
+		    Return Beacon.Engram(Self.mEngramCache.Value(ObjectID)).ModID = Beacon.UserModID
 		  End If
 		  
 		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE object_id = ?1;", ObjectID)
-		  Return Results.RowCount = 0 Or Results.Column("mod_id").StringValue = Self.UserModID
+		  Return Results.RowCount = 0 Or Results.Column("mod_id").StringValue = Beacon.UserModID
 		End Function
 	#tag EndMethod
 
@@ -775,7 +777,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
-		    Var RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
+		    Var RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Beacon.UserModID)
 		    If RS.RowCount = 0 Then
 		      Return Nil
 		    End If
@@ -1224,7 +1226,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End Try
 		  Self.BeginTransaction()
-		  Self.DeleteDataForMod(Self.UserModID)
+		  Self.DeleteDataForMod(Beacon.UserModID)
 		  If Not LegacyMode Then
 		    Var Unpacked() As Beacon.Blueprint
 		    For Each Dict As Dictionary In Blueprints
@@ -1252,7 +1254,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Var Label As String = Dict.Value("label")         
 		        Var Availability As UInt64 = Dict.Value("availability")
 		        Var Tags As String = Dict.Value("tags")
-		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Beacon.UserModID)      
 		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
 		        EngramsUpdated = True
 		      Catch Err As RuntimeException
@@ -1295,7 +1297,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If RemotePath = "/Engrams.json" Or RemotePath = "/Blueprints.json" Then
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
-		        Self.DeleteDataForMod(Self.UserModID)
+		        Self.DeleteDataForMod(Beacon.UserModID)
 		        EngramsUpdated = True
 		      Case "GET"
 		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
@@ -1387,12 +1389,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
 		    
 		    If ShouldTruncate Then
-		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Beacon.UserModID)
+		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Beacon.UserModID)
+		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Beacon.UserModID)
 		      Self.SQLExecute("DELETE FROM official_presets;")
-		      Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID) // Mods must be deleted last
+		      Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Beacon.UserModID)
+		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Beacon.UserModID) // Mods must be deleted last
 		    End If
 		    
 		    Var Mods() As Variant = ChangeDict.Value("mods")
@@ -1853,7 +1855,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Sub LoadPresets()
 		  Self.mPresets.ResizeTo(-1)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Self.UserModID) // Loading the presets will refill all the needed custom modifiers
+		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Beacon.UserModID) // Loading the presets will refill all the needed custom modifiers
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) != object_id AND LOWER(object_id) IN (SELECT object_id FROM custom_presets);") // To clean up object_id values that are not lowercase
 		  Self.SQLExecute("UPDATE custom_presets SET object_id = LOWER(object_id) WHERE LOWER(object_id) != object_id;")
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE object_id NOT IN (SELECT object_id FROM custom_presets WHERE user_id = ?1)", Self.UserID), Beacon.Preset.Types.BuiltIn)
@@ -1977,7 +1979,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  // Mods
 		  If FromSchemaVersion >= 19 Then
-		    Commands.Add("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
+		    Commands.Add("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Beacon.UserModID + "';")
 		  End If
 		  
 		  // Loot Sources
@@ -2000,9 +2002,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  ElseIf FromSchemaVersion >= 9 Then
 		    Commands.Add("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, tags FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 6 Then
-		    Commands.Add("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 0;")
-		    Commands.Add("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 1;")
-		    Commands.Add("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, CASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Self.UserModID + "';")
+		    Commands.Add("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Beacon.UserModID + "' AND can_blueprint = 0;")
+		    Commands.Add("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Beacon.UserModID + "' AND can_blueprint = 1;")
+		    Commands.Add("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, CASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Beacon.UserModID + "';")
 		  End If
 		  
 		  // Variables
@@ -2098,7 +2100,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Try
 		          Var ObjectID As New v4UUID
 		          Var Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
-		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID.StringValue, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
+		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID.StringValue, Beacon.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
 		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID.StringValue, "engrams", Tags)
 		        Catch Err As RuntimeException
 		          Self.Rollback()
@@ -2506,7 +2508,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      Var Update As Boolean
 		      Var ObjectID As String
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR (LOWER(mod_id) = ?2 AND LOWER(path) = ?3);", Blueprint.ObjectID, Self.UserModID, Blueprint.Path.Lowercase)
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR (LOWER(mod_id) = ?2 AND LOWER(path) = ?3);", Blueprint.ObjectID, Beacon.UserModID, Blueprint.Path.Lowercase)
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
 		        ObjectID = Results.Column("object_id").StringValue
@@ -2516,7 +2518,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		        
 		        Var ModID As String = Results.Column("mod_id").StringValue
-		        If ModID <> Self.UserModID Then
+		        If ModID <> Beacon.UserModID Then
 		          Continue
 		        End If
 		        
@@ -2541,7 +2543,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Columns.Value("label") = Blueprint.Label
 		      Columns.Value("tags") = Blueprint.TagString
 		      Columns.Value("availability") = Blueprint.Availability
-		      Columns.Value("mod_id") = Self.UserModID
+		      Columns.Value("mod_id") = Beacon.UserModID
 		      
 		      Select Case Blueprint
 		      Case IsA Beacon.Creature
@@ -3140,7 +3142,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints("", "", New Beacon.StringList(Self.UserModID), "")
+		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints("", "", New Beacon.StringList(Beacon.UserModID), "")
 		  Break
 		  Return
 		  Var Packed() As Dictionary
@@ -3160,7 +3162,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  #if false
-		    Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
+		    Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Beacon.UserModID)
 		    Var Dicts() As Dictionary
 		    While Not Results.AfterLastRow
 		      Var Dict As New Dictionary  
@@ -3364,15 +3366,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = UserModName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = UserModWorkshopID, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
 
 

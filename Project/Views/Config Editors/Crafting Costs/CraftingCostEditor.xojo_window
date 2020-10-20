@@ -397,7 +397,7 @@ End
 		    Dicts = Beacon.ParseJSON(Contents)
 		    
 		    For Each Dict As Dictionary In Dicts
-		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "", "Class", Nil)
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "Class", "", Nil)
 		      Var Quantity As Integer = Dict.Value("Quantity")
 		      Var Exact As Boolean = Dict.Value("Exact")
 		      Self.mTarget.Append(Engram, Quantity, Exact)

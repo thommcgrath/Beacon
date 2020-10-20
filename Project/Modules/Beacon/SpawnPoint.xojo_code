@@ -110,10 +110,10 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Var SpawnPoint As New Beacon.SpawnPoint
 		  SpawnPoint.mClassString = Beacon.ClassStringFromPath(Path)
 		  SpawnPoint.mPath = Path
-		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LocalData.UserModID.Lowercase + ":" + SpawnPoint.mPath.Lowercase)
+		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Beacon.UserModID.Lowercase + ":" + SpawnPoint.mPath.Lowercase)
 		  SpawnPoint.mLabel = Beacon.LabelFromClassString(SpawnPoint.mClassString)
-		  SpawnPoint.mModID = LocalData.UserModID
-		  SpawnPoint.mModName = LocalData.UserModName
+		  SpawnPoint.mModID = Beacon.UserModID
+		  SpawnPoint.mModName = Beacon.UserModName
 		  Return SpawnPoint
 		End Function
 	#tag EndMethod

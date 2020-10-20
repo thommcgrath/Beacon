@@ -1369,13 +1369,12 @@ Implements ObservationKit.Observable
 		  Var CustomBlueprints() As Dictionary
 		  For Each Entry As DictionaryEntry In BlueprintsMap
 		    Try
-		      Var BlueprintUUID As String = Entry.Key
 		      Var Blueprint As Beacon.Blueprint = Entry.Value
 		      If Blueprint Is Nil Then
 		        Continue
 		      End If
 		      
-		      If Blueprint.ModID <> LocalData.UserModID Then
+		      If Blueprint.ModID <> Beacon.UserModID Then
 		        Continue
 		      End If
 		      

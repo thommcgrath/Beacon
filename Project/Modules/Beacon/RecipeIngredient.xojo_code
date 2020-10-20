@@ -27,7 +27,7 @@ Protected Class RecipeIngredient
 		  End If
 		  
 		  Try
-		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "object_id", "", "path", Mods)
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "object_id", "path", "", Mods)
 		    Var Quantity As Integer = Dict.Value("quantity")
 		    Var Exact As Boolean = Dict.Value("exact")
 		    

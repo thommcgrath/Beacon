@@ -1358,7 +1358,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, ClassKey As String, PathKey As String, Mods As Beacon.StringList) As Beacon.Engram
+		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Beacon.Engram
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -2087,6 +2087,15 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = URLScheme, Type = String, Dynamic = False, Default = \"beacon", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UserModName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UserModWorkshopID, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 
 

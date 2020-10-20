@@ -78,7 +78,7 @@ Implements Beacon.DocumentItem
 		    App.Log(Err, CurrentMethodName, "Reading Weight value")
 		  End Try
 		  
-		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "Class", "Path", Nil)
+		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "Path", "Class", Nil)
 		  
 		  Var Option As New Beacon.SetEntryOption(Engram, Weight)
 		  Option.Modified = False

@@ -124,7 +124,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ModsList.Append(New SourceListItem(LocalData.UserModName, LocalData.UserModID))
+		  Self.ModsList.Append(New SourceListItem(Beacon.UserModName, Beacon.UserModID))
 		End Sub
 	#tag EndEvent
 
@@ -185,8 +185,8 @@ End
 		  Next
 		  Self.ModsList.Sort
 		  
-		  Self.ModsList.Insert(0, New SourceListItem(LocalData.UserModName, LocalData.UserModID))
-		  If SelectedModID = LocalData.UserModID Then
+		  Self.ModsList.Insert(0, New SourceListItem(Beacon.UserModName, Beacon.UserModID))
+		  If SelectedModID = Beacon.UserModID Then
 		    Self.ModsList.SelectedRowIndex = 0
 		  End If
 		  
@@ -299,7 +299,7 @@ End
 		  
 		  Var Controller As BlueprintController
 		  Var Tag As Variant = Me.Item(DesiredIndex).Tag
-		  If Tag = LocalData.UserModID Then
+		  If Tag = Beacon.UserModID Then
 		    Controller = New LocalBlueprintController
 		  Else
 		    Controller = New RemoteBlueprintController(Tag.StringValue)

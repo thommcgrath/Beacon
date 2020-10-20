@@ -82,7 +82,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "Engram", "", Nil))
+		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "", "Engram", Nil))
 		  
 		  If Dict.HasKey("Resources") Then
 		    Var Resources() As Variant = Dict.Value("Resources")
@@ -90,7 +90,7 @@ Implements Beacon.NamedItem
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
 		      
-		      Cost.mIngredients.Add(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "Class", "", Nil), Quantity, RequireExact))
+		      Cost.mIngredients.Add(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "", "Class", Nil), Quantity, RequireExact))
 		    Next
 		  End If
 		  
@@ -106,12 +106,12 @@ Implements Beacon.NamedItem
 		      Return Nil
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "", "ItemClassString", "", Mods)
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "", "", "ItemClassString", Mods)
 		    Var Cost As New Beacon.CraftingCost(Engram)
 		    If Dict.HasKey("BaseCraftingResourceRequirements") Then
 		      Var Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
 		      For Each Resource As Dictionary In Resources
-		        Var ResourceEngram As Beacon.Engram = Beacon.ResolveEngram(Resource, "", "ResourceItemTypeString", "", Mods)
+		        Var ResourceEngram As Beacon.Engram = Beacon.ResolveEngram(Resource, "", "", "ResourceItemTypeString", Mods)
 		        Var Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
 		        Var RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
 		        Cost.Append(ResourceEngram, Quantity, RequireExact)
