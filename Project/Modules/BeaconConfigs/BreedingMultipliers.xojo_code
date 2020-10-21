@@ -86,6 +86,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  If ParsedData.HasAnyKey("BabyMatureSpeedMultiplier", "EggHatchSpeedMultiplier", "BabyFoodConsumptionSpeedMultiplier", "LayEggIntervalMultiplier", "BabyCuddleGracePeriodMultiplier", "BabyCuddleIntervalMultiplier", "BabyCuddleLoseImprintQualitySpeedMultiplier", "BabyImprintingStatScaleMultiplier", "MatingIntervalMultiplier", "MatingSpeedMultiplier") = False Then
 		    Return Nil

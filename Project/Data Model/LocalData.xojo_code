@@ -2549,7 +2549,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
 		      Var Sets() As Beacon.ItemSet
 		      For Each Dict As Dictionary In SetDicts
-		        Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		        Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dict)
 		        If Set <> Nil Then
 		          Sets.Add(Set)
 		        End If

@@ -75,6 +75,16 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModID() As String
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.ModID
+		  Else
+		    Return Self.mSaveData.Value("ModUUID")
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ObjectID() As String
 		  If (Self.mBlueprint Is Nil) = False Then
 		    Return Self.mBlueprint.ObjectID

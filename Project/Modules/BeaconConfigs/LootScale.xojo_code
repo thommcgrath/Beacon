@@ -64,6 +64,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  If ParsedData.HasKey("SupplyCrateLootQualityMultiplier") Then
 		    Return New BeaconConfigs.LootScale(ParsedData.DoubleValue("SupplyCrateLootQualityMultiplier"))

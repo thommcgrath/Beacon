@@ -55,6 +55,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  If ParsedData.HasAnyKey("DayCycleSpeedScale", "DayTimeSpeedScale", "NightTimeSpeedScale") = False Then
 		    Return Nil

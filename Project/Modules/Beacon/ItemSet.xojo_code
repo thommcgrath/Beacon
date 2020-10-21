@@ -48,14 +48,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    Entry.ConsumeMissingEngrams(Engrams)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub CopyFrom(Source As Beacon.ItemSet)
 		  Self.mItemsRandomWithoutReplacement = Source.mItemsRandomWithoutReplacement
 		  Self.mMaxNumItems = Source.mMaxNumItems
@@ -79,29 +71,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mEntries.LastIndex + 1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Export() As Dictionary
-		  Var Children() As Dictionary
-		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    Children.Add(Entry.Export)
-		  Next
-		  
-		  Var Keys As New Dictionary
-		  Keys.Value("ItemEntries") = Children
-		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
-		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
-		  Keys.Value("MaxNumItems") = Self.MaxNumItems
-		  Keys.Value("MinNumItems") = Self.MinNumItems
-		  Keys.Value("NumItemsPower") = Self.NumItemsPower
-		  Keys.Value("Weight") = Self.RawWeight
-		  Keys.Value("SetWeight") = Self.RawWeight / 1000
-		  If Self.SourcePresetID <> "" Then
-		    Keys.Value("SourcePresetID") = Self.SourcePresetID
-		  End If
-		  Return Keys
 		End Function
 	#tag EndMethod
 
@@ -190,59 +159,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Hash(ForPreset As Boolean = False) As String
-		  If Self.HashIsStale Or ForPreset Then
-		    Var Entries() As String
-		    Entries.ResizeTo(Self.mEntries.LastIndex)
-		    For I As Integer = 0 To Entries.LastIndex
-		      Entries(I) = Self.mEntries(I).Hash
-		    Next
-		    Entries.Sort
-		    
-		    Var Locale As Locale = Locale.Raw
-		    Var Format As String = "0.000"
-		    
-		    Var Parts(6) As String
-		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
-		    Parts(1) = Self.MaxNumItems.ToString(Locale, Format)
-		    Parts(2) = Self.MinNumItems.ToString(Locale, Format)
-		    If ForPreset Then
-		      Return Beacon.MD5(Parts.Join(",")).Lowercase
-		    End If
-		    Parts(3) = Self.NumItemsPower.ToString(Locale, Format)
-		    Parts(4) = Self.RawWeight.ToString(Locale, Format)
-		    Parts(5) = Self.Label.Lowercase  
-		    Parts(6) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
-		    
-		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
-		    Self.mLastHashTime = System.Microseconds
-		  End If
-		  Return Self.mHash
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HashIsStale() As Boolean
-		  If Self.mLastHashTime < Self.mLastModifiedTime Then
-		    Return True
-		  End If
-		  
-		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    If Entry.HashIsStale Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ID() As v4UUID
-		  Return Self.mID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.ItemSet
 		  Var Set As New Beacon.ItemSet
 		  
 		  Try
@@ -296,7 +213,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  For Idx As Integer = 0 To Children.LastIndex
 		    Try
-		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dictionary(Children(Idx)))
+		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Dictionary(Children(Idx)))
 		      If (Entry Is Nil) = False Then
 		        Set.Append(Entry)
 		      End If
@@ -331,6 +248,64 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Set.Modified = False
 		  Return Set
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Hash(ForPreset As Boolean = False) As String
+		  If Self.HashIsStale Or ForPreset Then
+		    Var Entries() As String
+		    Entries.ResizeTo(Self.mEntries.LastIndex)
+		    For I As Integer = 0 To Entries.LastIndex
+		      Entries(I) = Self.mEntries(I).Hash
+		    Next
+		    Entries.Sort
+		    
+		    Var Locale As Locale = Locale.Raw
+		    Var Format As String = "0.000"
+		    
+		    Var Parts(6) As String
+		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
+		    Parts(1) = Self.MaxNumItems.ToString(Locale, Format)
+		    Parts(2) = Self.MinNumItems.ToString(Locale, Format)
+		    If ForPreset Then
+		      Return Beacon.MD5(Parts.Join(",")).Lowercase
+		    End If
+		    Parts(3) = Self.NumItemsPower.ToString(Locale, Format)
+		    Parts(4) = Self.RawWeight.ToString(Locale, Format)
+		    Parts(5) = Self.Label.Lowercase  
+		    Parts(6) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
+		    
+		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
+		    Self.mLastHashTime = System.Microseconds
+		  End If
+		  Return Self.mHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HashIsStale() As Boolean
+		  If Self.mLastHashTime < Self.mLastModifiedTime Then
+		    Return True
+		  End If
+		  
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    If Entry.HashIsStale Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ID() As v4UUID
+		  Return Self.mID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "FromSaveData" )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
+		  Return Beacon.ItemSet.FromSaveData(Dict)
 		End Function
 	#tag EndMethod
 
@@ -393,17 +368,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mEntries.AddAt(Index, Entry)
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    If Not Entry.IsValid(Document) Then
-		      Return False
-		    End If
-		  Next
-		  Return Self.mEntries.LastIndex > -1
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -535,6 +499,29 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mEntries.ResizeTo(Bound)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  Var Children() As Dictionary
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    Children.Add(Entry.SaveData)
+		  Next
+		  
+		  Var Keys As New Dictionary
+		  Keys.Value("ItemEntries") = Children
+		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
+		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
+		  Keys.Value("MaxNumItems") = Self.MaxNumItems
+		  Keys.Value("MinNumItems") = Self.MinNumItems
+		  Keys.Value("NumItemsPower") = Self.NumItemsPower
+		  Keys.Value("Weight") = Self.RawWeight
+		  Keys.Value("SetWeight") = Self.RawWeight / 1000
+		  If Self.SourcePresetID <> "" Then
+		    Keys.Value("SourcePresetID") = Self.SourcePresetID
+		  End If
+		  Return Keys
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

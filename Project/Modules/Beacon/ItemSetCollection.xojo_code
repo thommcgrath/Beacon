@@ -115,7 +115,7 @@ Implements Beacon.Countable
 		        Continue
 		      End If
 		      
-		      Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dictionary(Dict))
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dictionary(Dict))
 		      Call Sets.Append(Set)
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reading item set dictionary #" + Str(Idx, "-0"))
@@ -196,7 +196,7 @@ Implements Beacon.Countable
 		Function SaveData() As Dictionary()
 		  Var Sets() As Dictionary
 		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    Var Dict As Dictionary = Set.Export
+		    Var Dict As Dictionary = Set.SaveData
 		    If Dict Is Nil Then
 		      Continue
 		    End If

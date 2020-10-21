@@ -264,6 +264,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  If Not ParsedData.HasKey("LevelExperienceRampOverrides") Then
 		    Return Nil

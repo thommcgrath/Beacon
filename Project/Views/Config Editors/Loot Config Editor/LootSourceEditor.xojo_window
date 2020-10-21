@@ -1069,7 +1069,7 @@ End
 		    End If
 		    
 		    Var Organizer As ItemSetOrganizer = Me.RowTagAt(I)
-		    Var Dict As Dictionary = Organizer.Template.Export
+		    Var Dict As Dictionary = Organizer.Template.SaveData
 		    If Dict <> Nil Then
 		      Dicts.Add(Dict)
 		    End If
@@ -1120,7 +1120,7 @@ End
 		    
 		    Var NewItemSets() As Beacon.ItemSet
 		    For Each Dict As Dictionary In Dicts
-		      Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dict)
 		      If Set = Nil Then
 		        Continue
 		      End If
@@ -1300,13 +1300,13 @@ End
 		    End If
 		  Case "copyjson"
 		    If Targets.LastIndex = 0 Then
-		      Var Dict As Dictionary = Targets(0).Template.Export()
+		      Var Dict As Dictionary = Targets(0).Template.SaveData()
 		      Var Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Dict, True)
 		    Else
 		      Var Arr() As Dictionary
 		      For Each Organizer As ItemSetOrganizer In Targets
-		        Arr.Add(Organizer.Template.Export())
+		        Arr.Add(Organizer.Template.SaveData())
 		      Next
 		      Var Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Arr, True)

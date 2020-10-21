@@ -75,26 +75,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    Option.ConsumeMissingEngrams(Engrams)
-		  Next
-		  
-		  ' Dim Modified As Boolean
-		  ' For I As Integer = 0 To Self.mOptions.LastIndex
-		  ' Dim Option As Beacon.SetEntryOption = Self.mOptions(I)
-		  ' For Each Engram As Beacon.Engram In Engrams
-		  ' If Option.Engram <> Nil And Option.Engram.IsValid = False And Option.Engram.ClassString = Engram.ClassString Then
-		  ' Self.mOptions(I) = New Beacon.SetEntryOption(Engram, Option.Weight)
-		  ' Modified = True
-		  ' End If
-		  ' Next
-		  ' Next
-		  ' Return Modified
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mOptions.LastIndex + 1
 		End Function
@@ -176,70 +156,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Dictionary
-		  Var Children() As Dictionary
-		  For Each Item As Beacon.SetEntryOption In Self.mOptions
-		    Children.Add(Item.Export)
-		  Next
-		  
-		  Var Keys As New Dictionary
-		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
-		  Keys.Value("Items") = Children
-		  Keys.Value("MinQuality") = Self.MinQuality.Key
-		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
-		  Keys.Value("MinQuantity") = Self.MinQuantity
-		  Keys.Value("MaxQuantity") = Self.MaxQuantity
-		  Keys.Value("Weight") = Self.RawWeight
-		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
-		  Return Keys
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Hash() As String
-		  If Self.HashIsStale Then
-		    Var Items() As String
-		    Items.ResizeTo(Self.mOptions.LastIndex)
-		    For I As Integer = 0 To Items.LastIndex
-		      Items(I) = Self.mOptions(I).Hash
-		    Next
-		    Items.Sort
-		    
-		    Var Locale As Locale = Locale.Raw
-		    Var Format As String = "0.000"
-		    
-		    Var Parts(6) As String
-		    Parts(0) = Beacon.MD5(Items.Join(",")).Lowercase
-		    Parts(1) = Self.ChanceToBeBlueprint.ToString(Locale, Format)
-		    Parts(2) = Self.MaxQuality.Key.Lowercase
-		    Parts(3) = Self.MaxQuantity.ToString(Locale, Format)
-		    Parts(4) = Self.MinQuality.Key.Lowercase
-		    Parts(5) = Self.MinQuantity.ToString(Locale, Format)
-		    Parts(6) = Self.RawWeight.ToString(Locale, Format)
-		    
-		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
-		    Self.mLastHashTime = System.Microseconds
-		  End If
-		  Return Self.mHash
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HashIsStale() As Boolean
-		  If Self.mLastHashTime < Self.mLastModifiedTime Then
-		    Return True
-		  End If
-		  
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Option.HashIsStale Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntry
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SetEntry
 		  Var Entry As New Beacon.SetEntry
 		  
 		  Try
@@ -302,7 +219,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    For Idx As Integer = 0 To Children.LastIndex
 		      Try
-		        Var Option As Beacon.SetEntryOption = Beacon.SetEntryOption.ImportFromBeacon(Dictionary(Children(Idx)))
+		        Var Option As Beacon.SetEntryOption = Beacon.SetEntryOption.FromSaveData(Dictionary(Children(Idx)))
 		        If (Option Is Nil) = False Then
 		          Entry.Append(Option)
 		        End If
@@ -314,6 +231,49 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Entry.Modified = False
 		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Hash() As String
+		  If Self.HashIsStale Then
+		    Var Items() As String
+		    Items.ResizeTo(Self.mOptions.LastIndex)
+		    For I As Integer = 0 To Items.LastIndex
+		      Items(I) = Self.mOptions(I).Hash
+		    Next
+		    Items.Sort
+		    
+		    Var Locale As Locale = Locale.Raw
+		    Var Format As String = "0.000"
+		    
+		    Var Parts(6) As String
+		    Parts(0) = Beacon.MD5(Items.Join(",")).Lowercase
+		    Parts(1) = Self.ChanceToBeBlueprint.ToString(Locale, Format)
+		    Parts(2) = Self.MaxQuality.Key.Lowercase
+		    Parts(3) = Self.MaxQuantity.ToString(Locale, Format)
+		    Parts(4) = Self.MinQuality.Key.Lowercase
+		    Parts(5) = Self.MinQuantity.ToString(Locale, Format)
+		    Parts(6) = Self.RawWeight.ToString(Locale, Format)
+		    
+		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
+		    Self.mLastHashTime = System.Microseconds
+		  End If
+		  Return Self.mHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HashIsStale() As Boolean
+		  If Self.mLastHashTime < Self.mLastModifiedTime Then
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "FromSaveData" )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntry
+		  Return FromSaveData(Dict)
 		End Function
 	#tag EndMethod
 
@@ -427,17 +387,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mOptions.AddAt(Index, Item)
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Not Option.IsValid(Document) Then
-		      Return False
-		    End If
-		  Next
-		  Return Self.mOptions.LastIndex > -1
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -560,12 +509,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Self.mLastModifiedTime > Self.mLastSaveTime Then
 		    Return True
 		  End If
-		  
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Option.Modified Then
-		      Return True
-		    End If
-		  Next
 		End Function
 	#tag EndMethod
 
@@ -575,12 +518,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Self.mLastSaveTime = System.Microseconds
 		  Else
 		    Self.mLastModifiedTime = System.Microseconds
-		  End If
-		  
-		  If Not Value Then
-		    For Each Option As Beacon.SetEntryOption In Self.mOptions
-		      Option.Modified = False
-		    Next
 		  End If
 		End Sub
 	#tag EndMethod
@@ -640,6 +577,26 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  Var Children() As Dictionary
+		  For Each Item As Beacon.SetEntryOption In Self.mOptions
+		    Children.Add(Item.SaveData)
+		  Next
+		  
+		  Var Keys As New Dictionary
+		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
+		  Keys.Value("Items") = Children
+		  Keys.Value("MinQuality") = Self.MinQuality.Key
+		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
+		  Keys.Value("MinQuantity") = Self.MinQuantity
+		  Keys.Value("MaxQuantity") = Self.MaxQuantity
+		  Keys.Value("Weight") = Self.RawWeight
+		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Return Keys
 		End Function
 	#tag EndMethod
 

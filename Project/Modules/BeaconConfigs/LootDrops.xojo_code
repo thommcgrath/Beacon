@@ -211,10 +211,6 @@ Implements Iterable
 	#tag Method, Flags = &h21
 		Private Sub DetectItemSetIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
 		  Try
-		    If Set.IsValid(Document) Then
-		      Return
-		    End If
-		    
 		    If Set.Count = 0 Then
 		      Issues.Add(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
 		    Else
@@ -230,10 +226,6 @@ Implements Iterable
 	#tag Method, Flags = &h21
 		Private Sub DetectLootSourceIssues(Source As Beacon.LootSource, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
 		  Try
-		    If Source.IsValid(Document) Then
-		      Return
-		    End If
-		    
 		    If Source.ItemSets.Count < Source.RequiredItemSetCount Then
 		      Issues.Add(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSetCount.ToString + " " + if(Source.RequiredItemSetCount = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
@@ -249,10 +241,6 @@ Implements Iterable
 	#tag Method, Flags = &h21
 		Private Sub DetectSetEntryIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
 		  Try
-		    If Entry.IsValid(Document) Then
-		      Return
-		    End If
-		    
 		    If Entry.Count = 0 Then
 		      Issues.Add(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
 		    Else
@@ -268,18 +256,13 @@ Implements Iterable
 	#tag Method, Flags = &h21
 		Private Sub DetectSetEntryOptionIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
 		  Try
-		    If Option.IsValid(Document) Then
-		      Return
-		    End If
-		    
-		    If Option.Engram = Nil Then
-		      Issues.Add(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		    ElseIf Document.ModEnabled(Option.Engram.ModID) = False Then
-		      Issues.Add(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		    ElseIf Option.Engram.IsTagged("Generic") Or Option.Engram.IsTagged("Blueprint") Then
-		      Issues.Add(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		    Var Engram As Beacon.Engram = Option.Engram
+		    If Document.ModEnabled(Engram.ModID) = False Then
+		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
+		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    Else
-		      Issues.Add(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		      Issues.Add(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    End If
 		  Catch Err As RuntimeException
 		  End Try
@@ -468,45 +451,10 @@ Implements Iterable
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Searcher_EngramsFound(Sender As Beacon.EngramSearcherThread)
-		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints(True)
-		  Var Engrams() As Beacon.Engram = Blueprints.Engrams
-		  
-		  For Each Source As Beacon.LootSource In Self
-		    Source.ConsumeMissingEngrams(Engrams)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Searcher_Finished(Sender As Beacon.EngramSearcherThread)
-		  RemoveHandler Sender.Finished, AddressOf Searcher_Finished
-		  RemoveHandler Sender.EngramsFound, AddressOf Searcher_EngramsFound
-		  If Self.mResolveIssuesCallback <> Nil Then
-		    If (GetDelegateTargetMBS(Self.mResolveIssuesCallback) Is Nil) = False Then
-		      Self.mResolveIssuesCallback.Invoke
-		    End If
-		    Self.mResolveIssuesCallback = Nil
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
 		  Return True
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
-		  Self.mResolveIssuesCallback = Callback
-		  
-		  Var Searcher As New Beacon.EngramSearcherThread
-		  AddHandler Searcher.EngramsFound, AddressOf Searcher_EngramsFound
-		  AddHandler Searcher.Finished, AddressOf Searcher_Finished
-		  Searcher.Search(InputContent, False)
-		End Sub
 	#tag EndMethod
 
 

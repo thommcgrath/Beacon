@@ -127,6 +127,7 @@ Implements ObservationKit.Observable
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  If ParsedData.HasKey("SessionName") Then
 		    Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")

@@ -55,19 +55,14 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Dictionary
-		  Var Dict As Dictionary = Super.Export
-		  Dict.Value("Availability") = Self.mAvailability
-		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
-		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
-		  Dict.Value("RespectBlueprintMultiplier") = Self.mRespectBlueprintMultiplier
-		  Return Dict
+		Attributes( Deprecated )  Function Export() As Dictionary
+		  Return Self.SaveData
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.PresetEntry
-		  Var SetEntry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.PresetEntry
+		  Var SetEntry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Dict)
 		  If SetEntry = Nil Then
 		    Return Nil
 		  End If
@@ -78,6 +73,12 @@ Inherits Beacon.SetEntry
 		  Entry.mRespectQuantityMultiplier = Dict.Lookup("RespectQuantityMultiplier", Entry.mRespectQuantityMultiplier)
 		  Entry.mRespectBlueprintMultiplier = Dict.Lookup("RespectBlueprintMultiplier", Entry.mRespectBlueprintMultiplier)
 		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.PresetEntry
+		  Return Beacon.PresetEntry.FromSaveData(Dict)
 		End Function
 	#tag EndMethod
 
@@ -115,6 +116,18 @@ Inherits Beacon.SetEntry
 		Sub RespectQuantityMultiplier(Assigns Value As Boolean)
 		  Self.mRespectQuantityMultiplier = Value
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  // Calling the overridden superclass method.
+		  Var Dict As Dictionary = Super.SaveData
+		  Dict.Value("Availability") = Self.mAvailability
+		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
+		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
+		  Dict.Value("RespectBlueprintMultiplier") = Self.mRespectBlueprintMultiplier
+		  Return Dict
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

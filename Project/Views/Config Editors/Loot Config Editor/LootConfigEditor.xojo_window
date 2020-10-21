@@ -971,9 +971,7 @@ End
 		    If Me.Selected(I) Then
 		      Var Source As Beacon.LootSource = Me.RowTagAt(I)
 		      Dicts.Add(Source.SaveData)
-		      If Source.IsValid(Self.Document) Then
-		        BeaconConfigs.LootDrops.BuildOverrides(Source, Configs, Self.Document.Difficulty)
-		      End If
+		      BeaconConfigs.LootDrops.BuildOverrides(Source, Configs, Self.Document.Difficulty)
 		    End If
 		  Next
 		  

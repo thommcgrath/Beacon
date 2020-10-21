@@ -86,14 +86,6 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    Set.ConsumeMissingEngrams(Engrams)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub EditSaveData(SaveData As Dictionary)
 		  #Pragma Unused SaveData
 		  
@@ -167,17 +159,6 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag Method, Flags = &h0
 		Function IsOfficial() As Boolean
 		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    If Not Set.IsValid(Document) Then
-		      Return False
-		    End If
-		  Next
-		  Return Self.mItemSets.Count > 0
 		End Function
 	#tag EndMethod
 

@@ -483,7 +483,7 @@ End
 		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.Add(Beacon.SetEntry(Me.RowTagAt(I)).Export)
+		      Entries.Add(Beacon.SetEntry(Me.RowTagAt(I)).SaveData)
 		    End If
 		  Next
 		  
@@ -520,7 +520,7 @@ End
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		  If Info.FullName = "Dictionary" Then
 		    // Single item
-		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
+		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Parsed)
 		    If Entry <> Nil Then
 		      Self.mSet.Append(Entry)
 		      Modified = True
@@ -529,7 +529,7 @@ End
 		    // Multiple items
 		    Var Dicts() As Variant = Parsed
 		    For Each Dict As Dictionary In Dicts
-		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
+		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Dict)
 		      If Entry <> Nil Then
 		        Self.mSet.Append(Entry)
 		        Modified = True

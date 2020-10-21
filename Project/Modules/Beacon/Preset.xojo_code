@@ -92,7 +92,7 @@ Implements Beacon.Countable
 		  If Dict.HasKey("Entries") Then
 		    Var Contents() As Variant = Dict.Value("Entries")
 		    For Each EntryDict As Dictionary In Contents
-		      Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
+		      Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.FromSaveData(EntryDict)
 		      If Entry <> Nil Then
 		        Preset.mContents.Add(Entry)
 		      End If
@@ -105,7 +105,7 @@ Implements Beacon.Countable
 		        Var ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
 		        Var Items() As Variant = Set.Value
 		        For Each Item As Dictionary In Items
-		          Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Item)
+		          Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Item)
 		          If Entry <> Nil Then
 		            Var Child As New Beacon.PresetEntry(Entry)
 		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
@@ -348,7 +348,7 @@ Implements Beacon.Countable
 		  Var Contents() As Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
 		    Hashes.Add(Entry.Hash)
-		    Contents.Add(Entry.Export)
+		    Contents.Add(Entry.SaveData)
 		  Next
 		  Hashes.SortWith(Contents)
 		  

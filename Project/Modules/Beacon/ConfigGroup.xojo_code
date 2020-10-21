@@ -2,7 +2,6 @@
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function Clone(Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
-		  Var Map As New Dictionary
 		  Var Dict As Dictionary = Self.ToDictionary(Document)
 		  If Dict Is Nil Then
 		    Return Nil
@@ -184,16 +183,6 @@ Protected Class ConfigGroup
 		  RaiseEvent WriteDictionary(Dict, Document)
 		  Return Dict
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
-		  #Pragma Unused InputContent
-		  
-		  If Callback <> Nil And (GetDelegateTargetMBS(Callback) Is Nil) = False Then
-		    Callback.Invoke
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
