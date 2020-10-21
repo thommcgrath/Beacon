@@ -466,58 +466,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GetCreaturesByClass(Extends Source As Beacon.DataSource, ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
-		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByClass(ClassString, Mods)
-		  Var Creatures() As Beacon.Creature
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Add(Beacon.Creature(Blueprint))
-		    End If
-		  Next
-		  Return Creatures
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetCreaturesByPath(Extends Source As Beacon.DataSource, Path As String, Mods As Beacon.StringList) As Beacon.Creature()
-		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByPath(Path, Mods)
-		  Var Creatures() As Beacon.Creature
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Add(Beacon.Creature(Blueprint))
-		    End If
-		  Next
-		  Return Creatures
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramsByClass(Extends Source As Beacon.DataSource, ClassString As String, Mods As Beacon.StringList) As Beacon.Engram()
-		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByClass(ClassString, Mods)
-		  Var Engrams() As Beacon.Engram
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Add(Beacon.Engram(Blueprint))
-		    End If
-		  Next
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramsByPath(Extends Source As Beacon.DataSource, Path As String, Mods As Beacon.StringList) As Beacon.Engram()
-		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByPath(Path, Mods)
-		  Var Engrams() As Beacon.Engram
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Add(Beacon.Engram(Blueprint))
-		    End If
-		  Next
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastIndex DownTo 0
@@ -527,32 +475,6 @@ Protected Module Beacon
 		    End If
 		  Next
 		  Return Default
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetSpawnPointsByClass(Extends Source As Beacon.DataSource, ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
-		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByClass(ClassString, Mods)
-		  Var SpawnPoints() As Beacon.SpawnPoint
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.SpawnPoint Then
-		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
-		    End If
-		  Next
-		  Return SpawnPoints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetSpawnPointsByPath(Extends Source As Beacon.DataSource, Path As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
-		  Var Blueprints() As Beacon.Blueprint = Source.GetBlueprintsByPath(Path, Mods)
-		  Var SpawnPoints() As Beacon.SpawnPoint
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.SpawnPoint Then
-		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
-		    End If
-		  Next
-		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 

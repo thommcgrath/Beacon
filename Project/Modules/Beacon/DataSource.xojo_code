@@ -67,6 +67,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreaturesByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByPath(Path As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
 		  
 		End Function
@@ -85,7 +97,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetEngramsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramsByEntryString(EntryString As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
@@ -128,6 +152,18 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByPath(Path As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
 		  
 		End Function
 	#tag EndMethod
