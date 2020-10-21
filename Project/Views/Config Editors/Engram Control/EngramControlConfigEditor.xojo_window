@@ -394,7 +394,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupEngramsList(SelectEngrams() As Beacon.Engram = Nil)
 		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
-		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.Document.Mods, ""))
+		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.Engrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.Document.Mods, ""))
 		  Var LabelCounts As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1
@@ -728,67 +728,51 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Var Dict As New Dictionary
-		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
-		  
+		  Var Engrams() As Beacon.Engram
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) = False Then
 		      Continue
 		    End If
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(Idx)
-		    Dict.Value(Engram.ObjectID) = Config.BehaviorDict(Engram)
+		    Engrams.Add(Engram)
 		  Next
 		  
-		  Board.Text = Beacon.GenerateJSON(Dict, True)
+		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		  Var Overrides() As Dictionary = Config.Export(Engrams)
+		  
+		  Board.Text = Beacon.GenerateJSON(Overrides, True)
 		  Board.RawData(Self.kEngramsClipboardType) = Board.Text
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kEngramsClipboardType) Or (Board.TextAvailable And Board.Text.Trim.BeginsWith("{") And Board.Text.Trim.EndsWith("}"))
+		  If Board.RawDataAvailable(Self.kEngramsClipboardType) Then
+		    Return True
+		  End If
+		  
+		  If Not Board.TextAvailable Then
+		    Return False
+		  End If
+		  
+		  Var Content As String = Board.Text.Trim
+		  Return (Content.BeginsWith("{") And Content.EndsWith("}")) Or (Content.BeginsWith("[") And Content.EndsWith("]"))
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var JSONString As String
+		  Var InputString As String
 		  If Board.RawDataAvailable(Self.kPointsClipboardType) Then
-		    JSONString = Board.RawData(Self.kPointsClipboardType)
+		    InputString = Board.RawData(Self.kPointsClipboardType)
 		  Else
-		    JSONString = Board.Text
+		    InputString = Board.Text
 		  End If
 		  
-		  Var Dict As Dictionary
-		  Try
-		    Dict = Beacon.ParseJSON(JSONString)
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Var Config As BeaconConfigs.EngramControl
-		  Var Changed As Boolean
-		  
-		  For Each Entry As DictionaryEntry In Dict
-		    Try
-		      Var UUID As String = Entry.Key
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
-		      If Engram Is Nil Then
-		        Continue
-		      End If
-		      
-		      If Config = Nil Then
-		        Config = Self.Config(True)
-		      End If
-		      
-		      Config.BehaviorDict(Engram) = Entry.Value
-		      Changed = True
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  
+		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		  Var Changed As Boolean = Config.Import(InputString)
 		  If Changed Then
+		    Call Self.Config(True) // Will cause the previous retreival to become permanent since we still have a reference
 		    Self.SetupUI
-		  End If
-		  If Config <> Nil Then
 		    Self.Changed = Config.Modified
 		  End If
 		End Sub

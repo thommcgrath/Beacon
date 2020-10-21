@@ -436,7 +436,7 @@ End
 		    AddWhenFinished = True
 		  End If
 		  
-		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
+		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.Engrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work

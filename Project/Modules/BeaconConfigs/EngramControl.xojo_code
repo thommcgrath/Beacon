@@ -14,7 +14,7 @@ Inherits Beacon.ConfigGroup
 		    If Self.AutoUnlockAllEngrams Then
 		      Points = 0
 		    Else
-		      If IsNull(PointsForLevel) Then
+		      If PointsForLevel Is Nil Then
 		        Points = OfficialLevels.PointsForLevel(Level)
 		      Else
 		        Points = PointsForLevel.IntegerValue
@@ -30,33 +30,30 @@ Inherits Beacon.ConfigGroup
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As Beacon.ConfigValue
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
-		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Var Behaviors As Dictionary = Entry.Value
-		    Var UUID As String = Entry.Key
-		    
+		  Var Engrams() As Beacon.Engram = Self.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
 		    // Get the entry string from the engram if available, or use the backup if not available.
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
 		    If (Engram Is Nil) Or SourceDocument.ModEnabled(Engram.ModID) = False Then
 		      // Don't include items for disabled mods
 		      Continue
 		    End If
 		    
 		    Var EntryString As String
-		    If Engram <> Nil And Engram.HasUnlockDetails Then
+		    If (Engram Is Nil) = False And Engram.HasUnlockDetails Then
 		      EntryString = Engram.EntryString
-		    ElseIf Behaviors.HasKey(Self.KeyEntryString) Then
-		      EntryString = Behaviors.Value(Self.KeyEntryString)
+		    ElseIf Self.mOverrides.HasAttribute(Engram, Self.KeyEntryString) Then
+		      EntryString = Self.mOverrides.Value(Engram, Self.KeyEntryString)
 		    End If
 		    If EntryString.IsEmpty Then
 		      Continue
 		    End If
 		    
 		    Var AutoUnlocked As Boolean = Self.AutoUnlockAllEngrams
-		    If Self.mAutoUnlockAllEngrams = False And Behaviors.HasKey(Self.KeyAutoUnlockLevel) And Behaviors.Value(Self.KeyAutoUnlockLevel).BooleanValue = True Then
+		    If Self.mAutoUnlockAllEngrams = False And Self.mOverrides.HasAttribute(Engram, Self.KeyAutoUnlockLevel) And Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel).BooleanValue = True Then
 		      Var Level As Integer
-		      If Behaviors.HasKey(Self.KeyPlayerLevel) And IsNull(Behaviors.Value(Self.KeyPlayerLevel)) = False Then
-		        Level = Behaviors.Value(Self.KeyPlayerLevel).IntegerValue
-		      ElseIf IsNull(Engram.RequiredPlayerLevel) = False Then
+		      If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) And Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IsNull = False Then
+		        Level = Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IntegerValue
+		      ElseIf (Engram.RequiredPlayerLevel Is Nil) = False Then
 		        Level = Engram.RequiredPlayerLevel.IntegerValue
 		      Else
 		        Level = 0
@@ -68,8 +65,8 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    Var Arguments() As String
-		    If Behaviors.HasKey(Self.KeyHidden) Then
-		      Var Hidden As Boolean = Behaviors.Value(Self.KeyHidden).BooleanValue
+		    If Self.mOverrides.HasAttribute(Engram, Self.KeyHidden) Then
+		      Var Hidden As Boolean = Self.mOverrides.Value(Engram, Self.KeyHidden).BooleanValue
 		      If Hidden <> Whitelisting Then
 		        Arguments.Add("EngramHidden=" + If(Hidden, "True", "False"))
 		      End If
@@ -77,15 +74,15 @@ Inherits Beacon.ConfigGroup
 		    
 		    If Not AutoUnlocked Then
 		      If Not Self.EffectivelyHidden(Engram) Then
-		        If Behaviors.HasKey(Self.KeyRemovePrerequisites) Then
-		          Var RemovePrereq As Boolean = Behaviors.Value(Self.KeyRemovePrerequisites).BooleanValue
+		        If Self.mOverrides.HasAttribute(Engram, Self.KeyRemovePrerequisites) Then
+		          Var RemovePrereq As Boolean = Self.mOverrides.Value(Engram, Self.KeyRemovePrerequisites).BooleanValue
 		          If RemovePrereq = True Then
 		            Arguments.Add("RemoveEngramPreReq=True")
 		          End If
 		        End If
 		        
-		        If Behaviors.HasKey(Self.KeyPlayerLevel) Then
-		          Var Level As Integer = Round(Behaviors.Value(Self.KeyPlayerLevel).DoubleValue)
+		        If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) Then
+		          Var Level As Integer = Round(Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).DoubleValue)
 		          Arguments.Add("EngramLevelRequirement=" + Level.ToString)
 		        Else
 		          Var Level As NullableDouble = Engram.RequiredPlayerLevel
@@ -94,8 +91,8 @@ Inherits Beacon.ConfigGroup
 		          End If
 		        End If
 		        
-		        If Behaviors.HasKey(Self.KeyUnlockPoints) Then
-		          Var Points As Integer = Round(Behaviors.Value(Self.KeyUnlockPoints).DoubleValue)
+		        If Self.mOverrides.HasAttribute(Engram, Self.KeyUnlockPoints) Then
+		          Var Points As Integer = Round(Self.mOverrides.Value(Engram, Self.KeyUnlockPoints).DoubleValue)
 		          Arguments.Add("EngramPointsCost=" + Points.ToString)
 		        Else
 		          Var Points As NullableDouble = Engram.RequiredUnlockPoints
@@ -128,9 +125,12 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.EngramControl = BeaconConfigs.EngramControl(Other)
-		  For Each Entry As DictionaryEntry In Source.mBehaviors
-		    Self.mBehaviors.Value(Entry.Key) = Entry.Value
-		    Self.Modified = True
+		  Var Engrams() As Beacon.Engram = Source.Engrams
+		  Var Keys() As String = Self.AllAttributeKeys
+		  For Each Engram As Beacon.Engram In Engrams
+		    For Each Key As String In Keys
+		      Self.SetAttributeForEngram(Engram, Key, Source.mOverrides.Value(Engram, Key))
+		    Next
 		  Next
 		  
 		  Self.mPointsPerLevel.ResizeTo(Max(Self.mPointsPerLevel.LastIndex, Source.mPointsPerLevel.LastIndex))
@@ -180,32 +180,33 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("Behaviors") Then
-		    Self.mBehaviors = Dict.Value("Behaviors")
+		  If Dict.HasKey("Overrides") Then
+		    Var Overrides As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(Dict.Value("Overrides"))
+		    If (Overrides Is Nil) = False Then
+		      Self.mOverrides = Overrides
+		    End If
 		  ElseIf Dict.HasKey("Engrams") Then
 		    Var Behaviors As Dictionary = Dict.Value("Engrams")
 		    Var Mods As Beacon.StringList = Document.Mods
 		    For Each Entry As DictionaryEntry In Behaviors
 		      Var Path As String = Entry.Key
 		      Var BehaviorDict As Dictionary = Entry.Value
+		      
 		      Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Path, "", Mods)
-		      Self.BehaviorDict(Engram) = BehaviorDict
+		      For Each BehaviorEntry As DictionaryEntry In BehaviorDict
+		        Self.mOverrides.Value(Engram, BehaviorEntry.Key) = BehaviorEntry.Value
+		      Next
 		    Next
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document, BlueprintsMap As Dictionary)
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  If Self.mBehaviors.KeyCount > 0 Then
-		    Dict.Value("Behaviors") = Self.mBehaviors
-		    
-		    Var Engrams() As Beacon.Engram = Self.SpecifiedEngrams
-		    For Each Engram As Beacon.Engram In Engrams
-		      BlueprintsMap.Value(Engram.ObjectID) = Engram
-		    Next
+		  If Self.mOverrides.Count > 0 Then
+		    Dict.Value("Overrides") = Self.mOverrides.SaveData
 		  End If
 		  
 		  If Self.mPointsPerLevel.LastIndex > -1 Then
@@ -262,10 +263,16 @@ Inherits Beacon.ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function AllAttributeKeys() As String()
+		  Return Array(KeyAutoUnlockLevel, KeyEntryString, KeyHidden, KeyPlayerLevel, KeyPlayerLevel, KeyRemovePrerequisites, KeyUnlockPoints)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function AutoUnlockEngram(Engram As Beacon.Engram) As NullableBoolean
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel)
-		  If IsNull(Value) Then
+		  Var Value As Variant = Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel)
+		  If Value.IsNull Then
 		    Return Nil
 		  Else
 		    Return Value.BooleanValue
@@ -275,106 +282,11 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub AutoUnlockEngram(Engram As Beacon.Engram, Assigns ShouldUnlock As NullableBoolean)
-		  If IsNull(ShouldUnlock) Then
-		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = Nil
+		  If ShouldUnlock Is Nil Then
+		    Self.SetAttributeForEngram(Engram, Self.KeyAutoUnlockLevel, Nil)
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = ShouldUnlock.BooleanValue
+		    Self.SetAttributeForEngram(Engram, Self.KeyAutoUnlockLevel, ShouldUnlock.BooleanValue)
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function BehaviorDict(Engram As Beacon.Engram) As Dictionary
-		  If Self.mBehaviors.HasKey(Engram.ObjectID) Then
-		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID)
-		    Return Dict.Clone
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub BehaviorDict(Engram As Beacon.Engram, Assigns Dict As Dictionary)
-		  If IsNull(Dict) Or Dict.HasKey(Self.KeyEntryString) = False Then
-		    If Self.mBehaviors.HasKey(Engram.ObjectID) Then
-		      Self.mBehaviors.Remove(Engram.ObjectID)
-		      Self.Modified = True
-		    End If
-		    Return
-		  End If
-		  
-		  Var Behavior As New Dictionary
-		  Behavior.Value(Self.KeyEntryString) = Dict.Value(Self.KeyEntryString)
-		  If Dict.HasKey(Self.KeyAutoUnlockLevel) And IsNull(Dict.Value(Self.KeyAutoUnlockLevel)) = False Then
-		    Behavior.Value(Self.KeyAutoUnlockLevel) = Dict.Value(Self.KeyAutoUnlockLevel).IntegerValue
-		  End If
-		  If Dict.HasKey(Self.KeyHidden) And IsNull(Dict.Value(Self.KeyHidden)) = False Then
-		    Behavior.Value(Self.KeyHidden) = Dict.Value(Self.KeyHidden).BooleanValue
-		  End If
-		  If Dict.HasKey(Self.KeyPlayerLevel) And IsNull(Dict.Value(Self.KeyPlayerLevel)) = False Then
-		    Behavior.Value(Self.KeyPlayerLevel) = Dict.Value(Self.KeyPlayerLevel).IntegerValue
-		  End If
-		  If Dict.HasKey(Self.KeyRemovePrerequisites) And IsNull(Dict.Value(Self.KeyRemovePrerequisites)) = False Then
-		    Behavior.Value(Self.KeyRemovePrerequisites) = Dict.Value(Self.KeyRemovePrerequisites).BooleanValue
-		  End If
-		  If Dict.HasKey(Self.KeyUnlockPoints) And IsNull(Dict.Value(Self.KeyUnlockPoints)) = False Then
-		    Behavior.Value(Self.KeyUnlockPoints) = Dict.Value(Self.KeyUnlockPoints).IntegerValue
-		  End If
-		  
-		  Self.mBehaviors.Value(Engram.ObjectID) = Behavior
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function BehaviorForEngram(Engram As Beacon.Engram, Key As String) As Variant
-		  If Not Self.mBehaviors.HasKey(Engram.ObjectID) Then
-		    Return Nil
-		  End If
-		  
-		  Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID)
-		  If Dict.HasKey(Key) Then
-		    Return Dict.Value(Key)
-		  Else
-		    Return Nil
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub BehaviorForEngram(Engram As Beacon.Engram, Key As String, Assigns Value As Variant)
-		  If IsNull(Value) Then
-		    If Self.mBehaviors.HasKey(Engram.ObjectID) = False Then
-		      Return
-		    End If
-		    
-		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.ObjectID)
-		    If Dict.HasKey(Key) = False Then
-		      Return
-		    End If
-		    
-		    Dict.Remove(Key)
-		    If Engram.HasUnlockDetails Then
-		      Dict.Value(Self.KeyEntryString) = Engram.EntryString
-		    End If
-		    Self.mBehaviors.Value(Engram.ObjectID) = Dict
-		    Self.Modified = True
-		    
-		    Return
-		  End If
-		  
-		  Var Dict As Dictionary
-		  If Self.mBehaviors.HasKey(Engram.ObjectID) Then
-		    Dict = Self.mBehaviors.Value(Engram.ObjectID)
-		  Else
-		    Dict = New Dictionary
-		  End If
-		  
-		  If Engram.HasUnlockDetails Then
-		    Dict.Value(Self.KeyEntryString) = Engram.EntryString
-		  End If
-		  Dict.Value(Key) = Value
-		  Self.mBehaviors.Value(Engram.ObjectID) = Dict
-		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -388,7 +300,7 @@ Inherits Beacon.ConfigGroup
 		Sub Constructor()
 		  Super.Constructor()
 		  
-		  Self.mBehaviors = New Dictionary
+		  Self.mOverrides = New Beacon.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
@@ -416,12 +328,55 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Engrams() As Beacon.Engram()
+		  Var References() As Beacon.BlueprintReference = Self.mOverrides.References
+		  Var Results() As Beacon.Engram
+		  For Each Reference As Beacon.BlueprintReference In References
+		    If Not Reference.IsEngram Then
+		      Continue
+		    End If
+		    
+		    Var Blueprint As Beacon.Blueprint = Reference.Resolve
+		    If (Blueprint Is Nil = False) And Blueprint IsA Beacon.Engram Then
+		      Results.Add(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function EntryString(ForEngram As Beacon.Engram) As String
 		  If ForEngram.HasUnlockDetails Then
 		    Return ForEngram.EntryString
-		  ElseIf Self.mBehaviors.HasKey(ForEngram.ObjectID) Then
-		    Return Dictionary(Self.mBehaviors.Value(ForEngram.ObjectID)).Lookup(Self.KeyEntryString, "").StringValue
+		  ElseIf Self.mOverrides.HasAttribute(ForEngram, Self.KeyEntryString) Then
+		    Return Self.mOverrides.Value(ForEngram, Self.KeyEntryString).StringValue
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Export(Engrams() As Beacon.Engram) As Dictionary()
+		  Var Results() As Dictionary
+		  For Each Engram As Beacon.Engram In Engrams
+		    Var Exported As Dictionary = Self.Export(Engram)
+		    If (Exported Is Nil) = False Then
+		      Results.Add(Exported)
+		    End If
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Export(Engram As Beacon.Engram) As Dictionary
+		  Var Keys() As String = Self.AllAttributeKeys
+		  Var Dict As New Dictionary
+		  Dict.Value("Blueprint") = Beacon.BlueprintReference.CreateSaveData(Engram)
+		  For Each Key As String In Keys
+		    Dict.Value(Key) = Self.mOverrides.Value(Engram, Key)
+		  Next
+		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -546,8 +501,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Hidden(Engram As Beacon.Engram) As NullableBoolean
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyHidden)
-		  If IsNull(Value) Then
+		  Var Value As Variant = Self.mOverrides.Value(Engram, Self.KeyHidden)
+		  If Value.IsNull Then
 		    Return Nil
 		  Else
 		    Return Value.BooleanValue
@@ -557,12 +512,78 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Hidden(Engram As Beacon.Engram, Assigns Hidden As NullableBoolean)
-		  If IsNull(Hidden) Then
-		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Nil
+		  If Hidden Is Nil Then
+		    Self.SetAttributeForEngram(Engram, Self.KeyHidden, Nil)
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Hidden.BooleanValue
+		    Self.SetAttributeForEngram(Engram, Self.KeyHidden, Hidden.BooleanValue)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Import(Source As Variant) As Boolean
+		  If Source.IsNull Then
+		    Return False
+		  End If
+		  
+		  
+		  If Source.Type = Variant.TypeString Then
+		    // Could be JSON
+		    Try
+		      Var Parsed As Variant = Beacon.ParseJSON(Source.StringValue)
+		      Source = Parsed
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Var Dictionaries() As Dictionary
+		  If Source.IsArray = False And Source IsA Dictionary Then
+		    Dictionaries.Add(Source)
+		  ElseIf Source.IsArray Then
+		    Var Items() As Variant
+		    Try
+		      Items = Source
+		    Catch Err As RuntimeException
+		    End Try
+		    For Each Item As Variant In Items
+		      If Item IsA Dictionary Then
+		        Dictionaries.Add(Item)
+		      End If
+		    Next
+		  End If
+		  
+		  If Dictionaries.Count = 0 Then
+		    Return False
+		  End If
+		  
+		  Var Keys() As String = Self.AllAttributeKeys
+		  For Each Dict As Dictionary In Dictionaries
+		    If Dict.HasAllKeys("Blueprint", Self.KeyAutoUnlockLevel, Self.KeyEntryString, Self.KeyHidden, Self.KeyPlayerLevel, Self.KeyPlayerLevel, Self.KeyRemovePrerequisites, Self.KeyUnlockPoints) = False Then
+		      Continue
+		    End If
+		    
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		    If Reference Is Nil Then
+		      Continue
+		    End If
+		    
+		    Call Reference.Resolve
+		    If Reference.IsEngram = False Then
+		      Continue
+		    End If
+		    
+		    Var Engram As Beacon.Engram = Beacon.Engram(Reference.Resolve) // It's ok, result is cached
+		    If Engram Is Nil Then
+		      Continue
+		    End If
+		    
+		    For Each Key As String In Keys
+		      Self.SetAttributeForEngram(Engram, Key, Dict.Value(Key))
+		    Next
+		  Next
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -627,19 +648,19 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Remove(Engram As Beacon.Engram)
-		  If Not Self.mBehaviors.HasKey(Engram.ObjectID) Then
+		  If Not Self.mOverrides.HasBlueprint(Engram) Then
 		    Return
 		  End If
 		  
-		  Self.mBehaviors.Remove(Engram.ObjectID)
+		  Self.mOverrides.Remove(Engram)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RemovePrerequisites(Engram As Beacon.Engram) As NullableBoolean
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites)
-		  If IsNull(Value) Then
+		  Var Value As Variant = Self.mOverrides.Value(Engram, Self.KeyRemovePrerequisites)
+		  If Value.IsNull Then
 		    Return Nil
 		  Else
 		    Return Value.BooleanValue
@@ -649,18 +670,18 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RemovePrerequisites(Engram As Beacon.Engram, Assigns Value As NullableBoolean)
-		  If IsNull(Value) Then
-		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Nil
+		  If Value Is Nil Then
+		    Self.SetAttributeForEngram(Engram, Self.KeyRemovePrerequisites, Nil)
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Value.BooleanValue
+		    Self.SetAttributeForEngram(Engram, Self.KeyRemovePrerequisites, Value.BooleanValue)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RequiredPlayerLevel(Engram As Beacon.Engram) As NullableDouble
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel)
-		  If IsNull(Value) Then
+		  Var Value As Variant = Self.mOverrides.Value(Engram, Self.KeyPlayerLevel)
+		  If Value.IsNull Then
 		    Return Nil
 		  Else
 		    Return Value.DoubleValue
@@ -670,18 +691,18 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RequiredPlayerLevel(Engram As Beacon.Engram, Assigns Level As NullableDouble)
-		  If IsNull(Level) Then
-		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Nil
+		  If Level Is Nil Then
+		    Self.SetAttributeForEngram(Engram, Self.KeyPlayerLevel, Nil)
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Level.IntegerValue
+		    Self.SetAttributeForEngram(Engram, Self.KeyPlayerLevel, Level.IntegerValue)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RequiredPoints(Engram As Beacon.Engram) As NullableDouble
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints)
-		  If IsNull(Value) Then
+		  Var Value As Variant = Self.mOverrides.Value(Engram, Self.KeyUnlockPoints)
+		  If Value.IsNull Then
 		    Return Nil
 		  Else
 		    Return Value.DoubleValue
@@ -691,29 +712,28 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub RequiredPoints(Engram As Beacon.Engram, Assigns Points As NullableDouble)
-		  If IsNull(Points) Then
-		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Nil
+		  If Points Is Nil Then
+		    Self.SetAttributeForEngram(Engram, Self.KeyUnlockPoints, Nil)
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Points.IntegerValue
+		    Self.SetAttributeForEngram(Engram, Self.KeyUnlockPoints, Points.IntegerValue)
 		  End If
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SpecifiedEngrams() As Beacon.Engram()
-		  Var Engrams() As Beacon.Engram
-		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(Entry.Key.StringValue)
-		    If Engram = Nil Then
-		      Var Dict As Dictionary = Entry.Value
-		      Engram = Beacon.Engram.CreateFromEntryString(Dict.Value(Self.KeyEntryString))
-		    End If
-		    If Engram <> Nil Then
-		      Engrams.Add(Engram)
-		    End If
-		  Next
-		  Return Engrams
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub SetAttributeForEngram(Engram As Beacon.Engram, Key As String, Value As Variant)
+		  If Value.IsNull And Self.mOverrides.HasAttribute(Engram, Key) Then
+		    Self.mOverrides.Remove(Engram, Key)
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  Var CurrentValue As Variant = Self.mOverrides.Value(Engram, Key)
+		  If CurrentValue <> Value Then
+		    Self.mOverrides.Value(Engram, Key) = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -756,11 +776,11 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBehaviors As Dictionary
+		Private mOnlyAllowSpecifiedEngrams As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOnlyAllowSpecifiedEngrams As Boolean
+		Private mOverrides As Beacon.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -43,16 +43,23 @@ Protected Class BlueprintAttributeManager
 		  End If
 		  
 		  Var Manager As New Beacon.BlueprintAttributeManager
-		  Var Members() As Variant
-		  Try
+		  Var Members() As Dictionary
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(SaveData)
+		  Select Case Info.FullName
+		  Case "Object()"
+		    Var Temp() As Variant = SaveData
+		    Var Bound As Integer = Temp.LastIndex
+		    For Idx As Integer = 0 To Bound
+		      If Temp(Idx) IsA Dictionary Then
+		        Members.Add(Dictionary(Temp(Idx)))
+		      End If
+		    Next
+		  Case "Dictionary()"
 		    Members = SaveData
-		  Catch Err As RuntimeException
-		  End Try
+		  End Select
 		  
-		  Var Bound As Integer = Members.LastIndex
-		  For Idx As Integer = 0 To Bound
+		  For Each Dict As Dictionary In Members
 		    Try
-		      Var Dict As Dictionary = Members(Idx)
 		      Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		      If Reference Is Nil Then
 		        Continue
@@ -211,7 +218,12 @@ Protected Class BlueprintAttributeManager
 		  Var Attr As Dictionary = Self.mAttributes.Value(ObjectID)
 		  If Attr.HasKey(Key) Then
 		    Attr.Remove(Key)
-		    Self.mAttributes.Value(ObjectID) = Attr
+		    If Attr.KeyCount = 0 Then
+		      Self.mAttributes.Remove(ObjectID)
+		      Self.mReferences.Remove(ObjectID)
+		    Else
+		      Self.mAttributes.Value(ObjectID) = Attr
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
