@@ -1,40 +1,71 @@
 #tag Class
 Protected Class RecipeIngredient
 	#tag Method, Flags = &h0
-		Sub Constructor(Engram As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
-		  If Engram Is Nil Or Quantity <= 0 Then
+		Function ClassString() As String
+		  Return Self.mEngram.ClassString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Reference As Beacon.BlueprintReference, Quantity As Integer, RequireExact As Boolean)
+		  If Reference Is Nil Or Reference.IsEngram = False Or Quantity <= 0 Then
 		    Var Err As New RuntimeException
 		    Err.Message = "Invalid engram or quantity"
 		    Raise Err
 		  End If
 		  
-		  Self.mEngram = Engram.ImmutableVersion
+		  Self.mEngram = Reference
 		  Self.mQuantity = Quantity
 		  Self.mRequireExact = RequireExact
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Engram As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
+		  Self.Constructor(New Beacon.BlueprintReference(Engram.ImmutableVersion), Quantity, RequireExact)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Engram() As Beacon.Engram
-		  Return Self.mEngram.ImmutableVersion
+		  Return Beacon.Engram(Self.mEngram.Resolve).ImmutableVersion
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary, Mods As Beacon.StringList) As Beacon.RecipeIngredient
-		  If Dict Is Nil Or (Dict.HasKey("object_id") = False And Dict.HasKey("path") = False) Or Dict.HasKey("quantity") = False Or Dict.HasKey("exact") = False Then
+		  If Dict Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Try
-		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "object_id", "path", "", Mods)
-		    Var Quantity As Integer = Dict.Value("quantity")
-		    Var Exact As Boolean = Dict.Value("exact")
-		    
-		    Return New Beacon.RecipeIngredient(Engram, Quantity, Exact)
-		  Catch Err As RuntimeException
+		  If Dict.HasAllKeys("Blueprint", "Quantity", "Exact") Then
+		    Try
+		      Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		      If Reference Is Nil Then
+		        Return Nil
+		      End If
+		      Var Quantity As Integer = Dict.Value("Quantity")
+		      Var Exact As Boolean = Dict.Value("Exact")
+		      
+		      Return New Beacon.RecipeIngredient(Reference, Quantity, Exact)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  ElseIf (Dict.HasKey("object_id") Or Dict.HasKey("path")) And Dict.HasKey("quantity") And Dict.HasKey("exact") Then
+		    Try
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "object_id", "path", "", Mods)
+		      Var Quantity As Integer = Dict.Value("quantity")
+		      Var Exact As Boolean = Dict.Value("exact")
+		      
+		      Return New Beacon.RecipeIngredient(Engram, Quantity, Exact)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  Else
 		    Return Nil
-		  End Try
+		  End If
+		  
+		  
 		End Function
 	#tag EndMethod
 
@@ -110,9 +141,9 @@ Protected Class RecipeIngredient
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("object_id") = Self.mEngram.ObjectID
-		  Dict.Value("quantity") = Self.mQuantity
-		  Dict.Value("exact") = Self.mRequireExact
+		  Dict.Value("Blueprint") = Self.mEngram.SaveData
+		  Dict.Value("Quantity") = Self.mQuantity
+		  Dict.Value("Exact") = Self.mRequireExact
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -129,7 +160,7 @@ Protected Class RecipeIngredient
 
 
 	#tag Property, Flags = &h21
-		Private mEngram As Beacon.Engram
+		Private mEngram As Beacon.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

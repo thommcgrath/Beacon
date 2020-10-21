@@ -23,6 +23,21 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Reference As Beacon.BlueprintReference, LoadRecipe As Boolean = False)
+		  Self.Constructor()
+		  Self.mEngram = Reference
+		  
+		  If LoadRecipe Then
+		    Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
+		    Self.mIngredients.ResizeTo(-1)
+		    For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		      Self.mIngredients(Idx) = Ingredients(Idx)
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.CraftingCost)
 		  Self.Constructor()
 		  Self.mEngram = Source.mEngram
@@ -36,16 +51,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram, LoadRecipe As Boolean = False)
-		  Self.Constructor()
-		  Self.Engram = Engram.ImmutableVersion
-		  
-		  If LoadRecipe Then
-		    Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
-		    Self.mIngredients.ResizeTo(-1)
-		    For Idx As Integer = 0 To Self.mIngredients.LastIndex
-		      Self.mIngredients(Idx) = Ingredients(Idx)
-		    Next
-		  End If
+		  Self.Constructor(New Beacon.BlueprintReference(Engram.ImmutableVersion), LoadRecipe)
 		End Sub
 	#tag EndMethod
 
@@ -57,34 +63,51 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Var Dict As New Dictionary
-		  
-		  If Self.mEngram <> Nil Then
-		    Dict.Value("Engram") = Self.mEngram.ClassString
-		    Dict.Value("EngramID") = Self.mEngram.ObjectID
+		  If Self.mEngram Is Nil Then
+		    Return Nil
 		  End If
 		  
 		  Var Ingredients() As Dictionary
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
-		    Var Resource As New Dictionary
-		    Resource.Value("Class") = Self.mIngredients(Idx).Engram.ClassString
-		    Resource.Value("EngramID") = Self.mIngredients(Idx).Engram.ObjectID
-		    Resource.Value("Quantity") = Self.mIngredients(Idx).Quantity
-		    Resource.Value("Exact") = Self.mIngredients(Idx).RequireExact
-		    
-		    Ingredients.Add(Resource)
+		    Var Resource As Dictionary = Self.mIngredients(Idx).ToDictionary
+		    If (Resource Is Nil) = False Then
+		      Ingredients.Add(Resource)
+		    End If
 		  Next
-		  Dict.Value("Resources") = Ingredients
 		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Blueprint") = Self.mEngram.SaveData
+		  Dict.Value("Ingredients") = Ingredients
 		  Return Dict
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "", "Engram", Nil))
+		  Var Cost As Beacon.CraftingCost
+		  If Dict.HasKey("Blueprint") Then
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		    If Reference Is Nil Then
+		      Return Nil
+		    End If
+		    Cost = New Beacon.CraftingCost(Reference)
+		  ElseIf Dict.HasAnyKey("EngramID", "Engram") Then
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "EngramID", "", "Engram", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Cost = New Beacon.CraftingCost(Engram)
+		  End If
 		  
-		  If Dict.HasKey("Resources") Then
+		  If Dict.HasKey("Ingredients") Then
+		    Var Ingredients() As Variant = Dict.Value("Ingredients")
+		    For Each Ingredient As Dictionary In Ingredients
+		      Var Ref As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Ingredient, Nil)
+		      If (Ref Is Nil) = False Then
+		        Cost.mIngredients.Add(Ref)
+		      End If
+		    Next
+		  ElseIf Dict.HasKey("Resources") Then
 		    Var Resources() As Variant = Dict.Value("Resources")
 		    For Each Resource As Dictionary In Resources
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
@@ -154,11 +177,11 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mEngram = Nil Then
+		  If Self.mEngram Is Nil Then
 		    Return ""
 		  End If
 		  
-		  Return Self.mEngram.Label
+		  Return Self.Engram.Label
 		End Function
 	#tag EndMethod
 
@@ -202,14 +225,8 @@ Implements Beacon.NamedItem
 		    Return 0
 		  End If
 		  
-		  // Try to sort by name first, otherwise sort by object id for lack of a better option
-		  Var SelfName As String = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
-		  Var OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
-		  Var Result As Integer = SelfName.Compare(OtherName, ComparisonOptions.CaseSensitive)
-		  If Result = 0 Then
-		    Result = Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
-		  End If
-		  Return Result
+		  // Uh... sort on the id I guess? How else would this be sorted?
+		  Return Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 
@@ -309,14 +326,14 @@ Implements Beacon.NamedItem
 		Function StringValue() As String
 		  Var Components() As String
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
-		    Var ClassString As String = Self.mIngredients(Idx).Engram.ClassString
+		    Var ClassString As String = Self.mIngredients(Idx).ClassString
 		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
 		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "true", "false")
 		    Components.Add("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
 		  Var Pieces() As String
-		  Pieces.Add("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
+		  Pieces.Add("ItemClassString=""" + If((Self.mEngram Is Nil) = False, Self.mEngram.ClassString, "") + """")
 		  Pieces.Add("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
 		  Return "(" + Pieces.Join(",") + ")"
 		End Function
@@ -326,16 +343,16 @@ Implements Beacon.NamedItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mEngram
+			  Return Beacon.Engram(Self.mEngram.Resolve)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mEngram = Value Then
+			  If Value Is Nil Or Value = Self.mEngram Then
 			    Return
 			  End If
 			  
-			  Self.mEngram = Value
+			  Self.mEngram = New Beacon.BlueprintReference(Value.ImmutableVersion)
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
@@ -343,7 +360,7 @@ Implements Beacon.NamedItem
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mEngram As Beacon.Engram
+		Private mEngram As Beacon.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
