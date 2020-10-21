@@ -3,14 +3,15 @@ Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function Clone(NewTarget As Beacon.Creature) As Beacon.CreatureBehavior
 		  Var Result As New Beacon.CreatureBehavior(Self)
-		  Result.mTargetCreature = NewTarget
+		  Result.mTargetCreature = New Beacon.BlueprintReference(NewTarget)
+		  Result.mModified = True
 		  Return Result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Creature As Beacon.Creature)
-		  Self.mTargetCreature = Creature
+		Sub Constructor(Reference As Beacon.BlueprintReference)
+		  Self.mTargetCreature = Reference
 		  Self.mDamageMultiplier = 1.0
 		  Self.mResistanceMultiplier = 1.0
 		  Self.mTamedDamageMultiplier = 1.0
@@ -18,6 +19,12 @@ Protected Class CreatureBehavior
 		  Self.mProhibitSpawning = False
 		  Self.mReplacementCreature = Nil
 		  Self.mPreventTaming = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Creature As Beacon.Creature)
+		  Self.Constructor(New Beacon.BlueprintReference(Creature))
 		End Sub
 	#tag EndMethod
 
@@ -43,13 +50,36 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary) As Beacon.CreatureBehavior
-		  Var Creature As Beacon.Creature = Beacon.ResolveCreature(Dict, "UUID", "Path", "Class", Nil)
 		  
-		  Var Behavior As New Beacon.CreatureBehavior(Creature)
+		  Var Behavior As Beacon.CreatureBehavior
+		  If Dict.HasKey("Target") Then
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Target"))
+		    If Reference Is Nil Or Reference.IsCreature = False Then
+		      Return Nil
+		    End If
+		    Behavior = New Beacon.CreatureBehavior(Reference)
+		  ElseIf Dict.HasAnyKey("UUID", "Path", "Class") Then
+		    Var Creature As Beacon.Creature = Beacon.ResolveCreature(Dict, "UUID", "Path", "Class", Nil)
+		    If Creature Is Nil Then
+		      Return Nil
+		    End If
+		    Behavior = New Beacon.CreatureBehavior(Creature)
+		  Else
+		    Return Nil
+		  End If
+		  
 		  If Dict.HasKey("Prohibit Spawning") Then
 		    Behavior.mProhibitSpawning = Dict.Value("Prohibit Spawning")
+		  ElseIf Dict.HasKey("Replacement") Then
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Replacement"))
+		    If (Reference Is Nil) = False And Reference.IsCreature Then
+		      Behavior.mReplacementCreature = Reference
+		    End If
 		  ElseIf Dict.HasAnyKey("Replacement UUID", "Replacement Path", "Replacement Class") Then
-		    Behavior.mReplacementCreature = Beacon.ResolveCreature(Dict, "Replacement UUID", "Replacement Path", "Replacement Class", Nil)
+		    Var Creature As Beacon.Creature = Beacon.ResolveCreature(Dict, "Replacement UUID", "Replacement Path", "Replacement Class", Nil)
+		    If (Creature Is Nil) = False Then
+		      Behavior.mReplacementCreature = New Beacon.BlueprintReference(Creature)
+		    End If
 		  Else
 		    Behavior.mDamageMultiplier = Dict.Lookup("Damage Multiplier", 1.0)
 		    Behavior.mResistanceMultiplier = Dict.Lookup("Resistance Multiplier", 1.0)
@@ -75,6 +105,12 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ObjectID() As String
+		  Return Self.mTargetCreature.ObjectID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PreventTaming() As Boolean
 		  Return Self.mPreventTaming
 		End Function
@@ -88,7 +124,9 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ReplacementCreature() As Beacon.Creature
-		  Return Self.mReplacementCreature
+		  If (Self.mReplacementCreature Is Nil) = False Then
+		    Return Beacon.Creature(Self.mReplacementCreature.Resolve)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -112,22 +150,18 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function TargetCreature() As Beacon.Creature
-		  Return Self.mTargetCreature
+		  Return Beacon.Creature(Self.mTargetCreature.Resolve)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("UUID") = Self.mTargetCreature.ObjectID
-		  Dict.Value("Class") = Self.mTargetCreature.ClassString
-		  Dict.Value("Path") = Self.mTargetCreature.Path
+		  Dict.Value("Target") = Self.mTargetCreature.SaveData
 		  If Self.mProhibitSpawning Then
 		    Dict.Value("Prohibit Spawning") = True
 		  ElseIf IsNull(Self.mReplacementCreature) = False Then
-		    Dict.Value("Replacement UUID") = Self.mReplacementCreature.ObjectID
-		    Dict.Value("Replacement Class") = Self.mReplacementCreature.ClassString
-		    Dict.Value("Replacement Path") = Self.mReplacementCreature.Path
+		    Dict.Value("Replacement") = Self.mReplacementCreature.SaveData
 		  Else
 		    If Self.mDamageMultiplier <> 1.0 Then
 		      Dict.Value("Damage Multiplier") = Self.mDamageMultiplier
@@ -167,7 +201,7 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mReplacementCreature As Beacon.Creature
+		Protected mReplacementCreature As Beacon.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -183,7 +217,7 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mTargetCreature As Beacon.Creature
+		Protected mTargetCreature As Beacon.BlueprintReference
 	#tag EndProperty
 
 

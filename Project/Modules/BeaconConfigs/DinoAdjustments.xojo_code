@@ -60,11 +60,11 @@ Inherits Beacon.ConfigGroup
 		  Var Dicts() As Variant = Dict.Value("Creatures")
 		  For Each CreatureDict As Dictionary In Dicts
 		    Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(CreatureDict)
-		    If Behavior = Nil Then
+		    If Behavior Is Nil Then
 		      Return
 		    End If
 		    
-		    Self.mBehaviors.Value(Behavior.TargetCreature.ObjectID) = Behavior
+		    Self.mBehaviors.Value(Behavior.ObjectID) = Behavior
 		  Next
 		End Sub
 	#tag EndEvent
