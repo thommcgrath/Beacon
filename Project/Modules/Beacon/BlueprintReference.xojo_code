@@ -30,8 +30,8 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(Dict As Dictionary) As Beacon.BlueprintReference
-		  If Dict Is Nil Or Dict.HasKey("Version") = False Then
+		Shared Function FromSaveData(Dict As Dictionary, AlreadyValidated As Boolean = False) As Beacon.BlueprintReference
+		  If AlreadyValidated = False And IsSaveData(Dict) = False Then
 		    Return Nil
 		  End If
 		  
@@ -48,6 +48,31 @@ Protected Class BlueprintReference
 	#tag Method, Flags = &h0
 		Function IsEngram() As Boolean
 		  Return Self.Kind = Self.KindEngram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function IsSaveData(Value As Variant) As Boolean
+		  If Value.IsNull Or Value.IsArray Or (Value IsA Dictionary) = False Then
+		    Return False
+		  End If
+		  
+		  Var Dict As Dictionary = Value
+		  If Dict.HasKey("Version") = False Or Dict.HasKey("Schema") = False Then
+		    Return False
+		  End If
+		  
+		  Var SchemaValue As Variant = Dict.Value("Schema")
+		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or SchemaValue.StringValue <> "Beacon.BlueprintReference" Then
+		    Return False
+		  End If
+		  
+		  Var VersionValue As Variant = Dict.Value("Version")
+		  If VersionValue.IsNull Or VersionValue.Type <> Variant.TypeInteger Or VersionValue.IntegerValue > Beacon.BlueprintReference.Version Then
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -151,6 +176,7 @@ Protected Class BlueprintReference
 		Function SaveData() As Dictionary
 		  If Self.mSaveData Is Nil Then
 		    Var Dict As New Dictionary
+		    Dict.Value("Schema") = "Beacon.BlueprintReference"
 		    Dict.Value("Version") = Self.Version
 		    Select Case Self.mBlueprint
 		    Case IsA Beacon.Engram
@@ -231,14 +257,6 @@ Protected Class BlueprintReference
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mBlueprint"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

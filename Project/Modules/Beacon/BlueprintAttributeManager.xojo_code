@@ -1,9 +1,65 @@
 #tag Class
 Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
+		Function AttributesForBlueprint(Blueprint As Beacon.Blueprint) As String()
+		  Return Self.AttributesForBlueprint(Blueprint.ObjectID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AttributesForBlueprint(Reference As Beacon.BlueprintReference) As String()
+		  Return Self.AttributesForBlueprint(Reference.ObjectID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AttributesForBlueprint(ObjectID As String) As String()
+		  Var Arr() As String
+		  If Self.mAttributes.HasKey(ObjectID) = False Then
+		    Return Arr
+		  End If
+		  
+		  Var Dict As Dictionary = Self.mAttributes.Value(ObjectID)
+		  For Each Entry As DictionaryEntry In Dict
+		    Arr.Add(Entry.Key.StringValue)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Clone() As Beacon.BlueprintAttributeManager
+		  Return New Beacon.BlueprintAttributeManager(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mAttributes = New Dictionary
 		  Self.mReferences = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.BlueprintAttributeManager)
+		  // The references dictionary does not need to create new reference objects
+		  // because they are immutable. A new dictionary is required though. Be aware
+		  // however that objects inside the attribute values will not be cloned.
+		  
+		  Self.Constructor()
+		  
+		  Var References() As Beacon.BlueprintReference = Source.References
+		  For Each Reference As Beacon.BlueprintReference In References
+		    Var AttrList() As String = Source.AttributesForBlueprint(Reference)
+		    For Each Attr As String In AttrList
+		      Var Value As Variant = Source.Value(Reference, Attr)
+		      If Value IsA Beacon.BlueprintAttributeManager Then
+		        Self.Value(Reference, Attr) = Beacon.BlueprintAttributeManager(Value).Clone
+		      Else
+		        Self.Value(Reference, Attr) = Value
+		      End If
+		    Next
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -37,17 +93,20 @@ Protected Class BlueprintAttributeManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromSaveData(SaveData As Variant) As Beacon.BlueprintAttributeManager
-		  If SaveData.IsNull Then
+		Shared Function FromSaveData(SaveData As Variant, AlreadyValidated As Boolean = False) As Beacon.BlueprintAttributeManager
+		  If AlreadyValidated = False And IsSaveData(SaveData) = False Then
 		    Return Nil
 		  End If
 		  
+		  Var SaveDict As Dictionary = SaveData
+		  Var AttrArray As Variant = SaveDict.Value("Attributes")
+		  
 		  Var Manager As New Beacon.BlueprintAttributeManager
 		  Var Members() As Dictionary
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(SaveData)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(AttrArray)
 		  Select Case Info.FullName
 		  Case "Object()"
-		    Var Temp() As Variant = SaveData
+		    Var Temp() As Variant = AttrArray
 		    Var Bound As Integer = Temp.LastIndex
 		    For Idx As Integer = 0 To Bound
 		      If Temp(Idx) IsA Dictionary Then
@@ -55,7 +114,7 @@ Protected Class BlueprintAttributeManager
 		      End If
 		    Next
 		  Case "Dictionary()"
-		    Members = SaveData
+		    Members = AttrArray
 		  End Select
 		  
 		  For Each Dict As Dictionary In Members
@@ -71,7 +130,14 @@ Protected Class BlueprintAttributeManager
 		          Continue
 		        End If
 		        
-		        Attr.Value(Entry.Key) = Entry.Value
+		        Var Value As Variant = Entry.Value
+		        If Beacon.BlueprintAttributeManager.IsSaveData(Value) Then
+		          Attr.Value(Entry.Key) = Beacon.BlueprintAttributeManager.FromSaveData(Value, True)
+		        ElseIf Beacon.BlueprintReference.IsSaveData(Value) Then
+		          Attr.Value(Entry.Key) = Beacon.BlueprintReference.FromSaveData(Value, True)
+		        Else
+		          Attr.Value(Entry.Key) = Entry.Value
+		        End If
 		      Next
 		      
 		      Var ObjectID As String = Reference.ObjectID
@@ -134,6 +200,31 @@ Protected Class BlueprintAttributeManager
 	#tag Method, Flags = &h0
 		Function HasBlueprint(ObjectID As String) As Boolean
 		  Return Self.mReferences.HasKey(ObjectID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function IsSaveData(Value As Variant) As Boolean
+		  If Value.IsNull Or Value.IsArray Or (Value IsA Dictionary) = False Then
+		    Return False
+		  End If
+		  
+		  Var Dict As Dictionary = Value
+		  If Dict.HasKey("Version") = False Or Dict.HasKey("Schema") = False Then
+		    Return False
+		  End If
+		  
+		  Var SchemaValue As Variant = Dict.Value("Schema")
+		  If SchemaValue.IsNull Or SchemaValue.Type <> Variant.TypeString Or SchemaValue.StringValue <> "Beacon.BlueprintAttributeManager" Then
+		    Return False
+		  End If
+		  
+		  Var VersionValue As Variant = Dict.Value("Version")
+		  If VersionValue.IsNull Or VersionValue.Type <> Variant.TypeInteger Or VersionValue.IntegerValue > Beacon.BlueprintAttributeManager.Version Then
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -229,7 +320,7 @@ Protected Class BlueprintAttributeManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Variant
+		Function SaveData() As Dictionary
 		  Var Dicts() As Dictionary
 		  
 		  For Each Entry As DictionaryEntry In Self.mAttributes
@@ -240,13 +331,24 @@ Protected Class BlueprintAttributeManager
 		    Var Dict As New Dictionary
 		    Dict.Value("Blueprint") = ObjectRef.SaveData
 		    For Each ValueEntry As DictionaryEntry In ObjectValues
-		      Dict.Value(ValueEntry.Key) = ValueEntry.Value
+		      Var Value As Variant = ValueEntry.Value
+		      If Value IsA Beacon.BlueprintAttributeManager Then
+		        Dict.Value(ValueEntry.Key) = Beacon.BlueprintAttributeManager(Value).SaveData
+		      ElseIf Value IsA Beacon.BlueprintReference Then
+		        Dict.Value(ValueEntry.Key) = Beacon.BlueprintReference(Value).SaveData
+		      Else
+		        Dict.Value(ValueEntry.Key) = Value
+		      End If
 		    Next
 		    
 		    Dicts.Add(Dict)
 		  Next
 		  
-		  Return Dicts
+		  Var Schema As New Dictionary
+		  Schema.Value("Schema") = "Beacon.BlueprintAttributeManager"
+		  Schema.Value("Version") = Self.Version
+		  Schema.Value("Attributes") = Dicts
+		  Return Schema
 		End Function
 	#tag EndMethod
 
@@ -323,6 +425,10 @@ Protected Class BlueprintAttributeManager
 	#tag EndProperty
 
 
+	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"
@@ -361,14 +467,6 @@ Protected Class BlueprintAttributeManager
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mAttributes"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

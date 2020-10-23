@@ -36,31 +36,26 @@ Inherits Beacon.SpawnPointSet
 		    Return
 		  End If
 		  
-		  Var FromCreatureUUID As String = FromCreature.ObjectID
-		  Var ToCreatureUUID As String = ToCreature.ObjectID
-		  
-		  Var Options As Dictionary
-		  If Self.mReplacements.HasKey(FromCreatureUUID) Then
-		    Options = Self.mReplacements.Value(FromCreatureUUID)
+		  Var Options As Beacon.BlueprintAttributeManager
+		  If Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Options = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
 		  Else
 		    If Weight = Nil Then
 		      Return
 		    End If
-		    Options = New Dictionary
+		    Options = New Beacon.BlueprintAttributeManager
 		  End If
 		  
 		  If Weight = Nil Then
-		    If Options.HasKey(ToCreatureUUID) Then
-		      Options.Remove(ToCreatureUUID)
-		    End If
+		    Options.Remove(ToCreature)
 		  Else
-		    Options.Value(ToCreatureUUID) = Weight.DoubleValue
+		    Options.Value(ToCreature, "Weight") = Weight.DoubleValue
 		  End If
 		  
-		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreatureUUID) Then
-		    Self.mReplacements.Remove(FromCreatureUUID)
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Self.mReplacements.Remove(FromCreature)
 		  Else
-		    Self.mReplacements.Value(FromCreatureUUID) = Options
+		    Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute) = Options
 		  End If
 		  
 		  Self.Modified = True

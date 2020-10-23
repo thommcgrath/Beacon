@@ -121,7 +121,15 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPoint
 		  Try
-		    Var SpawnPoint As Beacon.SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil)
+		    Var SpawnPoint As Beacon.SpawnPoint
+		    If Dict.HasKey("Reference") Then
+		      Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Reference"))
+		      If Reference Is Nil Then
+		        Return Nil
+		      End If
+		    Else
+		      SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil)
+		    End If
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    If Dict.HasKey("Limits") Then
@@ -345,9 +353,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("UUID") = Self.ObjectID
-		  Keys.Value("Path") = Self.Path
-		  Keys.Value("Class") = Self.ClassString
+		  Keys.Value("Reference") = Beacon.BlueprintReference.CreateSaveData(Self)
 		  Keys.Value("Mode") = Self.Mode
 		  If Children.LastIndex > -1 Then
 		    Keys.Value("Sets") = Children

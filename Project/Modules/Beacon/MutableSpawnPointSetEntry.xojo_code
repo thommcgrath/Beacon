@@ -14,7 +14,7 @@ Inherits Beacon.SpawnPointSetEntry
 	#tag Method, Flags = &h0
 		Sub Creature(Assigns Value As Beacon.Creature)
 		  If Self.mCreature <> Value Then
-		    Self.mCreature = Value
+		    Self.mCreature = New Beacon.BlueprintReference(Value.ImmutableVersion)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -22,7 +22,7 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub ID(Assigns Value As v4UUID)
-		  If Not IsNull(Value) Then
+		  If (Value Is Nil) = False Then
 		    Self.mID = Value
 		  End If
 		End Sub

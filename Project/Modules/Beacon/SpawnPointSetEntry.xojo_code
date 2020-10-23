@@ -16,9 +16,15 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Creature As Beacon.Creature)
+		Sub Constructor(Reference As Beacon.BlueprintReference)
 		  Self.Constructor()
-		  Self.mCreature = Creature
+		  Self.mCreature = Reference
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Creature As Beacon.Creature)
+		  Self.Constructor(New Beacon.BlueprintReference(Creature.ImmutableVersion))
 		End Sub
 	#tag EndMethod
 
@@ -47,38 +53,38 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  // Part of the Beacon.DocumentItem interface.
-		  
-		  #Pragma Unused Engrams
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Creature() As Beacon.Creature
-		  Return Self.mCreature
+		  Return Beacon.Creature(Self.mCreature.Resolve)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPointSetEntry
-		  If Dict Is Nil Or (Dict.HasKey("creature_id") = False And Dict.HasKey("Creature") = False) Then
+		  If Dict Is Nil Or Dict.HasAnyKey("Blueprint", "creature_id", "Creature") = False Then
 		    Return Nil
 		  End If
 		  
-		  Var Entry As New Beacon.SpawnPointSetEntry
-		  If Dict.HasKey("creature_id") Then
-		    Var CreatureUUID As String = Dict.Value("creature_id")
-		    Entry.mCreature = Beacon.ResolveCreature(CreatureUUID, "", "", Nil)
+		  // There are so many possibilities here because this needs to support the
+		  // delta versions, v4, and v5 versions of the structure.
+		  
+		  Var Entry As Beacon.SpawnPointSetEntry
+		  If Dict.HasKey("Blueprint") Then
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference(Dict.Value("Blueprint"))
+		    If Reference Is Nil Then
+		      Return Nil
+		    End If
+		    Entry = New Beacon.SpawnPointSetEntry(Reference)
 		  Else
-		    Var CreaturePath As String = Dict.Value("Creature")
-		    Entry.mCreature = Beacon.ResolveCreature("", CreaturePath, "", Nil)
-		  End If
-		  If Entry.mCreature Is Nil Then
-		    Return Nil
+		    Var Creature As Beacon.Creature = Beacon.ResolveCreature(Dict, "creature_id", "Creature", "", Nil)
+		    If Creature Is Nil Then
+		      Return Nil
+		    End If
+		    Entry = New Beacon.SpawnPointSetEntry(Creature)
 		  End If
 		  
-		  If Dict.HasKey("weight") Then
+		  If Dict.HasKey("Weight") Then
+		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Weight"))
+		  ElseIf Dict.HasKey("weight") Then
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("weight"))
 		  ElseIf Dict.HasKey("SpawnChance") Then
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("SpawnChance"))
@@ -86,16 +92,20 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Chance"))
 		  End If
 		  
-		  If Dict.HasKey("spawn_offset") Then
+		  If Dict.HasKey("Spawn Offset") Then
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Spawn Offset"))
+		  ElseIf Dict.HasKey("spawn_offset") Then
 		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("spawn_offset"))
 		  ElseIf Dict.HasKey("Offset") Then
 		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Offset"))
 		  End If
 		  
 		  Var Levels() As Variant
-		  If Dict.HasKey("level_overrides") And IsNull(Dict.Value("level_overrides")) = False Then
+		  If Dict.HasKey("Level Overrides") And Dict.Value("Level Overrides").IsNull = False Then
+		    Levels = Dict.Value("Level Overrides")
+		  ElseIf Dict.HasKey("level_overrides") And Dict.Value("level_overrides").IsNull = False Then
 		    Levels = Dict.Value("level_overrides")
-		  ElseIf Dict.HasKey("Levels") And IsNull(Dict.Value("Levels")) = False Then
+		  ElseIf Dict.HasKey("Levels") And Dict.Value("Levels").IsNull = False Then
 		    Levels = Dict.Value("Levels")
 		  End If
 		  For Each LevelData As Dictionary In Levels
@@ -105,31 +115,41 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    End If
 		  Next
 		  
-		  If Dict.HasKey("max_level_multiplier") Then
+		  If Dict.HasKey("Max Level Multiplier") Then
+		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("Max Level Multiplier"))
+		  ElseIf Dict.HasKey("max_level_multiplier") Then
 		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("max_level_multiplier"))
 		  ElseIf Dict.HasKey("MaxLevelMultiplier") Then
 		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("MaxLevelMultiplier"))
 		  End If
 		  
-		  If Dict.HasKey("max_level_offset") Then
+		  If Dict.HasKey("Max Level Offset") Then
+		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("Max Level Offset"))
+		  ElseIf Dict.HasKey("max_level_offset") Then
 		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("max_level_offset"))
 		  ElseIf Dict.HasKey("MaxLevelOffset") Then
 		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("MaxLevelOffset"))
 		  End If
 		  
-		  If Dict.HasKey("min_level_multiplier") Then
+		  If Dict.HasKey("Min Level Multiplier") Then
+		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("Min Level Multiplier"))
+		  ElseIf Dict.HasKey("min_level_multiplier") Then
 		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("min_level_multiplier"))
 		  ElseIf Dict.HasKey("MinLevelMultiplier") Then
 		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("MinLevelMultiplier"))
 		  End If
 		  
-		  If Dict.HasKey("min_level_offset") Then
+		  If Dict.HasKey("Min Level Offset") Then
+		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("Min Level Offset"))
+		  ElseIf Dict.HasKey("min_level_offset") Then
 		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("min_level_offset"))
 		  ElseIf Dict.HasKey("MinLevelOffset") Then
 		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("MinLevelOffset"))
 		  End If
 		  
-		  If Dict.HasKey("override") Then
+		  If Dict.HasKey("Level Override") Then
+		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("Level Override"))
+		  ElseIf Dict.HasKey("override") Then
 		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("override"))
 		  ElseIf Dict.HasKey("LevelOverride") Then
 		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("LevelOverride"))
@@ -169,20 +189,10 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  // Part of the Beacon.DocumentItem interface.
-		  
-		  #Pragma Unused Document
-		  
-		  Return Self.mCreature <> Nil
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Label() As String
 		  // Part of the Beacon.NamedItem interface.
 		  
-		  Return Self.mCreature.Label
+		  Return Self.Creature.Label
 		End Function
 	#tag EndMethod
 
@@ -405,13 +415,13 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("creature_id") = Self.mCreature.ObjectID
-		  Dict.Value("type") = "SpawnPointSetEntry"
+		  Dict.Value("Blueprint") = Self.mCreature.SaveData
+		  Dict.Value("Type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
-		    Dict.Value("weight") = Self.mChance.DoubleValue
+		    Dict.Value("Weight") = Self.mChance.DoubleValue
 		  End If
 		  If Self.mOffset <> Nil Then
-		    Dict.Value("spawn_offset") = Self.mOffset.SaveData
+		    Dict.Value("Spawn Offset") = Self.mOffset.SaveData
 		  End If
 		  If Self.mLevels.LastIndex > -1 Then
 		    Var Levels() As Dictionary
@@ -419,22 +429,22 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    For I As Integer = 0 To Self.mLevels.LastIndex
 		      Levels(I) = Self.mLevels(I).SaveData
 		    Next
-		    Dict.Value("level_overrides") = Levels
+		    Dict.Value("Level Overrides") = Levels
 		  End If
 		  If Self.mMaxLevelMultiplier <> Nil Then
-		    Dict.Value("max_level_multiplier") = Self.mMaxLevelMultiplier.DoubleValue
+		    Dict.Value("Max Level Multiplier") = Self.mMaxLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMaxLevelOffset <> Nil Then
-		    Dict.Value("max_level_offset") = Self.mMaxLevelOffset.DoubleValue
+		    Dict.Value("Max Level Offset") = Self.mMaxLevelOffset.DoubleValue
 		  End If
 		  If Self.mMinLevelMultiplier <> Nil Then
-		    Dict.Value("min_level_multiplier") = Self.mMinLevelMultiplier.DoubleValue
+		    Dict.Value("Min Level Multiplier") = Self.mMinLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMinLevelOffset <> Nil Then
-		    Dict.Value("min_level_offset") = Self.mMinLevelOffset.DoubleValue
+		    Dict.Value("Min Level Offset") = Self.mMinLevelOffset.DoubleValue
 		  End If
 		  If Self.mLevelOverride <> Nil Then
-		    Dict.Value("override") = Self.mLevelOverride.DoubleValue
+		    Dict.Value("Level Override") = Self.mLevelOverride.DoubleValue
 		  End If
 		  Return Dict
 		End Function
@@ -452,7 +462,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mCreature As Beacon.Creature
+		Protected mCreature As Beacon.BlueprintReference
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
