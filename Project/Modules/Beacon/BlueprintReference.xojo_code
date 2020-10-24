@@ -68,7 +68,7 @@ Protected Class BlueprintReference
 		  End If
 		  
 		  Var VersionValue As Variant = Dict.Value("Version")
-		  If VersionValue.IsNull Or (Target32Bit And VersionValue.Type <> Variant.TypeInt32) Or (Target64Bit And VersionValue.Type <> Variant.TypeInt64) Or VersionValue.IntegerValue > Beacon.BlueprintReference.Version Then
+		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > Beacon.BlueprintReference.Version Then
 		    Return False
 		  End If
 		  
