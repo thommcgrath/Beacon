@@ -425,6 +425,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function FromString(Contents As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Document
+		  Var Tracker As New TimingTracker
 		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
@@ -433,6 +434,7 @@ Implements ObservationKit.Observable
 		    App.Log(FailureReason)
 		    Return Nil
 		  End Try
+		  Tracker.Log("Took %elapsed% to parse JSON.")
 		  
 		  Var Doc As New Beacon.Document
 		  Var Version As Integer = 1
@@ -495,6 +497,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  // New config system
+		  Tracker.Advance
 		  If Dict.HasKey("Configs") Then
 		    Var Groups As Dictionary = Dict.Value("Configs")
 		    For Each Entry As DictionaryEntry In Groups
@@ -510,6 +513,7 @@ Implements ObservationKit.Observable
 		      End Try
 		    Next
 		  End If
+		  Tracker.Log("Took %elapsed% to load config groups.")
 		  
 		  If Dict.HasKey("Map") Then
 		    Doc.MapCompatibility = Dict.Value("Map")
@@ -524,6 +528,7 @@ Implements ObservationKit.Observable
 		    Doc.UseCompression = True
 		  End If
 		  
+		  Tracker.Advance
 		  Var SecureDict As Dictionary
 		  #Pragma BreakOnExceptions False
 		  If Dict.HasKey("EncryptedData") Then
@@ -556,6 +561,7 @@ Implements ObservationKit.Observable
 		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
 		    LoadServerProfiles(Doc, ServerDicts)
 		  End If
+		  Tracker.Log("Took %elapsed% to decrypt.")
 		  
 		  If Dict.HasKey("IsConsole") Then
 		    Doc.mConsoleMode = Dict.Value("IsConsole").BooleanValue
@@ -620,6 +626,7 @@ Implements ObservationKit.Observable
 		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
+		  Tracker.Log("Took %elapsed% to load a " + Round(Contents.Length / 1024).ToString("###,###,###,##0") + "KB v" + Version.ToString + " document.", True)
 		  Return Doc
 		End Function
 	#tag EndMethod
