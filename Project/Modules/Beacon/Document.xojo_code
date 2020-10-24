@@ -602,6 +602,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function FromString(Contents As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Document
+		  Var Tracker As New TimingTracker
 		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
@@ -610,6 +611,7 @@ Implements ObservationKit.Observable
 		    App.Log(FailureReason)
 		    Return Nil
 		  End Try
+		  Tracker.Log("Took %elapsed% to parse JSON.")
 		  
 		  Var Doc As New Beacon.Document
 		  Var Version As Integer = 1
@@ -672,37 +674,8 @@ Implements ObservationKit.Observable
 		    Next
 		  End If
 		  
-		  // Custom Blueprints
-		  If Dict.HasKey("Custom Blueprints") Then
-		    Var Definitions() As Variant
-		    Try
-		      Definitions = Dict.Value("Custom Blueprints")
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    Var BlueprintsToSave() As Beacon.Blueprint
-		    For Idx As Integer = 0 To Definitions.LastIndex
-		      If (Definitions(Idx) IsA Dictionary) = False Then
-		        Continue
-		      End If
-		      Try
-		        Var Definition As Dictionary = Definitions(Idx)
-		        Var BlueprintUUID As String = Definition.Value("id")
-		        Var Blueprint As Beacon.Blueprint = Beacon.Data.GetBlueprintByID(BlueprintUUID)
-		        If Blueprint Is Nil Then
-		          Blueprint = Beacon.UnpackBlueprint(Definition)
-		          If (Blueprint Is Nil) = False Then
-		            BlueprintsToSave.Add(Blueprint)
-		          End If
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
-		    
-		    Call Beacon.Data.SaveBlueprints(BlueprintsToSave, False)
-		  End If
-		  
 		  // New config system
+		  Tracker.Advance
 		  If Dict.HasKey("Config Sets") Then
 		    Var Sets As Dictionary = Dict.Value("Config Sets")
 		    For Each Entry As DictionaryEntry In Sets
@@ -718,6 +691,7 @@ Implements ObservationKit.Observable
 		  ElseIf Dict.HasKey("Configs") Then
 		    Doc.ConfigSet(BaseConfigSetName) = LoadConfigSet(Dict.Value("Configs"), Identity, Doc)
 		  End If
+		  Tracker.Log("Took %elapsed% to load config groups.")
 		  
 		  If Dict.HasKey("Map") Then
 		    Doc.MapCompatibility = Dict.Value("Map")
@@ -732,6 +706,7 @@ Implements ObservationKit.Observable
 		    Doc.UseCompression = True
 		  End If
 		  
+		  Tracker.Advance
 		  Var SecureDict As Dictionary
 		  #Pragma BreakOnExceptions False
 		  If Dict.HasKey("EncryptedData") Then
@@ -764,6 +739,7 @@ Implements ObservationKit.Observable
 		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
 		    LoadServerProfiles(Doc, ServerDicts)
 		  End If
+		  Tracker.Log("Took %elapsed% to decrypt.")
 		  
 		  If Dict.HasKey("IsConsole") Then
 		    Doc.mConsoleMode = Dict.Value("IsConsole").BooleanValue
@@ -828,6 +804,7 @@ Implements ObservationKit.Observable
 		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
+		  Tracker.Log("Took %elapsed% to load a " + Round(Contents.Length / 1024).ToString("###,###,###,##0") + "KB v" + Version.ToString + " document.", True)
 		  Return Doc
 		End Function
 	#tag EndMethod

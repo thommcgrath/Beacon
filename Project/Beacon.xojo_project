@@ -427,6 +427,7 @@ Class=BeaconTextArea;Custom Controls/BeaconTextArea.xojo_code;&h0000000074CFAFFF
 Class=LogManager;Classes/LogManager.xojo_code;&h000000001193DFFF;&h00000000056D5FFF;false
 Folder=Support Ticket;Views/Support Ticket;&h000000003584DFFF;&h0000000008A387FF;false
 Window=SupportTicketWindow;Views/Support Ticket/SupportTicketWindow.xojo_window;&h000000005A8C67FF;&h000000003584DFFF;false
+Class=TimingTracker;Classes/TimingTracker.xojo_code;&h000000005463FFFF;&h00000000056D5FFF;false
 Folder=Omni Bar;Custom Controls/Omni Bar;&h00000000094BCFFF;&h0000000030DCFFFF;false
 Folder=Source List;Custom Controls/Source List;&h00000000598E47FF;&h0000000030DCFFFF;false
 Window=SourceList;Custom Controls/Source List/SourceList.xojo_window;&h00000000744E37FF;&h00000000598E47FF;false
