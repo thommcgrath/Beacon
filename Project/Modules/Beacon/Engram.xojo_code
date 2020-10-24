@@ -85,8 +85,38 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromClass(ClassString As String) As Beacon.Engram
-		  Return CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", ClassString))
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.Engram
+		  Var Engram As New Beacon.Engram
+		  Engram.mModID = Beacon.UserModID
+		  Engram.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "PrimalItemMystery_NoData_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = "PrimalItemMystery_" + ObjectID + "_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("Engrams", ClassString)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Engram.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
+		    If Path.Right(2) = "_C" Then
+		      // Appears to be a BlueprintGeneratedClass Path
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    Engram.mIsValid = True
+		  End If
+		  
+		  Engram.mPath = Path
+		  Engram.mObjectID = ObjectID
+		  Engram.mTags.Add("blueprintable")
+		  
+		  Return Engram
 		End Function
 	#tag EndMethod
 
@@ -98,37 +128,8 @@ Implements Beacon.Blueprint
 		  End If
 		  
 		  // Base probably already includes _C, so don't add it again. UnknownBlueprintPath will handle it if missing.
-		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base))
+		  Var Engram As Beacon.Engram = CreateCustom("", "", "PrimalItemMystery_" + Base)
 		  Engram.mEngramEntryString = EntryString
-		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.Engram
-		  Var ObjectIDString As String = ObjectID.StringValue
-		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + ObjectIDString + "_C"))
-		  Engram.mLabel = ObjectIDString
-		  Engram.mObjectID = ObjectID
-		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromPath(Path As String) As Beacon.Engram
-		  Var Engram As New Beacon.Engram
-		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
-		    If Path.Right(2) = "_C" Then
-		      // Appears to be a BlueprintGeneratedClass Path
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		    Engram.mIsValid = True
-		  End If
-		  Engram.mModID = Beacon.UserModID
-		  Engram.mModName = Beacon.UserModName
-		  Engram.mPath = Path
-		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Beacon.UserModID.Lowercase + ":" + Path.Lowercase)
-		  Engram.mTags.Add("blueprintable")
 		  Return Engram
 		End Function
 	#tag EndMethod

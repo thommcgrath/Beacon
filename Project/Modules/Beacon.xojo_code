@@ -1331,15 +1331,7 @@ Protected Module Beacon
 		    End Try
 		  End If
 		  
-		  If Path.IsEmpty = False Then
-		    Return Beacon.Engram.CreateFromPath(Path)
-		  ElseIf ClassString.IsEmpty = False Then
-		    Return Beacon.Engram.CreateFromClass(ClassString)
-		  ElseIf ObjectID.IsEmpty = False Then
-		    Return Beacon.Engram.CreateFromObjectID(ObjectID)
-		  End If
-		  
-		  Return Beacon.Engram.CreateFromClass("PrimalItemMystery_NoData_C")
+		  Return Beacon.Engram.CreateCustom(ObjectID, Path, ClassString)
 		End Function
 	#tag EndMethod
 

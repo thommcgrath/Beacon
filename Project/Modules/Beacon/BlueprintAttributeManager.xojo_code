@@ -220,7 +220,7 @@ Protected Class BlueprintAttributeManager
 		  End If
 		  
 		  Var VersionValue As Variant = Dict.Value("Version")
-		  If VersionValue.IsNull Or VersionValue.Type <> Variant.TypeInteger Or VersionValue.IntegerValue > Beacon.BlueprintAttributeManager.Version Then
+		  If VersionValue.IsNull Or (Target32Bit And VersionValue.Type <> Variant.TypeInt32) Or (Target64Bit And VersionValue.Type <> Variant.TypeInt64) Or VersionValue.IntegerValue > Beacon.BlueprintAttributeManager.Version Then
 		    Return False
 		  End If
 		  

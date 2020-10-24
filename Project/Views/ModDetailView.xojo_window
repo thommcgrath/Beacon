@@ -45,7 +45,7 @@ Begin BeaconContainer ModDetailView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField

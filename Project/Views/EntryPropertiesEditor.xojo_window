@@ -959,9 +959,9 @@ End
 	#tag Method, Flags = &h0
 		Sub Setup(Entry As Beacon.SetEntry)
 		  Var Arr(0) As Beacon.SetEntry
-		  If Entry = Nil Then
+		  If Entry Is Nil Then
 		    Var Default As New Beacon.SetEntry()
-		    Default.Append(New Beacon.SetEntryOption(Beacon.Engram.CreateFromPath("/Game/Mods/Default.Default"), 1.0))
+		    Default.Append(New Beacon.SetEntryOption(Beacon.Engram.CreateCustom("", "/Game/Mods/Default.Default", ""), 1.0))
 		    Arr(0) = Default
 		  Else
 		    Arr(0) = Entry

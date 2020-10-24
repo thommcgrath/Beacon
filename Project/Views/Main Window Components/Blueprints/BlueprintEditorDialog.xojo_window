@@ -44,7 +44,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -1664,7 +1664,7 @@ End
 		      Var TempPath As String
 		      Select Case Self.TypeMenu.SelectedRowIndex
 		      Case Self.IndexEngram
-		        TempPath = Beacon.Engram.CreateFromClass(Path).Path
+		        TempPath = Beacon.Engram.CreateCustom("", Path, "").Path
 		      Case Self.IndexCreature
 		        TempPath = Beacon.Creature.CreateFromClass(Path).Path
 		      Case Self.IndexSpawnPoint

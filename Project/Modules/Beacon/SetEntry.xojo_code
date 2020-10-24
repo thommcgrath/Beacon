@@ -338,11 +338,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Continue
 		      End If
 		      
-		      Var Engram As Beacon.Engram = Beacon.ResolveEngram("", Path, "", Mods)
-		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateFromPath(Path)
-		      End If
-		      Engrams.Add(Engram)
+		      Engrams.Add(Beacon.ResolveEngram("", Path, "", Mods))
 		    Next
 		  End If
 		  
