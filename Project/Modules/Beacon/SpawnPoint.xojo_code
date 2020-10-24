@@ -127,6 +127,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		      If Reference Is Nil Then
 		        Return Nil
 		      End If
+		      SpawnPoint = Beacon.SpawnPoint(Reference.Resolve)
 		    Else
 		      SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil)
 		    End If

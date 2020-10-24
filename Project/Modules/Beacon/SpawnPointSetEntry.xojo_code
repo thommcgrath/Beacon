@@ -69,7 +69,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  
 		  Var Entry As Beacon.SpawnPointSetEntry
 		  If Dict.HasKey("Blueprint") Then
-		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference(Dict.Value("Blueprint"))
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If
