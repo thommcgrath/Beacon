@@ -1924,11 +1924,12 @@ End
 		    End If
 		  Case "ShareLinkButton"
 		    Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		    Var Format As String = "-0.0#######"
-		    Var MatureSpeedMultiplier As String = Str(Config.BabyMatureSpeedMultiplier, Format)
-		    Var IncubationSpeedMultiplier As String = Str(Config.EggHatchSpeedMultiplier, Format)
-		    Var ImprintPeriodMultiplier As String = Str(Config.BabyCuddleIntervalMultiplier, Format)
-		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier)))
+		    Var Format As String = "0.0#######"
+		    Var MatureSpeedMultiplier As String = Config.BabyMatureSpeedMultiplier.ToString(Format)
+		    Var IncubationSpeedMultiplier As String = Config.EggHatchSpeedMultiplier.ToString(Format)
+		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
+		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
+		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
 		  End Select
 		End Sub
 	#tag EndEvent
