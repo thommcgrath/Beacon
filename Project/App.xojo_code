@@ -68,6 +68,7 @@ Implements NotificationKit.Receiver
 		  Self.mLogManager = New LogManager
 		  
 		  #if Not DebugBuild
+		    #Pragma Error "Cannot use SymmetricDecrypt before registering the plugin."
 		    Try
 		      Var JSON As String = BeaconEncryption.SymmetricDecrypt(Self.MBSKey, DecodeBase64(Self.MBSSerial))
 		      Var MBSData As Dictionary = Xojo.ParseJSON(JSON)

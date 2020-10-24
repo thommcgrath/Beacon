@@ -196,6 +196,7 @@ Protected Module BeaconEncryption
 		  Case 1
 		    Crypt = CipherMBS.bf_cbc
 		  End Select
+		  Key.Size = Crypt.KeyLength
 		  If Not Crypt.DecryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
 		    Err.Reason = "Incorrect key or vector length"
@@ -237,6 +238,7 @@ Protected Module BeaconEncryption
 		    Err.Message = "Unknown symmetric version " + Version.ToString
 		    Raise Err
 		  End Select
+		  Key.Size = Crypt.KeyLength
 		  If Not Crypt.EncryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
 		    Err.Reason = "Incorrect key or vector length"
