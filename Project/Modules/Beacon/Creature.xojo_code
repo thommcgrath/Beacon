@@ -132,7 +132,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Label.IsEmpty Then
+		  If Self.mLabel.IsEmpty Then
 		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		  End If
 		  
