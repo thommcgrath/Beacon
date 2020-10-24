@@ -1666,9 +1666,9 @@ End
 		      Case Self.IndexEngram
 		        TempPath = Beacon.Engram.CreateCustom("", Path, "").Path
 		      Case Self.IndexCreature
-		        TempPath = Beacon.Creature.CreateFromClass(Path).Path
+		        TempPath = Beacon.Creature.CreateCustom("", Path, "").Path
 		      Case Self.IndexSpawnPoint
-		        TempPath = Beacon.SpawnPoint.CreateFromClass(Path).Path
+		        TempPath = Beacon.SpawnPoint.CreateCustom("", Path, "").Path
 		      End Select
 		      If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Anyway", "Cancel") Then
 		        Path = TempPath

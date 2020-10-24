@@ -1267,15 +1267,7 @@ Protected Module Beacon
 		    End Try
 		  End If
 		  
-		  If Path.IsEmpty = False Then
-		    Return Beacon.Creature.CreateFromPath(Path)
-		  ElseIf ClassString.IsEmpty = False Then
-		    Return Beacon.Creature.CreateFromClass(ClassString)
-		  ElseIf ObjectID.IsEmpty = False Then
-		    Return Beacon.Creature.CreateFromObjectID(ObjectID)
-		  End If
-		  
-		  Return Beacon.Creature.CreateFromClass("BeaconNoData_Character_BP_C")
+		  Return Beacon.Creature.CreateCustom(ObjectID, Path, ClassString)
 		End Function
 	#tag EndMethod
 
@@ -1387,15 +1379,7 @@ Protected Module Beacon
 		    End Try
 		  End If
 		  
-		  If Path.IsEmpty = False Then
-		    Return Beacon.SpawnPoint.CreateFromPath(Path)
-		  ElseIf ClassString.IsEmpty = False Then
-		    Return Beacon.SpawnPoint.CreateFromClass(ClassString)
-		  ElseIf ObjectID.IsEmpty = False Then
-		    Return Beacon.SpawnPoint.CreateFromObjectID(ObjectID)
-		  End If
-		  
-		  Return Beacon.SpawnPoint.CreateFromClass("BeaconSpawn_NoData_C")
+		  Return Beacon.SpawnPoint.CreateCustom(ObjectID, Path, ClassString)
 		End Function
 	#tag EndMethod
 

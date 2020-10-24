@@ -99,6 +99,8 @@ Implements Beacon.Blueprint
 		      ClassString = "PrimalItemMystery_" + ObjectID + "_C"
 		    End If
 		    Path = Beacon.UnknownBlueprintPath("Engrams", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
 		  If ObjectID.IsEmpty Then
 		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Engram.mModID + ":" + Path.Lowercase)
@@ -178,7 +180,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mLabel = "" Then
+		  If Self.mLabel.IsEmpty Then
 		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		  End If
 		  

@@ -83,30 +83,31 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromClass(ClassString As String) As Beacon.Creature
-		  Return Creature.CreateFromPath(Beacon.UnknownBlueprintPath("Creatures", ClassString))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.Creature
-		  Var ObjectIDString As String = ObjectID.StringValue
-		  Var Creature As Beacon.Creature = CreateFromPath(Beacon.UnknownBlueprintPath("Creatures", ObjectIDString + "_Character_BP_C"))
-		  Creature.mLabel = ObjectIDString
-		  Creature.mObjectID = ObjectID
-		  Return Creature
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromPath(Path As String) As Beacon.Creature
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.Creature
 		  Var Creature As New Beacon.Creature
-		  Creature.mClassString = Beacon.ClassStringFromPath(Path)
-		  Creature.mPath = Path
-		  Creature.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Beacon.UserModID.Lowercase + ":" + Creature.mPath.Lowercase)
-		  Creature.mLabel = Beacon.LabelFromClassString(Creature.mClassString)
 		  Creature.mModID = Beacon.UserModID
 		  Creature.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "BeaconNoData_Character_BP_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = ObjectID + "_Character_BP_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("Creatures", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  Creature.mClassString = ClassString
+		  Creature.mPath = Path
+		  Creature.mObjectID = ObjectID
+		  Creature.mLabel = Beacon.LabelFromClassString(ClassString)
 		  Return Creature
 		End Function
 	#tag EndMethod
@@ -131,6 +132,10 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Label() As String
+		  If Label.IsEmpty Then
+		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
+		  End If
+		  
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod

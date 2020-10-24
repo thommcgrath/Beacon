@@ -90,30 +90,31 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromClass(ClassString As String) As Beacon.SpawnPoint
-		  Return CreateFromPath(Beacon.UnknownBlueprintPath("SpawnPoints", ClassString))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.SpawnPoint
-		  Var ObjectIDString As String = ObjectID.StringValue
-		  Var SpawnPoint As Beacon.SpawnPoint = CreateFromPath(Beacon.UnknownBlueprintPath("SpawnPoints", "BeaconSpawn_" + ObjectIDString + "_C"))
-		  SpawnPoint.mLabel = ObjectIDString
-		  SpawnPoint.mObjectID = ObjectID
-		  Return SpawnPoint
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromPath(Path As String) As Beacon.SpawnPoint
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.SpawnPoint
 		  Var SpawnPoint As New Beacon.SpawnPoint
-		  SpawnPoint.mClassString = Beacon.ClassStringFromPath(Path)
-		  SpawnPoint.mPath = Path
-		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Beacon.UserModID.Lowercase + ":" + SpawnPoint.mPath.Lowercase)
-		  SpawnPoint.mLabel = Beacon.LabelFromClassString(SpawnPoint.mClassString)
 		  SpawnPoint.mModID = Beacon.UserModID
 		  SpawnPoint.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "BeaconSpawn_NoData_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = "BeaconSpawn_" + ObjectID + "_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("SpawnPoints", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SpawnPoint.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  SpawnPoint.mClassString = ClassString
+		  SpawnPoint.mPath = Path
+		  SpawnPoint.mObjectID = ObjectID
+		  SpawnPoint.mLabel = Beacon.LabelFromClassString(ClassString)
 		  Return SpawnPoint
 		End Function
 	#tag EndMethod
