@@ -76,7 +76,7 @@ Begin BeaconPagedSubview DocumentsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   896
       Begin RecentDocumentsComponent RecentDocumentsComponent1
@@ -490,6 +490,8 @@ End
 		      Return
 		    End If
 		  Next
+		  
+		  Self.ShowAlert(Item.Caption + " is still loading", "Sit tight, the file is loading. Older documents will take longer to load than normal, but will load faster than ever once saved in the new format.")
 		End Sub
 	#tag EndEvent
 	#tag Event
