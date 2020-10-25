@@ -42,7 +42,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mAvailability = Beacon.Maps.All.Mask
-		  Self.mLimits = New Dictionary
+		  Self.mLimits = New Beacon.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
@@ -135,9 +135,18 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    If Dict.HasKey("Limits") Then
-		      SpawnPoint.mLimits = Dictionary(Dict.Value("Limits").ObjectValue).Clone
-		    Else
-		      SpawnPoint.mLimits = New Dictionary
+		      Var Manager As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(Dict.Value("Limits"))
+		      If (Manager Is Nil) = False Then
+		        SpawnPoint.mLimits = Manager
+		      Else
+		        Var Limits As Dictionary = Dict.Value("Limits")
+		        For Each Limit As DictionaryEntry In Limits
+		          Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Limit.Key.StringValue, "", Nil)
+		          If (Creature Is Nil) = False Then
+		            SpawnPoint.mLimits.Value(Creature, LimitAttribute) = Limit.Value.DoubleValue
+		          End If
+		        Next
+		      End If
 		    End If
 		    If Dict.HasKey("Sets") Then
 		      Var SetSaveData() As Variant = Dict.Value("Sets")
@@ -216,8 +225,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Limit(Creature As Beacon.Creature) As Double
-		  If Self.mLimits.HasKey(Creature.ObjectID) Then
-		    Return Self.mLimits.Value(Creature.ObjectID)
+		  If Self.mLimits.HasBlueprint(Creature) Then
+		    Return Self.mLimits.Value(Creature, Self.LimitAttribute)
 		  Else
 		    Return 1.0
 		  End If
@@ -227,11 +236,14 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Limits() As Dictionary
 		  Var Limits As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mLimits
-		    Var Creature As Beacon.Creature = Beacon.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
-		    If (Creature Is Nil) = False Then
-		      Limits.Value(Creature) = Entry.Value
+		  Var References() As Beacon.BlueprintReference = Self.mLimits.References
+		  For Each Reference As Beacon.BlueprintReference In References
+		    If Reference.IsCreature = False Then
+		      Continue
 		    End If
+		    
+		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
+		    Limits.Value(Beacon.Creature(Reference.Resolve)) = Limit
 		  Next
 		  Return Limits
 		End Function
@@ -240,7 +252,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function LimitsString(Pretty As Boolean = False) As String
 		  Try
-		    Return Beacon.GenerateJSON(Self.mLimits, Pretty)
+		    Return Beacon.GenerateJSON(Self.mLimits.SaveData, Pretty)
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
@@ -321,21 +333,11 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Sub Pack(Dict As Dictionary)
 		  Var Sets() As Dictionary
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
-		    Var Creatures() As String
-		    For Each Entry As Beacon.SpawnPointSetEntry In Set
-		      Creatures.Add(Entry.Creature.ObjectID)
-		    Next
-		    
-		    Var PackedSet As New Dictionary
-		    PackedSet.Value("label") = Set.Label
-		    PackedSet.Value("group_id") = Set.ID
-		    PackedSet.Value("weight") = Set.Weight
-		    PackedSet.Value("creatures") = Creatures
-		    Sets.Add(PackedSet)
+		    Sets.Add(Set.Pack)
 		  Next
 		  
-		  Dict.Value("groups") = Sets
-		  Dict.Value("limits") = Self.mLimits
+		  Dict.Value("sets") = Sets
+		  Dict.Value("limits") = Self.Limits
 		End Sub
 	#tag EndMethod
 
@@ -360,8 +362,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  If Children.LastIndex > -1 Then
 		    Keys.Value("Sets") = Children
 		  End If
-		  If Self.mLimits.KeyCount > 0 Then
-		    Keys.Value("Limits") = Self.mLimits
+		  If Self.mLimits.Count > 0 Then
+		    Keys.Value("Limits") = Self.mLimits.SaveData
 		  End If
 		  Return Keys
 		End Function
@@ -435,7 +437,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLimits As Dictionary
+		Protected mLimits As Beacon.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -470,6 +472,9 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Protected mTags() As String
 	#tag EndProperty
 
+
+	#tag Constant, Name = LimitAttribute, Type = String, Dynamic = False, Default = \"Limit", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = ModeAppend, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant

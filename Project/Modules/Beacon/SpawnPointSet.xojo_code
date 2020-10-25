@@ -414,6 +414,54 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("spawn_point_set_id") = Self.mID.StringValue
+		  Dict.Value("label") = Self.mLabel
+		  Dict.Value("weight") = Self.mWeight
+		  If Self.mGroupOffset Is Nil Then
+		    Dict.Value("spawn_offset") = Nil
+		  Else
+		    Var Offset As New Dictionary
+		    Offset.Value("x") = Self.mGroupOffset.X
+		    Offset.Value("y") = Self.mGroupOffset.Y
+		    Offset.Value("z") = Self.mGroupOffset.Z
+		    Dict.Value("spawn_offset") = Offset
+		  End If
+		  If Self.mMinDistanceFromPlayersMultiplier Is Nil Then
+		    Dict.Value("min_distance_from_players_multiplier") = Nil
+		  Else
+		    Dict.Value("min_distance_from_players_multiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
+		  End If
+		  If Self.mMinDistanceFromStructuresMultiplier Is Nil Then
+		    Dict.Value("min_distance_from_structures_multiplier") = Nil
+		  Else
+		    Dict.Value("min_distance_from_structures_multiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
+		  End If
+		  If Self.mMinDistanceFromTamedDinosMultiplier Is Nil Then
+		    Dict.Value("min_distance_from_tamed_dinos_multiplier") = Nil
+		  Else
+		    Dict.Value("min_distance_from_tamed_dinos_multiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
+		  End If
+		  If Self.mSpreadRadius Is Nil Then
+		    Dict.Value("spread_radius") = Nil
+		  Else
+		    Dict.Value("spread_radius") = Self.mSpreadRadius.DoubleValue
+		  End If
+		  If Self.mWaterOnlyMinimumHeight Is Nil Then
+		    Dict.Value("water_only_minimum_height") = Nil
+		  Else
+		    Dict.Value("water_only_minimum_height") = Self.mWaterOnlyMinimumHeight.DoubleValue
+		  End If
+		  Dict.Value("offset_before_multiplier") = Self.mOffsetBeforeMultiplier
+		  #Pragma Warning "Entries are not encoded"
+		  #Pragma Warning "Replacements are not encoded"
+		  Return Dict
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ReplacedCreatures() As Beacon.Creature()
 		  Var Arr() As Beacon.Creature
 		  Var Blueprints() As Beacon.BlueprintReference = Self.mReplacements.References

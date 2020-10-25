@@ -77,16 +77,16 @@ Implements Beacon.MutableBlueprint
 		Sub Limit(Creature As Beacon.Creature, Assigns Value As Double)
 		  Value = Min(Abs(Value), 1.0)
 		  
-		  Var Exists As Boolean = Self.mLimits.HasKey(Creature.ObjectID)
+		  Var Exists As Boolean = Self.mLimits.HasBlueprint(Creature)
 		  
 		  If Exists And Value = 1.0 Then
-		    Self.mLimits.Remove(Creature.ObjectID)
+		    Self.mLimits.Remove(Creature)
 		    Self.Modified = True
 		    Return
 		  End If
 		  
-		  If Exists = False Or Self.mLimits.Value(Creature.ObjectID).DoubleValue <> Value Then
-		    Self.mLimits.Value(Creature.ObjectID) = Value
+		  If Exists = False Or Self.mLimits.Value(Creature, Self.LimitAttribute).DoubleValue <> Value Then
+		    Self.mLimits.Value(Creature, Self.LimitAttribute) = Value
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -95,7 +95,21 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub LimitsString(Assigns Value As String)
 		  Try
-		    Self.mLimits = Beacon.ParseJSON(Value)
+		    Var Parsed As Variant = Beacon.ParseJSON(Value)
+		    Var Manager As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(Parsed)
+		    If (Manager Is Nil) = False Then
+		      Self.mLimits = Manager
+		    ElseIf Parsed.IsNull = False And Parsed.Type = Variant.TypeObject And Parsed IsA Dictionary Then
+		      Var Dict As Dictionary = Parsed
+		      Manager = New Beacon.BlueprintAttributeManager
+		      For Each Entry As DictionaryEntry In Dict
+		        Var Creature As Beacon.Creature = Beacon.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
+		        If (Creature Is Nil) = False Then
+		          Manager.Value(Creature, Self.LimitAttribute) = Entry.Value.DoubleValue
+		        End If
+		      Next
+		    End If
+		    
 		    Self.Modified = True
 		  Catch Err As RuntimeException
 		  End Try
@@ -208,16 +222,24 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Unpack(Dict As Dictionary)
-		  Self.mLimits = New Dictionary
+		  Self.mLimits = New Beacon.BlueprintAttributeManager
 		  If Dict.HasKey("limits") Then
 		    Var Limits As Variant = Dict.Value("limits")
 		    If IsNull(Limits) = False And Limits.Type = Variant.TypeObject And Limits.ObjectValue IsA Dictionary Then
-		      Self.mLimits = Dictionary(Limits)
+		      Var LimitsDict As Dictionary = Dictionary(Limits.ObjectValue)
+		      For Each Entry As DictionaryEntry In LimitsDict
+		        Var Creature As Beacon.Creature = Beacon.ResolveCreature(Entry.Key.StringValue, "", "", Nil)
+		        If (Creature Is Nil) = False Then
+		          Self.mLimits.Value(Creature, Self.LimitAttribute) = Entry.Value.DoubleValue
+		        End If
+		      Next
 		    End If
 		  End If
 		  
 		  Self.mSets.ResizeTo(-1)
-		  If Dict.HasKey("groups") Then
+		  If Dict.HasKey("sets") Then
+		    #Pragma Warning "Need to unpack sets"
+		  ElseIf Dict.HasKey("groups") Then
 		    Var Groups As Variant = Dict.Value("groups")
 		    If IsNull(Groups) = False And Groups.IsArray And Groups.ArrayElementType = Variant.TypeObject Then
 		      Var Info As Introspection.TypeInfo = Introspection.GetType(Groups)
