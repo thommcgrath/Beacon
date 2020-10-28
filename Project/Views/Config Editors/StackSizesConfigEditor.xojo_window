@@ -290,7 +290,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Self.GlobalMultiplierField.Text = Format(Self.Config(False).GlobalMultiplier, "0.0#####")
+		  Self.GlobalMultiplierField.Text = Self.Config(False).GlobalMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -417,7 +417,7 @@ End
 		  Self.List.RemoveAllRows()
 		  For Each Engram As Beacon.Engram In Engrams
 		    Var Size As UInt64 = Config.Override(Engram)
-		    Self.List.AddRow(Engram.Label, Format(Size, Self.NumberFormat))
+		    Self.List.AddRow(Engram.Label, Size.ToString(Locale.Current, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.ObjectID) > -1
 		  Next
@@ -444,7 +444,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.stacksize", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"0\x2C", Scope = Private
+	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"\x2C##0", Scope = Private
 	#tag EndConstant
 
 
@@ -511,9 +511,9 @@ End
 		  If Size > CType(BeaconConfigs.StackSizes.MaximumQuantity, UInt64) Then
 		    Size = BeaconConfigs.StackSizes.MaximumQuantity
 		    System.Beep
-		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + Format(BeaconConfigs.StackSizes.MaximumQuantity, Self.NumberFormat) + ".")
+		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + BeaconConfigs.StackSizes.MaximumQuantity.ToString(Locale.Current, Self.NumberFormat) + ".")
 		  End If
-		  Me.CellValueAt(Row, Column) = Format(Size, Self.NumberFormat)
+		  Me.CellValueAt(Row, Column) = Size.ToString(Locale.Current, Self.NumberFormat)
 		  
 		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  

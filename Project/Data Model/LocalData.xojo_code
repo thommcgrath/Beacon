@@ -475,7 +475,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var SearchFolders(1) As FolderItem
 		    SearchFolders(0) = BackupsFolder
 		    SearchFolders(1) = AppSupport
-		    Var SearchPrefix As String = "Library " + Str(Self.SchemaVersion, "-0")
+		    Var SearchPrefix As String = "Library " + Self.SchemaVersion.ToString(Locale.Raw, "0")
 		    Var SearchSuffix As String = ".sqlite"
 		    For Each SearchFolder As FolderItem In SearchFolders
 		      Var Candidates() As FolderItem
@@ -2023,7 +2023,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
 		    Self.mDeltaDownloadQueue.RemoveAllRows
-		    App.Log("Failed to download blueprints delta: HTTP " + Str(HTTPStatus, "-0"))
+		    App.Log("Failed to download blueprints delta: HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
 		    Self.mCheckingForUpdates = False
 		    Return
 		  End If
@@ -2062,7 +2062,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  App.Log("Migrating data from schema " + Str(FromSchemaVersion, "-0") + " at " + Source.NativePath)
+		  App.Log("Migrating data from schema " + FromSchemaVersion.ToString(Locale.Raw, "0") + " at " + Source.NativePath)
 		  
 		  Var MigrateLegacyCustomEngrams As Boolean = FromSchemaVersion <= 5
 		  Var Commands() As String
@@ -2302,7 +2302,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
-		    App.Log("Blueprint update returned HTTP " + Str(HTTPStatus, "-0"))
+		    App.Log("Blueprint update returned HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
 		    Self.mCheckingForUpdates = False
 		    Return
 		  End If

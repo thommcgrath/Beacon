@@ -1594,20 +1594,20 @@ End
 		  Self.EngramEntryStringField.Text = Engram.EntryString
 		  
 		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
-		    Self.EngramPlayerLevelField.Text = Format(Engram.RequiredPlayerLevel.IntegerValue, "0,")
+		    Self.EngramPlayerLevelField.Text = Engram.RequiredPlayerLevel.IntegerValue.ToString(Locale.Current, ",##0")
 		  End If
 		  
 		  If (Engram.RequiredUnlockPoints Is Nil) = False Then
-		    Self.EngramRequiredPointsField.Text = Format(Engram.RequiredUnlockPoints.IntegerValue, "0,")
+		    Self.EngramRequiredPointsField.Text = Engram.RequiredUnlockPoints.IntegerValue.ToString(Locale.Current, ",##0")
 		  End If
 		  
 		  If (Engram.StackSize Is Nil) = False Then
-		    Self.EngramStackSizeField.Text = Format(Engram.StackSize.IntegerValue, "0,")
+		    Self.EngramStackSizeField.Text = Engram.StackSize.IntegerValue.ToString(Locale.Current, ",##0")
 		  End If
 		  
 		  Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
 		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
-		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Format(Ingredient.Quantity, "0,"))
+		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Current, ",##0"))
 		    Self.EngramCraftingCostList.CellCheckBoxValueAt(Self.EngramCraftingCostList.LastAddedRowIndex, 2) = Ingredient.RequireExact
 		    Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
 		  Next
@@ -2215,12 +2215,12 @@ End
 		    Var Quantity As Integer = Round(CDbl(Value))
 		    If IsNumeric(Value) = False Or Quantity <= 0 Then
 		      System.Beep
-		      Me.CellValueAt(Row, Column) = Format(Ingredient.Quantity, "0,")
+		      Me.CellValueAt(Row, Column) = Ingredient.Quantity.ToString(Locale.Current, ",##0")
 		      Return
 		    End If
 		    
 		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Quantity, Ingredient.RequireExact)
-		    Me.CellValueAt(Row, Column) = Format(Quantity, "0,")
+		    Me.CellValueAt(Row, Column) = Quantity.ToString(Locale.Current, ",##0")
 		  Case 2
 		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select

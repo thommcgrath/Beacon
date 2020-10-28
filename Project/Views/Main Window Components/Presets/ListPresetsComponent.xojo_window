@@ -420,13 +420,13 @@ End
 		    Message = "Are you sure you want to delete this preset?"
 		    Action = "Delete"
 		  ElseIf DeleteCount > 1 Then
-		    Message = "Are you sure you want to delete these " + Str(DeleteCount, "-0") + " presets?"
+		    Message = "Are you sure you want to delete these " + DeleteCount.ToString(Locale.Raw, "0") + " presets?"
 		    Action = "Delete"
 		  ElseIf RevertCount = 1 Then
 		    Message = "Are you sure you want to revert this preset?"
 		    Action = "Revert"
 		  ElseIf RevertCount > 1 Then
-		    Message = "Are you sure you want to revert these " + Str(RevertCount, "-0") + " presets?"
+		    Message = "Are you sure you want to revert these " + RevertCount.ToString(Locale.Raw, "0") + " presets?"
 		    Action = "Revert"
 		  Else
 		    Return

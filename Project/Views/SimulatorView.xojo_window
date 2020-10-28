@@ -250,7 +250,7 @@ End
 		    List.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
 		  
-		  Self.StatusBar1.Caption = Format(List.RowCount, "0,") + " item" + If(List.RowCount = 1, "", "s")
+		  Self.StatusBar1.Caption = List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(List.RowCount = 1, "", "s")
 		End Sub
 	#tag EndMethod
 

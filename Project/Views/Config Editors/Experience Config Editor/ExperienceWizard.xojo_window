@@ -812,13 +812,14 @@ End
 		    Var LevelXP As UInt64 = TotalXP - LastXP
 		    LastXP = TotalXP
 		    
-		    Self.List.AddRow(Format((Level - 1) + StartingLevel, "0,"), Format(LevelXP, "0,"), Format(TotalXP, "0,"))
+		    Var DisplayLevel As Integer = (Level - 1) + StartingLevel
+		    Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		  
-		  Self.FinalLevelField.Text = Format(EndingLevel, "0,")
-		  Self.NextLevelField.Text = Format(StartingLevel, "0,")
+		  Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
+		  Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, ",##0")
 		  Self.ActionButton.Enabled = Allowed
 		  Self.WarningLabel.Visible = Not Allowed
 		End Sub
@@ -874,10 +875,10 @@ End
 		  
 		  Var Curve As Beacon.Curve = Me.Curve
 		  
-		  Self.PointFields(0).Text = Format(Curve.Point(1).X, "0.000")
-		  Self.PointFields(1).Text = Format(Curve.Point(1).Y, "0.000")
-		  Self.PointFields(2).Text = Format(Curve.Point(2).X, "0.000")
-		  Self.PointFields(3).Text = Format(Curve.Point(2).Y, "0.000")
+		  Self.PointFields(0).Text = Curve.Point(1).X.ToString(Locale.Current, "0.000")
+		  Self.PointFields(1).Text = Curve.Point(1).Y.ToString(Locale.Current, "0.000")
+		  Self.PointFields(2).Text = Curve.Point(2).X.ToString(Locale.Current, "0.000")
+		  Self.PointFields(3).Text = Curve.Point(2).Y.ToString(Locale.Current, "0.000")
 		  
 		  Self.UpdateList()
 		  

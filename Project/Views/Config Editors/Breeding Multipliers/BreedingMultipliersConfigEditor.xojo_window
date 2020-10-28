@@ -1517,17 +1517,17 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		  Self.EggLayPeriodField.Text = Format(Config.LayEggIntervalMultiplier, "0.0#####")
-		  Self.FoodConsumptionField.Text = Format(Config.BabyFoodConsumptionSpeedMultiplier, "0.0#####")
-		  Self.ImprintGracePeriodField.Text = Format(Config.BabyCuddleGracePeriodMultiplier, "0.0#####")
-		  Self.ImprintLossSpeedField.Text = Format(Config.BabyCuddleLoseImprintQualitySpeedMultiplier, "0.0#####")
-		  Self.ImprintPeriodField.Text = Format(Config.BabyCuddleIntervalMultiplier, "0.0#####")
-		  Self.ImprintStatScaleField.Text = Format(Config.BabyImprintingStatScaleMultiplier, "0.0#####")
-		  Self.ImprintAmountField.Text = Format(Config.BabyImprintAmountMultiplier, "0.0#####")
-		  Self.IncubationSpeedField.Text = Format(Config.EggHatchSpeedMultiplier, "0.0#####")
-		  Self.MatureSpeedField.Text = Format(Config.BabyMatureSpeedMultiplier, "0.0#####")
-		  Self.MatingSpeedField.Text = Format(Config.MatingSpeedMultiplier, "0.0#####")
-		  Self.MatingIntervalField.Text = Format(Config.MatingIntervalMultiplier, "0.0#####")
+		  Self.EggLayPeriodField.Text = Config.LayEggIntervalMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.FoodConsumptionField.Text = Config.BabyFoodConsumptionSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintGracePeriodField.Text = Config.BabyCuddleGracePeriodMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintLossSpeedField.Text = Config.BabyCuddleLoseImprintQualitySpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintPeriodField.Text = Config.BabyCuddleIntervalMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintStatScaleField.Text = Config.BabyImprintingStatScaleMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintAmountField.Text = Config.BabyImprintAmountMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.IncubationSpeedField.Text = Config.EggHatchSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.MatureSpeedField.Text = Config.BabyMatureSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.MatingSpeedField.Text = Config.MatingSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.MatingIntervalField.Text = Config.MatingIntervalMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
@@ -1676,7 +1676,7 @@ End
 		    End If
 		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", PerCuddle.ToString(Locale.Current, ",##0%")), If(PerCuddle = 0, "", MaxImprint.ToString(Locale.Current, ",##0%")))
 		    Var Idx As Integer = CreaturesList.LastAddedRowIndex
 		    CreaturesList.CellTagAt(Idx, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(Idx, Self.ColumnMatureTime) = MatureSeconds

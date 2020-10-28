@@ -1011,10 +1011,13 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  Self.WildDamageField.Text = Format(1.0, "0.0#####")
-		  Self.WildResistanceField.Text = Format(1.0, "0.0#####")
-		  Self.TameDamageField.Text = Format(1.0, "0.0#####")
-		  Self.TameResistanceField.Text = Format(1.0, "0.0#####")
+		  Var One As Double = 1.0
+		  Var OneFormatted As String = One.ToString(Locale.Current, "0.0#####")
+		  
+		  Self.WildDamageField.Text = OneFormatted
+		  Self.WildResistanceField.Text = OneFormatted
+		  Self.TameDamageField.Text = OneFormatted
+		  Self.TameResistanceField.Text = OneFormatted
 		End Sub
 	#tag EndEvent
 
@@ -1060,10 +1063,10 @@ End
 		        Win.SelectedReplacement = Behavior.ReplacementCreature
 		        Win.ModeReplaceRadio.Value = True
 		      Else
-		        Win.WildDamageField.Text = Format(Behavior.DamageMultiplier, "0.0#####")
-		        Win.WildResistanceField.Text = Format(Behavior.ResistanceMultiplier, "0.0#####")
-		        Win.TameDamageField.Text = Format(Behavior.TamedDamageMultiplier, "0.0#####")
-		        Win.TameResistanceField.Text = Format(Behavior.TamedResistanceMultiplier, "0.0#####")
+		        Win.WildDamageField.Text = Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.WildResistanceField.Text = Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.TameDamageField.Text = Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.TameResistanceField.Text = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
 		        Win.PreventTamingCheck.Value = Behavior.PreventTaming
 		      End If

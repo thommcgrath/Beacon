@@ -420,10 +420,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.LevelField.Text = Format(Self.mEditingLevel, "0,")
-		  Self.MinXPField.Text = Format(Self.mMinXP, "0,")
-		  Self.MaxXPField.Text = Format(Self.mMaxXP, "0,")
-		  Self.XPField.Text = Format(Self.mInitialXP, "0,")
+		  Self.LevelField.Text = Self.mEditingLevel.ToString(Locale.Current, ",##0")
+		  Self.MinXPField.Text = Self.mMinXP.ToString(Locale.Current, ",##0")
+		  Self.MaxXPField.Text = Self.mMaxXP.ToString(Locale.Current, ",##0")
+		  Self.XPField.Text = Self.mInitialXP.ToString(Locale.Current, ",##0")
 		  Self.XPField.SelectAll()
 		  
 		  Self.SwapButtons()

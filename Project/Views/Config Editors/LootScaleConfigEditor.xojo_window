@@ -199,7 +199,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.LootScaleField.Text = Str(Me.Value, "-0") + "%"
+		  Self.LootScaleField.Text = Me.Value.ToString(Locale.Raw, "0") + "%"
 		End Sub
 	#tag EndEvent
 #tag EndEvents

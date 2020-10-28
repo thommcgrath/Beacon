@@ -118,7 +118,7 @@ Implements Beacon.Countable
 		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dictionary(Dict))
 		      Call Sets.Append(Set)
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading item set dictionary #" + Str(Idx, "-0"))
+		      App.Log(Err, CurrentMethodName, "Reading item set dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
 		  

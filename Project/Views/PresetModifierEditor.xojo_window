@@ -733,8 +733,8 @@ End
 		  
 		  Self.MinQualityField.DoubleValue = Self.mPreset.MinQualityModifier(Self.mEditID)
 		  Self.MaxQualityField.DoubleValue = Self.mPreset.MaxQualityModifier(Self.mEditID)
-		  Self.QuantityField.Text = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
-		  Self.BlueprintField.Text = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
+		  Self.QuantityField.Text = Self.mPreset.QuantityMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
+		  Self.BlueprintField.Text = Self.mPreset.BlueprintMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
 		End Sub
 	#tag EndEvent
 

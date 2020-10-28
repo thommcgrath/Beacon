@@ -699,7 +699,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		  Self.MaxDinoLevelField.Text = Format(Difficulty.MaxDinoLevel, "0,")
+		  Self.MaxDinoLevelField.Text = Difficulty.MaxDinoLevel.ToString(Locale.Current, ",##0")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
 	#tag EndEvent
@@ -713,13 +713,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
-		  Self.LootScaleField.Text = Format(Difficulty.DifficultyValue, "0%")
+		  Var DifficultyOffset As Double = 1.0
+		  
+		  Self.LootScaleField.Text = Difficulty.DifficultyValue.ToString(Locale.Current, ",##0%")
 		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
-		  Self.DifficultyOffsetField.Text = Format(1.0, "0.0")
+		  Self.DifficultyOffsetField.Text = DifficultyOffset.ToString(Locale.Current, "0.0")
 		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
-		  Self.MaxTekLevelField.Text = Format(Difficulty.MaxTekLevel, "0,")
-		  Self.MaxWyvernLevelField.Text = Format(Difficulty.MaxWyvernLevel, "0,")
-		  Self.MaxCrystalWyvernLevelField.Text = Format(Difficulty.MaxCrystalWyvernLevel, "0,")
+		  Self.MaxTekLevelField.Text = Difficulty.MaxTekLevel.ToString(Locale.Current, ",##0")
+		  Self.MaxWyvernLevelField.Text = Difficulty.MaxWyvernLevel.ToString(Locale.Current, ",##0")
+		  Self.MaxCrystalWyvernLevelField.Text = Difficulty.MaxCrystalWyvernLevel.ToString(Locale.Current, ",##0")
 		End Sub
 	#tag EndMethod
 

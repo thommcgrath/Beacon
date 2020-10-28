@@ -22,7 +22,7 @@ Protected Module SQLiteExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub UserVersion(Extends Source As SQLiteDatabase, Assigns Value As Integer)
-		  Source.ExecuteSQL("PRAGMA user_version = " + Str(Value, "-0") + ";")
+		  Source.ExecuteSQL("PRAGMA user_version = " + Value.ToString(Locale.Raw, "0") + ";")
 		End Sub
 	#tag EndMethod
 

@@ -701,7 +701,7 @@ Inherits Beacon.IntegrationEngine
 		      Message = "Error: Nitrado responded with an error but no message."
 		    End If
 		  Case 0
-		    Message = "Connection error #" + Str(HTTPException.ErrorNumber, "-0")
+		    Message = "Connection error #" + HTTPException.ErrorNumber.ToString(Locale.Raw, "0")
 		    
 		    If (HTTPException Is Nil) = False And HTTPException.Message.IsEmpty = False Then
 		      Message = Message + ": " + HTTPException.Message

@@ -1378,8 +1378,8 @@ End
 		    BasedOn = New Beacon.CustomLootContainer("Template")
 		  End If
 		  
-		  Self.CustomizeMinSetsField.Text = Format(BasedOn.MinItemSets, "-0")
-		  Self.CustomizeMaxSetsField.Text = Format(BasedOn.MaxItemSets, "-0")
+		  Self.CustomizeMinSetsField.Text = BasedOn.MinItemSets.ToString(Locale.Current, "0")
+		  Self.CustomizeMaxSetsField.Text = BasedOn.MaxItemSets.ToString(Locale.Current, "0")
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
 		  
 		  Var Presets() As Beacon.Preset = Beacon.Data.Presets()
@@ -1428,8 +1428,8 @@ End
 		  If FieldSource <> Nil Then
 		    Self.DefineClassField.Text = FieldSource.ClassString
 		    Self.DefineNameField.Text = FieldSource.Label
-		    Self.DefineMinMultiplierField.Text = Format(FieldSource.Multipliers.Min, "0.0000")
-		    Self.DefineMaxMultiplierField.Text = Format(FieldSource.Multipliers.Max, "0.0000")
+		    Self.DefineMinMultiplierField.Text = FieldSource.Multipliers.Min.ToString(Locale.Current, "0.0000")
+		    Self.DefineMaxMultiplierField.Text = FieldSource.Multipliers.Max.ToString(Locale.Current, "0.0000")
 		  End If
 		  
 		  Self.Panel.SelectedPanelIndex = Self.PaneDefine

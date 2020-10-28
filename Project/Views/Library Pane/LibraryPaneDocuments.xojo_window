@@ -832,7 +832,7 @@ End
 		    If Controllers.LastIndex = 0 Then
 		      Message = "Are you sure you want to delete the document """ + Controllers(0).Name + """?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Controllers.LastIndex + 1, "-0") + " documents?"
+		      Message = "Are you sure you want to delete these " + Controllers.Count.ToString(Locale.Current, "0") + " documents?"
 		    End If
 		    Explanation = "Files will be deleted immediately and cannot be recovered."
 		    

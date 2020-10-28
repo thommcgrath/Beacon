@@ -560,19 +560,20 @@ End
 		  
 		  Var Message, Action As String
 		  If DeleteCount > 0 And RevertCount > 0 Then
-		    Message = "Are you sure you want to delete or revert these " + Str(DeleteCount + RevertCount, "-0") + " presets?"
+		    Var TotalCount As Integer = DeleteCount + RevertCount
+		    Message = "Are you sure you want to delete or revert these " + TotalCount.ToString(Locale.Current, "0") + " presets?"
 		    Action = "Delete"
 		  ElseIf DeleteCount = 1 Then
 		    Message = "Are you sure you want to delete this preset?"
 		    Action = "Delete"
 		  ElseIf DeleteCount > 1 Then
-		    Message = "Are you sure you want to delete these " + Str(DeleteCount, "-0") + " presets?"
+		    Message = "Are you sure you want to delete these " + DeleteCount.ToString(Locale.Current, "0") + " presets?"
 		    Action = "Delete"
 		  ElseIf RevertCount = 1 Then
 		    Message = "Are you sure you want to revert this preset?"
 		    Action = "Revert"
 		  ElseIf RevertCount > 1 Then
-		    Message = "Are you sure you want to revert these " + Str(RevertCount, "-0") + " presets?"
+		    Message = "Are you sure you want to revert these " + RevertCount.ToString(Locale.Current, "0") + " presets?"
 		    Action = "Revert"
 		  Else
 		    Return

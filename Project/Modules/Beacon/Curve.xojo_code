@@ -39,8 +39,8 @@ Protected Class Curve
 		    Self.Database.ExecuteSQL("COMMIT")
 		  #endif
 		  #if DebugBuild
-		    Var Elapsed As Double = System.Microseconds - Start
-		    System.DebugLog("Precomputed curve values in " + Str(Elapsed * 0.001, "-0") + "ms")
+		    Var Elapsed As Double = (System.Microseconds - Start) * 0.001
+		    System.DebugLog("Precomputed curve values in " + Elapsed.ToString(Locale.Raw, "0") + "ms")
 		  #endif
 		End Sub
 	#tag EndMethod

@@ -1005,9 +1005,9 @@ End
 		        Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      Else
 		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs " + Format(ContentLength, "0,") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		          Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, ",##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
 		        Else
-		          Explanation = "There is a config key that needs " + Format(ContentLength, "0,") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		          Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, ",##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
 		        End If
 		        Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      End If

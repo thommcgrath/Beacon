@@ -636,7 +636,7 @@ End
 		    If Me.SelectedRowCount = 1 Then
 		      Message = "Are you sure you want to delete this object?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " objects?"
+		      Message = "Are you sure you want to delete these " + Me.SelectedRowCount.ToString(Locale.Raw, "0") + " objects?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
@@ -670,12 +670,12 @@ End
 		  If ImportedCount = 1 Then
 		    Messages.Add("1 object was added.")
 		  ElseIf ImportedCount > 1 Then
-		    Messages.Add(Str(ImportedCount, "-0") + " objects were added.")
+		    Messages.Add(ImportedCount.ToString(Locale.Raw, "0") + " objects were added.")
 		  End If
 		  If SkippedCount = 1 Then
 		    Messages.Add("1 object was skipped because it already exists in the database.")
 		  ElseIf SkippedCount > 1 Then
-		    Messages.Add(Str(SkippedCount, "-0") + " objects were skipped because they already exist in the database.")
+		    Messages.Add(SkippedCount.ToString(Locale.Raw, "0") + " objects were skipped because they already exist in the database.")
 		  End If
 		  If ImportedCount = 0 And SkippedCount = 0 Then
 		    Messages.Add("No objects were found to import.")

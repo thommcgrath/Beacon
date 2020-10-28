@@ -886,7 +886,7 @@ End
 		    Return
 		  End If
 		  
-		  If Warn And Not Self.ShowConfirm(if(Self.ContentsList.SelectedRowCount = 1, "Are you sure you want to delete this entry?", "Are you sure you want to delete these " + Str(Self.ContentsList.SelectedRowCount, "-0") + " entries?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Not Self.ShowConfirm(if(Self.ContentsList.SelectedRowCount = 1, "Are you sure you want to delete this entry?", "Are you sure you want to delete these " + Self.ContentsList.SelectedRowCount.ToString(Locale.Raw, "0") + " entries?"), "This action cannot be undone.", "Delete", "Cancel") Then
 		    Return
 		  End If
 		  
@@ -1035,7 +1035,7 @@ End
 		  
 		  Self.ContentsList.RowTagAt(Index) = Entry
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnDescription) = Entry.Label
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
+		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Str(Entry.ChanceToBeBlueprint, "0%"), "N/A")
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
@@ -1309,24 +1309,28 @@ End
 #tag Events MaxItemsStepper
 	#tag Event
 		Sub Down()
-		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) - 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MaxItemsField.Text) - 1
+		  Self.MaxItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Up()
-		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) + 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MaxItemsField.Text) + 1
+		  Self.MaxItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsStepper
 	#tag Event
 		Sub Down()
-		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) - 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MinItemsField.Text) - 1
+		  Self.MinItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Up()
-		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) + 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MinItemsField.Text) + 1
+		  Self.MinItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1344,13 +1348,13 @@ End
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Text = Str(Self.mPreset.MaxItems, "-0")
+		    Me.Text = Self.mPreset.MaxItems.ToString(Locale.Raw, "0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = Str(Self.mPreset.MaxItems, "-0")
+		  Me.Text = Self.mPreset.MaxItems.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1368,13 +1372,13 @@ End
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Text = Str(Self.mPreset.MinItems, "-0")
+		    Me.Text = Self.mPreset.MinItems.ToString(Locale.Raw, "0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = Str(Self.mPreset.MinItems, "-0")
+		  Me.Text = Self.mPreset.MinItems.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1644,7 +1648,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelectedRowCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Str(Self.ModifiersList.SelectedRowCount, "-0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelectedRowCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Self.ModifiersList.SelectedRowCount.ToString(Locale.Raw, "0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
 		    Return
 		  End If
 		  

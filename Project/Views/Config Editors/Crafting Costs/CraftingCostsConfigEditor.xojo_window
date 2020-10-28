@@ -656,7 +656,7 @@ End
 		  If SelectedItems > 0 Then
 		    Self.ListStatusBar.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
 		  Else
-		    Self.ListStatusBar.Caption = Str(TotalItems, "-0") + " " + Noun
+		    Self.ListStatusBar.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1010,7 +1010,7 @@ End
 		    ReplacementConfig.Add(Cost)
 		    
 		    Self.mProgressWindow.Progress = NumProcessed / Engrams.Count
-		    Self.mProgressWindow.Detail = "Updated " + Format(NumProcessed, "0,") + " of " + Format(Engrams.Count, "0,")
+		    Self.mProgressWindow.Detail = "Updated " + NumProcessed.ToString(Locale.Current, ",##0") + " of " + Engrams.Count.ToString(Locale.Current, ",##0")
 		  Next
 		  
 		  Self.Document.AddConfigGroup(ReplacementConfig, Self.ConfigSetName)

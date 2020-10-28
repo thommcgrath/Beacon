@@ -361,7 +361,7 @@ End
 		      If Behavior.PreventTaming Then
 		        Label = Label + EndOfLine + "Cannot be tamed"
 		      End If
-		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
+		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If
 		    
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1

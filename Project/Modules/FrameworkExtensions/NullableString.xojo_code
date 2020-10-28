@@ -1,12 +1,6 @@
 #tag Class
 Class NullableString
 	#tag Method, Flags = &h0
-		Function Asc() As Integer
-		  Return Self.mValue.Asc
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function AscByte() As Integer
 		  Return Self.mValue.AscByte
 		End Function

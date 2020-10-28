@@ -608,10 +608,10 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Self.HarvestAmountMultiplierField.Text = Format(Config.HarvestAmountMultiplier, "0.0#####")
-		  Self.HarvestHealthMultiplierField.Text = Format(Config.HarvestHealthMultiplier, "0.0#####")
-		  Self.PlayerHarvestDamageMultiplierField.Text = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
-		  Self.DinoHarvestDamageMultiplierField.Text = Format(Config.DinoHarvestingDamageMultiplier, "0.0#####")
+		  Self.HarvestAmountMultiplierField.Text = Config.HarvestAmountMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.HarvestHealthMultiplierField.Text = Config.HarvestHealthMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.PlayerHarvestDamageMultiplierField.Text = Config.PlayerHarvestingDamageMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.DinoHarvestDamageMultiplierField.Text = Config.DinoHarvestingDamageMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.ClampHarvestDamageCheck.Value = Config.ClampResourceHarvestDamage
 		  Self.UseOptimizedRatesCheck.Value = Config.UseOptimizedRates
 		  Self.UpdateList()
@@ -895,7 +895,7 @@ End
 		    If Me.SelectedRowCount = 1 Then
 		      Message = "Are you sure you want to delete the """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ harvest rate override?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " harvest rate overrides?"
+		      Message = "Are you sure you want to delete these " + Me.SelectedRowCount.ToString(Locale.Raw, "0") + " harvest rate overrides?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then

@@ -1896,7 +1896,7 @@ End
 		  Case 500
 		    Self.ShowAlert(Message, "The connector had an error. Please contact help@usebeacon.app for support.")
 		  Else
-		    Self.ShowAlert(Message, "The connector returned HTTP status " + Str(HTTPStatus, "-0") + " which Beacon was not prepared for. Please contact help@usebeacon.app for support.")
+		    Self.ShowAlert(Message, "The connector returned HTTP status " + HTTPStatus.ToString(Locale.Raw, "0") + " which Beacon was not prepared for. Please contact help@usebeacon.app for support.")
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1905,7 +1905,7 @@ End
 		Private Sub ShowError(Message As String, Err As RuntimeException)
 		  Var Explanation As String
 		  If Err.ErrorNumber <> 0 Then
-		    Explanation = "Error #" + Str(Err.ErrorNumber, "-0") + ": " + Err.Message
+		    Explanation = "Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message
 		  Else
 		    Explanation = "Reason: " + Err.Message
 		  End If

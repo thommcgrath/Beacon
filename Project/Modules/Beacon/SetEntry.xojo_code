@@ -224,7 +224,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		          Entry.Append(Option)
 		        End If
 		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Str(Idx, "-0"))
+		        App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		      End Try
 		    Next
 		  End If

@@ -1004,7 +1004,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If RawContent <> Nil And RawContent.Size > 0 Then
 		    Base64 = EncodeBase64(RawContent, 0)
 		  End If
-		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
+		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " " + Base64)
 		End Sub
 	#tag EndMethod
 
@@ -1050,7 +1050,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If Code = 102 Then
 		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
 		  Else
-		    App.Log("IPC error " + Str(Code, "-0"))
+		    App.Log("IPC error " + Code.ToString(Locale.Raw, "0"))
 		  End If
 		End Sub
 	#tag EndMethod

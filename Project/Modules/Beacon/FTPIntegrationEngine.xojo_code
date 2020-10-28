@@ -492,7 +492,7 @@ Inherits Beacon.IntegrationEngine
 		  Self.mSocket.OptionUpload = False
 		  Self.mSocketLock.Leave
 		  If ErrorCode <> CURLSMBS.kError_OK Then
-		    App.Log("Error uploading " + Path + ": " + ErrorMessage + ", code " + Str(ErrorCode, "-0"))
+		    App.Log("Error uploading " + Path + ": " + ErrorMessage + ", code " + ErrorCode.ToString(Locale.Raw, "0"))
 		  End If
 		  Return ErrorCode = CURLSMBS.kError_OK
 		End Function

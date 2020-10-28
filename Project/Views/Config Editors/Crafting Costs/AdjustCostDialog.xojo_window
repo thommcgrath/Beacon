@@ -239,7 +239,9 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.MultiplierField.Text = Format(1.0, "0.,0")
+		  Var One As Double = 1.0
+		  
+		  Self.MultiplierField.Text = One.ToString(Locale.Current, "0.0")
 		  Self.Hide
 		End Sub
 	#tag EndEvent

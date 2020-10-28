@@ -20,7 +20,7 @@ Inherits Beacon.ConfigGroup
 		      Issues.Add(New Beacon.Issue(ConfigName, "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level.", "Player:" + Level.ToString))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(ConfigName, "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,") + ".", "Player:" + Level.ToString))
+		      Issues.Add(New Beacon.Issue(ConfigName, "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, ",##0") + ".", "Player:" + Level.ToString))
 		    End If
 		  Next
 		  
@@ -32,7 +32,7 @@ Inherits Beacon.ConfigGroup
 		      Issues.Add(New Beacon.Issue(ConfigName, "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level.", "Dino:" + Level.ToString))
 		    End If
 		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
-		      Issues.Add(New Beacon.Issue(ConfigName, "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,") + ".", "Dino:" + Level.ToString))
+		      Issues.Add(New Beacon.Issue(ConfigName, "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, ",##0") + ".", "Dino:" + Level.ToString))
 		    End If
 		  Next
 		End Sub

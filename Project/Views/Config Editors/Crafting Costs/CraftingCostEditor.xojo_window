@@ -218,7 +218,7 @@ End
 		  
 		  Self.List.RemoveAllRows
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Str(Self.mTarget.Quantity(I), "-0"))
+		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Self.mTarget.Quantity(I).ToString(Locale.Raw, "0"))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Self.mTarget.Resource(I).ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Self.mTarget.Resource(I)
@@ -239,7 +239,7 @@ End
 		  If SelectedItems > 0 Then
 		    Self.Status.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
 		  Else
-		    Self.Status.Caption = Str(TotalItems, "-0") + " " + Noun
+		    Self.Status.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If
 		End Sub
 	#tag EndMethod

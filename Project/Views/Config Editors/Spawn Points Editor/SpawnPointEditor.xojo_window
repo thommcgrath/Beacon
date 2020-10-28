@@ -965,7 +965,7 @@ End
 		      If Me.SelectedRowCount = 1 Then
 		        Dialog.Message = "Are you sure you want to delete the selected spawn set?"
 		      Else
-		        Dialog.Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " spawn sets?"
+		        Dialog.Message = "Are you sure you want to delete these " + Me.SelectedRowCount.ToString(Locale.Raw, "0") + " spawn sets?"
 		      End If
 		      Dialog.Explanation = "This action cannot be undone."
 		      Dialog.ActionButton.Caption = "Delete"

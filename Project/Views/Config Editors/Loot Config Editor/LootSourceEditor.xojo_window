@@ -862,9 +862,9 @@ End
 		  
 		  Var Caption As String
 		  If Self.SetList.SelectedRowCount > 0 Then
-		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
+		    Caption = Self.SetList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Self.SetList.RowCount.ToString(Locale.Current, ",##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
 		  Else
-		    Caption = Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
+		    Caption = Self.SetList.RowCount.ToString(Locale.Current, ",##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
 		  End If
 		  
 		  Self.StatusBar1.Caption = Caption

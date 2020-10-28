@@ -529,7 +529,7 @@ End
 		  If Self.EngramList.SelectedRowCount = 0 Then
 		    Self.EngramListStatus.Caption = Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides")
 		  Else
-		    Self.EngramListStatus.Caption = Format(Self.EngramList.SelectedRowCount, "-0,") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
+		    Self.EngramListStatus.Caption = Self.EngramList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -539,7 +539,7 @@ End
 		  If Self.PointsList.SelectedRowCount = 0 Then
 		    Self.PointsListStatus.Caption = Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels")
 		  Else
-		    Self.PointsListStatus.Caption = Format(Self.PointsList.SelectedRowCount, "-0,") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
+		    Self.PointsListStatus.Caption = Self.PointsList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
 		  End If
 		End Sub
 	#tag EndMethod

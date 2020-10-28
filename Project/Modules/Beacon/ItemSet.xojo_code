@@ -218,7 +218,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Set.Append(Entry)
 		      End If
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Str(Idx, "-0"))
+		      App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
 		  

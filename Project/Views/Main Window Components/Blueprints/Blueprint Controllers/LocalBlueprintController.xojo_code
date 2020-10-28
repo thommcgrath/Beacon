@@ -9,7 +9,7 @@ Inherits BlueprintController
 		  If NumSaved = BlueprintsToSave.Count Then
 		    Self.FinishPublishing(True, "")
 		  Else
-		    Self.FinishPublishing(False, "Only saved " + Format(NumSaved, "0,") + " of " + Format(BlueprintsToSave.Count, "0,") + " blueprints.")
+		    Self.FinishPublishing(False, "Only saved " + NumSaved.ToString(Locale.Current, ",##0") + " of " + BlueprintsToSave.Count.ToString(Locale.Current, ",##0") + " blueprints.")
 		  End If
 		End Sub
 	#tag EndEvent

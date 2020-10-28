@@ -1610,13 +1610,13 @@ Protected Module Beacon
 		  
 		  Var Parts() As String
 		  If Days > 0 Then
-		    Parts.Add(Str(Days, "-0") + "d")
+		    Parts.Add(Days.ToString(Locale.Raw, "0") + "d")
 		  End If
 		  If Hours > 0 Then
-		    Parts.Add(Str(Hours, "-0") + "h")
+		    Parts.Add(Hours.ToString(Locale.Raw, "0") + "h")
 		  End If
 		  If Minutes > 0 Then
-		    Parts.Add(Str(Minutes, "-0") + "m")
+		    Parts.Add(Minutes.ToString(Locale.Raw, "0") + "m")
 		  End If
 		  If Seconds > 0 Then
 		    Parts.Add(Seconds.PrettyText(False) + "s")

@@ -155,14 +155,14 @@ Protected Module Language
 		  Case Beacon.Stats.Weight
 		    Return "Weight"
 		  Else
-		    Return "Stat " + Str(Stat.Index, "-0")
+		    Return "Stat " + Stat.Index.ToString(Locale.Raw, "0")
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
-		  Return Format(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
+		  Return Quantity.ToString(Locale.Current, ",##0") + " " + If(Quantity = 1, Singular, Plural)
 		End Function
 	#tag EndMethod
 

@@ -293,7 +293,7 @@ End
 		  End If
 		  
 		  Self.mProgress.Progress = Self.mEngramsProcessed / Self.mEngramCount
-		  Self.mProgress.Detail = "Updated " + Format(Self.mEngramsProcessed, "0,") + " of " + Format(Self.mEngramCount, "0,") + " engrams"
+		  Self.mProgress.Detail = "Updated " + Self.mEngramsProcessed.ToString(Locale.Current, ",##0") + " of " + Self.mEngramCount.ToString(Locale.Current, ",##0") + " engrams"
 		End Sub
 	#tag EndMethod
 
