@@ -82,6 +82,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    Entry = New Beacon.SpawnPointSetEntry(Creature)
 		  End If
 		  
+		  If Dict.HasKey("UUID") Then
+		    Entry.mID = Dict.Value("UUID").StringValue
+		  ElseIf Dict.HasKey("spawn_point_set_entry_id") Then
+		    Entry.mID = Dict.Value("spawn_point_set_entry_id").StringValue
+		  End If
+		  
 		  If Dict.HasKey("Weight") Then
 		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Weight"))
 		  ElseIf Dict.HasKey("weight") Then
@@ -413,8 +419,72 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("spawn_point_set_entry_id") = Self.mID.StringValue
+		  Dict.Value("creature_id") = Self.mCreature.ObjectID
+		  If (Self.mChance Is Nil) = False Then
+		    Dict.Value("weight") = Self.mChance.DoubleValue
+		  Else
+		    Dict.Value("weight") = Nil
+		  End If
+		  If (Self.mChance Is Nil) = False Then
+		    Dict.Value("override") = Self.mLevelOverride.DoubleValue
+		  Else
+		    Dict.Value("override") = Nil
+		  End If
+		  If (Self.mMinLevelMultiplier Is Nil) = False Then
+		    Dict.Value("min_level_multiplier") = Self.mMinLevelMultiplier.DoubleValue
+		  Else
+		    Dict.Value("min_level_multiplier") = Nil
+		  End If
+		  If (Self.mMaxLevelMultiplier Is Nil) = False Then
+		    Dict.Value("max_level_multiplier") = Self.mMaxLevelMultiplier.DoubleValue
+		  Else
+		    Dict.Value("max_level_multiplier") = Nil
+		  End If
+		  If (Self.mMinLevelOffset Is Nil) = False Then
+		    Dict.Value("min_level_offset") = Self.mMinLevelOffset.DoubleValue
+		  Else
+		    Dict.Value("min_level_offset") = Nil
+		  End If
+		  If (Self.mMaxLevelOffset Is Nil) = False Then
+		    Dict.Value("max_level_offset") = Self.mMaxLevelOffset.DoubleValue
+		  Else
+		    Dict.Value("max_level_offset") = Nil
+		  End If
+		  If (Self.mOffset Is Nil) = False Then
+		    Var Offset As New Dictionary
+		    Offset.Value("x") = Self.mOffset.X
+		    Offset.Value("y") = Self.mOffset.Y
+		    Offset.Value("z") = Self.mOffset.Z
+		    Dict.Value("spawn_offset") = Offset
+		  Else
+		    Dict.Value("spawn_offset") = Nil
+		  End If
+		  
+		  If Self.mLevels.Count > 0 Then
+		    Var Overrides() As Dictionary
+		    For Each Level As Beacon.SpawnPointLevel In Self.mLevels
+		      Var Override As New Dictionary
+		      Override.Value("difficulty") = Level.Difficulty
+		      Override.Value("min_level") = Level.MinLevel
+		      Override.Value("max_level") = Level.MaxLevel
+		      Overrides.Add(Override)
+		    Next
+		    Dict.Value("level_overrides") = Overrides
+		  Else
+		    Dict.Value("level_overrides") = Nil
+		  End If
+		  
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
+		  Dict.Value("UUID") = Self.mID.StringValue
 		  Dict.Value("Blueprint") = Self.mCreature.SaveData
 		  Dict.Value("Type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then

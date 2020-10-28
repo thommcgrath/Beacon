@@ -345,6 +345,51 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DictionaryArrayValue(Extends Value As Variant) As Dictionary()
+		  If Value.IsNull Then
+		    Var Err As NilObjectException
+		    Err.Message = "Value is nil"
+		    Raise Err
+		  End If
+		  
+		  If Value.IsArray = False Then
+		    Var Err As New TypeMismatchException
+		    Err.Message = "Value is not an array"
+		    Raise Err
+		  End If
+		  
+		  If Value.ArrayElementType <> Variant.TypeObject Then
+		    Var Err As New TypeMismatchException
+		    Err.Message = "Value is not an array of objects"
+		    Raise Err
+		  End If
+		  
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
+		  Select Case Info.FullName
+		  Case "Dictionary()"
+		    Return Value
+		  Case "Object()"
+		    Var Results() As Dictionary
+		    Var Members() As Variant = Value
+		    For Idx As Integer = 0 To Members.LastIndex
+		      If Members(Idx) IsA Dictionary Then
+		        Results.Add(Members(Idx))
+		      Else
+		        Var Err As New TypeMismatchException
+		        Err.Message = "Value at index " + Idx.ToString + "is not a Dictionary"
+		        Raise Err
+		      End If
+		    Next
+		    Return Results
+		  Else
+		    Var Err As New TypeMismatchException
+		    Err.Message = "Value is a " + Info.FullName + " which cannot be converted to Dictionary()"
+		    Raise Err
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DictionaryValue(Extends Dict As Dictionary, Key As Variant, Default As Dictionary, AllowArray As Boolean = False) As Dictionary
 		  Return GetValueAsType(Dict, Key, "Dictionary", Default, AllowArray)
 		End Function

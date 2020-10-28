@@ -31,14 +31,20 @@ Inherits Beacon.SpawnPointSet
 		    Return
 		  End If
 		  
-		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
+		  Self.CreatureReplacementWeight(FromCreature.ObjectID, ToCreature.ObjectID) = Weight
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
+		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreatureID, ToCreatureID)
 		  If CurrentWeight = Weight Then
 		    Return
 		  End If
 		  
 		  Var Options As Beacon.BlueprintAttributeManager
-		  If Self.mReplacements.HasBlueprint(FromCreature) Then
-		    Options = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
+		  If Self.mReplacements.HasBlueprint(FromCreatureID) Then
+		    Options = Self.mReplacements.Value(FromCreatureID, Self.ReplacementsAttribute)
 		  Else
 		    If Weight = Nil Then
 		      Return
@@ -47,15 +53,15 @@ Inherits Beacon.SpawnPointSet
 		  End If
 		  
 		  If Weight = Nil Then
-		    Options.Remove(ToCreature)
+		    Options.Remove(ToCreatureID)
 		  Else
-		    Options.Value(ToCreature, "Weight") = Weight.DoubleValue
+		    Options.Value(ToCreatureID, "Weight") = Weight.DoubleValue
 		  End If
 		  
-		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreature) Then
-		    Self.mReplacements.Remove(FromCreature)
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreatureID) Then
+		    Self.mReplacements.Remove(FromCreatureID)
 		  Else
-		    Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute) = Options
+		    Self.mReplacements.Value(FromCreatureID, Self.ReplacementsAttribute) = Options
 		  End If
 		  
 		  Self.Modified = True

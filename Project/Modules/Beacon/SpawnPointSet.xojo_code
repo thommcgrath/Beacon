@@ -28,14 +28,6 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  // Part of the Beacon.DocumentItem interface.
-		  
-		  #Pragma Unused Engrams
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub CopyFrom(Source As Beacon.SpawnPointSet)
 		  Self.mCachedHash = ""
@@ -76,13 +68,19 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Return Nil
 		  End If
 		  
-		  If Not Self.mReplacements.HasBlueprint(FromCreature) Then
+		  Return Self.CreatureReplacementWeight(FromCreature.ObjectID, ToCreature.ObjectID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String) As NullableDouble
+		  If Not Self.mReplacements.HasBlueprint(FromCreatureID) Then
 		    Return Nil
 		  End If
 		  
-		  Var Options As Beacon.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
-		  If Options.HasAttribute(ToCreature, "Weight") Then
-		    Return Options.Value(ToCreature, "Weight").DoubleValue
+		  Var Options As Beacon.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureID, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreatureID, "Weight") Then
+		    Return Options.Value(ToCreatureID, "Weight").DoubleValue
 		  End If
 		  
 		  Return Nil
@@ -227,13 +225,11 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    If (Replacements Is Nil) = False Then
 		      For Each Entry As DictionaryEntry In Replacements
 		        Var FromUUID As String = Entry.Key
-		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature(FromUUID, "", "", Nil)
 		        Var ToDict As Dictionary = Entry.Value
 		        For Each SubEntry As DictionaryEntry In ToDict
 		          Var ToUUID As String = SubEntry.Key
 		          Var Weight As Double = SubEntry.Value
-		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature(ToUUID, "", "", Nil)
-		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		          Set.CreatureReplacementWeight(FromUUID, ToUUID) = Weight
 		        Next
 		      Next
 		    End If
@@ -297,20 +293,6 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    End If
 		  Next
 		  Return -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function IsValid(Document As Beacon.Document) As Boolean
-		  // Part of the Beacon.DocumentItem interface.
-		  
-		  #Pragma Unused Document
-		  
-		  If Self.mEntries.LastIndex = -1 Then
-		    Return False
-		  End If
-		  
-		  Return True
 		End Function
 	#tag EndMethod
 
@@ -454,8 +436,35 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Dict.Value("water_only_minimum_height") = Self.mWaterOnlyMinimumHeight.DoubleValue
 		  End If
 		  Dict.Value("offset_before_multiplier") = Self.mOffsetBeforeMultiplier
-		  #Pragma Warning "Entries are not encoded"
-		  #Pragma Warning "Replacements are not encoded"
+		  
+		  Var Entries() As Dictionary
+		  For Each Entry As Beacon.SpawnPointSetEntry In Self.mEntries
+		    Var Packed As Dictionary = Entry.Pack
+		    If (Packed Is Nil) = False Then
+		      Entries.Add(Packed)
+		    End If
+		  Next
+		  Dict.Value("entries") = Entries
+		  
+		  If Self.mReplacements.Count > 0 Then
+		    Var Replacements() As Dictionary
+		    Var TargetCreatures() As Beacon.Creature = Self.ReplacedCreatures
+		    For Each TargetCreature As Beacon.Creature In TargetCreatures
+		      Var ReplacementCreatures() As Beacon.Creature = Self.ReplacementCreatures(TargetCreature)
+		      Var Choices As New Dictionary
+		      For Each ReplacementCreature As Beacon.Creature In ReplacementCreatures
+		        Var Weight As Double = Self.CreatureReplacementWeight(TargetCreature, ReplacementCreature)
+		        Choices.Value(ReplacementCreature.ObjectID) = Weight
+		      Next
+		      Var ReplacementDict As New Dictionary
+		      ReplacementDict.Value("creature_id") = TargetCreature.ObjectID
+		      ReplacementDict.Value("choices") = Choices
+		      Replacements.Add(ReplacementDict)
+		    Next
+		    Dict.Value("replacements") = Replacements
+		  Else
+		    Dict.Value("replacements") = Nil
+		  End If
 		  Return Dict
 		  
 		End Function

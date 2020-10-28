@@ -238,50 +238,52 @@ Implements Beacon.MutableBlueprint
 		  
 		  Self.mSets.ResizeTo(-1)
 		  If Dict.HasKey("sets") Then
-		    #Pragma Warning "Need to unpack sets"
-		  ElseIf Dict.HasKey("groups") Then
-		    Var Groups As Variant = Dict.Value("groups")
-		    If IsNull(Groups) = False And Groups.IsArray And Groups.ArrayElementType = Variant.TypeObject Then
-		      Var Info As Introspection.TypeInfo = Introspection.GetType(Groups)
-		      Var SpawnDicts() As Dictionary
-		      Select Case Info.FullName
-		      Case "Dictionary()"
-		        SpawnDicts = Groups
-		      Case "Object()"
-		        Var Temp() As Object = Groups
-		        For Each Obj As Object In Temp
-		          If (Obj Is Nil) = False And Obj IsA Dictionary Then
-		            SpawnDicts.Add(Dictionary(Obj))
-		          End If
-		        Next
-		      End Select
-		      
-		      For Each SpawnDict As Dictionary In SpawnDicts
-		        Var Creatures() As String
-		        Var Arr As Variant = SpawnDict.Lookup("creatures", Nil)
-		        If IsNull(Arr) = False And Arr.IsArray Then
-		          Select Case Arr.ArrayElementType
-		          Case Variant.TypeString
-		            Creatures = Arr
-		          Case Variant.TypeObject
-		            Var Temp() As Variant = Arr
-		            For Each Path As String In Temp
-		              Creatures.Add(Path)
-		            Next
-		          End Select
-		        End If
-		        
-		        Var Set As New Beacon.MutableSpawnPointSet
-		        Set.Label = SpawnDict.Lookup("label", "Untitled Spawn Set").StringValue
-		        Set.ID = SpawnDict.Lookup("group_id", v4UUID.Create.StringValue).StringValue
-		        Set.Weight = SpawnDict.Lookup("weight", 0.1).DoubleValue
-		        For Each Path As String In Creatures
-		          Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Path, "", Nil)
-		          Set.Append(New Beacon.MutableSpawnPointSetEntry(Creature))
-		        Next
+		    Var Sets() As Dictionary = Dict.Value("sets").DictionaryArrayValue
+		    Try
+		      Sets = Dict.Value("sets").DictionaryArrayValue
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Unpacking spawn point sets value..")
+		    End Try
+		    
+		    For Each PackedSet As Dictionary In Sets
+		      Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(PackedSet)
+		      If (Set Is Nil) = False Then
 		        Self.mSets.Add(Set)
+		      End If
+		    Next
+		  ElseIf Dict.HasKey("groups") Then
+		    Var SpawnDicts() As Dictionary
+		    Try
+		      SpawnDicts = Dict.Value("groups").DictionaryArrayValue
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Unpacking spawn point groups value.")
+		    End Try
+		    
+		    For Each SpawnDict As Dictionary In SpawnDicts
+		      Var Creatures() As String
+		      Var Arr As Variant = SpawnDict.Lookup("creatures", Nil)
+		      If IsNull(Arr) = False And Arr.IsArray Then
+		        Select Case Arr.ArrayElementType
+		        Case Variant.TypeString
+		          Creatures = Arr
+		        Case Variant.TypeObject
+		          Var Temp() As Variant = Arr
+		          For Each Path As String In Temp
+		            Creatures.Add(Path)
+		          Next
+		        End Select
+		      End If
+		      
+		      Var Set As New Beacon.MutableSpawnPointSet
+		      Set.Label = SpawnDict.Lookup("label", "Untitled Spawn Set").StringValue
+		      Set.ID = SpawnDict.Lookup("group_id", v4UUID.Create.StringValue).StringValue
+		      Set.Weight = SpawnDict.Lookup("weight", 0.1).DoubleValue
+		      For Each Path As String In Creatures
+		        Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Path, "", Nil)
+		        Set.Append(New Beacon.MutableSpawnPointSetEntry(Creature))
 		      Next
-		    End If
+		      Self.mSets.Add(Set)
+		    Next
 		  End If
 		End Sub
 	#tag EndMethod
