@@ -1143,7 +1143,7 @@ Protected Module Beacon
 		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer, Localized As Boolean) As String
 		  Var Multiplier As UInteger = 1
 		  Var Places As Integer = 0
-		  Var Format As String = "-0"
+		  Var Format As String = "0"
 		  
 		  While Places < DecimalPlaces
 		    Var TestValue As Double = Value * Multiplier
@@ -1155,15 +1155,15 @@ Protected Module Beacon
 		    Places = Places + 1
 		  Wend
 		  
-		  If Format.Length > 2 Then
-		    Format = Format.Left(2) + "." + Format.Middle(2)
+		  If Format.Length > 1 Then
+		    Format = Format.Left(1) + "." + Format.Middle(1)
 		  End If
 		  
 		  Var RoundedValue As Double = Round(Value * Multiplier) / Multiplier
 		  If Localized Then
-		    Return Format(RoundedValue, Format)
+		    Return RoundedValue.ToString(Locale.Current, Format)
 		  Else
-		    Return Str(RoundedValue, Format)
+		    Return RoundedValue.ToString(Locale.Raw, Format)
 		  End If
 		End Function
 	#tag EndMethod
