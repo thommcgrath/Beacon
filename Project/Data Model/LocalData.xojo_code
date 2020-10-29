@@ -223,6 +223,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT, nitrado_format TEXT);")
+		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
@@ -966,6 +967,34 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetMap(Named As String) As Beacon.Map
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = $1 OR ark_identifier = $1 LIMIT 1;", Named)
+		  If Rows.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Return New Beacon.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps(Mask As UInt64) As Beacon.Map()
+		  Var Rows As RowSet
+		  If Mask = CType(0, UInt64) Then
+		    Rows = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
+		  Else
+		    Rows = Self.SQLSelect("SELECT * FROM maps WHERE (mask & $1) = mask ORDER BY official DESC, sort;", Mask)
+		  End If
+		  
+		  Var Maps() As Beacon.Map
+		  For Each Row As DatabaseRow In Rows
+		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
+		  Next
+		  Return Maps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetModWithID(ModID As v4UUID) As Beacon.ModDetails
 		  If ModID = Nil Then
 		    Return Nil
@@ -1519,6 +1548,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
 		      Case "mods"
 		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ObjectID.StringValue)
+		      Case "maps"
+		        Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectID.StringValue)
 		      End Select
 		    Next
 		    For Each IconID As v4UUID In DeleteIcons
@@ -1719,6 +1750,27 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Else
 		          // Insert
 		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);", Values)
+		        End If
+		      Next
+		    End If
+		    
+		    If ChangeDict.HasKey("maps") Then
+		      Var Maps() As Dictionary = ChangeDict.Value("maps").DictionaryArrayValue
+		      For Each MapDict As Dictionary In Maps
+		        Var MapID As String = MapDict.Value("map_id")
+		        Var ModID As String = MapDict.Value("mod_id")
+		        Var Label As String = MapDict.Value("label")
+		        Var Identifier As String = MapDict.Value("identifier")
+		        Var Difficulty As Double = MapDict.Value("difficulty")
+		        Var Official As Boolean = MapDict.Value("official")
+		        Var Mask As UInt64 = MapDict.Value("mask")
+		        Var Sort As Integer = MapDict.Value("sort")
+		        
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = $1;", MapID)
+		        If Results.RowCount = 1 Then
+		          Self.SQLExecute("UPDATE maps SET mod_id = $2, label = $3, ark_identifier = $4, difficulty_scale = $5, official = $6, mask = $7, sort = $8) WHERE object_id = $1);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		        Else
+		          Self.SQLExecute("INSERT INTO maps (object_id, mod_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		        End If
 		      Next
 		    End If
@@ -2164,6 +2216,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  // Searchable Tags
 		  If FromSchemaVersion >= 9 Then
 		    Commands.Add("INSERT INTO searchable_tags SELECT DISTINCT * FROM legacy.searchable_tags;")
+		  End If
+		  
+		  // Maps
+		  If FromSchemaVersion >= 19 Then
+		    Commands.Add("INSERT INTO maps SELECT DISTINCT * FROM legacy.maps;")
 		  End If
 		  
 		  // Sanity checking

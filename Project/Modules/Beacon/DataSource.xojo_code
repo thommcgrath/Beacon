@@ -127,6 +127,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetMap(Named As String) As Beacon.Map
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps(Mask As UInt64) As Beacon.Map()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetModWithID(ModID As v4UUID) As Beacon.ModDetails
 		  
 		End Function

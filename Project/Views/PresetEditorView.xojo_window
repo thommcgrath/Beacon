@@ -800,6 +800,15 @@ End
 
 	#tag Event
 		Sub Open()
+		  Self.MapSelector.RemoveAllSegments
+		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In AllMaps
+		    Var MapSegment As New Segment
+		    MapSegment.Title = Map.Name
+		    MapSegment.Enabled = True
+		    Self.MapSelector.AddSegment(MapSegment)
+		  Next
+		  
 		  Self.MapSelector.Width = Self.MapSelector.SegmentCount * 110 // Because the design-time size is not being respected
 		  Self.MapSelector.ResizeCells
 		  Self.MinimumWidth = Self.MapSelector.Width + 40
@@ -967,31 +976,14 @@ End
 	#tag Method, Flags = &h21
 		Private Function FilteredMaps() As Beacon.Map()
 		  Var Maps() As Beacon.Map
-		  For I As Integer = 0 To Self.MapSelector.SegmentCount - 1
-		    Var Cell As Segment = Self.MapSelector.SegmentAt(I)
+		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  For Idx As Integer = 0 To Self.MapSelector.SegmentCount - 1
+		    Var Cell As Segment = Self.MapSelector.SegmentAt(Idx)
 		    If Not Cell.Selected Then
 		      Continue
 		    End If
-		    Select Case I
-		    Case 0
-		      Maps.Add(Beacon.Maps.TheIsland)
-		    Case 1
-		      Maps.Add(Beacon.Maps.ScorchedEarth)
-		    Case 2
-		      Maps.Add(Beacon.Maps.Aberration)
-		    Case 3
-		      Maps.Add(Beacon.Maps.Extinction)
-		    Case 4
-		      Maps.Add(Beacon.Maps.Genesis)
-		    Case 5
-		      Maps.Add(Beacon.Maps.TheCenter)
-		    Case 6
-		      Maps.Add(Beacon.Maps.Ragnarok)
-		    Case 7
-		      Maps.Add(Beacon.Maps.Valguero)
-		    Case 8
-		      Maps.Add(Beacon.Maps.CrystalIsles)
-		    End Select
+		    
+		    Maps.Add(AllMaps(Idx))
 		  Next
 		  Return Maps
 		End Function
@@ -1131,15 +1123,10 @@ End
 		  Self.Changed = False
 		  
 		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
-		  Self.MapSelector.SegmentAt(0).Selected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
-		  Self.MapSelector.SegmentAt(1).Selected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
-		  Self.MapSelector.SegmentAt(2).Selected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
-		  Self.MapSelector.SegmentAt(3).Selected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
-		  Self.MapSelector.SegmentAt(4).Selected = (Mask And Beacon.Maps.Genesis.Mask) = Beacon.Maps.Genesis.Mask
-		  Self.MapSelector.SegmentAt(5).Selected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
-		  Self.MapSelector.SegmentAt(6).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
-		  Self.MapSelector.SegmentAt(7).Selected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
-		  Self.MapSelector.SegmentAt(8).Selected = (Mask And Beacon.Maps.CrystalIsles.Mask) = Beacon.Maps.CrystalIsles.Mask
+		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  For Idx As Integer = 0 To AllMaps.LastIndex
+		    Self.MapSelector.SegmentAt(Idx).Selected = (Mask And AllMaps(Idx).Mask) = AllMaps(Idx).Mask
+		  Next
 		  
 		  Var Maps() As Beacon.Map = Self.FilteredMaps()
 		  Var SelectedEntries() As String
