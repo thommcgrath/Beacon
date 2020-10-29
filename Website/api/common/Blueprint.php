@@ -6,7 +6,6 @@ class Blueprint extends \BeaconObject {
 	protected $availability;
 	protected $path;
 	protected $class_string;
-	protected $is_ambiguous = false;
 	
 	public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
 		$objects = static::Get('path:' . $path, $min_version, $updated_since);
@@ -20,7 +19,6 @@ class Blueprint extends \BeaconObject {
 		$columns[] = 'availability';
 		$columns[] = 'path';
 		$columns[] = 'class_string';
-		$columns[] = '(SELECT COUNT(object_id) FROM ' . static::TableName() . ' AS x WHERE x.class_string = ' . static::TableName() . '.class_string) AS duplicate_count';
 		return $columns;
 	}
 	
@@ -60,7 +58,6 @@ class Blueprint extends \BeaconObject {
 		$obj->availability = intval($row->Field('availability'));
 		$obj->path = $row->Field('path');
 		$obj->class_string = $row->Field('class_string');
-		$obj->is_ambiguous = intval($row->Field('duplicate_count')) > 1;
 		return $obj;
 	}
 	
@@ -109,7 +106,8 @@ class Blueprint extends \BeaconObject {
 	}
 	
 	public function IsAmbiguous() {
-		return $this->is_ambiguous;
+		// deprecated
+		return false;
 	}
 	
 	public function Availability() {

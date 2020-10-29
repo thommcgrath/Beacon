@@ -35,18 +35,18 @@ $has_something = $has_engrams || $has_loot_sources || $has_creatures || $has_con
 <h3 id="engrams"><?php echo htmlentities($mod->Name()); ?> Engrams</h3>
 <p><a href="/mods/<?php echo abs($mod->WorkshopID()); ?>/spawncodes">See the full list with spawn codes here.</a></p>
 <ul class="object_list">
-	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo ($engram->IsAmbiguous() ? (urlencode($engram->ModWorkshopID()) . '/' . urlencode($engram->ClassString())) : urlencode($engram->ClassString())); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
+	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo urlencode($engram->ObjectID()); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
 <?php } ?>
 <?php if ($has_loot_sources) { ?>
 <h3 id="lootsources"><?php echo htmlentities($mod->Name()); ?> Loot Sources</h3>
 <ul class="object_list">
-	<?php foreach ($loot_sources as $loot_source) { ?><li><a href="/object/<?php echo $loot_source->ClassString(); ?>"><?php echo htmlentities($loot_source->Label()); ?></a></li><?php } ?>
+	<?php foreach ($loot_sources as $loot_source) { ?><li><a href="/object/<?php echo urlencode($loot_source->ObjectID()); ?>"><?php echo htmlentities($loot_source->Label()); ?></a></li><?php } ?>
 </ul>
 <?php } ?>
 <?php if ($has_creatures) { ?>
 <h3 id="creatures"><?php echo htmlentities($mod->Name()); ?> Creatures</h3>
 <ul class="object_list">
-	<?php foreach ($creatures as $creature) { ?><li><a href="/object/<?php echo $creature->ClassString(); ?>"><?php echo htmlentities($creature->Label()); ?></a></li><?php } ?>
+	<?php foreach ($creatures as $creature) { ?><li><a href="/object/<?php echo urlencode($creature->ObjectID()); ?>"><?php echo htmlentities($creature->Label()); ?></a></li><?php } ?>
 </ul>
 <?php } ?>
 <?php
