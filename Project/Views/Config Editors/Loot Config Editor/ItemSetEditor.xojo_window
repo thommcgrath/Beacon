@@ -336,9 +336,10 @@ End
 		    Var RelativeWeight As Double = Self.mSet.RelativeWeight(I)
 		    Var ChanceText As String
 		    If RelativeWeight < 0.01 Then
-		      ChanceText = "< 1%"
+		      Var OnePercent As Double = 0.01
+		      ChanceText = "< " + OnePercent.ToString(Locale.Current, "0%")
 		    Else
-		      ChanceText = Str(RelativeWeight * 100, "0") + "%"
+		      ChanceText = RelativeWeight.ToString(Locale.Current, "0%")
 		    End If
 		    
 		    Var QualityText As String
@@ -365,7 +366,7 @@ End
 		    FiguresText = FiguresText + " wt"
 		    
 		    If Entry.CanBeBlueprint Then
-		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
+		      FiguresText = FiguresText + ", " + BlueprintChance.ToString(Locale.Current, "0%") + " bp"
 		    End If
 		    
 		    EntryList.AddRow("")

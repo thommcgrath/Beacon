@@ -247,7 +247,7 @@ End
 		  For Each Item As DictionaryEntry In GroupedItems
 		    Var Description As String = Item.Key
 		    Var Quantity As Integer = Item.Value
-		    List.AddRow(Str(Quantity, "0") + "x " + Description)
+		    List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
 		  Self.StatusBar1.Caption = List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(List.RowCount = 1, "", "s")

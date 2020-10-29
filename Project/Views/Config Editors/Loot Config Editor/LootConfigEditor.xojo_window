@@ -636,7 +636,7 @@ End
 		  If NumChanges = 1 Then
 		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its preset.")
 		  Else
-		    Self.ShowAlert(Str(NumChanges, "-0") + " item sets changed", "Rebuilding changed " + Str(NumChanges, "-0") + " item sets to match their presets.")
+		    Self.ShowAlert(NumChanges.ToString(Locale.Current, ",##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, ",##0") + " item sets to match their presets.")
 		  End If
 		End Sub
 	#tag EndMethod

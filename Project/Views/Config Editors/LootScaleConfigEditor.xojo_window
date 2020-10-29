@@ -118,7 +118,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Multiplier As Double = Self.Config(False).Multiplier
-		  Self.LootScaleField.Text = Str(Multiplier, "0%")
+		  Self.LootScaleField.Text = Multiplier.ToString(Locale.Current, "0%")
 		  Self.ScaleSlider.Value = Multiplier * 100
 		End Sub
 	#tag EndEvent

@@ -47,7 +47,7 @@ Inherits FolderItem
 		    Else
 		      Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
 		      Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
-		      App.Log("Unable to resolve saveinfo for: " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
+		      App.Log("Unable to resolve saveinfo for: " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		    End If
 		  #else
 		    Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(SaveInfo))
@@ -80,7 +80,7 @@ Inherits FolderItem
 		      Else
 		        Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
 		        Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
-		        App.Log("Unable to get saveinfo for " + Self.NativePath + ": " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
+		        App.Log("Unable to get saveinfo for " + Self.NativePath + ": " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		      End If
 		    End If
 		  #else

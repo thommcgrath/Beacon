@@ -784,7 +784,7 @@ End
 		Private Sub Begin()
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Var Now As DateTime = DateTime.Now
-		  Self.DeployLabel = Str(NowGMT.Year, "0000") + "-" + Str(NowGMT.Month, "00") + "-" + Str(NowGMT.Day, "00") + " " + Str(NowGMT.Hour, "00") + ":" + Str(NowGMT.Minute, "00") + ":" + Str(NowGMT.Second, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
+		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
 		  
 		  Var ProfileProblems As New Dictionary
 		  
@@ -797,7 +797,7 @@ End
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    If Profile Is Nil Then
-		      ProfileProblems.Value("profile at row " + Str(I, "0")) = "Nil profile"
+		      ProfileProblems.Value("profile at row " + I.ToString(Locale.Raw, "0")) = "Nil profile"
 		      Continue
 		    End If
 		    

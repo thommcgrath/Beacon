@@ -149,7 +149,8 @@ Protected Class LogManager
 		  #if SimpleDebugMode = False Or DebugBuild = False
 		    // Use local time for the actual log message
 		    Var Now As DateTime = DateTime.Now
-		    Var DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
+		    Var Fraction As Double = Now.Nanosecond / 1000000000
+		    Var DetailedMessage As String = Now.ToString(Locale.Raw) + Fraction.ToString(Locale.Raw, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
 		    
 		    // But use GMT for the filename
 		    Now = New DateTime(Now.SecondsFrom1970, New TimeZone(0))

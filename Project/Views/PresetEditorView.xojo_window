@@ -1037,7 +1037,7 @@ End
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnDescription) = Entry.Label
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Str(Entry.ChanceToBeBlueprint, "0%"), "N/A")
+		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityModifier
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintMultiplier
@@ -1111,10 +1111,10 @@ End
 		  Var Focus As RectControl = Self.Window.Focus
 		  
 		  If Focus <> Self.MinItemsField Then
-		    Self.MinItemsField.Text = Str(Self.mPreset.MinItems)
+		    Self.MinItemsField.Text = Self.mPreset.MinItems.ToString(Locale.Current, "0")
 		  End If
 		  If Focus <> Self.MaxItemsField Then
-		    Self.MaxItemsField.Text = Str(Self.mPreset.MaxItems)
+		    Self.MaxItemsField.Text = Self.mPreset.MaxItems.ToString(Locale.Current, "0")
 		  End If
 		End Sub
 	#tag EndMethod

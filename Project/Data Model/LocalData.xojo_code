@@ -349,7 +349,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ClassesURL(ForceRefresh As Boolean) As String
-		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Str(Self.EngramsVersion))
+		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Self.EngramsVersion.ToString(Locale.Raw, "0"))
 		  
 		  If ForceRefresh = False Then
 		    Var LastSync As String = Self.Variable("sync_time")
@@ -461,7 +461,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    // Relocate the current library
 		    Var Counter As Integer = 1
 		    Do
-		      Var Destination As FolderItem = BackupsFolder.Child("Library " + Str(CurrentSchemaVersion, "-0") + If(Counter > 1, "-" + Str(Counter, "-0"), "") + ".sqlite")
+		      Var Destination As FolderItem = BackupsFolder.Child("Library " + CurrentSchemaVersion.ToString(Locale.Raw, "0") + If(Counter > 1, "-" + Counter.ToString(Locale.Raw, "0"), "") + ".sqlite")
 		      If Destination.Exists Then
 		        Counter = Counter + 1
 		        Continue
@@ -1156,7 +1156,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods.LastRowIndex > -1 Then
 		      Var Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.Add("?" + Str(NextPlaceholder))
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
@@ -2831,7 +2831,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Clauses() As String
 		    Var Values As New Dictionary
 		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + Str(NextPlaceholder) + " OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + Str(NextPlaceholder) + ") OR class_string LIKE ?" + Str(NextPlaceholder))
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + ") OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
@@ -2859,7 +2859,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    If Tags <> "" Then
 		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
-		      Clauses.Add("searchable_tags.tags MATCH ?" + Str(NextPlaceholder, "0"))
+		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
@@ -3030,14 +3030,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods.LastRowIndex > -1 Then
 		      Var Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.Add("?" + Str(NextPlaceholder))
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
 		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + Str(NextPlaceholder) + " OR class_string LIKE ?" + Str(NextPlaceholder))
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If

@@ -446,7 +446,7 @@ Protected Module FrameworkExtensions
 		  Var Hours As Integer = Floor(Offset)
 		  Var Minutes As Integer = (Offset - Floor(Offset)) * 60
 		  
-		  Return Str(Source.Year, "0000") + "-" + Str(Source.Month, "00") + "-" + Str(Source.Day, "00") + " " + Str(Source.Hour, "00") + ":" + Str(Source.Minute, "00") + ":" + Str(Source.Second, "00") + If(Zone.SecondsFromGMT < 0, "-", "+") + Str(Hours, "00") + ":" + Str(Minutes, "00")
+		  Return Source.Year.ToString(Locale.Raw, "0000") + "-" + Source.Month.ToString(Locale.Raw, "00") + "-" + Source.Day.ToString(Locale.Raw, "00") + " " + Source.Hour.ToString(Locale.Raw, "00") + ":" + Source.Minute.ToString(Locale.Raw, "00") + ":" + Source.Second.ToString(Locale.Raw, "00") + If(Zone.SecondsFromGMT < 0, "-", "+") + Hours.ToString(Locale.Raw, "00") + ":" + Minutes.ToString(Locale.Raw, "00")
 		End Function
 	#tag EndMethod
 

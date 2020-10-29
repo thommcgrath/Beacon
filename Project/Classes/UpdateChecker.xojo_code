@@ -214,7 +214,7 @@ Protected Class UpdateChecker
 		Private Shared Function OSVersion() As String
 		  Var MajorVersion, MinorVersion, BugVersion As Integer
 		  OSVersion(MajorVersion, MinorVersion, BugVersion)
-		  Return Str(MajorVersion, "-0") + "." + Str(MinorVersion, "-0") + "." + Str(BugVersion, "-0")
+		  Return MajorVersion.ToString(Locale.Raw, "0") + "." + MinorVersion.ToString(Locale.Raw, "0") + "." + BugVersion.ToString(Locale.Raw, "0")
 		End Function
 	#tag EndMethod
 

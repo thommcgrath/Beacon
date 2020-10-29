@@ -338,7 +338,7 @@ Inherits Global.Thread
 		          SectionLines.Add("ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))")
 		          BeaconDict.Value("ManagedKeys") = SectionLines
 		        Next
-		        BeaconDict.Value("Build") = Array("Build=" + Str(App.BuildNumber, "0"))
+		        BeaconDict.Value("Build") = Array("Build=" + App.BuildNumber.ToString(Locale.Raw, "0"))
 		        BeaconDict.Value("Trust") = Array("Trust=" + TrustKey)
 		        BeaconDict.Value("LastUpdated") = Array("LastUpdated=""" + DateTime.Now.SQLDateTimeWithOffset + """")
 		        AllSectionHeaders.Add("Beacon")

@@ -169,8 +169,8 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function ReplacePlaceholders(Source As String, ParamArray Values() As String) As String
 		  For I As Integer = 0 To Values.LastIndex
-		    Var Placeholder As String = "?" + Str(I + 1, "0")
-		    Source = Source.ReplaceAll(Placeholder, Values(I))
+		    Var Placeholder As Integer = I + 1
+		    Source = Source.ReplaceAll("?" + Placeholder.ToString(Locale.Raw, "0"), Values(I))
 		  Next
 		  Return Source
 		End Function

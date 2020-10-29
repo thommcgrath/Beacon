@@ -347,7 +347,7 @@ End
 		  For Each Map As Beacon.Map In NewMaps
 		    Win.List.AddRow("", "Add Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
-		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map+" + Str(Map.Mask)
+		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map+" + Map.Mask.ToString(Locale.Raw, "0")
 		    If UseMergeUI Then
 		      Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
 		    End If
@@ -356,7 +356,7 @@ End
 		  For Each Map As Beacon.Map In OldMaps
 		    Win.List.AddRow("", "Remove Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
-		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map-" + Str(Map.Mask)
+		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map-" + Map.Mask.ToString(Locale.Raw, "0")
 		    If UseMergeUI Then
 		      Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
 		    End If

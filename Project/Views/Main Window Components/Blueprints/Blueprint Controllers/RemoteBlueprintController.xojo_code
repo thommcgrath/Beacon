@@ -75,7 +75,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Self.FinishPublishing(False, "Other HTTP error: " + Str(Response.HTTPStatus, "0"))
+		  Self.FinishPublishing(False, "Other HTTP error: " + Response.HTTPStatus.ToString(Locale.Raw, "0"))
 		End Sub
 	#tag EndMethod
 
@@ -209,7 +209,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Self.FinishPublishing(False, "Other HTTP error: " + Str(Response.HTTPStatus, "0"))
+		  Self.FinishPublishing(False, "Other HTTP error: " + Response.HTTPStatus.ToString(Locale.Raw, "0"))
 		End Sub
 	#tag EndMethod
 

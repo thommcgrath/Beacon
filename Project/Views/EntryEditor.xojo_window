@@ -651,7 +651,7 @@ End
 		  For Each Item As DictionaryEntry In GroupedItems
 		    Var Description As String = Item.Key
 		    Var Quantity As Integer = Item.Value
-		    SimulatedResultsList.AddRow(Str(Quantity, "0") + "x " + Description)
+		    SimulatedResultsList.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		End Sub
 	#tag EndMethod

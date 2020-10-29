@@ -237,7 +237,7 @@ End
 		  Var Noun As String = If(TotalItems = 1, "Resource", "Resources")
 		  
 		  If SelectedItems > 0 Then
-		    Self.Status.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
+		    Self.Status.Caption = SelectedItems.ToString(Locale.Current, ",##0") + " of " + TotalItems.ToString(Locale.Current, ",##0") + " " + Noun + " Selected"
 		  Else
 		    Self.Status.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If

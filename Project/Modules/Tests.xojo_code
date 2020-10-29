@@ -207,27 +207,27 @@ Protected Module Tests
 		  
 		  Interval = Beacon.ParseInterval("2d3h4m5s")
 		  If Assert((Interval Is Nil) = False, "Failed to parse interval `2d3h4m5s`, result is nil.") Then
-		    Call Assert(Interval.TotalSeconds = 183845, "Failed to parse interval `2d3h4m5s` into 183845, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		    Call Assert(Interval.TotalSeconds = 183845, "Failed to parse interval `2d3h4m5s` into 183845, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
 		  End If
 		  
 		  Interval = Beacon.ParseInterval("4m")
 		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4m`, result is nil.") Then
-		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4m` into 240, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4m` into 240, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
 		  End If
 		  
 		  Interval = Beacon.ParseInterval("4 minutes")
 		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4 minutes`, result is nil.") Then
-		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4 minutes` into 240, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4 minutes` into 240, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
 		  End If
 		  
 		  Interval = Beacon.ParseInterval("4 minutes 6 seconds")
 		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4 minutes 6 seconds`, result is nil.") Then
-		    Call Assert(Interval.TotalSeconds = 246, "Failed to parse interval `4 minutes 6 seconds` into 246, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		    Call Assert(Interval.TotalSeconds = 246, "Failed to parse interval `4 minutes 6 seconds` into 246, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
 		  End If
 		  
 		  Interval = Beacon.ParseInterval("6.5 seconds")
 		  If Assert((Interval Is Nil) = False, "Failed to parse interval `6.5 seconds`, result is nil.") Then
-		    Call Assert(Interval.TotalSeconds = 6.5, "Failed to parse interval `6.5 seconds` into 6.5, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		    Call Assert(Interval.TotalSeconds = 6.5, "Failed to parse interval `6.5 seconds` into 6.5, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
 		  End If
 		  
 		  Var TimeString As String = Beacon.SecondsToString(6.45)
@@ -429,13 +429,13 @@ Protected Module Tests
 		    Var ExtremeQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMin, Source.Multipliers.Min, ExtremeDifficulty)
 		    Var ExtremeQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMax, Source.Multipliers.Max, ExtremeDifficulty)
 		    
-		    Const Formatter = "-0.0000"
-		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + Str(StandardQualityMin.BaseValue, Formatter) + ") for difficulty 5")
-		    Call Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMax) + "(" + Str(StandardQualityMax.BaseValue, Formatter) + ") for difficulty 5")
-		    Call Assert(HighQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMin) + "(" + Str(HighQualityMax.BaseValue, Formatter) + ") for difficulty 15")
-		    Call Assert(HighQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMax) + "(" + Str(HighQualityMax.BaseValue, Formatter) + ") for difficulty 15")
-		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
-		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
+		    Const Formatter = "0.0000"
+		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + StandardQualityMin.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
+		    Call Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMax) + "(" + StandardQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
+		    Call Assert(HighQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMin) + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
+		    Call Assert(HighQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMax) + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
+		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
+		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		  #endif
 		End Sub
 	#tag EndMethod

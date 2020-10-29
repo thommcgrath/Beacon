@@ -35,7 +35,7 @@ Inherits ScrollCanvas
 		  End If
 		  
 		  //Var Char As String = Self.mContent.Middle(Floor(Index), 1)
-		  //System.DebugLog(Str(Index, "-0.00") + ": " + Char)
+		  //System.DebugLog(Index.ToString(Locale.Current, "0.00") + ": " + Char)
 		End Sub
 	#tag EndEvent
 
@@ -96,8 +96,9 @@ Inherits ScrollCanvas
 		    Line.Render(Area, New Xojo.Rect(0, LineTop, Area.Width, Self.mLineHeight), CurrentTheme, Self.LeftPadding + (Self.ScrollX * -1), LineTop + Self.mBaselineHeight)
 		    Line.Visible = True
 		    
-		    Var LineNum As String = Str(I + 1, "0")
-		    Gutter.DrawText(LineNum, Gutter.Width - (Gutter.TextWidth(LineNum) + 3), LineTop + Self.mBaselineHeight)
+		    Var LineNum As Integer = I + 1
+		    Var LineNumString As String = LineNum.ToString(Locale.Raw, "0")
+		    Gutter.DrawText(LineNumString, Gutter.Width - (Gutter.TextWidth(LineNumString) + 3), LineTop + Self.mBaselineHeight)
 		    
 		    LineTop = LineTop + Self.mLineHeight
 		  Next

@@ -388,22 +388,22 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function BuildVersion() As String
-		  Var VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
+		  Var VersionString As String = Self.MajorVersion.ToString(Locale.Raw, "0") + "." + Self.MinorVersion.ToString(Locale.Raw, "0")
 		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
-		    VersionString = VersionString + "." + Str(Self.BugVersion, "0")
+		    VersionString = VersionString + "." + Self.BugVersion.ToString(Locale.Raw, "0")
 		  End If
 		  Select Case Self.StageCode
 		  Case Application.Development
-		    Return VersionString + "pa" + Str(Self.NonReleaseVersion, "0")
+		    Return VersionString + "pa" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Case Application.Alpha
-		    Return VersionString + "a" + Str(Self.NonReleaseVersion, "0")
+		    Return VersionString + "a" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Case Application.Beta
-		    Return VersionString + "b" + Str(Self.NonReleaseVersion, "0")
+		    Return VersionString + "b" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Else
 		    If Self.NonReleaseVersion <= 0 Then
 		      Return VersionString
 		    Else
-		      Return VersionString + "." + Str(Self.NonReleaseVersion, "0")
+		      Return VersionString + "." + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		    End If
 		  End Select
 		End Function

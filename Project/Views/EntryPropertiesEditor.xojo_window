@@ -922,8 +922,8 @@ End
 		  MaxQualities.Sort
 		  
 		  Self.mIgnoreChanges = True
-		  MinQuantityField.Text = Str(MinQuantities(0))
-		  MaxQuantityField.Text = Str(MaxQuantities(MaxQuantities.LastIndex))
+		  MinQuantityField.Text = MinQuantities(0).ToString(Locale.Current, "0")
+		  MaxQuantityField.Text = MaxQuantities(MaxQuantities.LastIndex).ToString(Locale.Current, "0")
 		  If CanBeBlueprint Then
 		    ChanceSlider.Value = 100 * (TotalChance / (Entries.LastIndex + 1))
 		    ChanceSlider.Enabled = True

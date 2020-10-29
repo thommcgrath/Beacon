@@ -631,7 +631,10 @@ Protected Module Beacon
 		    End If
 		    Created = New DateTime(Created.SecondsFrom1970, New TimeZone(0))
 		    
-		    Return EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase
+		    Var Seconds As Double = Created.SecondsFrom1970 + 2082844800
+		    Return EncodeHex(Crypto.SHA256(Seconds.ToString(Locale.Raw, "0"))).Lowercase
+		  #else
+		    #Pragma Warning "No Hardware ID"
 		  #endif
 		End Function
 	#tag EndMethod
