@@ -92,19 +92,6 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
-		  #if DebugBuild
-		    G.DrawingColor = &cFF0000
-		    G.FillRectangle(20, 20, Self.Width - 40, Self.Height - 80)
-		  #else
-		    #Pragma Unused G
-		  #endif
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As PopoverController)
 		  // Calling the overridden superclass constructor.
