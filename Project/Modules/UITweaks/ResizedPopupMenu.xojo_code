@@ -16,6 +16,7 @@ Inherits PopupMenu
 
 
 	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"24"
 	#tag EndConstant
 
 

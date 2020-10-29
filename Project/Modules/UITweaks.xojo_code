@@ -8,10 +8,9 @@ Protected Module UITweaks
 		  End If
 		  
 		  Var TopOffset As Integer = Floor(Diff / 2)
-		  Var BottomOffset As Integer = Diff - TopOffset
 		  
 		  Target.Top = Target.Top - TopOffset
-		  Target.Height = Target.Height + BottomOffset
+		  Target.Height = Target.Height + Diff
 		End Sub
 	#tag EndMethod
 
