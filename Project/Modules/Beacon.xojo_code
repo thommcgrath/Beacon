@@ -633,8 +633,27 @@ Protected Module Beacon
 		    
 		    Var Seconds As Double = Created.SecondsFrom1970 + 2082844800
 		    Return EncodeHex(Crypto.SHA256(Seconds.ToString(Locale.Raw, "0"))).Lowercase
+		  #elseif TargetiOS
+		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
+		    
+		    Const UIKitFramework = "UIKit.framework"
+		    Const FoundationFramework = "Foundation.framework"
+		    
+		    Declare Function NSClassFromString Lib FoundationFramework (ClassName As CFStringRef) As Ptr
+		    Declare Function GetCurrentDevice Lib UIKitFramework Selector "currentDevice" (Target As Ptr) As Ptr
+		    Declare Function GetIdentifierForVendor Lib UIKitFramework Selector "identifierForVendor" (Target As Ptr) As Ptr
+		    Declare Function GetUUIDString Lib UIKitFramework Selector "UUIDString" (Target As Ptr) As Ptr
+		    Declare Function GetUTF8String Lib FoundationFramework Selector "UTF8String" (Target As Ptr) As CString
+		    
+		    Var UIDevice As Ptr = NSClassFromString("UIDevice")
+		    Var CurrentDevice As Ptr = GetCurrentDevice(UIDevice)
+		    Var UUIDValue As Ptr = GetIdentifierForVendor(CurrentDevice)
+		    Var NSStringValue As Ptr = GetUUIDString(UUIDValue)
+		    Var Identifier As String = GetUTF8String(NSStringValue)
+		    
+		    Return Identifier.DefineEncoding(Encodings.UTF8).Lowercase
 		  #else
-		    #Pragma Warning "No Hardware ID"
+		    #Pragma Error "HardwareID not implemented for this platform"
 		  #endif
 		End Function
 	#tag EndMethod
