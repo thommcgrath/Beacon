@@ -186,6 +186,14 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.mMask = Beacon.Maps.All.Mask
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub mMapSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
@@ -232,6 +240,10 @@ End
 
 	#tag Hook, Flags = &h0
 		Event NewDocument()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
 	#tag EndHook
 
 
