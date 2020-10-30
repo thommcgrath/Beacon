@@ -1653,6 +1653,11 @@ End
 
 	#tag Method, Flags = &h0
 		Function Save() As Boolean
+		  If Self.TypeMenu.SelectedRowIndex = -1 Then
+		    Self.ShowAlert("This objects has no type", "Please select what kind of object this is.")
+		    Return False
+		  End If
+		  
 		  Var Label As String = Self.NameField.Text.Trim
 		  Var Path As String = Self.PathField.Text.Trim
 		  If Label = "" Then
@@ -1660,17 +1665,17 @@ End
 		    Return False
 		  End If
 		  If Not Path.BeginsWith("/Game/") Then
-		    If Path.EndsWith("_C") And Path.IndexOf("/") = -1 Then
+		    If Path.IndexOf("/") = -1 Then
 		      Var TempPath As String
 		      Select Case Self.TypeMenu.SelectedRowIndex
 		      Case Self.IndexEngram
-		        TempPath = Beacon.Engram.CreateCustom("", Path, "").Path
+		        TempPath = Beacon.Engram.CreateCustom("", "", Path).Path
 		      Case Self.IndexCreature
-		        TempPath = Beacon.Creature.CreateCustom("", Path, "").Path
+		        TempPath = Beacon.Creature.CreateCustom("", "", Path).Path
 		      Case Self.IndexSpawnPoint
-		        TempPath = Beacon.SpawnPoint.CreateCustom("", Path, "").Path
+		        TempPath = Beacon.SpawnPoint.CreateCustom("", "", Path).Path
 		      End Select
-		      If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Anyway", "Cancel") Then
+		      If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Suggestion", "Cancel") Then
 		        Path = TempPath
 		      Else
 		        Return False
@@ -1870,6 +1875,9 @@ End
 		    Else
 		      Engram.RequiredUnlockPoints = Nil
 		    End If
+		  ElseIf RequiredLevelString.IsEmpty = False Or RequiredPointsString.IsEmpty = False Then
+		    Self.ShowAlert("Entry string is required to set level and point requirements.", "If you want to set level and point requirements for this engram, please provide the engram's entry string so Beacon can control it in the Engram Control editor.")
+		    Return False
 		  End If
 		  
 		  Var StackSizeString As String = Self.EngramStackSizeField.Text.Trim

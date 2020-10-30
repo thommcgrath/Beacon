@@ -402,6 +402,8 @@ End
 		    Blueprint.RemoveTags(RemoveTags)
 		    Self.mBlueprints(Idx) = Blueprint.ImmutableVersion
 		  Next
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
