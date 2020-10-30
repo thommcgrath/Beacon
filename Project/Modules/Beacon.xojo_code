@@ -543,7 +543,7 @@ Protected Module Beacon
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf ValueName = FullName Then
 		    Return Value
-		  ElseIf Adapter <> Nil And (GetDelegateTargetMBS(Adapter) Is Nil) = False Then
+		  ElseIf Beacon.SafeToInvoke(Adapter) Then
 		    If Adapter.Invoke(Value, ValueName) Then
 		      Return Value
 		    Else
@@ -1447,6 +1447,12 @@ Protected Module Beacon
 		  End If
 		  
 		  Return Beacon.SpawnPoint.CreateCustom(ObjectID, Path, ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SafeToInvoke(Callback As Variant) As Boolean
+		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or (GetDelegateTargetMBS(Callback) Is Nil) = False)
 		End Function
 	#tag EndMethod
 

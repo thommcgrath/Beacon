@@ -302,7 +302,7 @@ End
 		  
 		  Var Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
 		  Self.Hide()
-		  If (GetDelegateTargetMBS(Self.GoToIssueHandler) Is Nil) = False Then
+		  If Beacon.SafeToInvoke(Self.GoToIssueHandler) Then
 		    Self.GoToIssueHandler.Invoke(Issue)
 		  End If
 		  Self.Close()

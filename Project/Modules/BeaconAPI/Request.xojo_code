@@ -82,7 +82,7 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Sub InvokeCallback(Response As BeaconAPI.Response)
-		  If (GetDelegateTargetMBS(Self.mCallback) Is Nil) = False Then
+		  If Beacon.SafeToInvoke(Self.mCallback) Then
 		    Self.mCallback.Invoke(Self, Response)
 		  End If
 		  Self.mCallback = Nil

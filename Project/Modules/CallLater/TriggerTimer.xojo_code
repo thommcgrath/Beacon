@@ -4,13 +4,13 @@ Inherits Timer
 	#tag Event
 		Sub Action()
 		  If Self.Callback <> Nil Then
-		    If (GetDelegateTargetMBS(Self.Callback) Is Nil) = False Then
+		    If Beacon.SafeToInvoke(Self.Callback) Then
 		      Self.Callback.Invoke()
 		    Else
 		      Self.Callback = Nil
 		    End If
 		  ElseIf Self.CallbackWithArg <> Nil Then
-		    If (GetDelegateTargetMBS(Self.CallbackWithArg) Is Nil) = False Then
+		    If Beacon.SafeToInvoke(Self.CallbackWithArg) Then
 		      Self.CallbackWithArg.Invoke(Self.Argument)
 		    Else
 		      Self.CallbackWithArg = Nil

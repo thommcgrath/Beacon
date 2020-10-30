@@ -395,7 +395,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerCallback()
-		  If (GetDelegateTargetMBS(Self.mCallback) Is Nil) = False Then
+		  If Beacon.SafeToInvoke(Self.mCallback) Then
 		    Self.mCallback.Invoke()
 		  End If
 		  Self.Close

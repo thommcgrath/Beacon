@@ -122,7 +122,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DocumentsImported(Documents() As Beacon.Document)
-		  If (GetDelegateTargetMBS(Self.mImportCallback) Is Nil) = False Then
+		  If Beacon.SafeToInvoke(Self.mImportCallback) Then
 		    Self.mImportCallback.Invoke(Documents)
 		  End If
 		End Sub

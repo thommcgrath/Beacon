@@ -25,7 +25,7 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
-		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
+		    If Beacon.SafeToInvoke(Self.Handler) Then
 		      Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
 		    End If
 		    Self.Handler = Nil
@@ -40,7 +40,7 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
-		    If (GetDelegateTargetMBS(Self.Handler) Is Nil) = False Then
+		    If Beacon.SafeToInvoke(Self.Handler) Then
 		      Self.Handler.Invoke(Self.mURL, 0, Err.Reason, Self.Tag)
 		    End If
 		    Self.Handler = Nil

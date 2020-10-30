@@ -428,7 +428,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  
 		  Var AppSupport As FolderItem = App.ApplicationSupport
-		  Var ShouldImportCloud As Boolean
 		  
 		  Var LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
@@ -446,7 +445,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mBase.CreateDatabase
 		    
 		    Self.BuildSchema()
-		    ShouldImportCloud = True
 		  End If
 		  
 		  Var CurrentSchemaVersion As Integer = Self.mBase.UserVersion
@@ -509,35 +507,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
 		    Call Self.mBase.CreateDatabase
 		    Self.BuildSchema()
-		    ShouldImportCloud = True
 		  End If
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
-		  
-		  // Careful removing this, the commit updates the mLastCommitTime property
-		  Self.BeginTransaction()
-		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Beacon.UserModID, True)
-		  Self.Commit()
-		  
-		  Var Migrated As Boolean
-		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
-		    Try
-		      Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
-		    Catch Err As RuntimeException
-		      Var Message As String = Introspection.GetType(Err).FullName + " " + Err.Message
-		      App.Log("Database migration failed: " + Message.Trim)
-		    End Try
-		  End If
-		  If ShouldImportCloud And Migrated = False Then
-		    // Per https://github.com/thommcgrath/Beacon/issues/191 cloud data should be imported
-		    Self.mNextSyncImportAll = True
-		  End If
-		  
-		  If CurrentSchemaVersion < Self.SchemaVersion Then
-		    // Since the database version changed, import the local classes file. This helps
-		    // to mitigate issues where new columns have been added to records already synced.
-		    Self.ImportLocalClasses()
-		  End If
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
@@ -1311,6 +1283,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String)
+		  Self.mImporting = True
 		  Self.mPendingImports.Add(Content)
 		  
 		  If Self.mImportThread = Nil Then
@@ -1450,7 +1423,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function Importing() As Boolean
-		  Return (Self.mImportThread Is Nil) = False And Self.mImportThread.ThreadState <> Thread.ThreadStates.NotRunning
+		  Return Self.mImporting
 		End Function
 	#tag EndMethod
 
@@ -2109,6 +2082,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function MigrateData(Source As FolderItem, FromSchemaVersion As Integer) As Boolean
+		  Return True
+		  
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
 		    App.Log("Unable to attach database " + Source.NativePath)
 		    Return False
@@ -2321,6 +2296,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused Sender
 		  
 		  If Self.mPendingImports.LastIndex = -1 Then
+		    Self.mImporting = False
 		    Return
 		  End If
 		  
@@ -2334,6 +2310,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Wend
+		  Self.mImporting = False
 		  Var SyncNew As DateTime = Self.LastSync
 		  
 		  If SyncOriginal <> SyncNew Then
@@ -3131,6 +3108,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Beacon.Data = mInstance
 		    Var Results As RowSet = mInstance.SQLSelect("SELECT EXISTS(SELECT 1 FROM blueprints) AS populated;")
 		    If Results.Column("populated").BooleanValue = False Then
+		      mInstance.mNextSyncImportAll = True
 		      mInstance.ImportLocalClasses()
 		    End If
 		    If Preferences.OnlineEnabled Then
@@ -3289,49 +3267,45 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints("", "", New Beacon.StringList(Beacon.UserModID), "")
-		  Break
-		  Return
+		  Var Mods As New Beacon.StringList(Beacon.UserModID)
 		  Var Packed() As Dictionary
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    Var Dict As Dictionary = Blueprint.Pack
-		    If (Dict Is Nil) = False Then
+		  
+		  Var Engrams() As Beacon.Engram = Self.SearchForEngrams("", Mods, "")
+		  For Each Engram As Beacon.Engram In Engrams
+		    Var Dict As Dictionary = Engram.Pack
+		    If Dict Is Nil Then
 		      Continue
 		    End If
 		    
 		    Packed.Add(Dict)
 		  Next
+		  
+		  Var Creatures() As Beacon.Creature = Self.SearchForCreatures("", Mods, "")
+		  For Each Creature As Beacon.Creature In Creatures
+		    Var Dict As Dictionary = Creature.Pack
+		    If Dict Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packed.Add(Dict)
+		  Next
+		  
+		  Var SpawnPoints() As Beacon.SpawnPoint = Self.SearchForSpawnPoints("", Mods, "")
+		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		    Var Dict As Dictionary = SpawnPoint.Pack
+		    If Dict Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packed.Add(Dict)
+		  Next
+		  
 		  If Packed.Count > 0 Then
-		    Var Content As String = Beacon.GenerateJSON(Packed, False)
+		    Var Content As String = Beacon.GenerateJSON(Packed, True)
 		    Call UserCloud.Write("Blueprints.json", Content)
 		  Else
 		    Call UserCloud.Delete("Blueprints.json")
 		  End If
-		  
-		  #if false
-		    Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Beacon.UserModID)
-		    Var Dicts() As Dictionary
-		    While Not Results.AfterLastRow
-		      Var Dict As New Dictionary  
-		      Dict.Value("class_string") = Results.Column("class_string").StringValue  
-		      Dict.Value("path") = Results.Column("path").StringValue  
-		      Dict.Value("tags") = Results.Column("tags").StringValue
-		      Dict.Value("object_id") = Results.Column("object_id").StringValue
-		      Dict.Value("label") = Results.Column("label").StringValue
-		      Dict.Value("availability") = Results.Column("availability").IntegerValue
-		      Dict.Value("category") = Results.Column("category").StringValue
-		      Dicts.Add(Dict)
-		      
-		      Results.MoveToNextRow()
-		    Wend
-		    
-		    If Dicts.Count > 0 Then
-		      Var Content As String = Beacon.GenerateJSON(Dicts, False)
-		      Call UserCloud.Write("Engrams.json", Content)
-		    Else
-		      Call UserCloud.Delete("Engrams.json")
-		    End If
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -3417,6 +3391,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mEngramCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImporting As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

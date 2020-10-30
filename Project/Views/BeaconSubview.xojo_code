@@ -95,7 +95,7 @@ Implements ObservationKit.Observable
 		    Return True
 		  End If
 		  
-		  If Callback <> Nil And (GetDelegateTargetMBS(Callback) Is Nil) = False Then
+		  If Beacon.SafeToInvoke(Callback) Then
 		    Callback.Invoke(Self)
 		  End If
 		  

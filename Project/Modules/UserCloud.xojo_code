@@ -468,7 +468,17 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub SyncActual()
-		  SyncKey = ""
+		  If SyncKey.IsEmpty = False Then
+		    CallLater.Cancel(SyncKey)
+		    SyncKey = ""
+		  End If
+		  
+		  If LocalData.SharedInstance.Importing Then
+		    // Wait
+		    SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
+		    Return
+		  End If
+		  
 		  SyncActions.ResizeTo(-1)
 		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
 		End Sub
