@@ -3,7 +3,12 @@ Protected Class ResizedPushButton
 Inherits PushButton
 	#tag Event
 		Sub Open()
-		  Self.ResizeForPlatform(Self.IdealHeight)
+		  If Self.TopDelta <> 0 Then
+		    Self.Top = Self.Top + Self.TopDelta
+		  End If
+		  If Self.HeightDelta <> 0 Then
+		    Self.Height = Self.Height + Self.HeightDelta
+		  End If
 		  
 		  RaiseEvent Open
 		End Sub
@@ -15,8 +20,12 @@ Inherits PushButton
 	#tag EndHook
 
 
-	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"24"
+	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"5"
+	#tag EndConstant
+
+	#tag Constant, Name = TopDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"-2"
 	#tag EndConstant
 
 

@@ -1,20 +1,6 @@
 #tag Module
 Protected Module UITweaks
 	#tag Method, Flags = &h0
-		Sub ResizeForPlatform(Extends Target As Global.RectControl, IdealHeight As Integer)
-		  Var Diff As Integer = Max(IdealHeight - Target.Height, 0)
-		  If Diff = 0 Then
-		    Return
-		  End If
-		  
-		  Var TopOffset As Integer = Floor(Diff / 2)
-		  
-		  Target.Top = Target.Top - TopOffset
-		  Target.Height = Target.Height + Diff
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SwapButtons(Extends Win As Window, PanelIndex As Integer = -1)
 		  Var DefaultButton As PushButton
 		  Var CancelButton As PushButton

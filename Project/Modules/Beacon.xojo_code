@@ -1126,6 +1126,10 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ParseJSON(Source As String) As Variant
+		  If Source.IsEmpty Then
+		    Return Nil
+		  End If
+		  
 		  Const UseMBS = False
 		  
 		  If Source.Encoding Is Nil Then
