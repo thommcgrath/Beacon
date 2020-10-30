@@ -339,7 +339,7 @@ End
 		      Continue
 		    End If
 		    
-		    If (RequireAllMaps And (Document.MapMask And Mask) <> Mask) Or (RequireAllMaps = False And (Document.MapMask And Mask) = CType(0, UInt64)) Then
+		    If Mask > CType(0, UInt64) And ((RequireAllMaps And (Document.MapMask And Mask) <> Mask) Or (RequireAllMaps = False And (Document.MapMask And Mask) = CType(0, UInt64))) Then
 		      Continue
 		    End If
 		    

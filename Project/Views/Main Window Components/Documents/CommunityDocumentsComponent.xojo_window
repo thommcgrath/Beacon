@@ -102,7 +102,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   "#ColumnDownloads"
-      DefaultSortDirection=   1
+      DefaultSortDirection=   -1
       DropIndicatorVisible=   False
       EditCaption     =   "Open"
       Enabled         =   True
@@ -281,7 +281,9 @@ End
 		  Var Params As New Dictionary
 		  Params.Value("offset") = Offset
 		  Params.Value("count") = RowCount
-		  Params.Value("mask") = Self.FilterBar.Mask
+		  If Self.FilterBar.Mask > CType(0, UInt64) Then
+		    Params.Value("mask") = Self.FilterBar.Mask
+		  End If
 		  
 		  Var Filter As String = Self.FilterBar.SearchText
 		  If Filter.IsEmpty = False Then

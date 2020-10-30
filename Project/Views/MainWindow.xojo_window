@@ -620,12 +620,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub ShowLibraryPane(PageIndex As Integer)
-		  Self.LibraryPane1.ShowPage(PageIndex)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ShowPresets()
 		  Self.SwitchView(Self.PagePresets)
 		End Sub
@@ -687,6 +681,13 @@ End
 		    Return
 		  End If
 		  
+		  #if TargetWindows
+		    If Index = Self.PageHelp And SystemInformationMBS.IsWindows10(True) = False Then
+		      ShowURL(Beacon.WebURL("/help"))
+		      Return
+		    End If
+		  #endif
+		  
 		  Select Case CurrentIndex
 		  Case Self.PageHome
 		    Self.DashboardPane1.SwitchedFrom()
@@ -721,12 +722,6 @@ End
 		    Self.NavBar.Item(Idx).Toggled = (Idx = Index)
 		  Next
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function Tools() As LibraryPaneTools
-		  Return Self.LibraryPane1.ToolsPane
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -833,7 +828,7 @@ End
 		  
 		  Var Presets As OmniBarItem = OmniBarItem.CreateTab("NavPresets", "Presets")
 		  
-		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Help")
+		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Support")
 		  
 		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
 		  
