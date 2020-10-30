@@ -48,7 +48,9 @@ Inherits Listbox
 		  End If
 		  
 		  // Make the listbox transparent
-		  G.ClearRectangle(0, 0, G.Width, G.Height)
+		  If Self.Transparent Then
+		    G.ClearRectangle(0, 0, G.Width, G.Height)
+		  End If
 		  
 		  Var InsetLeft, InsetRight As Integer 
 		  #if UseRoundedRows
@@ -376,9 +378,7 @@ Inherits Listbox
 		  
 		  RaiseEvent Open
 		  
-		  #if TargetMacOS
-		    Self.Transparent = True
-		  #endif
+		  Self.Transparent = False
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
 		  Self.mOpened = True

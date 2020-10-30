@@ -295,15 +295,27 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ListEvenRowColor() As Color
-		  Var Colors() As Color = SystemColors.RowColors
-		  Return Colors(0)
+		  Try
+		    #if TargetMacOS
+		      Return New ColorGroup("primaryContentBackgroundColor")
+		    #endif
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Return New ColorGroup(&cfffefe00, &c16161600)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ListOddRowColor() As Color
-		  Var Colors() As Color = SystemColors.RowColors
-		  Return Colors(1)
+		  Try
+		    #if TargetMacOS
+		      Return New ColorGroup("secondaryContentBackgroundColor")
+		    #endif
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Return New ColorGroup(&cf1f2f200, &cfffefef3)
 		End Function
 	#tag EndMethod
 
@@ -334,65 +346,6 @@ Protected Module SystemColors
 		  End Try
 		  
 		  Return New ColorGroup(&c000000E6, &cFFFFFFE6)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function RowColors() As Color()
-		  Var Colors(1) As Color
-		  #if TargetMacOS
-		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
-		    Declare Function NSSelectorFromString Lib "Cocoa" (SelectorName As CFStringRef) As Ptr
-		    Declare Function RespondsToSelector Lib "Cocoa" Selector "respondsToSelector:" (Target As Ptr, Sel As Ptr) As Boolean
-		    
-		    Var NSColor As Ptr = objc_getClass("NSColor")
-		    
-		    Var ArrayRef As Ptr
-		    If RespondsToSelector(NSColor, NSSelectorFromString("alternatingContentBackgroundColors")) Then
-		      Declare Function RowColors Lib "Cocoa" Selector "alternatingContentBackgroundColors" (Target As Ptr) As Ptr
-		      ArrayRef = RowColors(NSColor)
-		    Else
-		      Declare Function RowColors Lib "Cocoa" Selector "controlAlternatingRowBackgroundColors" (Target As Ptr) As Ptr
-		      ArrayRef = RowColors(NSColor)
-		    End If
-		    
-		    Declare Function ArrayCount Lib "Cocoa" Selector "count" (Target As Ptr) As UInteger
-		    Declare Function ArrayObjectAtIndex Lib "Cocoa" Selector "objectAtIndex:" (Target As Ptr, Index As UInteger) As Ptr
-		    Declare Function GetGenericRGBColorSpace Lib "Cocoa" Selector "deviceRGBColorSpace" (Target As Ptr) As Ptr
-		    Declare Function ColorUsingColorSpace Lib "Cocoa" Selector "colorUsingColorSpace:" (Target As Ptr, ColorSpace As Ptr) As Ptr
-		    Declare Sub GetRGBValues Lib "Cocoa" Selector "getRed:green:blue:alpha:" (Target As Ptr, ByRef Red As CGFloat, ByRef Green As CGFloat, ByRef Blue As CGFloat, ByRef Alpha As CGFloat)
-		    
-		    Var ObjectCount As UInteger = ArrayCount(ArrayRef)
-		    Var Bound As Integer = CType(ObjectCount, Integer) - 1
-		    Var NSColorSpace As Ptr = objc_getClass("NSColorSpace")
-		    Var ColorSpace As Ptr = GetGenericRGBColorSpace(NSColorSpace)
-		    
-		    Colors.ResizeTo(Bound)
-		    For I As Integer = 0 To Bound
-		      Var Handle As Ptr = ColorUsingColorSpace(ArrayObjectAtIndex(ArrayRef, CType(I, UInteger)), ColorSpace)
-		      If Handle = Nil Then
-		        Colors(I) = &cFB02FE00
-		        Continue
-		      End If
-		      
-		      Var RedValue, GreenValue, BlueValue, AlphaValue As CGFloat
-		      GetRGBValues(Handle, RedValue, GreenValue, BlueValue, AlphaValue)
-		      Colors(I) = Color.RGB(255 * RedValue, 255 * GreenValue, 255 * BlueValue, 255 - (AlphaValue * 255))
-		    Next
-		    
-		    // This is to work around an issue where the even dark color isn't getting the proper alpha channel
-		    // https://forum.xojo.com/50440-dark-mode-alternatingcontentbackgroundcolors-doesn-t-seem-corre
-		    If SystemColors.IsDarkMode Then
-		      Colors(0) = Color.RGB(Colors(0).Red, Colors(0).Green, Colors(0).Blue, 153)
-		    End If
-		    
-		    Return Colors
-		  #endif
-		  
-		  Colors(0) = New ColorGroup(&cFFFFFF00, &c1E1E1E99)
-		  Colors(1) = New ColorGroup(&cF4F5F500, &cFFFFFFF3)
-		  
-		  Return Colors
 		End Function
 	#tag EndMethod
 
