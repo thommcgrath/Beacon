@@ -537,7 +537,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function TotalSeconds(Extends Interval As DateInterval) As Double
-		  Var Now As DateTime = DateTime.Now
+		  Var Now As DateTime = DateTime.Now(New TimeZone(0))
 		  Var Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
