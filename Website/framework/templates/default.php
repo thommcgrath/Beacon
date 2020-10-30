@@ -12,6 +12,7 @@ $description = BeaconTemplate::PageDescription();
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
 		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
