@@ -16,7 +16,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 $user = BeaconUser::GetByUserID($session->UserID());
-BeaconTemplate::SetTitle('Account: ' . $user->LoginKey());
+BeaconTemplate::SetTitle('Account: ' . $user->Username());
 
 BeaconTemplate::StartStyles(); ?>
 <style>
@@ -37,7 +37,7 @@ if (isset($_REQUEST['code'])) {
 	$code = '';
 }
 
-$email_id = $user->Email();
+$email_id = $user->EmailID();
 
 $results = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1 AND product_id = $2;', $email_id, OMNI_PRODUCT_ID);
 if ($results->RecordCount() > 0) {

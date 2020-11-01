@@ -8,6 +8,7 @@ require(dirname(__FILE__) . '/loader.php');
 $document_id = BeaconAPI::ObjectID();
 $method = BeaconAPI::Method();
 $database = BeaconCommon::Database();
+$user_id = null;
 
 $subobject = BeaconAPI::ObjectID(1);
 if (is_null($subobject) == false) {

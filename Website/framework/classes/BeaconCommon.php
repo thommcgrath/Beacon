@@ -158,6 +158,18 @@ abstract class BeaconCommon {
 		}
 	}
 	
+	public static function APIDomain() {
+		$domain = self::Domain();
+		$environment = self::EnvironmentName();
+		if ($environment === 'live') {
+			return 'api.' . $domain;
+		} elseif ($domain === 'beaconapp.cc') {
+			return 'api.' . $environment . '.' . $domain;
+		} else {
+			return $environment . '-api.' . $domain;
+		}
+	}
+	
 	public static function AbsoluteURL(string $path) {
 		// Because the host can be spoofed, only trust it in development.
 		if (self::InProduction()) {

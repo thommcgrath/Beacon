@@ -162,7 +162,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			} else if (hostnameResults[2] === undefined || hostnameResults[2] === 'www') {
 				apiHost = 'api.' + hostnameResults[3];
 			} else {
-				apiHost = hostnameResults[2] + '-api.' + hostnameResults[3];
+				if (hostnameResults[3] === 'beaconapp.cc') {
+					apiHost = 'api.' + hostnameResults[2] + '.' + hostnameResults[3];
+				} else {
+					apiHost = hostnameResults[2] + '-api.' + hostnameResults[3];
+				}
 			}
 			
 			request.post('https://' + apiHost + '/v2/session', {}, function(obj) {

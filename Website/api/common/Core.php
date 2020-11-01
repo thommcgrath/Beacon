@@ -269,7 +269,7 @@ abstract class Core {
 		if (strlen($path) == 0 || substr($path, 0, 1) != '/') {
 			$path = '/' . $path;
 		}
-		$domain = \BeaconCommon::InProduction() ? 'api.' . \BeaconCommon::Domain() : \BeaconCommon::EnvironmentName() . '-api.' . \BeaconCommon::Domain();
+		$domain = \BeaconCommon::APIDomain();
 		return 'https://' . $domain . '/' . static::APIVersion() . $path;
 	}
 }
