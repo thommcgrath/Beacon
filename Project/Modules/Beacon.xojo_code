@@ -110,6 +110,35 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function BytesToString(Bytes As Double, Locale As Locale = Nil) As String
+		  If Bytes < 1024 Then
+		    Return Bytes.ToString(Locale, ",##0") + " Bytes"
+		  End If
+		  
+		  Var Kibibytes As Double = Bytes / 1024
+		  If Kibibytes < 1024 Then
+		    Return Kibibytes.ToString(Locale, ",##0.00") + " KiB"
+		  End If
+		  
+		  Var Mebibytes As Double = Kibibytes / 1024
+		  If Mebibytes < 1024 Then
+		    Return Mebibytes.ToString(Locale, ",##0.00") + " MiB"
+		  End If
+		  
+		  // Let's be real, Beacon isn't going to be dealing with values greater than
+		  // Mebibytes, but here's the logic just in case.
+		  
+		  Var Gibibytes As Double = Mebibytes / 1024
+		  If Gibibytes < 1024 Then
+		    Return Gibibytes.ToString(Locale, ",##0.00") + " GiB"
+		  End If
+		  
+		  Var Tebibytes As Double = Gibibytes / 1024
+		  Return Tebibytes.ToString(Locale, ",##0.00") + " TiB"
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Categories() As String()
 		  Return Array(CategoryEngrams, CategoryCreatures, CategorySpawnPoints)

@@ -487,6 +487,7 @@ Class=ResizedSearchField;Modules/UITweaks/ResizedSearchField.xojo_code;&h0000000
 Class=BlueprintReference;Modules/Beacon/BlueprintReference.xojo_code;&h000000006D287FFF;&h0000000055ADDFFF;false
 Class=BlueprintAttributeManager;Modules/Beacon/BlueprintAttributeManager.xojo_code;&h000000002060E7FF;&h0000000055ADDFFF;false
 Class=TimingTracker;Classes/TimingTracker.xojo_code;&h000000005463FFFF;&h00000000056D5FFF;false
+Window=DocumentVersionListWindow;Views/Main Window Components/Documents/DocumentVersionListWindow.xojo_window;&h0000000010679FFF;&h000000005E2867FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

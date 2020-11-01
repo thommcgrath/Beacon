@@ -45,7 +45,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -240,6 +240,22 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  If Self.mVersionProgressKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mVersionProgressKey)
+		    Self.mVersionProgressKey = ""
+		  End If
+		  
+		  If (Self.mVersionProgress Is Nil) = False Then
+		    Self.mVersionProgress.Close
+		    Self.mVersionProgress = Nil
+		  End If
+		  
+		  RaiseEvent Close
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
@@ -309,6 +325,64 @@ End
 		  
 		  Self.UpdateList(Response)
 		  Self.Pages.SelectedPanelIndex = Self.PageList
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListVersions(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Self.mVersionProgressKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mVersionProgressKey)
+		    Self.mVersionProgressKey = ""
+		  End If
+		  
+		  If (Self.mVersionProgress Is Nil) = False Then
+		    Var Cancel As Boolean = Self.mVersionProgress.CancelPressed
+		    Self.mVersionProgress.Close
+		    Self.mVersionProgress = Nil
+		    If Cancel Then
+		      Return
+		    End If
+		  End If
+		  
+		  If Response.Success = False Then
+		    If Response.HTTPStatus = 0 Then
+		      Self.ShowAlert("Could not list versions due to a connection error", Response.Message)
+		      Return
+		    End If
+		    
+		    If Response.Message.IsEmpty = False Then
+		      Self.ShowAlert("Could not list versions", Response.Message)
+		    Else
+		      Self.ShowAlert("Could not list versions", "There was an HTTP " + Response.HTTPStatus.ToString(Locale.Current, "0") + " error.")
+		    End If
+		    Return
+		  End If
+		  
+		  If Not Response.JSONParsed Then
+		    Self.ShowAlert("Could not list versions", "The server replied with something that is not JSON.")
+		    Return
+		  End If
+		  
+		  Var Parsed As Variant = Response.JSON
+		  Var Versions() As Dictionary
+		  Try
+		    Versions = Parsed.DictionaryArrayValue
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Could not find any older versions", "There are no older versions of this document available.")
+		    Return
+		  End Try
+		  
+		  DocumentVersionListWindow.Present(Self, Versions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowVersionProgress()
+		  Self.mVersionProgressKey = ""
+		  
+		  Var Progress As New ProgressWindow("Finding older versions…", "Just a moment…")
+		  Progress.ShowWithin(Self.TrueWindow)
+		  Self.mVersionProgress = Progress
 		End Sub
 	#tag EndMethod
 
@@ -388,8 +462,21 @@ End
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
+
+
 	#tag Property, Flags = &h21
 		Private mDocuments() As BeaconAPI.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVersionProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVersionProgressKey As String
 	#tag EndProperty
 
 
@@ -548,6 +635,37 @@ End
 		    Self.OpenDocument(Self.URLForDocument(Document))
 		  Next
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  Var VersionsItem As New MenuItem("Older Versions…", "versions")
+		  VersionsItem.Enabled = Me.SelectedRowCount = 1 And Preferences.OnlineToken.IsEmpty = False
+		  Base.AddMenu(VersionsItem)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		  If HitItem Is Nil Then
+		    Return False
+		  End If
+		  
+		  If HitItem.Tag.IsNull = False And HitItem.Tag.Type = Variant.TypeString And HitItem.Tag.StringValue = "versions" Then
+		    If Me.SelectedRowCount = 1 Then
+		      Var Document As BeaconAPI.Document = Me.RowTagAt(Me.SelectedRowIndex)
+		      Var Request As New BeaconAPI.Request("/document/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
+		      Request.Authenticate(Preferences.OnlineToken)
+		      BeaconAPI.Send(Request)
+		      
+		      Self.mVersionProgressKey = CallLater.Schedule(2000, WeakAddressOf ShowVersionProgress)
+		    End If
+		    Return True
+		  End If
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events APISocket
