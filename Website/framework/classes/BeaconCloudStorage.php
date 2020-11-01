@@ -141,7 +141,7 @@ abstract class BeaconCloudStorage {
 				case 'logging':
 				case 'torrent':
 				case 'versionId':
-					if (is_null($value)) {
+					if (empty($value)) {
 						$subresource[] = urlencode($key);
 					} else {
 						$subresource[] = urlencode($key) . '=' . urlencode($value);
@@ -548,6 +548,10 @@ abstract class BeaconCloudStorage {
 		foreach ($elements as $element) {
 			$is_latest = strval($element->IsLatest[0]) === 'true';
 			$version_id = strval($element->VersionId[0]);
+			if ($version_id === 'null') {
+				// not sure what this is all about
+				continue;
+			}
 			$date = new DateTime(strval($element->LastModified));
 			$bytes = intval($element->Size);
 			$versions[] = [

@@ -4,6 +4,9 @@ class BeaconDocument extends BeaconAPI\Document {
 	public function Versions() {
 		$path = self::GenerateCloudStoragePath($this->OwnerID(), $this->DocumentID());
 		$versions = BeaconCloudStorage::VersionsForFile($path);
+		if ($versions === false) {
+			return array();
+		}
 		$api_path = $this->ResourceURL();
 		$api_query = '';
 		$pos = strpos($api_path, '?');
