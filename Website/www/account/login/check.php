@@ -32,7 +32,7 @@ if (is_null($user)) {
 		$verify_code = BeaconCommon::GenerateRandomKey(6, '0123456789');
 	}
 	
-	$headers = "From: Beacon Support <help@usebeacon.app>";
+	$headers = "From: Beacon Support <help@' . BeaconCommon::Domain() . '>";
 	$subject = "Email Verification Code";
 	$body = "Your email verification is $verify_code";
 	if (!mail($email, $subject, $body, $headers)) {

@@ -22,7 +22,7 @@ abstract class BeaconEmail {
 		];
 		
 		$body = [
-			'From' => '"Beacon" <help@usebeacon.app>',
+			'From' => '"Beacon" <help@' . BeaconCommon::Domain() . '>',
 			'To' => $recipient,
 			'Subject' => $subject,
 			'HtmlBody' => $body_html,

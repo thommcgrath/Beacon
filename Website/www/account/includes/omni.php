@@ -225,13 +225,13 @@ function ShowGiftCodes() {
 	}
 	
 	echo '<h2>Gift Codes</h2>';
-	echo '<p>Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or using the link next to each code.</p>';
+	echo '<p>Codes can be redeemed at <a href="/redeem">https://' . BeaconCommon::Domain() . '/redeem</a> or using the link next to each code.</p>';
 	echo '<table class="generic"><thead><tr><th>Code</th><th class="low-priority">Status</th><th class="low-priority">Redeem Link</th></thead>';
 	while (!$results->EOF()) {
 		$code = $results->Field('code');
 		$redeemed = is_null($results->Field('redemption_date')) === false;
 		
-		echo '<tr><td>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : 'https://usebeacon.app/redeem/' . htmlentities($code)) . '<span></div></td><td class="low-priority">' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td class="low-priority">' . ($redeemed ? '&nbsp;' : 'https://usebeacon.app/redeem/' . htmlentities($code)) . '</td>';
+		echo '<tr><td>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : '/redeem/' . htmlentities($code)) . '<span></div></td><td class="low-priority">' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td class="low-priority">' . ($redeemed ? '&nbsp;' : '/redeem/' . htmlentities($code)) . '</td>';
 		$results->MoveNext();
 	}
 	echo '</table>';
