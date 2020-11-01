@@ -178,8 +178,8 @@ Begin DocumentsComponentView CloudDocumentsComponent
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   5
-         ColumnWidths    =   "46,2*,*,100,*"
+         ColumnCount     =   6
+         ColumnWidths    =   "46,2*,*,100,70,220"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
@@ -201,7 +201,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Height          =   445
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   " 	Name	Map	Console Safe	Last Updated"
+         InitialValue    =   " 	Name	Map	Console Safe	Revision	Last Updated"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -239,12 +239,6 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
@@ -359,6 +353,7 @@ End
 		    Self.List.CellValueAt(I, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellValueAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
 		    Self.List.CellValueAt(I, Self.ColumnUpdated) = Document.LastUpdated.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.CellValueAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, ",##0")
 		    Self.List.RowTagAt(I) = Document
 		    Self.List.Selected(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
 		  Next
@@ -410,7 +405,10 @@ End
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnRevision, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageError, Type = Double, Dynamic = False, Default = \"4", Scope = Private
@@ -505,6 +503,19 @@ End
 		    If Row1Document.LastUpdated.SecondsFrom1970 > Row2Document.LastUpdated.SecondsFrom1970 Then
 		      Result = 1
 		    ElseIf Row1Document.LastUpdated.SecondsFrom1970 < Row2Document.LastUpdated.SecondsFrom1970 Then
+		      Result = -1
+		    Else
+		      Result = 0
+		    End If
+		    
+		    Return True
+		  Case Self.ColumnRevision
+		    Var Row1Document As BeaconAPI.Document = Me.RowTagAt(Row1)
+		    Var Row2Document As BeaconAPI.Document = Me.RowTagAt(Row2)
+		    
+		    If Row1Document.Revision > Row2Document.Revision Then
+		      Result = 1
+		    ElseIf Row1Document.Revision < Row2Document.Revision Then
 		      Result = -1
 		    Else
 		      Result = 0
