@@ -438,18 +438,20 @@ Implements ObservationKit.Observable
 		  
 		  Var Doc As New Beacon.Document
 		  Var Version As Integer = 1
+		  Var MinVersion As Integer = DocumentVersion
 		  Var Dict As Dictionary
 		  If Parsed IsA Dictionary Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
+		    MinVersion = Dict.Lookup("MinVersion", MinVersion)
 		    If Dict.HasKey("Identifier") Then
 		      Doc.mIdentifier = Dict.Value("Identifier")
 		    Else
 		      Doc.mIdentifier = New v4UUID
 		    End If
 		  End If
-		  If Version > DocumentVersion Then
-		    FailureReason = "Unable to load document because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + DocumentVersion.ToString + "."
+		  If MinVersion > DocumentVersion Then
+		    FailureReason = "Unable to load document because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + MinVersion.ToString + "."
 		    App.Log(FailureReason)
 		    Return Nil
 		  ElseIf Version < 3 Then
