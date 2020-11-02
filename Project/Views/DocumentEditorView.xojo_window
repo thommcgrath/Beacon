@@ -850,7 +850,7 @@ End
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
-		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
+		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL(Beacon.DocumentURL.URLTypes.Unmodified) // To force convert to text
 		  Notification.UserData.Value("Reason") = Reason
 		  LocalData.SharedInstance.SaveNotification(Notification)
 		End Sub

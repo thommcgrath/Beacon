@@ -219,15 +219,15 @@ End
 			  
 			  Self.mDocumentURL = Value
 			  
-			  Self.URLLabel.Text = Self.mDocumentURL.URL
+			  Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Reading)
 			  
 			  Select Case Self.mDocumentURL.Scheme
 			  Case Beacon.DocumentURL.TypeLocal
 			    Try
-			      Var File As New FolderItem(Self.mDocumentURL.URL, FolderItem.PathModes.URL)
+			      Var File As New FolderItem(Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Unmodified), FolderItem.PathModes.URL)
 			      Self.URLLabel.Text = File.NativePath
 			    Catch Err As RuntimeException
-			      Self.URLLabel.Text = Self.mDocumentURL.URL
+			      Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Reading)
 			    End Try
 			    Self.MessageLabel.Text = "Loading " + Self.mDocumentURL.Name + "…"
 			  Case Beacon.DocumentURL.TypeWeb

@@ -164,7 +164,7 @@ Protected Module Preferences
 		  Var URLs() As String
 		  URLs.ResizeTo(Values.LastIndex)
 		  For I As Integer = 0 To Values.LastIndex
-		    URLs(I) = Values(I).URL
+		    URLs(I) = Values(I).URL(Beacon.DocumentURL.URLTypes.Storage)
 		  Next
 		  
 		  Init
