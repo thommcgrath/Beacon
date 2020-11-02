@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			return false;
 		}
 		
-		request.post('/account/actions/password.php', {'current_password': current_password, 'password': password, 'allow_vulnerable': allow_vulnerable}, function(obj) {
+		request.post('/account/actions/password', {'current_password': current_password, 'password': password, 'allow_vulnerable': allow_vulnerable}, function(obj) {
 			document.getElementById('change_password_form').reset();
 			dialog.show('Your password has been changed.', 'Changing your password does not sign you out of other devices.');
 		}, function(http_status, content) {
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			return false;
 		}
 		
-		request.post('/account/actions/username.php', {'username': username}, function(obj) {
+		request.post('/account/actions/username', {'username': username}, function(obj) {
 			dialog.show('Username changed', 'Your username has been changed to "' + obj.username + '."', function() {
 				window.location.reload(true);
 			});
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	});
 	
 	document.getElementById('new-suggestion-link').addEventListener('click', function(ev) {
-		request.get('/account/login/suggest.php', {}, function(obj) {
+		request.get('/account/login/suggest', {}, function(obj) {
 			document.getElementById('suggested-username-link').innerText = obj.username;
 			document.getElementById('suggested-username-link').setAttribute('beacon-username', obj.username);
 		}, function(http_status, content) {});

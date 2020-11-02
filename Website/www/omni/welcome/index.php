@@ -27,7 +27,7 @@ function check_purchase_status(client_reference_id) {
 	}
 	
 	number_of_checks++;
-	request.get('status.php', {'client_reference_id': client_reference_id}, function(obj) {
+	request.get('status', {'client_reference_id': client_reference_id}, function(obj) {
 		document.getElementById('checking_container').style.display = 'none';
 		document.getElementById('checking_container').style.display = 'none';
 		document.getElementById('purchase_confirmed').style.display = 'block';

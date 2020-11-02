@@ -164,7 +164,7 @@ BeaconTemplate::FinishStyles();
 		$login = new BeaconLogin();
 		$login->with_remember_me = true;
 		$login->with_login_cancel = false;
-		$login->session_consumer_uri = '/account/auth.php?session_id={{session_id}}&return={{return_uri}}&temporary={{temporary}}';
+		$login->session_consumer_uri = '/account/auth?session_id={{session_id}}&return={{return_uri}}&temporary={{temporary}}';
 		$login->Show();
 	?>
 </div><?php

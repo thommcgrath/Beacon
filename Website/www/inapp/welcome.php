@@ -12,7 +12,7 @@ $login_only = isset($_GET['login_only']) ? (strtolower($_GET['login_only']) == '
 </div>
 <?php if (!$login_only) { ?>
 <div id="page_intro">
-	<p class="explanation">Beacon stores fully anonymous user data to provide community document sharing and cloud storage features.<br><a href="/privacy.php">See how Beacon manages your data&hellip;</a></p>
+	<p class="explanation">Beacon stores fully anonymous user data to provide community document sharing and cloud storage features.<br><a href="/privacy">See how Beacon manages your data&hellip;</a></p>
 	<div id="welcome_choices">
 		<p><button id="intro_continue_button" class="default">Continue</button></p>
 		<p><button id="intro_login_button">Log In With Email</button></p>

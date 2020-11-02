@@ -34,7 +34,7 @@ if ($version >= 5) {
 		$build_number = $results->Field('build_number');
 	}
 	
-	$destination = BeaconCommon::AbsoluteURL('/download/classes.php?version=' . $build_number);
+	$destination = BeaconCommon::AbsoluteURL('/download/classes?version=' . $build_number);
 }
 
 http_response_code(302);

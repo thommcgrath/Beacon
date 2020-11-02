@@ -139,7 +139,7 @@ if (count($map_names) >= 3) {
 	<div id="mode_view">
 		<div id="mode_view_new">
 			<p>This option creates a new Game.ini from scratch. Use this if your server has no customizations.</p>
-			<form action="generate.php" method="get">
+			<form action="generate" method="get">
 				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
 				<input type="hidden" name="difficulty_value" value="" id="create_difficulty_value">
 				<p class="text-center"><label class="radio"><input type="radio" name="mode" value="inline" id="create_inline_check" checked><span></span>Show new Game.ini in browser</label><br><label class="radio"><input type="radio" name="mode" value="download" id="create_download_check"><span></span>Download new Game.ini</label></p>
@@ -148,7 +148,7 @@ if (count($map_names) >= 3) {
 		</div>
 		<div id="mode_view_paste">
 			<p>Paste your current Game.ini here and a customized version will be produced for you.</p>
-			<form action="generate.php" method="post">
+			<form action="generate" method="post">
 				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
 				<input type="hidden" name="mode" value="inline">
 				<input type="hidden" name="difficulty_value" value="" id="paste_difficulty_value">
@@ -158,7 +158,7 @@ if (count($map_names) >= 3) {
 		</div>
 		<div id="mode_view_upload">
 			<p>Upload your current Game.ini to download a customized version.</p>
-			<form action="generate.php" method="post" enctype="multipart/form-data">
+			<form action="generate" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
 				<input type="hidden" name="mode" value="download">
 				<input type="hidden" name="difficulty_value" value="" id="upload_difficulty_value">

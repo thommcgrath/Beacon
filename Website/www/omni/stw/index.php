@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var encrypted = encrypt.encrypt(document.getElementById('stw_email_field').value);
 		
 		var fields = {'email': encrypted};
-		request.post('submit.php', fields, function (obj) {
+		request.post('submit', fields, function (obj) {
 			var container = document.getElementById('stw_container');
 			container.innerHTML = 'Ok, ' + obj.email + ' is now on the list! If selected, you will receive an email with instructions.';
 		}, function (http_status, response_body) {

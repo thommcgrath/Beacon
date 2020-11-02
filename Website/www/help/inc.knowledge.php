@@ -43,7 +43,7 @@ function ShowKnowledgeContent(string $html, string $current_slug) {
 	<?php
 	BeaconTemplate::FinishScript();
 	
-	echo '<div id="knowledge_search_block"><form action="/help/search.php" method="get" id="knowledge_search_form"><input type="search" placeholder="Search For Help" name="query" id="knowledge_search_field" recents="0" value="' . (isset($_GET['query']) ? htmlentities($_GET['query']) : '') . '"></form></div>';
+	echo '<div id="knowledge_search_block"><form action="/help/search" method="get" id="knowledge_search_form"><input type="search" placeholder="Search For Help" name="query" id="knowledge_search_field" recents="0" value="' . (isset($_GET['query']) ? htmlentities($_GET['query']) : '') . '"></form></div>';
 	
 	foreach ($toc as $group_name => $group_contents) {
 		echo '<p>' . htmlentities($group_name) . '</p><ul>';

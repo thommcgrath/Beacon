@@ -86,7 +86,7 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
 
 ?><h1>Redeem a Code for Beacon Omni</h1>
 <div id="redeem_form">
-	<form action="redeem.php" method="post">
+	<form action="redeem" method="post">
 		<p>Got a code for Beacon Omni? Redeem it here!</p>
 		<?php if (isset($error)) { ?><p class="text-center text-red"><?php echo htmlentities($error); ?></p><?php } ?>
 		<p><input type="text" name="code" placeholder="Code" minlength="9" maxlength="9" value="<?php echo htmlentities($code); ?>"></p>

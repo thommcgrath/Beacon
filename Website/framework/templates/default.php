@@ -60,7 +60,7 @@ $description = BeaconTemplate::PageDescription();
 				<p>Beacon is an open source project by</p>
 				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="120" alt="The ZAZ Studios"></a></p>
 				<p>Copyright 2016-<?php echo date('Y'); ?></p>
-				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>" alt="Beacon on GitHub"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>" alt="Beacon Discord Server"></a></p>
+				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>" alt="Beacon on GitHub"></a><a class="external_logo" href="/discord" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>" alt="Beacon Discord Server"></a></p>
 				<p>Get in touch using <a href="/help/contact">our support form</a>.<span class="smaller"><br><a href="/help/about_user_privacy">Privacy Policy</a></span></p>
 			</div>
 		</div>

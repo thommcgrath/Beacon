@@ -18,7 +18,7 @@ class BeaconLogin {
 	<p class="text-center"><img id="loading_spinner" src="/assets/images/spinner.svg" class="white-on-dark" width="64"></p>
 </div>
 <div id="page_login">
-	<form id="login_form_intro" action="check.php" method="post">
+	<form id="login_form_intro" action="check" method="post">
 		<p><input type="email" name="email" placeholder="E-Mail Address" id="login_email_field" required></p>
 		<p><input type="password" name="password" placeholder="Password" id="login_password_field" minlength="8" title="Enter a password with at least 8 characters" required></p>
 		<?php if ($this->with_remember_me) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>

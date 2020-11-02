@@ -195,7 +195,7 @@ BeaconTemplate::FinishScript();
 		<div class="push">&nbsp;</div>
 	</div>
 	<div class="signin_step separator-color" id="upload_container">
-		<form id="upload_activation_form" method="post" action="/account/actions/activate.php" enctype="multipart/form-data">
+		<form id="upload_activation_form" method="post" action="/account/actions/activate" enctype="multipart/form-data">
 			<input type="file" name="file" accept=".beaconauth" id="file_chooser"><input type="submit" value="Upload">
 		</form>
 		<div id="drop_area" class="separator-color"><span id="drop_initial_instructions">Drop your activation file here or <a href="" id="choose_file_button">choose the file</a>.</span><span id="drop_hover_instructions">Do it!</span></div>

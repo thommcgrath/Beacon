@@ -128,7 +128,7 @@ if ($stable_engrams_version >= 5) {
 	$engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
 } else {
 	$last_database_update = BeaconCommon::NewestUpdateTimestamp($build);
-	$engrams_url = 'classes.php?version=' . $build;
+	$engrams_url = 'classes?version=' . $build;
 }
 $prerelease = $database->Query('SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;', $build);
 $stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_number = 10306300;');
@@ -164,7 +164,7 @@ $stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_nu
 		}
 	}
 	
-	$prerelease_links[] = '<a href="/history.php?stage=' . htmlentities($prerelease->Field('stage')) . '#build' . htmlentities($prerelease->Field('build_number')) . '">Release Notes</a>';
+	$prerelease_links[] = '<a href="/history?stage=' . htmlentities($prerelease->Field('stage')) . '#build' . htmlentities($prerelease->Field('build_number')) . '">Release Notes</a>';
 	
 	$prerelease_engrams_version = $prerelease->Field('delta_version');
 	if ($prerelease_engrams_version == $stable_engrams_version) {
@@ -173,7 +173,7 @@ $stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_nu
 		$results = $database->Query('SELECT path FROM update_files WHERE version = $1 AND type = \'Complete\';', $prerelease_engrams_version);
 		$prerelease_engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
 	} else {
-		$prerelease_engrams_url = 'classes.php?version=' . $prerelease->Field('build_number');
+		$prerelease_engrams_url = 'classes?version=' . $prerelease->Field('build_number');
 	}
 	$prerelease_links[] = '<a href="' . $prerelease_engrams_url . '" rel="nofollow">Engrams Database</a>';
 ?>
