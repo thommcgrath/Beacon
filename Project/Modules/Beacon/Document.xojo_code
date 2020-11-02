@@ -1315,7 +1315,7 @@ Implements ObservationKit.Observable
 		  
 		  Var Document As New Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
-		  Document.Value("MinVersion") = 5
+		  Document.Value("MinVersion") = 5 // This only changes when the document can't be backwards compatible.
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("Trust") = Self.TrustKey
 		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords

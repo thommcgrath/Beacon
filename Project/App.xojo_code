@@ -607,12 +607,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    
 		    Select Case Instructions
 		    Case "showdocuments"
-		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneDocuments)
+		      Self.mMainWindow.ShowDocuments()
 		    Case "showpresets"
-		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PanePresets)
-		    Case "showengrams"
-		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneEngrams)
-		    Case "showmods"
+		      Self.mMainWindow.ShowPresets()
+		    Case "showengrams", "showblueprints", "showmods"
 		      Self.mMainWindow.ShowBlueprints()
 		    Case "showidentity"
 		      IdentityWindow.Show()

@@ -27,35 +27,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
    Title           =   "Beacon"
    Visible         =   True
    Width           =   1200
-   Begin LibraryPane LibraryPane1
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
-      Height          =   680
-      HelpTag         =   ""
-      InitialParent   =   ""
-      Left            =   -323
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -420
-      Transparent     =   True
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   300
-   End
    Begin OmniBar NavBar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -107,7 +78,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   1200
       Begin HTMLViewer HelpViewer
@@ -412,36 +383,21 @@ End
 
 	#tag MenuHandler
 		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+			Self.ShowDocuments()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
+			Self.ShowBlueprints()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewPresets() As Boolean Handles ViewPresets.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PanePresets)
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function ViewSearch() As Boolean Handles ViewSearch.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneSearch)
-			Return True
-			
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function ViewTools() As Boolean Handles ViewTools.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneTools)
+			Self.ShowPresets()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -796,23 +752,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events LibraryPane1
-	#tag Event
-		Sub ShouldShowView(View As BeaconSubview)
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function ShouldDiscardView(View As BeaconSubview) As Boolean
-		  
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub ChangePosition(Difference As Integer)
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events NavBar
 	#tag Event
 		Sub Open()
