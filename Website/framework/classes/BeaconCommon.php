@@ -151,7 +151,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function Domain() {
-		if (strtolower(substr($_SERVER['HTTP_HOST'], -12)) === 'beaconapp.cc') {
+		if (isset($_SERVER['HTTP_HOST']) && (strtolower(substr($_SERVER['HTTP_HOST'], -12)) === 'beaconapp.cc')) {
 			return 'beaconapp.cc';
 		} else {
 			return 'usebeacon.app';

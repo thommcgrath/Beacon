@@ -53,7 +53,8 @@ BeaconErrors::StartWatching();
 	$policies = array(
 		'default-src' => array(
 			"'self'",
-			"https://*." . BeaconCommon::Domain(),
+			"https://*.beaconapp.cc",
+			"https://*.usebeacon.app",
 			"https://*.stripe.com"
 		),
 		'frame-src' => array(
