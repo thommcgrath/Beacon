@@ -19,7 +19,7 @@ class User implements \JsonSerializable {
 	protected $banned = false;
 	protected $enabled = true;
 	protected $require_password_change = false;
-	protected $parent_account_id = false;
+	protected $parent_account_id = null;
 	
 	private $has_child_accounts = null;
 	private $child_accounts = null;
