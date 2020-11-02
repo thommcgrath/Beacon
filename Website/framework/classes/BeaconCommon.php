@@ -540,19 +540,22 @@ abstract class BeaconCommon {
 	}
 	
 	public static function SignDownloadURL(string $url, int $expires = 3600) {
-		if (strtolower(substr($url, 0, 29)) === 'https://releases.' . self::Domain()) {
-			$key = static::GetGlobal('BunnyCDN_Signing_Key');
-			if (is_null($key)) {
-				return $url;
-			}
-			
+		if (strtolower(substr($url, 0, 29)) === 'https://releases.beaconapp.cc') {
 			$path = substr($url, 29);
-			$expires += time();
-			$token = str_replace('=', '', strtr(base64_encode(md5($key . $path . $expires, true)), '+/', '-_'));
-			return $url . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
+		} elseif (strtolower(substr($url, 0, 30)) === 'https://releases.usebeacon.app') {
+			$path = substr($url, 30);
 		} else {
 			return $url;
 		}
+		
+		$key = static::GetGlobal('BunnyCDN_Signing_Key');
+		if (is_null($key)) {
+			return $url;
+		}
+		
+		$expires += time();
+		$token = str_replace('=', '', strtr(base64_encode(md5($key . $path . $expires, true)), '+/', '-_'));
+		return 'https://releases.' . self::Domain() . $path . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
 	}
 	
 	public static function IsCompressed(string $content) {
