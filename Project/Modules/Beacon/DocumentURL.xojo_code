@@ -187,12 +187,6 @@ Protected Class DocumentURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "URL(DocumentURL.URLTypes.Unmodified)" )  Function URL() As String
-		  Return Self.URL(Beacon.DocumentURL.URLTypes.Unmodified)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function URL(Purpose As Beacon.DocumentURL.URLTypes) As String
 		  If Purpose = Beacon.DocumentURL.URLTypes.Unmodified Or Self.mScheme = Self.TypeLocal Or Self.mScheme = Self.TypeTransient Then
 		    Return Self.mOriginalURL
@@ -247,12 +241,6 @@ Protected Class DocumentURL
 		    End If
 		  #endif
 		  Return New Beacon.DocumentURL(Path)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function WithScheme(NewScheme As String) As Beacon.DocumentURL
-		  Return NewScheme + Self.mOriginalURL.Middle(Self.mScheme.Length)
 		End Function
 	#tag EndMethod
 
