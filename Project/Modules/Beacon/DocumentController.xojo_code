@@ -220,7 +220,7 @@ Protected Class DocumentController
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mDocumentURL.WithScheme("https").URL)
-		    If Socket.LastHTTPStatus >= 200 Then
+		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
 		      FileContent = Socket.LastContent
 		    Else
 		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
