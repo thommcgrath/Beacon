@@ -12,6 +12,17 @@ Protected Module Tests
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CreateEncryptionTest()
+		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(40)
+		  Var Message As String = v4UUID.Create.StringValue
+		  Var EncryptedLegacy As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 1)
+		  Var EncryptedModern As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 2)
+		  
+		  System.DebugLog("TestEncryptionPortability(""ciphermbs"", """ + EncodeBase64(Key, 0) + """, """ + Message + """, """ + EncodeBase64(EncryptedLegacy, 0) + """, """ + EncodeBase64(EncryptedModern, 0) + """)")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RunTests()
 		  #if DebugBuild
@@ -139,51 +150,55 @@ Protected Module Tests
 		  
 		  Call Assert(TestValue = Decrypted, "Decrypted value does not match original")
 		  
-		  Var Key As MemoryBlock = BeaconEncryption.GenerateSymmetricKey()
+		  // Test symmetric with different key lengths
+		  TestSymmetricEncryption(8) // Half necessary for even blowfish
+		  TestSymmetricEncryption(9) // Nonsense number
+		  TestSymmetricEncryption(32) // Too much for blowfish, perfect for aes
+		  TestSymmetricEncryption(40) // Too much for both
+		  
+		  // These values come from PHP
+		  TestEncryptionPortability("php", "xNPUcwVM+TrisKjmQtYb6hQoYG+6LnCZYp2qZYgtqRSLSBSDOCZBvw==", "ecf83b98-8285-418f-88f8-5b789392b30b", "igHRJFCVtL2H3AAAACS1SWEOrO2a2eul3N+cB4GhmCOETi4lqt/z8vyQfP6uWxRvnYsDDd5O9dHe1A==", "igLzyZkDYLaDRNUhYYWH0X12AAAAJLVJYQ7pVEuanCARqgMPPGVcQkKvdS3HXW461MbYN9/ooG88LzXClOHYRUE8arDyI7mhhEQ=")
+		  
+		  // These values come from M_Crypto versions of Beacon (1.4.7 and earlier)
+		  TestEncryptionPortability("m_crypto", "Eq/Ypo2Kw3RNA2te31fp19EP/dMGSR4IlWmjtoYn8tBnKYgA+Sr2LA==", "3456efca-c48c-41cc-a01e-3713301d9a38", "igEeFJyHv42YOAAAACQTaroA7hSPqLmalHvZflHwhZtOiTYNUZD4JOdfusagXzlKt5PH2j8vUhxV0Q==", "igKh3O68LgyGZPABtA7OI0pzAAAAJBNqugBO2kDGdvIXrkfA5femIzmdRnDSSWI3xFA9diRZiHqdbbjH+qS/5Hi9Acjh26lGfmg=")
+		  
+		  // Create a test usable by other versions (don't need it enabled right now)
+		  // CreateEncryptionTest()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestEncryptionPortability(Source As String, Key As String, DesiredMessage As String, LegacyPayload As String, ModernPayload As String)
+		  Var KeyDecoded As MemoryBlock = DecodeBase64(Key)
+		  Var LegacyPayloadDecoded As MemoryBlock = DecodeBase64(LegacyPayload)
+		  Var ModernPayloadDecoded As MemoryBlock = DecodeBase64(ModernPayload)
+		  Var Failed As Boolean
 		  
 		  Try
-		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric encrypt test value")
-		  End Try
-		  
-		  Var Board As New Clipboard
-		  Board.Text = "Key: " + EncodeHex(Key) + EndOfLine + "Encrypted: " + EncodeHex(Encrypted) + EndOfLine + "Decrypted: " + EncodeHex(TestValue)
-		  
-		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric decrypt encrypted test value")
-		  End Try
-		  
-		  Call Assert(TestValue = Decrypted, "Symmetric decrypted value does not match original")
-		  
-		  Try
-		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 1)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric(legacy) encrypt test value")
-		  End Try
-		  
-		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric(legacy) decrypt encrypted test value")
-		  End Try
-		  
-		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
-		  
-		  // Test decrypting constant values
-		  
-		  Key = DecodeHex("F433EAEEDB6B12B4EDC354FAB072BC14FF44B8A3F93B299E")
-		  Encrypted = DecodeHex("8A0257B63E837DA5B5D995FF2E32FEEA0FA9000000188A24AAE6742E36962B17E1C903B8DA8ADCF00D16EC59E4369B40DA145ABCB7D7CBAAAB92")
-		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
-		    If EncodeHex(Decrypted) <> "B5457B456A0A662198A72ABEEB9D409B5B6AD5603743ABAB" Then
-		      System.DebugLog("Constant value was decrypted to the wrong value.")
+		    Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(KeyDecoded, LegacyPayloadDecoded)
+		    If Decrypted <> DesiredMessage Then
+		      Failed = True
+		      System.DebugLog(Source + ": Constant value was decrypted to the wrong value.")
 		    End If
 		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric decrypt constant values.")
+		    Failed = True
+		    System.DebugLog(Source + ": Unable to symmetric decrypt constant legacy values.")
 		  End Try
+		  
+		  Try
+		    Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(KeyDecoded, ModernPayloadDecoded)
+		    If Decrypted <> DesiredMessage Then
+		      Failed = True
+		      System.DebugLog(Source + ": Constant value was decrypted to the wrong value.")
+		    End If
+		  Catch Err As RuntimeException
+		    Failed = True
+		    System.DebugLog(Source + ": Unable to symmetric decrypt constant modern values.")
+		  End Try
+		  
+		  If Failed Then
+		    System.Beep
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -445,6 +460,42 @@ Protected Module Tests
 		  Var StringValue As String = "Human"
 		  Call Assert(StringValue.IndexOf("u") = 1, "String.IndexOf returns incorrect result. Expected 1, got " + StringValue.IndexOf("u").ToString + ".")
 		  Call Assert(StringValue.Middle(2) = "man", "String.Middle returns incorrect result. Expected 'man', got '" + StringValue.Middle(2) + "'.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestSymmetricEncryption(KeyLength As Integer)
+		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(KeyLength)
+		  Var TestValue As MemoryBlock = Crypto.GenerateRandomBytes(33) // Use a strange number that will always require padding
+		  Var Encrypted, Decrypted As MemoryBlock
+		  
+		  Try
+		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric decrypt encrypted test value")
+		  End Try
+		  
+		  Call Assert(TestValue = Decrypted, "Symmetric decrypted value does not match original")
+		  
+		  Try
+		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 1)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric(legacy) encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric(legacy) decrypt encrypted test value")
+		  End Try
+		  
+		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
 		End Sub
 	#tag EndMethod
 

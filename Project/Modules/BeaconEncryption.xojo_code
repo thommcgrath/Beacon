@@ -10,6 +10,21 @@ Protected Module BeaconEncryption
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function FixSymmetricKey(Key As MemoryBlock, DesiredLength As Integer) As MemoryBlock
+		  If Key Is Nil Then
+		    Return Nil
+		  ElseIf Key.Size = DesiredLength Then
+		    Return Key
+		  End If
+		  
+		  Var Temp As New MemoryBlock(DesiredLength)
+		  Temp.LittleEndian = Key.LittleEndian
+		  Temp.StringValue(0, Min(Key.Size, DesiredLength)) = Key.StringValue(0, Min(Key.Size, DesiredLength))
+		  Return Temp
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GenerateSymmetricKey(Bits As Integer = 256) As MemoryBlock
 		  Return Crypto.GenerateRandomBytes(Bits / 8)
@@ -151,7 +166,7 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function SymmetricDecrypt(Key As MemoryBlock, Data As MemoryBlock) As MemoryBlock
-		  If Data = "" Then
+		  If Data Is Nil Or Data.Size = 0 Then
 		    Return ""
 		  End If
 		  
@@ -168,15 +183,17 @@ Protected Module BeaconEncryption
 		  Select Case Header.Version
 		  Case 2
 		    Crypt = CipherMBS.aes_256_cbc
+		    Key = FixSymmetricKey(Key, Crypt.KeyLength)
 		  Case 1
 		    Crypt = CipherMBS.bf_cbc
 		  End Select
-		  Key.Size = Crypt.KeyLength
+		  
 		  If Not Crypt.DecryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
 		    Err.Reason = "Incorrect key or vector length"
 		    Raise Err
 		  End If
+		  
 		  Data = Crypt.Process(Data)
 		  
 		  If Data.Size > Header.Length Then
@@ -206,6 +223,7 @@ Protected Module BeaconEncryption
 		  Select Case Version
 		  Case 2
 		    Crypt = CipherMBS.aes_256_cbc
+		    Key = FixSymmetricKey(Key, Crypt.KeyLength)
 		  Case 1
 		    Crypt = CipherMBS.bf_cbc
 		  Else
@@ -213,13 +231,14 @@ Protected Module BeaconEncryption
 		    Err.Message = "Unknown symmetric version " + Version.ToString
 		    Raise Err
 		  End Select
-		  Key.Size = Crypt.KeyLength
+		  
 		  If Not Crypt.EncryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
 		    Err.Reason = "Incorrect key or vector length"
 		    Raise Err
 		    Return ""
 		  End If
+		  
 		  Return Header.Encoded + Crypt.Process(Data)
 		End Function
 	#tag EndMethod
