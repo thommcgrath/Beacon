@@ -2,7 +2,7 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
-$key = BeaconEncryption::GenerateKey();
+$key = BeaconEncryption::GenerateKey(320);
 $message = BeaconCommon::GenerateUUID();
 $bf = BeaconEncryption::SymmetricEncrypt($key, $message, true);
 $aes = BeaconEncryption::SymmetricEncrypt($key, $message, false);
@@ -23,10 +23,10 @@ try {
 }
 
 // from Beacon 1.4.8 and newer
-TestEncryptionPortability("ciphermbs", "BO0qk2RScG2baup6WAYpiguTFpizGbDBbSx3gC/N/t0=", "eeff8a11-e5f8-4b78-ae69-dc12fc2675fd", "igFqWPg9U7pTJAAAACSo/43maibGAokDBTvNswpEF7/kiDTVZ1uRqRbSYqby3OhJ7AbuwcTwEzxZmg==", "igJD0Q/kz9v16/j0zZNR9yvRAAAAJKj/jeZRY5vTF6YiPmZZ2mN2z1CxVfyZqrxLcyVHprlpDbTa+yanYh4NltRkss+d476woTk=");
+TestEncryptionPortability("ciphermbs", "AcdHE85j+s4dB5bkTTlZ9Gha29AM7yS5Gs1ufTYvPI7Oktk0v8UoRg==", "b8398f3a-d824-46e6-a1dc-dce31683b1d3", "igFRTQGqO7BxzgAAACTzMx7Lv1LuEeD8wwdbG4vAY+t+FQEAwWAJGPZ4Srhx61dHIPfFiPC1LEn3fw==", "igKFXIhPpObtIp4prbDFhj7pAAAAJPMzHsvpGvB0jA6b0wCNMlCMhfmlpPgYpIRlV7t4ixXVEn8cBFBnEMV0P/S8A/q47MyE3OU=");
 
 // from Beacon 1.4.7 and older
-TestEncryptionPortability("m_crypto", "d91mxFHrUDwEdLM2vYr+Gm4TQh1gCKSbn2jMsVft9NA=", "0ccd9f2b-98f5-4f5e-be9a-d5fa34a891a7", "igHvE1aDgEeXlAAAACRDhoUOuVxa2Icn/LXcnVfqOC0Hx6s+8putqQwOCwsrxRc27X18sVv6ox09Xg==", "igKSVEqdy9MAQuU0V05WOsVkAAAAJEOGhQ7qB0FctVspKnkIcO3NVAN8GNGx7mG7/wAcfX/wDo+zDE95hFOvKcjh07co3LSZ7+U=");
+TestEncryptionPortability("m_crypto", "Eq/Ypo2Kw3RNA2te31fp19EP/dMGSR4IlWmjtoYn8tBnKYgA+Sr2LA==", "3456efca-c48c-41cc-a01e-3713301d9a38", "igEeFJyHv42YOAAAACQTaroA7hSPqLmalHvZflHwhZtOiTYNUZD4JOdfusagXzlKt5PH2j8vUhxV0Q==", "igKh3O68LgyGZPABtA7OI0pzAAAAJBNqugBO2kDGdvIXrkfA5femIzmdRnDSSWI3xFA9diRZiHqdbbjH+qS/5Hi9Acjh26lGfmg=");
 
 function TestEncryptionPortability(string $source, string $key_encoded, string $message, string $legacy_encoded, string $modern_encoded) {
 	$key = base64_decode($key_encoded);
