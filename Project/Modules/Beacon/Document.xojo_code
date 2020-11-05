@@ -872,7 +872,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
-		  If Key = Nil Then
+		  If Key Is Nil Then
 		    Return Nil
 		  End If
 		  
@@ -880,7 +880,7 @@ Implements ObservationKit.Observable
 		  Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
 		  Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
 		  Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
-		  If Not Crypt.DecryptInit(Key, Vector) Then
+		  If Not Crypt.DecryptInit(BeaconEncryption.FixSymmetricKey(Key, Crypt.KeyLength), Vector) Then
 		    Return Nil
 		  End If
 		  

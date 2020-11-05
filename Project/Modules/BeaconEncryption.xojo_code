@@ -35,8 +35,8 @@ Protected Module BeaconEncryption
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function FixSymmetricKey(Key As MemoryBlock, DesiredLength As Integer) As MemoryBlock
+	#tag Method, Flags = &h1
+		Protected Function FixSymmetricKey(Key As MemoryBlock, DesiredLength As Integer) As MemoryBlock
 		  If Key Is Nil Then
 		    Return Nil
 		  ElseIf Key.Size = DesiredLength Then
