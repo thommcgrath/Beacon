@@ -91,7 +91,7 @@ Inherits Beacon.ConfigGroup
 		    Var ExpectedHash As String = SecureDict.Value("Hash")
 		    
 		    Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
-		    If Not Crypt.DecryptInit(Key, Vector) Then
+		    If Not Crypt.DecryptInit(BeaconEncryption.FixSymmetricKey(Key, Crypt.KeyLength), Vector) Then
 		      Return ""
 		    End If
 		    
