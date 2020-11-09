@@ -951,13 +951,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetMaps(Mask As UInt64) As Beacon.Map()
-		  Var Rows As RowSet
-		  If Mask = CType(0, UInt64) Then
-		    Rows = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
-		  Else
-		    Rows = Self.SQLSelect("SELECT * FROM maps WHERE (mask & $1) = mask ORDER BY official DESC, sort;", Mask)
-		  End If
-		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & $1) = mask ORDER BY official DESC, sort;", Mask)
 		  Var Maps() As Beacon.Map
 		  For Each Row As DatabaseRow In Rows
 		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))

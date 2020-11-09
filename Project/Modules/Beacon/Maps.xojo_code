@@ -8,7 +8,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Map()
-		  Return Beacon.Data.GetMaps(0)
+		  Return Beacon.Data.GetMaps(18446744073709551615)
 		End Function
 	#tag EndMethod
 
