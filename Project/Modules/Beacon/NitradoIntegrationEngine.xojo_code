@@ -109,8 +109,9 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		    
 		    Self.Log("Updating 'Custom Game.ini Settings' field…")
-		    Var ExtraGameIni As String = Self.DownloadFile(Self.mGamePath + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed)
-		    If Self.Finished Then
+		    Var ExtraGameIniSuccess As Boolean
+		    Var ExtraGameIni As String = Self.GetFile(Self.mGamePath + "user-settings.ini", DownloadFailureMode.MissingAllowed, ExtraGameIniSuccess)
+		    If ExtraGameIniSuccess = False Or Self.Finished Then
 		      Return False
 		    End If
 		    If ExtraGameIni.BeginsWith("[" + Beacon.ShooterGameHeader + "]") = False Then
@@ -127,7 +128,7 @@ Inherits Beacon.IntegrationEngine
 		    // Need to remove the header that the rewriter adds
 		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
 		    
-		    If Not Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni) Then
+		    If Not Self.PutFile(ExtraGameIni, Self.mGamePath + "user-settings.ini") Then
 		      Return False
 		    End If
 		    If Self.Finished Then
@@ -386,11 +387,13 @@ Inherits Beacon.IntegrationEngine
 		        Var GameUserSettingsIniDict As New Dictionary
 		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
 		        
-		        Var Errored As Boolean
-		        Var ExtraGameIni As String = Self.DownloadFile(GameSpecific.Value("path") + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
-		        If Self.Finished Then
+		        Var ExtraGameIniSuccess As Boolean
+		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, ExtraGameIniSuccess)
+		        If ExtraGameIniSuccess = False Or Self.Finished Then
 		          Return Nil
 		        End If
+		        
+		        Var Errored As Boolean
 		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		      Else
@@ -409,10 +412,91 @@ Inherits Beacon.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
-		Function DownloadFile(Filename As String) As String
-		  Var Path As String = Beacon.NitradoServerProfile(Self.Profile).ConfigPath + "/" + Filename
-		  Return Self.DownloadFile(Path, DownloadFailureMode.MissingAllowed)
-		End Function
+		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
+		  If (Profile IsA Beacon.NitradoServerProfile) = False Then
+		    Transfer.Success = False
+		    Transfer.ErrorMessage = "Profile is not a NitradoServerProfile"
+		    Return
+		  End If
+		  
+		  Var Filename As String = Transfer.Filename
+		  Var Path As String = Transfer.Path
+		  If Path.IsEmpty Then
+		    If Filename = "user-settings.ini" Then
+		      Path = Self.mGamePath
+		    Else
+		      Path = Beacon.NitradoServerProfile(Profile).ConfigPath
+		    End If
+		  End If
+		  Var FullPath As String = Path + "/" + Filename
+		  
+		  Var ServiceID As Integer = Beacon.NitradoServerProfile(Profile).ServiceID
+		  
+		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Cache-Control") = "no-cache"
+		  Sock.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath))
+		  Var Content As MemoryBlock = Sock.LastContent
+		  Var Status As Integer = Sock.LastHTTPStatus
+		  
+		  If Status <> 200 Then
+		    Select Case FailureMode
+		    Case DownloadFailureMode.MissingAllowed
+		      Var Message As String
+		      Call Self.CheckResponseForError(Status, Content, Sock.LastException, Message)
+		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
+		        // Bad Nitrado
+		        Status = 404
+		      End If
+		      If Status = 404 Then
+		        Transfer.Success = True
+		        Transfer.Content = ""
+		      Else
+		        Transfer.SetError(Message)
+		      End If
+		    Case DownloadFailureMode.ErrorsAllowed
+		      Transfer.Success = True
+		      Transfer.Content = ""
+		    Case DownloadFailureMode.Required
+		      Call Self.CheckSocketForError(Sock, Transfer)
+		    End Select
+		    
+		    Return
+		  End If
+		  
+		  Var FetchURL As String
+		  Try
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    If Response.Value("status") <> "success" Then
+		      Transfer.SetError("Error: Could not download " + FullPath + ".")
+		      Return
+		    End If
+		    
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
+		    FetchURL = TokenDict.Value("url")
+		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    Transfer.SetError(Err.Message)
+		    Return
+		  End Try
+		  
+		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
+		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
+		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  FetchSocket.Send("GET", FetchURL)
+		  
+		  If (FetchSocket.LastHTTPStatus <> 200 And FailureMode = DownloadFailureMode.ErrorsAllowed) Or (FetchSocket.LastHTTPStatus = 404 And FailureMode = DownloadFailureMode.MissingAllowed) Then
+		    Transfer.Success = True
+		    Transfer.Content = ""
+		  ElseIf Self.CheckSocketForError(FetchSocket, Transfer) Then
+		    // The previous method took care of it
+		  Else
+		    Transfer.Success = True
+		    Transfer.Content = FetchSocket.LastString
+		  End If
+		  
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -429,38 +513,43 @@ Inherits Beacon.IntegrationEngine
 		    Now = DateTime.Now
 		  End Try
 		  
-		  Var LogContent As String = Self.DownloadFile(Self.mLogFilePath, DownloadFailureMode.ErrorsAllowed)
+		  Var LogContentSuccess As Boolean
+		  Var LogContent As String = Self.GetFile(Self.mLogFilePath, DownloadFailureMode.ErrorsAllowed, LogContentSuccess)
 		  Var ServerStopTime As DateTime
 		  
-		  Try
-		    Var EOL As String = Encodings.ASCII.Chr(10)
-		    Var Lines() As String = LogContent.ReplaceLineEndings(EOL).Split(EOL)
-		    Var TimestampFound As Boolean
-		    For I As Integer = Lines.LastIndex DownTo 0
-		      Var Line As String = Lines(I)
-		      If Line.IndexOf("Log file closed") = -1 Then
-		        Continue
+		  If LogContentSuccess Then
+		    Try
+		      Var EOL As String = Encodings.ASCII.Chr(10)
+		      Var Lines() As String = LogContent.ReplaceLineEndings(EOL).Split(EOL)
+		      Var TimestampFound As Boolean
+		      For I As Integer = Lines.LastIndex DownTo 0
+		        Var Line As String = Lines(I)
+		        If Line.IndexOf("Log file closed") = -1 Then
+		          Continue
+		        End If
+		        
+		        Var Year As Integer = Val(Line.Middle(1, 4))
+		        Var Month As Integer = Val(Line.Middle(6, 2))
+		        Var Day As Integer = Val(Line.Middle(9, 2))
+		        Var Hour As Integer = Val(Line.Middle(12, 2))
+		        Var Minute As Integer = Val(Line.Middle(15, 2))
+		        Var Second As Integer = Val(Line.Middle(18, 2))
+		        Var Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
+		        
+		        ServerStopTime = New DateTime(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
+		        TimestampFound = True
+		        Exit For I
+		      Next
+		      
+		      If Not TimestampFound Then
+		        ServerStopTime = Now
 		      End If
-		      
-		      Var Year As Integer = Val(Line.Middle(1, 4))
-		      Var Month As Integer = Val(Line.Middle(6, 2))
-		      Var Day As Integer = Val(Line.Middle(9, 2))
-		      Var Hour As Integer = Val(Line.Middle(12, 2))
-		      Var Minute As Integer = Val(Line.Middle(15, 2))
-		      Var Second As Integer = Val(Line.Middle(18, 2))
-		      Var Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
-		      
-		      ServerStopTime = New DateTime(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
-		      TimestampFound = True
-		      Exit For I
-		    Next
-		    
-		    If Not TimestampFound Then
+		    Catch Err As RuntimeException
 		      ServerStopTime = Now
-		    End If
-		  Catch Err As RuntimeException
+		    End Try
+		  Else
 		    ServerStopTime = Now
-		  End Try
+		  End If
 		  
 		  // Now we can compute how long to wait.
 		  Var WaitUntil As DateTime = ServerStopTime + New DateInterval(0, 0, 0, 0, 3, 0)
@@ -624,10 +713,75 @@ Inherits Beacon.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
-		Function UploadFile(Contents As String, Filename As String) As Boolean
-		  Var Path As String = Beacon.NitradoServerProfile(Self.Profile).ConfigPath + "/" + Filename
-		  Return Self.UploadFile(Path, Contents)
-		End Function
+		Sub UploadFile(Transfer As Beacon.IntegrationTransfer)
+		  Var Filename As String = Transfer.Filename
+		  Var Path As String = Transfer.Path
+		  If Path.IsEmpty Then
+		    If Filename = "user-settings.ini" Then
+		      Path = Self.mGamePath
+		    Else
+		      Path = Beacon.NitradoServerProfile(Self.Profile).ConfigPath
+		    End If
+		  End If
+		  
+		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
+		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Cache-Control") = "no-cache"
+		  
+		  Var FormData As New Dictionary
+		  FormData.Value("path") = Path
+		  FormData.Value("file") = Filename
+		  Sock.SetFormData(FormData)
+		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
+		  Var PermissionErrorMessage As String
+		  If Self.CheckSocketForError(Sock, PermissionErrorMessage) Then
+		    Transfer.SetError(PermissionErrorMessage)
+		    Return
+		  End If
+		  Var Content As String = Sock.LastString
+		  Var Status As Integer = Sock.LastHTTPStatus
+		  
+		  Var PutURL, PutToken As String
+		  Try
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    If Response.Value("status") <> "success" Then
+		      Transfer.Success = False
+		      Transfer.ErrorMessage = "Error: Could not upload " + Path + "/" + Filename + "."
+		      Return
+		    End If
+		    
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
+		    PutURL = TokenDict.Value("url")
+		    PutToken = TokenDict.Value("token")
+		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    Transfer.Success = False
+		    Transfer.ErrorMessage = Err.Message
+		    Return
+		  End Try
+		  
+		  // Wait a moment so the receiver server is ready for the file... or something?
+		  Self.Wait(1000)
+		  
+		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
+		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  PutSocket.RequestHeader("token") = PutToken
+		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(Transfer.Content))
+		  PutSocket.SetRequestContent(Transfer.Content, "application/octet-stream")
+		  PutSocket.RequestHeader("Cache-Control") = "no-cache"
+		  PutSocket.Send("POST", PutURL)
+		  If Self.CheckSocketForError(Sock, Transfer) Then
+		    Var AdditionalLines As String = EndOfLine + "Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content."
+		    If Self.BackupEnabled Then
+		      AdditionalLines = AdditionalLines + EndOfLine + "Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath
+		    End If
+		    Transfer.ErrorMessage = Transfer.ErrorMessage + AdditionalLines
+		    Return
+		  End If
+		  
+		  Transfer.Success = True
+		End Sub
 	#tag EndEvent
 
 
@@ -718,6 +872,26 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CheckSocketForError(Socket As SimpleHTTP.SynchronousHTTPSocket, Transfer As Beacon.IntegrationTransfer) As Boolean
+		  Var Message As String
+		  If CheckResponseForError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException, Message) Then
+		    Transfer.ErrorMessage = Message
+		    Transfer.Success = False
+		  Else
+		    Transfer.Success = True
+		  End If
+		  Transfer.Content = Socket.LastContent
+		  Return Not Transfer.Success
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CheckSocketForError(Socket As SimpleHTTP.SynchronousHTTPSocket, ByRef Message As String) As Boolean
+		  Return CheckResponseForError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException, Message)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ServerProfile)
 		  Super.Constructor(Profile)
 		  Self.mInitialStatusQuery = True
@@ -763,75 +937,6 @@ Inherits Beacon.IntegrationEngine
 		    Self.SetError(Err)
 		  End Try
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode) As String
-		  Return Self.DownloadFile(Path, Mode, Self.mServiceID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode, ServiceID As Integer) As String
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  Sock.RequestHeader("Cache-Control") = "no-cache"
-		  Sock.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path))
-		  If Self.Finished Then
-		    Return ""
-		  End If
-		  Var Content As MemoryBlock = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Status <> 200 Then
-		    Select Case Mode
-		    Case DownloadFailureMode.MissingAllowed
-		      Var Message As String
-		      Call Self.CheckResponseForError(Status, Content, Sock.LastException, Message)
-		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
-		        // Bad Nitrado
-		        Status = 404
-		      End If
-		      If Status <> 404 Then
-		        Self.SetError(Message)
-		      End If
-		    Case DownloadFailureMode.ErrorsAllowed
-		      // Do nothing
-		    Case DownloadFailureMode.Required
-		      Call Self.CheckError(Sock)
-		    End Select
-		    
-		    Return ""
-		  End If
-		  
-		  Var FetchURL As String
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
-		      Self.SetError("Error: Could not download " + Path + ".")
-		      Return ""
-		    End If
-		    
-		    Var Data As Dictionary = Response.Value("data")
-		    Var TokenDict As Dictionary = Data.Value("token")
-		    FetchURL = TokenDict.Value("url")
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		    Self.SetError(Err)
-		    Return ""
-		  End Try
-		  
-		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
-		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  FetchSocket.Send("GET", FetchURL)
-		  
-		  If Self.Finished Or (FetchSocket.LastHTTPStatus <> 200 And Mode = DownloadFailureMode.ErrorsAllowed) Or (FetchSocket.LastHTTPStatus = 404 And Mode = DownloadFailureMode.MissingAllowed) Or Self.CheckError(FetchSocket) Then
-		    Return ""
-		  End If
-		  
-		  Return FetchSocket.LastString
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -966,71 +1071,6 @@ Inherits Beacon.IntegrationEngine
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function UploadFile(Path As String, FileContent As String) As Boolean
-		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  Sock.RequestHeader("Cache-Control") = "no-cache"
-		  
-		  Var PathParts() As String = Path.Split("/")
-		  Var Filename As String = PathParts(PathParts.LastIndex)
-		  PathParts.RemoveAt(PathParts.LastIndex)
-		  Path = PathParts.Join("/")
-		  
-		  Var FormData As New Dictionary
-		  FormData.Value("path") = Path
-		  FormData.Value("file") = Filename
-		  Sock.SetFormData(FormData)
-		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
-		  If Self.Finished Or Self.CheckError(Sock) Then
-		    Return False
-		  End If
-		  Var Content As String = Sock.LastString
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  Var PutURL, PutToken As String
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
-		      Self.SetError("Error: Could not upload " + Path + "/" + Filename + ".")
-		      Return False
-		    End If
-		    
-		    Var Data As Dictionary = Response.Value("data")
-		    Var TokenDict As Dictionary = Data.Value("token")
-		    PutURL = TokenDict.Value("url")
-		    PutToken = TokenDict.Value("token")
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		    Self.SetError(Err)
-		    Return False
-		  End Try
-		  
-		  // Wait a moment so the receiver server is ready for the file... or something?
-		  Self.Wait(1000)
-		  
-		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  PutSocket.RequestHeader("token") = PutToken
-		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(FileContent))
-		  PutSocket.SetRequestContent(FileContent, "application/octet-stream")
-		  PutSocket.RequestHeader("Cache-Control") = "no-cache"
-		  PutSocket.Send("POST", PutURL)
-		  If Self.Finished Then
-		    Return False
-		  End If
-		  If Self.CheckError(PutSocket) Then
-		    Self.Log("Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content.")
-		    If Self.BackupEnabled Then
-		      Self.Log("Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath)
-		    End If
-		    Return False
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mAccount As Beacon.ExternalAccount
@@ -1066,13 +1106,6 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
 	#tag EndConstant
-
-
-	#tag Enum, Name = DownloadFailureMode, Type = Integer, Flags = &h21
-		Required
-		  MissingAllowed
-		ErrorsAllowed
-	#tag EndEnum
 
 
 	#tag ViewBehavior

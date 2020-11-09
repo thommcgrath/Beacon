@@ -130,6 +130,42 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile, ByRef Success As Boolean) As String
+		  Var Counter As Integer = 0
+		  Var Message As String
+		  While Counter < 3
+		    If Self.Finished Then
+		      Success = False
+		      Return ""
+		    End If
+		    
+		    Var Transfer As New Beacon.IntegrationTransfer(Filename)
+		    Self.Log("Downloading " + Transfer.Filename + "…")
+		    RaiseEvent DownloadFile(Transfer, FailureMode, Profile)
+		    
+		    If Transfer.Success Then
+		      Success = True
+		      Return Transfer.Content
+		    End If
+		    
+		    Message = Transfer.ErrorMessage
+		    Counter = Counter + 1
+		  Wend
+		  
+		  Self.Log("Unable to download " + Filename + ": " + Message)
+		  
+		  Success = False
+		  Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, ByRef Success As Boolean) As String
+		  Return Self.GetFile(Filename, FailureMode, Self.mProfile, Success)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ID() As String
 		  Return Self.mID
@@ -197,40 +233,45 @@ Protected Class IntegrationEngine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function PutFile(Contents As String, Filename As String) As Boolean
-		  Var Counter As Integer = 0
-		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents)).Lowercase
-		  Self.Log("Uploading " + Filename + "…")
-		  While Counter < 3
-		    If Self.Finished Then
-		      Return False
-		    End If
-		    
-		    If RaiseEvent UploadFile(Contents, Filename) Then
-		      If Self.Finished Then
-		        Return False
-		      End If
-		      
-		      Var CheckedContents As String = RaiseEvent DownloadFile(Filename)
-		      If Self.Finished Then
-		        Return False
-		      End If
-		      
-		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents)).Lowercase
+	#tag Method, Flags = &h1
+		Protected Function PutFile(Contents As String, Filename As String, TriesRemaining As Integer = 2) As Boolean
+		  Var DesiredHash As String = EncodeHex(Crypto.SHA256(Contents)).Lowercase
+		  Var Transfer As New Beacon.IntegrationTransfer(Filename, Contents)
+		  Self.Log("Uploading " + Transfer.Filename + "…")
+		  RaiseEvent UploadFile(Transfer)
+		  
+		  If Transfer.Success Then
+		    Var DownloadSuccess As Boolean
+		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, DownloadSuccess)
+		    If DownloadSuccess Then
+		      Var CheckedHash As String = EncodeHex(Crypto.SHA256(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
 		        Return True
 		      Else
-		        Self.Log("Checksum of " + Filename + " is " + CheckedHash + ", expected " + DesiredHash + ".")
-		        Self.Log(Filename + " checksum does not match, retrying…")
+		        Self.Log(Filename + " checksum does not match.")
+		        #if DebugBuild
+		          Self.Log("Expected hash " + DesiredHash + ", got " + CheckedHash)
+		        #endif
 		      End If
-		    Else
-		      Self.Log(Filename + " upload failed, retrying…")
 		    End If
-		    Counter = Counter + 1
-		  Wend
+		  End If
 		  
-		  Self.SetError("Could not verify " + Filename + " is correct on the server.")
+		  If Self.Finished Then
+		    Return False
+		  End If
+		  
+		  If TriesRemaining > 0 Then
+		    Self.Log(Filename + " upload failed, retrying…")
+		    Return Self.PutFile(Contents, Filename, TriesRemaining - 1)
+		  End If
+		  
+		  Self.Log("Could not upload " + Filename + " and verify its content is correct on the server.")
+		  
+		  If Transfer.ErrorMessage.IsEmpty = False Then
+		    Self.Log("Reason: " + Transfer.ErrorMessage)
+		  End If
+		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -338,14 +379,15 @@ Protected Class IntegrationEngine
 		  
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
 		  // Download the ini files
-		  Self.Log("Downloading Game.ini…")
-		  GameIniOriginal = RaiseEvent DownloadFile("Game.ini")
-		  If Self.Finished Then
+		  Var DownloadSuccess As Boolean
+		  GameIniOriginal = Self.GetFile("Game.ini", DownloadFailureMode.MissingAllowed, DownloadSuccess)
+		  If Self.Finished Or DownloadSuccess = False Then
+		    Self.Finished = True
 		    Return
 		  End If
-		  Self.Log("Downloading GameUserSettings.ini")
-		  GameUserSettingsIniOriginal = RaiseEvent DownloadFile("GameUserSettings.ini")
-		  If Self.Finished Then
+		  GameUserSettingsIniOriginal = Self.GetFile("GameUserSettings.ini", DownloadFailureMode.MissingAllowed, DownloadSuccess)
+		  If Self.Finished Or DownloadSuccess = False Then
+		    Self.Finished = True
 		    Return
 		  End If
 		  
@@ -451,9 +493,11 @@ Protected Class IntegrationEngine
 		  
 		  // Put the new files on the server
 		  If Self.PutFile(GameIniRewritten, "Game.ini") = False Or Self.Finished Then
+		    Self.Finished = True
 		    Return
 		  End If 
 		  If Self.PutFile(GameUserSettingsIniRewritten, "GameUserSettings.ini") = False Or Self.Finished Then
+		    Self.Finished = True
 		    Return
 		  End If
 		  
@@ -750,7 +794,7 @@ Protected Class IntegrationEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event DownloadFile(Filename As String) As String
+		Event DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -774,7 +818,7 @@ Protected Class IntegrationEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event UploadFile(Contents As String, Filename As String) As Boolean
+		Event UploadFile(Transfer As Beacon.IntegrationTransfer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -906,6 +950,13 @@ Protected Class IntegrationEngine
 
 	#tag Constant, Name = StateUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant
+
+
+	#tag Enum, Name = DownloadFailureMode, Flags = &h1
+		Required
+		  MissingAllowed
+		ErrorsAllowed
+	#tag EndEnum
 
 
 	#tag ViewBehavior

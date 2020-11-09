@@ -873,9 +873,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Self.mEngramCache.HasKey(EntryString) Then
 		    Engrams = Self.mEngramCache.Value(EntryString)
 		  Else
-		    Var SQL As String = Self.EngramSelectSQL + " WHERE entry_string = ?1;"
+		    Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.entry_string = ?1;"
 		    If (Mods Is Nil) = False Then
-		      SQL = SQL.Left(SQL.Length - 1) + " AND mod_id IN (" + Mods.SQLValue + ");"
+		      SQL = SQL.Left(SQL.Length - 1) + " AND engrams.mod_id IN (" + Mods.SQLValue + ");"
 		    End If
 		    
 		    Try
@@ -2047,7 +2047,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mDeltaDownloader = Nil
 		  
 		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
-		    Self.mDeltaDownloadQueue.RemoveAllRows
+		    Self.mDeltaDownloadQueue.RemoveAll
 		    App.Log("Failed to download blueprints delta: HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
 		    Self.mCheckingForUpdates = False
 		    Return
@@ -2063,7 +2063,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused Sender
 		  
 		  Self.mDeltaDownloader = Nil
-		  Self.mDeltaDownloadQueue.RemoveAllRows
+		  Self.mDeltaDownloadQueue.RemoveAll
 		  
 		  App.Log("Failed to download blueprints delta: " + Err.Message)
 		  Self.mCheckingForUpdates = False

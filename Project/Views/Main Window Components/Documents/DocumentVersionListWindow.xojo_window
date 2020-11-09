@@ -203,6 +203,7 @@ Begin BeaconDialog DocumentVersionListWindow
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -212,7 +213,9 @@ Begin BeaconDialog DocumentVersionListWindow
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
 End

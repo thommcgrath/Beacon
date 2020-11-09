@@ -125,25 +125,68 @@ Inherits Beacon.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
-		Function DownloadFile(Filename As String) As String
-		  Select Case Filename
-		  Case "Game.ini"
-		    Return Self.DownloadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameIniPath)
-		  Case "GameUserSettings.ini"
-		    Return Self.DownloadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath)
-		  End Select
-		End Function
+		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
+		  Var Path As String
+		  If Transfer.Path.IsEmpty Then
+		    Path = Self.BaseURL
+		    Select Case Transfer.Filename
+		    Case "Game.ini"
+		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameIniPath
+		    Case "GameUserSettings.ini"
+		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath
+		    End Select
+		  Else
+		    Path = Transfer.Path + "/" + Transfer.Filename
+		  End If
+		  
+		  Self.mSocketLock.Enter
+		  Self.mSocket.OptionURL = Path
+		  Self.SetTLSValues()
+		  Call Self.mSocket.PerformMT
+		  If Self.mSocket.Lasterror = CURLSMBS.kError_OK Then
+		    Transfer.Content = Self.mSocket.OutputData
+		    Transfer.Success = True
+		  ElseIf (Self.mSocket.LastError = CURLSMBS.kError_REMOTE_FILE_NOT_FOUND And FailureMode = DownloadFailureMode.MissingAllowed) Or FailureMode = DownloadFailureMode.ErrorsAllowed Then
+		    Transfer.Content = ""
+		    Transfer.Success = True
+		  Else
+		    Transfer.SetError("Could not download: " + Self.mSocket.LasterrorMessage + ", code " + Self.mSocket.Lasterror.ToString(Locale.Raw, "0"))
+		  End If
+		  Self.mSocketLock.Leave
+		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Function UploadFile(Contents As String, Filename As String) As Boolean
-		  Select Case Filename
-		  Case "Game.ini"
-		    Return Self.UploadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameIniPath, Contents)
-		  Case "GameUserSettings.ini"
-		    Return Self.UploadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath, Contents)
-		  End Select
-		End Function
+		Sub UploadFile(Transfer As Beacon.IntegrationTransfer)
+		  Var Path As String
+		  If Transfer.Path.IsEmpty Then
+		    Path = Self.BaseURL
+		    Select Case Transfer.Filename
+		    Case "Game.ini"
+		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameIniPath
+		    Case "GameUserSettings.ini"
+		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath
+		    End Select
+		  Else
+		    Path = Transfer.Path + "/" + Transfer.Filename
+		  End If
+		  
+		  Self.mSocketLock.Enter
+		  Self.mSocket.OptionURL = Path
+		  Self.mSocket.OptionUpload = True
+		  Self.SetTLSValues()
+		  Self.mSocket.SetInputData(Transfer.Content)
+		  Call Self.mSocket.PerformMT
+		  Var ErrorCode As Integer = Self.mSocket.Lasterror
+		  Var ErrorMessage As String = Self.mSocket.LasterrorMessage
+		  Self.mSocket.OptionUpload = False
+		  Self.mSocketLock.Leave
+		  If ErrorCode <> CURLSMBS.kError_OK Then
+		    Transfer.SetError(ErrorMessage + ", code " + ErrorCode.ToString(Locale.Raw, "0"))
+		  Else
+		    Transfer.Success = True
+		  End If
+		End Sub
 	#tag EndEvent
 
 
@@ -247,34 +290,32 @@ Inherits Beacon.IntegrationEngine
 		      Next
 		      Filenames.Sort
 		      For Idx As Integer = Filenames.LastIndex DownTo 0
-		        Var Contents As String = Self.DownloadFile(LogsPath + "/" + Filenames(Idx))
-		        If Self.ParseLogFile(Data, Contents) Then
+		        Var LogFileDownloaded As Boolean
+		        Var Contents As String = Self.GetFile(LogsPath + "/" + Filenames(Idx), DownloadFailureMode.Required, LogFileDownloaded)
+		        If LogFileDownloaded And Self.ParseLogFile(Data, Contents) Then
 		          Exit
 		        End If
 		      Next
 		    End If
 		  End If
 		  
-		  Self.Log("Downloading ini files…")
-		  Data.GameIniContent = Self.DownloadFile(BaseURL + Profile.GameIniPath).GuessEncoding
-		  Data.GameUserSettingsIniContent = Self.DownloadFile(BaseURL + Profile.GameUserSettingsIniPath).GuessEncoding 
+		  Var FileDownloaded As Boolean
+		  Var FileContent As String = Self.GetFile(BaseURL + Profile.GameIniPath, DownloadFailureMode.MissingAllowed, FileDownloaded)
+		  If FileDownloaded Then
+		    Data.GameIniContent = FileContent.GuessEncoding
+		  Else
+		    Self.SetError("Could not download Game.ini")
+		    Return Nil
+		  End If
+		  FileContent = Self.GetFile(BaseURL + Profile.GameUserSettingsIniPath, DownloadFailureMode.MissingAllowed, FileDownloaded)
+		  If FileDownloaded Then
+		    Data.GameUserSettingsIniContent = FileContent.GuessEncoding
+		  Else
+		    Self.SetError("Could not download GameUserSettings.ini")
+		    Return Nil
+		  End If
 		  
 		  Return Data
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DownloadFile(Path As String) As String
-		  Self.mSocketLock.Enter
-		  Self.mSocket.OptionURL = Path
-		  Self.SetTLSValues()
-		  Call Self.mSocket.PerformMT
-		  Var Response As String
-		  If Self.mSocket.Lasterror = CURLSMBS.kError_OK Then
-		    Response = Self.mSocket.OutputData
-		  End If
-		  Self.mSocketLock.Leave
-		  Return Response
 		End Function
 	#tag EndMethod
 
@@ -477,25 +518,6 @@ Inherits Beacon.IntegrationEngine
 		  Var Params() As Variant = Value
 		  RaiseEvent FilesListed(Params(0).StringValue, Params(1))
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function UploadFile(Path As String, Contents As String) As Boolean
-		  Self.mSocketLock.Enter
-		  Self.mSocket.OptionURL = Path
-		  Self.mSocket.OptionUpload = True
-		  Self.SetTLSValues()
-		  Self.mSocket.SetInputData(Contents)
-		  Call Self.mSocket.PerformMT
-		  Var ErrorCode As Integer = Self.mSocket.Lasterror
-		  Var ErrorMessage As String = Self.mSocket.LasterrorMessage
-		  Self.mSocket.OptionUpload = False
-		  Self.mSocketLock.Leave
-		  If ErrorCode <> CURLSMBS.kError_OK Then
-		    App.Log("Error uploading " + Path + ": " + ErrorMessage + ", code " + ErrorCode.ToString(Locale.Raw, "0"))
-		  End If
-		  Return ErrorCode = CURLSMBS.kError_OK
-		End Function
 	#tag EndMethod
 
 

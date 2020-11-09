@@ -73,12 +73,18 @@ Protected Class ServerProfile
 		  End If
 		  
 		  If Dict.HasKey("Message of the Day") Then
-		    If Dict.Value("Message of the Day").Type = Variant.TypeString Then
+		    Var MOTD As Variant = Dict.Value("Message of the Day")
+		    If MOTD.Type = Variant.TypeString Then
 		      #if Not TargetiOS
-		        Self.mMessageOfTheDay = Beacon.ArkML.FromRTF(Dict.Value("Message of the Day"))
+		        Self.mMessageOfTheDay = Beacon.ArkML.FromRTF(MOTD)
 		      #endif
 		    Else
-		      Self.mMessageOfTheDay = Beacon.ArkML.FromObjects(Dict.Value("Message of the Day"))
+		      Var Info As Introspection.TypeInfo = Introspection.GetType(MOTD)
+		      If Info.FullName = "Dictionary()" Then
+		        Self.mMessageOfTheDay = Beacon.ArkML.FromArray(MOTD)
+		      ElseIf Info.FullName = "Object()" Then
+		        Self.mMessageOfTheDay = Beacon.ArkML.FromObjects(MOTD)
+		      End If
 		    End If
 		    Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
 		  End If

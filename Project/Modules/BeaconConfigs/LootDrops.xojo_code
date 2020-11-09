@@ -261,8 +261,6 @@ Implements Iterable
 		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
 		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		    Else
-		      Issues.Add(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    End If
 		  Catch Err As RuntimeException
 		  End Try

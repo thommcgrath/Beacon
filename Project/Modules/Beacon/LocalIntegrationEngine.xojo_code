@@ -2,44 +2,60 @@
 Protected Class LocalIntegrationEngine
 Inherits Beacon.IntegrationEngine
 	#tag Event
-		Function DownloadFile(Filename As String) As String
+		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
 		  Var File As FolderItem
-		  Select Case Filename
+		  Select Case Transfer.Filename
 		  Case "Game.ini"
 		    File = Beacon.LocalServerProfile(Self.Profile).GameIniFile
 		  Case "GameUserSettings.ini"
 		    File = Beacon.LocalServerProfile(Self.Profile).GameUserSettingsIniFile
 		  Else
-		    Return ""
+		    Transfer.SetError("Unknown file " + Transfer.Filename)
+		    Return
 		  End Select
 		  
 		  If File <> Nil And File.Exists Then
-		    Return File.Read
+		    Try
+		      Transfer.Content = File.Read
+		      Transfer.Success = True
+		    Catch Err As RuntimeException
+		      Transfer.SetError(Err.Message)
+		    End Try
+		  Else
+		    Transfer.SetError("File " + Transfer.Filename + " does not exist.")
 		  End If
-		End Function
+		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Function UploadFile(Contents As String, Filename As String) As Boolean
+		Sub UploadFile(Transfer As Beacon.IntegrationTransfer)
 		  Var File As FolderItem
-		  Select Case Filename
+		  Select Case Transfer.Filename
 		  Case "Game.ini"
 		    File = Beacon.LocalServerProfile(Self.Profile).GameIniFile
 		  Case "GameUserSettings.ini"
 		    File = Beacon.LocalServerProfile(Self.Profile).GameUserSettingsIniFile
 		  Else
-		    Return False
+		    Transfer.SetError("Unknown file " + Transfer.Filename)
+		    Return
 		  End Select
 		  
-		  If File <> Nil Then
-		    If Not File.Write(Contents) Then
-		      Self.SetError("Unable to write to " + File.NativePath)
-		      Return False
-		    End If
+		  If File Is Nil Then
+		    Transfer.SetError("Destination is invalid")
+		    Return
 		  End If
 		  
-		  Return True
-		End Function
+		  Try
+		    If File.Write(Transfer.Content) = False Then
+		      Transfer.SetError("Could not write to " + File.NativePath)
+		      Return
+		    End If
+		    
+		    Transfer.Success = True
+		  Catch Err As RuntimeException
+		    Transfer.SetError(Err.Message)
+		  End Try
+		End Sub
 	#tag EndEvent
 
 
