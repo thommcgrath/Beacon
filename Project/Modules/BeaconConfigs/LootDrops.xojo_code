@@ -5,9 +5,10 @@ Implements Iterable
 	#tag Event
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 		  Var ConfigName As String = ConfigKey
+		  Var Cache As New Dictionary
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Self.DetectLootSourceIssues(Source, ConfigName, Document, Issues)
+		    Self.DetectLootSourceIssues(Source, ConfigName, Document, Issues, Cache)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -209,13 +210,13 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DetectItemSetIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		Private Sub DetectItemSetIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue, Cache As Dictionary)
 		  Try
 		    If Set.Count = 0 Then
 		      Issues.Add(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
 		    Else
 		      For Each Entry As Beacon.SetEntry In Set
-		        Self.DetectSetEntryIssues(Source, Set, Entry, ConfigName, Document, Issues)
+		        Self.DetectSetEntryIssues(Source, Set, Entry, ConfigName, Document, Issues, Cache)
 		      Next
 		    End If
 		  Catch Err As RuntimeException
@@ -224,13 +225,13 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DetectLootSourceIssues(Source As Beacon.LootSource, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		Private Sub DetectLootSourceIssues(Source As Beacon.LootSource, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue, Cache As Dictionary)
 		  Try
 		    If Source.ItemSets.Count < Source.RequiredItemSetCount Then
 		      Issues.Add(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSetCount.ToString + " " + if(Source.RequiredItemSetCount = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source.ItemSets
-		        Self.DetectItemSetIssues(Source, Set, ConfigName, Document, Issues)
+		        Self.DetectItemSetIssues(Source, Set, ConfigName, Document, Issues, Cache)
 		      Next
 		    End If
 		  Catch Err As RuntimeException
@@ -239,13 +240,13 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DetectSetEntryIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		Private Sub DetectSetEntryIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue, Cache As Dictionary)
 		  Try
 		    If Entry.Count = 0 Then
 		      Issues.Add(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
 		    Else
 		      For Each Option As Beacon.SetEntryOption In Entry
-		        Self.DetectSetEntryOptionIssues(Source, Set, Entry, Option, ConfigName, Document, Issues)
+		        Self.DetectSetEntryOptionIssues(Source, Set, Entry, Option, ConfigName, Document, Issues, Cache)
 		      Next
 		    End If
 		  Catch Err As RuntimeException
@@ -254,14 +255,20 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DetectSetEntryOptionIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		Private Sub DetectSetEntryOptionIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue, Cache As Dictionary)
 		  Try
+		    Var ObjectID As String = Option.Reference.ObjectID
+		    If Cache.HasKey(ObjectID) Then
+		      Return
+		    End If
+		    
 		    Var Engram As Beacon.Engram = Option.Engram
 		    If Document.ModEnabled(Engram.ModID) = False Then
 		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
 		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    End If
+		    Cache.Value(Engram.ObjectID) = True
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
