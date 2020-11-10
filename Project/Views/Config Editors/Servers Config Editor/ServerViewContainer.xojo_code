@@ -1,7 +1,44 @@
 #tag Class
 Protected Class ServerViewContainer
 Inherits BeaconSubview
+	#tag Method, Flags = &h1
+		Protected Sub UpdateConfigSetUI(Document As Beacon.Document, Profile As Beacon.ServerProfile, Field As Label, Button As PushButton)
+		  If Document.ConfigSetCount > 1 Then
+		    Var States() As Beacon.ConfigSetState = Profile.ConfigSetStates(Document)
+		    Var EnabledSets() As String
+		    For Each State As Beacon.ConfigSetState In States
+		      If State.Enabled Then
+		        EnabledSets.Add(State.Name)
+		      End If
+		    Next
+		    
+		    Field.Text = EnabledSets.EnglishOxfordList()
+		    Button.Enabled = True
+		  Else
+		    Field.Text = Beacon.Document.BaseConfigSetName
+		    Button.Enabled = False
+		  End If
+		End Sub
+	#tag EndMethod
+
+
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ViewTitle"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ViewIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EraseBackground"
 			Visible=false
@@ -73,14 +110,6 @@ Inherits BeaconSubview
 			InitialValue="ProgressNone"
 			Type="Double"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"

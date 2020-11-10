@@ -391,11 +391,11 @@ End
 		    Case IsA Beacon.NitradoServerProfile
 		      View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
 		    Case IsA Beacon.FTPServerProfile
-		      View = New FTPServerView(Beacon.FTPServerProfile(Profile))
+		      View = New FTPServerView(Self.Document, Beacon.FTPServerProfile(Profile))
 		    Case IsA Beacon.ConnectorServerProfile
 		      View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
 		    Case IsA Beacon.LocalServerProfile
-		      View = New LocalServerView(Beacon.LocalServerProfile(Profile))
+		      View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
 		    Else
 		      Self.CurrentProfileID = ""
 		      Return

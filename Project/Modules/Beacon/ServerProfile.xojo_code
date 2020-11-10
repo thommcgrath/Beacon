@@ -46,6 +46,40 @@ Protected Class ServerProfile
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConfigSetStates(ForDocument As Beacon.Document) As Beacon.ConfigSetState()
+		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
+		  Var States(0) As Beacon.ConfigSetState
+		  States(0) = New Beacon.ConfigSetState(Beacon.Document.BaseConfigSetName, True)
+		  
+		  Var Names() As String = ForDocument.ConfigSetNames
+		  Var Filter As New Dictionary
+		  For Each Name As String In Names
+		    If Name = Beacon.Document.BaseConfigSetName Then
+		      Continue
+		    End If
+		    
+		    Filter.Value(Name) = True
+		  Next
+		  
+		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
+		    If Filter.HasKey(State.Name) = False Then
+		      Continue
+		    End If
+		    
+		    States.Add(State)
+		    
+		    Filter.Remove(State.Name)
+		  Next
+		  
+		  For Each Entry As DictionaryEntry In Filter
+		    States.Add(New Beacon.ConfigSetState(Entry.Key, False))
+		  Next
+		  
+		  Return States
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Var Err As New UnsupportedOperationException

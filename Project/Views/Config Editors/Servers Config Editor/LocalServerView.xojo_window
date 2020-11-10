@@ -88,7 +88,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "Does not change the map"
@@ -123,44 +123,12 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "Build Config For:"
       Visible         =   True
       Width           =   172
-   End
-   Begin UITweaks.ResizedPopupMenu MapMenu
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   204
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      SelectedRowIndex=   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   95
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   165
    End
    Begin UITweaks.ResizedTextField ServerNameField
       AllowAutoDeactivate=   True
@@ -275,7 +243,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   127
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -309,7 +277,7 @@ Begin ServerViewContainer LocalServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   128
+      Top             =   160
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -343,7 +311,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   127
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       Value           =   "Game.ini File:"
@@ -385,7 +353,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   161
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -419,7 +387,7 @@ Begin ServerViewContainer LocalServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   162
+      Top             =   194
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -453,7 +421,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   161
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       Value           =   "GameUserSettings.ini File:"
@@ -486,7 +454,7 @@ Begin ServerViewContainer LocalServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   195
+      Top             =   227
       Transparent     =   True
       Visible         =   True
       Width           =   376
@@ -519,7 +487,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   195
+      Top             =   227
       Transparent     =   False
       Underline       =   False
       Value           =   "Message of the Day:"
@@ -554,7 +522,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   352
+      Top             =   384
       Transparent     =   False
       Underline       =   False
       Value           =   "Message Duration:"
@@ -597,7 +565,7 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   352
+      Top             =   384
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -633,10 +601,144 @@ Begin ServerViewContainer LocalServerView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   352
+      Top             =   384
       Transparent     =   False
       Underline       =   False
       Value           =   "Seconds"
+      Visible         =   True
+      Width           =   284
+   End
+   Begin UITweaks.ResizedPopupMenu MapMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   127
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   165
+   End
+   Begin UITweaks.ResizedPushButton ConfigSetChooseButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   500
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel ConfigSetLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Config Sets:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   172
+   End
+   Begin UITweaks.ResizedLabel ConfigSetField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Base"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
       Visible         =   True
       Width           =   284
    End
@@ -666,12 +768,15 @@ End
 		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
 		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
 		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
+		  
+		  Self.UpdateConfigSetUI()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.LocalServerProfile)
+		Sub Constructor(Document As Beacon.Document, Profile As Beacon.LocalServerProfile)
+		  Self.mDocument = Document
 		  Self.mProfile = Profile
 		End Sub
 	#tag EndMethod
@@ -697,6 +802,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateConfigSetUI()
+		  Self.UpdateConfigSetUI(Self.mDocument, Self.mProfile, Self.ConfigSetField, Self.ConfigSetChooseButton)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mDocument As Beacon.Document
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.LocalServerProfile
@@ -705,30 +820,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events MapMenu
-	#tag Event
-		Sub Change()
-		  Var Mask As UInt64
-		  If Me.SelectedRowIndex = -1 Then
-		    Mask = Beacon.Maps.All.Mask
-		  Else
-		    Mask = Me.RowTagAt(Me.SelectedRowIndex)
-		  End If
-		  Self.mProfile.Mask = Mask
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
-		  
-		  Var Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    Me.AddRow(Map.Name, Map.Mask)
-		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
@@ -805,6 +896,40 @@ End
 		    Self.mProfile.MessageDuration = Me.DoubleValue
 		    Self.Changed = Self.mProfile.Modified
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapMenu
+	#tag Event
+		Sub Change()
+		  Var Mask As UInt64
+		  If Me.SelectedRowIndex = -1 Then
+		    Mask = Beacon.Maps.All.Mask
+		  Else
+		    Mask = Me.RowTagAt(Me.SelectedRowIndex)
+		  End If
+		  Self.mProfile.Mask = Mask
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
+		  
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigSetChooseButton
+	#tag Event
+		Sub Action()
+		  Var States() As Beacon.ConfigSetState = Self.mProfile.ConfigSetStates(Self.mDocument)
+		  Var ChangedStates() As Beacon.ConfigSetState = ConfigSetSelectorDialog.Present(Self, States)
+		  Self.mProfile.ConfigSetStates = ChangedStates
+		  Self.UpdateConfigSetUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

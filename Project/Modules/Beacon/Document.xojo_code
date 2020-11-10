@@ -681,7 +681,11 @@ Implements ObservationKit.Observable
 		  If Dict.HasKey("Config Sets") Then
 		    Var Sets As Dictionary = Dict.Value("Config Sets")
 		    For Each Entry As DictionaryEntry In Sets
-		      Doc.ConfigSet(Entry.Key) = LoadConfigSet(Entry.Value, Identity, Doc)
+		      If Entry.Value IsA Dictionary Then
+		        Doc.ConfigSet(Entry.Key) = LoadConfigSet(Entry.Value, Identity, Doc)
+		      Else
+		        Doc.ConfigSet(Entry.Key) = New Dictionary
+		      End If
 		    Next
 		    
 		    // Doc.ConfigSet will add the states. We don't need them.

@@ -202,7 +202,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   127
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -238,7 +238,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   127
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -280,7 +280,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   161
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -316,7 +316,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   161
+      Top             =   193
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -358,7 +358,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   195
+      Top             =   227
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -394,7 +394,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   195
+      Top             =   227
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -436,7 +436,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   229
+      Top             =   261
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -472,7 +472,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   229
+      Top             =   261
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -514,7 +514,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   295
+      Top             =   327
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -550,7 +550,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   295
+      Top             =   327
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -592,7 +592,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   329
+      Top             =   361
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -628,7 +628,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   329
+      Top             =   361
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -660,7 +660,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   263
+      Top             =   295
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -695,7 +695,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   263
+      Top             =   295
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -727,7 +727,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -762,7 +762,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -797,7 +797,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -829,7 +829,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   363
+      Top             =   395
       Transparent     =   True
       Visible         =   True
       Width           =   376
@@ -862,7 +862,7 @@ Begin ServerViewContainer FTPServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   363
+      Top             =   395
       Transparent     =   False
       Underline       =   False
       Value           =   "Message of the Day:"
@@ -897,7 +897,7 @@ Begin ServerViewContainer FTPServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   520
+      Top             =   552
       Transparent     =   False
       Underline       =   False
       Value           =   "Message Duration:"
@@ -940,7 +940,7 @@ Begin ServerViewContainer FTPServerView
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   520
+      Top             =   552
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -976,10 +976,112 @@ Begin ServerViewContainer FTPServerView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   520
+      Top             =   552
       Transparent     =   False
       Underline       =   False
       Value           =   "Seconds"
+      Visible         =   True
+      Width           =   284
+   End
+   Begin UITweaks.ResizedPushButton ConfigSetChooseButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   500
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   26
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel ConfigSetLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   27
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Config Sets:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   172
+   End
+   Begin UITweaks.ResizedLabel ConfigSetField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   28
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Base"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
       Visible         =   True
       Width           =   284
    End
@@ -1010,16 +1112,29 @@ End
 		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
 		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
 		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
+		  
+		  Self.UpdateConfigSetUI()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.FTPServerProfile)
+		Sub Constructor(Document As Beacon.Document, Profile As Beacon.FTPServerProfile)
+		  Self.mDocument = Document
 		  Self.mProfile = Profile
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateConfigSetUI()
+		  Self.UpdateConfigSetUI(Self.mDocument, Self.mProfile, Self.ConfigSetField, Self.ConfigSetChooseButton)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mDocument As Beacon.Document
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.FTPServerProfile
@@ -1147,6 +1262,16 @@ End
 		    Self.mProfile.MessageDuration = Me.DoubleValue
 		    Self.Changed = Self.mProfile.Modified
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigSetChooseButton
+	#tag Event
+		Sub Action()
+		  Var States() As Beacon.ConfigSetState = Self.mProfile.ConfigSetStates(Self.mDocument)
+		  Var ChangedStates() As Beacon.ConfigSetState = ConfigSetSelectorDialog.Present(Self, States)
+		  Self.mProfile.ConfigSetStates = ChangedStates
+		  Self.UpdateConfigSetUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

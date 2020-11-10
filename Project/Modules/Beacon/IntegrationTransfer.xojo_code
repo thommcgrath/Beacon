@@ -6,7 +6,7 @@ Protected Class IntegrationTransfer
 		    // Given a full path
 		    Var Components() As String = Filename.Split("/")
 		    Self.mFilename = Components(Components.LastIndex)
-		    Components.Remove(Components.LastIndex)
+		    Components.RemoveAt(Components.LastIndex)
 		    Self.mPath = Components.Join("/")
 		  Else
 		    Self.mFilename = Filename

@@ -305,7 +305,7 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   158
+      Top             =   190
       Transparent     =   True
       Visible         =   True
       Width           =   412
@@ -338,7 +338,7 @@ Begin ServerViewContainer NitradoServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   158
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       Value           =   "Message of the Day:"
@@ -373,7 +373,7 @@ Begin ServerViewContainer NitradoServerView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   315
+      Top             =   347
       Transparent     =   False
       Underline       =   False
       Value           =   "Message Duration:"
@@ -416,7 +416,7 @@ Begin ServerViewContainer NitradoServerView
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   315
+      Top             =   347
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -452,10 +452,112 @@ Begin ServerViewContainer NitradoServerView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   315
+      Top             =   347
       Transparent     =   False
       Underline       =   False
       Value           =   "Seconds"
+      Visible         =   True
+      Width           =   320
+   End
+   Begin UITweaks.ResizedPushButton ConfigSetChooseButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   500
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel ConfigSetLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Config Sets:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   136
+   End
+   Begin UITweaks.ResizedLabel ConfigSetField
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Base"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
       Visible         =   True
       Width           =   320
    End
@@ -496,6 +598,8 @@ End
 		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
 		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
 		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
+		  
+		  Self.UpdateConfigSetUI()
 		End Sub
 	#tag EndEvent
 
@@ -639,6 +743,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateConfigSetUI()
+		  Self.UpdateConfigSetUI(Self.mDocument, Self.mProfile, Self.ConfigSetField, Self.ConfigSetChooseButton)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
@@ -770,6 +880,16 @@ End
 		    Self.mProfile.MessageDuration = Me.DoubleValue
 		    Self.Changed = Self.mProfile.Modified
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigSetChooseButton
+	#tag Event
+		Sub Action()
+		  Var States() As Beacon.ConfigSetState = Self.mProfile.ConfigSetStates(Self.mDocument)
+		  Var ChangedStates() As Beacon.ConfigSetState = ConfigSetSelectorDialog.Present(Self, States)
+		  Self.mProfile.ConfigSetStates = ChangedStates
+		  Self.UpdateConfigSetUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
