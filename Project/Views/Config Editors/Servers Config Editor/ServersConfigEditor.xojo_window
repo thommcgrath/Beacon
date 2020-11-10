@@ -66,7 +66,7 @@ Begin ConfigEditor ServersConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   0
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -337,6 +337,7 @@ End
 			  If Self.mCurrentProfileID <> "" Then
 			    Var View As ServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
+			    View.SwitchedFrom()
 			    Self.mCurrentProfileID = ""
 			  End If
 			  
@@ -345,6 +346,7 @@ End
 			  End If
 			  
 			  Var View As ServerViewContainer = Self.mViews.Value(Value)
+			  View.SwitchedTo()
 			  View.Visible = True
 			  Self.mCurrentProfileID = Value
 			End Set
@@ -377,35 +379,57 @@ End
 #tag Events ServerList
 	#tag Event
 		Sub Change()
-		  If Me.SelectedRowIndex = -1 Then
+		  Select Case Me.SelectedRowCount
+		  Case 0
 		    Self.CurrentProfileID = ""
 		    Return
-		  End If
-		  
-		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
-		  Var ProfileID As String = Profile.ProfileID
-		  If Not Self.mViews.HasKey(ProfileID) Then
-		    // Create the view
-		    Var View As ServerViewContainer
-		    Select Case Profile
-		    Case IsA Beacon.NitradoServerProfile
-		      View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
-		    Case IsA Beacon.FTPServerProfile
-		      View = New FTPServerView(Self.Document, Beacon.FTPServerProfile(Profile))
-		    Case IsA Beacon.ConnectorServerProfile
-		      View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
-		    Case IsA Beacon.LocalServerProfile
-		      View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
-		    Else
-		      Self.CurrentProfileID = ""
-		      Return
-		    End Select
+		  Case 1
+		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
+		    Var ProfileID As String = Profile.ProfileID
+		    If Not Self.mViews.HasKey(ProfileID) Then
+		      // Create the view
+		      Var View As ServerViewContainer
+		      Select Case Profile
+		      Case IsA Beacon.NitradoServerProfile
+		        View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
+		      Case IsA Beacon.FTPServerProfile
+		        View = New FTPServerView(Self.Document, Beacon.FTPServerProfile(Profile))
+		      Case IsA Beacon.ConnectorServerProfile
+		        View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
+		      Case IsA Beacon.LocalServerProfile
+		        View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
+		      Else
+		        Self.CurrentProfileID = ""
+		        Return
+		      End Select
+		      
+		      View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
+		      AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
+		      Self.mViews.Value(ProfileID) = View
+		    End If
+		    Self.CurrentProfileID = ProfileID
+		  Else
+		    Var Profiles() As Beacon.ServerProfile
+		    Var Parts() As String
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Not Me.Selected(Idx) Then
+		        Continue
+		      End If
+		      
+		      Profiles.Add(Me.RowTagAt(Idx))
+		      Parts.Add(Profiles(Profiles.LastIndex).ProfileID)
+		    Next
 		    
-		    View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
-		    AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
-		    Self.mViews.Value(ProfileID) = View
-		  End If
-		  Self.CurrentProfileID = ProfileID
+		    Var ProfileID As String = Parts.Join(",")
+		    If Not Self.mViews.HasKey(ProfileID) Then
+		      Var View As New MultiServerView(Self.Document, Profiles)
+		      View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
+		      AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
+		      Self.mViews.Value(ProfileID) = View
+		    End If
+		    
+		    Self.CurrentProfileID = ProfileID
+		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -428,7 +452,7 @@ End
 		    End If
 		  End If
 		  
-		  For I As Integer = 0 To Me.RowCount - 1
+		  For I As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(I) Then
 		      Var Profile As Beacon.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then

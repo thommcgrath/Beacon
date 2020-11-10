@@ -230,6 +230,7 @@ Window=ExperienceCurvesConfigEditor;Views/Config Editors/Experience Config Edito
 Class=Metadata;Modules/BeaconConfigs/Metadata.xojo_code;&h00000000182797FF;&h0000000068EBAFFF;false
 MultiImage=IconToolbarShare;Icons/IconToolbarShare.xojo_image;&h000000007A6197FF;&h0000000007F977FF;false
 Class=ServerViewContainer;Views/Config Editors/Servers Config Editor/ServerViewContainer.xojo_code;&h000000006CAA2FFF;&h000000002E7F7FFF;false
+Window=MultiServerView;Views/Config Editors/Servers Config Editor/MultiServerView.xojo_window;&h000000001C829FFF;&h000000002E7F7FFF;false
 Window=NitradoServerView;Views/Config Editors/Servers Config Editor/NitradoServerView.xojo_window;&h000000000D3887FF;&h000000002E7F7FFF;false
 MultiImage=IconToolbarPower;Icons/IconToolbarPower.xojo_image;&h000000002B09C7FF;&h0000000007F977FF;false
 Window=FTPServerView;Views/Config Editors/Servers Config Editor/FTPServerView.xojo_window;&h00000000408ED7FF;&h000000002E7F7FFF;false

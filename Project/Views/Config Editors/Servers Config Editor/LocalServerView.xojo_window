@@ -747,7 +747,9 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.Header.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Text = Self.mProfile.Name
 		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)

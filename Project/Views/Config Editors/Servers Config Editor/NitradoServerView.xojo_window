@@ -31,7 +31,7 @@ Begin ServerViewContainer NitradoServerView
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin BeaconToolbar Controls
+   Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -66,7 +66,7 @@ Begin ServerViewContainer NitradoServerView
       Visible         =   True
       Width           =   600
    End
-   Begin FadedSeparator ControlsSeparator
+   Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -583,8 +583,14 @@ End
 		  Else
 		    Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Beacon.ExternalAccount.ProviderNitrado + ". This means there is probably an update available.")
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
 		  
-		  Self.Controls.Caption = Self.mProfile.Name
+		  Self.Header.Caption = Self.mProfile.Name
 		  
 		  Self.ServerNameField.Text = Self.mProfile.Name
 		  
@@ -663,13 +669,13 @@ End
 		      Enabled = False
 		    End Select
 		    
-		    Self.Controls.PowerButton.Enabled = Enabled
-		    Self.Controls.PowerButton.Toggled = Started
-		    Self.Controls.PowerButton.HelpTag = If(Started, "Stop the server.", "Start the server.")
+		    Self.Header.PowerButton.Enabled = Enabled
+		    Self.Header.PowerButton.Toggled = Started
+		    Self.Header.PowerButton.HelpTag = If(Started, "Stop the server.", "Start the server.")
 		  Catch Err As RuntimeException
-		    Self.Controls.PowerButton.Enabled = False
-		    Self.Controls.PowerButton.Toggled = False
-		    Self.Controls.PowerButton.HelpTag = "Server state unknown. Cannot start or stop."
+		    Self.Header.PowerButton.Enabled = False
+		    Self.Header.PowerButton.Toggled = False
+		    Self.Header.PowerButton.HelpTag = "Server state unknown. Cannot start or stop."
 		    Self.ServerStatusField.Text = "Unknown"
 		  End Try
 		  
@@ -802,7 +808,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Controls
+#tag Events Header
 	#tag Event
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
@@ -854,7 +860,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.mProfile.Name = Me.Text
-		  Self.Controls.Caption = Me.Text
+		  Self.Header.Caption = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
