@@ -438,7 +438,7 @@ End
 		    Return True
 		  End If
 		  
-		  If UserCloud.IsBusy Then
+		  If UserCloud.IsBusy Or UserCloud.HasPendingSync Then
 		    Return True
 		  End If
 		End Function

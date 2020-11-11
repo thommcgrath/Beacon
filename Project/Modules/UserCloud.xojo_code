@@ -133,6 +133,12 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function HasPendingSync() As Boolean
+		  Return SyncKey.IsEmpty = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function IsBusy() As Boolean
 		  If PendingRequests = Nil Then
 		    PendingRequests = New Dictionary
