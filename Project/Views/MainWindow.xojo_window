@@ -78,7 +78,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   1200
       Begin HTMLViewer HelpViewer
@@ -246,12 +246,29 @@ End
 #tag WindowCode
 	#tag Event
 		Function CancelClose(appQuitting as Boolean) As Boolean
-		  #Pragma Unused AppQuitting
-		  
 		  Const AllowClose = False
 		  Const BlockClose = True
 		  
 		  If Self.DocumentsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
+		  
+		  If Self.BlueprintsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
+		  
+		  If Self.PresetsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
+		  
+		  If Self.Busy Then
+		    Self.mQuitWhenNotBusy = Self.mQuitWhenNotBusy Or AppQuitting
+		    If Self.mBusyWatcher Is Nil Then
+		      Self.mBusyWatcher = New Timer
+		      Self.mBusyWatcher.Period = 500
+		      AddHandler mBusyWatcher.Action, WeakAddressOf mBusyWatcher_Action
+		    End If
+		    Self.mBusyWatcher.RunMode = Timer.RunModes.Multiple
 		    Return BlockClose
 		  End If
 		  
@@ -404,6 +421,26 @@ End
 
 
 	#tag Method, Flags = &h0
+		Function Busy() As Boolean
+		  If Self.DocumentsComponent1.Busy Then
+		    Return True
+		  End If
+		  
+		  If Self.DashboardPane1.Busy Then
+		    Return True
+		  End If
+		  
+		  If Self.BlueprintsComponent1.Busy Then
+		    Return True
+		  End If
+		  
+		  If Self.PresetsComponent1.Busy Then
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  #if TargetMacOS
 		    Self.mObserver = New NSNotificationObserverMBS
@@ -458,6 +495,47 @@ End
 		    Return DocumentEditorView(DocumentView)
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasModifications() As Boolean
+		  If Self.DocumentsComponent1.HasModifications Then
+		    Return True
+		  End If
+		  
+		  If Self.DashboardPane1.HasModifications Then
+		    Return True
+		  End If
+		  
+		  If Self.BlueprintsComponent1.HasModifications Then
+		    Return True
+		  End If
+		  
+		  If Self.PresetsComponent1.HasModifications Then
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mBusyWatcher_Action(Sender As Timer)
+		  If Self.Busy Then
+		    Return
+		  End If
+		  
+		  If Self.HasModifications Then
+		    // The work has finished but there are still changes left, so cancel this action entirely.
+		    Sender.RunMode = Timer.RunModes.Off
+		    Self.mQuitWhenNotBusy = False
+		    Return
+		  End If
+		  
+		  If Self.mQuitWhenNotBusy Then
+		    Quit
+		  Else
+		    Self.Close
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -711,6 +789,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mBusyWatcher As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHelpLoaded As Boolean
 	#tag EndProperty
 
@@ -720,6 +802,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mOpened As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mQuitWhenNotBusy As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

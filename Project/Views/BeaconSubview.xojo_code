@@ -78,6 +78,12 @@ Implements ObservationKit.Observable
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
+		Function Busy() As Boolean
+		  Return Self.mProgress > Self.ProgressNone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CanBeClosed() As Boolean
 		  Return True
 		End Function
@@ -142,6 +148,12 @@ Implements ObservationKit.Observable
 		Sub GetEditorMenuItems(Items() As MenuItem)
 		  RaiseEvent GetEditorMenuItems(Items)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasModifications() As Boolean
+		  Return Self.Changed
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

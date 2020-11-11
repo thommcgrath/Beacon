@@ -24,6 +24,20 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Busy() As Boolean
+		  If Super.Busy Then
+		    Return True
+		  End If
+		  
+		  For Each Page As BeaconSubview In Self.mPages
+		    If Page.Busy Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
 		  Const AllowClose = True
 		  Const BlockClose = False
@@ -103,6 +117,18 @@ Inherits BeaconSubview
 		  
 		  RaiseEvent PageChanged(OldIndex, Idx)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasModifications() As Boolean
+		  If Super.HasModifications Then
+		    Return True
+		  End If
+		  
+		  For Each Page As BeaconSubview In Self.mPages
+		    Return Page.HasModifications
+		  Next
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
