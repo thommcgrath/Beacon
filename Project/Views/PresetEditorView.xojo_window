@@ -139,7 +139,7 @@ Begin BeaconSubview PresetEditorView
       TabPanelIndex   =   0
       Top             =   61
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   740
       BeginSegmentedButton SegmentedButton MapSelector
@@ -1045,7 +1045,9 @@ End
 		  If Self.mSaveFile = Nil Then
 		    Beacon.Data.SavePreset(Self.mPreset)
 		  Else
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
+		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Start
 		  End If
 		  Self.Changed = False
@@ -1189,6 +1191,15 @@ End
 		    Return Self.mPreset.PresetID
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
+		  #Pragma Unused Sender
+		  #Pragma Unused Destination
+		  
+		  Self.Progress = BeaconSubview.ProgressNone
+		End Sub
 	#tag EndMethod
 
 

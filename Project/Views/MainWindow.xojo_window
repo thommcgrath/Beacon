@@ -437,6 +437,10 @@ End
 		  If Self.PresetsComponent1.Busy Then
 		    Return True
 		  End If
+		  
+		  If UserCloud.IsBusy Then
+		    Return True
+		  End If
 		End Function
 	#tag EndMethod
 
