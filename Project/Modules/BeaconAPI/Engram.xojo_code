@@ -31,7 +31,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod

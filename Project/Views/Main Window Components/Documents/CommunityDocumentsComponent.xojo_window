@@ -251,7 +251,7 @@ End
 #tag Events FilterBar
 	#tag Event
 		Sub Open()
-		  Me.Mask = Beacon.Maps.All.Mask
+		  Me.Mask = Beacon.Maps.UniversalMask
 		End Sub
 	#tag EndEvent
 	#tag Event

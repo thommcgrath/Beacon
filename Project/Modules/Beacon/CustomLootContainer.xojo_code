@@ -64,7 +64,7 @@ Implements Beacon.MutableLootSource
 		  End If
 		  
 		  Try
-		    Self.Availability = SaveData.Lookup("Availability", Beacon.Maps.All.Mask).UInt64Value
+		    Self.Availability = SaveData.Lookup("Availability", Beacon.Maps.UniversalMask).UInt64Value
 		  Catch Err As RuntimeException
 		  End Try
 		  

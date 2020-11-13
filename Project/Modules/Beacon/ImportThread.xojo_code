@@ -255,7 +255,7 @@ Inherits Beacon.Thread
 		  Var GameIniValues As New Dictionary
 		  Var GameUserSettingsIniValues As New Dictionary
 		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
+		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.UniversalMask)
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)

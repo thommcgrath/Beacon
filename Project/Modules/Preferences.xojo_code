@@ -377,7 +377,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.VariantValue("Last Preset Map Filter", Beacon.Maps.All.Mask)
+			  Return mManager.VariantValue("Last Preset Map Filter", Beacon.Maps.UniversalMask)
 			End Get
 		#tag EndGetter
 		#tag Setter

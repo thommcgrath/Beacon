@@ -181,7 +181,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
 		  If Self.mMask = CType(0, UInt64) Then
-		    Return Beacon.Maps.All.Mask
+		    Return Beacon.Maps.UniversalMask
 		  Else
 		    Return Self.mMask
 		  End If

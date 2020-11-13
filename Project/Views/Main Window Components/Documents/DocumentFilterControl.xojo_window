@@ -188,7 +188,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.mMask = Beacon.Maps.All.Mask
+		  Self.mMask = Beacon.Maps.UniversalMask
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent

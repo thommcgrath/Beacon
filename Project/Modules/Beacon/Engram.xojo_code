@@ -50,7 +50,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		End Sub
 	#tag EndMethod
 

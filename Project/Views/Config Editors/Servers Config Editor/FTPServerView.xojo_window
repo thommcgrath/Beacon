@@ -1224,7 +1224,7 @@ End
 		Sub Change()
 		  Var Mask As UInt64
 		  If Me.SelectedRowIndex = -1 Then
-		    Mask = Beacon.Maps.All.Mask
+		    Mask = Beacon.Maps.UniversalMask
 		  Else
 		    Mask = Me.RowTagAt(Me.SelectedRowIndex)
 		  End If
@@ -1234,7 +1234,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
+		  Me.AddRow("All Maps", Beacon.Maps.UniversalMask)
 		  
 		  Var Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps

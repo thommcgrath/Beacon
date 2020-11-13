@@ -239,8 +239,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_mod_id_idx ON " + Category + "(mod_id);")
 		  Next
 		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
+		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
@@ -946,6 +948,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Return New Beacon.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps() As Beacon.Map()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
+		  Var Maps() As Beacon.Map
+		  For Each Row As DatabaseRow In Rows
+		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
+		  Next
+		  Return Maps
 		End Function
 	#tag EndMethod
 

@@ -76,7 +76,7 @@ Inherits Beacon.Thread
 		      GroupColumnIdx = HeaderColumns.IndexOf("Group")
 		      BlueprintColumnIdx = HeaderColumns.IndexOf("Can Blueprint")
 		      
-		      Var AllAvailabilityMask As UInt64 = Beacon.Maps.All.Mask
+		      Var AllAvailabilityMask As UInt64 = Beacon.Maps.UniversalMask
 		      
 		      If PathColumnIdx = -1 Or LabelColumnIdx = -1 Then
 		        Var Err As New UnsupportedFormatException

@@ -41,7 +41,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		  Self.mLimits = New Beacon.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod

@@ -114,7 +114,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
 		    Var MutableSource As New Beacon.CustomLootContainer(ClassString)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    MutableSource.Availability = Beacon.Maps.All.Mask
+		    MutableSource.Availability = Beacon.Maps.UniversalMask
 		    MutableSource.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 999).IntegerValue
 		    MutableSource.Label = Dict.Lookup("Label", ClassString).StringValue

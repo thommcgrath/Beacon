@@ -8,7 +8,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Map()
-		  Return Beacon.Data.GetMaps(18446744073709551615)
+		  Return Beacon.Data.GetMaps()
 		End Function
 	#tag EndMethod
 
@@ -40,7 +40,7 @@ Protected Module Maps
 		Protected Function MaskForIdentifier(Identifier As String) As UInt64
 		  Var Map As Beacon.Map = Beacon.Data.GetMap(Identifier)
 		  If (Map Is Nil) Then
-		    Return Beacon.Maps.All.Mask
+		    Return Beacon.Maps.UniversalMask
 		  End If
 		  
 		  Return Map.Mask
@@ -72,10 +72,24 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function UniversalMask() As UInt64
+		  If mUniversalMask = CType(0, UInt64) Then
+		    mUniversalMask = All.Mask
+		  End If
+		  Return mUniversalMask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Attributes( Deprecated ) Protected Function Valguero() As Beacon.Map
 		  Return Beacon.Data.GetMap("Valguero_P")
 		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mUniversalMask As UInt64
+	#tag EndProperty
 
 
 	#tag ViewBehavior

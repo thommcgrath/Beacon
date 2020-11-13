@@ -204,7 +204,7 @@ End
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var SelfDocument As Beacon.Document = Self.Document
 		  Var CreatedEditorNames() As String
-		  Var GenericProfile As New Beacon.GenericServerProfile(SelfDocument.Title, Beacon.Maps.All.Mask)
+		  Var GenericProfile As New Beacon.GenericServerProfile(SelfDocument.Title, Beacon.Maps.UniversalMask)
 		  Var GameIniValues As New Dictionary
 		  Var GameUserSettingsIniValues As New Dictionary
 		  

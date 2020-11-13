@@ -1477,7 +1477,7 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Limit As UInt64 = Beacon.Maps.All.Mask
+			  Var Limit As UInt64 = Beacon.Maps.UniversalMask
 			  Value = Value And Limit
 			  If Self.mMapCompatibility <> Value Then
 			    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)

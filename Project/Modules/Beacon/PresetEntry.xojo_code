@@ -16,7 +16,7 @@ Inherits Beacon.SetEntry
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		  Self.mRespectQualityModifier = True
 		  Self.mRespectQuantityMultiplier = True
 		  Self.mRespectBlueprintMultiplier = True

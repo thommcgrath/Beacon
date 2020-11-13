@@ -980,7 +980,7 @@ End
 		    Win.MapMenu.AddRow(Maps(0).Name, Maps(0).Mask)
 		    Win.MapMenu.SelectedRowIndex = 0
 		  ElseIf Maps.LastIndex > 0 Then
-		    Win.MapMenu.AddRow("All Maps", Beacon.Maps.All.Mask)
+		    Win.MapMenu.AddRow("All Maps", Beacon.Maps.UniversalMask)
 		    For Each Map As Beacon.Map In Maps
 		      Win.MapMenu.AddRow(Map.Name, Map.Mask)
 		    Next
@@ -1165,7 +1165,7 @@ End
 			Get
 			  Var Mask As UInt64
 			  If Self.ProfileMenu.SelectedRowIndex = -1 Then
-			    Mask = Beacon.Maps.All.Mask
+			    Mask = Beacon.Maps.UniversalMask
 			  Else
 			    Mask = Beacon.ServerProfile(Self.ProfileMenu.RowTagAt(Self.ProfileMenu.SelectedRowIndex)).Mask
 			  End If
