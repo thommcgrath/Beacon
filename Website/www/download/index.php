@@ -179,7 +179,7 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 	<div class="column">
 		<p><strong>Mac</strong></p>
 		<ul>
-			<li>El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
+			<li>Big Sur (11), El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
 			<li>1280x720 screen resolution or greater. Retina screens will need 2560x1440 pixels or greater.</li>
 		</ul>
 	</div>
