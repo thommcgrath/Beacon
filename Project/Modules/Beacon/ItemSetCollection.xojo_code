@@ -100,9 +100,9 @@ Implements Beacon.Countable
 		    Return Sets
 		  End If
 		  
-		  Var Dicts() As Variant
+		  Var Dicts() As Dictionary
 		  Try
-		    Dicts = SaveData
+		    Dicts = SaveData.DictionaryArrayValue
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting SaveData to array")
 		    Return Sets

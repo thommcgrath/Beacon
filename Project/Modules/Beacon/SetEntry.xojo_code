@@ -210,9 +210,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End Try
 		  
 		  If Dict.HasKey("Items") Then
-		    Var Children() As Variant
+		    Var Children() As Dictionary
 		    Try
-		      Children = Dict.Value("Items")
+		      Children = Dict.Value("Items").DictionaryArrayValue
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Casting Items to array")
 		    End Try

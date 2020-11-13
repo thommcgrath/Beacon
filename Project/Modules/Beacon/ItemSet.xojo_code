@@ -200,12 +200,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    App.Log(Err, CurrentMethodName, "Reading Label value")
 		  End Try
 		  
-		  Var Children() As Variant
+		  Var Children() As Dictionary
 		  Try
 		    If Dict.HasKey("ItemEntries") Then
-		      Children = Dict.Value("ItemEntries")
+		      Children = Dict.Value("ItemEntries").DictionaryArrayValue
 		    ElseIf Dict.HasKey("Items") Then
-		      Children = Dict.Value("Items")
+		      Children = Dict.Value("Items").DictionaryArrayValue
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")

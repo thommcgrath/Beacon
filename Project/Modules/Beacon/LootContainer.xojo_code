@@ -124,9 +124,9 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		    LootSource = MutableSource
 		  End If
 		  
-		  Var Children() As Variant
+		  Var Children() As Dictionary
 		  If Dict.HasKey("ItemSets") Then
-		    Children = Dict.Value("ItemSets")
+		    Children = Dict.Value("ItemSets").DictionaryArrayValue
 		  End If
 		  Var AddedHashes As New Dictionary
 		  For Each Child As Dictionary In Children

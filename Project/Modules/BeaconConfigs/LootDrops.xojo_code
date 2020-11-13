@@ -89,7 +89,7 @@ Implements Iterable
 		  End If
 		  
 		  // Only keep the most recent of the duplicates
-		  Var Contents() As Variant = Dict.Value("Contents")
+		  Var Contents() As Dictionary = Dict.Value("Contents").DictionaryArrayValue
 		  Var UniqueClasses As New Dictionary
 		  For Each DropDict As Dictionary In Contents
 		    Var Source As Beacon.LootSource
