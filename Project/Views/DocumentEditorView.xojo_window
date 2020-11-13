@@ -45,7 +45,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       Top             =   50
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   627
       Begin LogoFillCanvas LogoFillCanvas1
@@ -1156,9 +1156,9 @@ End
 		Private Sub UpdateViewIcon()
 		  Select Case Self.mController.URL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    Self.ViewIcon = IconCloudTab
+		    Self.ViewIcon = IconCloudDocument
 		  Case Beacon.DocumentURL.TypeWeb
-		    Self.ViewIcon = IconCommunityTab
+		    Self.ViewIcon = IconCommunityDocument
 		  Else
 		    Self.ViewIcon = Nil
 		  End Select
