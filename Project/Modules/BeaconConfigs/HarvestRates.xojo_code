@@ -244,7 +244,7 @@ Inherits Beacon.ConfigGroup
 		  If Rate <= 0 And Self.mOverrides.HasBlueprint(Engram) Then
 		    Self.mOverrides.Remove(Engram)
 		    Self.Modified = True
-		  ElseIf Rate > 0 And Self.Override(Engram) <> Rate Then
+		  ElseIf Rate > 0 And (Self.mOverrides.HasAttribute(Engram, Self.RateAttribute) = False Or Self.Override(Engram) <> Rate) Then
 		    Self.mOverrides.Value(Engram, Self.RateAttribute) = Rate
 		    Self.Modified = True
 		  End If
