@@ -32,25 +32,25 @@
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""ATSApplicationFontsPath"" ""Fonts/""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""LSMinimumSystemVersion"" ""10.11.0""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""NSAppAccentColorName"" ""BeaconBrand""")
+					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleIconName"" ""App""")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
 					Destination = 1
 					Subdirectory = 
-					FolderItem = Li4vLi4vQXJ0d29yay9BcHAuaWNucw==
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25Eb2N1bWVudC5pY25z
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25JZGVudGl0eS5pY25z
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNucw==
 					FolderItem = Li4vLi4vRm9udHMv
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbnM=
-					FolderItem = Li4vQXNzZXRzLmNhcg==
-					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25EYXRhLmljbnM=
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vSW5zdGFsbGVycy9NYWMvY29udGFpbmVyLW1pZ3JhdGlvbi5wbGlzdA==
+				End
+				Begin IDEScriptBuildStep BuildMacAssets , AppliesTo = 0
+					If TargetMacOS Then
+					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Call DoShellCommand("actool --compile " + App + "/Contents/Resources --platform macosx --minimum-deployment-target 10.11 ""${PROJECT_PATH}/Assets.xcassets""")
+					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3
 					If TargetMacOS Then
