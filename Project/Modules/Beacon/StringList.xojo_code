@@ -60,6 +60,15 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As String
+		  If Self.mCachedHash.IsEmpty Then
+		    Self.mCachedHash = EncodeHex(Crypto.SHA256(Self.Join(","))).Lowercase
+		  End If
+		  Return Self.mCachedHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Item As String) As Integer
 		  Return Self.mItems.IndexOf(Item)
 		End Function
@@ -202,12 +211,35 @@ Implements Iterable
 
 
 	#tag Property, Flags = &h21
+		Private mCachedHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mItems() As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Modified As Boolean
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mModified
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mModified = Value Then
+			    Return
+			  End If
+			  
+			  Self.mModified = value
+			  Self.mCachedHash = ""
+			End Set
+		#tag EndSetter
+		Modified As Boolean
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -252,7 +284,7 @@ Implements Iterable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Modified"
+			Name="mModified"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

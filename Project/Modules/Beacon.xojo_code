@@ -448,6 +448,24 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Label As String, Specifier As String) As String
+		  Return Beacon.Disambiguate(Label, Specifier)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Disambiguate(Label As String, Specifier As String) As String
+		  // Yes it's a word, shut up.
+		  
+		  If Label.EndsWith(")") Then
+		    Return Label.Left(Label.Length - 1) + ", " + Specifier + ")"
+		  Else
+		    Return Label + " (" + Specifier + ")"
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, Default As Double, AllowArray As Boolean = False) As Double
 		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray, AddressOf CoerceToDouble)
 		End Function

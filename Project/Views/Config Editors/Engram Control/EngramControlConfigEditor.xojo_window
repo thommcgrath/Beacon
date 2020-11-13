@@ -420,7 +420,7 @@ End
 		    Var Engram As Beacon.Engram = Engrams(Idx)
 		    Self.EngramList.RowTagAt(Idx) = Engram
 		    If LabelCounts.Lookup(Engram.Label, 0) > 1 Then
-		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label + " (" + Engram.ModName + ")"
+		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label.Disambiguate(Engram.ModName)
 		    Else
 		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label
 		    End If

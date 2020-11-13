@@ -196,6 +196,42 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function BlueprintLabels(Category As String, Mods As Beacon.StringList) As Dictionary
+		  Var CacheKey As String = Category + ":" + Mods.Hash
+		  If Self.mBlueprintLabelsCacheKey <> CacheKey Then
+		    Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Category, "", Mods, "")
+		    Var Temp As New Dictionary
+		    For Each Blueprint As Beacon.Blueprint In Blueprints
+		      Var Matches() As Beacon.Blueprint
+		      If Temp.HasKey(Blueprint.Label) Then
+		        Matches = Temp.Value(Blueprint.Label)
+		      End If
+		      Matches.Add(Blueprint)
+		      Temp.Value(Blueprint.Label) = Matches
+		    Next
+		    
+		    Var Dict As New Dictionary
+		    For Each Entry As DictionaryEntry In Temp
+		      Var Base As String = Entry.Key
+		      Var Matches() As Beacon.Blueprint = Entry.Value
+		      If Matches.Count = 1 Then
+		        Dict.Value(Matches(0).ObjectID) = Base
+		      Else
+		        For Each Sibling As Beacon.Blueprint In Matches
+		          Dict.Value(Sibling.ObjectID) = Base.Disambiguate(Sibling.ModName)
+		        Next
+		      End If
+		    Next
+		    
+		    Self.mBlueprintLabelsCacheDict = Dict
+		    Self.mBlueprintLabelsCacheKey = CacheKey
+		  End If
+		  
+		  Return Self.mBlueprintLabelsCacheDict
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub BuildSchema()
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
@@ -428,6 +464,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mLock = New CriticalSection
 		  Self.mDropsLabelCacheDict = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
+		  Self.mBlueprintLabelsCacheDict = New Dictionary
 		  
 		  Var AppSupport As FolderItem = App.ApplicationSupport
 		  
@@ -1847,6 +1884,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.LoadPresets()
 		    End If
 		    
+		    Self.mDropsLabelCacheMask = 0
+		    Self.mDropsLabelCacheDict = New Dictionary
+		    Self.mSpawnLabelCacheMask = 0
+		    Self.mSpawnLabelCacheDict = New Dictionary
+		    Self.mBlueprintLabelsCacheKey = ""
+		    Self.mBlueprintLabelsCacheDict = New Dictionary
+		    
 		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.SQLDateTimeWithOffset)
 		    
 		    If EngramsChanged Then
@@ -2028,11 +2072,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Idx > -1 Then
 		        Var Filtered As UInt64 = Drops(Idx).Availability And Availability
 		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label + " (" + Maps.Label + ")"
+		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label.Disambiguate(Maps.Label)
 		        
 		        Filtered = Drops(I).Availability And Availability
 		        Maps = Beacon.Maps.ForMask(Filtered)
-		        Label = Label + " (" + Maps.Label + ")"
+		        Label = Label.Disambiguate(Maps.Label)
 		      End If
 		      
 		      Dict.Value(Drops(I).Path) = Label
@@ -2934,11 +2978,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Idx > -1 Then
 		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
 		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Points(Idx).Path) = Points(Idx).Label + " (" + Maps.Label + ")"
+		        Dict.Value(Points(Idx).ObjectID) = Points(Idx).Label.Disambiguate(Maps.Label)
 		        
 		        Filtered = Points(I).Availability And Availability
 		        Maps = Beacon.Maps.ForMask(Filtered)
-		        Label = Label + " (" + Maps.Label + ")"
+		        Label = Label.Disambiguate(Maps.Label)
 		      End If
 		      
 		      Dict.Value(Points(I).ObjectID) = Label
@@ -3147,6 +3191,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mBase As SQLiteDatabase
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlueprintLabelsCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlueprintLabelsCacheKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
