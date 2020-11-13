@@ -57,7 +57,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Var Dicts() As Variant = Dict.Value("Creatures")
+		  Var Dicts() As Dictionary = Dict.Value("Creatures").DictionaryArrayValue
 		  For Each CreatureDict As Dictionary In Dicts
 		    Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(CreatureDict)
 		    If Behavior Is Nil Then

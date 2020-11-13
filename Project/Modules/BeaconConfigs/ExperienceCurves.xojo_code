@@ -97,10 +97,18 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Player Levels") Then
-		    Var List() As Variant = Dict.Value("Player Levels")
-		    For Each LevelXP As UInt64 In List
-		      Self.mPlayerLevels.Add(LevelXP)
-		    Next
+		    Var Value As Variant = Dict.Value("Player Levels")
+		    If Value.IsNull = False Then
+		      Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
+		      If Info.FullName = "UInt64()" Then
+		        Self.mPlayerLevels = Value
+		      Else
+		        Var List() As Variant = Dict.Value("Player Levels")
+		        For Each LevelXP As UInt64 In List
+		          Self.mPlayerLevels.Add(LevelXP)
+		        Next
+		      End If
+		    End If
 		  ElseIf Dict.HasAllKeys("Player Curve", "Player Level Cap", "Player Max Experience") Then
 		    Var Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Player Curve"))
 		    Var MaxLevel As Integer = Dict.Value("Player Level Cap")
@@ -109,10 +117,18 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If Dict.HasKey("Dino Levels") Then
-		    Var List() As Variant = Dict.Value("Dino Levels")
-		    For Each LevelXP As UInt64 In List
-		      Self.mDinoLevels.Add(LevelXP)
-		    Next
+		    Var Value As Variant = Dict.Value("Dino Levels")
+		    If Value.IsNull = False Then
+		      Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
+		      If Info.FullName = "UInt64()" Then
+		        Self.mDinoLevels = Value
+		      Else
+		        Var List() As Variant = Dict.Value("Dino Levels")
+		        For Each LevelXP As UInt64 In List
+		          Self.mDinoLevels.Add(LevelXP)
+		        Next
+		      End If
+		    End If
 		  ElseIf Dict.HasAllKeys("Dino Curve", "Dino Level Cap", "Dino Max Experience") Then
 		    Var Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Dino Curve"))
 		    Var MaxLevel As Integer = Dict.Value("Dino Level Cap")

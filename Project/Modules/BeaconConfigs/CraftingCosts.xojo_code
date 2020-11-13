@@ -40,7 +40,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Costs") Then
-		    Var Costs() As Variant = Dict.Value("Costs")
+		    Var Costs() As Dictionary = Dict.Value("Costs").DictionaryArrayValue
 		    For Each CostData As Dictionary In Costs
 		      Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then

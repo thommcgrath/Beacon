@@ -49,9 +49,8 @@ Implements Iterable
 		    Return
 		  End If
 		  
-		  Var Points() As Variant
 		  Try
-		    Points = Dict.Value("Points")
+		    Var Points() As Dictionary = Dict.Value("Points").DictionaryArrayValue
 		    For Each PointData As Dictionary In Points
 		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.SpawnPoint.FromSaveData(PointData)
 		      If SpawnPoint <> Nil Then

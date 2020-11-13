@@ -100,7 +100,7 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  If Dict.HasKey("Ingredients") Then
-		    Var Ingredients() As Variant = Dict.Value("Ingredients")
+		    Var Ingredients() As Dictionary = Dict.Value("Ingredients").DictionaryArrayValue
 		    For Each Ingredient As Dictionary In Ingredients
 		      Var Ref As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Ingredient, Nil)
 		      If (Ref Is Nil) = False Then
@@ -108,7 +108,7 @@ Implements Beacon.NamedItem
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Resources") Then
-		    Var Resources() As Variant = Dict.Value("Resources")
+		    Var Resources() As Dictionary = Dict.Value("Resources").DictionaryArrayValue
 		    For Each Resource As Dictionary In Resources
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
