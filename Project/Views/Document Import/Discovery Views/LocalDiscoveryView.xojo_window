@@ -341,6 +341,15 @@ Begin DiscoveryView LocalDiscoveryView
       Visible         =   True
       Width           =   214
    End
+   Begin Timer TextChangeDelayTrigger
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -631,7 +640,11 @@ End
 		    End Select
 		  End If
 		  
-		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
+		  If Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single Then
+		    Self.TextChangeDelayTrigger.Reset
+		  Else
+		    Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -717,6 +730,13 @@ End
 		    Me.AddRow(Map.Name, Map.Mask)
 		  Next
 		  Me.SelectedRowIndex = 0
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TextChangeDelayTrigger
+	#tag Event
+		Sub Action()
+		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
