@@ -268,6 +268,10 @@ End
 #tag Events List
 	#tag Event
 		Sub LoadMoreRows(Offset As Integer, RowCount As Integer)
+		  If Not Self.mHasBeenShown Then
+		    Return
+		  End If
+		  
 		  Var Bound As Integer = Offset + RowCount
 		  If Bound > Self.mLoadedBound Then
 		    

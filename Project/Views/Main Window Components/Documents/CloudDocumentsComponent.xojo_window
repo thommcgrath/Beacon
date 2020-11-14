@@ -1,5 +1,5 @@
 #tag Window
-Begin DocumentsComponentView CloudDocumentsComponent
+Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -228,6 +228,242 @@ Begin DocumentsComponentView CloudDocumentsComponent
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin Label LoginMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   213
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Looks like there was a problem signing you in."
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   228
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   379
+      End
+      Begin UITweaks.ResizedPushButton LoginActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Sign In"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   362
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   260
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label PermissionMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   75
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Your cloud features are disabled. Turn them on to access projects stored in the cloud."
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   228
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   655
+      End
+      Begin UITweaks.ResizedPushButton PermissionActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Turn On"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   362
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   260
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label ErrorMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   74
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "There was an error loading your cloud projects."
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   212
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   655
+      End
+      Begin UITweaks.ResizedPushButton ErrorActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Try Again"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   357
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   276
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin Label ErrorExplanationLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   74
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "This is a placeholder"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   244
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   655
+      End
    End
    Begin BeaconAPI.Socket APISocket
       Index           =   -2147483648
@@ -251,7 +487,15 @@ End
 		    Self.mVersionProgress = Nil
 		  End If
 		  
+		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged)
+		  
 		  RaiseEvent Close
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged)
 		End Sub
 	#tag EndEvent
 
@@ -262,6 +506,18 @@ End
 		  Var LoadingGroup As New ControlGroup(Self.LoadingLabel, Self.LoadingProgressBar)
 		  LoadingGroup.Left = (Self.Width - LoadingGroup.Width) / 2
 		  LoadingGroup.Top = (Self.Height - LoadingGroup.Height) / 2
+		  
+		  Var LoginGroup As New ControlGroup(Self.LoginMessageLabel, Self.LoginActionButton)
+		  LoginGroup.Left = (Self.Width - LoginGroup.Width) / 2
+		  LoginGroup.Top = (Self.Height - LoginGroup.Height) / 2
+		  
+		  Var PermissionGroup As New ControlGroup(Self.PermissionMessageLabel, Self.PermissionActionButton)
+		  PermissionGroup.Left = (Self.Width - PermissionGroup.Width) / 2
+		  PermissionGroup.Top = (Self.Height - PermissionGroup.Height) / 2
+		  
+		  Var ErrorGroup As New ControlGroup(Self.ErrorMessageLabel, Self.ErrorExplanationLabel, Self.ErrorActionButton)
+		  ErrorGroup.Left = (Self.Width - ErrorGroup.Width) / 2
+		  ErrorGroup.Top = (Self.Height - ErrorGroup.Height) / 2
 		End Sub
 	#tag EndEvent
 
@@ -269,28 +525,7 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Preferences.OnlineEnabled = False Or App.IdentityManager.CurrentIdentity Is Nil Then
-		    Self.Pages.SelectedPanelIndex = Self.PagePermission
-		    Return
-		  End If
-		  
-		  If Self.APISocket.Working = False Then
-		    Var Params As New Dictionary
-		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
-		    
-		    Var Request As BeaconAPI.Request
-		    Var Token As String = Preferences.OnlineToken
-		    If Token.IsEmpty Then
-		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
-		      Request.Sign(App.IdentityManager.CurrentIdentity)
-		    Else
-		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
-		      Request.Authenticate(Token)
-		    End If
-		    Self.APISocket.Start(Request)
-		  End If
-		  
-		  Self.Pages.SelectedPanelIndex = Self.PageLoading
+		  Self.RefreshList()
 		End Sub
 	#tag EndEvent
 
@@ -305,7 +540,6 @@ End
 		  End If
 		  
 		  Self.UpdateList(Response)
-		  Self.Pages.SelectedPanelIndex = Self.PageList
 		End Sub
 	#tag EndMethod
 
@@ -324,7 +558,6 @@ End
 		  End If
 		  
 		  Self.UpdateList(Response)
-		  Self.Pages.SelectedPanelIndex = Self.PageList
 		End Sub
 	#tag EndMethod
 
@@ -373,6 +606,44 @@ End
 		  End Try
 		  
 		  DocumentVersionListWindow.Present(Self, Versions)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case IdentityManager.Notification_IdentityChanged, Preferences.Notification_OnlineStateChanged, Preferences.Notification_OnlineTokenChanged
+		    Self.RefreshList()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshList()
+		  If Preferences.OnlineEnabled = False Or App.IdentityManager.CurrentIdentity Is Nil Then
+		    Self.Pages.SelectedPanelIndex = Self.PagePermission
+		    Return
+		  End If
+		  
+		  If Self.APISocket.Working = False Then
+		    Var Params As New Dictionary
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
+		    
+		    Var Request As BeaconAPI.Request
+		    Var Token As String = Preferences.OnlineToken
+		    If Token.IsEmpty Then
+		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		      Request.Sign(App.IdentityManager.CurrentIdentity)
+		    Else
+		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
+		      Request.Authenticate(Token)
+		    End If
+		    Self.APISocket.Start(Request)
+		  End If
+		  
+		  Self.Pages.SelectedPanelIndex = Self.PageLoading
 		End Sub
 	#tag EndMethod
 
@@ -438,12 +709,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(Response As BeaconAPI.Response)
+		  Self.mDocuments.ResizeTo(-1)
+		  
 		  If Response.Success = False Then
 		    Self.Pages.SelectedPanelIndex = Self.PageError
+		    Self.ErrorExplanationLabel.Text = Response.Message
 		    Return
 		  End If
-		  
-		  Self.mDocuments.ResizeTo(-1)
 		  
 		  Var Dicts() As Variant = Response.JSON
 		  For Each Dict As Dictionary In Dicts
@@ -452,6 +724,7 @@ End
 		  Next
 		  
 		  Self.UpdateFilter()
+		  Self.Pages.SelectedPanelIndex = Self.PageList
 		End Sub
 	#tag EndMethod
 
@@ -666,6 +939,27 @@ End
 		    Return True
 		  End If
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events LoginActionButton
+	#tag Event
+		Sub Action()
+		  UserWelcomeWindow.Present(True)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PermissionActionButton
+	#tag Event
+		Sub Action()
+		  UserWelcomeWindow.Present(False)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ErrorActionButton
+	#tag Event
+		Sub Action()
+		  Self.RefreshList()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events APISocket
