@@ -20,7 +20,7 @@ Begin BeaconDialog DocumentVersionListWindow
    MinimumHeight   =   400
    MinimumWidth    =   600
    Resizeable      =   True
-   Title           =   "Document Versions"
+   Title           =   "Project Versions"
    Type            =   8
    Visible         =   True
    Width           =   600
@@ -113,7 +113,7 @@ Begin BeaconDialog DocumentVersionListWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Older Document Versions"
+      Text            =   "Older Project Versions"
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -148,7 +148,7 @@ Begin BeaconDialog DocumentVersionListWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Beacon Cloud documents are versioned every 15 minutes. The older versions can be downloaded at any time. Modifications to older versions, if saved, will become the new latest version of the document. No document version is ever deleted under any circumstances. All times are in your local time."
+      Text            =   "Beacon Cloud projects are versioned every 15 minutes. The older versions can be downloaded at any time. Modifications to older versions, if saved, will become the new latest version of the project. No project version is ever deleted under any circumstances. All times are in your local time."
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -255,7 +255,7 @@ End
 		  
 		  If Win Is Nil Then
 		    // There were no versions
-		    Parent.ShowAlert("Could not find any older versions", "There are no older versions of this document available.")
+		    Parent.ShowAlert("Could not find any older versions", "There are no older versions of this project available.")
 		    Return
 		  End If
 		  

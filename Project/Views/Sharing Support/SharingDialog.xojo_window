@@ -22,7 +22,7 @@ Begin BeaconDialog SharingDialog
    Placement       =   0
    Resizable       =   "False"
    Resizeable      =   True
-   Title           =   "Document Sharing"
+   Title           =   "Project Sharing"
    Visible         =   True
    Width           =   600
    Begin GroupBox WriteAccessGroup
@@ -116,7 +116,7 @@ Begin BeaconDialog SharingDialog
          Top             =   336
          Transparent     =   False
          Underline       =   False
-         Value           =   "Users listed here will be able to make changes to this document and deploy changes to servers. Only the document owner may add or remove users."
+         Value           =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner may add or remove users."
          Visible         =   True
          Width           =   520
       End
@@ -234,7 +234,7 @@ Begin BeaconDialog SharingDialog
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Document Sharing"
+      Value           =   "Project Sharing"
       Visible         =   True
       Width           =   560
    End
@@ -425,7 +425,7 @@ Begin BeaconDialog SharingDialog
          Top             =   176
          Transparent     =   False
          Underline       =   False
-         Value           =   "Documents shared with the community will be available for download from the Beacon website and the Community section of the Documents list. Community members will have read-only access, unless listed below."
+         Value           =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed below."
          Visible         =   True
          Width           =   520
       End
@@ -568,7 +568,7 @@ End
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mUsersChanged Then
-		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your document.", "Adding or removing a user updates the encryption keys inside your document, so it is necessary to save the document before newly authorized users are able to access it.")
+		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
 		  End If
 		  
 		  Win.Close
@@ -704,7 +704,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
 		    Var UserCount As Integer = Me.SelectedRowCount
-		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this document with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the document is saved. This document will no longer appear in the user's cloud documents and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
+		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this project with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the project is saved. This project will no longer appear in the user's cloud projects and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
 		      Return
 		    End If
 		  End If
@@ -756,7 +756,7 @@ End
 		  If Me.Caption = "Share" Then
 		    Var Description As String = Self.mDocument.Description.Trim
 		    If Description.IsEmpty Then
-		      Self.ShowAlert("Your document has no description and will be rejected if shared.", "This might be the best document ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
+		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
 		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.Metadata.ConfigName)
 		      Self.Hide()
 		      Return

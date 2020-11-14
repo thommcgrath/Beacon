@@ -128,7 +128,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Document Name:"
+      Text            =   "Project Name:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"

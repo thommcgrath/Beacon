@@ -10,7 +10,7 @@ Begin Menu MainMenuBar
       Begin MenuItem FileNew
          SpecialMenu = 0
          Index = -2147483648
-         Text = "New Document"
+         Text = "New Project"
          ShortcutKey = "N"
          Shortcut = "Cmd+N"
          MenuModifier = True
@@ -260,7 +260,7 @@ Begin Menu MainMenuBar
       Begin MenuItem ViewDocuments
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Documents"
+         Text = "Projects"
          ShortcutKey = "1"
          Shortcut = "Cmd+1"
          MenuModifier = True

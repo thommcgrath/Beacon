@@ -24,7 +24,7 @@ Begin BeaconDialog DocumentMergerWindow
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
-   Title           =   "Import From Document"
+   Title           =   "Import From Project"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -659,7 +659,7 @@ End
 		  Next
 		  
 		  If Self.mDestination.Mods <> PreviousMods Then
-		    Var Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
+		    Var Notification As New Beacon.UserNotification("The list of mods enabled for project """ + Self.mDestination.Title + """ has changed.")
 		    Notification.SecondaryMessage = "You can change the enabled mods in the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  End If

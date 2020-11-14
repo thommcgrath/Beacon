@@ -30,7 +30,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Bold            =   False
       ButtonStyle     =   0
       Cancel          =   False
-      Caption         =   "New Beacon File…"
+      Caption         =   "New Project…"
       Default         =   False
       Enabled         =   True
       Height          =   20
@@ -38,7 +38,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   260
+      Left            =   278
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -55,14 +55,14 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   138
+      Width           =   120
    End
    Begin UITweaks.ResizedPushButton OpenFileButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   0
       Cancel          =   False
-      Caption         =   "Open Beacon File…"
+      Caption         =   "Open Project…"
       Default         =   False
       Enabled         =   True
       Height          =   20
@@ -87,7 +87,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   138
+      Width           =   120
    End
    Begin ControlCanvas LogoCanvas
       AcceptFocus     =   False

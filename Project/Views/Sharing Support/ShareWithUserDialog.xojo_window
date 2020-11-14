@@ -56,7 +56,7 @@ Begin BeaconDialog ShareWithUserDialog
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Add User to Document"
+      Value           =   "Add User to Project"
       Visible         =   True
       Width           =   410
    End

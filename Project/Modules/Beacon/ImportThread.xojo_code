@@ -113,7 +113,7 @@ Inherits Beacon.Thread
 		  
 		  Self.mCharactersProcessed = Self.mCharactersTotal
 		  
-		  Self.Status = "Building Beacon document…"
+		  Self.Status = "Building Beacon project…"
 		  Try
 		    Var CommandLineOptions As Dictionary
 		    If (Self.mData Is Nil) = False Then
@@ -238,7 +238,7 @@ Inherits Beacon.Thread
 		      Continue For ConfigName
 		    End If
 		    
-		    Self.Status = "Building Beacon document… (" + Language.LabelForConfig(ConfigName) + ")"
+		    Self.Status = "Building Beacon project… (" + Language.LabelForConfig(ConfigName) + ")"
 		    Var Group As Beacon.ConfigGroup
 		    Try
 		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document)
@@ -251,7 +251,7 @@ Inherits Beacon.Thread
 		  
 		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
 		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Self.Status = "Building Beacon document… (" + Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName) + ")"
+		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName) + ")"
 		  Var GameIniValues As New Dictionary
 		  Var GameUserSettingsIniValues As New Dictionary
 		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs

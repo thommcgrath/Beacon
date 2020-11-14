@@ -107,7 +107,7 @@ Implements ObservationKit.Observable
 		  
 		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
-		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.ViewTitle + """?"
+		  Dialog.Message = "Do you want to save the changes made to the project """ + Self.ViewTitle + """?"
 		  Dialog.Explanation = "Your changes will be lost if you don't save them."
 		  Dialog.ActionButton.Caption = "Save…"
 		  Dialog.CancelButton.Visible = True

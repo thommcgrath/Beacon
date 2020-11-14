@@ -61,7 +61,7 @@ Protected Module Language
 		  Case BeaconConfigs.LootScale.ConfigName
 		    Return "Loot Quality Scaling"
 		  Case BeaconConfigs.Metadata.ConfigName
-		    Return "Document Properties"
+		    Return "Project Settings"
 		  Case BeaconConfigs.ExperienceCurves.ConfigName
 		    Return "Levels and XP"
 		  Case BeaconConfigs.CustomContent.ConfigName

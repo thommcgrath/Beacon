@@ -275,7 +275,7 @@ End
 		  Self.mLoadedBound = Bound
 		  
 		  #if DebugBuild
-		    System.DebugLog("Looking for documents " + Offset.ToString + "-" + Bound.ToString + "…")
+		    System.DebugLog("Looking for projects " + Offset.ToString + "-" + Bound.ToString + "…")
 		  #endif
 		  
 		  Var Params As New Dictionary

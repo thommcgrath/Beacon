@@ -139,7 +139,7 @@ Begin BeaconSubview PresetEditorView
       TabPanelIndex   =   0
       Top             =   61
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   740
       BeginSegmentedButton SegmentedButton MapSelector

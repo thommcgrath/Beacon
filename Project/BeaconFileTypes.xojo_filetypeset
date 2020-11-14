@@ -6,9 +6,9 @@
 		Flags=&h5
 		MacCreator=????
 		MacType=
-		Name=Beacon Document
+		Name=Beacon Project
 		UTI=com.thezaz.beacon.document
-		UTIConformsTo=public.content,public.data
+		UTIConformsTo=public.content, public.data
 		Description=Beacon's main document format contains all information about a cluster of servers.
 		MimeType=
 		Imported=False
@@ -41,7 +41,7 @@
 		MacType=
 		Name=Beacon Identity
 		UTI=com.thezaz.beacon.identity
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=Contains the private key for a Beacon user account.
 		MimeType=
 		Imported=False
@@ -58,7 +58,7 @@
 		MacType=
 		Name=Beacon Preset
 		UTI=com.thezaz.beacon.preset
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=A Beacon preset is a form of template used for building item sets in loot drops.
 		MimeType=
 		Imported=False
@@ -123,7 +123,7 @@
 		MacType=
 		Name=Beacon Authorization
 		UTI=com.thezaz.beacon.auth
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=Used to generate an identity file using Beacon's website.
 		MimeType=
 		Imported=False
@@ -140,7 +140,7 @@
 		MacType=
 		Name=Beacon Data Update
 		UTI=com.thezaz.beacon.updatedelta
-		UTIConformsTo=public.content,public.data
+		UTIConformsTo=public.content, public.data
 		Description=Contains updates to Beacon's blueprints and loot sources.
 		MimeType=
 		Imported=False

@@ -190,12 +190,12 @@ Begin ConfigEditor MetaDataConfigEditor
    Begin CheckBox UncompressedCheckbox
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Disable document compression"
+      Caption         =   "Disable project compression"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       Height          =   20
-      HelpTag         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
+      HelpTag         =   "Project compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -277,7 +277,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
+      Tooltip         =   "When enabled, mods that are not safe for consoles will be forced off."
       Top             =   450
       Transparent     =   False
       Underline       =   False

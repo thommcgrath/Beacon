@@ -24,7 +24,7 @@ Begin ContainerControl DocumentFilterControl
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   768
+   Width           =   758
    Begin DelayedSearchField FilterField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
@@ -32,10 +32,10 @@ Begin ContainerControl DocumentFilterControl
       ClearMenuItemValue=   "Clear"
       Enabled         =   True
       Height          =   22
-      Hint            =   "Search Documents"
+      Hint            =   "Search Projects"
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   548
+      Left            =   538
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -68,7 +68,7 @@ Begin ContainerControl DocumentFilterControl
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   157
+      Left            =   147
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -90,7 +90,7 @@ Begin ContainerControl DocumentFilterControl
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "New Document"
+      Caption         =   "New Project"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -116,7 +116,7 @@ Begin ContainerControl DocumentFilterControl
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   125
+      Width           =   115
    End
    Begin UITweaks.ResizedPopupMenu OperatorMenu
       AllowAutoDeactivate=   True
@@ -132,7 +132,7 @@ Begin ContainerControl DocumentFilterControl
       InitialParent   =   ""
       InitialValue    =   "Any Selected Map\nAll Selected Maps"
       Italic          =   False
-      Left            =   249
+      Left            =   239
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -164,7 +164,7 @@ Begin ContainerControl DocumentFilterControl
       InitialParent   =   ""
       InitialValue    =   "Mods Allowed\nNo Mods"
       Italic          =   False
-      Left            =   411
+      Left            =   401
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False

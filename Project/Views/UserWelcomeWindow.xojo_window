@@ -108,7 +108,7 @@ Begin Window UserWelcomeWindow
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Beacon stores fully anonymous user data to provide community document sharing and cloud storage features."
+         Text            =   "Beacon stores fully anonymous user data to provide community project sharing and cloud storage features."
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"

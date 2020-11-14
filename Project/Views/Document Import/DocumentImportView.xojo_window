@@ -426,7 +426,7 @@ Begin ContainerControl DocumentImportView
       Begin RadioButton SourceRadio
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Other Beacon document"
+         Caption         =   "Other Beacon project"
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
@@ -847,7 +847,7 @@ End
 	#tag Method, Flags = &h0
 		Sub SetOtherDocuments(Documents() As Beacon.Document)
 		  Self.mOtherDocuments = Documents
-		  Self.SourceRadio(3).Caption = "Other Beacon Document" + If(Self.SourceRadio(3).Enabled, "", " (No Other Documents Open)")
+		  Self.SourceRadio(3).Caption = "Other Beacon Project" + If(Self.SourceRadio(3).Enabled, "", " (No Other Projects Open)")
 		End Sub
 	#tag EndMethod
 

@@ -45,7 +45,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -103,7 +103,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Top             =   232
          Transparent     =   False
          Underline       =   False
-         Value           =   "Loading documents…"
+         Value           =   "Loading projects…"
          Visible         =   True
          Width           =   250
       End
@@ -368,7 +368,7 @@ End
 		  Try
 		    Versions = Parsed.DictionaryArrayValue
 		  Catch Err As RuntimeException
-		    Self.ShowAlert("Could not find any older versions", "There are no older versions of this document available.")
+		    Self.ShowAlert("Could not find any older versions", "There are no older versions of this project available.")
 		    Return
 		  End Try
 		  

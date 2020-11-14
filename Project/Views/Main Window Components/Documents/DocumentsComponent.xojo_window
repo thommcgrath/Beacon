@@ -76,7 +76,7 @@ Begin BeaconPagedSubview DocumentsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   896
       Begin RecentDocumentsComponent RecentDocumentsComponent1
@@ -212,8 +212,8 @@ End
 		Sub ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
 		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
-		  Dialog.Message = "You have " + NumPages.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
-		  Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
+		  Dialog.Message = "You have " + NumPages.ToString + " projects with unsaved changes. Do you want to review these changes before quitting?"
+		  Dialog.Explanation = "If you don't review your projects, all your changes will be lost."
 		  Dialog.ActionButton.Caption = "Review Changes…"
 		  Dialog.CancelButton.Visible = True
 		  Dialog.AlternateActionButton.Caption = "Discard Changes"
@@ -293,12 +293,12 @@ End
 		  Next
 		  
 		  If RecentIdx > -1 Then
-		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted. Would you like to remove it from the recent documents list?", "Remove", "Keep") Then
+		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The project could not be loaded. It may have been deleted. Would you like to remove it from the recent projects list?", "Remove", "Keep") Then
 		      Recents.RemoveAt(RecentIdx)
 		      Preferences.RecentDocuments = Recents
 		    End If
 		  Else
-		    Self.ShowAlert("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted.")
+		    Self.ShowAlert("Unable to load """ + Sender.Name + """", "The project could not be loaded. It may have been deleted.")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -397,7 +397,7 @@ End
 		    Document = New Beacon.Document
 		    
 		    Static NewDocumentNumber As Integer = 1
-		    Document.Title = "Untitled Document " + NewDocumentNumber.ToString
+		    Document.Title = "Untitled Project " + NewDocumentNumber.ToString
 		    Document.Modified = False
 		    NewDocumentNumber = NewDocumentNumber + 1
 		  End If
@@ -491,7 +491,7 @@ End
 		    End If
 		  Next
 		  
-		  Self.ShowAlert(Item.Caption + " is still loading", "Sit tight, the file is loading. Older documents will take longer to load than normal, but will load faster than ever once saved in the new format.")
+		  Self.ShowAlert(Item.Caption + " is still loading", "Sit tight, the file is loading. Older projects will take longer to load than normal, but will load faster than ever once saved in the new format.")
 		End Sub
 	#tag EndEvent
 	#tag Event

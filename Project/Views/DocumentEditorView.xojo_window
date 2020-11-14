@@ -527,7 +527,7 @@ End
 		    Self.Autosave()
 		    
 		    If Not Self.ReadyToDeploy Then
-		      If Self.ShowConfirm("This document is not ready for deploy.", "You must import at least one server with this document to use the deploy feature.", "Import a Server", "Cancel") Then 
+		      If Self.ShowConfirm("This project is not ready for deploy.", "You must import at least one server with this project to use the deploy feature.", "Import a Server", "Cancel") Then 
 		        Self.BeginImport(True)
 		      End If
 		      Return
@@ -846,7 +846,7 @@ End
 		    Reason = Reason.GuessEncoding
 		  End If
 		  
-		  Var Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
+		  Var Notification As New Beacon.UserNotification("Uh oh, the project " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
@@ -1015,7 +1015,7 @@ End
 		      Return
 		    End If
 		    
-		    If Self.Document.Title.BeginsWith("Untitled Document") Then
+		    If Self.Document.Title.BeginsWith("Untitled Project") Then
 		      Var Filename As String = File.Name
 		      Var Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
 		      If Filename.EndsWith(Extension) Then
@@ -1510,8 +1510,8 @@ End
 		  #if DeployEnabled
 		    Var DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
 		  #endif
-		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
-		  Var MapsButton As New BeaconToolbarItem("MapsButton", IconToolbarMaps, "Change the maps for this document")
+		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this project")
+		  Var MapsButton As New BeaconToolbarItem("MapsButton", IconToolbarMaps, "Change the maps for this project")
 		  
 		  Var HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
 		  
@@ -1543,9 +1543,9 @@ End
 		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
 		      SharingDialog.Present(Self, Self.Document)
 		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.ShowAlert("Document sharing is only available to cloud documents", "Use ""Save As…"" under the file menu to save a new copy of this document to the cloud if you would like to use Beacon's sharing features.")
+		      Self.ShowAlert("project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
-		      Self.ShowAlert("Document sharing is only available to cloud documents", "If you would like to use Beacon's sharing features, first save your document using ""Save"" under the file menu.")
+		      Self.ShowAlert("project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
@@ -1572,10 +1572,10 @@ End
 		  #endif
 		  
 		  Me.Append(OmniBarItem.CreateSpace())
-		  Me.Append(OmniBarItem.CreateButton("ShareButton", "Share", IconToolbarShare, "Share this document with other users"))
+		  Me.Append(OmniBarItem.CreateButton("ShareButton", "Share", IconToolbarShare, "Share this project with other users"))
 		  
 		  Me.Append(OmniBarItem.CreateSeparator())
-		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this document"))
+		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this project"))
 		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods"))
 		End Sub
 	#tag EndEvent
@@ -1596,9 +1596,9 @@ End
 		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
 		      SharingDialog.Present(Self, Self.Document)
 		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.ShowAlert("Document sharing is only available to cloud documents", "Use ""Save As…"" under the file menu to save a new copy of this document to the cloud if you would like to use Beacon's sharing features.")
+		      Self.ShowAlert("project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
-		      Self.ShowAlert("Document sharing is only available to cloud documents", "If you would like to use Beacon's sharing features, first save your document using ""Save"" under the file menu.")
+		      Self.ShowAlert("project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()

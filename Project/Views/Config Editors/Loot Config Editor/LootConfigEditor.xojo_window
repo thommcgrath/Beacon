@@ -395,7 +395,7 @@ End
 		  
 		  Var Replace As Boolean = True
 		  If DuplicateSourceCount > 0 Then
-		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateSourceCount, "loot source", "loot sources") + "?", DuplicateSourceCount.ToString + " of " + Language.NounWithQuantity(TotalNewSources, " loot source has already been defined in this document. Would you like to replace it?", " loot sources are already defined in this document. Would you like to replace them?"), "Replace", "Cancel")
+		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateSourceCount, "loot source", "loot sources") + "?", DuplicateSourceCount.ToString + " of " + Language.NounWithQuantity(TotalNewSources, " loot source has already been defined in this project. Would you like to replace it?", " loot sources are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
 		  End If
 		  
 		  Var AddedSources() As Beacon.LootSource

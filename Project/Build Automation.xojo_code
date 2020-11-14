@@ -32,7 +32,6 @@
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""ATSApplicationFontsPath"" ""Fonts/""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""LSMinimumSystemVersion"" ""10.11.0""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""NSAppAccentColorName"" ""BeaconBrand""")
-					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleIconName"" ""App""")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0

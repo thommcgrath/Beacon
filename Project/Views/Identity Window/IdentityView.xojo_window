@@ -76,7 +76,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         Text            =   "This is how you are identified to the Beacon server. Your documents and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
+         Text            =   "This is how you are identified to the Beacon server. Your projects and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"

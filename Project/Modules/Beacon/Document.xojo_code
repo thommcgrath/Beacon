@@ -607,7 +607,7 @@ Implements ObservationKit.Observable
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
-		    FailureReason = "Unable to load document due to JSON parsing error: " + Err.Message
+		    FailureReason = "Unable to load project due to JSON parsing error: " + Err.Message
 		    App.Log(FailureReason)
 		    Return Nil
 		  End Try
@@ -628,7 +628,7 @@ Implements ObservationKit.Observable
 		    End If
 		  End If
 		  If MinVersion > DocumentVersion Then
-		    FailureReason = "Unable to load document because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + MinVersion.ToString + "."
+		    FailureReason = "Unable to load project because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + MinVersion.ToString + "."
 		    App.Log(FailureReason)
 		    Return Nil
 		  ElseIf Version < 3 Then
@@ -810,7 +810,7 @@ Implements ObservationKit.Observable
 		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
-		  Tracker.Log("Took %elapsed% to load a " + Round(Contents.Length / 1024).ToString("###,###,###,##0") + "KB v" + Version.ToString + " document.", True)
+		  Tracker.Log("Took %elapsed% to load a " + Round(Contents.Length / 1024).ToString("###,###,###,##0") + "KB v" + Version.ToString + " project.", True)
 		  Return Doc
 		End Function
 	#tag EndMethod
@@ -894,7 +894,7 @@ Implements ObservationKit.Observable
 		        SetDict.Value(GroupName) = Instance
 		      End If
 		    Catch Err As RuntimeException
-		      App.Log("Unable to load config group " + Entry.Key + " from document " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		      App.Log("Unable to load config group " + Entry.Key + " from project " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		    End Try
 		  Next
 		  Return SetDict

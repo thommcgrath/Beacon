@@ -83,7 +83,7 @@ Begin BeaconWindow SupportTicketWindow
          Top             =   422
          Transparent     =   False
          Underline       =   False
-         Value           =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon document, and any backed up ini files."
+         Value           =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon project, and any backed up ini files."
          Visible         =   True
          Width           =   512
       End
@@ -886,7 +886,7 @@ End
 		  Var Document As Beacon.Document
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
 		    Document = Self.DocumentMenu.RowTagAt(Self.DocumentMenu.SelectedRowIndex)
-		  ElseIf Not Self.ShowConfirm("Are you sure you do not wish to include a document?", "Including a Beacon document provides a ton of information and helps get you an answer faster. If you cannot find your document in the menu, open the document first. Are you sure you do not want to include a document?", "Do Not Include", "Cancel") Then
+		  ElseIf Not Self.ShowConfirm("Are you sure you do not wish to include a project?", "Including a Beacon project provides a ton of information and helps get you an answer faster. If you cannot find your project in the menu, open the project first. Are you sure you do not want to include a project?", "Do Not Include", "Cancel") Then
 		    Return
 		  End If
 		  
@@ -1014,7 +1014,7 @@ End
 		    Else
 		      Identity = New Beacon.Identity
 		    End If
-		    Self.mProgress.Detail = "Attaching document…"
+		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"
 		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.ToDictionary(Identity), True)
 		    

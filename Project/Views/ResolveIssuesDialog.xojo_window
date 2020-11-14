@@ -24,7 +24,7 @@ Begin BeaconDialog ResolveIssuesDialog
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
-   Title           =   "Document Issues"
+   Title           =   "Project Issues"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -50,7 +50,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This document has problems that must be resolved"
+      Text            =   "This project has problems that must be resolved"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
