@@ -289,7 +289,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       Top             =   103
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   474
       Begin Label CheckingLabel
@@ -782,7 +782,7 @@ End
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
 		  
-		  G.DrawPicture(LogoColor, 0, 0, G.Width, G.Height, 0, 0, LogoColor.Width, LogoColor.Height)
+		  G.DrawPicture(IconApp, 0, 0, G.Width, G.Height, 0, 0, IconApp.Width, IconApp.Height)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
