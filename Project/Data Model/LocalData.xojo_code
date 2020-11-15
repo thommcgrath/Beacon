@@ -1445,11 +1445,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Mods() As Variant = ChangeDict.Value("mods")
 		    Var RetainMods() As String
 		    RetainMods.AddRow(Self.UserModID)
+		    Var BuildNumber As Integer = App.BuildNumber
 		    For Each ModData As Dictionary In Mods
 		      Var ModID As String = ModData.Value("mod_id")
 		      Var ModName As String = ModData.Value("name")
 		      Var ConsoleSafe As Boolean = ModData.Value("console_safe")
 		      Var DefaultEnabled As Boolean = ModData.Lookup("default_enabled", ConsoleSafe)
+		      If ModData.HasKey("min_version") And ModData.Value("min_version").IntegerValue > BuildNumber Then
+		        // This mod is too new
+		        Continue
+		      End If
 		      
 		      ModID = ModID.Lowercase
 		      
