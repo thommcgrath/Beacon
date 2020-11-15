@@ -1901,7 +1901,11 @@ Protected Module Beacon
 		    Blueprint = New Beacon.MutableCreature(Path, ObjectID)
 		  Case "spawn_points"
 		    Blueprint = New Beacon.MutableSpawnPoint(Path, ObjectID)
+		  Else
+		    Return Nil
 		  End Select
+		  
+		  #Pragma Warning "Does not unpack loot sources"
 		  
 		  Var ModInfo As Dictionary = Dict.Value("mod")
 		  

@@ -31,6 +31,14 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub CacheBlueprints()
+		  // This is a convenience method to finish loading an empty set.
+		  Var Blueprints() As Beacon.Blueprint
+		  Self.CacheBlueprints(Blueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub CacheBlueprints(Blueprints() As Beacon.Blueprint)
 		  Self.mBlueprints.RemoveAll
 		  
