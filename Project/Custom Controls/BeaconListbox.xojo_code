@@ -330,6 +330,30 @@ Inherits Listbox
 		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
 		    Self.DoEdit()
 		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(30) Then // Up Arrow
+		    Var MinIndex As Integer = Self.MinSelectedRow()
+		    If MinIndex > 0 Then
+		      If Self.RowSelectionType = Listbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
+		        Self.Selected(MinIndex - 1) = True
+		      Else
+		        Self.SelectedRowIndex = MinIndex - 1
+		      End
+		    Else
+		      System.Beep
+		    End If
+		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(31) Then // Down Arrow
+		    Var MaxIndex As Integer = Self.MaxSelectedRow()
+		    If MaxIndex < Self.LastRowIndex Then
+		      If Self.RowSelectionType = Listbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
+		        Self.Selected(MaxIndex + 1) = True
+		      Else
+		        Self.SelectedRowIndex = MaxIndex + 1
+		      End
+		    Else
+		      System.Beep
+		    End If
+		    Return True
 		  ElseIf RaiseEvent KeyDown(Key) Then
 		    Self.mForwardKeyUp = True
 		  Else
@@ -586,6 +610,42 @@ Inherits Listbox
 		Sub InvalidateScrollPosition()
 		  Self.mLastScrollPosition = -1
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxSelectedRow() As Integer
+		  If Self.SelectedRowCount = 0 Then
+		    Return -1
+		  End If
+		  
+		  If Self.RowSelectionType = Listbox.RowSelectionTypes.Single Then
+		    Return Self.SelectedRowIndex
+		  End If
+		  
+		  For Idx As Integer = Self.LastRowIndex DownTo 0
+		    If Self.Selected(Idx) Then
+		      Return Idx
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinSelectedRow() As Integer
+		  If Self.SelectedRowCount = 0 Then
+		    Return -1
+		  End If
+		  
+		  If Self.RowSelectionType = Listbox.RowSelectionTypes.Single Then
+		    Return Self.SelectedRowIndex
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.LastRowIndex
+		    If Self.Selected(Idx) Then
+		      Return Idx
+		    End If
+		  Next
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
