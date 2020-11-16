@@ -254,51 +254,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_BlueprintsLoaded(Sender As BlueprintController)
-		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints
-		  Var SelectedBlueprints() As String
-		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
-		    If Self.BlueprintList.Selected(Row) Then
-		      SelectedBlueprints.Add(Self.BlueprintList.RowTagAt(Row))
-		    End If
-		  Next
+		  #Pragma Unused Sender
 		  
-		  Self.BlueprintList.SelectionChangeBlocked = True
-		  Self.BlueprintList.RowCount = Blueprints.Count
-		  
-		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
-		    Var Blueprint As Beacon.Blueprint = Blueprints(Row)
-		    Var ObjectID As String = Blueprint.ObjectID
-		    Var Type As String = "Blueprint"
-		    Select Case Blueprint
-		    Case IsA Beacon.Engram
-		      Type = "Engram"
-		    Case IsA Beacon.Creature
-		      Type = "Creature"
-		    Case IsA Beacon.SpawnPoint
-		      Type = "Spawn"
-		    End Select
-		    
-		    Self.BlueprintList.CellValueAt(Row, 0) = Blueprint.Label
-		    Self.BlueprintList.CellValueAt(Row, 1) = Type
-		    Self.BlueprintList.RowTagAt(Row) = ObjectID
-		    Self.BlueprintList.Selected(Row) = SelectedBlueprints.IndexOf(ObjectID) > -1
-		  Next
-		  
-		  Self.BlueprintList.SortingColumn = 0
-		  Self.BlueprintList.Sort
-		  Self.BlueprintList.EnsureSelectionIsVisible
-		  Self.BlueprintList.SelectionChangeBlocked = False
-		  Self.BlueprintHeader.ExportButton.Enabled = Self.BlueprintList.RowCount > 0
+		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mController_PublishFinished(Sender As BlueprintController, Success As Boolean, Reason As String)
-		  Self.UpdatePublishButton()
-		  
 		  If Success Then
+		    Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
 		    Self.mController.LoadBlueprints()
 		  Else
+		    Self.UpdatePublishButton()
 		    Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
 		  End If
 		End Sub
@@ -306,13 +274,17 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WorkFinished(Sender As BlueprintController)
+		  #Pragma Unused Sender
 		  
+		  RaiseEvent WorkFinished
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WorkStarted(Sender As BlueprintController)
+		  #Pragma Unused Sender
 		  
+		  RaiseEvent WorkStarted
 		End Sub
 	#tag EndMethod
 
@@ -365,11 +337,92 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateList()
+		  Var SelectedBlueprints() As String
+		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
+		    If Self.BlueprintList.Selected(Row) Then
+		      SelectedBlueprints.Add(Self.BlueprintList.RowTagAt(Row))
+		    End If
+		  Next
+		  
+		  Self.UpdateList(SelectedBlueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(Selected() As Beacon.Blueprint)
+		  Var SelectedBlueprints() As String
+		  For Each Blueprint As Beacon.Blueprint In Selected
+		    SelectedBlueprints.Add(Blueprint.ObjectID)
+		  Next
+		  
+		  Self.UpdateList(SelectedBlueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(Selected As Beacon.Blueprint)
+		  Var SelectedBlueprints() As String = Array(Selected.ObjectID)
+		  Self.UpdateList(SelectedBlueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(Selected() As String)
+		  Var Blueprints() As Beacon.Blueprint = Self.mController.Blueprints
+		  
+		  Self.BlueprintList.SelectionChangeBlocked = True
+		  Self.BlueprintList.RowCount = Blueprints.Count
+		  
+		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
+		    Var Blueprint As Beacon.Blueprint = Blueprints(Row)
+		    Var ObjectID As String = Blueprint.ObjectID
+		    
+		    Var Type As String = "Blueprint"
+		    Select Case Blueprint
+		    Case IsA Beacon.Engram
+		      Type = "Engram"
+		    Case IsA Beacon.Creature
+		      Type = "Creature"
+		    Case IsA Beacon.SpawnPoint
+		      Type = "Spawn"
+		    Case IsA Beacon.LootSource
+		      Type = "Loot Container"
+		    End Select
+		    
+		    Self.BlueprintList.CellValueAt(Row, 0) = Blueprint.Label
+		    Self.BlueprintList.CellValueAt(Row, 1) = Type
+		    Self.BlueprintList.RowTagAt(Row) = ObjectID
+		    Self.BlueprintList.Selected(Row) = Selected.IndexOf(ObjectID) > -1
+		  Next
+		  
+		  Self.BlueprintList.SortingColumn = 0
+		  Self.BlueprintList.Sort
+		  If Self.BlueprintList.SelectedRowCount > 0 Then
+		    Self.BlueprintList.EnsureSelectionIsVisible
+		  End If
+		  Self.BlueprintList.SelectionChangeBlocked = False
+		  Self.BlueprintHeader.ExportButton.Enabled = Self.BlueprintList.RowCount > 0
+		  
+		  Self.UpdatePublishButton()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdatePublishButton()
 		  Self.mPublishButton.Enabled = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
 		  Self.mRevertButton.Enabled = Self.mPublishButton.Enabled
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event WorkFinished()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event WorkStarted()
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21
@@ -429,6 +482,7 @@ End
 		  End If
 		  
 		  Self.mController.DeleteBlueprints(Blueprints)
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -450,6 +504,7 @@ End
 		    End If
 		    
 		    Self.mController.SaveBlueprint(Blueprint)
+		    Self.UpdateList(Blueprint)
 		  ElseIf Me.SelectedRowCount > 1 Then
 		    Var Blueprints() As Beacon.Blueprint
 		    For Row As Integer = 0 To Me.LastRowIndex
@@ -464,6 +519,7 @@ End
 		        Self.mController.SaveBlueprint(Blueprint)
 		      Next
 		    End If
+		    Self.UpdateList(ModifiedBlueprints)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -504,6 +560,7 @@ End
 		    Var Blueprint As Beacon.Blueprint = BlueprintEditorDialog.Present(Self, Nil)
 		    If (Blueprint Is Nil) = False Then
 		      Self.mController.SaveBlueprint(Blueprint)
+		      Self.UpdateList()
 		    End If
 		  Case "ImportFile"
 		    Self.Import()

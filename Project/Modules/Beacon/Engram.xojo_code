@@ -301,7 +301,7 @@ Implements Beacon.Blueprint
 		  Else
 		    Var Ingredients() As Dictionary
 		    For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
-		      Ingredients.Add(Ingredient.ToDictionary)
+		      Ingredients.Add(Ingredient.Pack)
 		    Next
 		    Dict.Value("recipe") = Ingredients
 		  End If

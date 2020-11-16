@@ -290,6 +290,18 @@ End
 
 #tag EndWindowCode
 
+#tag Events Editor
+	#tag Event
+		Sub WorkFinished()
+		  Self.Progress = BeaconSubview.ProgressNone
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkStarted()
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ModsList
 	#tag Event
 		Function ShouldChange(DesiredIndex As Integer) As Boolean
@@ -305,7 +317,11 @@ End
 		    Controller = New RemoteBlueprintController(Tag.StringValue)
 		  End If
 		  
-		  Return Self.Editor.SetController(Controller)
+		  If Self.Editor.SetController(Controller) Then
+		    Return True
+		  End If
+		  
+		  Self.ShowAlert("Cannot switch mods right now.", "The mod you're working on has unpublished changes. Publish them or discard them first.")
 		End Function
 	#tag EndEvent
 #tag EndEvents

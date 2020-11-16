@@ -15,7 +15,7 @@ Inherits BlueprintController
 		      Continue
 		    End If
 		    
-		    Var Packed As Dictionary = Blueprint.Pack
+		    Var Packed As Dictionary = Beacon.PackBlueprint(Blueprint)
 		    
 		    Select Case Blueprint
 		    Case IsA Beacon.Engram
@@ -135,7 +135,14 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Self.FinishPublishing(False, "Other HTTP error: " + Response.HTTPStatus.ToString(Locale.Raw, "0"))
+		  If Response.Message.IsEmpty Then
+		    Self.FinishPublishing(False, "Other HTTP error: " + Response.HTTPStatus.ToString(Locale.Raw, "0"))
+		    #if DebugBuild
+		      System.DebugLog(Response.Content)
+		    #endif
+		  Else
+		    Self.FinishPublishing(False, Response.Message)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -149,6 +156,15 @@ Inherits BlueprintController
 		Sub Constructor(ModUUID As String)
 		  Self.mModUUID = ModUUID
 		  Self.Constructor()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveBlueprint(Blueprint As Beacon.Blueprint)
+		  Var Mutable As Beacon.MutableBlueprint = Blueprint.MutableVersion
+		  Mutable.ModID = Self.mModUUID
+		  Super.SaveBlueprint(Mutable)
+		  
 		End Sub
 	#tag EndMethod
 

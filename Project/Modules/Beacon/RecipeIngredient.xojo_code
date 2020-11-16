@@ -127,6 +127,16 @@ Protected Class RecipeIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("object_id") = Self.mEngram.ObjectID
+		  Dict.Value("quantity") = Self.mQuantity
+		  Dict.Value("exact") = Self.mRequireExact
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Quantity() As Integer
 		  Return Self.mQuantity
 		End Function
