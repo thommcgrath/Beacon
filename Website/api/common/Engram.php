@@ -21,7 +21,7 @@ class Engram extends \BeaconBlueprint {
 		$columns[] = 'required_level';
 		$columns[] = 'stack_size';
 		$columns[] = 'item_id';
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, quantity, exact FROM crafting_costs INNER JOIN engrams AS ingredients ON (crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = engrams.object_id) AS recipe_template) AS recipe';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, quantity, exact FROM crafting_costs INNER JOIN engrams AS ingredients ON (crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = engrams.object_id) AS recipe_template) AS recipe';
 		return $columns;
 	}
 	
@@ -149,6 +149,81 @@ class Engram extends \BeaconBlueprint {
 			$results->MoveNext();
 		}
 		return $arr;
+	}
+	
+	public function ConsumeJSON(array $json) {
+		parent::ConsumeJSON($json);
+		
+		if (array_key_exists('entry_string', $json)) {
+			$value = $json['entry_string'];
+			if (is_null($value) || (is_string($value) && substr($value, -2) === '_C')) {
+				$this->entry_string = $value;
+			} else {
+				throw new \Exception('Entry string should end in _C.');
+			}
+		}
+		
+		if (array_key_exists('required_points', $json)) {
+			$value = $json['required_points'];
+			if (is_null($value) || is_int($value)) {
+				$this->required_points = $value;
+			} else {
+				throw new \Exception('Required points should be a whole number.');
+			}
+		}
+		
+		if (array_key_exists('required_level', $json)) {
+			$value = $json['required_level'];
+			if (is_null($value) || is_int($value)) {
+				$this->required_level = $value;
+			} else {
+				throw new \Exception('Required level should be a whole number.');
+			}
+		}
+		
+		if (array_key_exists('stack_size', $json)) {
+			$value = $json['stack_size'];
+			if (is_null($value) || (is_int($value) && $value > 0)) {
+				$this->stack_size = $value;
+			} else {
+				throw new \Exception('Stack size should be a whole number.');
+			}
+		}
+		
+		if (array_key_exists('recipe', $json)) {
+			$value = $json['recipe'];
+			if (is_null($value) || (is_array($value) && \BeaconCommon::IsAssoc($value) === false)) {
+				$this->recipe = $value;
+			} else {
+				throw new \Exception('Recipe should be an array of ingredients.');
+			}
+		}
+	}
+	
+	protected function SaveChildrenHook(\BeaconDatabase $database) {
+		parent::SaveChildrenHook($database);
+		$object_id = $this->ObjectID();
+		
+		if (is_null($this->recipe)) {
+			$database->Query('DELETE FROM crafting_costs WHERE engram_id = $1;', $object_id);
+			return;
+		}
+		
+		$keep_ingredients = [];
+		foreach ($this->recipe as $ingredient) {
+			$ingredient_id = $ingredient['object_id'];
+			$quantity = intval($ingredient['quantity']);
+			$require_exact = boolval($ingredient['exact']);
+			
+			if (\BeaconCommon::IsUUID($ingredient_id) === false) {
+				throw new \Exception('Recipe ingredient should be a v4 UUID.');
+			}
+			$keep_ingredients[] = $ingredient_id;
+			
+			$database->Query('INSERT INTO crafting_costs (engram_id, ingredient_id, quantity, exact) VALUES ($1, $2, $3, $4) ON CONFLICT (engram_id, ingredient_id) DO UPDATE SET quantity = $3, exact = $4 WHERE crafting_costs.quantity IS DISTINCT FROM $3 OR crafting_costs.exact IS DISTINCT FROM $4;', $object_id, $ingredient_id, $quantity, $require_exact);
+		}
+		
+		$database->Query('DELETE FROM crafting_costs WHERE engram_id = $1 AND ingredient_id NOT IN (\'' . implode('\',\'', $keep_ingredients) . '\');', $object_id);
 	}
 }
 

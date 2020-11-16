@@ -12,6 +12,7 @@ class Mod implements \JsonSerializable {
 	protected $last_pull_hash = null;
 	protected $console_safe = false;
 	protected $default_enabled = false;
+	protected $min_version = 0;
 	
 	public function ModID() {
 		return $this->mod_id;
@@ -92,6 +93,7 @@ class Mod implements \JsonSerializable {
 		$mod->last_pull_hash = $results->Field('last_pull_hash');
 		$mod->console_safe = boolval($results->Field('console_safe'));
 		$mod->default_enabled = boolval($results->Field('default_enabled'));
+		$mod->min_version = intval($results->Field('min_version'));
 		return $mod;
 	}
 	
@@ -141,7 +143,7 @@ class Mod implements \JsonSerializable {
 	}
 	
 	protected static function BuildSQL(string $clause = '') {
-		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url, last_pull_hash, console_safe, default_enabled FROM mods';
+		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url, last_pull_hash, console_safe, default_enabled, min_version FROM mods';
 		if ($clause !== '') {
 			$sql .= ' WHERE ' . $clause;
 		}
@@ -163,7 +165,8 @@ class Mod implements \JsonSerializable {
 			'confirm_url' => \BeaconAPI::URL('/mod/' . $this->workshop_id . '?action=confirm'),
 			'engrams_url' => \BeaconAPI::URL('/engram?mod_id=' . $this->workshop_id),
 			'spawncodes_url' => \BeaconCommon::AbsoluteURL('/spawn/?mod_id=' . $this->workshop_id),
-			'pull_url' => $this->pull_url
+			'pull_url' => $this->pull_url,
+			'min_version' => $this->min_version
 		);
 	}
 }

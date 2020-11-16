@@ -95,7 +95,7 @@ case 'POST':
 			}
 			
 			try {
-				$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url) VALUES ($1, $2, $3, $4);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
+				$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
 			} catch (BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 			}

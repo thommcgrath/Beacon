@@ -24,12 +24,13 @@ class CommonObject implements \JsonSerializable {
 	}
 	
 	protected static function SQLColumns() {
+		$table = static::TableName();
 		return array(
-			'object_id',
-			'label',
-			'alternate_label',
-			'min_version',
-			'tags',
+			$table . '.object_id',
+			$table . '.label',
+			$table . '.alternate_label',
+			'GREATEST(' . $table . '.min_version, mods.min_version) AS min_version',
+			$table . '.tags',
 			'mods.mod_id',
 			'mods.name AS mod_name',
 			'ABS(mods.workshop_id) AS mod_workshop_id'
@@ -85,10 +86,10 @@ class CommonObject implements \JsonSerializable {
 			$this->alternate_label = $json['alternate_label'];
 		}
 		if (array_key_exists('min_version', $json)) {
-			$this->min_version = $json['min_versoin'];
+			$this->min_version = $json['min_version'];
 		}
-		if (is_null($this->mod_id) && array_key_exists('mod_id', $json)) {
-			$this->mod_id = $json['mod_id'];
+		if (is_null($this->mod_id) && isset($json['mod']['id'])) {
+			$this->mod_id = $json['mod']['id'];
 		}
 		if (array_key_exists('tags', $json) && is_array($json['tags'])) {
 			$tags = array();
@@ -97,6 +98,18 @@ class CommonObject implements \JsonSerializable {
 			}
 			$this->tags = $tags;
 		}
+	}
+	
+	public static function FromJSON(array $json) {
+		if (array_key_exists('id', $json)) {
+			$object_id = $json['id'];
+		} else {
+			$object_id = null;
+		}
+		
+		$obj = new static($object_id);
+		$obj->ConsumeJSON($json);
+		return $obj;
 	}
 	
 	public function Save() {
@@ -256,7 +269,7 @@ class CommonObject implements \JsonSerializable {
 		if (count($clauses) > 0) {
 			$clauses = array('(' . implode(' OR ', $clauses) . ')');
 		}
-		array_unshift($clauses, 'min_version <= $1', $table = static::TableName() . '.last_update > $2');
+		array_unshift($clauses, 'GREATEST(' . static::TableName() . '.min_version, mods.min_version) <= $1', static::TableName() . '.last_update > $2');
 		if ($confirmed_only == true) {
 			$clauses[] = 'mods.confirmed = TRUE';
 		}

@@ -8,19 +8,19 @@ class Creature extends \BeaconBlueprint {
 	const TAMING_METHOD_PASSIVE = 'Passive';
 	const TAMING_METHOD_TRAP = 'Trap';
 	
-	protected $tamable;
-	protected $taming_diet_id;
-	protected $taming_method;
-	protected $tamed_diet_id;
-	protected $rideable;
-	protected $carryable;
-	protected $breedable;
-	protected $incubation_time;
-	protected $mature_time;
-	protected $stats;
-	protected $used_stats;
-	protected $mating_interval_min;
-	protected $mating_interval_max;
+	protected $tamable = false;
+	protected $taming_diet_id = null;
+	protected $taming_method = 'None';
+	protected $tamed_diet_id = null;
+	protected $rideable = false;
+	protected $carryable = false;
+	protected $breedable = false;
+	protected $incubation_time = null;
+	protected $mature_time = null;
+	protected $stats = null;
+	protected $used_stats = 0;
+	protected $mating_interval_min = null;
+	protected $mating_interval_max = null;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -131,43 +131,48 @@ class Creature extends \BeaconBlueprint {
 			}
 		}
 		if (array_key_exists('incubation_time', $json)) {
-			if (is_int($json['incubation_time'])) {
-				$this->incubation_time = $json['incubation_time'];
+			$value = $json['incubation_time'];
+			if (is_null($value) || is_numeric($value)) {
+				$this->incubation_time = $value;
 			} else {
 				throw new \Exception('Incubation time must be a number of seconds.');
 			}
 		}
 		if (array_key_exists('mature_time', $json)) {
-			if (is_int($json['mature_time'])) {
-				$this->mature_time = $json['mature_time'];
+			$value = $json['mature_time'];
+			if (is_null($value) || is_numeric($value)) {
+				$this->mature_time = $value;
 			} else {
 				throw new \Exception('Mature time must be a number of seconds.');
 			}
 		}
 		if (array_key_exists('stats', $json)) {
-			if (BeaconCommon::IsAssoc($json['stats'])) {
+			if (is_null($json['stats']) || (is_array($json['stats']) && \BeaconCommon::IsAssoc($json['stats']) === false)) {
 				$this->stats = $json['stats'];
 			} else {
 				throw new \Exception('Stats must be a structure.');
 			}
 		}
 		if (array_key_exists('mating_interval_min', $json)) {
-			if (is_int($json['mating_interval_min'])) {
-				$this->mature_time = $json['mating_interval_min'];
+			$value = $json['mating_interval_min'];
+			if (is_null($value) || is_numeric($value)) {
+				$this->mating_interval_min = $value;
 			} else {
 				throw new \Exception('Min mating interval time must be a number of seconds.');
 			}
 		}
 		if (array_key_exists('mating_interval_max', $json)) {
-			if (is_int($json['mating_interval_max'])) {
-				$this->mature_time = $json['mating_interval_max'];
+			$value = $json['mating_interval_max'];
+			if (is_null($value) || is_numeric($value)) {
+				$this->mating_interval_max = $value;
 			} else {
 				throw new \Exception('Max mating interval time must be a number of seconds.');
 			}
 		}
 		if (array_key_exists('used_stats', $json)) {
-			if (is_int($json['used_stats'])) {
-				$this->used_stats = $json['used_stats'];
+			$value = $json['used_stats'];
+			if (is_null($value) || is_numeric($value)) {
+				$this->used_stats = $value;
 			} else {
 				throw new \Exception('Used stats should be an bit mask.');
 			}
@@ -326,6 +331,24 @@ class Creature extends \BeaconBlueprint {
 	
 	public function UsedStats() {
 		return $this->used_stats;
+	}
+	
+	protected function SaveChildrenHook(\BeaconDatabase $database) {
+		parent::SaveChildrenHook($database);
+		$object_id = $this->ObjectID();
+		
+		if (is_null($this->stats)) {
+			$database->Query('DELETE FROM creature_stats WHERE creature_id = $1;', $object_id);
+			return;
+		}
+		
+		$indexes = [];
+		foreach ($this->stats as $stat) {
+			$index = intval($stat['stat_index']);
+			$indexes[] = $index;
+			$database->Query('INSERT INTO creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (creature_id, stat_index) DO UPDATE SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_stats.base_value IS DISTINCT FROM $3 OR creature_stats.per_level_wild_multiplier IS DISTINCT FROM $4 OR creature_stats.per_level_tamed_multiplier IS DISTINCT FROM $5 OR creature_stats.add_multiplier IS DISTINCT FROM $7 OR creature_stats.affinity_multiplier IS DISTINCT FROM $7;', $object_id, $index, $stat['base_value'], $stat['per_level_wild_multiplier'], $stat['per_level_tamed_multiplier'], $stat['add_multiplier'], $stat['affinity_multiplier']);
+		}
+		$database->Query('DELETE FROM creature_stats WHERE creature_id = $1 AND stat_index NOT IN (' . implode(',', $indexes) . ');', $object_id);
 	}
 }
 
