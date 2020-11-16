@@ -251,6 +251,18 @@ End
 		    Return
 		  End If
 		  
+		  If (TargetMacOS And Keyboard.CommandKey) Or (TargetWindows And Keyboard.ControlKey) Then
+		    Self.mSettingUp = True
+		    For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		      If Box = Me Then
+		        Continue
+		      End If
+		      
+		      Box.Value = Me.Value
+		    Next
+		    Self.mSettingUp = False
+		  End If
+		  
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
