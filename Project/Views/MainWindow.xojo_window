@@ -8,7 +8,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
-   Height          =   400
+   Height          =   680
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
@@ -17,16 +17,16 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    MaxWidth        =   32000
    MenuBar         =   817604607
    MenuBarVisible  =   True
-   MinHeight       =   400
+   MinHeight       =   680
    MinimizeButton  =   True
-   MinWidth        =   800
+   MinWidth        =   1200
    Placement       =   2
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
    Title           =   "Beacon"
    Visible         =   True
-   Width           =   800
+   Width           =   1200
    Begin TabBar TabBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -55,13 +55,13 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   759
+      Width           =   1159
       WithTopBorder   =   False
    End
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   375
+      Height          =   655
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -80,7 +80,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   759
+      Width           =   1159
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -91,7 +91,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   375
+         Height          =   655
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   41
@@ -113,7 +113,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   759
+         Width           =   1159
       End
    End
    Begin ControlCanvas UpdateBar
@@ -142,7 +142,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   759
+      Width           =   1159
    End
    Begin ControlCanvas OverlayCanvas
       AcceptFocus     =   False
@@ -151,7 +151,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   100
+      Height          =   380
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -170,7 +170,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   False
-      Width           =   100
+      Width           =   500
    End
    Begin LibraryPane LibraryPane1
       AcceptFocus     =   False
@@ -182,7 +182,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   400
+      Height          =   680
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   -259
@@ -279,6 +279,14 @@ End
 
 	#tag Event
 		Sub Open()
+		  Var Frame As Rect = Self.Bounds
+		  Var XDelta As Integer = Frame.Width - Self.Width
+		  Var YDelta As Integer = Frame.Height - Self.Height
+		  Self.MinimumWidth = Self.MinimumWidth - XDelta
+		  Self.MinimumHeight = Self.MinimumHeight - YDelta
+		  Self.Width = Max(Self.Width, Self.MinimumWidth)
+		  Self.Height = Max(Self.Height, Self.MinimumHeight)
+		  
 		  Var Bounds As Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
@@ -303,15 +311,15 @@ End
 		    End If
 		    
 		    Var AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
-		    
-		    Var Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
-		    Var Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
-		    Var Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
-		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    Var WidthRange As New Beacon.Range(Self.MinimumWidth + XDelta, Self.MaximumWidth + XDelta)
+		    Var HeightRange As New Beacon.Range(Self.MinimumHeight + YDelta, Self.MaximumHeight + YDelta)
+		    Var Width As Integer = WidthRange.Fit(Min(Bounds.Width, AvailableBounds.Width))
+		    Var Height As Integer = HeightRange.Fit(Min(Bounds.Height, AvailableBounds.Height))
+		    Var Left As Integer = Max(Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width), 0)
+		    Var Top As Integer = Max(Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height), 0)
 		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
 		  
-		  Self.UpdateSizeForView(Self.DashboardPane1)
 		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  
@@ -496,12 +504,6 @@ End
 		  #Pragma Unused Value
 		  
 		  Select Case Key
-		  Case "MinimumWidth", "MinimumHeight"
-		    If Self.mCurrentView <> Nil Then
-		      Self.UpdateSizeForView(Self.mCurrentView)
-		    Else
-		      Self.UpdateSizeForView(Self.DashboardPane1)
-		    End If
 		  Case "ToolbarCaption", "ToolbarIcon"
 		    Self.TabBar1.Invalidate
 		  End Select
@@ -543,8 +545,6 @@ End
 		  
 		  If Self.mCurrentView <> Nil Then
 		    Self.mCurrentView.Visible = False
-		    Self.mCurrentView.RemoveObserver(Self, "MinimumHeight")
-		    Self.mCurrentView.RemoveObserver(Self, "MinimumWidth")
 		    Self.mCurrentView.SwitchedFrom()
 		  End If
 		  
@@ -553,9 +553,7 @@ End
 		    Self.mCurrentView = Nil
 		    Self.Views.SelectedPanelIndex = 0
 		    Self.TabBar1.SelectedIndex = 0
-		    Self.UpdateSizeForView(DashboardPane1)
 		    Self.DashboardPane1.SwitchedTo()
-		    Self.UpdateSizeForView(Self.DashboardPane1)
 		    Self.Title = "Beacon"
 		    Self.UpdateEditorMenu()
 		    Return
@@ -579,7 +577,6 @@ End
 		  Self.TabBar1.SelectedIndex = ViewIndex + 1
 		  
 		  Self.Changed = View.Changed
-		  Self.UpdateSizeForView(View)
 		  
 		  If Self.mCurrentView.ToolbarCaption.Length > 0 Then
 		    Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
@@ -588,11 +585,7 @@ End
 		  End If
 		  
 		  Self.mCurrentView.SwitchedTo()
-		  Self.UpdateSizeForView(Self.mCurrentView)
-		  Self.mCurrentView.AddObserver(Self, "MinimumHeight")
-		  Self.mCurrentView.AddObserver(Self, "MinimumWidth")
 		  Self.Views.SelectedPanelIndex = 1
-		  Self.UpdateEditorMenu()
 		End Sub
 	#tag EndMethod
 
@@ -641,15 +634,6 @@ End
 		  For Each Item As MenuItem In Items
 		    Menu.AddMenu(Item)
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateSizeForView(View As BeaconSubview)
-		  Self.MinimumWidth = Max(View.MinimumWidth, Self.AbsoluteMinWidth) + Self.Views.Left
-		  Self.MinimumHeight = Max(View.MinimumHeight, Self.AbsoluteMinHeight) + Self.Views.Top
-		  Self.Width = Max(Self.Width, Self.MinimumWidth)
-		  Self.Height = Max(Self.Height, Self.MinimumHeight)
 		End Sub
 	#tag EndMethod
 
@@ -734,12 +718,6 @@ End
 		Private UpdateBarVisible As Boolean
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"468", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = AbsoluteMinWidth, Type = Double, Dynamic = False, Default = \"800", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
 	#tag EndConstant

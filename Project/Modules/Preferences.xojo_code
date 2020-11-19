@@ -383,6 +383,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.SizeValue("Last Used Screen Size", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.SizeValue("Last Used Screen Size") = Value
+			End Set
+		#tag EndSetter
+		Protected LastUsedScreenSize As Size
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.RectValue("Main Window Size", Nil)
 			End Get
 		#tag EndGetter

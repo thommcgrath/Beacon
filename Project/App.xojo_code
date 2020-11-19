@@ -68,16 +68,17 @@ Implements NotificationKit.Receiver
 		  Self.mLogManager = New LogManager
 		  
 		  #if Not DebugBuild
+		    Var MBSRegistered As Boolean
 		    Try
-		      Var JSON As String = BeaconEncryption.SymmetricDecrypt(Self.MBSKey, DecodeBase64(Self.MBSSerial))
-		      Var MBSData As Dictionary = Xojo.ParseJSON(JSON)
-		      If Not RegisterMBSPlugin(MBSData.Value("username").StringValue, MBSData.Value("package").StringValue, MBSData.Value("expires").IntegerValue, MBSData.Value("serial").StringValue) Then
-		        Self.Log("Unable to register MBS plugins")
-		      End If
+		      Var MBSData As Dictionary = Xojo.ParseJSON(Self.MBSLicense)
+		      MBSRegistered = RegisterMBSPlugin(MBSData.Value("username").StringValue, MBSData.Value("package").StringValue, MBSData.Value("expires").IntegerValue, MBSData.Value("serial").StringValue)
 		    Catch Err As RuntimeException
+		    End Try
+		    If Not MBSRegistered Then
+		      Self.Log("Unable to register MBS plugins")
 		      BeaconUI.ShowAlert("This version of Beacon is not suitable for use.", "This build encountered problems during the build process and cannot be used. Please contact the developer.")
 		      Quit
-		    End Try
+		    End If
 		  #endif
 		  
 		  Self.Log(Self.UserAgent)
@@ -158,6 +159,7 @@ Implements NotificationKit.Receiver
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_NewsletterPrompt)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_GettingStarted)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -753,6 +755,33 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_CheckScreenSize()
+		  // Find the largest screen
+		  Var LargestScreen As Integer = -1
+		  Var Bound As Integer = ScreenCount - 1
+		  For Idx As Integer = 0 To Bound
+		    If LargestScreen = -1 Then
+		      LargestScreen = Idx
+		    Else
+		      If (Screen(Idx).Width * Screen(Idx).Height) > (Screen(LargestScreen).Width * Screen(LargestScreen).Height) Then
+		        LargestScreen = Idx
+		      End If
+		    End If
+		  Next
+		  
+		  Var ScreenSize As New Size(Screen(LargestScreen).Width, Screen(LargestScreen).Height)
+		  Var LastScreen As Size = Preferences.LastUsedScreenSize
+		  If LastScreen Is Nil Or ScreenSize.Width <> LastScreen.Width Or ScreenSize.Height <> LastScreen.Height Then
+		    // Warn
+		    If ScreenSize.Width < 1280 Or ScreenSize.Height < 720 Then
+		      BeaconUI.ShowAlert("Beacon was not designed for your screen resolution.", "Beacon needs a screen resolution of at least 1280x720 points. You may find that Beacon's window does not fit nicely on your screen.")
+		    End If
+		    Preferences.LastUsedScreenSize = ScreenSize
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CheckUpdates()
 		  If Preferences.OnlineEnabled Then
 		    Self.CheckForUpdates(True)
@@ -934,6 +963,13 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function MainWindow() As MainWindow
 		  Return Self.mMainWindow
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function MBSLicense() As String
+		  Const Chars = Self.MBSKey
+		  Return DefineEncoding(DecodeBase64(Chars.Middle(16, 1) + Chars.Middle(26, 1) + Chars.Middle(21, 1) + Chars.Middle(13, 1) + Chars.Middle(17, 1) + Chars.Middle(14, 1) + Chars.Middle(40, 1) + Chars.Middle(26, 1) + Chars.Middle(43, 1) + Chars.Middle(9, 1) + Chars.Middle(34, 1) + Chars.Middle(2, 1) + Chars.Middle(0, 1) + Chars.Middle(29, 1) + Chars.Middle(52, 1) + Chars.Middle(37, 1) + Chars.Middle(52, 1) + Chars.Middle(19, 1) + Chars.Middle(41, 1) + Chars.Middle(4, 1) + Chars.Middle(43, 1) + Chars.Middle(14, 1) + Chars.Middle(38, 1) + Chars.Middle(35, 1) + Chars.Middle(7, 1) + Chars.Middle(49, 1) + Chars.Middle(46, 1) + Chars.Middle(1, 1) + Chars.Middle(17, 1) + Chars.Middle(9, 1) + Chars.Middle(34, 1) + Chars.Middle(38, 1) + Chars.Middle(5, 1) + Chars.Middle(55, 1) + Chars.Middle(52, 1) + Chars.Middle(36, 1) + Chars.Middle(52, 1) + Chars.Middle(11, 1) + Chars.Middle(44, 1) + Chars.Middle(54, 1) + Chars.Middle(24, 1) + Chars.Middle(14, 1) + Chars.Middle(2, 1) + Chars.Middle(54, 1) + Chars.Middle(0, 1) + Chars.Middle(14, 1) + Chars.Middle(22, 1) + Chars.Middle(51, 1) + Chars.Middle(15, 1) + Chars.Middle(51, 1) + Chars.Middle(21, 1) + Chars.Middle(46, 1) + Chars.Middle(10, 1) + Chars.Middle(19, 1) + Chars.Middle(20, 1) + Chars.Middle(35, 1) + Chars.Middle(10, 1) + Chars.Middle(14, 1) + Chars.Middle(42, 1) + Chars.Middle(2, 1) + Chars.Middle(17, 1) + Chars.Middle(50, 1) + Chars.Middle(23, 1) + Chars.Middle(19, 1) + Chars.Middle(48, 1) + Chars.Middle(50, 1) + Chars.Middle(22, 1) + Chars.Middle(51, 1) + Chars.Middle(8, 1) + Chars.Middle(55, 1) + Chars.Middle(21, 1) + Chars.Middle(19, 1) + Chars.Middle(16, 1) + Chars.Middle(1, 1) + Chars.Middle(44, 1) + Chars.Middle(45, 1) + Chars.Middle(17, 1) + Chars.Middle(9, 1) + Chars.Middle(40, 1) + Chars.Middle(31, 1) + Chars.Middle(52, 1) + Chars.Middle(53, 1) + Chars.Middle(4, 1) + Chars.Middle(26, 1) + Chars.Middle(20, 1) + Chars.Middle(32, 1) + Chars.Middle(52, 1) + Chars.Middle(23, 1) + Chars.Middle(20, 1) + Chars.Middle(32, 1) + Chars.Middle(20, 1) + Chars.Middle(36, 1) + Chars.Middle(52, 1) + Chars.Middle(11, 1) + Chars.Middle(46, 1) + Chars.Middle(19, 1) + Chars.Middle(17, 1) + Chars.Middle(9, 1) + Chars.Middle(19, 1) + Chars.Middle(54, 1) + Chars.Middle(43, 1) + Chars.Middle(55, 1) + Chars.Middle(52, 1) + Chars.Middle(37, 1) + Chars.Middle(52, 1) + Chars.Middle(27, 1) + Chars.Middle(2, 1) + Chars.Middle(29, 1) + Chars.Middle(43, 1) + Chars.Middle(13, 1) + Chars.Middle(52, 1) + Chars.Middle(31, 1) + Chars.Middle(22, 1) + Chars.Middle(27, 1) + Chars.Middle(40, 1) + Chars.Middle(54, 1) + Chars.Middle(22, 1) + Chars.Middle(50, 1) + Chars.Middle(28, 1) + Chars.Middle(26, 1) + Chars.Middle(24, 1) + Chars.Middle(14, 1) + Chars.Middle(35, 1) + Chars.Middle(33, 1) + Chars.Middle(46, 1) + Chars.Middle(7, 1) + Chars.Middle(21, 1) + Chars.Middle(27, 1) + Chars.Middle(5, 1) + Chars.Middle(40, 1) + Chars.Middle(45, 1) + Chars.Middle(2, 1) + Chars.Middle(20, 1) + Chars.Middle(32, 1) + Chars.Middle(22, 1) + Chars.Middle(33, 1) + Chars.Middle(5, 1) + Chars.Middle(25, 1) + Chars.Middle(40, 1) + Chars.Middle(39, 1) + Chars.Middle(24, 1) + Chars.Middle(22, 1) + Chars.Middle(12, 1) + Chars.Middle(33, 1) + Chars.Middle(5, 1) + Chars.Middle(27, 1) + Chars.Middle(21, 1) + Chars.Middle(45, 1) + Chars.Middle(20, 1) + Chars.Middle(7, 1) + Chars.Middle(48, 1) + Chars.Middle(39, 1) + Chars.Middle(46, 1) + Chars.Middle(25, 1) + Chars.Middle(44, 1) + Chars.Middle(39, 1) + Chars.Middle(22, 1) + Chars.Middle(30, 1) + Chars.Middle(13, 1) + Chars.Middle(28, 1) + Chars.Middle(0, 1) + Chars.Middle(13, 1) + Chars.Middle(27, 1) + Chars.Middle(38, 1) + Chars.Middle(5, 1) + Chars.Middle(25, 1) + Chars.Middle(34, 1) + Chars.Middle(41, 1) + Chars.Middle(7, 1) + Chars.Middle(27, 1) + Chars.Middle(46, 1) + Chars.Middle(51, 1) + Chars.Middle(22, 1) + Chars.Middle(11, 1) + Chars.Middle(0, 1) + Chars.Middle(36, 1) + Chars.Middle(0, 1) + Chars.Middle(13, 1) + Chars.Middle(40, 1) + Chars.Middle(20, 1) + Chars.Middle(29, 1) + Chars.Middle(38, 1) + Chars.Middle(52, 1) + Chars.Middle(14, 1) + Chars.Middle(48, 1) + Chars.Middle(3, 1) + Chars.Middle(35, 1) + Chars.Middle(23, 1) + Chars.Middle(47, 1) + Chars.Middle(7, 1) + Chars.Middle(38, 1) + Chars.Middle(51, 1) + Chars.Middle(18, 1) + Chars.Middle(10, 1) + Chars.Middle(6, 1) + Chars.Middle(6, 1)),Encodings.UTF8)
 		End Function
 	#tag EndMethod
 
@@ -1323,9 +1359,6 @@ Implements NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = MBSKey, Type = String, Dynamic = False, Default = \"Nice try", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"igL6VgUANZR2PbRfpilbjMggAAAAkeHTGKoujFp8BzbQHvS9z3P1tvugc7XoSFNQuy2UtkMEx+QQtuAmbGt3pA7ZjkpciNSh7F24+WyKXX8l473vKLp/FBuvj2BPxzev2RAs3D83WWMnZ1TAtTt2+jFuuMhHJiglcsjZq/0u8qupohz44Z0NsihDuN6Zgd2Zv+BBc13hMy10+tpGZP/5wXNuMewOGzvf13VrJVC7Qrw/AV95eRRFWA3q", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public

@@ -148,7 +148,14 @@ Implements ObservationKit.Observable
 		      End If
 		    End If
 		    
-		    Var EndPos As Integer = ArkData.IndexOf(Offset, "</>") + 3
+		    Var EndPos As Integer = ArkData.IndexOf(Offset, "</>")
+		    If EndPos = -1 Then
+		      // Tag was never closed
+		      ArkData = ArkData + "</>"
+		      EndPos = ArkData.Length
+		    Else
+		      EndPos = EndPos + 3
+		    End If
 		    Var Chunk As String = ArkData.Middle(Offset, EndPos - Offset)
 		    
 		    Var ColorStartPos As Integer = Chunk.IndexOf("=") + 1
@@ -465,7 +472,6 @@ Implements ObservationKit.Observable
 		  Input = Input.ReplaceAll("<", "&lt;")
 		  Input = Input.ReplaceAll(">", "&gt;")
 		  Input = Input.ReplaceAll("""", "&quot;")
-		  Input = Input.ReplaceAll("'", "&apos;")
 		  
 		  // Clear control characters
 		  Var Searcher As New Regex
@@ -482,9 +488,7 @@ Implements ObservationKit.Observable
 		      Return Input
 		    End If
 		    
-		    Var Codepoint As Integer = Asc(Match.SubExpressionString(0))
-		    Var Replacement As String = "&#" + Codepoint.ToString + ";"
-		    Input = Input.ReplaceAll(Match.SubExpressionString(0), Replacement)
+		    Input = Input.ReplaceAll(Match.SubExpressionString(0), "")
 		  Loop
 		  
 		  Return Input

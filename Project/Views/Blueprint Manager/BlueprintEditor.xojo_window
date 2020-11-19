@@ -438,10 +438,10 @@ Begin BeaconSubview BlueprintEditor
       Height          =   317
       InitialParent   =   ""
       Left            =   146
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Mask            =   ""
       Scope           =   2

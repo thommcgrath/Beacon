@@ -108,7 +108,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Bold            =   False
       Caption         =   "Reference Values"
       Enabled         =   True
-      Height          =   248
+      Height          =   282
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -605,6 +605,85 @@ Begin ConfigEditor DifficultyConfigEditor
          Visible         =   True
          Width           =   179
       End
+      Begin UITweaks.ResizedTextField MaxCrystalWyvernLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   231
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   294
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel MaxCrystalWyvernLevelLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   13
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   294
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Max Crystal Wyvern Level:"
+         Visible         =   True
+         Width           =   179
+      End
    End
 End
 #tag EndWindow
@@ -640,6 +719,7 @@ End
 		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
 		  Self.MaxTekLevelField.Value = Format(Difficulty.MaxTekLevel, "0,")
 		  Self.MaxWyvernLevelField.Value = Format(Difficulty.MaxWyvernLevel, "0,")
+		  Self.MaxCrystalWyvernLevelField.Value = Format(Difficulty.MaxCrystalWyvernLevel, "0,")
 		End Sub
 	#tag EndMethod
 

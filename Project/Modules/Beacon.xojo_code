@@ -400,7 +400,7 @@ Protected Module Beacon
 		    Var Line As String = Lines(I).Trim
 		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		      Select Case Line
-		      Case "[Beacon]", "[/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]"
+		      Case "[Beacon]", "[/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]", "[ScalabilityGroups.sg]"
 		        IgnoreLines = True
 		      Else
 		        IgnoreLines = False
@@ -722,10 +722,13 @@ Protected Module Beacon
 		      Parts.AddRowAt(0, MapName)
 		    End If
 		    
-		    Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    If Parts.Count > 0 Then
+		      Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    End If
 		  Catch Err As RuntimeException
-		    Return Beacon.MakeHumanReadable(ClassString)
 		  End Try
+		  
+		  Return Beacon.MakeHumanReadable(ClassString)
 		End Function
 	#tag EndMethod
 
@@ -1164,7 +1167,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SanitizeFilename(Filename As String) As String
+		Protected Function SanitizeFilename(Filename As String, MaxLength As Integer = 0) As String
 		  Filename = Filename.ReplaceAll("/", "-")
 		  Filename = Filename.ReplaceAll("\", "-")
 		  Filename = Filename.ReplaceAll(":", "-")
@@ -1174,6 +1177,37 @@ Protected Module Beacon
 		  Filename = Filename.ReplaceAll("|", "")
 		  Filename = Filename.ReplaceAll("*", "")
 		  Filename = Filename.ReplaceAll("?", "")
+		  
+		  If MaxLength > 0 And Filename.Length > MaxLength Then
+		    // Extension cannot be truncated
+		    Var Parts() As String = Filename.Split(".")
+		    Var Basename, Extension As String
+		    If Parts.Count >= 2 Then
+		      Extension = "." + Parts(Parts.LastRowIndex)
+		      Parts.RemoveRowAt(Parts.LastRowIndex)
+		      Basename = Parts.Join(".")
+		      MaxLength = MaxLength - (Extension.Length)
+		      If MaxLength <= 0 Then
+		        // What do we do? The extension is longer than the max.
+		        MaxLength = (Extension.Length)
+		        Var Err As New UnsupportedOperationException
+		        Err.Message = "Cannot truncate filename `" + Filename + "` because the extension is longer than the requested maximum length of " + MaxLength.ToString + "."
+		        Raise Err
+		      End If
+		    Else
+		      Basename = Filename
+		    End If
+		    
+		    If MaxLength > 1 Then
+		      MaxLength = MaxLength - 1 // To leave space for the elipsis
+		    End If
+		    Var PrefixLength As Integer = Ceil(MaxLength / 2)
+		    Var SuffixLength As Integer = MaxLength - PrefixLength
+		    Var Prefix As String = Basename.Left(PrefixLength).Trim
+		    Var Suffix As String = Basename.Right(SuffixLength).Trim
+		    Filename = Prefix + If(PrefixLength + SuffixLength > 1, "…", "") + Suffix + Extension
+		  End If
+		  
 		  Return Filename
 		End Function
 	#tag EndMethod
@@ -1508,6 +1542,31 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
+		  Var MissingHeaders() As String
+		  For Each RequiredHeader As String In RequiredHeaders
+		    If Content.IndexOf(RequiredHeader) = -1 Then
+		      MissingHeaders.AddRow(RequiredHeader)
+		    End If
+		  Next
+		  MissingHeaders.Sort
+		  Return MissingHeaders
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ValidateIniContent(Content As String, Filename As String) As String()
+		  Var RequiredHeaders() As String
+		  If Filename = "Game.ini" Then
+		    RequiredHeaders = Array("[/script/shootergame.shootergamemode]")
+		  ElseIf Filename = "GameUserSettings.ini" Then
+		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]")
+		  End If
+		  Return Beacon.ValidateIniContent(Content, RequiredHeaders)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ValidForDocument(Extends Blueprint As Beacon.Blueprint, Document As Beacon.Document) As Boolean
 		  Return (Document Is Nil) = False And Document.ModEnabled(Blueprint.ModID)
@@ -1567,7 +1626,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As String = "/") As String
 		  #if DebugBuild
-		    Var Domain As String = "https://workbench.beaconapp.cc"
+		    Var Domain As String = "https://lab.beaconapp.cc"
 		  #else
 		    Var Domain As String = "https://beaconapp.cc"
 		  #endif

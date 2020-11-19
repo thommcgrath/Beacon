@@ -13,7 +13,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
-		      Var StackSize As Integer = Min(Entry.Value, Self.MaximumQuantity)
+		      Var StackSize As UInt64 = Min(Entry.Value, Self.MaximumQuantity)
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If
 		  Next
@@ -74,7 +74,7 @@ Inherits Beacon.ConfigGroup
 		          Engram = Beacon.Engram.CreateFromClass(Entry.Key)
 		        End If
 		        If IsNull(Engram) = False Then
-		          Self.mOverrides.Value(Engram.Path) = Entry.Value.IntegerValue
+		          Self.mOverrides.Value(Engram.Path) = Entry.Value.UInt64Value
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -174,7 +174,7 @@ Inherits Beacon.ConfigGroup
 		      
 		      Var Quantity As Dictionary = Dict.Value("Quantity")
 		      Var ClassString As String = Dict.Value("ItemClassString")
-		      Var StackSize As Integer = Quantity.Lookup("MaxItemQuantity", 0)
+		      Var StackSize As UInt64 = Quantity.Lookup("MaxItemQuantity", 0)
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And StackSize > 0 Then
 		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
@@ -200,23 +200,27 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Override(Engram As Beacon.Engram) As Integer
+		Function Override(Engram As Beacon.Engram) As UInt64
+		  Var Zero As UInt64 = 0
+		  
 		  If Engram <> Nil Then
-		    Return Self.mOverrides.Lookup(Engram.Path, 0)
+		    Return Self.mOverrides.Lookup(Engram.Path, Zero)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Override(Engram As Beacon.Engram, Assigns StackSize As Integer)
+		Sub Override(Engram As Beacon.Engram, Assigns StackSize As UInt64)
+		  Var Zero As UInt64 = 0
+		  
 		  If IsNull(Engram) Then
 		    Return
 		  End If
 		  
-		  If StackSize <= 0 And Self.mOverrides.HasKey(Engram.Path) Then
+		  If StackSize <= Zero And Self.mOverrides.HasKey(Engram.Path) Then
 		    Self.mOverrides.Remove(Engram.Path)
 		    Self.Modified = True
-		  ElseIf StackSize > 0 And Self.mOverrides.Lookup(Engram.Path, 0) <> StackSize Then
+		  ElseIf StackSize > Zero And Self.mOverrides.Lookup(Engram.Path, Zero) <> StackSize Then
 		    Self.mOverrides.Value(Engram.Path) = StackSize
 		    Self.Modified = True
 		  End If
@@ -250,7 +254,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 
-	#tag Constant, Name = MaximumQuantity, Type = Double, Dynamic = False, Default = \"65535", Scope = Public
+	#tag Constant, Name = MaximumQuantity, Type = Double, Dynamic = False, Default = \"2147483647", Scope = Public
 	#tag EndConstant
 
 

@@ -41,7 +41,7 @@ Inherits Beacon.IntegrationEngine
 		      If ConfigKey.File = "GameUserSettings.ini" And ConfigKey.HasNitradoEquivalent = False Then
 		        // We need to put a setting in GUS but Nitrado doesn't have a key for it. That means expert mode is needed.
 		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		        Self.SwitchToExpertMode(ConfigKey.Key)
+		        Self.SwitchToExpertMode(ConfigKey.Key, 0)
 		        Return False
 		      End If
 		      
@@ -59,6 +59,12 @@ Inherits Beacon.IntegrationEngine
 		      Else
 		        Continue
 		      End Select
+		      
+		      If NewValue.Length > 65535 Then
+		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs " + NewValue.Length.ToString + " characters, and Nitrado has a limit of 65,535 characters.")
+		        Self.SwitchToExpertMode(ConfigKey.Key, NewValue.Length)
+		        Return False
+		      End If
 		      
 		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, ConfigKey.NitradoPath)
 		      If CurrentValue.Compare(NewValue, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
@@ -88,7 +94,7 @@ Inherits Beacon.IntegrationEngine
 		        Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", "", Key) // Allow any file so that command line options don't trigger this
 		        If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
 		          App.Log("Cannot use guided deploy because the key " + Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		          Self.SwitchToExpertMode(Key)
+		          Self.SwitchToExpertMode(Key, 0)
 		          Return False
 		        End If
 		      Next
@@ -121,7 +127,9 @@ Inherits Beacon.IntegrationEngine
 		    // Need to remove the header that the rewriter adds
 		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
 		    
-		    Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni)
+		    If Not Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni) Then
+		      Return False
+		    End If
 		    If Self.Finished Then
 		      Return False
 		    End If
@@ -506,6 +514,9 @@ Inherits Beacon.IntegrationEngine
 		    Case "backup_creation"
 		      Self.State = Self.StateOther
 		      Self.SetError("The server is creating a backup.")
+		    Case "updating"
+		      Self.State = Self.StateOther
+		      Self.SetError("The server is currently installing an update.")
 		    Else
 		      Self.State = Self.StateOther
 		      Self.SetError("Unknown server status: " + GameServer.Value("status").StringValue)
@@ -615,8 +626,7 @@ Inherits Beacon.IntegrationEngine
 	#tag Event
 		Function UploadFile(Contents As String, Filename As String) As Boolean
 		  Var Path As String = Beacon.NitradoServerProfile(Self.Profile).ConfigPath + "/" + Filename
-		  Self.UploadFile(Path, Contents)
-		  Return True
+		  Return Self.UploadFile(Path, Contents)
 		End Function
 	#tag EndEvent
 
@@ -691,12 +701,12 @@ Inherits Beacon.IntegrationEngine
 		      Message = "Error: Nitrado responded with an error but no message."
 		    End If
 		  Case 0
+		    Message = "Connection error #" + Str(HTTPException.ErrorNumber, "-0")
+		    
 		    If (HTTPException Is Nil) = False And HTTPException.Message.IsEmpty = False Then
-		      Message = "Connection error: " + HTTPException.Message
+		      Message = Message + ": " + HTTPException.Message
 		    ElseIf (HTTPResponse Is Nil) = False And HTTPResponse.Size > 0 Then
-		      Message = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
-		    Else
-		      Message = "Connection error"
+		      Message = Message + ": " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
 		    End If
 		  Else
 		    Message = ""
@@ -765,6 +775,7 @@ Inherits Beacon.IntegrationEngine
 		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode, ServiceID As Integer) As String
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  Sock.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path))
 		  If Self.Finished Then
 		    Return ""
@@ -811,6 +822,7 @@ Inherits Beacon.IntegrationEngine
 		  End Try
 		  
 		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
+		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  FetchSocket.Send("GET", FetchURL)
 		  
@@ -854,9 +866,10 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SwitchToExpertMode(OffendingKey As String)
+		Private Sub SwitchToExpertMode(OffendingKey As String, ContentLength As Integer)
 		  Var UserData As New Dictionary
 		  UserData.Value("OffendingKey") = OffendingKey
+		  UserData.Value("ContentLength") = ContentLength
 		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode", UserData)
 		  
 		  Self.Log("Waiting for user action…")
@@ -930,9 +943,10 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UploadFile(Path As String, FileContent As String)
+		Private Function UploadFile(Path As String, FileContent As String) As Boolean
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.RequestHeader("Cache-Control") = "no-cache"
 		  
 		  Var PathParts() As String = Path.Split("/")
 		  Var Filename As String = PathParts(PathParts.LastRowIndex)
@@ -945,7 +959,7 @@ Inherits Beacon.IntegrationEngine
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
 		  If Self.Finished Or Self.CheckError(Sock) Then
-		    Return
+		    Return False
 		  End If
 		  Var Content As String = Sock.LastString
 		  Var Status As Integer = Sock.LastHTTPStatus
@@ -955,7 +969,7 @@ Inherits Beacon.IntegrationEngine
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    If Response.Value("status") <> "success" Then
 		      Self.SetError("Error: Could not upload " + Path + "/" + Filename + ".")
-		      Return
+		      Return False
 		    End If
 		    
 		    Var Data As Dictionary = Response.Value("data")
@@ -965,19 +979,32 @@ Inherits Beacon.IntegrationEngine
 		  Catch Err As RuntimeException
 		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
 		    Self.SetError(Err)
-		    Return
+		    Return False
 		  End Try
+		  
+		  // Wait a moment so the receiver server is ready for the file... or something?
+		  Self.Wait(1000)
 		  
 		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  PutSocket.RequestHeader("token") = PutToken
-		  PutSocket.SetRequestContent(FileContent, "text/plain")
+		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(FileContent))
+		  PutSocket.SetRequestContent(FileContent, "application/octet-stream")
+		  PutSocket.RequestHeader("Cache-Control") = "no-cache"
 		  PutSocket.Send("POST", PutURL)
 		  If Self.Finished Then
-		    Return
+		    Return False
 		  End If
-		  Call Self.CheckError(PutSocket)
-		End Sub
+		  If Self.CheckError(PutSocket) Then
+		    Self.Log("Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content.")
+		    If Self.BackupEnabled Then
+		      Self.Log("Your config files were backed up to " + App.BackupsFolder.Child(Self.Profile.BackupFolderName).NativePath)
+		    End If
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 

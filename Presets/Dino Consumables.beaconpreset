@@ -1,1211 +1,349 @@
 {
-	"Entries": [
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Moth_C",
-					"Path": "/Game/ScorchedEarth/Dinos/Moth/PrimalItemConsumable_Kibble_Moth.PrimalItemConsumable_Kibble_Moth",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 32,
-			"ChanceToBeBlueprintOverride": 0.25,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Base_XLarge_EX_C",
-					"Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge_EX.PrimalItemConsumable_Kibble_Base_XLarge_EX",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 32,
-			"ChanceToBeBlueprintOverride": 0.25,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Base_XSmall_EX_C",
-					"Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall_EX.PrimalItemConsumable_Kibble_Base_XSmall_EX",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_TurtleEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_TurtleEgg.PrimalItemConsumable_Kibble_TurtleEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_PteroEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_PteroEgg.PrimalItemConsumable_Kibble_PteroEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 16,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_LanternLizardEgg_C",
-					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_LanternLizardEgg.PrimalItemConsumable_Kibble_LanternLizardEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 32,
-			"ChanceToBeBlueprintOverride": 0.25,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Base_Large_EX_C",
-					"Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Large_EX.PrimalItemConsumable_Kibble_Base_Large_EX",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Compy_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Compy.PrimalItemConsumable_Kibble_Compy",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_DodoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_DodoEgg.PrimalItemConsumable_Kibble_DodoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_GalliEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_GalliEgg.PrimalItemConsumable_Kibble_GalliEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_SpinoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_SpinoEgg.PrimalItemConsumable_Kibble_SpinoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_RexEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_RexEgg.PrimalItemConsumable_Kibble_RexEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_DimorphEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_DimorphEgg.PrimalItemConsumable_Kibble_DimorphEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_KaproEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_KaproEgg.PrimalItemConsumable_Kibble_KaproEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_DimetroEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_DimetroEgg.PrimalItemConsumable_Kibble_DimetroEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Camelsaurus_C",
-					"Path": "/Game/ScorchedEarth/Dinos/Camelsaurus/PrimalItemConsumable_Kibble_Camelsaurus.PrimalItemConsumable_Kibble_Camelsaurus",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 42,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_SpineyLizard_C",
-					"Path": "/Game/ScorchedEarth/Dinos/SpineyLizard/PrimalItemConsumable_Kibble_SpineyLizard.PrimalItemConsumable_Kibble_SpineyLizard",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 32,
-			"ChanceToBeBlueprintOverride": 0.25,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Base_Medium_EX_C",
-					"Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium_EX.PrimalItemConsumable_Kibble_Base_Medium_EX",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_TherizinoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_TherizinoEgg.PrimalItemConsumable_Kibble_TherizinoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_SpiderEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_SpiderEgg.PrimalItemConsumable_Kibble_SpiderEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_SweetVeggieCake_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_SweetVeggieCake.PrimalItemConsumable_SweetVeggieCake",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_PachyRhinoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_PachyRhinoEgg.PrimalItemConsumable_Kibble_PachyRhinoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_LystroEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_LystroEgg.PrimalItemConsumable_Kibble_LystroEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 16,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_LanternBirdEgg_C",
-					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_LanternBirdEgg.PrimalItemConsumable_Kibble_LanternBirdEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 10,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Vulture_C",
-					"Path": "/Game/ScorchedEarth/Dinos/Vulture/PrimalItemConsumable_Kibble_Vulture.PrimalItemConsumable_Kibble_Vulture",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_MoschopsEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_MoschopsEgg.PrimalItemConsumable_Kibble_MoschopsEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_ArchaEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_ArchaEgg.PrimalItemConsumable_Kibble_ArchaEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 48,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_RockDrakeEgg_C",
-					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_RockDrakeEgg.PrimalItemConsumable_Kibble_RockDrakeEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 32,
-			"ChanceToBeBlueprintOverride": 0.25,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Base_Small_EX_C",
-					"Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small_EX.PrimalItemConsumable_Kibble_Base_Small_EX",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_TapejaraEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_TapejaraEgg.PrimalItemConsumable_Kibble_TapejaraEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_TerrorbirdEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_TerrorbirdEgg.PrimalItemConsumable_Kibble_TerrorbirdEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Allo_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Allo.PrimalItemConsumable_Kibble_Allo",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_KentroEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_KentroEgg.PrimalItemConsumable_Kibble_KentroEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_PegomastaxEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_PegomastaxEgg.PrimalItemConsumable_Kibble_PegomastaxEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_ScorpionEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_ScorpionEgg.PrimalItemConsumable_Kibble_ScorpionEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_IchthyornisEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_IchthyornisEgg.PrimalItemConsumable_Kibble_IchthyornisEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Honey_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Honey.PrimalItemConsumable_Honey",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_StegoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_StegoEgg.PrimalItemConsumable_Kibble_StegoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Pela_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Pela.PrimalItemConsumable_Kibble_Pela",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_OviraptorEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_OviraptorEgg.PrimalItemConsumable_Kibble_OviraptorEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_DiploEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_DiploEgg.PrimalItemConsumable_Kibble_DiploEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_RaptorEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_RaptorEgg.PrimalItemConsumable_Kibble_RaptorEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_IguanodonEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_IguanodonEgg.PrimalItemConsumable_Kibble_IguanodonEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_BoaEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_BoaEgg.PrimalItemConsumable_Kibble_BoaEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_TrikeEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_TrikeEgg.PrimalItemConsumable_Kibble_TrikeEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_SarcoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_SarcoEgg.PrimalItemConsumable_Kibble_SarcoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 13,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_KairukuEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_KairukuEgg.PrimalItemConsumable_Kibble_KairukuEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 32,
-			"ChanceToBeBlueprintOverride": 0.25,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Base_Special_EX_C",
-					"Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special_EX.PrimalItemConsumable_Kibble_Base_Special_EX",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_MegalosaurusEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_MegalosaurusEgg.PrimalItemConsumable_Kibble_MegalosaurusEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_BaryonyxEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_BaryonyxEgg.PrimalItemConsumable_Kibble_BaryonyxEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_MicroraptorEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_MicroraptorEgg.PrimalItemConsumable_Kibble_MicroraptorEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_DiloEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_DiloEgg.PrimalItemConsumable_Kibble_DiloEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 61,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Megalania_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Megalania.PrimalItemConsumable_Kibble_Megalania",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_PachyEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_PachyEgg.PrimalItemConsumable_Kibble_PachyEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 47,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_ArgentEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_ArgentEgg.PrimalItemConsumable_Kibble_ArgentEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_ParaEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_ParaEgg.PrimalItemConsumable_Kibble_ParaEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_TroodonEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_TroodonEgg.PrimalItemConsumable_Kibble_TroodonEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 10,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_Mantis_C",
-					"Path": "/Game/ScorchedEarth/Dinos/Mantis/PrimalItemConsumable_Kibble_Mantis.PrimalItemConsumable_Kibble_Mantis",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_QuetzEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_QuetzEgg.PrimalItemConsumable_Kibble_QuetzEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_AnkyloEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_AnkyloEgg.PrimalItemConsumable_Kibble_AnkyloEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 63,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_CarnoEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_CarnoEgg.PrimalItemConsumable_Kibble_CarnoEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 45,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Kibble_SauroEgg_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_SauroEgg.PrimalItemConsumable_Kibble_SauroEgg",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 20,
-			"MinQuality": "Tier1",
-			"MinQuantity": 5,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		}
-	],
-	"Grouping": "Miscellaneous",
-	"ID": "5863a1d9-f2cf-43e4-a081-6de7ac6b5a81",
-	"Label": "Dino Consumables",
-	"Max": 4,
-	"Min": 2,
-	"Modifier Definitions": [
-		{
-			"Label": "Bonus Drops",
-			"ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$"
-		},
-		{
-			"Label": "Cave Crates",
-			"ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
-			"Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$"
-		},
-		{
-			"Label": "Open Desert Crate",
-			"ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
-			"Pattern": "^SupplyCreate_OceanInstant_High_C$"
-		},
-		{
-			"Label": "Deep Sea Crate",
-			"ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
-			"Pattern": "^SupplyCrate_OceanInstant_C$"
-		},
-		{
-			"Label": "Bosses",
-			"ModifierID": "4d70fee5-81c7-48f4-8a97-51057f7e6ac2",
-			"Pattern": "^DinoDropInventoryComponent_Boss(.+)_(.+)_C$"
-		},
-		{
-			"Label": "Artifact Crates",
-			"ModifierID": "87a001d7-5f3b-4d0e-8494-e00c4488e077",
-			"Pattern": "^ArtifactCrate_.+_C$"
-		},
-		{
-			"Label": "Aberration Surface Bonus Drops",
-			"ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$"
-		},
-		{
-			"Label": "Aberration Surface Drops",
-			"ModifierID": "e3454afa-d47a-4f9f-9cd9-ceb0171317e4",
-			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_C$"
-		},
-		{
-			"Label": "Basic Drops",
-			"ModifierID": "e350c14c-a3a1-493a-bd5c-b34a530e45cb",
-			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d)|(Level\\d\\d)|(Level\\d\\d_ScorchedEarth))_C$"
-		}
-	],
-	"Modifiers": {
-		"13299620-1aaa-43a7-9c44-42fc409ea7a1": {
-			"Quality": 0,
-			"Quantity": 2.0
-		},
-		"22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
-			"Quality": 0,
-			"Quantity": 3.0
-		},
-		"3910ae49-41bc-4307-b395-2c1bb44619b6": {
-			"Quality": 0,
-			"Quantity": 4.0
-		},
-		"4ae8364b-4890-4a53-9d24-204ab5f00411": {
-			"Quality": 0,
-			"Quantity": 4.0
-		},
-		"4d70fee5-81c7-48f4-8a97-51057f7e6ac2": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"87a001d7-5f3b-4d0e-8494-e00c4488e077": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
-			"Quality": 0,
-			"Quantity": 2.0
-		},
-		"e3454afa-d47a-4f9f-9cd9-ceb0171317e4": {
-			"Quality": 0,
-			"Quantity": 1.0
-		},
-		"e350c14c-a3a1-493a-bd5c-b34a530e45cb": {
-			"Quality": 0,
-			"Quantity": 1.0
-		}
-	},
-	"Version": 2
+    "Version": 2,
+    "ID": "5863a1d9-f2cf-43e4-a081-6de7ac6b5a81",
+    "Label": "Dino Consumables",
+    "Grouping": "Miscellaneous",
+    "Min": 1,
+    "Max": 3,
+    "Entries": [
+        {
+            "ChanceToBeBlueprintOverride": 0.25,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall_EX.PrimalItemConsumable_Kibble_Base_XSmall_EX",
+                    "Class": "PrimalItemConsumable_Kibble_Base_XSmall_EX_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall.PrimalItemConsumable_Kibble_Base_XSmall",
+                    "Class": "PrimalItemConsumable_Kibble_Base_XSmall_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Large.PrimalItemConsumable_Kibble_Base_Large",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Large_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_SweetVeggieCake.PrimalItemConsumable_SweetVeggieCake",
+                    "Class": "PrimalItemConsumable_SweetVeggieCake_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special.PrimalItemConsumable_Kibble_Base_Special",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Special_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Honey.PrimalItemConsumable_Honey",
+                    "Class": "PrimalItemConsumable_Honey_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium.PrimalItemConsumable_Kibble_Base_Medium",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Medium_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.25,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small_EX.PrimalItemConsumable_Kibble_Base_Small_EX",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Small_EX_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small.PrimalItemConsumable_Kibble_Base_Small",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Small_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.25,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Large_EX.PrimalItemConsumable_Kibble_Base_Large_EX",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Large_EX_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge.PrimalItemConsumable_Kibble_Base_XLarge",
+                    "Class": "PrimalItemConsumable_Kibble_Base_XLarge_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 511,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.25,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge_EX.PrimalItemConsumable_Kibble_Base_XLarge_EX",
+                    "Class": "PrimalItemConsumable_Kibble_Base_XLarge_EX_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.25,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium_EX.PrimalItemConsumable_Kibble_Base_Medium_EX",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Medium_EX_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.25,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special_EX.PrimalItemConsumable_Kibble_Base_Special_EX",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Special_EX_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        }
+    ],
+    "Modifiers": {
+        "13299620-1aaa-43a7-9c44-42fc409ea7a1": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        },
+        "22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 3.0,
+            "Blueprint": 1.0
+        },
+        "3910ae49-41bc-4307-b395-2c1bb44619b6": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 4.0,
+            "Blueprint": 1.0
+        },
+        "4ae8364b-4890-4a53-9d24-204ab5f00411": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 4.0,
+            "Blueprint": 1.0
+        },
+        "b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+            "MinQuality": 0,
+            "MaxQuality": 0,
+            "Quantity": 2.0,
+            "Blueprint": 1.0
+        }
+    },
+    "Modifier Definitions": [
+        {
+            "ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
+            "Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$",
+            "Label": "Bonus Drops"
+        },
+        {
+            "ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
+            "Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$",
+            "Label": "Cave Crates"
+        },
+        {
+            "ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
+            "Pattern": "^SupplyCreate_OceanInstant_High_C$",
+            "Label": "Open Desert Crate"
+        },
+        {
+            "ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
+            "Pattern": "^SupplyCrate_OceanInstant_C$",
+            "Label": "Deep Sea Crate"
+        },
+        {
+            "ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
+            "Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$",
+            "Label": "Aberration Surface Bonus Drops"
+        }
+    ]
 }

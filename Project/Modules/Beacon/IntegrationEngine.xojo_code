@@ -202,7 +202,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h21
 		Private Function PutFile(Contents As String, Filename As String) As Boolean
 		  Var Counter As Integer = 0
-		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents))
+		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents)).Lowercase
 		  Self.Log("Uploading " + Filename + "…")
 		  While Counter < 3
 		    If Self.Finished Then
@@ -219,12 +219,15 @@ Protected Class IntegrationEngine
 		        Return False
 		      End If
 		      
-		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents))
+		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
 		        Return True
 		      Else
-		        Self.Log("Retrying " + Filename + "…")
+		        Self.Log("Checksum of " + Filename + " is " + CheckedHash + ", expected " + DesiredHash + ".")
+		        Self.Log(Filename + " checksum does not match, retrying…")
 		      End If
+		    Else
+		      Self.Log(Filename + " upload failed, retrying…")
 		    End If
 		    Counter = Counter + 1
 		  Wend
@@ -369,6 +372,14 @@ Protected Class IntegrationEngine
 		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
 		  If RewriteErrored Then
 		    Self.SetError("Failed to produce GameUserSettings.ini")
+		    Return
+		  End If
+		  
+		  // Verify content looks acceptable
+		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, "GameUserSettings.ini") Then
+		    Return
+		  End If
+		  If Not Self.ValidateContent(GameIniRewritten, "Game.ini") Then
 		    Return
 		  End If
 		  
@@ -667,6 +678,20 @@ Protected Class IntegrationEngine
 		  End Try
 		  RaiseEvent Discovered(Data)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ValidateContent(Content As String, Filename As String) As Boolean
+		  Var MissingHeaders() As String = Beacon.ValidateIniContent(Content, Filename)
+		  
+		  If MissingHeaders.Count > 1 Then
+		    Self.SetError(Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + ".")
+		  ElseIf MissingHeaders.Count = 1 Then
+		    Self.SetError(Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group.")
+		  End If
+		  
+		  Return MissingHeaders.Count = 0
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

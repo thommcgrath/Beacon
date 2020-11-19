@@ -31,6 +31,12 @@ Protected Class Range
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Fit(Value As Double) As Double
+		  Return REALbasic.Max(REALbasic.Min(Value, Self.mMax), Self.mMin)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Max() As Double
 		  Return Self.mMax
 		End Function

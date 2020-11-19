@@ -206,6 +206,9 @@ case 'POST':
 	}
 	
 	$payload = BeaconAPI::JSONPayload();
+	if (is_array($payload) === false) {
+		BeaconAPI::ReplyError('Unable to parse JSON payload');
+	}
 	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);

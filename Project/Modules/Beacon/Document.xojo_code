@@ -424,28 +424,37 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromString(Contents As String, Identity As Beacon.Identity) As Beacon.Document
+		Shared Function FromString(Contents As String, Identity As Beacon.Identity, ByRef FailureReason As String) As Beacon.Document
+		  Var Tracker As New TimingTracker
 		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
-		    App.Log("Unable to load document due to JSON parsing error: " + Err.Message)
+		    FailureReason = "Unable to load document due to JSON parsing error: " + Err.Message
+		    App.Log(FailureReason)
 		    Return Nil
 		  End Try
+		  Tracker.Log("Took %elapsed% to parse JSON.")
 		  
 		  Var Doc As New Beacon.Document
 		  Var Version As Integer = 1
+		  Var MinVersion As Integer = DocumentVersion
 		  Var Dict As Dictionary
 		  If Parsed IsA Dictionary Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
+		    MinVersion = Dict.Lookup("MinVersion", MinVersion)
 		    If Dict.HasKey("Identifier") Then
 		      Doc.mIdentifier = Dict.Value("Identifier")
 		    Else
 		      Doc.mIdentifier = New v4UUID
 		    End If
 		  End If
-		  If Version < 3 Then
+		  If MinVersion > DocumentVersion Then
+		    FailureReason = "Unable to load document because the version is " + Version.ToString + " but this version of Beacon only supports up to version " + MinVersion.ToString + "."
+		    App.Log(FailureReason)
+		    Return Nil
+		  ElseIf Version < 3 Then
 		    Return Beacon.Document.FromLegacy(Parsed, Identity)
 		  End If
 		  
@@ -490,6 +499,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  // New config system
+		  Tracker.Advance
 		  If Dict.HasKey("Configs") Then
 		    Var Groups As Dictionary = Dict.Value("Configs")
 		    For Each Entry As DictionaryEntry In Groups
@@ -505,6 +515,7 @@ Implements ObservationKit.Observable
 		      End Try
 		    Next
 		  End If
+		  Tracker.Log("Took %elapsed% to load config groups.")
 		  
 		  If Dict.HasKey("Map") Then
 		    Doc.MapCompatibility = Dict.Value("Map")
@@ -519,6 +530,7 @@ Implements ObservationKit.Observable
 		    Doc.UseCompression = True
 		  End If
 		  
+		  Tracker.Advance
 		  Var SecureDict As Dictionary
 		  #Pragma BreakOnExceptions False
 		  If Dict.HasKey("EncryptedData") Then
@@ -551,6 +563,7 @@ Implements ObservationKit.Observable
 		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
 		    LoadServerProfiles(Doc, ServerDicts)
 		  End If
+		  Tracker.Log("Took %elapsed% to decrypt.")
 		  
 		  If Dict.HasKey("IsConsole") Then
 		    Doc.mConsoleMode = Dict.Value("IsConsole").BooleanValue
@@ -615,6 +628,7 @@ Implements ObservationKit.Observable
 		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
+		  Tracker.Log("Took %elapsed% to load a " + Round(Contents.Length / 1024).ToString("###,###,###,##0") + "KB v" + Version.ToString + " document.", True)
 		  Return Doc
 		End Function
 	#tag EndMethod
@@ -858,20 +872,21 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
-		  If Key = Nil Then
+		  If Key Is Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var ExpectedHash As String = SecureDict.Lookup("Hash", "")
 		  Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
 		  Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
-		  Var AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		  AES.SetKey(Key)
-		  AES.SetInitialVector(Vector)
+		  Var Crypt As CipherMBS = CipherMBS.aes_256_cbc
+		  If Not Crypt.DecryptInit(BeaconEncryption.FixSymmetricKey(Key, Crypt.KeyLength), Vector) Then
+		    Return Nil
+		  End If
 		  
 		  Var Decrypted As String
 		  Try
-		    Decrypted = AES.DecryptCBC(Encrypted)
+		    Decrypted = Crypt.Process(Encrypted)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try

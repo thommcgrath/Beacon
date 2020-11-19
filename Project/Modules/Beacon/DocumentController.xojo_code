@@ -219,7 +219,7 @@ Protected Class DocumentController
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mDocumentURL.WithScheme("https").URL)
-		    If Socket.LastHTTPStatus >= 200 Then
+		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
 		      FileContent = Socket.LastContent
 		    Else
 		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
@@ -284,9 +284,10 @@ Protected Class DocumentController
 		    #endif
 		  End If
 		  
-		  Var Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity)
+		  Var FailureReason As String
+		  Var Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity, FailureReason)
 		  If Document = Nil Then
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to parse document")
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, FailureReason)
 		    Return
 		  End If
 		  

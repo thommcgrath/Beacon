@@ -312,6 +312,10 @@ BeaconTemplate::FinishScript();
 		<div class="column text-center"><button id="buy-button" class="default">Buy Omni</button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></div>
 		<div class="column text-center">Unable to purchase for some reason? Learn more about Beacon's <em><a href="stw">Share The Wealth</a></em> program.</div>
 	</div>
+	<div class="comment-block">
+		<div class="icon"><img src="<?php echo BeaconCommon::AssetURI('stripe-climate-badge.svg'); ?>" width="32" alt=""></div>
+		<div class="comment">2% of your purchase will be contributed to the removal of carbon dioxide from the atmosphere.</div>
+	</div>
 	<table class="generic">
 		<thead>
 			<tr>

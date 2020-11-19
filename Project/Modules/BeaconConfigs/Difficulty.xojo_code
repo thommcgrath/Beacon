@@ -111,6 +111,15 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.DifficultyValue * 45
+			End Get
+		#tag EndGetter
+		MaxCrystalWyvernLevel As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Max(Self.mMaxDinoLevel, 15)
 			End Get
 		#tag EndGetter
@@ -262,6 +271,14 @@ Inherits Beacon.ConfigGroup
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaxWyvernLevel"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaxCrystalWyvernLevel"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

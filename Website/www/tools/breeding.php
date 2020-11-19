@@ -5,10 +5,12 @@ BeaconTemplate::SetTitle('Ark Breeding Chart');
 $msm = isset($_GET['msm']) ? floatval($_GET['msm']) : 1.0;
 $ipm = isset($_GET['ipm']) ? floatval($_GET['ipm']) : 1.0;
 $ism = isset($_GET['ism']) ? floatval($_GET['ism']) : 1.0;
+$iam = isset($_GET['iam']) ? floatval($_GET['iam']) : 1.0;
 
 $msm = ($msm > 0) ? $msm : 1.0;
 $ipm = ($ipm > 0) ? $ipm : 1.0;
 $ism = ($ism > 0) ? $ism : 1.0;
+$iam = ($iam > 0) ? $iam : 1.0;
 
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT value::INTEGER FROM game_variables WHERE key = $1;', 'Cuddle Period');
@@ -91,6 +93,10 @@ BeaconTemplate::FinishStyles();
 		<div class="breeding-stats-value"><?php echo htmlentities(BeaconCommon::FormatFloat($ipm)); ?></div>
 	</div>
 	<div id="breeding-stats-if" class="breeding-stats-column">
+		<div class="breeding-stats-label">Imprint Amount:</div>
+		<div class="breeding-stats-value"><?php echo htmlentities(BeaconCommon::FormatFloat($iam)); ?></div>
+	</div>
+	<div id="breeding-stats-if" class="breeding-stats-column">
 		<div class="breeding-stats-label">Imprint Frequency:</div>
 		<div class="breeding-stats-value"><?php echo htmlentities(BeaconCommon::SecondsToEnglish($computed_cuddle_period, true)); ?></div>
 	</div>
@@ -107,7 +113,7 @@ BeaconTemplate::FinishStyles();
 	<tbody>
 		<?php
 			
-		$cache_key = 'breeding:msm=' . number_format($msm, 8) . ';ipm=' . number_format($ipm, 8) . ';ism=' . number_format($ism, 8);
+		$cache_key = 'breeding:msm=' . number_format($msm, 8) . ';ipm=' . number_format($ipm, 8) . ';ism=' . number_format($ism, 8) . ';iam=' . number_format($iam, 8);
 		$cached = BeaconCache::Get($cache_key);
 		
 		if (is_null($cached)) {
@@ -125,13 +131,20 @@ BeaconTemplate::FinishStyles();
 				$incubation_seconds = $creature->IncubationTimeSeconds() / $ism;
 				$mature_seconds = $creature->MatureTimeSeconds() / $msm;
 				
-				$max_cuddles = floor($mature_seconds / $computed_cuddle_period);
+				$max_cuddles = 0;
 				$per_cuddle = 0;
-				if ($max_cuddles > 0) {
-					$per_cuddle = 1 / $max_cuddles;
-					$cuddle_text = number_format($per_cuddle * 100, 0) . '% ea / ' . $max_cuddles . ' total';
-				} else {
+				if ($iam > 0) {
+					$max_cuddles = floor($mature_seconds / $computed_cuddle_period);
+					
+					if ($max_cuddles > 0) {
+						$per_cuddle = min((1 / $max_cuddles) * $iam, 1.0);
+						$max_cuddles = ceil(1.0 / $per_cuddle);
+					}
+				}
+				if ($max_cuddles == 0) {
 					$cuddle_text = 'Can\'t Imprint';
+				} else {
+					$cuddle_text = number_format($per_cuddle * 100, 0) . '% ea / ' . $max_cuddles . ' total';
 				}
 				
 				$incubation_text = BeaconCommon::SecondsToEnglish($incubation_seconds, true);

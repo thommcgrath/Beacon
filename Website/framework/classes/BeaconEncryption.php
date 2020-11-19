@@ -8,6 +8,10 @@ abstract class BeaconEncryption {
 		return random_bytes(128);
 	}
 	
+	public static function GenerateKey(int $bits = 256) {
+		return random_bytes($bits / 8);
+	}
+	
 	public static function HashFromPassword(string $password, string $salt, int $iterations) {
 		return hash_pbkdf2('sha512', $password, $salt, $iterations, 56, true);
 	}
@@ -52,7 +56,7 @@ abstract class BeaconEncryption {
 		$version = $legacy ? 1 : 2;
 		$iv_size = openssl_cipher_iv_length($cipher);
 		$iv = random_bytes($iv_size);
-		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), $cipher, $key, OPENSSL_RAW_DATA, $iv);
+		$encrypted = openssl_encrypt($data, $cipher, $key, OPENSSL_RAW_DATA, $iv);
 		if ($encrypted === false) {
 			throw new Exception('Unable to encrypt: ' . openssl_error_string());
 		}

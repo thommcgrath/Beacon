@@ -12,6 +12,17 @@ Protected Module Tests
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CreateEncryptionTest()
+		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(40)
+		  Var Message As String = v4UUID.Create.StringValue
+		  Var EncryptedLegacy As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 1)
+		  Var EncryptedModern As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Key, Message, 2)
+		  
+		  System.DebugLog("TestEncryptionPortability(""ciphermbs"", """ + EncodeBase64(Key, 0) + """, """ + Message + """, """ + EncodeBase64(EncryptedLegacy, 0) + """, """ + EncodeBase64(EncryptedModern, 0) + """)")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RunTests()
 		  #if DebugBuild
@@ -29,13 +40,14 @@ Protected Module Tests
 		    #if Beacon.MOTDEditingEnabled
 		      TestArkML()
 		    #endif
+		    TestFilenames()
 		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub TestArkML()
-		  Var InputString As String = "This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; and discord.gg/invite that\nneeds to be encoded."
+		  Var InputString As String = "This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like 'discord.gg/invite' that\nneed to be encoded."
 		  
 		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
 		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
@@ -120,35 +132,69 @@ Protected Module Tests
 		  
 		  Call Assert(TestValue = Decrypted, "Decrypted value does not match original")
 		  
-		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(24)
+		  // Test symmetric with different key lengths
+		  TestSymmetricEncryption(8) // Half necessary for even blowfish
+		  TestSymmetricEncryption(9) // Nonsense number
+		  TestSymmetricEncryption(32) // Too much for blowfish, perfect for aes
+		  TestSymmetricEncryption(40) // Too much for both
+		  
+		  // These values come from PHP
+		  TestEncryptionPortability("php", "xNPUcwVM+TrisKjmQtYb6hQoYG+6LnCZYp2qZYgtqRSLSBSDOCZBvw==", "ecf83b98-8285-418f-88f8-5b789392b30b", "igHRJFCVtL2H3AAAACS1SWEOrO2a2eul3N+cB4GhmCOETi4lqt/z8vyQfP6uWxRvnYsDDd5O9dHe1A==", "igLzyZkDYLaDRNUhYYWH0X12AAAAJLVJYQ7pVEuanCARqgMPPGVcQkKvdS3HXW461MbYN9/ooG88LzXClOHYRUE8arDyI7mhhEQ=")
+		  
+		  // These values come from M_Crypto versions of Beacon (1.4.7 and earlier)
+		  TestEncryptionPortability("m_crypto", "Eq/Ypo2Kw3RNA2te31fp19EP/dMGSR4IlWmjtoYn8tBnKYgA+Sr2LA==", "3456efca-c48c-41cc-a01e-3713301d9a38", "igEeFJyHv42YOAAAACQTaroA7hSPqLmalHvZflHwhZtOiTYNUZD4JOdfusagXzlKt5PH2j8vUhxV0Q==", "igKh3O68LgyGZPABtA7OI0pzAAAAJBNqugBO2kDGdvIXrkfA5femIzmdRnDSSWI3xFA9diRZiHqdbbjH+qS/5Hi9Acjh26lGfmg=")
+		  
+		  // Create a test usable by other versions (don't need it enabled right now)
+		  // CreateEncryptionTest()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestEncryptionPortability(Source As String, Key As String, DesiredMessage As String, LegacyPayload As String, ModernPayload As String)
+		  Var KeyDecoded As MemoryBlock = DecodeBase64(Key)
+		  Var LegacyPayloadDecoded As MemoryBlock = DecodeBase64(LegacyPayload)
+		  Var ModernPayloadDecoded As MemoryBlock = DecodeBase64(ModernPayload)
+		  Var Failed As Boolean
 		  
 		  Try
-		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
+		    Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(KeyDecoded, LegacyPayloadDecoded)
+		    If Decrypted <> DesiredMessage Then
+		      Failed = True
+		      System.DebugLog(Source + ": Constant value was decrypted to the wrong value.")
+		    End If
 		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric encrypt test value")
+		    Failed = True
+		    System.DebugLog(Source + ": Unable to symmetric decrypt constant legacy values.")
 		  End Try
 		  
 		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		    Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(KeyDecoded, ModernPayloadDecoded)
+		    If Decrypted <> DesiredMessage Then
+		      Failed = True
+		      System.DebugLog(Source + ": Constant value was decrypted to the wrong value.")
+		    End If
 		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric decrypt encrypted test value")
+		    Failed = True
+		    System.DebugLog(Source + ": Unable to symmetric decrypt constant modern values.")
 		  End Try
 		  
-		  Call Assert(TestValue = Decrypted, "Symmetric decrypted value does not match original")
+		  If Failed Then
+		    System.Beep
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestFilenames()
+		  Const Filename = "Frog Blast: The Vent Core.extension"
 		  
-		  Try
-		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 1)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric(legacy) encrypt test value")
-		  End Try
+		  Var Sanitized As String = Beacon.SanitizeFilename(Filename)
+		  Var SanitizedAndShort As String = Beacon.SanitizeFilename(Filename, 20)
+		  Var SanitizedAndVeryShort As String = Beacon.SanitizeFilename(Filename, 11)
 		  
-		  Try
-		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
-		  Catch Err As RuntimeException
-		    System.DebugLog("Unable to symmetric(legacy) decrypt encrypted test value")
-		  End Try
-		  
-		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		  Call Assert(Sanitized = "Frog Blast- The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
+		  Call Assert(SanitizedAndShort = "Frog…Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 20 characters correctly. Expected `Frog…Core.extension`, got `" + SanitizedAndShort + "`.")
+		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
 		End Sub
 	#tag EndMethod
 
@@ -366,6 +412,42 @@ Protected Module Tests
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub TestSymmetricEncryption(KeyLength As Integer)
+		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(KeyLength)
+		  Var TestValue As MemoryBlock = Crypto.GenerateRandomBytes(33) // Use a strange number that will always require padding
+		  Var Encrypted, Decrypted As MemoryBlock
+		  
+		  Try
+		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric decrypt encrypted test value")
+		  End Try
+		  
+		  Call Assert(TestValue = Decrypted, "Symmetric decrypted value does not match original")
+		  
+		  Try
+		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 1)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric(legacy) encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric(legacy) decrypt encrypted test value")
+		  End Try
+		  
+		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TestUUID()
 		  Var UUID As New v4UUID
 		  
@@ -411,12 +493,6 @@ Protected Module Tests
 		  Catch Err As UnsupportedFormatException
 		    System.DebugLog("MD5UUID generated bad format")
 		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Untitled()
-		  
 		End Sub
 	#tag EndMethod
 

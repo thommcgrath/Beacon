@@ -5,7 +5,10 @@ class BeaconBot(discord.Client):
 	logger = None;
 	
 	def __init__(self, logger):
-		super().__init__()
+		intents = discord.Intents.default()
+		intents.members = True
+		
+		super().__init__(intents=intents)
 		self.logger = logger
 	
 	def logMessage(self, message):
@@ -15,6 +18,7 @@ class BeaconBot(discord.Client):
 		self.logMessage('Bot is ready')
 	
 	async def on_member_join(self, member):
+		self.logMessage(member.name + ' has joined the server');
 		channel = member.dm_channel
 		if channel == None:
 			channel = await member.create_dm()

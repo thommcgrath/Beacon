@@ -169,10 +169,10 @@ Begin BeaconDialog EntryEditor
          Border          =   True
          ColumnCount     =   4
          ColumnsResizable=   False
-         ColumnWidths    =   "22,*,100,70"
+         ColumnWidths    =   "24,*,100,72"
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   22
+         DefaultRowHeight=   24
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False

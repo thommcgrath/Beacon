@@ -12,7 +12,7 @@
 					Var AppName As String = CurrentBuildAppName
 					If TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://workbench.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildLinux , AppliesTo = 2
@@ -54,7 +54,7 @@
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://workbench.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildMac , AppliesTo = 2
@@ -84,10 +84,10 @@
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "\" + AppName + " Resources"
-					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://workbench.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " -OutFile '" + ResourcesPath + "\Classes.json'""")
+					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " -OutFile '" + ResourcesPath + "\Classes.json'""")
 					ElseIf TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://workbench.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildWin , AppliesTo = 2

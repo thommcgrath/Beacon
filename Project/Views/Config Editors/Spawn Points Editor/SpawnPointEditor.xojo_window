@@ -402,6 +402,7 @@ End
 		  
 		  Self.SetsListWidth = Self.SetsListWidth
 		  Self.LimitsListHeight = Self.LimitsListHeight
+		  Self.SetsToolbar.ResizerEnabled = Self.Width > Self.MinimumWidth
 		End Sub
 	#tag EndEvent
 
@@ -751,7 +752,7 @@ End
 	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.set", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"911", Scope = Public
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"810", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageNoSelection, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -760,7 +761,7 @@ End
 	#tag Constant, Name = PageSetEditor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Private
+	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Private
 	#tag EndConstant
 
 

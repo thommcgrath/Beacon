@@ -80,7 +80,11 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
-		  Return Self.mMask
+		  If Self.mMask = 0 Then
+		    Return Beacon.Maps.All.Mask
+		  Else
+		    Return Self.mMask
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -191,6 +195,15 @@ Protected Class ServerProfile
 		Event WriteToDictionary(Dict As Dictionary)
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Beacon.SanitizeFilename(Self.Name, 60)
+			End Get
+		#tag EndGetter
+		BackupFolderName As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

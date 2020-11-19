@@ -1484,8 +1484,14 @@ End
 		  Item.Value = "Create Blueprint Entry"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "createblueprintentry"
-		  
 		  Base.AddMenu(Item)
+		  
+		  Item = New MenuItem
+		  Item.Value = "Match Official Availability"
+		  Item.Enabled = Me.SelectedRowCount > 0
+		  Item.Tag = "matchavailability"
+		  Base.AddMenu(Item)
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -1548,6 +1554,30 @@ End
 		    Me.Sort
 		    Me.EnsureSelectionIsVisible()
 		    Self.Changed = True
+		  Case "matchavailability"
+		    Var Changed As Boolean
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(Idx) = False Then
+		        Continue
+		      End If
+		      
+		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Idx)
+		      Var Availability As UInt64
+		      For Each Option As Beacon.SetEntryOption In Entry
+		        Availability = Availability Or Option.Engram.Availability
+		      Next
+		      If Entry.Availability <> Availability Then
+		        Entry.Availability = Availability
+		        Changed = True
+		        Self.PutEntryInRow(Entry, Idx, Self.FilteredMaps)
+		      End If
+		    Next
+		    
+		    If Changed Then
+		      Me.Sort
+		      Me.EnsureSelectionIsVisible()
+		      Self.Changed = True
+		    End If
 		  End Select
 		End Function
 	#tag EndEvent

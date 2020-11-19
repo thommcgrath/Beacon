@@ -1209,6 +1209,29 @@ ul.object_list {
 	}
 }
 
+div.comment-block {
+	text-align: center;
+	font-size: small;
+	margin: 20px auto;
+	max-width: 400px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4pt;
+	padding: 10pt;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	div.icon {
+		img {
+			margin: 0px;
+			display: block;
+		}
+		
+		margin-right: 10pt;
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	.pagebody {
 		width: $max_content_width;

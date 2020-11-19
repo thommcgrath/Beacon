@@ -1186,7 +1186,9 @@ End
 		    CommonMaxLevelMultiplier = Self.mEntries(0).MaxLevelMultiplier
 		    CommonMinLevelOffset = Self.mEntries(0).MinLevelOffset
 		    CommonMaxLevelOffset = Self.mEntries(0).MaxLevelOffset
-		    CommonLevelRange = Self.mEntries(0).LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
+		    If Self.mEntries(0).HasCustomLevelRange Then
+		      CommonLevelRange = Self.mEntries(0).LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
+		    End If
 		  End If
 		  
 		  If Self.mEntries.LastRowIndex > 0 Then
