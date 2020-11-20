@@ -2304,35 +2304,40 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
+		Private Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
 		  Var Creatures() As Beacon.Creature
 		  While Not Results.AfterLastRow
-		    Var Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		    Creature.Label = Results.Column("label").StringValue
-		    If IsNull(Results.Column("alternate_label").Value) = False Then
-		      Creature.AlternateLabel = Results.Column("alternate_label").StringValue
-		    End If
-		    Creature.Availability = Results.Column("availability").Value
-		    Creature.TagString = Results.Column("tags").StringValue
-		    Creature.ModID = Results.Column("mod_id").StringValue
-		    Creature.ModName = Results.Column("mod_name").StringValue
-		    If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
-		      Creature.ConsumeStats(Results.Column("stats").StringValue)
-		      Creature.StatsMask = Results.Column("used_stats").Value
+		    Var CreatureID As String = Results.Column("object_id").StringValue
+		    If Self.mCreatureCache.HasKey(CreatureID) = False Then
+		      Var Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, CreatureID)
+		      Creature.Label = Results.Column("label").StringValue
+		      If IsNull(Results.Column("alternate_label").Value) = False Then
+		        Creature.AlternateLabel = Results.Column("alternate_label").StringValue
+		      End If
+		      Creature.Availability = Results.Column("availability").Value
+		      Creature.TagString = Results.Column("tags").StringValue
+		      Creature.ModID = Results.Column("mod_id").StringValue
+		      Creature.ModName = Results.Column("mod_name").StringValue
+		      If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
+		        Creature.ConsumeStats(Results.Column("stats").StringValue)
+		        Creature.StatsMask = Results.Column("used_stats").Value
+		      End If
+		      
+		      If Results.Column("incubation_time").Value <> Nil Then
+		        Creature.IncubationTime = Results.Column("incubation_time").DoubleValue
+		      End If
+		      If Results.Column("mature_time").Value <> Nil Then
+		        Creature.MatureTime = Results.Column("mature_time").DoubleValue
+		      End If
+		      If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
+		        Creature.MinMatingInterval = Results.Column("mating_interval_min").DoubleValue
+		        Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
+		      End If
+		      
+		      Self.mCreatureCache.Value(CreatureID) = Creature.ImmutableVersion
 		    End If
 		    
-		    If Results.Column("incubation_time").Value <> Nil Then
-		      Creature.IncubationTime = Results.Column("incubation_time").DoubleValue
-		    End If
-		    If Results.Column("mature_time").Value <> Nil Then
-		      Creature.MatureTime = Results.Column("mature_time").DoubleValue
-		    End If
-		    If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
-		      Creature.MinMatingInterval = Results.Column("mating_interval_min").DoubleValue
-		      Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
-		    End If
-		    
-		    Creatures.Add(Creature)
+		    Creatures.Add(Self.mCreatureCache.Value(CreatureID))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Creatures
@@ -2340,34 +2345,38 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
+		Private Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
 		  Var Engrams() As Beacon.Engram
 		  While Not Results.AfterLastRow
-		    Var Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		    Engram.Label = Results.Column("label").StringValue
-		    If IsNull(Results.Column("alternate_label").Value) = False Then
-		      Engram.AlternateLabel = Results.Column("alternate_label").StringValue
-		    End If
-		    Engram.Availability = Results.Column("availability").Value
-		    Engram.TagString = Results.Column("tags").StringValue
-		    Engram.ModID = Results.Column("mod_id").StringValue
-		    Engram.ModName = Results.Column("mod_name").StringValue
-		    If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
-		      Engram.EntryString = Results.Column("entry_string").StringValue
-		      
-		      If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
-		        Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
-		        Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		    Var EngramID As String = Results.Column("object_id").StringValue
+		    If Self.mEngramCache.HasKey(EngramID) = False Then
+		      Var Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, EngramID)
+		      Engram.Label = Results.Column("label").StringValue
+		      If IsNull(Results.Column("alternate_label").Value) = False Then
+		        Engram.AlternateLabel = Results.Column("alternate_label").StringValue
 		      End If
-		    End If
-		    If IsNull(Results.Column("stack_size").Value) = False Then
-		      Engram.StackSize = Results.Column("stack_size").IntegerValue
-		    End If
-		    If IsNull(Results.Column("item_id").Value) = False Then
-		      Engram.ItemID = Results.Column("item_id").IntegerValue
+		      Engram.Availability = Results.Column("availability").Value
+		      Engram.TagString = Results.Column("tags").StringValue
+		      Engram.ModID = Results.Column("mod_id").StringValue
+		      Engram.ModName = Results.Column("mod_name").StringValue
+		      If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
+		        Engram.EntryString = Results.Column("entry_string").StringValue
+		        
+		        If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
+		          Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
+		          Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		        End If
+		      End If
+		      If IsNull(Results.Column("stack_size").Value) = False Then
+		        Engram.StackSize = Results.Column("stack_size").IntegerValue
+		      End If
+		      If IsNull(Results.Column("item_id").Value) = False Then
+		        Engram.ItemID = Results.Column("item_id").IntegerValue
+		      End If
+		      Self.mEngramCache.Value(EngramID) = Engram.ImmutableVersion
 		    End If
 		    
-		    Engrams.Add(Engram)
+		    Engrams.Add(Self.mEngramCache.Value(EngramID))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
@@ -2375,7 +2384,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
+		Private Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
 		  Var Sources() As Beacon.LootSource
 		  While Not Results.AfterLastRow
 		    Var HexColor As String = Results.Column("uicolor").StringValue
@@ -2443,20 +2452,25 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
+		Private Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  While Not Results.AfterLastRow
-		    Var Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		    Point.Label = Results.Column("label").StringValue
-		    If IsNull(Results.Column("alternate_label").Value) = False Then
-		      Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		    Var PointID As String = Results.Column("object_id").StringValue
+		    If Self.mSpawnPointCache.HasKey(PointID) = False Then
+		      Var Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, PointID)
+		      Point.Label = Results.Column("label").StringValue
+		      If IsNull(Results.Column("alternate_label").Value) = False Then
+		        Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		      End If
+		      Point.Availability = Results.Column("availability").Value
+		      Point.TagString = Results.Column("tags").StringValue
+		      Point.ModID = Results.Column("mod_id").StringValue
+		      Point.ModName = Results.Column("mod_name").StringValue
+		      Point.Modified = False
+		      Self.mSpawnPointCache.Value(PointID) = Point.ImmutableVersion
 		    End If
-		    Point.Availability = Results.Column("availability").Value
-		    Point.TagString = Results.Column("tags").StringValue
-		    Point.ModID = Results.Column("mod_id").StringValue
-		    Point.ModName = Results.Column("mod_name").StringValue
-		    Point.Modified = False
-		    SpawnPoints.Add(New Beacon.SpawnPoint(Point))
+		    
+		    SpawnPoints.Add(Self.mSpawnPointCache.Value(PointID))
 		    Results.MoveToNextRow
 		  Wend
 		  Return SpawnPoints
