@@ -428,7 +428,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  Else
 		    Dict.Value("weight") = Nil
 		  End If
-		  If (Self.mChance Is Nil) = False Then
+		  If (Self.mLevelOverride Is Nil) = False Then
 		    Dict.Value("override") = Self.mLevelOverride.DoubleValue
 		  Else
 		    Dict.Value("override") = Nil

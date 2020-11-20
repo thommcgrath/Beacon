@@ -524,7 +524,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
@@ -554,7 +554,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   0
@@ -1139,7 +1139,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   12
          TabPanelIndex   =   0
@@ -1281,7 +1281,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CreateEntry() As Beacon.MutableSpawnPointSetEntry
-		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature)
+		  // For the purposes of this method, we don't need a creature, but the class does. So give it one that will always exist. A dodo.
+		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Beacon.Data.GetCreatureByID("08d6f1c5-6b8a-48b0-9232-e2705864c87c"))
 		  
 		  If Self.LevelOverrideMinField.Text <> "" And Self.LevelOverrideMaxField.Text <> "" Then
 		    Entry.Append(Beacon.SpawnPointLevel.FromUserLevel(Self.LevelOverrideMinField.DoubleValue, Self.LevelOverrideMaxField.DoubleValue, Self.mDifficulty))
@@ -1343,8 +1344,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEffectiveLevel()
-		  Var Entry As Beacon.MutableSpawnPointSetEntry = Self.CreateEntry
-		  
 		  If IsNumeric(Self.LevelOverrideMinField.Text) And IsNumeric(Self.LevelOverrideMaxField.Text) Then
 		    Self.LevelOverrideMinField.Enabled = True
 		    Self.LevelOverrideMaxField.Enabled = True
@@ -1368,9 +1367,12 @@ End
 		    Self.LevelMultiplierMaxField.Enabled = True
 		  End If
 		  
-		  Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
-		  Self.EffectiveMinLevelField.Text = Range.Min.PrettyText
-		  Self.EffectiveMaxLevelField.Text = Range.Max.PrettyText
+		  Var Entry As Beacon.MutableSpawnPointSetEntry = Self.CreateEntry
+		  If (Entry Is Nil) = False Then
+		    Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
+		    Self.EffectiveMinLevelField.Text = Range.Min.PrettyText
+		    Self.EffectiveMaxLevelField.Text = Range.Max.PrettyText
+		  End If
 		End Sub
 	#tag EndMethod
 

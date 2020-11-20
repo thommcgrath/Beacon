@@ -263,11 +263,17 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_PublishFinished(Sender As BlueprintController, Success As Boolean, Reason As String)
 		  If Success Then
-		    Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
 		    Self.mController.LoadBlueprints()
 		  Else
 		    Self.UpdatePublishButton()
-		    Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
+		  End If
+		  
+		  If Sender.AutoPublish = False Then
+		    If Success Then
+		      Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
+		    Else
+		      Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod

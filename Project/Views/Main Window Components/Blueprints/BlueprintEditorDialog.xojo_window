@@ -17,7 +17,7 @@ Begin BeaconDialog BlueprintEditorDialog
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   400
+   MinimumHeight   =   408
    MinimumWidth    =   540
    Resizeable      =   True
    Title           =   "New Blueprint"
@@ -27,7 +27,7 @@ Begin BeaconDialog BlueprintEditorDialog
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   416
+      Height          =   405
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -44,7 +44,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   3
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -60,10 +60,10 @@ Begin BeaconDialog BlueprintEditorDialog
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   254
+         Height          =   243
          InitialParent   =   "Pages"
          Left            =   146
-         LockBottom      =   True
+         LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
@@ -620,7 +620,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   420
+         Top             =   401
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -652,7 +652,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   420
+         Top             =   401
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -859,7 +859,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   420
+         Top             =   401
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -1207,7 +1207,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   420
+         Top             =   401
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -1239,7 +1239,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   420
+         Top             =   401
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -1271,7 +1271,7 @@ Begin BeaconDialog BlueprintEditorDialog
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   420
+         Top             =   401
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -1307,7 +1307,7 @@ Begin BeaconDialog BlueprintEditorDialog
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   214
+         Height          =   195
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Ingredient	Quantity	No Subst."
@@ -1367,7 +1367,7 @@ Begin BeaconDialog BlueprintEditorDialog
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   0
-         Height          =   214
+         Height          =   195
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Stat	Base	Wild	Tamed	Add	Affinity"
@@ -1396,6 +1396,35 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   500
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin SpawnPointEditor SpawnPointEditor1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   405
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   False
+         Visible         =   True
+         Width           =   540
       End
    End
    Begin OmniBar PageSelector
@@ -1493,6 +1522,34 @@ Begin BeaconDialog BlueprintEditorDialog
       Visible         =   True
       Width           =   80
    End
+   Begin FadedSeparator BottomSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   443
+      Transparent     =   True
+      Visible         =   True
+      Width           =   540
+   End
 End
 #tag EndWindow
 
@@ -1521,6 +1578,8 @@ End
 		      Self.LoadEngram(Beacon.Engram(Self.mOriginalBlueprint))
 		    Case IsA Beacon.Creature
 		      Self.LoadCreature(Beacon.Creature(Self.mOriginalBlueprint))
+		    Case IsA Beacon.SpawnPoint
+		      Self.LoadSpawnPoint(Beacon.SpawnPoint(Self.mOriginalBlueprint))
 		    End Select
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
@@ -1531,10 +1590,21 @@ End
 		    Self.MapSelector.Mask = 0
 		  End If
 		  
+		  Self.MinimumHeight = Self.AbsoluteMinimumHeight
+		  If Self.Height < Self.MinimumHeight Then
+		    Self.Height = Self.MinimumHeight
+		  End If
+		  
 		  Self.Modified = False
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function AbsoluteMinimumHeight() As Integer
+		  Return Self.MapSelector.Top + Self.MapSelector.DesiredHeight + 20 + Self.BottomSeparator.Height + 20 + Self.ActionButton.Height + 20
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Blueprint As Beacon.Blueprint)
@@ -1616,6 +1686,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub LoadSpawnPoint(Point As Beacon.SpawnPoint)
+		  Var Mutable As Beacon.MutableSpawnPoint = Point.MutableVersion
+		  LocalData.SharedInstance.LoadDefaults(Mutable)
+		  
+		  Var Points(0) As Beacon.SpawnPoint
+		  Points(0) = Mutable
+		  Self.SpawnPointEditor1.SpawnPoints = Points
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
@@ -1630,6 +1711,16 @@ End
 		  
 		  Self.mModified = Value
 		  Self.ActionButton.Enabled = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mResizeAnimation_Completed(Sender As AnimationKit.MoveTask)
+		  Self.mResizeAnimation = Nil
+		  Self.MinimumWidth = Sender.Width
+		  If Sender.AnimateHeight Then
+		    Self.MinimumHeight = Sender.Height
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1729,6 +1820,10 @@ End
 		    End If
 		  Case IsA Beacon.MutableCreature
 		    If Not Self.UpdateCreature(Beacon.MutableCreature(Blueprint)) Then
+		      Return False
+		    End If
+		  Case IsA Beacon.MutableSpawnPoint
+		    If Not Self.UpdateSpawnPoint(Beacon.MutableSpawnPoint(Blueprint)) Then
 		      Return False
 		    End If
 		  End Select
@@ -1906,6 +2001,21 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function UpdateSpawnPoint(Point As Beacon.MutableSpawnPoint) As Boolean
+		  Var Points() As Beacon.SpawnPoint = Self.SpawnPointEditor1.SpawnPoints
+		  If Points.Count <> 1 Then
+		    Return False
+		  End If
+		  
+		  Var Source As Beacon.SpawnPoint = Points(0)
+		  Point.SetsString = Source.SetsString
+		  Point.LimitsString = Source.LimitsString
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1921,6 +2031,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mOriginalBlueprint As Beacon.Blueprint
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mResizeAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSampleDocument As Beacon.Document
 	#tag EndProperty
 
 
@@ -1940,6 +2058,12 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = CreatureStatColumnWild, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureWindowWidth, Type = Double, Dynamic = False, Default = \"540", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramWindowWidth, Type = Double, Dynamic = False, Default = \"540", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = IndexCreature, Type = Double, Dynamic = False, Default = \"1", Scope = Private
@@ -1999,6 +2123,9 @@ End
 		    Self.PageSelector.Remove(Idx)
 		  Next
 		  
+		  Var TargetWidth As Integer = 540
+		  Var MinHeight As Integer = Self.AbsoluteMinimumHeight
+		  
 		  Select Case Me.SelectedRowIndex
 		  Case Self.IndexEngram
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageEngram", "Advanced"))
@@ -2006,7 +2133,28 @@ End
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageCreature", "Advanced"))
 		  Case Self.IndexSpawnPoint
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageSpawn", "Advanced"))
+		    TargetWidth = SpawnPointEditor.MinEditorWidth
+		    MinHeight = Max(640, Self.AbsoluteMinimumHeight)
 		  End Select
+		  
+		  If (Self.mResizeAnimation Is Nil) = False Then
+		    Self.mResizeAnimation.Cancel
+		    Self.mResizeAnimation = Nil
+		  End If
+		  
+		  If Self.Width <> TargetWidth Or Self.Height < MinHeight Then
+		    Self.MinimumWidth = 540
+		    Self.MinimumHeight = Self.AbsoluteMinimumHeight
+		    Self.mResizeAnimation = New AnimationKit.MoveTask(Self)
+		    Self.mResizeAnimation.Width = TargetWidth
+		    If Self.Height < MinHeight Then
+		      Self.mResizeAnimation.Height = MinHeight
+		    End If
+		    Self.mResizeAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		    Self.mResizeAnimation.DurationInSeconds = 0.20
+		    AddHandler mResizeAnimation.Completed, WeakAddressOf mResizeAnimation_Completed
+		    Self.mResizeAnimation.Run
+		  End If
 		  
 		  Self.Modified = True
 		End Sub
@@ -2315,6 +2463,28 @@ End
 		    End If
 		  Next
 		  
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SpawnPointEditor1
+	#tag Event
+		Sub Open()
+		  Var Points(0) As Beacon.SpawnPoint
+		  Points(0) = New Beacon.MutableSpawnPoint(Beacon.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25")
+		  Me.SpawnPoints = Points
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  If Self.mSampleDocument Is Nil Then
+		    Self.mSampleDocument = New Beacon.Document
+		  End If
+		  Return Self.mSampleDocument
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Changed()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent

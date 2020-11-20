@@ -68,22 +68,24 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Return Nil
 		  End If
 		  
-		  Return Self.CreatureReplacementWeight(FromCreature.ObjectID, ToCreature.ObjectID)
+		  If Not Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As Beacon.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
+		  If Options.HasAttribute(ToCreature, "Weight") Then
+		    Return Options.Value(ToCreature, "Weight").DoubleValue
+		  End If
+		  
+		  Return Nil
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String) As NullableDouble
-		  If Not Self.mReplacements.HasBlueprint(FromCreatureID) Then
-		    Return Nil
-		  End If
-		  
-		  Var Options As Beacon.BlueprintAttributeManager = Self.mReplacements.Value(FromCreatureID, Self.ReplacementsAttribute)
-		  If Options.HasAttribute(ToCreatureID, "Weight") Then
-		    Return Options.Value(ToCreatureID, "Weight").DoubleValue
-		  End If
-		  
-		  Return Nil
+		  Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(FromCreatureID)
+		  Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(ToCreatureID)
+		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		End Function
 	#tag EndMethod
 
@@ -111,6 +113,11 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  End If
 		  
 		  Var Set As New Beacon.MutableSpawnPointSet
+		  If SaveData.HasKey("spawn_point_set_id") Then
+		    Set.ID = SaveData.Value("spawn_point_set_id").StringValue
+		  ElseIf SaveData.HasKey("ID") Then
+		    Set.ID = SaveData.Value("ID").StringValue
+		  End If
 		  If SaveData.HasKey("label") Then
 		    Set.Label = SaveData.Value("label")
 		  ElseIf SaveData.HasKey("Label") Then
@@ -126,7 +133,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Return Nil
 		  End If
 		  
-		  If SaveData.HasKey("entries") Or SaveData.HasKey("Entries") Then
+		  If (SaveData.HasKey("entries") And SaveData.Value("entries").IsNull = False) Or (SaveData.HasKey("Entries") And SaveData.Value("Entries").IsNull = False) Then
 		    Var Entries() As Variant
 		    If SaveData.HasKey("entries") Then
 		      Entries = SaveData.Value("entries")
@@ -141,7 +148,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		      
 		      Set.Append(Entry)
 		    Next
-		  ElseIf SaveData.HasKey("creatures") Then
+		  ElseIf SaveData.HasKey("creatures") And SaveData.Value("creatures").IsNull = False Then
 		    Var Paths() As Variant = SaveData.Value("creatures")
 		    For Each Path As String In Paths
 		      Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Path, "", Nil)
@@ -165,7 +172,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  
 		  Var SpawnOffset As Beacon.Point3D
 		  If SaveData.HasKey("Spawn Offset") And SaveData.Value("Spawn Offset") <> Nil Then
-		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("spawn_offset"))
+		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("Spawn Offset"))
 		  ElseIf SaveData.HasKey("spawn_offset") And SaveData.Value("spawn_offset") <> Nil Then
 		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("spawn_offset"))
 		  ElseIf SaveData.HasKey("GroupOffset") And SaveData.Value("GroupOffset") <> Nil Then
@@ -215,25 +222,31 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("OffsetBeforeMultiplier").BooleanValue
 		  End If
 		  
-		  If SaveData.HasKey("Creature Replacements") Then
+		  If SaveData.HasKey("Creature Replacements") And SaveData.Value("Creature Replacements").IsNull = False Then
 		    Var Replacements As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(SaveData.Value("Creature Replacements"))
 		    If (Replacements Is Nil) = False Then
 		      Beacon.SpawnPointSet(Set).mReplacements = Replacements
 		    End If
-		  ElseIf SaveData.HasKey("replacements") Then
-		    Var Replacements As Dictionary = SaveData.Value("replacements")
-		    If (Replacements Is Nil) = False Then
-		      For Each Entry As DictionaryEntry In Replacements
-		        Var FromUUID As String = Entry.Key
-		        Var ToDict As Dictionary = Entry.Value
-		        For Each SubEntry As DictionaryEntry In ToDict
-		          Var ToUUID As String = SubEntry.Key
-		          Var Weight As Double = SubEntry.Value
-		          Set.CreatureReplacementWeight(FromUUID, ToUUID) = Weight
+		  ElseIf SaveData.HasKey("replacements") And SaveData.Value("replacements").IsNull = False Then
+		    Var Replacements() As Dictionary
+		    Try
+		      Replacements = SaveData.Value("replacements").DictionaryArrayValue
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    For Each Replacement As Dictionary In Replacements
+		      Try
+		        Var TargetCreatureUUID As String = Replacement.Value("creature_id")
+		        Var Choices As Dictionary = Replacement.Value("choices")
+		        For Each Entry As DictionaryEntry In Choices
+		          Var ReplacementCreatureUUID As String = Entry.Key
+		          Var Weight As Double = Entry.Value
+		          Set.CreatureReplacementWeight(TargetCreatureUUID, ReplacementCreatureUUID) = Weight
 		        Next
-		      Next
-		    End If
-		  ElseIf SaveData.HasKey("Replacements") Then
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  ElseIf SaveData.HasKey("Replacements") And SaveData.Value("replacements").IsNull = False Then
 		    Var Replacements As Dictionary = SaveData.Value("Replacements")
 		    If (Replacements Is Nil) = False Then
 		      For Each Entry As DictionaryEntry In Replacements
@@ -491,13 +504,15 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  End If
 		  
 		  Var Options As Beacon.BlueprintAttributeManager = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
-		  Var References() As Beacon.BlueprintReference = Options.References
-		  For Each Reference As Beacon.BlueprintReference In References
-		    If Reference.IsCreature = False Then
-		      Continue
-		    End If
-		    Arr.Add(Beacon.Creature(Reference.Resolve))
-		  Next
+		  If (Options Is Nil) = False Then
+		    Var References() As Beacon.BlueprintReference = Options.References
+		    For Each Reference As Beacon.BlueprintReference In References
+		      If Reference.IsCreature = False Then
+		        Continue
+		      End If
+		      Arr.Add(Beacon.Creature(Reference.Resolve))
+		    Next
+		  End If
 		  
 		  Return Arr
 		End Function
@@ -517,6 +532,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Next
 		  
 		  Var SaveData As New Dictionary
+		  SaveData.Value("ID") = Self.mID.StringValue
 		  SaveData.Value("Type") = "SpawnPointSet"
 		  SaveData.Value("Label") = Self.Label
 		  SaveData.Value("Weight") = Self.Weight

@@ -31,20 +31,14 @@ Inherits Beacon.SpawnPointSet
 		    Return
 		  End If
 		  
-		  Self.CreatureReplacementWeight(FromCreature.ObjectID, ToCreature.ObjectID) = Weight
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
-		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreatureID, ToCreatureID)
+		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		  If CurrentWeight = Weight Then
 		    Return
 		  End If
 		  
 		  Var Options As Beacon.BlueprintAttributeManager
-		  If Self.mReplacements.HasBlueprint(FromCreatureID) Then
-		    Options = Self.mReplacements.Value(FromCreatureID, Self.ReplacementsAttribute)
+		  If Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Options = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
 		  Else
 		    If Weight = Nil Then
 		      Return
@@ -53,18 +47,26 @@ Inherits Beacon.SpawnPointSet
 		  End If
 		  
 		  If Weight = Nil Then
-		    Options.Remove(ToCreatureID)
+		    Options.Remove(ToCreature)
 		  Else
-		    Options.Value(ToCreatureID, "Weight") = Weight.DoubleValue
+		    Options.Value(ToCreature, "Weight") = Weight.DoubleValue
 		  End If
 		  
-		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreatureID) Then
-		    Self.mReplacements.Remove(FromCreatureID)
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Self.mReplacements.Remove(FromCreature)
 		  Else
-		    Self.mReplacements.Value(FromCreatureID, Self.ReplacementsAttribute) = Options
+		    Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute) = Options
 		  End If
 		  
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
+		  Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(FromCreatureID)
+		  Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(ToCreatureID)
+		  Self.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
 		End Sub
 	#tag EndMethod
 

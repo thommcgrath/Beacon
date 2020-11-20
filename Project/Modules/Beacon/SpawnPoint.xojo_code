@@ -336,8 +336,19 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    Sets.Add(Set.Pack)
 		  Next
 		  
+		  Var Limits As New Dictionary
+		  Var References() As Beacon.BlueprintReference = Self.mLimits.References
+		  For Each Reference As Beacon.BlueprintReference In References
+		    If Reference.IsCreature = False Then
+		      Continue
+		    End If
+		    
+		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
+		    Limits.Value(Reference.ObjectID) = Limit
+		  Next
+		  
 		  Dict.Value("sets") = Sets
-		  Dict.Value("limits") = Self.Limits
+		  Dict.Value("limits") = Limits
 		End Sub
 	#tag EndMethod
 

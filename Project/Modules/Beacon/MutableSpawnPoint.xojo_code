@@ -237,7 +237,7 @@ Implements Beacon.MutableBlueprint
 		  End If
 		  
 		  Self.mSets.ResizeTo(-1)
-		  If Dict.HasKey("sets") Then
+		  If Dict.HasKey("sets") And Dict.Value("sets").IsNull = False Then
 		    Var Sets() As Dictionary = Dict.Value("sets").DictionaryArrayValue
 		    Try
 		      Sets = Dict.Value("sets").DictionaryArrayValue
@@ -251,7 +251,7 @@ Implements Beacon.MutableBlueprint
 		        Self.mSets.Add(Set)
 		      End If
 		    Next
-		  ElseIf Dict.HasKey("groups") Then
+		  ElseIf Dict.HasKey("groups") And Dict.Value("groups").IsNull = False Then
 		    Var SpawnDicts() As Dictionary
 		    Try
 		      SpawnDicts = Dict.Value("groups").DictionaryArrayValue

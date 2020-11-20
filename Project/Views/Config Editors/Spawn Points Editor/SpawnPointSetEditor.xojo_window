@@ -1705,14 +1705,16 @@ End
 #tag Events ReplaceAddButton
 	#tag Event
 		Sub Action()
-		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet)
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  
+		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Set)
 		  If Creature = Nil Then
 		    Return
 		  End If
 		  
 		  Var Creatures(0) As Beacon.Creature
 		  Creatures(0) = Creature
-		  Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
+		  Self.UpdateReplacementsList(Set, Creatures)
 		  Self.ReplaceList.EnsureSelectionIsVisible
 		  RaiseEvent Changed
 		End Sub
