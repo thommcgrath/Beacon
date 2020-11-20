@@ -210,6 +210,50 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		$this->Commit();
 	}
 	
+	public function Upsert(string $table, array $data, array $conflict_columns) {
+		$i = 1;
+		$columns = [];
+		$values = array_values($data);
+		$placeholders = [];
+		$conflicts = [];
+		$assignments = [];
+		$clauses = [];
+		$table_escaped = $this->EscapeIdentifier($table);
+		foreach ($conflict_columns as $column) {
+			$conflicts[] = $this->EscapeIdentifier($column);
+		}
+		foreach ($data as $column => $value) {
+			$column_escaped = $this->EscapeIdentifier($column);
+			$placeholder = '$' . $i;
+			$i++;
+			
+			$columns[] = $column_escaped;
+			$placeholders[] = $placeholder;			
+			if (in_array($column, $conflict_columns) === false) {
+				$assignments[] = $column_escaped . ' = ' . $placeholder;
+				$clauses[] = $table_escaped . '.' . $column_escaped . ' IS DISTINCT FROM ' . $placeholder;
+			}
+		}
+		$sql = 'INSERT INTO ' . $table_escaped . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ') ON CONFLICT (' . implode(', ', $conflicts) . ') DO UPDATE SET ' . implode(', ', $assignments) . ' WHERE ' . implode(' OR ', $clauses) . ' RETURNING *;';
+		$this->BeginTransaction();
+		$inserted = $this->Query($sql, $values);
+		if ($inserted->RecordCount() === 0) {
+			// No changes were made, need to look up the original record
+			$clauses = [];
+			$values = [];
+			$i = 1;
+			foreach ($conflict_columns as $column) {
+				$values[] = $data[$column];
+				$clauses[] = $this->EscapeIdentifier($column) . ' = $' . $i;
+				$i++;
+			}
+			$inserted = $this->Query('SELECT * FROM ' . $table_escaped . ' WHERE ' . implode(' AND ', $clauses) . ' LIMIT 1;', $values);
+		}
+		$this->Commit();
+		
+		return $inserted;
+	}
+	
 	public function Host() {
 		if ($this->IsConnected()) {
 			return pg_host($this->connection);

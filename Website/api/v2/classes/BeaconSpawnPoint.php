@@ -61,6 +61,163 @@ class BeaconSpawnPoint extends BeaconAPI\SpawnPoint {
 		}
 		return $json;
 	}
+	
+	public function ConsumeJSON(array $json) {
+		parent::ConsumeJSON($json);
+		
+		if (array_key_exists('sets', $json)) {
+			$sets = $json['sets'];
+			if (is_null($sets) || (is_array($sets) && \BeaconCommon::IsAssoc($sets) === false)) {
+				$this->groups = $sets;
+			} else {
+				throw new \Exception('Sets should be an array of spawn entry sets.');
+			}
+		}
+		
+		if (array_key_exists('limits', $json)) {
+			$limits = $json['limits'];
+			if (is_null($limits) || (is_array($limits) && \BeaconCommon::IsAssoc($limits) === true)) {
+				$this->limits = $limits;
+			} else {
+				throw new \Exception('Limits should be an structure of creature uuid keys and percentage values.'); 
+			}
+		}
+	}
+	
+	protected function SaveChildrenHook(\BeaconDatabase $database) {
+		parent::SaveChildrenHook($database);
+		
+		$this->SaveSets($database);
+		$this->SaveLimits($database);
+	}
+	
+	protected function SaveSets(\BeaconDatabase $database) {
+		$spawn_point_id = $this->ObjectID();
+		$sets_list = [];
+		if (is_null($this->groups) === false) {
+			foreach ($this->groups as $set) {
+				$set_id = $set['spawn_point_set_id'];
+				if (\BeaconCommon::IsUUID($set_id)) {
+					$sets_list[] = $set_id;
+				} else {
+					throw new \Exception('Spawn point set id is not a uuid.');
+				}
+				
+				$set['spawn_point_id'] = $spawn_point_id;
+				$entries = $set['entries'];
+				$replacements = $set['replacements'];
+				unset($set['entries'], $set['replacements']);
+				
+				if (is_null($set['spawn_offset']) === false) {
+					$offset = $set['spawn_offset'];
+					$set['spawn_offset'] = '(' . $offset['x'] . ',' . $offset['y'] . ',' . $offset['z'] . ')';	
+				}
+				
+				$database->Upsert('spawn_point_sets', $set, ['spawn_point_set_id']);
+				
+				$this->SaveSetEntries($database, $set['spawn_point_set_id'], $entries);
+				$this->SaveSetReplacements($database, $set['spawn_point_set_id'], $replacements);
+			}
+		}
+		if (count($sets_list) > 0) {
+			$database->Query('DELETE FROM spawn_point_sets WHERE spawn_point_id = $1 AND spawn_point_set_id NOT IN (\'' . implode('\', \'', $sets_list) . '\');', $spawn_point_id);
+		} else {
+			$database->Query('DELETE FROM spawn_point_sets WHERE spawn_point_id = $1;', $spawn_point_id);
+		}
+	}
+	
+	protected function SaveSetEntries(\BeaconDatabase $database, string $spawn_point_set_id, $entries) {
+		$keep_entries = [];
+		if (is_null($entries) === false) {
+			foreach ($entries as $entry) {
+				$inserted = $database->Upsert('spawn_point_set_entries', [
+					'spawn_point_set_entry_id' => $entry['spawn_point_set_entry_id'],
+					'spawn_point_set_id' => $spawn_point_set_id,
+					'creature_id' => $entry['creature_id'],
+					'weight' => $entry['weight'],
+					'override' => $entry['override'],
+					'min_level_multiplier' => $entry['min_level_multiplier'],
+					'max_level_multiplier' => $entry['max_level_multiplier'],
+					'min_level_offset' => $entry['min_level_offset'],
+					'max_level_offset' => $entry['max_level_offset'],
+					'spawn_offset' => (is_null($entry['spawn_offset']) ? null : ('(' . $entry['spawn_offset']['x'] . ',' . $entry['spawn_offset']['y'] . ',' . $entry['spawn_offset']['z'] . ')'))
+				], ['spawn_point_set_entry_id']);
+				$keep_entries[] = $inserted->Field('spawn_point_set_entry_id');
+				
+				$this->SaveSetEntryLevels($database, $entry['spawn_point_set_entry_id'], $entry['level_overrides']);
+			}
+		}
+		if (count($keep_entries) > 0) {
+			$database->Query('DELETE FROM spawn_point_set_entries WHERE spawn_point_set_id = $1 AND spawn_point_set_entry_id NOT IN (\'' . implode('\', \'', $keep_entries) . '\');', $spawn_point_set_id);
+		} else {
+			$database->Query('DELETE FROM spawn_point_set_entries WHERE spawn_point_set_id = $1;', $spawn_point_set_id);
+		}
+	}
+	
+	protected function SaveSetEntryLevels(\BeaconDatabase $database, string $spawn_point_set_entry_id, $levels) {
+		$keep_levels = [];
+		if (is_null($levels) === false) {
+			foreach ($levels as $level) {
+				$inserted = $database->Upsert('spawn_point_set_entry_levels', [
+					'spawn_point_set_entry_id' => $spawn_point_set_entry_id,
+					'difficulty' => $level['difficulty'],
+					'min_level' => $level['min_level'],
+					'max_level' => $level['max_level']
+				], ['spawn_point_set_entry_id', 'difficulty']);
+				$keep_levels[] = $inserted->Field('spawn_point_set_entry_level_id');
+			}
+		}
+		if (count($keep_levels) > 0) {
+			$database->Query('DELETE FROM spawn_point_set_entry_levels WHERE spawn_point_set_entry_id = $1 AND spawn_point_set_entry_level_id NOT IN (\'' . implode('\', \'', $keep_levels) . '\');', $spawn_point_set_entry_id);
+		} else {
+			$database->Query('DELETE FROM spawn_point_set_entry_levels WHERE spawn_point_set_entry_id = $1;', $spawn_point_set_entry_id);
+		}
+	}
+	
+	protected function SaveSetReplacements(\BeaconDatabase $database, string $spawn_point_set_id, $replacements) {
+		$keep_replacements = [];
+		if (is_null($replacements) === false) {
+			foreach ($replacements as $replacement) {
+				$target_creature_id = $replacement['creature_id'];
+				$choices = $replacement['choices'];
+				foreach ($choices as $replacement_creature_id => $weight) {
+					$inserted = $database->Upsert('spawn_point_set_replacements', [
+						'spawn_point_set_id' => $spawn_point_set_id,
+						'target_creature_id' => $target_creature_id,
+						'replacement_creature_id' => $replacement_creature_id,
+						'weight' => $weight
+					], ['spawn_point_set_id', 'target_creature_id', 'replacement_creature_id']);
+					$keep_replacements[] = $inserted->Field('spawn_point_set_replacement_id');
+				}
+			}
+		}
+		if (count($keep_replacements) > 0) {
+			$database->Query('DELETE FROM spawn_point_set_replacements WHERE spawn_point_set_id = $1 AND spawn_point_set_replacement_id NOT IN (\'' . implode('\', \'', $keep_replacements) . '\');', $spawn_point_set_id);
+		} else {
+			$database->Query('DELETE FROM spawn_point_set_replacements WHERE spawn_point_set_id = $1;', $spawn_point_set_id);
+		}
+	}
+	
+	protected function SaveLimits(\BeaconDatabase $database) {
+		$spawn_point_id = $this->ObjectID();
+		$creature_list = [];
+		if (is_null($this->limits) === false) {
+			foreach ($this->limits as $creature_id => $percentage) {
+				if (\BeaconCommon::IsUUID($creature_id)) {
+					$creature_list[] = $creature_id;
+				} else {
+					throw new \Exception('Key for limit is not a uuid.');
+				}
+				
+				$database->Query('INSERT INTO spawn_point_limits (spawn_point_id, creature_id, max_percentage) VALUES ($1, $2, $3) ON CONFLICT (spawn_point_id, creature_id) DO UPDATE SET max_percentage = $3 WHERE spawn_point_limits.max_percentage IS DISTINCT FROM $3;', $spawn_point_id, $creature_id, $percentage);
+			}
+		}
+		if (count($creature_list) > 0) {
+			$database->Query('DELETE FROM spawn_point_limits WHERE spawn_point_id = $1 AND creature_id NOT IN (\'' . implode('\', \'', $creature_list) . '\');', $spawn_point_id);
+		} else {
+			$database->Query('DELETE FROM spawn_point_limits WHERE spawn_point_id = $1;', $spawn_point_id);
+		}
+	}
 }
 
 ?>
