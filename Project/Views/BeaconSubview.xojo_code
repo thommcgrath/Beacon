@@ -107,7 +107,7 @@ Implements ObservationKit.Observable
 		  
 		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
-		  Dialog.Message = "Do you want to save the changes made to the project """ + Self.ViewTitle + """?"
+		  Dialog.Message = "Do you want to save the changes made to the " + Self.ViewType(False, True) + " """ + Self.ViewTitle + """?"
 		  Dialog.Explanation = "Your changes will be lost if you don't save them."
 		  Dialog.ActionButton.Caption = "Save…"
 		  Dialog.CancelButton.Visible = True
@@ -223,6 +223,16 @@ Implements ObservationKit.Observable
 		Function ViewID() As String
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		  Return Info.Name
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "items", "Items")
+		  Else
+		    Return If(Lowercase, "item", "Item")
+		  End If
 		End Function
 	#tag EndMethod
 

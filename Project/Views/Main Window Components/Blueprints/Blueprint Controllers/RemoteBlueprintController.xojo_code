@@ -153,10 +153,23 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ModUUID As String)
+		Sub Constructor(ModUUID As String, ModName As String)
 		  Self.mModUUID = ModUUID
+		  Self.mModName = ModName
 		  Self.Constructor()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModID() As String
+		  Return Self.mModUUID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModName() As String
+		  Return Self.mModName
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -188,6 +201,10 @@ Inherits BlueprintController
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mModName As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModUUID As String

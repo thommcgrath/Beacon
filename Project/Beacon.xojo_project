@@ -434,6 +434,7 @@ Window=DocumentFilterControl;Views/Main Window Components/Documents/DocumentFilt
 Class=SourceListItem;Custom Controls/Source List/SourceListItem.xojo_code;&h000000007FFC37FF;&h00000000598E47FF;false
 Folder=Blueprints;Views/Main Window Components/Blueprints;&h00000000472E07FF;&h0000000008626FFF;false
 Window=BlueprintsComponent;Views/Main Window Components/Blueprints/BlueprintsComponent.xojo_window;&h000000007E5FAFFF;&h00000000472E07FF;false
+Window=ModsListView;Views/Main Window Components/Blueprints/ModsListView.xojo_window;&h0000000078254FFF;&h00000000472E07FF;false
 Window=ModEditorView;Views/Main Window Components/Blueprints/ModEditorView.xojo_window;&h00000000246957FF;&h00000000472E07FF;false
 Window=BlueprintEditorDialog;Views/Main Window Components/Blueprints/BlueprintEditorDialog.xojo_window;&h000000004E0F9FFF;&h00000000472E07FF;false
 Window=BlueprintMultiEditor;Views/Main Window Components/Blueprints/BlueprintMultiEditor.xojo_window;&h00000000411FDFFF;&h00000000472E07FF;false

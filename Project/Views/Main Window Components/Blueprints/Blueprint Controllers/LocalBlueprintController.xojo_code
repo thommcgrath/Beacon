@@ -45,6 +45,18 @@ Inherits BlueprintController
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ModID() As String
+		  Return Beacon.UserModID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModName() As String
+		  Return Beacon.UserModName
+		End Function
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

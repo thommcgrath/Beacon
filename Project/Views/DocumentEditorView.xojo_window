@@ -1177,6 +1177,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "projects", "Projects")
+		  Else
+		    Return If(Lowercase, "project", "Project")
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

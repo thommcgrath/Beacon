@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconPagedSubview BlueprintsComponent
+Begin BeaconSubview ModsListView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -10,7 +10,7 @@ Begin BeaconPagedSubview BlueprintsComponent
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   486
+   Height          =   300
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -24,91 +24,63 @@ Begin BeaconPagedSubview BlueprintsComponent
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   800
-   Begin OmniBar Nav
-      Alignment       =   0
+   Width           =   494
+   Begin BeaconListbox ModsList
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowInfiniteScroll=   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   2
+      ColumnWidths    =   "*,200"
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   -1
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
-      Height          =   38
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
+      HasBorder       =   False
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   300
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
-      LeftPadding     =   -1
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RightPadding    =   -1
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   800
-   End
-   Begin PagePanel Views
-      AllowAutoDeactivate=   True
-      Enabled         =   True
-      Height          =   448
-      Index           =   -2147483648
-      InitialParent   =   ""
+      InitialValue    =   "Name	Status"
+      Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   1
-      Panels          =   ""
+      PreferencesKey  =   ""
+      RequiresSelection=   False
+      RowSelectionType=   0
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
-      Top             =   38
+      Top             =   0
       Transparent     =   False
-      Value           =   0
+      TypeaheadColumn =   0
+      Underline       =   False
       Visible         =   True
-      Width           =   800
-      Begin ModsListView ModsListView1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   448
-         InitialParent   =   "Views"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   38
-         Transparent     =   True
-         ViewIcon        =   0
-         ViewTitle       =   "Mods"
-         Visible         =   True
-         Width           =   800
-      End
+      Width           =   494
+      _ScrollWidth    =   -1
    End
 End
 #tag EndWindow
@@ -116,139 +88,157 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.AppendPage(Self.ModsListView1)
+		  Self.RefreshMods()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub PageChanged(OldIndex As Integer, NewIndex As Integer)
-		  If OldIndex > -1 Then
-		    Self.Nav.Item(OldIndex).Toggled = False
-		  End If
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
 		  
-		  If NewIndex > -1 Then
-		    Self.Nav.Item(NewIndex).Toggled = True
-		  End If
-		  
-		  Self.Views.SelectedPanelIndex = NewIndex
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "You have " + NumPages.ToString + " mods with unpublished changes. Do you want to review these changes before quitting?"
-		  Dialog.Explanation = "If you don't review your mods, all your changes will be lost."
-		  Dialog.ActionButton.Caption = "Review Changes…"
-		  Dialog.CancelButton.Visible = True
-		  Dialog.AlternateActionButton.Caption = "Discard Changes"
-		  Dialog.AlternateActionButton.Visible = True
-		  
-		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		  Select Case Choice
-		  Case Dialog.ActionButton
-		    ShouldClose = False
-		    ShouldFocus = True
-		  Case Dialog.CancelButton
-		    ShouldClose = False
-		    ShouldFocus = False
-		  Case Dialog.AlternateActionButton
-		    ShouldClose = True
-		    ShouldFocus = False // Doesn't matter
-		  End Select
+		  Self.RefreshMods()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Function CloseView(View As BeaconSubview) As Boolean
-		  If View.CanBeClosed = False Or View.ConfirmClose(WeakAddressOf ShowView) = False Then
-		    Return False
+		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Self.ModsList = Nil Then
+		    // This view already closed
+		    Return
 		  End If
 		  
-		  Var Idx As Integer = Self.IndexOf(View)
+		  Self.Progress = BeaconSubview.ProgressNone
 		  
-		  Self.RemovePage(Idx)
-		  Self.Views.RemovePanelAt(Idx)
-		  Self.Nav.Remove(View.LinkedOmniBarItem)
-		  Return True
+		  Var SelectedModID As String
+		  If Self.ModsList.SelectedRowIndex > -1 Then
+		    SelectedModID = Self.ModsList.RowTagAt(Self.ModsList.SelectedRowIndex)
+		  End If
+		  
+		  Self.ModsList.RemoveAllRows
+		  
+		  If Response.Success Then
+		    Var Arr() As Variant = Response.JSON
+		    For Each Dict As Dictionary In Arr
+		      Var UserMod As New BeaconAPI.WorkshopMod(Dict)
+		      Self.ModsList.AddRow(UserMod.Name, If(UserMod.Confirmed, "Confirmed", "Waiting Confirmation"))
+		      Self.ModsList.RowTagAt(Self.ModsList.LastRowIndex) = UserMod.ModID
+		      If SelectedModID = UserMod.ModID Then
+		        Self.ModsList.SelectedRowIndex = Self.ModsList.LastRowIndex
+		      End If
+		    Next
+		  End If
+		  Self.ModsList.Sort
+		  
+		  Self.ModsList.AddRowAt(0, Beacon.UserModName)
+		  Self.ModsList.CellValueAt(0, 1) = "Built-In"
+		  Self.ModsList.RowTagAt(0) = Beacon.UserModID
+		  If SelectedModID = Beacon.UserModID Then
+		    Self.ModsList.SelectedRowIndex = 0
+		  End If
+		  
+		  If Self.ModsList.RowCount = 1 And Self.mDidFirstRefresh = False Then
+		    Var Idx As Integer = Self.ModsList.SelectedRowIndex
+		    Self.ModsList.SelectedRowIndex = 0
+		    Self.ModsList.DoEdit
+		    Self.ModsList.SelectedRowIndex = Idx
+		  End If
+		  Self.mDidFirstRefresh = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshMods()
+		  If Preferences.OnlineEnabled = False Then
+		    #Pragma Warning "Test this"
+		    Var FakeResponse As New BeaconAPI.Response("", 0, New MemoryBlock(0), New Dictionary)
+		    Self.APICallback_ListMods(Nil, FakeResponse)
+		    Return
+		  End If
+		  
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		  
+		  Var Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
+		  Request.Authenticate(Preferences.OnlineToken)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewID() As String
+		  Return "ModsListView"
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub EmbedView(View As BeaconSubview)
-		  Self.AppendPage(View)
-		  
-		  Self.Views.AddPanel
-		  Var ViewIdx As Integer = Self.Views.LastAddedPanelIndex
-		  View.EmbedWithinPanel(Self.Views, ViewIdx, 0, 0, Self.Views.Width, Self.Views.Height)
-		  
-		  Var NavButton As OmniBarItem = OmniBarItem.CreateTab(View.ViewID, View.ViewTitle)
-		  NavButton.CanBeClosed = True
-		  Self.Nav.Append(NavButton)
-		  
-		  View.LinkedOmniBarItem = NavButton
-		End Sub
-	#tag EndMethod
+
+	#tag Hook, Flags = &h0
+		Event ShowMod(Controller As BlueprintController)
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mDidFirstRefresh As Boolean
+	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events Nav
+#tag Events ModsList
 	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowIndex > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
 		  
-		  For Idx As Integer = 0 To Self.LastPageIndex
-		    Var Page As BeaconSubview = Self.Page(Idx)
-		    If Page.LinkedOmniBarItem = Item Then
-		      Self.CurrentPageIndex = Idx
-		      Return
-		    End If
-		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Var Mods As OmniBarItem = OmniBarItem.CreateTab(Self.ModsListView1.ViewID, "Mods")
-		  Mods.Toggled = True
-		  
-		  Me.Append(Mods)
-		  
-		  Self.ModsListView1.LinkedOmniBarItem = Mods
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCloseItem(Item As OmniBarItem)
-		  For Idx As Integer = 0 To Self.LastPageIndex
-		    If Self.Page(Idx).LinkedOmniBarItem = Item Then
-		      Var View As BeaconSubview = Self.Page(Idx)
-		      If View IsA ModEditorView Then
-		        Call Self.CloseView(ModEditorView(View))
-		      End If
-		      Return
-		    End If
-		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ModsListView1
-	#tag Event
-		Sub ShowMod(Controller As BlueprintController)
-		  Var View As BeaconSubview
-		  Var Idx As Integer = Self.Nav.IndexOf(Controller.ModID)
-		  If Idx > -1 Then
-		    View = Self.Page(Idx)
+		Sub PerformEdit()
+		  Var ModID As String = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var Controller As BlueprintController
+		  If ModID = Beacon.UserModID Then
+		    Controller = New LocalBlueprintController
 		  Else
-		    View = New ModEditorView(Controller)
-		    Self.EmbedView(View)
+		    Controller = New RemoteBlueprintController(ModID, Me.CellValueAt(Me.SelectedRowIndex, 0))
 		  End If
-		  Self.ShowView(View)
+		  RaiseEvent ShowMod(Controller)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ViewTitle"
 		Visible=true
@@ -263,30 +253,6 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumWidth"
-		Visible=true
-		Group="Behavior"
-		InitialValue="400"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimumHeight"
-		Visible=true
-		Group="Behavior"
-		InitialValue="300"
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

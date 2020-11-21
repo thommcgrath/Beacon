@@ -139,7 +139,7 @@ Begin BeaconSubview PresetEditorView
       TabPanelIndex   =   0
       Top             =   61
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   740
       BeginSegmentedButton SegmentedButton MapSelector
@@ -1189,6 +1189,16 @@ End
 		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath))
 		  Else
 		    Return Self.mPreset.PresetID
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "presets", "Presets")
+		  Else
+		    Return If(Lowercase, "preset", "Preset")
 		  End If
 		End Function
 	#tag EndMethod

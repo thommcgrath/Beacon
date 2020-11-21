@@ -181,6 +181,18 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModID() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModName() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Publish()
 		  If Self.IsWorking Then
 		    Var Err As New UnsupportedOperationException

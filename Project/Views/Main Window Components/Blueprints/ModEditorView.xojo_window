@@ -133,6 +133,23 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.ViewTitle = Self.mController.ModName
+		  
+		  Self.UpdatePublishButton()
+		  Self.mController.LoadBlueprints()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function ShouldSave() As Boolean
+		  Self.mController.Publish
+		  Return True
+		End Function
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Shared Function ClipboardHasCodes() As Boolean
 		  Var Board As New Clipboard
@@ -143,6 +160,17 @@ End
 		  Var Content As String = Board.Text
 		  Return Content.IndexOf("Blueprint") > -1 Or Content.IndexOf("giveitem") > -1 Or Content.IndexOf("spawndino") > -1
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Controller As BlueprintController)
+		  AddHandler Controller.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
+		  AddHandler Controller.PublishFinished, WeakAddressOf mController_PublishFinished
+		  AddHandler Controller.WorkStarted, WeakAddressOf mController_WorkStarted
+		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
+		  
+		  Self.mController = Controller
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -282,7 +310,7 @@ End
 		Private Sub mController_WorkFinished(Sender As BlueprintController)
 		  #Pragma Unused Sender
 		  
-		  RaiseEvent WorkFinished
+		  Self.Progress = Self.ProgressNone
 		End Sub
 	#tag EndMethod
 
@@ -290,8 +318,14 @@ End
 		Private Sub mController_WorkStarted(Sender As BlueprintController)
 		  #Pragma Unused Sender
 		  
-		  RaiseEvent WorkStarted
+		  Self.Progress = Self.ProgressIndeterminate
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModID() As String
+		  Return Self.mController.ModID
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -305,40 +339,6 @@ End
 	#tag Method, Flags = &h0
 		Shared Function PromptForImportURL(Parent As Window) As String
 		  Return LibraryEngramsURLDialog.Present(Parent)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SetController(Controller As BlueprintController) As Boolean
-		  If Self.mController = Controller Then
-		    Return False
-		  End If
-		  
-		  If (Self.mController Is Nil) = False Then
-		    If Self.mController.HasUnpublishedChanges Then
-		      Return False
-		    End If
-		    
-		    RemoveHandler Self.mController.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
-		    RemoveHandler Self.mController.PublishFinished, WeakAddressOf mController_PublishFinished
-		    RemoveHandler Self.mController.WorkStarted, WeakAddressOf mController_WorkStarted
-		    RemoveHandler Self.mController.WorkFinished, WeakAddressOf mController_WorkFinished
-		    Self.mController = Nil
-		    Self.BlueprintList.RemoveAllRows
-		  End If
-		  
-		  If (Controller Is Nil) = False Then
-		    AddHandler Controller.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
-		    AddHandler Controller.PublishFinished, WeakAddressOf mController_PublishFinished
-		    AddHandler Controller.WorkStarted, WeakAddressOf mController_WorkStarted
-		    AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
-		    
-		    Self.mController = Controller
-		    Self.UpdatePublishButton()
-		    Self.mController.LoadBlueprints()
-		  End If
-		  
-		  Return True
 		End Function
 	#tag EndMethod
 
@@ -418,17 +418,25 @@ End
 		Private Sub UpdatePublishButton()
 		  Self.mPublishButton.Enabled = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
 		  Self.mRevertButton.Enabled = Self.mPublishButton.Enabled
+		  Self.Changed = Self.mPublishButton.Enabled
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ViewID() As String
+		  Return Self.mController.ModID
+		End Function
+	#tag EndMethod
 
-	#tag Hook, Flags = &h0
-		Event WorkFinished()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event WorkStarted()
-	#tag EndHook
+	#tag Method, Flags = &h0
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "mods", "Mods")
+		  Else
+		    Return If(Lowercase, "mod", "Mod")
+		  End If
+		End Function
+	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
