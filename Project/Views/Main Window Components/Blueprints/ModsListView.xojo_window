@@ -160,7 +160,6 @@ End
 		      End If
 		    Next
 		  End If
-		  Self.ModsList.Sort
 		  
 		  Self.ModsList.AddRowAt(0, Beacon.UserModName)
 		  Self.ModsList.CellValueAt(0, 1) = "Built-In"
@@ -168,6 +167,7 @@ End
 		  If SelectedModID = Beacon.UserModID Then
 		    Self.ModsList.SelectedRowIndex = 0
 		  End If
+		  Self.ModsList.Sort
 		  
 		  If Self.ModsList.RowCount = 1 And Self.mDidFirstRefresh = False Then
 		    Var Idx As Integer = Self.ModsList.SelectedRowIndex

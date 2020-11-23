@@ -51,14 +51,14 @@ Begin BeaconSubview ModEditorView
       GridLinesHorizontalStyle=   0
       GridLinesVerticalStyle=   0
       HasBorder       =   False
-      HasHeader       =   False
+      HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   391
+      Height          =   382
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
+      InitialValue    =   "Name	Type"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -75,7 +75,7 @@ Begin BeaconSubview ModEditorView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   41
+      Top             =   50
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -85,41 +85,6 @@ Begin BeaconSubview ModEditorView
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin BeaconToolbar BlueprintHeader
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Blueprints"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   844
-   End
    Begin ClipboardWatcher Watcher
       Enabled         =   True
       Index           =   -2147483648
@@ -128,6 +93,36 @@ Begin BeaconSubview ModEditorView
       RunMode         =   2
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin OmniBar ModToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   844
    End
 End
 #tag EndWindow
@@ -408,7 +403,9 @@ End
 		    Self.BlueprintList.EnsureSelectionIsVisible
 		  End If
 		  Self.BlueprintList.SelectionChangeBlocked = False
-		  Self.BlueprintHeader.ExportButton.Enabled = Self.BlueprintList.RowCount > 0
+		  If (Self.ModToolbar.Item("ExportFile") Is Nil) = False Then
+		    Self.ModToolbar.Item("ExportFile").Enabled = Self.BlueprintList.RowCount > 0
+		  End If
 		  
 		  Self.UpdatePublishButton()
 		End Sub
@@ -416,9 +413,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePublishButton()
-		  Self.mPublishButton.Enabled = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
-		  Self.mRevertButton.Enabled = Self.mPublishButton.Enabled
-		  Self.Changed = Self.mPublishButton.Enabled
+		  Var PublishEnabled As Boolean = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
+		  If (Self.ModToolbar.Item("Publish") Is Nil) = False Then
+		    Self.ModToolbar.Item("Publish").Enabled = PublishEnabled
+		  End If
+		  If (Self.ModToolbar.Item("Discard") Is Nil) = False Then
+		    Self.ModToolbar.Item("Discard").Enabled = PublishEnabled
+		  End If
+		  Self.Changed = PublishEnabled
 		End Sub
 	#tag EndMethod
 
@@ -441,14 +443,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mController As BlueprintController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPublishButton As BeaconToolbarItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRevertButton As BeaconToolbarItem
 	#tag EndProperty
 
 
@@ -538,39 +532,43 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events BlueprintHeader
+#tag Events Watcher
 	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add a new blueprint to this mod")
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var ImportFileButton As New BeaconToolbarItem("ImportFile", IconToolbarFile, "Import from file")
-		  Me.LeftItems.Append(ImportFileButton)
-		  
-		  Var ImportURLButton As New BeaconToolbarItem("ImportURL", IconToolbarLink, "Import from website")
-		  Me.LeftItems.Append(ImportURLButton)
-		  
-		  Var ImportClipboardButton As New BeaconToolbarItem("ImportClipboard", IconToolbarCopied, Self.ClipboardHasCodes, "Import from copied text")
-		  Me.LeftItems.Append(ImportClipboardButton)
-		  
-		  Var ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.BlueprintList.RowCount > 0, "Export blueprints to JSON")
-		  Me.LeftItems.Append(ExportButton)
-		  
-		  Self.mPublishButton = New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Make changes live")
-		  Self.mRevertButton = New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Cancel changes and revert to the blueprints on the server.")
-		  
-		  Me.RightItems.Append(Self.mRevertButton)
-		  Me.RightItems.Append(Self.mPublishButton)
+		Sub ClipboardChanged(Content As String)
+		  If (Self.ModToolbar.Item("ImportClipboard") Is Nil) = False Then
+		    Self.ModToolbar.Item("ImportClipboard").Enabled = Self.ClipboardHasCodes
+		  End If
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events ModToolbar
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  If Self.mController Is Nil Then
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateButton("AddBlueprint", "New Blueprint", IconToolbarAdd, "Create a new blueprint."))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("ImportFile", "Import File", IconToolbarFile, "Import blueprints from a file on your computer."))
+		  Me.Append(OmniBarItem.CreateButton("ImportURL", "Import URL", IconToolbarLink, "Import blueprints from cheat codes on a website."))
+		  Me.Append(OmniBarItem.CreateButton("ImportClipboard", "Import Copied", IconToolbarCopied, "Import blueprints from copied cheat codes.", Self.ClipboardHasCodes))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("ExportFile", "Export", IconToolbarExport, "Export selected blueprints to a file on your computer."))
+		  
+		  If Self.mController.AutoPublish Then
 		    Return
 		  End If
 		  
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateButton("Publish", "Publish", IconToolbarPublish, "Publish your changes to Beacon's users.", False))
+		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("Settings", "Settings", IconToolbarSettings, "Change mod settings."))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
 		  Select Case Item.Name
-		  Case "AddButton"
+		  Case "AddBlueprint"
 		    Var Blueprint As Beacon.Blueprint = BlueprintEditorDialog.Present(Self, Nil)
 		    If (Blueprint Is Nil) = False Then
 		      Self.mController.SaveBlueprint(Blueprint)
@@ -579,23 +577,18 @@ End
 		  Case "ImportFile"
 		    Self.Import()
 		  Case "ImportURL"
-		    
+		    #Pragma Warning "Not implemented"
 		  Case "ImportClipboard"
-		    
-		  Case "PublishButton"
-		    Self.mController.Publish()
-		  Case "RevertButton"
-		    Self.mController.DiscardChanges()
-		  Case "ExportButton"
+		    #Pragma Warning "Not implemented"
+		  Case "ExportFile"
 		    Self.Export()
+		  Case "Publish"
+		    Self.mController.Publish()
+		  Case "Discard"
+		    Self.mController.DiscardChanges()
+		  Case "Settings"
+		    #Pragma Warning "Not implemented"
 		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Watcher
-	#tag Event
-		Sub ClipboardChanged(Content As String)
-		  Self.BlueprintHeader.ImportClipboard.Enabled = Self.ClipboardHasCodes
 		End Sub
 	#tag EndEvent
 #tag EndEvents
