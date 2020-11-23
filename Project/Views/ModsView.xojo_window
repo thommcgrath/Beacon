@@ -356,9 +356,6 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
-		    If DeveloperAddModDialog.Present(Self) Then
-		      Self.RefreshMods
-		    End If
 		  Case "RemoveButton"
 		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""

@@ -235,12 +235,29 @@ End
 #tag EndEvents
 #tag Events ModsListView1
 	#tag Event
-		Sub ShowMod(Controller As BlueprintController)
+		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
+		  If ModInfo.Confirmed = False Then
+		    Var Status As Integer =  RegisterModDialog.Present(Self, ModInfo)
+		    If (Status And RegisterModDialog.FlagShouldRefresh) = RegisterModDialog.FlagShouldRefresh Then
+		      Me.RefreshMods()
+		    End If
+		    If (Status And RegisterModDialog.FlagModIsConfirmed) = 0 Then
+		      Return
+		    End If
+		  End If
+		  
 		  Var View As BeaconSubview
-		  Var Idx As Integer = Self.Nav.IndexOf(Controller.ModID)
+		  Var Idx As Integer = Self.Nav.IndexOf(ModInfo.ModID)
 		  If Idx > -1 Then
 		    View = Self.Page(Idx)
 		  Else
+		    Var Controller As BlueprintController
+		    If ModInfo.ModID = Beacon.UserModID Then
+		      Controller = New LocalBlueprintController
+		    Else
+		      Controller = New RemoteBlueprintController(ModInfo.ModID, ModInfo.Name)
+		    End If
+		    
 		    View = New ModEditorView(Controller)
 		    Self.EmbedView(View)
 		  End If

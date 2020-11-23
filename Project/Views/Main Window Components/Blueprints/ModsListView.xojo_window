@@ -41,9 +41,9 @@ Begin BeaconSubview ModsListView
       DataSource      =   ""
       DefaultRowHeight=   -1
       DefaultSortColumn=   0
-      DefaultSortDirection=   0
+      DefaultSortDirection=   1
       DropIndicatorVisible=   False
-      EditCaption     =   "Edit"
+      EditCaption     =   "Edit Blueprints"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -54,8 +54,8 @@ Begin BeaconSubview ModsListView
       HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
-      HeadingIndex    =   -1
-      Height          =   300
+      HeadingIndex    =   0
+      Height          =   250
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Status"
@@ -74,13 +74,43 @@ Begin BeaconSubview ModsListView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   50
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       Width           =   494
       _ScrollWidth    =   -1
+   End
+   Begin OmniBar ModsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   494
    End
 End
 #tag EndWindow
@@ -114,7 +144,7 @@ End
 		  
 		  Var SelectedModID As String
 		  If Self.ModsList.SelectedRowIndex > -1 Then
-		    SelectedModID = Self.ModsList.RowTagAt(Self.ModsList.SelectedRowIndex)
+		    SelectedModID = BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Self.ModsList.SelectedRowIndex)).ModID
 		  End If
 		  
 		  Self.ModsList.RemoveAllRows
@@ -122,10 +152,10 @@ End
 		  If Response.Success Then
 		    Var Arr() As Variant = Response.JSON
 		    For Each Dict As Dictionary In Arr
-		      Var UserMod As New BeaconAPI.WorkshopMod(Dict)
-		      Self.ModsList.AddRow(UserMod.Name, If(UserMod.Confirmed, "Confirmed", "Waiting Confirmation"))
-		      Self.ModsList.RowTagAt(Self.ModsList.LastRowIndex) = UserMod.ModID
-		      If SelectedModID = UserMod.ModID Then
+		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
+		      Self.ModsList.AddRow(ModInfo.Name, If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation"))
+		      Self.ModsList.RowTagAt(Self.ModsList.LastRowIndex) = ModInfo
+		      If SelectedModID = ModInfo.ModID Then
 		        Self.ModsList.SelectedRowIndex = Self.ModsList.LastRowIndex
 		      End If
 		    Next
@@ -134,7 +164,7 @@ End
 		  
 		  Self.ModsList.AddRowAt(0, Beacon.UserModName)
 		  Self.ModsList.CellValueAt(0, 1) = "Built-In"
-		  Self.ModsList.RowTagAt(0) = Beacon.UserModID
+		  Self.ModsList.RowTagAt(0) = BeaconAPI.WorkshopMod.UserBlueprintsMod
 		  If SelectedModID = Beacon.UserModID Then
 		    Self.ModsList.SelectedRowIndex = 0
 		  End If
@@ -149,12 +179,16 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub RefreshMods()
+	#tag Method, Flags = &h0
+		Sub RefreshMods()
 		  If Preferences.OnlineEnabled = False Then
 		    #Pragma Warning "Test this"
 		    Var FakeResponse As New BeaconAPI.Response("", 0, New MemoryBlock(0), New Dictionary)
 		    Self.APICallback_ListMods(Nil, FakeResponse)
+		    Return
+		  End If
+		  
+		  If Self.Progress <> BeaconSubview.ProgressNone Then
 		    Return
 		  End If
 		  
@@ -174,7 +208,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event ShowMod(Controller As BlueprintController)
+		Event ShowMod(ModInfo As BeaconAPI.WorkshopMod)
 	#tag EndHook
 
 
@@ -198,19 +232,44 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  
+		  #Pragma Warning "Not implemented"
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Var ModID As String = Me.RowTagAt(Me.SelectedRowIndex)
-		  Var Controller As BlueprintController
-		  If ModID = Beacon.UserModID Then
-		    Controller = New LocalBlueprintController
-		  Else
-		    Controller = New RemoteBlueprintController(ModID, Me.CellValueAt(Me.SelectedRowIndex, 0))
+		  Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Me.SelectedRowIndex)
+		  RaiseEvent ShowMod(ModInfo)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  If (Self.ModsToolbar.Item("EditModBlueprints") Is Nil) = False Then
+		    Self.ModsToolbar.Item("EditModBlueprints").Enabled = Me.SelectedRowCount = 1
 		  End If
-		  RaiseEvent ShowMod(Controller)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ModsToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateButton("RegisterMod", "Register Mod", IconToolbarAdd, "Register your mod with Beacon."))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("EditModBlueprints", "Edit Blueprints", IconToolbarEdit, "Edit the blueprints provided by the selected mod.", Self.ModsList.SelectedRowCount = 1))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "RegisterMod"
+		    Var Status As Integer =  RegisterModDialog.Present(Self)
+		    If (Status And RegisterModDialog.FlagShouldRefresh) = RegisterModDialog.FlagShouldRefresh Then
+		      Self.RefreshMods()
+		    End If
+		  Case "EditModBlueprints"
+		    Self.ModsList.DoEdit()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

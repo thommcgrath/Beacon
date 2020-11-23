@@ -29,6 +29,12 @@ Protected Class WorkshopMod
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
 		  Self.mConfirmationCode = Source.Value("confirmation_code")
@@ -76,6 +82,16 @@ Protected Class WorkshopMod
 	#tag Method, Flags = &h0
 		Function ResourceURL() As String
 		  Return Self.mResourceURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function UserBlueprintsMod() As BeaconAPI.WorkshopMod
+		  Var ModInfo As New BeaconAPI.WorkshopMod
+		  ModInfo.mConfirmed = True
+		  ModInfo.mModID = Beacon.UserModID
+		  ModInfo.mName = Beacon.UserModName
+		  Return ModInfo
 		End Function
 	#tag EndMethod
 
