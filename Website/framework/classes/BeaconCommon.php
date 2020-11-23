@@ -603,6 +603,10 @@ abstract class BeaconCommon {
 			return 'XX';
 		}
 	}
+	
+	public static function TeamsEnabled() {
+		return self::GetGlobal('Teams Enabled', false);
+	}
 }
 
 ?>

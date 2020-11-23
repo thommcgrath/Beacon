@@ -47,6 +47,8 @@ if (isset($product_details['omni']) === false) {
 	exit;
 }
 
+$teams_enabled = BeaconCommon::TeamsEnabled();
+
 BeaconTemplate::StartStyles(); ?>
 <style type="text/css">
 
@@ -88,29 +90,39 @@ BeaconTemplate::StartScript();
 var owns_omni = false;
 var is_child = false;
 
+var stw_quantity_field = null;
+var gift_quantity_field = null;
+var slot_quantity_field = null;
+
 var update_total = function() {
 	var include_omni = owns_omni === false && is_child === false && document.getElementById('omni_checkbox').checked;
-	var stw_quantity = Math.min(document.getElementById('stw_quantity_field').value, 10);
-	var gift_quantity = Math.min(document.getElementById('gift_quantity_field').value, 10);
+	var stw_quantity = 0;
+	if (stw_quantity_field) {
+		stw_quantity = Math.min(stw_quantity_field.value, 10);
+	}
+	var gift_quantity = 0;
+	if (gift_quantity_field) {
+		gift_quantity = Math.min(gift_quantity_field.value, 10);
+	}
 	var slot_quantity = 0;
- 	if (is_child === false) {
- 		slot_quantity = Math.min(document.getElementById('slot_quantity_field').value, 20);
- 	}
+	 if (is_child === false && slot_quantity_field) {
+		 slot_quantity = Math.min(slot_quantity_field.value, 20);
+	 }
 	
-	if (document.getElementById('stw_quantity_field').value != stw_quantity) {
-		document.getElementById('stw_quantity_field').value = stw_quantity;
+	if (stw_quantity_field && stw_quantity_field.value != stw_quantity) {
+		stw_quantity_field.value = stw_quantity;
 	}
-	if (document.getElementById('gift_quantity_field').value != gift_quantity) {
-		document.getElementById('gift_quantity_field').value = gift_quantity;
+	if (gift_quantity_field && gift_quantity_field.value != gift_quantity) {
+		gift_quantity_field.value = gift_quantity;
 	}
-	if (document.getElementById('slot_quantity_field').value != slot_quantity) {
- 		document.getElementById('slot_quantity_field').value = slot_quantity
+	if (slot_quantity_field && slot_quantity_field.value != slot_quantity) {
+ 		slot_quantity_field.value = slot_quantity
  	}
 	
 	var omni_price = <?php echo json_encode($product_details['omni']['price'] * 100); ?>;
 	var stw_price = <?php echo json_encode($product_details['stw']['price'] * 100); ?>;
 	var gift_price = <?php echo json_encode($product_details['gift']['price'] * 100); ?>;
-	var slot_price = <?php echo json_encode($product_details['slot']['price'] * 100); ?>;
+	var slot_price = <?php echo $teams_enabled ? json_encode($product_details['slot']['price'] * 100) : 0; ?>;
 	var total = (stw_price * stw_quantity) + (gift_price * gift_quantity) + (slot_price * slot_quantity);
 	if (include_omni) {
 		total += omni_price;
@@ -132,12 +144,14 @@ var set_view_mode = function() {
 };
 
 var update_checkout_components = function() {
-	if (is_child) {
-		document.getElementById('slot_quantity_field').className = 'hidden';
-		document.getElementById('slot_quantity_prohibited').className = 'text-lighter';
-	} else {
-		document.getElementById('slot_quantity_field').className = 'text-center';
-		document.getElementById('slot_quantity_prohibited').className = 'hidden';
+	if (slot_quantity_field) {
+		if (is_child) {
+			document.getElementById('slot_quantity_field').className = 'hidden';
+			document.getElementById('slot_quantity_prohibited').className = 'text-lighter';
+		} else {
+			document.getElementById('slot_quantity_field').className = 'text-center';
+			document.getElementById('slot_quantity_prohibited').className = 'hidden';
+		}
 	}
 	if (is_child || owns_omni) {
 		document.getElementById('omni_checkbox_frame').className = 'hidden';
@@ -167,6 +181,10 @@ var validate_email = function(email) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+	stw_quantity_field = document.getElementById('stw_quantity_field');
+	slot_quantity_field = document.getElementById('slow_quantity_field');
+	gift_quantity_field = document.getElementById('gift_quantity_field');
+	
 	update_checkout_components();
 	set_view_mode();
 	
@@ -184,17 +202,23 @@ document.addEventListener('DOMContentLoaded', function() {
 		ev.preventDefault();
 	});
 	
-	document.getElementById('stw_quantity_field').addEventListener('input', function(ev) {
-		update_total();
-	});
+	if (stw_quantity_field) {
+		stw_quantity_field.addEventListener('input', function(ev) {
+			update_total();
+		});
+	}
 	
-	document.getElementById('gift_quantity_field').addEventListener('input', function(ev) {
-		update_total();
-	});
+	if (gift_quantity_field) {
+		gift_quantity_field.addEventListener('input', function(ev) {
+			update_total();
+		});
+	}
 	
-	document.getElementById('slot_quantity_field').addEventListener('input', function(ev) {
- 		update_total();
- 	});
+	if (slot_quantity_field) {
+		slot_quantity_field.addEventListener('input', function(ev) {
+			update_total();
+		});
+	}
 	
 	document.getElementById('omni_checkbox').addEventListener('change', function(ev) {
 		update_total();
@@ -209,11 +233,17 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.disabled = true;
 		
 		var include_omni = owns_omni === false && is_child === false && document.getElementById('omni_checkbox').checked;
-		var stw_quantity = Math.min(document.getElementById('stw_quantity_field').value, 10);
-		var gift_quantity = Math.min(document.getElementById('gift_quantity_field').value, 10);
+		var stw_quantity = 0;
+		if (stw_quantity_field) {
+			stw_quantity = Math.min(stw_quantity_field.value, 10);
+		}
+		var gift_quantity = 0;
+		if (gift_quantity_field) {
+			gift_quantity = Math.min(gift_quantity_field.value, 10);
+		}
 		var slot_quantity = 0;
- 		if (is_child === false) {
- 			slot_quantity = Math.min(document.getElementById('slot_quantity_field').value, 20);
+ 		if (is_child === false && slot_quantity_field) {
+ 			slot_quantity = Math.min(slot_quantity_field.value, 20);
  		}
  		
  		if (owns_omni === false && include_omni === false && slot_quantity > 0) {
@@ -234,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				items.push({sku: <?php echo json_encode($product_details['gift']['sku']); ?>, quantity: gift_quantity});
 			}
 			if (slot_quantity > 0) {
-	 			items.push({sku: <?php echo json_encode($product_details['slot']['sku']); ?>, quantity: slot_quantity});
+	 			items.push({sku: <?php echo $teams_enabled ? json_encode($product_details['slot']['sku']) : 0; ?>, quantity: slot_quantity});
 	 		}
 			
 			var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
@@ -428,11 +458,11 @@ BeaconTemplate::FinishScript();
 			<td class="quantity_column"><div id="omni_checkbox_frame"><label class="checkbox"><input type="checkbox" name="omni" id="omni_checkbox" checked><span></span></label></div><span id="omni_owned_caption" class="hidden">Owned</span></td>
 			<td class="price_column"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
 		</tr>
-		<tr id="slots_row">
+		<?php if ($teams_enabled) { ?><tr id="slots_row">
  			<td>Team Member Account<br><span class="smaller text-lighter">Need to purchase Beacon Omni for another admin on your team? Additional team member licenses can be purchased at any time. <a href="#">Learn more about Beacon for teams</a>.</span></td>
  			<td class="quantity_column"><input class="text-center" type="number" value="0" id="slot_quantity_field" min="0" max="20"><span id="slot_quantity_prohibited" class="hidden">N/A</span></td>
  			<td class="price_column"><?php echo htmlentities($product_details['slot']['price_formatted']); ?>
- 		</tr>
+ 		</tr><?php } ?>
 		<tr>
 			<td>Beacon Omni Gift Codes<br><span class="smaller text-lighter">If you would like to purchase a copy of Beacon Omni for somebody else, this is the option for you. You'll be given codes which you can distribute any way you feel like.</span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="gift_quantity_field" min="0" max="10"></td>
