@@ -616,7 +616,7 @@ End
 		    
 		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
 		    If UpdateItem Is Nil Then
-		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarImport, Preview)
+		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarUpdate, Preview)
 		      UpdateItem.AlwaysUseActiveColor = True
 		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
 		      
