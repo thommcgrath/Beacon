@@ -63,7 +63,7 @@
 					Call DoShellCommand("/usr/bin/curl https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
-				Begin IDEScriptBuildStep Sign , AppliesTo = 0
+				Begin IDEScriptBuildStep Sign , AppliesTo = 1
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("xattr -clr " + App)
 					Call DoShellCommand("codesign -f --options=runtime --deep --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.dylib")
