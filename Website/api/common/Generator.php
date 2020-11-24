@@ -1,6 +1,6 @@
 <?php
 
-namespace BeaconAPI
+namespace BeaconAPI;
 
 class Generator {
 	protected $document, $quality_scale, $map_mask, $difficulty_value;
