@@ -166,24 +166,33 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color) As Color
+		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color, ChangeForeground As Boolean = True, RequiredContrast As Double = 4.5) As Color
 		  If mContrastingColors Is Nil Then
 		    mContrastingColors = New Dictionary
 		  End If
 		  
-		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex
+		  Var TargetColor, TestAgainst As Color
+		  If ChangeForeground Then
+		    TargetColor = ForegroundColor
+		    TestAgainst = BackgroundColor
+		  Else
+		    TargetColor = BackgroundColor
+		    TestAgainst = ForegroundColor
+		  End If
+		  
+		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex + ":" + RequiredContrast.ToString + ":" + ChangeForeground.ToString
 		  If mContrastingColors.HasKey(Key) = False Then
 		    Var ComputedColor As Color
 		    
 		    Var Computed As Boolean
 		    For Percent As Double = 0.0 To 1.0 Step 0.01
-		      Var Darker As Color = ForegroundColor.Darker(Percent)
-		      Var Lighter As Color = ForegroundColor.Lighter(Percent)
-		      If Darker.ContrastAgainst(BackgroundColor) >= 4.5 Then
+		      Var Darker As Color = TargetColor.Darker(Percent)
+		      Var Lighter As Color = TargetColor.Lighter(Percent)
+		      If Darker.ContrastAgainst(TestAgainst) >= RequiredContrast Then
 		        ComputedColor = Darker
 		        Computed = True
 		        Exit
-		      ElseIf Lighter.ContrastAgainst(BackgroundColor) >= 4.5 Then
+		      ElseIf Lighter.ContrastAgainst(TestAgainst) >= RequiredContrast Then
 		        ComputedColor = Lighter
 		        Computed = True
 		        Exit
@@ -191,8 +200,8 @@ Protected Module BeaconUI
 		    Next
 		    
 		    If Computed = False Then
-		      Var WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
-		      Var BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
+		      Var WhiteContrast As Double = TestAgainst.ContrastAgainst(&cFFFFFF)
+		      Var BlackContrast As Double = TestAgainst.ContrastAgainst(&c000000)
 		      If WhiteContrast > BlackContrast Then
 		        ComputedColor = &cFFFFFF
 		      Else

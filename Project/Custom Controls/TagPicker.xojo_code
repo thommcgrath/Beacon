@@ -206,16 +206,10 @@ Inherits ControlCanvas
 		  Var CellHeight As Integer = CapHeight + (VerticalPadding * 2)
 		  Var Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
-		  Var RequiredBackgroundColor As Color = SystemColors.SelectedContentBackgroundColor
-		  Var RequiredTextColor As Color = SystemColors.AlternateSelectedControlTextColor
-		  Var NeutralBackgroundColor As Color = SystemColors.UnemphasizedSelectedTextBackgroundColor
-		  Var NeutralTextColor As Color = SystemColors.UnemphasizedSelectedTextColor
-		  Var ExcludedBackgroundColor As Color = SystemColors.SystemRedColor
-		  Var ExcludedTextColor As Color = SystemColors.AlternateSelectedControlTextColor
-		  
-		  If Self.ColorsAreSimilar(RequiredBackgroundColor, ExcludedBackgroundColor, 100) Then
-		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
-		  End If
+		  Var CellTextColor As Color = &cFFFFFF
+		  Var RequiredBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemBlueColor)
+		  Var NeutralBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemGrayColor)
+		  Var ExcludedBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemRedColor)
 		  
 		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Var Tag As String = Self.mTags(I)
@@ -237,16 +231,13 @@ Inherits ControlCanvas
 		    Var CaptionLeft As Integer = CellRect.Left + HorizontalPadding
 		    Var CaptionBottom As Integer = CellRect.Top + VerticalPadding + CapHeight
 		    
-		    Var CellColor, CellTextColor As Color
+		    Var CellColor As Color
 		    If Required Then
 		      CellColor = RequiredBackgroundColor
-		      CellTextColor = RequiredTextColor
 		    ElseIf Excluded Then
 		      CellColor = ExcludedBackgroundColor
-		      CellTextColor = ExcludedTextColor
 		    Else
 		      CellColor = NeutralBackgroundColor
-		      CellTextColor = NeutralTextColor
 		    End If
 		    Clip.DrawingColor = CellColor
 		    Clip.FillRoundRectangle(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
