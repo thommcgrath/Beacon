@@ -1025,6 +1025,13 @@ End
 		    End Select
 		    
 		    Controller.ShouldResume = True
+		  Case "ValidationFailed"
+		    Var UserData As Dictionary = Controller.UserData
+		    Var Message As String = "Beacon was not able to verify the new files will not harm your server."
+		    Var Explanation As String = UserData.Value("Message").StringValue + " Check the " + UserData.Value("File").StringValue + " on your server."
+		    Var ShouldStop As Boolean = Self.ShowConfirm(Message, Explanation, "Cancel Deploy", "Continue Anyway")
+		    Controller.Cancelled = ShouldStop
+		    Controller.ShouldResume = True
 		  Else
 		    Return False
 		  End Select

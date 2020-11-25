@@ -726,13 +726,29 @@ Protected Class IntegrationEngine
 		Private Function ValidateContent(Content As String, Filename As String) As Boolean
 		  Var MissingHeaders() As String = Beacon.ValidateIniContent(Content, Filename)
 		  
-		  If MissingHeaders.Count > 1 Then
-		    Self.SetError(Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + ".")
-		  ElseIf MissingHeaders.Count = 1 Then
-		    Self.SetError(Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group.")
+		  If MissingHeaders.Count = 0 Then
+		    Return True
 		  End If
 		  
-		  Return MissingHeaders.Count = 0
+		  Var Dict As New Dictionary
+		  Dict.Value("File") = Filename
+		  Dict.Value("Groups") = MissingHeaders
+		  If MissingHeaders.Count > 1 Then
+		    Dict.Value("Message") = Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + "."
+		  Else
+		    Dict.Value("Message") = Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group."
+		  End If
+		  
+		  Var Controller As New Beacon.TaskWaitController("ValidationFailed", Dict)
+		  
+		  Self.Log("Content validation failed!")
+		  Self.Wait(Controller)
+		  If Controller.Cancelled Then
+		    Self.SetError(Dict.Value("Message").StringValue)
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
