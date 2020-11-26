@@ -78,7 +78,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   1200
       Begin HTMLViewer HelpViewer

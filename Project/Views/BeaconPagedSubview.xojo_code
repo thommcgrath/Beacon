@@ -11,6 +11,15 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var Page As BeaconSubview = Self.CurrentPage
+		  If (Page Is Nil) = False Then
+		    Page.GetEditorMenuItems(Items)
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub AppendPage(Page As BeaconSubview)

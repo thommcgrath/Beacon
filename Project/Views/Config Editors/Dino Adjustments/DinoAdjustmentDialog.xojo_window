@@ -277,7 +277,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       Top             =   158
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField

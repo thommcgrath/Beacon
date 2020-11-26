@@ -268,10 +268,10 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewPresets
+      Begin MenuItem ViewEngrams
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Presets"
+         Text = "Blueprints"
          ShortcutKey = "2"
          Shortcut = "Cmd+2"
          MenuModifier = True
@@ -279,10 +279,10 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewEngrams
+      Begin MenuItem ViewPresets
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Engrams"
+         Text = "Presets"
          ShortcutKey = "3"
          Shortcut = "Cmd+3"
          MenuModifier = True

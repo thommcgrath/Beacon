@@ -226,7 +226,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -347,6 +347,7 @@ End
 		Sub EnableMenuItems()
 		  Self.EnableEditorMenuItem("CreateFibercraftServer")
 		  Self.EnableEditorMenuItem("AdjustCosts")
+		  Self.EnableEditorMenuItem("SetupElementTransfer")
 		End Sub
 	#tag EndEvent
 
@@ -361,6 +362,11 @@ End
 		  AdjustCostsItem.Name = "AdjustCosts"
 		  AdjustCostsItem.AutoEnabled = False
 		  Items.Add(AdjustCostsItem)
+		  
+		  Var SetupElementTransferItem As New MenuItem("Setup Transferrable Element")
+		  SetupElementTransferItem.Name = "SetupElementTransfer"
+		  SetupElementTransferItem.AutoEnabled = False
+		  Items.Add(SetupElementTransferItem)
 		End Sub
 	#tag EndEvent
 
@@ -448,6 +454,20 @@ End
 	#tag MenuHandler
 		Function CreateFibercraftServer() As Boolean Handles CreateFibercraftServer.Action
 			Self.CreateFibercraftServer()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function SetupElementTransfer() As Boolean Handles SetupElementTransfer.Action
+			Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+			If SetupTransferrableElementDialog.Present(Self, Config, Self.Document.Mods) Then
+			Call Self.Config(True) // Forces adding the config to the file
+			Self.UpdateList()
+			Self.Changed = Config.Modified
+			End If
+			
 			Return True
 			
 		End Function
