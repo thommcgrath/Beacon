@@ -217,6 +217,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window) As String
+		  If Parent Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Var Win As New LibraryEngramsURLDialog
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Var Content As String = Win.mContent

@@ -101,6 +101,7 @@ Begin BeaconSubview ModEditorView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648
@@ -145,9 +146,15 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0
-		Shared Function ClipboardHasCodes() As Boolean
+	#tag Method, Flags = &h21
+		Private Shared Function ClipboardHasCodes() As Boolean
 		  Var Board As New Clipboard
+		  Return ClipboardHasCodes(Board)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ClipboardHasCodes(Board As Clipboard) As Boolean
 		  If Not Board.TextAvailable Then
 		    Return False
 		  End If
@@ -208,29 +215,11 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Import()
-		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.JsonFile + BeaconFileTypes.Text
-		  
-		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If File Is Nil Then
-		    Return
+	#tag Method, Flags = &h21
+		Private Sub Import(Contents As String)
+		  If Not Self.ImportAsJSON(Contents) Then
+		    Self.ImportAsPlain(Contents)
 		  End If
-		  
-		  Var Contents As String
-		  Try
-		    Contents = File.Read
-		  Catch Err As RuntimeException
-		    Self.ShowAlert("Could not open file", "Beacon was unable to open the selected file: " + Err.Message)
-		    Return
-		  End Try
-		  
-		  If Self.ImportAsJSON(Contents) Then
-		    Return
-		  End If
-		  
-		  Self.ImportAsPlain(Contents)
 		End Sub
 	#tag EndMethod
 
@@ -262,8 +251,14 @@ End
 		    End Try
 		  Next
 		  
-		  Var Added As Integer = Beacon.Data.SaveBlueprints(Blueprints, False)
-		  Break
+		  If Blueprints.Count = 0 Then
+		    Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
+		    Return True // It was still JSON data, even if nothing was found.
+		  End If
+		  
+		  Self.mController.SaveBlueprints(Blueprints)
+		  Self.UpdateList(Blueprints)
+		  Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(Blueprints.Count, "blueprint", "blueprints") + " to import.")
 		  
 		  Return True
 		End Function
@@ -271,7 +266,57 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportAsPlain(Contents As String)
+		  #Pragma Warning "Not implemented"
 		  
+		  Var Searcher As New Beacon.EngramSearcherThread
+		  AddHandler Searcher.Started, WeakAddressOf Searcher_Started
+		  AddHandler Searcher.Finished, WeakAddressOf Searcher_Finished
+		  Searcher.Search(Contents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportFromClipboard()
+		  Var Board As New Clipboard
+		  
+		  If Not Self.ClipboardHasCodes(Board) Then
+		    Return
+		  End If
+		  
+		  Self.Import(Board.Text)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportFromFile()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
+		  
+		  Var File As FolderItem = Dialog.ShowModalWithin(Parent.TrueWindow)
+		  If File Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Contents As String
+		  Try
+		    Contents = File.Read
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Could not open file", "Beacon was unable to open the selected file: " + Err.Message)
+		    Return
+		  End Try
+		  
+		  Self.Import(Contents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportFromURL()
+		  Var Contents As String = LibraryEngramsURLDialog.Present(Self)
+		  If Contents.IsEmpty Then
+		    Return
+		  End If
+		  
+		  Self.Import(Contents)
 		End Sub
 	#tag EndMethod
 
@@ -323,18 +368,26 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function PromptForImportFile(Parent As Window) As FolderItem
-		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
-		  Return Dialog.ShowModalWithin(Parent.TrueWindow)
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub Searcher_Finished(Sender As Beacon.EngramSearcherThread)
+		  Self.Progress = BeaconSubview.ProgressNone
+		  
+		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints(True)
+		  If Blueprints.Count = 0 Then
+		    Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
+		    Return
+		  End If
+		  Self.mController.SaveBlueprints(Blueprints)
+		  Self.UpdateList(Blueprints)
+		  Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(Blueprints.Count, "blueprint", "blueprints") + " to import.")
+		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function PromptForImportURL(Parent As Window) As String
-		  Return LibraryEngramsURLDialog.Present(Parent)
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub Searcher_Started(Sender As Beacon.EngramSearcherThread)
+		  #Pragma Unused Sender
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -575,11 +628,11 @@ End
 		      Self.UpdateList()
 		    End If
 		  Case "ImportFile"
-		    Self.Import()
+		    Self.ImportFromFile()
 		  Case "ImportURL"
-		    #Pragma Warning "Not implemented"
+		    Self.ImportFromURL()
 		  Case "ImportClipboard"
-		    #Pragma Warning "Not implemented"
+		    Self.ImportFromClipboard()
 		  Case "ExportFile"
 		    Self.Export()
 		  Case "Publish"

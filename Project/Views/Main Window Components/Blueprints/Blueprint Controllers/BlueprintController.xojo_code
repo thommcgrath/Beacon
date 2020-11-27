@@ -221,21 +221,29 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveBlueprint(Blueprint As Beacon.Blueprint)
+		Sub SaveBlueprint(ParamArray Blueprints() As Beacon.Blueprint)
+		  Self.SaveBlueprints(Blueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveBlueprints(Blueprints() As Beacon.Blueprint)
 		  If Self.IsWorking Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
 		  End If
 		  
-		  Var ObjectID As String = Blueprint.ObjectID
-		  
-		  Self.mBlueprints.Value(ObjectID) = Blueprint
-		  Self.mBlueprintsToSave.Value(ObjectID) = Blueprint
-		  
-		  If Self.mBlueprintsToDelete.HasKey(ObjectID) Then
-		    Self.mBlueprintsToDelete.Remove(ObjectID)
-		  End If
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    Var ObjectID As String = Blueprint.ObjectID
+		    
+		    Self.mBlueprints.Value(ObjectID) = Blueprint
+		    Self.mBlueprintsToSave.Value(ObjectID) = Blueprint
+		    
+		    If Self.mBlueprintsToDelete.HasKey(ObjectID) Then
+		      Self.mBlueprintsToDelete.Remove(ObjectID)
+		    End If
+		  Next
 		  
 		  If Self.AutoPublish Then
 		    Self.Publish()
