@@ -5,10 +5,9 @@ BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that
 
 $hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
 
-$database = BeaconCommon::Database();
-$results = $database->Query('SELECT MAX(build_number) AS latest_public_build FROM updates WHERE stage = 3;');
-$public_build = $results->Field('latest_public_build');
+$public_build = BeaconCommon::MinVersion();
 
+$database = BeaconCommon::Database();
 $results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
 while (!$results->EOF()) {
 	if ($results->Field('experimental')) {
@@ -203,15 +202,15 @@ BeaconTemplate::FinishStyles();
 		<ul>
 			<?php
 			
-			$results = $database->Query('(SELECT message, secondary_message, action_url, last_update FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1)) UNION (SELECT subject AS message, preview AS secondary_message, \'/blog/\' || article_slug AS action_url, last_updated AS last_update FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP) ORDER BY last_update DESC LIMIT 4;', $public_build);
+			$results = $database->Query('SELECT title, detail, url FROM news WHERE stage >= 3 ORDER BY moment DESC LIMIT 4;');
 			while (!$results->EOF()) {
 				echo '<li>';
-				echo '<span class="title">' . htmlentities($results->Field('message')) . '</span>';
-				if ($results->Field('secondary_message') != '') {
-					echo '<br>' . nl2br(htmlentities($results->Field('secondary_message')), false);
+				echo '<span class="title">' . htmlentities($results->Field('title')) . '</span>';
+				if (is_string($results->Field('detail')) && $results->Field('detail') != '') {
+					echo '<br>' . nl2br(htmlentities($results->Field('detail')), false);
 				}
-				if ($results->Field('action_url') != '') {
-					echo '<br><a href="' . htmlentities($results->Field('action_url')) . '">More Details &hellip;</a>';
+				if (is_string($results->Field('url')) && $results->Field('url') != '') {
+					echo '<br><a href="' . htmlentities($results->Field('url')) . '">Read More &hellip;</a>';
 				}
 				echo '</li>';
 				$results->MoveNext();
