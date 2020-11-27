@@ -658,12 +658,6 @@ End
 		    End Select
 		  Next
 		  
-		  If Self.mDestination.Mods <> PreviousMods Then
-		    Var Notification As New Beacon.UserNotification("The list of mods enabled for project """ + Self.mDestination.Title + """ has changed.")
-		    Notification.SecondaryMessage = "You can change the enabled mods in the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
-		    LocalData.SharedInstance.SaveNotification(Notification)
-		  End If
-		  
 		  If Self.mCallback <> Nil Then
 		    Self.mCallbackKey = CallLater.Schedule(100, WeakAddressOf TriggerCallback)
 		    Self.Hide

@@ -481,7 +481,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused Item
+		  #Pragma Unused ItemRect
 		  
 		  For Idx As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.Page(Idx)

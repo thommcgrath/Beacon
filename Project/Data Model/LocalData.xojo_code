@@ -254,7 +254,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE news (uuid TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT NOT NULL, detail TEXT, url TEXT, min_version INTEGER, max_version INTEGER, moment TEXT NOT NULL, min_os_version TEXT);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
@@ -584,18 +584,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id = ?1;", ModID)
 		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = ?1;", ModID)
 		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", ModID)
-		  Self.Commit()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DeleteNotification(Notification As Beacon.UserNotification)
-		  If Notification = Nil Then
-		    Return
-		  End If
-		  
-		  Self.BeginTransaction()
-		  Self.SQLExecute("UPDATE notifications SET deleted = 1 WHERE notification_id = ?1;", Notification.Identifier)
 		  Self.Commit()
 		End Sub
 	#tag EndMethod
@@ -1033,25 +1021,41 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetNotifications() As Beacon.UserNotification()
-		  Var Notifications() As Beacon.UserNotification
-		  Var Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
-		  While Not Results.AfterLastRow
-		    Var Notification As New Beacon.UserNotification
-		    Notification.Message = Results.Column("message").StringValue
-		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue
-		    Notification.ActionURL = Results.Column("action_url").StringValue
-		    Notification.Read = Results.Column("read").BooleanValue
-		    Notification.Timestamp = NewDateFromSQLDateTime(Results.Column("moment").StringValue)
-		    Try
-		      Notification.UserData = Beacon.ParseJSON(Results.Column("user_data").StringValue)
-		    Catch Err As RuntimeException
-		    End Try
-		    Notifications.Add(Notification)
+		Function GetNews() As NewsItem()
+		  Var OSMajor, OSMinor, OSBug As Integer
+		  #if TargetMacOS
+		    OSMajor = SystemInformationMBS.MacMajorVersion
+		    OSMinor = SystemInformationMBS.MacMinorVersion
+		    OSBug = SystemInformationMBS.MacBugFixVersion
+		  #elseif TargetWin32
+		    OSMajor = SystemInformationMBS.WinMajorVersion
+		    OSMinor = SystemInformationMBS.WinMinorVersion
+		    OSBug = SystemInformationMBS.WinBuildNumber
+		  #endif
+		  
+		  Var BuildNumber As Integer = App.BuildNumber
+		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid, title, COALESCE(detail, '') AS detail, COALESCE(url, '') AS url, min_os_version FROM news WHERE (min_version IS NULL OR min_version <= ?1) AND (max_version IS NULL OR max_version >= ?1) ORDER BY moment DESC;", BuildNumber)
+		  Var Items() As NewsItem
+		  For Each Row As DatabaseRow In Rows
+		    If Row.Column("min_os_version").Value.IsNull = False Then
+		      Var MinOSVersionParts() As String = Row.Column("min_os_version").StringValue.Split(".")
+		      Var MinOSMajor As Integer = MinOSVersionParts(0).ToInteger
+		      Var MinOSMinor As Integer = MinOSVersionParts(1).ToInteger
+		      Var MinOSBug As Integer = MinOSVersionParts(2).ToInteger
+		      Var Supported As Boolean = OSMajor > MinOSMajor Or (OSMajor = MinOSMajor And OSMinor > MinOSMinor) Or (OSMajor = MinOSMajor And OSMinor = MinOSMinor AND OSBug >= MinOSBug)
+		      If Not Supported Then
+		        Continue
+		      End If
+		    End If
 		    
-		    Results.MoveToNextRow
-		  Wend
-		  Return Notifications
+		    Var Item As New NewsItem
+		    Item.UUID = Row.Column("uuid").StringValue
+		    Item.Title = Row.Column("title").StringValue
+		    Item.Detail = Row.Column("detail").StringValue
+		    Item.URL = Row.Column("url").StringValue
+		    Items.Add(Item)
+		  Next
+		  Return Items
 		End Function
 	#tag EndMethod
 
@@ -1785,7 +1789,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        
 		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = $1;", MapID)
 		        If Results.RowCount = 1 Then
-		          Self.SQLExecute("UPDATE maps SET mod_id = $2, label = $3, ark_identifier = $4, difficulty_scale = $5, official = $6, mask = $7, sort = $8) WHERE object_id = $1);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		          Self.SQLExecute("UPDATE maps SET mod_id = $2, label = $3, ark_identifier = $4, difficulty_scale = $5, official = $6, mask = $7, sort = $8 WHERE object_id = $1;", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		        Else
 		          Self.SQLExecute("INSERT INTO maps (object_id, mod_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		        End If
@@ -2645,42 +2649,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveNotification(Notification As Beacon.UserNotification)
-		  If Notification = Nil Then
-		    Return
-		  End If
-		  
-		  Var UserDataString As String = "{}"
-		  If (Notification.UserData Is Nil) = False Then
-		    Try
-		      UserDataString = Beacon.GenerateJSON(Notification.UserData, False)
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Self.BeginTransaction()
-		  Var Results As RowSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
-		  Var Deleted As Boolean = Results.RowCount = 1 And Results.Column("deleted").BooleanValue = True
-		  Var Read As Boolean = Results.RowCount = 1 And Results.Column("read").BooleanValue
-		  If Notification.DoNotResurrect And (Deleted Or Read)  Then
-		    Self.Rollback
-		    Return
-		  End If
-		  
-		  Try
-		    Var Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
-		    Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, UserDataString)
-		    Self.Commit
-		    
-		    If Notify Then
-		      NotificationKit.Post(Self.Notification_NewAppNotification, Notification)
-		    End If
-		  Catch Err As RuntimeException
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SavePreset(Preset As Beacon.Preset)
 		  Self.SavePreset(Preset, True)
 		End Sub
@@ -3163,6 +3131,87 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UpdateNews()
+		  Var Socket As New URLConnection
+		  AddHandler Socket.ContentReceived, WeakAddressOf UpdateNews_ContentReceived
+		  Socket.RequestHeader("User-Agent") = App.UserAgent
+		  Socket.Send("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateNews_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  #Pragma Unused Sender
+		  
+		  If HTTPStatus <> 200 Then
+		    Return
+		  End If
+		  
+		  Var Parsed As Variant
+		  Try
+		    Parsed = Beacon.ParseJSON(Content)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var Items() As Dictionary
+		  Try
+		    Items = Parsed.DictionaryArrayValue
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Self.BeginTransaction()
+		  
+		  Var Changed As Boolean
+		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid FROM news")
+		  Var ItemsToRemove() As String
+		  For Each Row As DatabaseRow In Rows
+		    ItemsToRemove.Add(Row.Column("uuid").StringValue)
+		  Next
+		  
+		  For Each Item As Dictionary In Items
+		    Try
+		      Var UUID As String = Item.Value("uuid")
+		      Var Title As String = Item.Value("title")
+		      Var Detail As Variant = Item.Value("detail")
+		      Var ItemURL As Variant = Item.Value("url")
+		      Var MinVersion As Variant = Item.Value("min_version")
+		      Var MaxVersion As Variant = Item.Value("max_version")
+		      Var Moment As String = Item.Value("timestamp")
+		      Var MinOSVersion As Variant
+		      #if TargetMacOS
+		        MinOSVersion = Item.Value("mac_min_os")
+		      #elseif TargetWindows
+		        MinOSVersion = Item.Value("win_min_os")
+		      #endif
+		      
+		      Var Idx As Integer = ItemsToRemove.IndexOf(UUID)
+		      If Idx > -1 Then
+		        ItemsToRemove.RemoveAt(Idx)
+		      Else
+		        Self.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
+		        Changed = True
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Changed = Changed Or ItemsToRemove.Count > 0
+		  
+		  If ItemsToRemove.Count > 0 Then
+		    Self.SQLExecute("DELETE FROM news WHERE uuid IN ('" + ItemsToRemove.Join("','") + "');")
+		  End If
+		  
+		  Self.Commit()
+		  
+		  If Changed Then
+		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function UserID() As String
 		  Try
@@ -3343,7 +3392,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_ImportSuccess, Type = String, Dynamic = False, Default = \"Import Success", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_NewAppNotification, Type = String, Dynamic = False, Default = \"New App Notification", Scope = Public
+	#tag Constant, Name = Notification_NewsUpdated, Type = String, Dynamic = False, Default = \"News Updated", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public

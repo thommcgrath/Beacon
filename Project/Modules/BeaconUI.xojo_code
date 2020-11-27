@@ -388,6 +388,16 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Sub ShowAlert(Win As Window = Nil, Message As String, Explanation As String)
+		  If (Thread.Current Is Nil) = False Then
+		    // Can't show the alert right now
+		    Var Dict As New Dictionary
+		    Dict.Value("Window") = Win
+		    Dict.Value("Message") = Message
+		    Dict.Value("Explanation") = Explanation
+		    Call CallLater.Schedule(0, AddressOf ShowAlertLater, Dict)
+		    Return
+		  End If
+		  
 		  Try
 		    Win = Win.TrueWindow
 		  Catch Err As RuntimeException
@@ -411,6 +421,15 @@ Protected Module BeaconUI
 		  Catch Err As RuntimeException
 		    Call Dialog.ShowModal()
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowAlertLater(Argument As Variant)
+		  If Argument.IsNull = False And Argument IsA Dictionary Then
+		    Var Dict As Dictionary = Argument
+		    ShowAlert(Dict.Value("Window"), Dict.Value("Message").StringValue, Dict.Value("Explanation").StringValue)
+		  End If
 		End Sub
 	#tag EndMethod
 

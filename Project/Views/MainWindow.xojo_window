@@ -135,7 +135,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewIcon        =   0
          ViewTitle       =   "Home"
          Visible         =   True
-         Width           =   1200
+         Width           =   899
       End
       Begin BlueprintsComponent BlueprintsComponent1
          AllowAutoDeactivate=   True
@@ -238,6 +238,64 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewTitle       =   ""
          Visible         =   True
          Width           =   1200
+      End
+      Begin FadedSeparator NotificationsSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   642
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   899
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin NewsPane NotificationsPane1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   642
+         InitialParent   =   "Pages"
+         Left            =   900
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
+         Visible         =   True
+         Width           =   300
       End
    End
 End
@@ -379,14 +437,6 @@ End
 		    Var Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  #if TargetWin32
-		    Self.LibraryPane1.Dismiss()
-		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -620,7 +670,7 @@ End
 		      UpdateItem.AlwaysUseActiveColor = True
 		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
 		      
-		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
+		      Var Idx As Integer = Self.NavBar.IndexOf("NavUpdate")
 		      If Idx > -1 Then
 		        Self.NavBar.Insert(Idx, UpdateItem)
 		      Else

@@ -2499,6 +2499,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    Me.Item(Idx).Toggled = (Me.Item(Idx) = Item)
 		  Next

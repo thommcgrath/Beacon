@@ -563,6 +563,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListVersions(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Self.mVersionProgressKey.IsEmpty = False Then
 		    CallLater.Cancel(Self.mVersionProgressKey)
 		    Self.mVersionProgressKey = ""

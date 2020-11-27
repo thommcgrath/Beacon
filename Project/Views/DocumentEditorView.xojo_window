@@ -846,13 +846,8 @@ End
 		    Reason = Reason.GuessEncoding
 		  End If
 		  
-		  Var Notification As New Beacon.UserNotification("Uh oh, the project " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
-		  Notification.SecondaryMessage = Reason
-		  Notification.UserData = New Dictionary
-		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
-		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL(Beacon.DocumentURL.URLTypes.Unmodified) // To force convert to text
-		  Notification.UserData.Value("Reason") = Reason
-		  LocalData.SharedInstance.SaveNotification(Notification)
+		  // This has been made thread safe
+		  Self.ShowAlert("Uh oh, the project " + Sender.Name + " did not save!", Reason)
 		End Sub
 	#tag EndMethod
 
@@ -1553,9 +1548,9 @@ End
 		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
 		      SharingDialog.Present(Self, Self.Document)
 		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.ShowAlert("project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
+		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
-		      Self.ShowAlert("project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
+		      Self.ShowAlert("Project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
@@ -1606,9 +1601,9 @@ End
 		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
 		      SharingDialog.Present(Self, Self.Document)
 		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.ShowAlert("project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
+		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
-		      Self.ShowAlert("project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
+		      Self.ShowAlert("Project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()

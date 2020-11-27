@@ -247,12 +247,6 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveNotification(Notification As Beacon.UserNotification)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SavePreset(Preset As Beacon.Preset)
 		  
 		End Sub

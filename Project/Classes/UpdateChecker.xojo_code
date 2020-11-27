@@ -123,16 +123,8 @@ Protected Class UpdateChecker
 		  End Try
 		  
 		  If Dict.HasKey("notices") Then
-		    Var Notices() As Variant = Dict.Value("notices")
+		    // Not needed anymore
 		    Dict.Remove("notices")
-		    
-		    For Each Notice As Dictionary In Notices
-		      Var Notification As New Beacon.UserNotification(Notice.Value("message"))
-		      Notification.SecondaryMessage = Notice.Value("secondary_message")
-		      Notification.ActionURL = Notice.Value("action_url")
-		      Notification.DoNotResurrect = True
-		      LocalData.SharedInstance.SaveNotification(Notification)
-		    Next
 		  End If
 		  
 		  If Dict.KeyCount = 0 Then

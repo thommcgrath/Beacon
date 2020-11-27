@@ -180,8 +180,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
-		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_NewsletterPrompt)
-		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_GettingStarted)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.NextLaunchQueueTask
 		  
@@ -847,38 +845,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub LaunchQueue_CleanupConfigBackups()
 		  Self.CleanupConfigBackups()
 		  Self.NextLaunchQueueTask
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LaunchQueue_GettingStarted()
-		  Var Notification As New Beacon.UserNotification("How about a nice tutorial video?")
-		  Notification.SecondaryMessage = "Click here to watch a video for first-time users of Beacon, or just to get a better understanding of how loot works."
-		  Notification.ActionURL = Beacon.WebURL("/videos/introduction_to_loot_drops_with")
-		  Notification.DoNotResurrect = True
-		  
-		  LocalData.SharedInstance.SaveNotification(Notification)
-		  
-		  Self.NextLaunchQueueTask
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LaunchQueue_NewsletterPrompt()
-		  If Preferences.HasShownSubscribeDialog Then
-		    Self.NextLaunchQueueTask
-		    Return
-		  End If
-		  
-		  Var Notification As New Beacon.UserNotification("Welcome to Beacon!")
-		  Notification.SecondaryMessage = "Beacon has an announcement list used to inform users of important updates and changes. Click here to sign up."
-		  Notification.ActionURL = "beacon://action/shownewsletterprompt"
-		  Notification.DoNotResurrect = True
-		  
-		  LocalData.SharedInstance.SaveNotification(Notification)
-		  Preferences.HasShownSubscribeDialog = True
-		  
-		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 
