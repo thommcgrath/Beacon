@@ -531,8 +531,6 @@ End
 		      Return
 		    End If
 		    
-		    Var Blueprint As Beacon.Blueprint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		    
 		    If Self.Pages.SelectedPanelIndex <> Self.PageEditor Then
 		      Self.Pages.SelectedPanelIndex = Self.PageEditor
 		    End If

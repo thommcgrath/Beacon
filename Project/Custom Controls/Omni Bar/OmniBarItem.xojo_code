@@ -142,7 +142,7 @@ Implements ObservationKit.Observable
 		      BackColor = Colors.ToggledButtonInactiveColor
 		      ShadowColor = Colors.TextShadowColor
 		    End If
-		  ElseIf Highlighted And Self.AlwaysUseActiveColor Then
+		  ElseIf Highlighted And (Self.AlwaysUseActiveColor Or MouseHover) Then
 		    ForeColor = Self.ActiveColorToColor(Self.ActiveColor, Colors, False)
 		    ShadowColor = Colors.TextShadowColor
 		  Else

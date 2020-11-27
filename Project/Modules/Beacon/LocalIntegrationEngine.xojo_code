@@ -3,6 +3,9 @@ Protected Class LocalIntegrationEngine
 Inherits Beacon.IntegrationEngine
 	#tag Event
 		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
+		  #Pragma Unused FailureMode
+		  #Pragma Unused Profile
+		  
 		  Var File As FolderItem
 		  Select Case Transfer.Filename
 		  Case "Game.ini"

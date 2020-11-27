@@ -588,6 +588,8 @@ End
 #tag Events Watcher
 	#tag Event
 		Sub ClipboardChanged(Content As String)
+		  #Pragma Unused Content
+		  
 		  If (Self.ModToolbar.Item("ImportClipboard") Is Nil) = False Then
 		    Self.ModToolbar.Item("ImportClipboard").Enabled = Self.ClipboardHasCodes
 		  End If

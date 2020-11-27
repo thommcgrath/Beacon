@@ -126,6 +126,8 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Event
 		Sub DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
+		  
 		  Var Path As String
 		  If Transfer.Path.IsEmpty Then
 		    Path = Self.BaseURL

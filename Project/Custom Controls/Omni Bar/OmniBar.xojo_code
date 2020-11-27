@@ -524,7 +524,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMouseDownIndex As Integer
+		Private mMouseDownIndex As Integer = -1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -532,7 +532,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMouseOverIndex As Integer
+		Private mMouseOverIndex As Integer = -1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

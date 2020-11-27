@@ -1,7 +1,7 @@
 #tag Module
 Protected Module Maps
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function Aberration() As Beacon.Map
+		Protected Function Aberration() As Beacon.Map
 		  Return Beacon.Data.GetMap("Aberration_P")
 		End Function
 	#tag EndMethod
@@ -13,13 +13,13 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function CrystalIsles() As Beacon.Map
+		Protected Function CrystalIsles() As Beacon.Map
 		  Return Beacon.Data.GetMap("CrystalIsles")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function Extinction() As Beacon.Map
+		Protected Function Extinction() As Beacon.Map
 		  Return Beacon.Data.GetMap("Extinction")
 		End Function
 	#tag EndMethod
@@ -31,7 +31,7 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function Genesis() As Beacon.Map
+		Protected Function Genesis() As Beacon.Map
 		  Return Beacon.Data.GetMap("Genesis")
 		End Function
 	#tag EndMethod
@@ -48,25 +48,25 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function Ragnarok() As Beacon.Map
+		Protected Function Ragnarok() As Beacon.Map
 		  Return Beacon.Data.GetMap("Ragnarok")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function ScorchedEarth() As Beacon.Map
+		Protected Function ScorchedEarth() As Beacon.Map
 		  Return Beacon.Data.GetMap("ScorchedEarth_P")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function TheCenter() As Beacon.Map
+		Protected Function TheCenter() As Beacon.Map
 		  Return Beacon.Data.GetMap("TheCenter")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function TheIsland() As Beacon.Map
+		Protected Function TheIsland() As Beacon.Map
 		  Return Beacon.Data.GetMap("TheIsland")
 		End Function
 	#tag EndMethod
@@ -81,7 +81,7 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Function Valguero() As Beacon.Map
+		Protected Function Valguero() As Beacon.Map
 		  Return Beacon.Data.GetMap("Valguero_P")
 		End Function
 	#tag EndMethod

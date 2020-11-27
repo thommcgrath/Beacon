@@ -296,6 +296,8 @@ End
 		  // What a stupid event this is. It doesn't even tell us *what* changed.
 		  // Rows have not been moved yet. Return true to prevent moving.
 		  
+		  #Pragma Unused ParentRow
+		  
 		  If Me.SelectedRowIndex = Me.LastRowIndex Or NewPosition = Me.LastRowIndex Then
 		    // Can't move the base row
 		    Return True

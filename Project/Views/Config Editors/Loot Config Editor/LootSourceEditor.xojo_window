@@ -715,6 +715,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
+		  #Pragma Unused Remember
+		  
 		  Var ListWidth, EditorWidth As Integer
 		  If Self.Width <= Self.MinEditorWidth Then
 		    ListWidth = Self.ListMinWidth
