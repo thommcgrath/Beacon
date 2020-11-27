@@ -380,6 +380,7 @@ Begin Window EditorWindow
       Top             =   299
       Transparent     =   True
       Underline       =   False
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   720
@@ -957,6 +958,8 @@ End
 		  InsertData.Value("preview") = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
 		  InsertData.Value("min_mac_version") = "'10.11.0'"
 		  InsertData.Value("min_win_version") = "'6.1.7601'"
+		  InsertData.Value("delta_version") = If(Self.mBuildNumber >= 10500000, 5, 4)
+		  InsertData.Value("published") = DateTime.Now.SQLDateTime
 		  
 		  If Self.mMacFile <> Nil And Self.mMacFile.Exists And Self.mMacSignature <> "" And Self.mMacPath <> "" Then
 		    InsertData.Value("mac_url") = "'" + ReplaceAll(Root + "/" + Self.mMacPath, "'", "''") + "'"
