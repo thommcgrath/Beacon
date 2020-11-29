@@ -50,6 +50,8 @@ Begin ConfigEditor EngramControlConfigEditor
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -80,6 +82,8 @@ Begin ConfigEditor EngramControlConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -115,6 +119,8 @@ Begin ConfigEditor EngramControlConfigEditor
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -143,6 +149,8 @@ Begin ConfigEditor EngramControlConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -173,6 +181,8 @@ Begin ConfigEditor EngramControlConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0

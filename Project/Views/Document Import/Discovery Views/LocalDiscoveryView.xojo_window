@@ -227,6 +227,8 @@ Begin DiscoveryView LocalDiscoveryView
       LockTop         =   True
       RequiresSelection=   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -255,6 +257,8 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0

@@ -604,8 +604,6 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
-		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Or Self.List.RowTagAt(I) = Nil Then
 		      Continue

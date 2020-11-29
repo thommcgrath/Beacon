@@ -106,6 +106,8 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0

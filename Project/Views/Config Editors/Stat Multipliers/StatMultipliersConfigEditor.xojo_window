@@ -45,7 +45,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   1122
       Begin UITweaks.ResizedLabel PlayerBaseLabel
@@ -2822,6 +2822,8 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -2853,6 +2855,8 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       RequiresSelection=   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0

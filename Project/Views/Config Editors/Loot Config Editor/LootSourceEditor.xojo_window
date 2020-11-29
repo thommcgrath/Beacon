@@ -110,6 +110,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Resizer         =   1
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -140,7 +142,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin ItemSetEditor Editor
@@ -191,6 +193,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -221,6 +225,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -250,6 +256,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -307,6 +315,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -366,6 +376,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0

@@ -48,35 +48,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Value           =   0
       Visible         =   True
       Width           =   627
-      Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "There was an error loading the editor"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   478
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Left            =   231
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   50
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   627
-      End
       Begin Canvas OmniNoticeBanner
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -104,6 +75,37 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Visible         =   False
          Width           =   627
       End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "There was an error loading the editor"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   478
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   231
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   50
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   627
+      End
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -123,6 +125,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -158,6 +162,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -189,6 +195,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -227,6 +235,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -258,6 +268,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -288,7 +300,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      ScrollActive    =   False
       SelectedRowIndex=   0
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -317,6 +328,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -345,6 +358,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -1666,8 +1681,9 @@ End
 #tag EndEvents
 #tag Events ConfigSetPicker
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused SafeArea
 		  
 		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet
 		  Var CaptionBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)

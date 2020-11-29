@@ -50,6 +50,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Resizer         =   1
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -78,6 +80,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -108,6 +112,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -196,6 +202,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -229,35 +237,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Value           =   0
       Visible         =   True
       Width           =   399
-      Begin LogoFillCanvas FillCanvas
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "No Selection"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   396
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   399
-      End
       Begin CraftingCostEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -287,6 +266,37 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Visible         =   True
          Width           =   399
       End
+      Begin LogoFillCanvas FillCanvas
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   396
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   399
+      End
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -306,6 +316,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   3

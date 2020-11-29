@@ -250,146 +250,6 @@ Begin BeaconContainer ModDetailView
          Visible         =   True
          Width           =   340
       End
-      Begin BeaconToolbar Header
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         BorderBottom    =   False
-         BorderLeft      =   False
-         BorderRight     =   False
-         BorderTop       =   False
-         Caption         =   "Mod Detail"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   40
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Resizer         =   ""
-         ResizerEnabled  =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   864
-      End
-      Begin BeaconToolbar NoSelectionHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         BorderBottom    =   False
-         BorderLeft      =   False
-         BorderRight     =   False
-         BorderTop       =   False
-         Caption         =   "No Mod Selected"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   41
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Resizer         =   ""
-         ResizerEnabled  =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   864
-      End
-      Begin BeaconToolbar LoadingHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         BorderBottom    =   False
-         BorderLeft      =   False
-         BorderRight     =   False
-         BorderTop       =   False
-         Caption         =   "Mod Detail"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   41
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Resizer         =   ""
-         ResizerEnabled  =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   864
-      End
-      Begin BeaconToolbar ConfirmationHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         BorderBottom    =   False
-         BorderLeft      =   False
-         BorderRight     =   False
-         BorderTop       =   False
-         Caption         =   "Untitled"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   41
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Resizer         =   ""
-         ResizerEnabled  =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   864
-      End
       Begin BeaconListbox EngramList
          AllowInfiniteScroll=   False
          AutoDeactivate  =   True
@@ -450,6 +310,154 @@ Begin BeaconContainer ModDetailView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin BeaconToolbar Header
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         BorderBottom    =   False
+         BorderLeft      =   False
+         BorderRight     =   False
+         BorderTop       =   False
+         Caption         =   "Mod Detail"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   40
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   ""
+         ResizerEnabled  =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   864
+      End
+      Begin BeaconToolbar NoSelectionHeader
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         BorderBottom    =   False
+         BorderLeft      =   False
+         BorderRight     =   False
+         BorderTop       =   False
+         Caption         =   "No Mod Selected"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   ""
+         ResizerEnabled  =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   864
+      End
+      Begin BeaconToolbar LoadingHeader
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         BorderBottom    =   False
+         BorderLeft      =   False
+         BorderRight     =   False
+         BorderTop       =   False
+         Caption         =   "Mod Detail"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   ""
+         ResizerEnabled  =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   864
+      End
+      Begin BeaconToolbar ConfirmationHeader
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         BorderBottom    =   False
+         BorderLeft      =   False
+         BorderRight     =   False
+         BorderTop       =   False
+         Caption         =   "Untitled"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   ""
+         ResizerEnabled  =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   864
+      End
    End
    Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
@@ -475,6 +483,8 @@ Begin BeaconContainer ModDetailView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -940,47 +950,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Engram As New BeaconAPI.Engram
-		    Engram.ModID = Self.CurrentMod.ModID
-		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
-		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
-		    Self.EngramSet.Add(Engram)
-		  Case "RemoveButton"
-		    For I As Integer = EngramList.RowCount -1 DownTo 0
-		      If EngramList.Selected(I) Then
-		        Var Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
-		        Self.EngramSet.Remove(Engram)
-		        EngramList.RemoveRowAt(I)
-		      End If
-		    Next
-		    Me.PublishButton.Enabled = Self.EngramSet.Modified
-		  Case "PublishButton"
-		    Self.Publish()
-		  Case "ImportFileButton"
-		    Self.ShowFileImport()
-		  Case "ImportURLButton"
-		    Self.ShowURLImport()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
-		  
-		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
-		  
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
@@ -1033,6 +1002,47 @@ End
 		    Me.ColumnAlignmentAt(I) = Listbox.Alignments.Center
 		  Next
 		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Engram As New BeaconAPI.Engram
+		    Engram.ModID = Self.CurrentMod.ModID
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
+		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
+		    Self.EngramSet.Add(Engram)
+		  Case "RemoveButton"
+		    For I As Integer = EngramList.RowCount -1 DownTo 0
+		      If EngramList.Selected(I) Then
+		        Var Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
+		        Self.EngramSet.Remove(Engram)
+		        EngramList.RemoveRowAt(I)
+		      End If
+		    Next
+		    Me.PublishButton.Enabled = Self.EngramSet.Modified
+		  Case "PublishButton"
+		    Self.Publish()
+		  Case "ImportFileButton"
+		    Self.ShowFileImport()
+		  Case "ImportURLButton"
+		    Self.ShowURLImport()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
+		  
+		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
+		  
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

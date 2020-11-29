@@ -88,36 +88,6 @@ Begin BeaconDialog EntryEditor
          Visible         =   True
          Width           =   340
       End
-      Begin TagPicker Picker
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Border          =   15
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   67
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         Spec            =   ""
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Top             =   90
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   340
-      End
       Begin DelayedSearchField FilterField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
@@ -206,6 +176,38 @@ Begin BeaconDialog EntryEditor
          Width           =   340
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin TagPicker Picker
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Border          =   15
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   67
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         Spec            =   ""
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Top             =   90
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -704,29 +706,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Picker
-	#tag Event
-		Sub TagsChanged()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
-		  Self.UpdateFilter
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldAdjustHeight(Delta As Integer)
-		  If Me = Nil Then
-		    Return
-		  End If
-		  
-		  Me.Height = Me.Height + Delta
-		  Self.EngramList.Height = Self.EngramList.Height - Delta
-		  Self.EngramList.Top = Self.EngramList.Top + Delta
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events FilterField
 	#tag Event
 		Sub TextChanged()
@@ -818,6 +797,29 @@ End
 		  
 		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Picker
+	#tag Event
+		Sub TagsChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
+		  Self.UpdateFilter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
+		  Me.Height = Me.Height + Delta
+		  Self.EngramList.Height = Self.EngramList.Height - Delta
+		  Self.EngramList.Top = Self.EngramList.Top + Delta
 		End Sub
 	#tag EndEvent
 #tag EndEvents

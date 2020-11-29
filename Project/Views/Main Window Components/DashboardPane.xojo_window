@@ -107,6 +107,8 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -240,6 +242,8 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -441,9 +445,10 @@ End
 #tag EndEvents
 #tag Events LogoCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  G.DrawPicture(LogoColor, 0, 0)
 		End Sub
@@ -470,9 +475,10 @@ End
 #tag EndEvents
 #tag Events TitleCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  Var TitleIcon As Picture
 		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then

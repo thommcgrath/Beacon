@@ -32,6 +32,7 @@ Begin BeaconPagedSubview BlueprintsComponent
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -45,6 +46,8 @@ Begin BeaconPagedSubview BlueprintsComponent
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -97,6 +100,9 @@ Begin BeaconPagedSubview BlueprintsComponent
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1

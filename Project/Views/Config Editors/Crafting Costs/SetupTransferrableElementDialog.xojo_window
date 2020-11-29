@@ -650,12 +650,4 @@ End
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mConfig"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
 #tag EndViewBehavior

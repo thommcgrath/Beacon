@@ -50,6 +50,8 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Resizer         =   0
       ResizerEnabled  =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -78,6 +80,8 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0

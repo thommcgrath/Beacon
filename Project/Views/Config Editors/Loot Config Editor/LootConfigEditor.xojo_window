@@ -50,6 +50,8 @@ Begin ConfigEditor LootConfigEditor
       Resizer         =   1
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -78,6 +80,8 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -168,7 +172,7 @@ Begin ConfigEditor LootConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   451
       Begin LootSourceEditor Editor
@@ -219,6 +223,8 @@ Begin ConfigEditor LootConfigEditor
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -249,6 +255,8 @@ Begin ConfigEditor LootConfigEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -278,6 +286,8 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -308,6 +318,8 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0

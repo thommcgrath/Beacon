@@ -332,6 +332,8 @@ Begin ServerViewContainer MultiServerView
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -360,6 +362,8 @@ Begin ServerViewContainer MultiServerView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   9
       TabPanelIndex   =   0

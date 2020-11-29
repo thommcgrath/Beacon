@@ -50,6 +50,8 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -78,6 +80,8 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   True
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -128,19 +132,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PaintInto(G As Graphics, VerticalOffset As Integer)
+		Private Sub PaintInto(G As Graphics, VerticalOffset As Integer, SafeArea As Rect)
 		  Const CellPadding = 10
 		  
 		  G.FontName = "System"
 		  G.FontUnit = FontUnits.Point
 		  G.FontSize = 0
 		  
-		  Var CellWidth As Double = G.Width - (CellPadding * 2)
+		  Var CellWidth As Double = SafeArea.Width - (CellPadding * 2)
 		  Var Pos As Double = VerticalOffset
 		  Var ContentHeight As Integer
-		  Self.mNewsRects.ResizeTo(Self.mNews.LastRowIndex)
-		  For I As Integer = 0 To Self.mNews.LastRowIndex
-		    Var DrawBottomBorder As Boolean = I < Self.mNews.LastRowIndex
+		  Self.mNewsRects.ResizeTo(Self.mNews.LastIndex)
+		  For I As Integer = 0 To Self.mNews.LastIndex
+		    Var DrawBottomBorder As Boolean = I < Self.mNews.LastIndex
 		    
 		    Var Message As String = Self.mNews(I).Title
 		    Var MessageTop As Double = Pos + CellPadding
@@ -197,22 +201,18 @@ End
 		    End If
 		  Next
 		  
-		  Self.mContentOverflow = Max(ContentHeight - G.Height, 0)
+		  Self.DrawCanvas.ContentHeight = ContentHeight
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshNews()
 		  Self.mNews = LocalData.SharedInstance.GetNews
-		  Self.mNewsRects.ResizeTo(Self.mNews.LastRowIndex)
+		  Self.mNewsRects.ResizeTo(Self.mNews.LastIndex)
 		  Self.DrawCanvas.Invalidate
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mContentOverflow As Integer
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDownIndex As Integer = -1
@@ -234,22 +234,20 @@ End
 		Private mPressed As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mScrollPosition As Integer
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
 #tag Events DrawCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
-		  If Self.mScrollPosition > 0 Then
-		    Self.PaintInto(G.Clip(0, 1, G.Width, G.Height - 1), (Self.mScrollPosition * -1) - 1)
+		  If Me.ScrollPosition > 0 Then
+		    Self.PaintInto(G.Clip(0, 1, G.Width, G.Height - 1), (Me.ScrollPosition * -1) - 1, SafeArea)
 		    
-		    Var Ratio As Double = Min(Self.mScrollPosition / 60, 1.0)
+		    Var Ratio As Double = Min(Me.ScrollPosition / 60, 1.0)
 		    
 		    Var Brush As New ShadowBrush
 		    Brush.Offset = New Point(0, 3 * Ratio)
@@ -258,27 +256,15 @@ End
 		    G.ShadowBrush = Brush
 		    G.DrawingColor = SystemColors.SeparatorColor
 		    G.FillRectangle(-10, 0 - Me.Top, G.Width + 20, Me.Top + 1) // Draw it larger so the shadow has more effect
+		    G.ShadowBrush = Nil
 		  Else
-		    Self.PaintInto(G, 0)
+		    Self.PaintInto(G, 0, SafeArea)
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Double, PixelsY As Double, WheelData As BeaconUI.ScrollEvent) As Boolean
-		  #Pragma Unused MouseX
-		  #Pragma Unused MouseY
-		  #Pragma Unused PixelsX
-		  #Pragma Unused WheelData
-		  
-		  If PixelsY <> 0 Then
-		    Self.mScrollPosition = Min(Max(Self.mScrollPosition + PixelsY, 0), Self.mContentOverflow)
-		    Me.Invalidate
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  For I As Integer = 0 To Self.mNewsRects.LastRowIndex
+		  For I As Integer = 0 To Self.mNewsRects.LastIndex
 		    Try
 		      If Self.mNewsRects(I).Contains(X, Y) Then
 		        If Self.mNews(I).URL.IsEmpty = False Then
@@ -330,7 +316,7 @@ End
 		  End If
 		  
 		  Try
-		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNews.LastRowIndex And Self.mDownRect.Contains(X, Y) Then
+		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNews.LastIndex And Self.mDownRect.Contains(X, Y) Then
 		      Var URL As String = Self.mNews(Self.mDownIndex).URL
 		      If Beacon.IsBeaconURL(URL) Then
 		        Call App.HandleURL(URL, True)

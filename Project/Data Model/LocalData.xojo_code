@@ -3143,6 +3143,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub UpdateNews_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
+		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
 		    Return

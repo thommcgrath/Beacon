@@ -50,6 +50,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -78,6 +80,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -129,6 +133,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -164,6 +170,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Resizer         =   0
          ResizerEnabled  =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -253,6 +261,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0

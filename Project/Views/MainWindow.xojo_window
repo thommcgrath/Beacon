@@ -48,6 +48,8 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -239,33 +241,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Visible         =   True
          Width           =   1200
       End
-      Begin FadedSeparator NotificationsSeparator
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         Enabled         =   True
-         Height          =   642
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   899
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   38
-         Transparent     =   True
-         Visible         =   True
-         Width           =   1
-      End
       Begin NewsPane NotificationsPane1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -296,6 +271,36 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewTitle       =   "Untitled"
          Visible         =   True
          Width           =   300
+      End
+      Begin FadedSeparator NotificationsSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   642
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   899
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   1
       End
    End
 End

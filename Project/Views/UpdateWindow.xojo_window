@@ -141,34 +141,6 @@ Begin BeaconWindow UpdateWindow
          Visible         =   True
          Width           =   80
       End
-      Begin ControlCanvas ResultsIconCanvas
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   64
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   20
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   64
-      End
       Begin Label ResultsMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
@@ -426,6 +398,36 @@ Begin BeaconWindow UpdateWindow
          Visible         =   True
          Width           =   484
       End
+      Begin ControlCanvas ResultsIconCanvas
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   64
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   20
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   64
+      End
    End
    Begin UpdateChecker Checker
       Index           =   -2147483648
@@ -578,16 +580,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ResultsIconCanvas
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
-		  #Pragma Unused areas
-		  #Pragma Unused Highlighted
-		  
-		  G.DrawPicture(IconApp, 0, 0)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ResultsActionButton
 	#tag Event
 		Sub Action()
@@ -639,6 +631,17 @@ End
 	#tag Event
 		Sub Action()
 		  ShowURL(Self.mNotesURL)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ResultsIconCanvas
+	#tag Event
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		  #Pragma Unused areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
+		  
+		  G.DrawPicture(IconApp, 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

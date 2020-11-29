@@ -68,6 +68,8 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   14
       TabPanelIndex   =   0

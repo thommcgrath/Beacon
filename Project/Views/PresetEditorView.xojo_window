@@ -50,6 +50,8 @@ Begin BeaconSubview PresetEditorView
       Resizer         =   ""
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -78,6 +80,8 @@ Begin BeaconSubview PresetEditorView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -109,6 +113,8 @@ Begin BeaconSubview PresetEditorView
       LockTop         =   True
       RequiresSelection=   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0

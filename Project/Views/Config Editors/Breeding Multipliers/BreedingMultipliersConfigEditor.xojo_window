@@ -1093,6 +1093,8 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Resizer         =   0
       ResizerEnabled  =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0

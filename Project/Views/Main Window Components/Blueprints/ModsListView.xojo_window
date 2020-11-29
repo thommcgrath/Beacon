@@ -70,6 +70,7 @@ Begin BeaconSubview ModsListView
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -79,7 +80,9 @@ Begin BeaconSubview ModsListView
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   494
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin OmniBar ModsToolbar
@@ -89,6 +92,7 @@ Begin BeaconSubview ModsListView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648
@@ -102,6 +106,8 @@ Begin BeaconSubview ModsListView
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0

@@ -1,11 +1,26 @@
 #tag Class
 Protected Class ControlCanvas
 Inherits Canvas
+Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  If Not Self.mPainted Then
 		    Return False
 		  End If
+		  
+		  If Self.ScrollingEnabled And X >= Self.Width - Self.ScrollTrackWidth Then
+		    Var ThumbRect As Rect = Self.ScrollThumbRect
+		    If ThumbRect.Contains(X, Y) Then
+		      Self.mMouseDownThumbPoint = New Point(X, Y)
+		    Else
+		      Self.mMouseDownThumbPoint = Nil
+		    End If
+		    
+		    Self.mMouseDownInTrack = True
+		    Return True
+		  End If
+		  
+		  Self.mMouseDownInTrack = False
 		  
 		  Return MouseDown(X, Y)
 		End Function
@@ -13,7 +28,7 @@ Inherits Canvas
 
 	#tag Event
 		Sub MouseEnter()
-		  If Not Self.mPainted Then
+		  If Self.mPainted = False Or Self.mMouseDownInTrack Then
 		    Return
 		  End If
 		  
@@ -23,9 +38,11 @@ Inherits Canvas
 
 	#tag Event
 		Sub MouseExit()
-		  If Not Self.mPainted Then
+		  If Self.mPainted = False Or Self.mMouseDownInTrack Then
 		    Return
 		  End If
+		  
+		  Self.ScrollActive = False
 		  
 		  RaiseEvent MouseExit
 		End Sub
@@ -33,9 +50,12 @@ Inherits Canvas
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  If Not Self.mPainted Then
+		  If Self.mPainted = False Or Self.mMouseDownInTrack Then
 		    Return
 		  End If
+		  
+		  Var TrackRect As Rect = Self.ScrollTrackRect
+		  Self.ScrollActive = TrackRect.Contains(X, Y)
 		  
 		  RaiseEvent MouseMove(X, Y)
 		End Sub
@@ -48,7 +68,13 @@ Inherits Canvas
 		  End If
 		  
 		  Var WheelData As New BeaconUI.ScrollEvent(Self.ScrollSpeed, DeltaX, DeltaY)
-		  Return MouseWheel(X, Y, WheelData.ScrollX, WheelData.ScrollY, WheelData)
+		  
+		  If IsEventImplemented("MouseWheel") Then
+		    Return RaiseEvent MouseWheel(X, Y, WheelData.ScrollX, WheelData.ScrollY, WheelData)
+		  ElseIf Self.ScrollingEnabled Then
+		    Self.ScrollPosition = Self.mScrollOffset + WheelData.ScrollY
+		    Return True
+		  End If
 		End Function
 	#tag EndEvent
 
@@ -68,22 +94,59 @@ Inherits Canvas
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  If Not Self.Transparent Then
-		    Var TempColor As Color = G.DrawingColor
-		    If Self.Window.HasBackgroundColor Then
-		      G.DrawingColor = Self.Window.BackgroundColor
+		  Var WithScroller As Boolean = Self.ScrollingEnabled And Self.ScrollMaximum > 0
+		  Var NeedsRedraw As Boolean = True
+		  While NeedsRedraw
+		    Var SafeArea As Rect
+		    If WithScroller Then
+		      SafeArea = New Rect(0, 0, G.Width - Self.ScrollTrackWidth, G.Height)
 		    Else
-		      G.DrawingColor = SystemColors.WindowBackgroundColor
+		      SafeArea = New Rect(0, 0, G.Width, G.Height)
 		    End If
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		    G.DrawingColor = TempColor
+		    
+		    If Self.Transparent Then
+		      G.ClearRectangle(0, 0, G.Width, G.Height)
+		    Else
+		      Var TempColor As Color = G.DrawingColor
+		      If Self.Window.HasBackgroundColor Then
+		        G.DrawingColor = Self.Window.BackgroundColor
+		      Else
+		        G.DrawingColor = SystemColors.WindowBackgroundColor
+		      End If
+		      G.FillRectangle(0, 0, G.Width, G.Height)
+		      G.DrawingColor = TempColor
+		    End If
+		    
+		    RaiseEvent Paint(g, areas, Self.Highlighted, SafeArea)
+		    
+		    // If the paint changed the content height, we need to redraw
+		    Var NewWithScroller As Boolean = Self.ScrollingEnabled And Self.ScrollMaximum > 0
+		    NeedsRedraw = WithScroller <> NewWithScroller
+		    WithScroller = NewWithScroller
+		  Wend
+		  
+		  If WithScroller Then
+		    Var ThumbRect As Rect = Self.ScrollThumbRect()
+		    G.DrawingColor = SystemColors.SecondaryLabelColor.AtOpacity(Self.mScrollOpacity)
+		    G.FillRoundRectangle(NearestMultiple(ThumbRect.Left, G.ScaleX), NearestMultiple(ThumbRect.Top, G.ScaleY), NearestMultiple(ThumbRect.Width, G.ScaleX), NearestMultiple(ThumbRect.Height, G.ScaleY), Self.ScrollThumbWidth, Self.ScrollThumbWidth)
 		  End If
 		  
-		  RaiseEvent Paint(g, areas, Self.Highlighted)
 		  Self.mPainted = True
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As String, Value As Double)
+		  // Part of the AnimationKit.ValueAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "Scroll Opacity"
+		    Self.mScrollOpacity = Value
+		    Self.Invalidate(Self.Width - ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), 0, ((Self.ScrollThumbPadding * 2) + Self.ScrollThumbWidth), Self.Height)
+		  End Select
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Highlighted() As Boolean
@@ -119,6 +182,12 @@ Inherits Canvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function LimitScrollOffset(Offset As Double, ContentHeight As Integer, ViewportHeight As Integer) As Double
+		  Return Min(Max(Offset, 0), Max(ContentHeight - ViewportHeight, 0))
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Refresh(eraseBackground As Boolean = True)
 		  #if XojoVersion >= 2018.01
@@ -133,7 +202,6 @@ Inherits Canvas
 	#tag Method, Flags = &h0
 		Sub Refresh(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
 		  // Calling the overridden superclass method.
-		  Super.Refresh(x, y, width, height, eraseBackground)
 		  #if XojoVersion >= 2020.01
 		    Super.Refresh(X, Y, Width, Height, EraseBackground)
 		  #elseif XojoVersion >= 2018.01
@@ -143,6 +211,91 @@ Inherits Canvas
 		    Super.RefreshRect(X, Y, Width, Height, Self.EraseBackground)
 		  #endif
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ScrollMaximum() As Double
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Return Max(Self.mContentHeight - Self.Height, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ScrollMaximum(Assigns Value As Double)
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  #Pragma Unused Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ScrollMinimum() As Double
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Return 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ScrollMinimum(Assigns Value As Double)
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  #Pragma Unused Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ScrollPosition() As Double
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Return Self.LimitScrollOffset(Self.mScrollOffset, Self.mContentHeight, Self.Height)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ScrollPosition(Assigns Value As Double)
+		  // Part of the AnimationKit.Scrollable interface.
+		  
+		  Value = Self.LimitScrollOffset(Value, Self.mContentHeight, Self.Height)
+		  If Self.mScrollOffset <> Value Then
+		    Self.mScrollOffset = Value
+		    Self.Invalidate
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ScrollThumbRect() As Rect
+		  If Self.ScrollingEnabled = False Or Self.ScrollMaximum = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var ScrollPercent As Double
+		  If Self.ScrollMaximum > 0 Then
+		    ScrollPercent = Min(Max(Self.ScrollPosition / Self.ScrollMaximum, 0.0), 1.0)
+		  End If
+		  
+		  Var Ratio As Double = Min(Self.Height / Self.mContentHeight, 1.0)
+		  Var TrackArea As Integer = Self.Height - (ScrollThumbPadding * 2)
+		  Var ScrollThumbHeight As Double = TrackArea * Ratio
+		  Var ScrollThumbTop As Double = Self.ScrollThumbPadding + ((TrackArea - ScrollThumbHeight) * ScrollPercent)
+		  
+		  Return New Rect(Self.Width - (Self.ScrollThumbWidth + Self.ScrollThumbPadding), ScrollThumbTop, Self.ScrollThumbWidth, ScrollThumbHeight)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ScrollTrackRect() As Rect
+		  Var TrackWidth As Double = Self.ScrollTrackWidth
+		  Return New Rect(Self.Width - TrackWidth, 0, TrackWidth, Self.Height)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ScrollTrackWidth() As Double
+		  Return Self.ScrollThumbWidth + (Self.ScrollThumbPadding * 2)
+		End Function
 	#tag EndMethod
 
 
@@ -171,92 +324,144 @@ Inherits Canvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		Event Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mScrollingEnabled Then
+			    Return Max(Self.mContentHeight, Self.Height)
+			  Else
+			    Return Self.Height
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mContentHeight = Value Then
+			    Return
+			  End If
+			  
+			  Self.mContentHeight = Value
+			  Self.Invalidate()
+			End Set
+		#tag EndSetter
+		ContentHeight As Integer
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mContentHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseDownInTrack As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseDownThumbPoint As Point
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mPainted As Boolean
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollActive As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollFadeAnimation As AnimationKit.ValueTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollingEnabled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollOffset As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollOpacity As Double = 0.25
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollOpacityKey As String
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mScrollActive
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mScrollActive = Value Then
+			    Return
+			  End If
+			  
+			  Self.mScrollActive = Value
+			  
+			  If (Self.mScrollFadeAnimation Is Nil) = False Then
+			    Self.mScrollFadeAnimation.Cancel
+			    Self.mScrollFadeAnimation = Nil
+			  End If
+			  
+			  Var Amount As Double = If(Value, 1.0, 0.25)
+			  
+			  If Self.mScrollOpacity = Amount Then
+			    Return
+			  End If
+			  
+			  Self.mScrollFadeAnimation = New AnimationKit.ValueTask(Self, "Scroll Opacity", Self.mScrollOpacity, Amount)
+			  If Value Then
+			    Self.mScrollFadeAnimation.DurationInSeconds = 0.15
+			  Else
+			    If Self.mScrollOpacity = 1.0 Then
+			      Self.mScrollFadeAnimation.DelayInSeconds = 1.0
+			    End If
+			    Self.mScrollFadeAnimation.DurationInSeconds = 0.5
+			  End If
+			  Self.mScrollFadeAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+			  Self.mScrollFadeAnimation.Run
+			End Set
+		#tag EndSetter
+		ScrollActive As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mScrollingEnabled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mScrollingEnabled <> Value Then
+			    Self.mScrollingEnabled = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		ScrollingEnabled As Boolean
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		ScrollSpeed As Integer = 20
 	#tag EndProperty
 
 
+	#tag Constant, Name = ScrollThumbPadding, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ScrollThumbWidth, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
+	#tag EndConstant
+
+
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Backdrop"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="Picture"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -266,11 +471,27 @@ Inherits Canvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
+			Name="Name"
+			Visible=true
+			Group="ID"
 			InitialValue=""
 			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -314,32 +535,8 @@ Inherits Canvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabIndex"
 			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
@@ -362,9 +559,49 @@ Inherits Canvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Transparent"
+			Name="Width"
 			Visible=true
-			Group="Behavior"
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Backdrop"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=true
+			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
@@ -378,11 +615,27 @@ Inherits Canvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Width"
+			Name="AllowFocus"
 			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -390,6 +643,54 @@ Inherits Canvas
 			Visible=false
 			Group="Behavior"
 			InitialValue="20"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group=""
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

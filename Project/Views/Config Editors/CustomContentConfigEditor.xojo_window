@@ -46,6 +46,8 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       LockTop         =   True
       RequiresSelection=   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -123,6 +125,8 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -158,6 +162,8 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0

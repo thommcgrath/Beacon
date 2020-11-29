@@ -102,6 +102,8 @@ Begin BeaconAutopositionWindow DeployManager
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -132,7 +134,7 @@ Begin BeaconAutopositionWindow DeployManager
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   499
       Begin Label OptionsMessageLabel
@@ -386,37 +388,6 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   459
       End
-      Begin Shelf ReviewSwitcher
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         DrawCaptions    =   True
-         Enabled         =   True
-         Height          =   72
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         IsVertical      =   False
-         Left            =   301
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   False
-         Visible         =   True
-         Width           =   499
-      End
       Begin UITweaks.ResizedPushButton ReviewActionButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -514,62 +485,6 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   0
          Width           =   255
       End
-      Begin FadedSeparator ReviewBottomSeparator
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   5
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   489
-         Transparent     =   True
-         Visible         =   True
-         Width           =   499
-      End
-      Begin FadedSeparator ReviewTopSeparator
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   6
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   72
-         Transparent     =   True
-         Visible         =   True
-         Width           =   499
-      End
       Begin CodeArea ReviewArea
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
@@ -620,6 +535,99 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   499
       End
+      Begin Shelf ReviewSwitcher
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         DrawCaptions    =   True
+         Enabled         =   True
+         Height          =   72
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         IsVertical      =   False
+         Left            =   301
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   False
+         Visible         =   True
+         Width           =   499
+      End
+      Begin FadedSeparator ReviewBottomSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   301
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   5
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   489
+         Transparent     =   True
+         Visible         =   True
+         Width           =   499
+      End
+      Begin FadedSeparator ReviewTopSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   301
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   6
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   72
+         Transparent     =   True
+         Visible         =   True
+         Width           =   499
+      End
       Begin LogoFillCanvas NoSelectionCanvas
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -639,6 +647,8 @@ Begin BeaconAutopositionWindow DeployManager
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -1265,6 +1275,37 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ReviewActionButton
+	#tag Event
+		Sub Action()
+		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
+		  If Controller <> Nil Then
+		    Controller.Cancelled = False
+		    Controller.ShouldResume = True
+		    Self.UpdateMainView()
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReviewCancelButton
+	#tag Event
+		Sub Action()
+		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
+		  If Controller <> Nil Then
+		    Controller.Cancelled = True
+		    Controller.ShouldResume = True
+		    Self.UpdateMainView()
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReviewConfirmationCheck
+	#tag Event
+		Sub Action()
+		  Self.ReviewActionButton.Enabled = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ReviewSwitcher
 	#tag Event
 		Sub Open()
@@ -1299,37 +1340,6 @@ End
 		    Self.ReviewArea.Text = UserData.Lookup("Game.ini", "").StringValue
 		  End Select
 		  Self.UpdatingReviewContent = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReviewActionButton
-	#tag Event
-		Sub Action()
-		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
-		  If Controller <> Nil Then
-		    Controller.Cancelled = False
-		    Controller.ShouldResume = True
-		    Self.UpdateMainView()
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReviewCancelButton
-	#tag Event
-		Sub Action()
-		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
-		  If Controller <> Nil Then
-		    Controller.Cancelled = True
-		    Controller.ShouldResume = True
-		    Self.UpdateMainView()
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReviewConfirmationCheck
-	#tag Event
-		Sub Action()
-		  Self.ReviewActionButton.Enabled = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

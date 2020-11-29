@@ -103,6 +103,8 @@ Begin BeaconSubview ModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -167,6 +169,8 @@ Begin BeaconSubview ModsView
       Resizer         =   1
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -195,6 +199,8 @@ Begin BeaconSubview ModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -223,6 +229,8 @@ Begin BeaconSubview ModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -402,9 +410,10 @@ End
 #tag EndEvents
 #tag Events DividerCap
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect, Highlighted As Boolean)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  Var Icon As Picture = BeaconUI.IconWithColor(ImgToolbarDivider, SystemColors.SeparatorColor)
 		  G.DrawPicture(Icon, 0, 0)

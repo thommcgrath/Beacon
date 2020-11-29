@@ -46,6 +46,8 @@ Begin BeaconPagedSubview PresetsComponent
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -76,7 +78,7 @@ Begin BeaconPagedSubview PresetsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   "0"
+      Value           =   0
       Visible         =   True
       Width           =   300
       Begin ListPresetsComponent PresetsList

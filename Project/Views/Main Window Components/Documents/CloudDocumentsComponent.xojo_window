@@ -107,34 +107,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Visible         =   True
          Width           =   250
       End
-      Begin FadedSeparator FadedSeparator1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   62
-         Transparent     =   True
-         Visible         =   True
-         Width           =   804
-      End
       Begin DocumentFilterControl FilterBar
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -463,6 +435,36 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Underline       =   False
          Visible         =   True
          Width           =   655
+      End
+      Begin FadedSeparator FadedSeparator1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   62
+         Transparent     =   True
+         Visible         =   True
+         Width           =   804
       End
    End
    Begin BeaconAPI.Socket APISocket

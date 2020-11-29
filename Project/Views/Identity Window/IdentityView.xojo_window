@@ -362,6 +362,8 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   9
       TabPanelIndex   =   0

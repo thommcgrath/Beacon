@@ -43,6 +43,8 @@ Begin BeaconDialog BlueprintMultiEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       Spec            =   ""
       TabIndex        =   2
