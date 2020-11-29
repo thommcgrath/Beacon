@@ -148,7 +148,7 @@ Inherits Beacon.ConfigGroup
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    
 		    Var Errored As Boolean
-		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", Beacon.ShooterGameHeader, ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		    If Not Errored Then
 		      Value = Rewritten
 		    End If
@@ -226,7 +226,7 @@ Inherits Beacon.ConfigGroup
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    
 		    Var Errored As Boolean
-		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", Beacon.ServerSettingsHeader, ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		    If Not Errored Then
 		      Value = Rewritten
 		    End If

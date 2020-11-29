@@ -649,8 +649,8 @@ End
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  
-		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
-		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
+		  Self.GameIniRewriter.Rewrite("", Beacon.ShooterGameHeader, Beacon.RewriteModeGameIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
+		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.ServerSettingsHeader, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
 		  
 		  Var CLIDict As New Dictionary
 		  Var Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
@@ -712,6 +712,24 @@ End
 			End Set
 		#tag EndSetter
 		CurrentContent As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  If Self.Switcher = Nil Then
+			    Return ""
+			  End If
+			  
+			  Select Case Self.Switcher.SelectedIndex
+			  Case 1
+			    Return Beacon.ServerSettingsHeader
+			  Case 2
+			    Return Beacon.ShooterGameHeader
+			  End Select
+			End Get
+		#tag EndGetter
+		Private CurrentDefaultHeader As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -872,7 +890,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Board As New Clipboard
-		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
+		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentDefaultHeader, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  
 		  Self.mLastRewrittenHash = ""
 		  Self.CheckButtons()
@@ -926,7 +944,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
+		  Self.FileRewriter.Rewrite(Content, Self.CurrentDefaultHeader, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  Self.mFileDestination = File
 		  
 		  Self.CheckButtons()
