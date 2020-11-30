@@ -35,6 +35,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Engrams"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -99,6 +101,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -189,6 +192,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   396
@@ -272,6 +276,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   396
@@ -303,6 +308,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Multiple Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   396

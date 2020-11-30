@@ -320,6 +320,7 @@ Begin BeaconContainer ModDetailView
          BorderRight     =   False
          BorderTop       =   False
          Caption         =   "Mod Detail"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   40
@@ -357,6 +358,7 @@ Begin BeaconContainer ModDetailView
          BorderRight     =   False
          BorderTop       =   False
          Caption         =   "No Mod Selected"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   41
@@ -394,6 +396,7 @@ Begin BeaconContainer ModDetailView
          BorderRight     =   False
          BorderTop       =   False
          Caption         =   "Mod Detail"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   41
@@ -431,6 +434,7 @@ Begin BeaconContainer ModDetailView
          BorderRight     =   False
          BorderTop       =   False
          Caption         =   "Untitled"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   41
@@ -470,6 +474,7 @@ Begin BeaconContainer ModDetailView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

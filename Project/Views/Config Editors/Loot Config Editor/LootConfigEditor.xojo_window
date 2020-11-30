@@ -35,6 +35,7 @@ Begin ConfigEditor LootConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Sources"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin ConfigEditor LootConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   436
@@ -210,6 +212,7 @@ Begin ConfigEditor LootConfigEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   415
@@ -242,6 +245,7 @@ Begin ConfigEditor LootConfigEditor
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
@@ -273,6 +277,7 @@ Begin ConfigEditor LootConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -305,6 +310,7 @@ Begin ConfigEditor LootConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

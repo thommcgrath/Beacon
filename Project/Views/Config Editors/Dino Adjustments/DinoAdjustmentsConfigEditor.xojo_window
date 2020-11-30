@@ -35,6 +35,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Creature Adjustments"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

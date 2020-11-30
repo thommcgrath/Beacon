@@ -92,6 +92,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50

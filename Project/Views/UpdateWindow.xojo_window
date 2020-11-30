@@ -403,6 +403,7 @@ Begin BeaconWindow UpdateWindow
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   64

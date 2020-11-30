@@ -44,6 +44,7 @@ Begin ServerViewContainer ConnectorServerView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Untitled"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -76,6 +77,7 @@ Begin ServerViewContainer ConnectorServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -106,6 +108,7 @@ Begin ServerViewContainer ConnectorServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

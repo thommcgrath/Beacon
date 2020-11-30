@@ -36,6 +36,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Spawn Points"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
@@ -130,6 +131,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -160,6 +162,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   548
@@ -243,6 +246,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   527
@@ -275,6 +279,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21

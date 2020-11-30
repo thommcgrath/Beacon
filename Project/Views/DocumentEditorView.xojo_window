@@ -81,6 +81,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "There was an error loading the editor"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   478
@@ -112,6 +113,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -147,6 +149,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -181,6 +184,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Backdrop        =   0
       Body            =   ""
       Borders         =   8
+      ContentHeight   =   0
       DetailURL       =   ""
       DoubleBuffer    =   False
       Enabled         =   True
@@ -223,6 +227,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   478
@@ -254,6 +259,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
@@ -316,6 +322,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -346,6 +353,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   36

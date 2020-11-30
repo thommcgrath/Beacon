@@ -2810,6 +2810,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -2840,6 +2841,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True

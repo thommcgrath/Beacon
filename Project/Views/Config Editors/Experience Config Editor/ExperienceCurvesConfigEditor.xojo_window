@@ -35,6 +35,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
@@ -100,6 +102,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

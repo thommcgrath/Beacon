@@ -34,6 +34,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
@@ -260,6 +261,9 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -278,6 +282,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   642

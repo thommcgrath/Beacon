@@ -36,6 +36,7 @@ Begin ConfigEditor EngramControlConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Engrams"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
@@ -70,6 +71,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -105,6 +107,7 @@ Begin ConfigEditor EngramControlConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Unlock Points"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
@@ -137,6 +140,7 @@ Begin ConfigEditor EngramControlConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   672
@@ -169,6 +173,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

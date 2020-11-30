@@ -318,6 +318,7 @@ Begin ServerViewContainer MultiServerView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Multiple Servers"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -350,6 +351,7 @@ Begin ServerViewContainer MultiServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

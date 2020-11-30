@@ -95,6 +95,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Item Sets"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -180,6 +181,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   443
@@ -212,6 +214,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
@@ -243,6 +246,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   464
@@ -302,6 +306,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -363,6 +368,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

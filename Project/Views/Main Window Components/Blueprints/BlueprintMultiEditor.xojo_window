@@ -30,6 +30,7 @@ Begin BeaconDialog BlueprintMultiEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Border          =   15
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   100

@@ -35,6 +35,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Blueprints"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   552
@@ -120,6 +122,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
@@ -155,6 +158,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          BorderRight     =   False
          BorderTop       =   False
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   40
@@ -248,6 +252,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

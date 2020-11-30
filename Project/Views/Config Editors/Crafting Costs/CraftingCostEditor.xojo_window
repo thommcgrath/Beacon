@@ -35,6 +35,7 @@ Begin BeaconContainer CraftingCostEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Resources Required"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin BeaconContainer CraftingCostEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -159,6 +161,7 @@ Begin BeaconContainer CraftingCostEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

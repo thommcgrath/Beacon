@@ -780,6 +780,7 @@ Begin DiscoveryView FTPDiscoveryView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
@@ -810,6 +811,7 @@ Begin DiscoveryView FTPDiscoveryView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
@@ -840,6 +842,7 @@ Begin DiscoveryView FTPDiscoveryView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   204
@@ -870,6 +873,7 @@ Begin DiscoveryView FTPDiscoveryView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   204

@@ -30,6 +30,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
@@ -112,6 +113,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -147,6 +149,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40

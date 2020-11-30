@@ -90,6 +90,7 @@ Begin BeaconSubview ModsView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   379
@@ -154,6 +155,7 @@ Begin BeaconSubview ModsView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Mods"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -186,6 +188,7 @@ Begin BeaconSubview ModsView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -216,6 +219,7 @@ Begin BeaconSubview ModsView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40

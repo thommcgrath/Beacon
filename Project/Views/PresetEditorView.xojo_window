@@ -35,6 +35,7 @@ Begin BeaconSubview PresetEditorView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin BeaconSubview PresetEditorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -97,6 +99,7 @@ Begin BeaconSubview PresetEditorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True

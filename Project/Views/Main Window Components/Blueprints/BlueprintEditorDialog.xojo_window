@@ -1434,6 +1434,7 @@ Begin BeaconDialog BlueprintEditorDialog
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
@@ -1530,6 +1531,7 @@ Begin BeaconDialog BlueprintEditorDialog
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

@@ -36,6 +36,7 @@ Begin ConfigEditor AccountsConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Accounts"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41

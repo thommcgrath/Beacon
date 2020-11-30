@@ -95,6 +95,7 @@ Begin BeaconContainer SimulatorView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Simulator"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -127,6 +128,7 @@ Begin BeaconContainer SimulatorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -157,6 +159,7 @@ Begin BeaconContainer SimulatorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -189,6 +192,7 @@ Begin BeaconContainer SimulatorView
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

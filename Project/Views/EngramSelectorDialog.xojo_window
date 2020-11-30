@@ -316,6 +316,7 @@ Begin BeaconDialog EngramSelectorDialog
       AutoDeactivate  =   True
       Backdrop        =   0
       Border          =   15
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   67

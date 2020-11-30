@@ -90,6 +90,7 @@ Begin BeaconAutopositionWindow DeployManager
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   550
@@ -541,6 +542,7 @@ Begin BeaconAutopositionWindow DeployManager
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          DrawCaptions    =   True
          Enabled         =   True
@@ -574,6 +576,7 @@ Begin BeaconAutopositionWindow DeployManager
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
@@ -604,6 +607,7 @@ Begin BeaconAutopositionWindow DeployManager
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
@@ -635,6 +639,7 @@ Begin BeaconAutopositionWindow DeployManager
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   550

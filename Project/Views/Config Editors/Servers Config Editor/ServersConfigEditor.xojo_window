@@ -90,6 +90,7 @@ Begin ConfigEditor ServersConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   506
@@ -120,6 +121,7 @@ Begin ConfigEditor ServersConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -155,6 +157,7 @@ Begin ConfigEditor ServersConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Servers"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40

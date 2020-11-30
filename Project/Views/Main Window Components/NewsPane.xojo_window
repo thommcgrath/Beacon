@@ -36,6 +36,7 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "News"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -68,6 +69,7 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   260

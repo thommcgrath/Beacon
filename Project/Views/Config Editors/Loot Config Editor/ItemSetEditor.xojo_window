@@ -95,6 +95,7 @@ Begin BeaconContainer ItemSetEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Item Set Contents"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -127,6 +128,7 @@ Begin BeaconContainer ItemSetEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -188,6 +190,7 @@ Begin BeaconContainer ItemSetEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

@@ -1078,6 +1078,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Breeding Multipliers"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41

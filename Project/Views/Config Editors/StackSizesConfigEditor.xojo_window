@@ -113,6 +113,7 @@ Begin ConfigEditor StackSizesConfigEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Stack Size Overrides"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -145,6 +146,7 @@ Begin ConfigEditor StackSizesConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -235,6 +237,7 @@ Begin ConfigEditor StackSizesConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

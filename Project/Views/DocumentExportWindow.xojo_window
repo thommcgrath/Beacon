@@ -113,6 +113,7 @@ Begin BeaconDialog DocumentExportWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -232,6 +233,7 @@ Begin BeaconDialog DocumentExportWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   600
@@ -262,6 +264,7 @@ Begin BeaconDialog DocumentExportWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
@@ -341,6 +344,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
@@ -373,6 +377,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

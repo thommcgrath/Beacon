@@ -35,6 +35,7 @@ Begin ServerViewContainer FTPServerView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Untitled"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -67,6 +68,7 @@ Begin ServerViewContainer FTPServerView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1

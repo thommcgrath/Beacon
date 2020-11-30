@@ -31,6 +31,7 @@ Begin BeaconContainer SpawnPointEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   664
@@ -66,6 +67,7 @@ Begin BeaconContainer SpawnPointEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Limits"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
@@ -103,6 +105,7 @@ Begin BeaconContainer SpawnPointEditor
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Spawn Sets"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
@@ -188,6 +191,7 @@ Begin BeaconContainer SpawnPointEditor
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   643
@@ -220,6 +224,7 @@ Begin BeaconContainer SpawnPointEditor
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
@@ -253,6 +258,7 @@ Begin BeaconContainer SpawnPointEditor
       Backdrop        =   0
       Borders         =   3
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
@@ -285,6 +291,7 @@ Begin BeaconContainer SpawnPointEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21

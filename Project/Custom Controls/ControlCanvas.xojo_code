@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ControlCanvas
 Inherits Canvas
-Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
+Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  If Not Self.mPainted Then
@@ -24,6 +24,36 @@ Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 		  
 		  Return MouseDown(X, Y)
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  If Self.mMouseDownInTrack = False Then
+		    RaiseEvent MouseDrag(X, Y)
+		    Return
+		  End If
+		  
+		  If Self.mMouseDownThumbPoint Is Nil Then
+		    // Jump to a point in the scroll track
+		    Var TrackRect As Rect = Self.ScrollTrackRect
+		    Var ScrollPercent As Double = (Y - TrackRect.Top) / (TrackRect.Height - TrackRect.Top)
+		    Self.ScrollPosition = Round(Self.ScrollMaximum * ScrollPercent)
+		    Return
+		  End If
+		  
+		  Var Delta As Integer = Y - Self.mMouseDownThumbPoint.Y
+		  If Delta <> 0 Then
+		    Var ThumbRect As Rect = Self.ScrollThumbRect
+		    Var ThumbMousePoint As Point = ThumbRect.LocalPoint(Self.mMouseDownThumbPoint)
+		    Var TrackRect As Rect = Self.ScrollTrackRect
+		    Var Limit As Integer = TrackRect.Height - ThumbRect.Height
+		    Var ScrollPercent As Double = (ThumbRect.Top + Delta) / Limit
+		    Self.ScrollPosition = Round(Self.ScrollMaximum * ScrollPercent)
+		    
+		    ThumbRect = Self.ScrollThumbRect
+		    Self.mMouseDownThumbPoint = New Point(ThumbRect.Left + ThumbMousePoint.X, ThumbRect.Top + ThumbMousePoint.Y)
+		  End If
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -58,6 +88,20 @@ Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 		  Self.ScrollActive = TrackRect.Contains(X, Y)
 		  
 		  RaiseEvent MouseMove(X, Y)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  If Self.mMouseDownInTrack = False Then
+		    RaiseEvent MouseUp(X, Y)
+		  End If
+		  
+		  Self.mMouseDownInTrack = False
+		  Self.mMouseDownThumbPoint = Nil
+		  
+		  Var TrackRect As Rect = Self.ScrollTrackRect
+		  Self.ScrollActive = TrackRect.Contains(X, Y)
 		End Sub
 	#tag EndEvent
 
@@ -128,7 +172,7 @@ Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 		  If WithScroller Then
 		    Var ThumbRect As Rect = Self.ScrollThumbRect()
 		    G.DrawingColor = SystemColors.SecondaryLabelColor.AtOpacity(Self.mScrollOpacity)
-		    G.FillRoundRectangle(NearestMultiple(ThumbRect.Left, G.ScaleX), NearestMultiple(ThumbRect.Top, G.ScaleY), NearestMultiple(ThumbRect.Width, G.ScaleX), NearestMultiple(ThumbRect.Height, G.ScaleY), Self.ScrollThumbWidth, Self.ScrollThumbWidth)
+		    G.FillRoundRectangle(NearestMultiple(ThumbRect.Left + Self.ScrollThumbPadding, G.ScaleX), NearestMultiple(ThumbRect.Top + Self.ScrollThumbPadding, G.ScaleY), NearestMultiple(ThumbRect.Width - (Self.ScrollThumbPadding * 2), G.ScaleX), NearestMultiple(ThumbRect.Height - (Self.ScrollThumbPadding * 2), G.ScaleY), Self.ScrollThumbWidth, Self.ScrollThumbWidth)
 		  End If
 		  
 		  Self.mPainted = True
@@ -276,12 +320,12 @@ Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 		    ScrollPercent = Min(Max(Self.ScrollPosition / Self.ScrollMaximum, 0.0), 1.0)
 		  End If
 		  
-		  Var Ratio As Double = Min(Self.Height / Self.mContentHeight, 1.0)
-		  Var TrackArea As Integer = Self.Height - (ScrollThumbPadding * 2)
-		  Var ScrollThumbHeight As Double = TrackArea * Ratio
-		  Var ScrollThumbTop As Double = Self.ScrollThumbPadding + ((TrackArea - ScrollThumbHeight) * ScrollPercent)
+		  Var TrackRect As Rect = Self.ScrollTrackRect()
+		  Var Ratio As Double = Min(TrackRect.Height / Self.mContentHeight, 1.0)
+		  Var ScrollThumbHeight As Double = TrackRect.Height * Ratio
+		  Var ScrollThumbTop As Double = TrackRect.Top + ((TrackRect.Height - ScrollThumbHeight) * ScrollPercent)
 		  
-		  Return New Rect(Self.Width - (Self.ScrollThumbWidth + Self.ScrollThumbPadding), ScrollThumbTop, Self.ScrollThumbWidth, ScrollThumbHeight)
+		  Return New Rect(TrackRect.Left, ScrollThumbTop, TrackRect.Width, ScrollThumbHeight)
 		End Function
 	#tag EndMethod
 
@@ -304,6 +348,10 @@ Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event MouseDrag(X As Integer, Y As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event MouseEnter()
 	#tag EndHook
 
@@ -313,6 +361,10 @@ Implements AnimationKit.Scrollable, AnimationKit.ValueAnimator
 
 	#tag Hook, Flags = &h0
 		Event MouseMove(X As Integer, Y As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseUp(X As Integer, Y As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

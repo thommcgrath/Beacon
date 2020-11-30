@@ -36,6 +36,7 @@ Begin ServerViewContainer LocalServerView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Untitled"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
