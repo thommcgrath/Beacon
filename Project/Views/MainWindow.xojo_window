@@ -119,6 +119,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Height          =   642
          HelpTag         =   ""
          InitialParent   =   "Pages"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -153,6 +154,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          HasBackgroundColor=   False
          Height          =   642
          InitialParent   =   "Pages"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -187,6 +189,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          HasBackgroundColor=   False
          Height          =   642
          InitialParent   =   "Pages"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -221,6 +224,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          HasBackgroundColor=   False
          Height          =   642
          InitialParent   =   "Pages"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -255,6 +259,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          HasBackgroundColor=   False
          Height          =   642
          InitialParent   =   "Pages"
+         IsFrontmost     =   False
          Left            =   900
          LockBottom      =   True
          LockedInPosition=   False

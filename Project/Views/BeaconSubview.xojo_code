@@ -208,12 +208,14 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
+		  Self.mIsFrontmost = False
 		  RaiseEvent Hidden
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SwitchedTo(UserData As Variant = Nil)
+		  Self.mIsFrontmost = True
 		  RaiseEvent Shown(UserData)
 		  NotificationKit.Post(Self.Notification_ViewShown, Nil)
 		End Sub
@@ -281,6 +283,15 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mIsFrontmost
+			End Get
+		#tag EndGetter
+		IsFrontmost As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mLinkedOmniBarItem
 			End Get
 		#tag EndGetter
@@ -339,6 +350,10 @@ Implements ObservationKit.Observable
 		#tag EndSetter
 		MinimumWidth As Integer
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mIsFrontmost As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLinkedOmniBarItem As OmniBarItem
@@ -717,6 +732,14 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsFrontmost"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

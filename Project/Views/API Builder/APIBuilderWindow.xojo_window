@@ -37,6 +37,7 @@ Begin BeaconAutopositionWindow APIBuilderWindow
       HasBackgroundColor=   False
       Height          =   500
       InitialParent   =   ""
+      IsFrontmost     =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False

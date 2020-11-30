@@ -20,6 +20,26 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Hidden()
+		  If Self.mCurrentPageIndex > -1 Then
+		    Self.mPages(Self.mCurrentPageIndex).SwitchedFrom()
+		  End If
+		  
+		  RaiseEvent Hidden()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  RaiseEvent Shown(UserData)
+		  
+		  If Self.mCurrentPageIndex > -1 Then
+		    Self.mPages(Self.mCurrentPageIndex).SwitchedTo(UserData)
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub AppendPage(Page As BeaconSubview)
@@ -113,14 +133,14 @@ Inherits BeaconSubview
 		  
 		  Var OldIndex As Integer = Self.mCurrentPageIndex
 		  
-		  If OldIndex > -1 Then
+		  If Self.IsFrontmost And OldIndex > -1 Then
 		    // Tell the current page that it is being switched from
 		    Self.mPages(OldIndex).SwitchedFrom()
 		  End If
 		  
 		  Self.mCurrentPageIndex = Idx
 		  
-		  If Idx > -1 Then
+		  If Self.IsFrontmost And Idx > -1 Then
 		    Self.mPages(Idx).SwitchedTo(Nil)
 		  End If
 		  
@@ -241,11 +261,19 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event PageChanged(OldIndex As Integer, NewIndex As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
 
@@ -259,6 +287,14 @@ Inherits BeaconSubview
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsFrontmost"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

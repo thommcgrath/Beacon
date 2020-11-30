@@ -124,12 +124,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  Self.RefreshMods()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
@@ -281,6 +275,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=false

@@ -95,6 +95,7 @@ Begin BeaconPagedSubview BlueprintsComponent
          HasBackgroundColor=   False
          Height          =   448
          InitialParent   =   "Views"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
@@ -273,6 +274,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ViewTitle"
 		Visible=true
