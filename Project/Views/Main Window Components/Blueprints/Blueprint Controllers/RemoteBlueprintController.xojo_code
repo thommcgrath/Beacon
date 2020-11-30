@@ -81,10 +81,9 @@ Inherits BlueprintController
 	#tag Method, Flags = &h21
 		Private Sub APICallback_LoadBlueprints(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
-		  #Pragma Warning "Errors are not handled nicely here."
 		  
 		  If Response.HTTPStatus <> 200 Then
-		    Self.CacheBlueprints()
+		    Self.CacheError(Response.Message)
 		    Return
 		  End If
 		  
@@ -92,12 +91,12 @@ Inherits BlueprintController
 		  Try
 		    Parsed = Beacon.ParseJSON(Response.Content)
 		  Catch Err As RuntimeException
-		    Self.CacheBlueprints()
+		    Self.CacheError(Err.Message)
 		    Return
 		  End Try
 		  
 		  If Parsed.IsNull Or Parsed.Type <> Variant.TypeObject Or (Parsed.ObjectValue IsA Dictionary) = False Then
-		    Self.CacheBlueprints()
+		    Self.CacheError("Invalid object type returned.")
 		    Return
 		  End If
 		  
@@ -105,16 +104,16 @@ Inherits BlueprintController
 		  Var Dict As Dictionary = Parsed
 		  
 		  If Not Self.Unpack(Blueprints, Dict, "engrams") Then
-		    Self.CacheBlueprints()
+		    Return
 		  End If
 		  If Not Self.Unpack(Blueprints, Dict, "creatures") Then
-		    Self.CacheBlueprints()
+		    Return
 		  End If
 		  If Not Self.Unpack(Blueprints, Dict, "spawn_points") Then
-		    Self.CacheBlueprints()
+		    Return
 		  End If
 		  If Not Self.Unpack(Blueprints, Dict, "loot_sources") Then
-		    Self.CacheBlueprints()
+		    Return
 		  End If
 		  
 		  Self.CacheBlueprints(Blueprints)
@@ -193,6 +192,7 @@ Inherits BlueprintController
 		        End If
 		      Next
 		    Catch Err As RuntimeException
+		      Self.CacheError(Err.Message)
 		      Return False
 		    End Try
 		  End If

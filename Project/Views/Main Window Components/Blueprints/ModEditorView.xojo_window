@@ -351,9 +351,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WorkFinished(Sender As BlueprintController)
-		  #Pragma Unused Sender
-		  
 		  Self.Progress = Self.ProgressNone
+		  
+		  If Sender.CacheErrored Then
+		    Self.ShowAlert("There was an error loading the blueprints.", Sender.CacheErrorMessage)
+		  End If
 		End Sub
 	#tag EndMethod
 

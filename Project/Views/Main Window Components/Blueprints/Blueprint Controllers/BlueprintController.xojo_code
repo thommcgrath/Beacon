@@ -48,10 +48,37 @@ Protected Class BlueprintController
 		  
 		  Self.mOriginalBlueprints = Self.mBlueprints.Clone
 		  
+		  Self.mCacheErrored = False
+		  Self.mCacheErrorMessage = ""
 		  Self.mLoading = False
 		  RaiseEvent BlueprintsLoaded()
 		  RaiseEvent WorkFinished()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub CacheError(Message As String)
+		  Self.mBlueprints.RemoveAll
+		  Self.mOriginalBlueprints = Self.mBlueprints.Clone
+		  
+		  Self.mCacheErrored = True
+		  Self.mCacheErrorMessage = Message
+		  Self.mLoading = False
+		  RaiseEvent BlueprintsLoaded()
+		  RaiseEvent WorkFinished()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CacheErrored() As Boolean
+		  Return Self.mCacheErrored
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CacheErrorMessage() As String
+		  Return Self.mCacheErrorMessage
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -326,6 +353,14 @@ Protected Class BlueprintController
 
 	#tag Property, Flags = &h21
 		Private mBlueprintsToSave As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCacheErrored As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCacheErrorMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
