@@ -45,6 +45,7 @@ Protected Class WorkshopMod
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mWorkshopURL = Source.Value("workshop_url")
+		  Self.mWorkshopID = Source.Value("workshop_id")
 		  If Source.Value("pull_url") <> Nil Then
 		    Self.mPullURL = Source.Value("pull_url")
 		  End If
@@ -91,7 +92,14 @@ Protected Class WorkshopMod
 		  ModInfo.mConfirmed = True
 		  ModInfo.mModID = Beacon.UserModID
 		  ModInfo.mName = Beacon.UserModName
+		  ModInfo.mWorkshopID = Beacon.UserModWorkshopID
 		  Return ModInfo
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function WorkshopID() As Integer
+		  Return Self.mWorkshopID
 		End Function
 	#tag EndMethod
 
@@ -132,6 +140,10 @@ Protected Class WorkshopMod
 
 	#tag Property, Flags = &h21
 		Private mResourceURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWorkshopID As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

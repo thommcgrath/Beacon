@@ -68,7 +68,7 @@ Begin BeaconSubview ModsListView
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   0
@@ -133,6 +133,21 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_DeleteMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  Self.FinishJob()
+		  
+		  If Response.Success Then
+		    Self.RefreshMods()
+		    Return
+		  End If
+		  
+		  Self.ShowAlert("Sorry, the selected mod or mods were not deleted.", Response.Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
@@ -141,7 +156,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.Progress = BeaconSubview.ProgressNone
+		  Self.FinishJob()
 		  
 		  Var SelectedModID As String
 		  If Self.ModsList.SelectedRowIndex > -1 Then
@@ -180,20 +195,30 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub FinishJob()
+		  Self.mJobCount = Self.mJobCount - 1
+		  If Self.mJobCount > 0 Then
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		  Else
+		    Self.Progress = BeaconSubview.ProgressNone
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub RefreshMods()
 		  If Preferences.OnlineEnabled = False Then
-		    #Pragma Warning "Test this"
 		    Var FakeResponse As New BeaconAPI.Response("", 0, New MemoryBlock(0), New Dictionary)
 		    Self.APICallback_ListMods(Nil, FakeResponse)
 		    Return
 		  End If
 		  
-		  If Self.Progress <> BeaconSubview.ProgressNone Then
+		  If Self.Working Then
 		    Return
 		  End If
 		  
-		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		  Self.StartJob()
 		  
 		  Var Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
 		  Request.Authenticate(Preferences.OnlineToken)
@@ -201,9 +226,26 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub StartJob()
+		  Self.mJobCount = Self.mJobCount + 1
+		  If Self.mJobCount > 0 Then
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		  Else
+		    Self.Progress = BeaconSubview.ProgressNone
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ViewID() As String
 		  Return "ModsListView"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Working() As Boolean
+		  Return Self.mJobCount > 0
 		End Function
 	#tag EndMethod
 
@@ -217,13 +259,21 @@ End
 		Private mDidFirstRefresh As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mJobCount As Integer
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
 #tag Events ModsList
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowIndex > 0
+		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Beacon.UserModID Then
+		    Return False
+		  Else
+		    Return Me.SelectedRowIndex > 0
+		  End If
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -233,7 +283,28 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  #Pragma Warning "Not implemented"
+		  Var WorkshopIDs() As String
+		  If Warn Then
+		    Var Names() As String
+		    For Row As Integer = 0 To Me.LastRowIndex
+		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
+		      If Me.Selected(Row) And ModInfo.ModID <> Beacon.UserModID Then
+		        Names.Add(ModInfo.Name)
+		        WorkshopIDs.Add(ModInfo.WorkshopID.ToString(Locale.Raw, "0"))
+		      End If
+		    Next
+		    
+		    If Not Self.ShowDeleteConfirmation(Names, "mod", "mods") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Self.StartJob()
+		  
+		  Var Body As String = WorkshopIDs.Join(",")
+		  Var Request As New BeaconAPI.Request("/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
+		  Request.Authenticate(Preferences.OnlineToken)
+		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -269,8 +269,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportAsPlain(Contents As String)
-		  #Pragma Warning "Not implemented"
-		  
 		  Var Searcher As New Beacon.EngramSearcherThread
 		  AddHandler Searcher.Started, WeakAddressOf Searcher_Started
 		  AddHandler Searcher.Finished, WeakAddressOf Searcher_Finished
@@ -619,8 +617,6 @@ End
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		  Me.Append(OmniBarItem.CreateButton("Publish", "Publish", IconToolbarPublish, "Publish your changes to Beacon's users.", False))
 		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
-		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("Settings", "Settings", IconToolbarSettings, "Change mod settings."))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -646,8 +642,6 @@ End
 		    Self.mController.Publish()
 		  Case "Discard"
 		    Self.mController.DiscardChanges()
-		  Case "Settings"
-		    #Pragma Warning "Not implemented"
 		  End Select
 		End Sub
 	#tag EndEvent
