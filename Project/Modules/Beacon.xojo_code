@@ -1905,8 +1905,6 @@ Protected Module Beacon
 		    Return Nil
 		  End Select
 		  
-		  #Pragma Warning "Does not unpack loot sources"
-		  
 		  Var ModInfo As Dictionary = Dict.Value("mod")
 		  
 		  Var Tags() As String

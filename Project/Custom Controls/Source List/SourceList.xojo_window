@@ -198,13 +198,15 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  #Pragma Warning "Won't trigger change event"
-		  
 		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems.RemoveAt(Idx)
 		    
-		    If Idx <= Self.mSelectedRowIndex Then
+		    If Idx < Self.mSelectedRowIndex Then
+		      // So that Change is not fired
 		      Self.mSelectedRowIndex = Self.mSelectedRowIndex - 1
+		    ElseIf Idx = Self.mSelectedRowIndex Then
+		      // So that Change *is* fired
+		      Self.SelectedRowIndex = Self.SelectedRowIndex - 1
 		    End If
 		    
 		    Self.Content.Invalidate
@@ -214,10 +216,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub RemoveAllItems()
-		  #Pragma Warning "Won't trigger change event"
-		  
 		  Self.mItems.ResizeTo(-1)
-		  Self.mSelectedRowIndex = -1
+		  Self.SelectedRowIndex = -1
 		  Self.Content.Invalidate
 		End Sub
 	#tag EndMethod

@@ -526,7 +526,7 @@ End
 		    Weight = 0.08
 		  Case Self.TemplateHighLevel
 		    Weight = 1000
-		    Limit = 0.0001
+		    Limit = 0.00000001
 		    OverrideLimit = True
 		    
 		    For Each Entry As Beacon.MutableSpawnPointSetEntry In Entries
