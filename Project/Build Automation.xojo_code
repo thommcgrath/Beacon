@@ -54,13 +54,13 @@
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
+					Call DoShellCommand("/usr/bin/curl -L 'https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + "' > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildMac , AppliesTo = 2
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
+					Call DoShellCommand("/usr/bin/curl -L 'https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + "' > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 1
