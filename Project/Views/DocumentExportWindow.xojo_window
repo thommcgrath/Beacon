@@ -893,7 +893,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.ClipboardRewriter.Rewrite(ClipboardContents, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
+		  Self.ClipboardRewriter.Rewrite(ClipboardContents, Self.CurrentDefaultHeader, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  Self.mLastRewrittenHash = ""
 		End Sub
 	#tag EndMethod
@@ -937,7 +937,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
+		  Self.FileRewriter.Rewrite(Content, Self.CurrentDefaultHeader, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  Self.mFileDestination = File
 		  
 		  Self.CheckButtons()

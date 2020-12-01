@@ -393,7 +393,7 @@ Inherits Beacon.IntegrationEngine
 		          Return Nil
 		        End If
 		        Var Errored As Boolean
-				Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", Beacon.ServerSettingsHeader, GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		      Else
 		        // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
