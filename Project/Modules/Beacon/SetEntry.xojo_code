@@ -272,12 +272,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "FromSaveData" )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntry
-		  Return FromSaveData(Dict)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Beacon.SetEntry
 		  Var Entry As New Beacon.SetEntry
 		  Entry.RawWeight = Dict.Lookup("EntryWeight", 1.0)

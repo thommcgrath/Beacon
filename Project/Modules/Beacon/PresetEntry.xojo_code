@@ -55,12 +55,6 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function Export() As Dictionary
-		  Return Self.SaveData
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.PresetEntry
 		  Var SetEntry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Dict)
 		  If SetEntry = Nil Then
@@ -73,12 +67,6 @@ Inherits Beacon.SetEntry
 		  Entry.mRespectQuantityMultiplier = Dict.Lookup("RespectQuantityMultiplier", Entry.mRespectQuantityMultiplier)
 		  Entry.mRespectBlueprintMultiplier = Dict.Lookup("RespectBlueprintMultiplier", Entry.mRespectBlueprintMultiplier)
 		  Return Entry
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.PresetEntry
-		  Return Beacon.PresetEntry.FromSaveData(Dict)
 		End Function
 	#tag EndMethod
 

@@ -532,7 +532,7 @@ End
 		      If Folder = Nil Then
 		        Return Nil
 		      End If
-		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension))
+		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + Beacon.FileExtensionProject))
 		    End If
 		  End If
 		  
@@ -1025,7 +1025,7 @@ End
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
 		    Var Dialog As New SaveFileDialog
-		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
+		    Dialog.SuggestedFileName = Self.mController.Name + Beacon.FileExtensionProject
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
 		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
@@ -1035,7 +1035,7 @@ End
 		    
 		    If Self.Document.Title.BeginsWith("Untitled Project") Then
 		      Var Filename As String = File.Name
-		      Var Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
+		      Var Extension As String = Beacon.FileExtensionProject
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If

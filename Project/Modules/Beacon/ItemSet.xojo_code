@@ -304,12 +304,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "FromSaveData" )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
-		  Return Beacon.ItemSet.FromSaveData(Dict)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Beacon.ItemSet
 		  Var Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then

@@ -162,7 +162,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		  
-		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
 		  AddHandler mIdentityManager.NeedsLogin, WeakAddressOf mIdentityManager_NeedsLogin
 		  
@@ -296,7 +296,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
 			Var Dialog As New SaveFileDialog
-			Dialog.SuggestedFileName = "Authorization Request" + BeaconFileTypes.BeaconAuth.PrimaryExtension
+			Dialog.SuggestedFileName = "Authorization Request" + Beacon.FileExtensionAuth
 			
 			Var File As FolderItem = Dialog.ShowModal()
 			If File = Nil Then
@@ -1116,7 +1116,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconData) Or File.IsType(BeaconFileTypes.JsonFile) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionDelta) Or File.ExtensionMatches(Beacon.FileExtensionJSON) Then
 		    Try
 		      Var Content As String = File.Read(Encodings.UTF8)
 		      LocalData.SharedInstance.Import(Content)
@@ -1126,25 +1126,25 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionPreset) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Presets.OpenPreset(File, Import)
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.IniFile) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionINI) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Documents.ImportFile(File)
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionProject) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Documents.OpenDocument(File)
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconIdentity) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionIdentity) Then
 		    Call Self.ImportIdentityFile(File)
 		    Return
 		  End If

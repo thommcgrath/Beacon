@@ -845,7 +845,7 @@ End
 		Function FileExport() As Boolean Handles FileExport.Action
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
@@ -867,7 +867,7 @@ End
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then

@@ -1280,22 +1280,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Function PrimaryExtension(Extends Type As FileType) As String
-		  Var Extensions() As String = Type.Extensions.Split(";")
-		  If Extensions.LastIndex = -1 Then
-		    Return ""
-		  End If
-		  
-		  Var Extension As String = Extensions(0)
-		  If Extension.Left(1) <> "." Then
-		    Extension = "." + Extension
-		  End If
-		  
-		  Return Extension
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Integer
 		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
@@ -2093,6 +2077,33 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrettyLocalized, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionAuth, Type = String, Dynamic = False, Default = \".beaconauth", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionCSV, Type = String, Dynamic = False, Default = \".csv", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionDelta, Type = String, Dynamic = False, Default = \".beacondata", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionIdentity, Type = String, Dynamic = False, Default = \".beaconidentity", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionINI, Type = String, Dynamic = False, Default = \".ini", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionJSON, Type = String, Dynamic = False, Default = \".json", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionPlainText, Type = String, Dynamic = False, Default = \".txt", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionPreset, Type = String, Dynamic = False, Default = \".beaconpreset", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionProject, Type = String, Dynamic = False, Default = \".beacon", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = MOTDEditingEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected

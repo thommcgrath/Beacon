@@ -211,7 +211,7 @@ Protected Class IdentityManager
 		    Return Nil
 		  End If
 		  
-		  Var File As FolderItem = Folder.Child(UserID.StringValue + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var File As FolderItem = Folder.Child(UserID.StringValue + Beacon.FileExtensionIdentity)
 		  If File.Exists = False Then
 		    Return Nil
 		  End If
@@ -288,7 +288,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  Var File As FolderItem = Folder.Child(Source.UserID + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var File As FolderItem = Folder.Child(Source.UserID + Beacon.FileExtensionIdentity)
 		  If File <> Nil And File.Write(Beacon.GenerateJSON(Source.Export, True)) Then
 		    App.Log("Merged identity has been saved to " + File.NativePath)
 		  End If

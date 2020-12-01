@@ -283,12 +283,6 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Username" )  Function LoginKey() As String
-		  Return Self.mUsername
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function OmniVersion() As Integer
 		  Return Self.mPurchasedOmniVersion
 		End Function

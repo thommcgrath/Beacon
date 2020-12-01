@@ -424,7 +424,7 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private Sub ShowAlertLater(Argument As Variant)
 		  If Argument.IsNull = False And Argument IsA Dictionary Then
 		    Var Dict As Dictionary = Argument

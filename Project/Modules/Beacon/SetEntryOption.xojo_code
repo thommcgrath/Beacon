@@ -66,12 +66,6 @@ Protected Class SetEntryOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "FromSaveData" )  Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntryOption
-		  Return FromSaveData(Dict)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.SetEntryOption) As Integer
 		  If Other = Nil Then
 		    Return 1

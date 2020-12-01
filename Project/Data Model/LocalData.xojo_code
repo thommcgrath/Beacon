@@ -598,7 +598,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Preset.PresetID)
 		  Self.Commit()
 		  
-		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension)
+		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + Beacon.FileExtensionPreset)
 		  
 		  Self.LoadPresets()
 		End Sub
@@ -2666,7 +2666,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, ?2, ?3, ?4);", Self.UserID, Preset.PresetID, Preset.Label, Content)
 		  Self.Commit()
 		  
-		  Call UserCloud.Write("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
+		  Call UserCloud.Write("/Presets/" + Preset.PresetID.Lowercase + Beacon.FileExtensionPreset, Content)
 		  
 		  If Reload Then
 		    Self.LoadPresets()

@@ -135,7 +135,7 @@ End
 		    End If
 		    
 		    Var File As FolderItem = Obj.FolderItem
-		    If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
+		    If Not File.ExtensionMatches(Beacon.FileExtensionPreset) Then
 		      Continue
 		    End If
 		    
@@ -256,7 +256,7 @@ End
 		    Var Preset As Beacon.Preset = List.RowTagAt(List.SelectedRowIndex)
 		    Var Dialog As New SaveFileDialog
 		    Dialog.Filter = BeaconFileTypes.BeaconPreset
-		    Dialog.SuggestedFileName = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+		    Dialog.SuggestedFileName = Preset.Label + Beacon.FileExtensionPreset
 		    
 		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File <> Nil Then
@@ -280,7 +280,7 @@ End
 		    End If
 		    
 		    Var Preset As Beacon.Preset = List.RowTagAt(I)
-		    Preset.ToFile(Folder.Child(Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension))
+		    Preset.ToFile(Folder.Child(Preset.Label + Beacon.FileExtensionPreset))
 		  Next
 		  
 		  Folder.Open

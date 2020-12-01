@@ -410,7 +410,7 @@ End
 		Private Sub ShowExportIdentity()
 		  Var Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
-		  Dialog.SuggestedFileName = "Identity Backup" + BeaconFileTypes.BeaconIdentity.PrimaryExtension
+		  Dialog.SuggestedFileName = "Identity Backup" + Beacon.FileExtensionIdentity
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
