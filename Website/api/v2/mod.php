@@ -62,7 +62,7 @@ case 'POST':
 			$database->Rollback();
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
-		$workshop_id = $item['mod_id'];
+		$workshop_id = abs($item['mod_id']);
 		if (!is_numeric($workshop_id)) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Mod ID must be numeric.', $item);
@@ -80,10 +80,18 @@ case 'POST':
 			}
 		}
 	
-		$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id);
+		$results = $database->Query('SELECT mod_id, user_id, confirmed FROM mods WHERE ABS(workshop_id) = $1;', $workshop_id);
 		if ($results->RecordCount() == 1) {
+			$mod_user_id = $results->Field('user_id');
+			$mod_uuid = $results->Field('mod_id');
+			$mod_confirmed = $results->Field('confirmed');
+			if ($mod_confirmed && $mod_user_id !== $user_id) {
+				$database->Rollback();
+				BeaconAPI::ReplyError('Mod belongs to another user.');
+			}
+			
 			try {
-				$database->Query('UPDATE mods SET pull_url = $3 WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id, $pull_url);
+				$database->Query('UPDATE mods SET pull_url = $2 WHERE mod_id = $1;', $mod_uuid, $pull_url);
 			} catch (\BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not updated: ' . $e->getMessage());
 			}
@@ -95,13 +103,14 @@ case 'POST':
 			}
 			
 			try {
-				$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
+				$results = $database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url, min_version) VALUES ($1, $2, $3, $4, 10500000) RETURNING mod_id;', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
+				$mod_uuid = $results->Field('mod_id');
 			} catch (BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 			}
 		}
 		
-		$mods[] = BeaconMod::GetByWorkshopID(BeaconAPI::UserID(), $workshop_id)[0];
+		$mods[] = BeaconMod::GetByModID($mod_uuid);
 	}
 	$database->Commit();
 		
