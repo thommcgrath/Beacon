@@ -20,13 +20,13 @@ Protected Class ArkML
 		    
 		    Var RunLen As Integer = Body.Length - 2
 		    For Offset As Integer = 0 To RunLen
-		      Var Char As Int32 = Asc(Body.Middle(Offset, 1))
+		      Var Char As Int32 = Body.Middle(Offset, 1).Asc
 		      If Char < UTF16HighSurrogateStart Or Char > UTF16SurrogateEnd Then
 		        Continue
 		      End If
 		      
 		      Var HighSurrogate As Int32 = Char - UTF16HighSurrogateStart
-		      Var LowSurrogate As Int32 = (Asc(Body.Middle(Offset + 1, 1)) And &hFFFF) - UTF16LowSurrogateStart
+		      Var LowSurrogate As Int32 = (Body.Middle(Offset + 1, 1).Asc And &hFFFF) - UTF16LowSurrogateStart
 		      
 		      If HighSurrogate >= 0 And LowSurrogate >= 0 Then
 		        Char = (HighSurrogate * &h400) + LowSurrogate + &h10000

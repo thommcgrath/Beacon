@@ -206,7 +206,7 @@ Inherits Global.Thread
 		        If Value.BeginsWith("""") And Value.EndsWith("""") Then
 		          Value = Value.Middle(1, Value.Length - 2)
 		        End If
-		        BeaconGroupVersion = Val(Value)
+		        BeaconGroupVersion = Integer.FromString(Value, Locale.Raw)
 		      End If
 		      
 		      Var IsTrusted As Boolean

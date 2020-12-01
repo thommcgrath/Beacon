@@ -4,6 +4,28 @@ Protected Module CallLater
 		Protected Delegate Sub CallNoParams()
 	#tag EndDelegateDeclaration
 
+	#tag Method, Flags = &h21
+		Private Sub CallTimer_Action(Sender As CallLater.TriggerTimer)
+		  If (Sender.Callback Is Nil) = False Then
+		    If Beacon.SafeToInvoke(Sender.Callback) Then
+		      Sender.Callback.Invoke()
+		    Else
+		      Sender.Callback = Nil
+		    End If
+		  ElseIf (Sender.CallbackWithArg Is Nil) = False Then
+		    If Beacon.SafeToInvoke(Sender.CallbackWithArg) Then
+		      Sender.CallbackWithArg.Invoke(Sender.Argument)
+		    Else
+		      Sender.CallbackWithArg = Nil
+		    End If
+		  End If
+		  
+		  If (Timers Is Nil) = False And Timers.HasKey(Sender.Key) Then
+		    Timers.Remove(Sender.Key)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Sub CallWithArg(Argument As Variant)
 	#tag EndDelegateDeclaration
@@ -29,6 +51,11 @@ Protected Module CallLater
 	#tag Method, Flags = &h1
 		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallNoParams) As String
 		  Var CallTimer As New CallLater.TriggerTimer
+		  #if TargetDesktop
+		    AddHandler CallTimer.Action, AddressOf CallTimer_Action
+		  #else
+		    AddHandler CallTimer.Run, AddressOf CallTimer_Run
+		  #endif
 		  CallTimer.Period = Delay
 		  CallTimer.RunMode = Timer.RunModes.Single
 		  CallTimer.Key = Crypto.GenerateRandomBytes(20)
@@ -46,6 +73,11 @@ Protected Module CallLater
 	#tag Method, Flags = &h1
 		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallWithArg, Argument As Variant) As String
 		  Var CallTimer As New CallLater.TriggerTimer
+		  #if TargetDesktop
+		    AddHandler CallTimer.Action, AddressOf CallTimer_Action
+		  #else
+		    AddHandler CallTimer.Run, AddressOf CallTimer_Run
+		  #endif
 		  CallTimer.Period = Delay
 		  CallTimer.RunMode = Timer.RunModes.Single
 		  CallTimer.Key = Crypto.GenerateRandomBytes(20)

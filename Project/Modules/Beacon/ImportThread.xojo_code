@@ -308,7 +308,11 @@ Inherits Beacon.Thread
 		  Self.mUpdateTimer = New Timer
 		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
 		  Self.mUpdateTimer.Period = 0
-		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
+		  #if TargetDesktop
+		    AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
+		  #else
+		    AddHandler Self.mUpdateTimer.Run, WeakAddressOf Self.mUpdateTimer_Action
+		  #endif
 		  
 		  Self.mData = Data
 		  Self.mDestinationDocument = DestinationDocument
@@ -476,7 +480,7 @@ Inherits Beacon.Thread
 		      End If
 		      If IsNumeric Then
 		        // Number
-		        Return Val(StringValue)
+		        Return Double.FromString(StringValue, Locale.Raw)
 		      Else
 		        // Probably String
 		        Return StringValue

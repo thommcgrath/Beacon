@@ -518,7 +518,7 @@ Protected Module Beacon
 		  
 		  Var Words() As String = DesiredLabel.Split(" ")
 		  If Words.LastIndex > 0 And IsNumeric(Words(Words.LastIndex)) Then
-		    Counter = Val(Words(Words.LastIndex))
+		    Counter = Integer.FromString(Words(Words.LastIndex), Locale.Raw)
 		    Words.RemoveAt(Words.LastIndex)
 		    DesiredLabel = Words.Join(" ")
 		  End If
@@ -715,7 +715,7 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Method, Flags = &h1
 		Protected Function Hash(Block As MemoryBlock) As String
 		  Return EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8)
 		End Function
@@ -953,7 +953,7 @@ Protected Module Beacon
 		  Var Chars() As String
 		  Var SourceChars() As String = Source.Split("")
 		  For Each Char As String In SourceChars
-		    Var Codepoint As Integer = Asc(Char)
+		    Var Codepoint As Integer = Char.Asc
 		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
 		      Chars.Add(Char)
 		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
@@ -1161,13 +1161,28 @@ Protected Module Beacon
 		  End If
 		  
 		  Var MatchCount As Integer = Matches.SubExpressionCount
-		  Var Days As String = If(MatchCount >= 2, Matches.SubExpressionString(2), "")
-		  Var Hours As String = If(MatchCount >= 5, Matches.SubExpressionString(5), "")
-		  Var Minutes As String = If(MatchCount >= 8, Matches.SubExpressionString(8), "")
-		  Var Seconds As String = If(MatchCount >= 11, Matches.SubExpressionString(11), "")
+		  Var Days As String = If(MatchCount >= 2, Matches.SubExpressionString(2), "0")
+		  Var Hours As String = If(MatchCount >= 5, Matches.SubExpressionString(5), "0")
+		  Var Minutes As String = If(MatchCount >= 8, Matches.SubExpressionString(8), "0")
+		  Var Seconds As String = If(MatchCount >= 11, Matches.SubExpressionString(11), "0")
 		  Var PartialSeconds As String = If(MatchCount >= 12, "0" + Matches.SubExpressionString(12), "0.0")
+		  If Days.IsEmpty Then
+		    Days = "0"
+		  End If
+		  If Hours.IsEmpty Then
+		    Hours = "0"
+		  End If
+		  If Minutes.IsEmpty Then
+		    Minutes = "0"
+		  End If
+		  If Seconds.IsEmpty Then
+		    Seconds = "0"
+		  End If
+		  If PartialSeconds.IsEmpty Then
+		    PartialSeconds = "0.0"
+		  End If
 		  
-		  Return New DateInterval(0, 0, Val(Days), Val(Hours), Val(Minutes), Val(Seconds), 1000000000 * Val(PartialSeconds))
+		  Return New DateInterval(0, 0, Integer.FromString(Days), Integer.FromString(Hours), Integer.FromString(Minutes), Integer.FromString(Seconds), 1000000000 * Double.FromString(PartialSeconds))
 		End Function
 	#tag EndMethod
 

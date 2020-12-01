@@ -527,13 +527,13 @@ Inherits Beacon.IntegrationEngine
 		          Continue
 		        End If
 		        
-		        Var Year As Integer = Val(Line.Middle(1, 4))
-		        Var Month As Integer = Val(Line.Middle(6, 2))
-		        Var Day As Integer = Val(Line.Middle(9, 2))
-		        Var Hour As Integer = Val(Line.Middle(12, 2))
-		        Var Minute As Integer = Val(Line.Middle(15, 2))
-		        Var Second As Integer = Val(Line.Middle(18, 2))
-		        Var Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
+		        Var Year As Integer = Integer.FromString(Line.Middle(1, 4), Locale.Raw)
+		        Var Month As Integer = Integer.FromString(Line.Middle(6, 2), Locale.Raw)
+		        Var Day As Integer = Integer.FromString(Line.Middle(9, 2), Locale.Raw)
+		        Var Hour As Integer = Integer.FromString(Line.Middle(12, 2), Locale.Raw)
+		        Var Minute As Integer = Integer.FromString(Line.Middle(15, 2), Locale.Raw)
+		        Var Second As Integer = Integer.FromString(Line.Middle(18, 2), Locale.Raw)
+		        Var Nanosecond As Integer = (Integer.FromString(Line.Middle(21, 3), Locale.Raw) / 1000) * 1000000000
 		        
 		        ServerStopTime = New DateTime(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
 		        TimestampFound = True

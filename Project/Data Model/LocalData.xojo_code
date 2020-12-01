@@ -1284,7 +1284,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Badges.ApplyMask(BadgesMask)
 		    
-		    Var Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
+		    Var Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height)
 		    Sprites.Graphics.DrawPicture(SpriteSheet, 0, 0)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(0, 0, Width, Height), 0, Height)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)

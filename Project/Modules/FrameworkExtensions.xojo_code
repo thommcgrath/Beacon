@@ -276,7 +276,7 @@ Protected Module FrameworkExtensions
 		    Return Round(DoubleValue)
 		  Case "String"
 		    Var StringValue As String = Value
-		    Return Val(StringValue)
+		    Return Integer.FromString(StringValue, Locale.Raw)
 		  Else
 		    Return 0
 		  End Select
@@ -463,9 +463,9 @@ Protected Module FrameworkExtensions
 		    Return
 		  End If
 		  
-		  Var Year As Integer = Val(Matches.SubExpressionString(1))
-		  Var Month As Integer = Val(Matches.SubExpressionString(2))
-		  Var Day As Integer = Val(Matches.SubExpressionString(3))
+		  Var Year As Integer = Integer.FromString(Matches.SubExpressionString(1), Locale.Raw)
+		  Var Month As Integer = Integer.FromString(Matches.SubExpressionString(2), Locale.Raw)
+		  Var Day As Integer = Integer.FromString(Matches.SubExpressionString(3), Locale.Raw)
 		  Var Hour As Integer
 		  Var Minute As Integer
 		  Var Second As Integer
@@ -473,19 +473,19 @@ Protected Module FrameworkExtensions
 		  Var Offset As Double
 		  Var ExpressionCount As Integer = Matches.SubExpressionCount
 		  
-		  If ExpressionCount >= 8 And Matches.SubExpressionString(4) <> "" Then
-		    Hour = Val(Matches.SubExpressionString(5))
-		    Minute = Val(Matches.SubExpressionString(6))
-		    Second = Val(Matches.SubExpressionString(7))
+		  If ExpressionCount >= 8 And Matches.SubExpressionString(4).IsEmpty = False Then
+		    Hour = Integer.FromString(Matches.SubExpressionString(5), Locale.Raw)
+		    Minute = Integer.FromString(Matches.SubExpressionString(6), Locale.Raw)
+		    Second = Integer.FromString(Matches.SubExpressionString(7), Locale.Raw)
 		    If ExpressionCount >= 9 Then
-		      Nanosecond = Val("0" + Matches.SubExpressionString(8)) * 1000000000
+		      Nanosecond = Double.FromString("0" + Matches.SubExpressionString(8), Locale.Raw) * 1000000000
 		    End If
 		    
-		    If ExpressionCount >= 12 And Matches.SubExpressionString(9) <> "" Then
-		      Var OffsetHour As Integer = Val(Matches.SubExpressionString(11))
+		    If ExpressionCount >= 12 And Matches.SubExpressionString(9).IsEmpty = False Then
+		      Var OffsetHour As Integer = Integer.FromString(Matches.SubExpressionString(11), Locale.Raw)
 		      Var OffsetMinute As Integer
-		      If ExpressionCount >= 14 And Matches.SubExpressionString(13) <> "" Then
-		        OffsetMinute = Val(Matches.SubExpressionString(13))
+		      If ExpressionCount >= 14 And Matches.SubExpressionString(13).IsEmpty = False Then
+		        OffsetMinute = Integer.FromString(Matches.SubExpressionString(13), Locale.Raw)
 		      End If
 		      Offset = OffsetHour + (OffsetMinute / 60)
 		      If Matches.SubExpressionString(10) = "-" Then
@@ -541,6 +541,19 @@ Protected Module FrameworkExtensions
 		  Var Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UserVersion(Extends Source As SQLiteDatabase) As Integer
+		  Var Results As RowSet = Source.SelectSQL("PRAGMA user_version;")
+		  Return Results.ColumnAt(0).IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UserVersion(Extends Source As SQLiteDatabase, Assigns Value As Integer)
+		  Source.ExecuteSQL("PRAGMA user_version = " + Value.ToString(Locale.Raw, "0") + ";")
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

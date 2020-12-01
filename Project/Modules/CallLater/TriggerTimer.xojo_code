@@ -1,29 +1,6 @@
 #tag Class
 Private Class TriggerTimer
 Inherits Timer
-	#tag Event
-		Sub Action()
-		  If Self.Callback <> Nil Then
-		    If Beacon.SafeToInvoke(Self.Callback) Then
-		      Self.Callback.Invoke()
-		    Else
-		      Self.Callback = Nil
-		    End If
-		  ElseIf Self.CallbackWithArg <> Nil Then
-		    If Beacon.SafeToInvoke(Self.CallbackWithArg) Then
-		      Self.CallbackWithArg.Invoke(Self.Argument)
-		    Else
-		      Self.CallbackWithArg = Nil
-		    End If
-		  End If
-		  
-		  If Timers <> Nil And Timers.HasKey(Self.Key) Then
-		    Timers.Remove(Self.Key)
-		  End If
-		End Sub
-	#tag EndEvent
-
-
 	#tag Property, Flags = &h0
 		Argument As Variant
 	#tag EndProperty

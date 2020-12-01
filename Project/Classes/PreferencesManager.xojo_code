@@ -123,7 +123,7 @@ Protected Class PreferencesManager
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Method, Flags = &h0
 		Sub Constructor(File As FolderItem)
 		  Self.mFile = File
 		  
@@ -372,7 +372,7 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Property, Flags = &h21
 		Private mFile As FolderItem
 	#tag EndProperty
 

@@ -68,7 +68,11 @@ Protected Module NotificationKit
 		    mQueueTimer = New Timer
 		    mQueueTimer.RunMode = Timer.RunModes.Multiple
 		    mQueueTimer.Period = 1
-		    AddHandler mQueueTimer.Action, AddressOf mQueueTimer_Action
+		    #if TargetDesktop
+		      AddHandler mQueueTimer.Action, AddressOf mQueueTimer_Action
+		    #else
+		      AddHandler mQueueTimer.Run, AddressOf mQueueTimer_Action
+		    #endif
 		  End If
 		  
 		  If mQueueTimer.RunMode = Timer.RunModes.Off Then

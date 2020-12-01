@@ -25,7 +25,7 @@ Begin ContainerControl MapSelectionGrid
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
-   Begin BeaconUI.MapCheckBox Boxes
+   Begin MapCheckBox Boxes
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Untitled"
@@ -122,7 +122,7 @@ End
 	#tag Method, Flags = &h0
 		Function CheckedMask() As UInt64
 		  Var Combined As UInt64
-		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		  For Each Box As MapCheckBox In Self.mBoxes
 		    If Box.VisualState = CheckBox.VisualStates.Checked Then
 		      Combined = Combined Or Box.Mask
 		    End If
@@ -135,7 +135,7 @@ End
 		Sub SetWithMasks(Masks() As UInt64)
 		  Var Dict As New Dictionary
 		  For Each Mask As UInt64 In Masks
-		    For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		    For Each Box As MapCheckBox In Self.mBoxes
 		      If (Mask And Box.Mask) = Box.Mask Then
 		        Dict.Value(Box.Mask) = Dict.Lookup(Box.Mask, 0) + 1
 		      End If
@@ -143,7 +143,7 @@ End
 		  Next
 		  
 		  Var MaskCount As Integer = Masks.LastIndex + 1
-		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		  For Each Box As MapCheckBox In Self.mBoxes
 		    Var Count As Integer = Dict.Lookup(Box.Mask, 0)
 		    If Count = 0 Then
 		      Box.VisualState = Checkbox.VisualStates.Unchecked
@@ -159,7 +159,7 @@ End
 	#tag Method, Flags = &h0
 		Function UncheckedMask() As UInt64
 		  Var Combined As UInt64
-		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		  For Each Box As MapCheckBox In Self.mBoxes
 		    If Box.VisualState = CheckBox.VisualStates.Unchecked Then
 		      Combined = Combined Or Box.Mask
 		    End If
@@ -200,7 +200,7 @@ End
 		#tag Getter
 			Get
 			  Var Combined As UInt64
-			  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+			  For Each Box As MapCheckBox In Self.mBoxes
 			    If Box.Value Then
 			      Combined = Combined Or Box.Mask
 			    End If
@@ -215,7 +215,7 @@ End
 			  End If
 			  
 			  Self.mSettingUp = True
-			  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+			  For Each Box As MapCheckBox In Self.mBoxes
 			    Box.Value = (Value And Box.Mask) = Box.Mask
 			  Next
 			  Self.mSettingUp = False
@@ -226,7 +226,7 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBoxes() As BeaconUI.MapCheckBox
+		Private mBoxes() As MapCheckBox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -253,7 +253,7 @@ End
 		  
 		  If (TargetMacOS And Keyboard.CommandKey) Or (TargetWindows And Keyboard.ControlKey) Then
 		    Self.mSettingUp = True
-		    For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		    For Each Box As MapCheckBox In Self.mBoxes
 		      If Box = Me Then
 		        Continue
 		      End If

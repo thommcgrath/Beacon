@@ -7,7 +7,7 @@ Inherits UITweaks.ResizedTextField
 		    Return True
 		  End If
 		  
-		  Var Code As Integer = Asc(Key)
+		  Var Code As Integer = Key.Asc
 		  Select Case Code
 		  Case 10, 13, 3
 		    Self.CheckValue()
