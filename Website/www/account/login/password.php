@@ -10,6 +10,7 @@ http_response_code(500);
 define('ERR_EMAIL_NOT_VERIFIED', 436);
 define('ERR_PASSWORD_VIOLATES_RULES', 437);
 define('ERR_PASSWORD_COMPROMISED', 438);
+define('ERR_CONFIRM_CHILD_RESET', 439);
 
 if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == false || empty($_POST['password']) || empty($_POST['code']) || empty($_POST['username'])) {
 	http_response_code(400);
@@ -24,6 +25,8 @@ $code = $_POST['code'];
 $key = isset($_POST['key']) ? $_POST['key'] : null;
 $username = trim($_POST['username']); // only used for new accounts
 $allow_vulnerable = isset($_POST['allow_vulnerable']) ? filter_var($_POST['allow_vulnerable'], FILTER_VALIDATE_BOOLEAN) : false;
+$confirm_reset_children = isset($_POST['confirm_reset_children']) ? filter_var($_POST['confirm_reset_children'], FILTER_VALIDATE_BOOLEAN) : false;
+$current_password = (isset($_POST['previous_password']) && empty($_POST['previous_password']) === false) ? $_POST['previous_password'] : null;
 $database = BeaconCommon::Database();
 
 // get the email uuid
@@ -77,16 +80,33 @@ if (is_null($user_id)) {
 	$user = BeaconUser::GetByUserID($user_id);
 }
 
-$public_key = null;
-$private_key = null;
-BeaconEncryption::GenerateKeyPair($public_key, $private_key);
-
-$useUpgradedEncryption = isset($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']) && boolval($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']);
-$user->SetPublicKey($public_key);
-if ($user->AddAuthentication($username, $email, $password, $private_key, $useUpgradedEncryption) == false && $user->ReplacePassword($password, $private_key, $useUpgradedEncryption) == false) {
-	http_response_code(500);
-	echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
-	exit;
+if (is_null($current_password)) {
+	if ($user->IsChildAccount()) {
+		http_response_code(500);
+		echo json_encode(array('message' => 'Cannot force change a child account password.'), JSON_PRETTY_PRINT);
+		exit;
+	}
+	if ($user->HasChildAccounts() === true && $confirm_reset_children === false) {
+		http_response_code(ERR_CONFIRM_CHILD_RESET);
+		echo json_encode(array('message' => 'All team passwords will also be reset. Include `confirm_reset_children` to confirm.'), JSON_PRETTY_PRINT);
+		exit;
+	}
+	
+	$public_key = null;
+	$private_key = null;
+	BeaconEncryption::GenerateKeyPair($public_key, $private_key);
+	
+	if ($user->AddAuthentication($username, $email, $password, $private_key) === false && $user->ReplacePassword($password, $private_key, BeaconUser::GenerateUsercloudKey()) === false) {
+		http_response_code(500);
+		echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
+		exit;
+	}
+} else {
+	if ($user->ChangePassword($current_password, $password) === false) {
+		http_response_code(500);
+		echo json_encode(array('message' => 'Failed to gracefully change password'), JSON_PRETTY_PRINT);
+		exit;
+	}
 }
 if ($user->Commit() == false) {
 	http_response_code(500);
@@ -106,7 +126,7 @@ $response = array(
 
 if ($new_user) {
 	$subject = 'Welcome to Beacon';
-	$body = "You just created a Beacon Account, which means you can easily share your documents with multiple devices. You can manage your account at <" . BeaconCommon::AbsoluteURL("/account/") . "> to change your password, manage documents, and see your Beacon Omni purchase status.\n\nFor reference, you can view Beacon's privacy policy at <" . BeaconCommon::AbsoluteURL("/privacy.php") . ">. The summary of it is simple: your data is yours and won't be sold or monetized in any way.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
+	$body = "You just created a Beacon Account, which means you can easily share your documents with multiple devices. You can manage your account at <" . BeaconCommon::AbsoluteURL("/account/") . "> to change your password, manage documents, and see your Beacon Omni purchase status.\n\nFor reference, you can view Beacon's privacy policy at <" . BeaconCommon::AbsoluteURL("/privacy") . ">. The summary of it is simple: your data is yours and won't be sold or monetized in any way.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
 	BeaconEmail::SendMail($email, $subject, $body);
 }
 

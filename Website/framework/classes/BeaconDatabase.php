@@ -18,6 +18,7 @@ abstract class BeaconDatabase {
 	abstract public function Query(string $sql, ...$params);
 	abstract public function Insert(string $table, array $dict);
 	abstract public function Update (string $table, array $data, array $conditions);
+	abstract public function Upsert(string $table, array $data, array $conflict_columns);
 	abstract public function Host();
 	abstract public function EscapeIdentifier(string $identifier);
 	abstract public function EscapeLiteral(string $literal);

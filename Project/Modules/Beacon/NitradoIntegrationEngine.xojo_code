@@ -119,7 +119,7 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		    
 		    Var GameIniErrored As Boolean
-		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), GameIniErrored)
+		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, GameIniDict, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), GameIniErrored)
 		    If GameIniErrored Then
 		      Self.SetError("Unable to generate new value for Custom Game.ini Content field.")
 		      Return False
@@ -392,10 +392,9 @@ Inherits Beacon.IntegrationEngine
 		        If ExtraGameIniSuccess = False Or Self.Finished Then
 		          Return Nil
 		        End If
-		        
 		        Var Errored As Boolean
-		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
-		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+				Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", Beacon.ServerSettingsHeader, GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		      Else
 		        // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
 		      End If

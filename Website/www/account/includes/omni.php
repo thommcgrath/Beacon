@@ -195,7 +195,7 @@ BeaconTemplate::FinishScript();
 		<div class="push">&nbsp;</div>
 	</div>
 	<div class="signin_step separator-color" id="upload_container">
-		<form id="upload_activation_form" method="post" action="/account/actions/activate.php" enctype="multipart/form-data">
+		<form id="upload_activation_form" method="post" action="/account/actions/activate" enctype="multipart/form-data">
 			<input type="file" name="file" accept=".beaconauth" id="file_chooser"><input type="submit" value="Upload">
 		</form>
 		<div id="drop_area" class="separator-color"><span id="drop_initial_instructions">Drop your activation file here or <a href="" id="choose_file_button">choose the file</a>.</span><span id="drop_hover_instructions">Do it!</span></div>
@@ -219,22 +219,22 @@ function ShowGiftCodes() {
 	global $user;
 	
 	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT code, redemption_date FROM purchase_codes WHERE purchaser_email_id = $1;', $user->Email());
+	$results = $database->Query('SELECT code, redemption_date FROM purchase_codes WHERE purchaser_email_id = $1;', $user->EmailID());
 	if ($results->RecordCount() == 0) {
 		return;
 	}
 	
 	echo '<h2>Gift Codes</h2>';
-	echo '<table class="generic"><thead><tr><th>Code</th><th>Status</th><th>Redeem Link</th></thead>';
+	echo '<p>Codes can be redeemed at <a href="/redeem">https://' . BeaconCommon::Domain() . '/redeem</a> or using the link next to each code.</p>';
+	echo '<table class="generic"><thead><tr><th>Code</th><th class="low-priority">Status</th><th class="low-priority">Redeem Link</th></thead>';
 	while (!$results->EOF()) {
 		$code = $results->Field('code');
 		$redeemed = is_null($results->Field('redemption_date')) === false;
 		
-		echo '<tr><td>' . htmlentities($code) . '</td><td>' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td>' . ($redeemed ? '&nbsp;' : 'https://beaconapp.cc/redeem/' . htmlentities($code)) . '</td>';
+		echo '<tr><td>' . htmlentities($code) . '<div class="row-details"><span class="detail">' . ($redeemed ? 'Redeemed' : '/redeem/' . htmlentities($code)) . '<span></div></td><td class="low-priority">' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td class="low-priority">' . ($redeemed ? '&nbsp;' : '/redeem/' . htmlentities($code)) . '</td>';
 		$results->MoveNext();
 	}
 	echo '</table>';
-	echo '<p>Codes can be redeemed at <a href="https://beaconapp.cc/redeem">https://beaconapp.cc/redeem</a> or using the link next to each code.</p>';
 }
 
 ?>

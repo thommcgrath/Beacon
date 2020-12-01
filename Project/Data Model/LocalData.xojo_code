@@ -1538,12 +1538,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Var Mods() As Variant = ChangeDict.Value("mods")
-		    For Each ModData As Dictionary In Mods
+		    Var BuildNumber As Integer = App.BuildNumber
+			For Each ModData As Dictionary In Mods
 		      Var ModID As String = ModData.Value("mod_id").StringValue.Lowercase
 		      Var ModName As String = ModData.Value("name").StringValue
 		      Var ConsoleSafe As Boolean = ModData.Value("console_safe").BooleanValue
 		      Var DefaultEnabled As Boolean = ModData.Value("default_enabled").BooleanValue
 		      Var WorkshopID As Integer = ModData.Value("workshop_id").IntegerValue
+			  If ModData.HasKey("min_version") And ModData.Value("min_version").IntegerValue > BuildNumber Then
+		        // This mod is too new
+		        Continue
+		      End If
 		      
 		      Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RowCount = 1 Then

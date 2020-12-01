@@ -2,36 +2,61 @@
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-if (!isset($_GET['id'])) {
-	http_response_code(400);
-	echo 'Missing id parameter';
-	exit;
+$object_id = null;
+$objects = [];
+
+if (isset($_GET['object_id'])) {
+	// find object by its id
+	$object_id = $_GET['object_id'];
+} elseif (isset($_GET['class_string'])) {
+	// find all objects matching this class string
+	$database = BeaconCommon::Database();
+	try {
+		if (isset($_GET['workshop_id'])) {
+			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 AND ABS(mods.workshop_id) = $2 ORDER BY blueprints.label;', $_GET['class_string'], abs($_GET['workshop_id']));
+		} else {
+			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 ORDER BY blueprints.label;', $_GET['class_string']);
+		}
+		if ($results->RecordCount() === 1) {
+			$object_id = $results->Field('object_id');
+		} else {
+			while (!$results->EOF()) {
+				$objects[] = [
+					'id' => $results->Field('object_id'),
+					'label' => $results->Field('label'),
+					'mod_name' => $results->Field('mod_name')
+				];
+				$results->MoveNext();
+			}
+		}
+	} catch (Exception $err) {
+	}
 }
 
-$workshop_id = isset($_GET['mod']) ? intval($_GET['mod']) : 0;
-$obj = BeaconCommon::ResolveObjectIdentifier($_GET['id'], $workshop_id);
-if (is_null($obj)) {
+if (is_null($object_id) === false && BeaconCommon::IsUUID($object_id)) {
+	$correct_path = '/object/' . urlencode($object_id);
+	if ($_SERVER['REQUEST_URI'] !== $correct_path) {
+		header('Location: ' . $correct_path, true, 301);
+		exit;
+	}
+} elseif (count($objects) > 0) {
+	echo '<h1>' . htmlentities($_GET['class_string']) . ' Disambiguation</h1>';
+	echo '<ul>';
+	foreach ($objects as $obj) {
+		echo '<li><a href="/object/' . urlencode($obj['id']) . '">' . htmlentities($obj['label']) . '</a> <span class="text-lighter">(' . htmlentities($obj['mod_name']) . ')</span></li>';
+	}
+	echo '</ul>';
+	exit;
+} else {
 	http_response_code(404);
 	echo 'Object not found';
 	exit;
 }
 
-if (is_array($obj)) {
-	echo '<h1>' . htmlentities($_GET['id']) . ' Disambiguation</h1>';
-	echo '<ul>';
-	foreach ($obj as $o) {
-		echo '<li><a href="/object/' . urlencode($o->ModWorkshopID()) . '/' . urlencode($o->ClassString()) . '">' . htmlentities($o->Label()) . '</a> <span class="text-lighter">(' . htmlentities($o->ModName()) . ')</span></li>';
-	}
-	echo '</ul>';
-	exit;
-}
-
-if ($obj instanceof BeaconBlueprint && $_GET['id'] != $obj->ClassString()) {
-	if ($obj->IsAmbiguous()) {
-		header('Location: /object/' . urlencode($obj->ModWorkshopID()) . '/' . urlencode($obj->ClassString()));
-	} else {
-		header('Location: /object/' . urlencode($obj->ClassString()));
-	}
+$obj = BeaconCommon::ResolveObjectIdentifier($object_id);
+if (is_null($obj)) {
+	http_response_code(404);
+	echo 'Object not found';
 	exit;
 }
 
@@ -214,38 +239,25 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 	}
 	
 	$unique_creatures = array();
-	$creatures = array();
-	foreach ($spawns as $group) {
-		foreach ($group['creatures'] as $creature_path) {
-			if (in_array($creature_path, $unique_creatures)) {
+	foreach ($spawns as $set) {
+		$entries = $set['entries'];
+		foreach ($entries as $entry) {
+			$creature_id = $entry['creature_id'];
+			if (in_array($creature_id, $unique_creatures)) {
 				continue;
 			}
-			
-			$creature = BeaconCreature::GetByObjectPath($creature_path);
-			if (is_null($creature)) {
-				continue;
-			}
-			
-			$label = MarkdownLinkToObject($creature);
-			if (array_key_exists($creature_path, $limits)) {
-				$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_path] * 100, 0) . '%)';
-			}
-			$creatures[] = $label;
-			$unique_creatures[] = $creature_path;
+			$unique_creatures[] = $creature_id;
 		}
 	}
 	
-	foreach ($limits as $creature_path => $percentage) {
-		if (in_array($creature_path, $unique_creatures)) {
-			continue;
+	$creatures = [];
+	foreach ($unique_creatures as $creature_id) {
+		$creature = BeaconCreature::GetByObjectID($creature_id);
+		$label = MarkdownLinkToObject($creature);
+		if (array_key_exists($creature_id, $limits)) {
+			$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_id] * 100, 0) . '%)';
 		}
-		
-		$creature = BeaconCreature::GetByObjectPath($creature_path);
-		if (is_null($creature)) {
-			continue;
-		}
-		
-		$creatures[] = MarkdownLinkToObject($creature) . ' (Max ' . BeaconCommon::FormatFloat($percentage * 100, 0) . '%)';
+		$creatures[] = $label;
 	}
 	
 	sort($creatures);
@@ -286,11 +298,7 @@ function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $mult
 }
 
 function MarkdownLinkToObject(BeaconBlueprint $obj) {
-	$path = $obj->ClassString();
-	
-	if ($obj->IsAmbiguous()) {
-		$path = $obj->ModWorkshopID() . '/' . $path;
-	}
+	$path = $obj->ObjectID();
 	
 	return '[' . $obj->Label() . '](/object/' . $path . ')';
 }

@@ -6,7 +6,7 @@ Inherits Global.Thread
 		  Self.mFinished = False
 		  Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
 		  Var Errored As Boolean
-		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, If(Self.mDocument.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), Errored)
+		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mDefaultHeader, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, If(Self.mDocument.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
 		  Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
@@ -86,7 +86,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, ConfigDict As Dictionary, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
 		  Try
 		    // Normalize line endings
 		    Var EOL As String = InitialContent.DetectLineEnding
@@ -126,7 +126,7 @@ Inherits Global.Thread
 		    // Organize all existing content
 		    Var Lines() As String = InitialContent.Split(Encodings.ASCII.Chr(10))
 		    Var UntouchedConfigs As New Dictionary
-		    Var LastGroupHeader As String
+		    Var LastGroupHeader As String = DefaultHeader
 		    For I As Integer = 0 To Lines.LastIndex
 		      Var Line As String = Lines(I).Trim
 		      If Line.Length = 0 Then
@@ -428,9 +428,10 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
+		Sub Rewrite(InitialContent As String, DefaultHeader As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
 		  Self.mWithMarkup = WithMarkup
 		  Self.mInitialContent = InitialContent.SanitizeIni
+		  Self.mDefaultHeader = DefaultHeader
 		  Self.mMode = Mode
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity
@@ -441,7 +442,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, TrustKey As String, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, TrustKey As String, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
 		  Try
 		    Var ConfigDict As New Dictionary
 		    Var CustomContentGroup As BeaconConfigs.CustomContent
@@ -478,7 +479,7 @@ Inherits Global.Thread
 		      End If
 		    End If
 		    
-		    Return Rewrite(InitialContent, ConfigDict, TrustKey, Format, Errored)
+		    Return Rewrite(InitialContent, DefaultHeader, ConfigDict, TrustKey, Format, Errored)
 		  Catch Err As RuntimeException
 		    Errored = True
 		  End Try
@@ -518,6 +519,10 @@ Inherits Global.Thread
 		Event Started()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mDefaultHeader As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document

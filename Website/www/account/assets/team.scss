@@ -1,0 +1,27 @@
+.child_seat_status {
+	text-align: center;
+	margin-top: 40px;
+	margin-bottom: 40px;
+	
+	.slot_explanation {
+		font-size: 1.2em;
+	}
+	
+	.slot_count {
+		font-weight: bold;
+	}
+	
+	button {
+		margin: 6px;
+	}
+}
+
+table.generic {
+	td:nth-of-type(2), th:nth-of-type(2) {
+		width: 100px;
+	}
+	
+	td:nth-of-type(3), th:nth-of-type(3) {
+		width: 125px;
+	}
+}

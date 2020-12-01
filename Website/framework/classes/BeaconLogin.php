@@ -18,7 +18,7 @@ class BeaconLogin {
 	<p class="text-center"><img id="loading_spinner" src="/assets/images/spinner.svg" class="white-on-dark" width="64"></p>
 </div>
 <div id="page_login">
-	<form id="login_form_intro" action="check.php" method="post">
+	<form id="login_form_intro" action="check" method="post">
 		<p><input type="email" name="email" placeholder="E-Mail Address" id="login_email_field" required></p>
 		<p><input type="password" name="password" placeholder="Password" id="login_password_field" minlength="8" title="Enter a password with at least 8 characters" required></p>
 		<?php if ($this->with_remember_me) { ?><p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p><?php } ?>
@@ -77,13 +77,22 @@ class BeaconLogin {
 		return $code;
 	}
 	
-	public static function GenerateVerificationLink(string $email) {
+	public static function GenerateVerificationLink(string $email, $password = null) {
 		$code = static::GenerateVerificationCode($email);
 		if (is_null($code)) {
 			return null;
 		}
 		
-		return BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code));
+		$path = '/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code);
+		
+		if (is_null($password) === false) {
+			if (is_string($password) === false) {
+				return null;
+			}
+			$path .= '&password=' . urlencode($password);
+		}
+		
+		return BeaconCommon::AbsoluteURL($path);
 	}
 	
 	public static function SendVerification(string $email, $key = null, string $subject = 'Please Verify Your E-Mail Address') {
@@ -94,8 +103,32 @@ class BeaconLogin {
 		
 		$code_spaced = implode(' ', str_split($code));
 		$url = BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key)));
-		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (isset($_SERVER['REMOTE_ADDR']) ? ' This process was started from a device at the following ip address: ' . htmlentities($_SERVER['REMOTE_ADDR']) : '');
-		$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, simply reply to this email.' . (isset($_SERVER['REMOTE_ADDR']) ? ' This process was started from a device at the following ip address: <span style="font-weight:bold">' . htmlentities($_SERVER['REMOTE_ADDR']) . '</span>' : '') . '</center>';
+		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device at the following ip address: ' . BeaconCommon::RemoteAddr() : '');
+		$html = '<center>You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.<br /><br /><span style="font-weight:bold;font-size: x-large">' . $code_spaced . '</span><br /><br />Alternatively, you may use the following link to continue the process automatically:<br /><br /><a href="' . $url . '">' . $url . '</a><br /><br />If you need help, simply reply to this email.' . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device at the following ip address: <span style="font-weight:bold">' . htmlentities(BeaconCommon::RemoteAddr()) . '</span>' : '') . '</center>';
+		
+		return BeaconEmail::SendMail($email, $subject, $plain, $html);
+	}
+	
+	public static function SendTeamWelcome(string $email, string $password, string $parent, string $subject = 'Welcome to your Beacon Team') {
+		$link = static::GenerateVerificationLink($email, $password);
+		if (is_null($link)) {
+			return false;
+		}
+		
+		$plain = "A Beacon account has been created for you by $parent to share access to their Beacon documents. Please follow the link below to verify your email address and create a password for your account.\n\n$link";
+		$html = '<center>A Beacon account has been created for you by ' . htmlentities($parent) . ' to share access to their Beacon documents. Please follow the link below to verify your email address and create a password for your account.<br /><br /><a href="' . htmlentities($link) . '">' . htmlentities($link) . '</a></center>';
+		
+		return BeaconEmail::SendMail($email, $subject, $plain, $html);
+	}
+	
+	public static function SendForcedPasswordChangeEmail(string $email, string $password, string $subject = 'Please change your Beacon account password') {
+		$link = static::GenerateVerificationLink($email, $password);
+		if (is_null($link)) {
+			return false;
+		}
+		
+		$plain = "A mandatory password change has been initiated for your Beacon account. Please follow the link below to verify your email address and create a new password for your account.\n\n$link";
+		$html = '<center>A mandatory password change has been initiated for your Beacon account. Please follow the link below to verify your email address and create a new password for your account.<br /><br /><a href="' . htmlentities($link) . '">' . htmlentities($link) . '</a></center>';
 		
 		return BeaconEmail::SendMail($email, $subject, $plain, $html);
 	}

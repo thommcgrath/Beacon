@@ -252,7 +252,7 @@ table.generic {
 	td, th {
 		border-width: 1px;
 		border-style: solid;
-		padding: 0.6em;
+		padding: 6pt;
 	}
 	
 	thead {
@@ -275,6 +275,32 @@ table.generic {
 		ul {
 			padding-left: 40px;
 		}
+	}
+	
+	div.row-details {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		justify-content: start;
+		font-size: 10pt;
+		border-top-style: solid;
+		border-top-width: 1px;
+		margin-top: 8pt;
+		margin-bottom: -2pt;
+		padding-top: 2pt;
+		word-break: break-word;
+		
+		span.detail {
+			margin: 4pt;
+		}
+		
+		a {
+			word-break: normal;
+		}
+	}
+	
+	.low-priority {
+		display: none;
 	}
 }
 
@@ -450,6 +476,20 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 		cursor: default;
 		opacity: 0.25;
 	}
+	
+	.spinner {
+		display: none;
+	}
+	
+	&.working {
+		.caption {
+			display: none;
+		}
+		
+		.spinner {
+			display: initial;
+		}
+	}
 }
 
 /* !Fields */
@@ -481,6 +521,13 @@ input[type="text"], input[type="password"], input[type="email"], input[type="url
 		line-height: 1.0em;
 		vertical-align: bottom;
 		padding-top: 0.3em;
+	}
+}
+
+.field-pair {
+	label {
+		padding-left: 6px;
+		line-height: 1.6em;
 	}
 }
 
@@ -782,7 +829,7 @@ div.results {
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
-	transition-duration: 0.15s;
+	transition-duration: 0.25s;
 	transition-timing-function: ease-out;
 	transition-property: background-color, -webkit-backdrop-filter;
 	z-index: 2000;
@@ -802,10 +849,10 @@ div.results {
 	right: 0px;
 	z-index: 2001;
 	opacity: 0;
-	transition-duration: 0.15s;
+	transition-duration: 0.25s;
 	transition-timing-function: ease-out;
-	transition-property: opacity;
-	transition-delay: 0s;
+	transition-property: opacity, filter;
+	filter: blur(30px);
 	
 	&.exist {
 		display: block;
@@ -813,7 +860,7 @@ div.results {
 	
 	&.visible {
 		opacity: 1;
-		transition-delay: 0.2s;
+		filter: none;
 	}
 	
 	p {
@@ -839,6 +886,120 @@ div.results {
 
 #dialog_buttons {
 	text-align: center;
+}
+
+.modal {
+	display: none;
+	opacity: 0;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-out;
+	transition-property: opacity, top;
+	z-index: 2001;
+	position: fixed;
+	top: 35%;
+	left: 50%;
+	width: 600px;
+	margin-left: -300px;
+	margin-right: auto;
+	padding: 20px;
+	border-radius: 6px;
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.45);
+	box-sizing: border-box;
+	transform: translateY(-50%);
+	
+	&.exist {
+		display: block;
+	}
+	
+	&.visible {
+		opacity: 1;
+		top: 40%;
+	}
+	
+	.button-bar {
+		display: flex;
+		margin-top: 20px;
+		justify-content: space-between;
+		align-items: center;
+		
+		.left {
+			text-align: left;
+			flex: 1 1 auto;
+		}
+		
+		.middle {
+			text-align: center;
+			flex: 1 1 auto;
+		}
+		
+		.right {
+			text-align: right;
+			flex: 1 1 auto;
+		}
+	}
+	
+	.title-bar {
+		font-weight: 600;
+		margin-bottom: 20px;
+	}
+	
+	@media (max-width: 640px) {
+		left: 20px;
+		width: auto;
+		right: 20px;
+		margin: 0px;
+		top: 45%;
+		
+		&.visible {
+			top: 50%;	
+		}
+	}
+}
+
+.spinner {
+	display: inline-block;
+	
+	@mixin create-spinner-size($size) {
+		width: $size;
+		height: $size;
+		
+		&:after {
+			width: $size * 0.8;
+			height: $size * 0.8;
+			border-width: $size * 0.075;
+		}
+	}
+	
+	&.large {
+		@include create-spinner-size(65px);
+	}
+	
+	@include create-spinner-size(30px);
+	
+	&.small {
+		@include create-spinner-size(20px);
+	}
+	
+	&:after {
+		content: ' ';
+		display: block;
+		border-radius: 50%;
+		border-style: solid;
+		animation: spinner-keyframes 1.2s linear infinite;
+	}
+	
+	&.hidden {
+		display: none;
+	}
+}
+
+@keyframes spinner-keyframes {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 #knowledge_wrapper {
@@ -1048,6 +1209,29 @@ ul.object_list {
 	}
 }
 
+div.comment-block {
+	text-align: center;
+	font-size: small;
+	margin: 20px auto;
+	max-width: 400px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4pt;
+	padding: 10pt;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	div.icon {
+		img {
+			margin: 0px;
+			display: block;
+		}
+		
+		margin-right: 10pt;
+	}
+}
+
 @media (min-width: $breakpoint_desktop) {
 	.pagebody {
 		width: $max_content_width;
@@ -1109,6 +1293,16 @@ ul.object_list {
 			padding-left: 20px;
 			padding-top: 0px;
 			margin-top: 0px;
+		}
+	}
+	
+	table.generic {
+		div.row-details {
+			display: none;
+		}
+		
+		.low-priority {
+			display: table-cell;
 		}
 	}
 }

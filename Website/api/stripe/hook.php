@@ -134,21 +134,21 @@ case 'checkout.session.completed':
 	$database->Commit();
 	
 	if (count($codes) > 0) {
-		$email_body_plain = 'Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://beaconapp.cc/redeem>.' . "\n\n";
-		$email_body_html = '<p>Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://beaconapp.cc/redeem">https://beaconapp.cc/redeem</a> or by the direct link for a code below.</p>';
+		$email_body_plain = 'Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://usebeacon.app/redeem>.' . "\n\n";
+		$email_body_html = '<p>Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or by the direct link for a code below.</p>';
 		if (count($codes) > 1) {
 			$email_body_plain .= "Your codes are:\n" . implode("\n", $codes);
 			$email_body_html .= '<p>Your codes are';
 			for ($i = 0; $i < count($codes); $i++) {
-				$email_body_html .= '<br />' . $codes[$i] . ',  Redeem Link: <a href="https://beaconapp.cc/redeem/' . $codes[$i] . '">https://beaconapp.cc/redeem/' . $codes[$i] . '</a>';
+				$email_body_html .= '<br />' . $codes[$i] . ',  Redeem Link: <a href="https://usebeacon.app/redeem/' . $codes[$i] . '">https://usebeacon.app/redeem/' . $codes[$i] . '</a>';
 			}
 			$email_body_html .= '</p>';
 		} else {
 			$email_body_plain .= "Your code is " . $codes[0];
-			$email_body_html .= '<p>Your code is ' . $codes[0] . ' and can be redeemed using <a href="https://beaconapp.cc/redeem/' . $codes[0] . '">https://beaconapp.cc/redeem/' . $codes[0] . '</a></p>';
+			$email_body_html .= '<p>Your code is ' . $codes[0] . ' and can be redeemed using <a href="https://usebeacon.app/redeem/' . $codes[0] . '">https://usebeacon.app/redeem/' . $codes[0] . '</a></p>';
 		}
-		$email_body_plain .= "\n\nYou can also view the status of all purchased gift codes at <https://beaconapp.cc/account/#omni>.";
-		$email_body_html .= '<p>You can also view the status of all purchased gift codes at <a href="https://beaconapp.cc/account/#omni">https://beaconapp.cc/account/#omni</a></p>';
+		$email_body_plain .= "\n\nYou can also view the status of all purchased gift codes at <https://usebeacon.app/account/#omni>.";
+		$email_body_html .= '<p>You can also view the status of all purchased gift codes at <a href="https://usebeacon.app/account/#omni">https://usebeacon.app/account/#omni</a></p>';
 		
 		BeaconEmail::SendMail($email, 'Your Beacon Omni Gift', $email_body_plain, $email_body_html);
 	}

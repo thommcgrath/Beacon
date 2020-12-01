@@ -98,7 +98,7 @@ abstract class BeaconExceptions {
 		$database->Commit();
 		
 		if (count($changes) > 0) {
-			$details_url = BeaconCommon::AbsoluteURL('/reportaproblem.php?uuid=' . urlencode($exception_id) . '&action=view');
+			$details_url = BeaconCommon::AbsoluteURL('/reportaproblem?uuid=' . urlencode($exception_id) . '&action=view');
 			$arr = array(
 				'attachments' => array(
 					array(
@@ -144,7 +144,7 @@ abstract class BeaconExceptions {
 		}
 		$database->Commit();
 		
-		$details_url = BeaconCommon::AbsoluteURL('/reportaproblem.php?uuid=' . urlencode($exception_id) . '&action=view');
+		$details_url = BeaconCommon::AbsoluteURL('/reportaproblem?uuid=' . urlencode($exception_id) . '&action=view');
 		$arr = array(
 			'attachments' => array(
 				array(
@@ -200,7 +200,7 @@ abstract class BeaconExceptions {
 			$location = $results->Field('location');
 			
 			if (is_null($results->Field('solution_build'))) {
-				$details_url = BeaconCommon::AbsoluteURL('/reportaproblem.php?uuid=' . urlencode($exception_id) . '&action=view');
+				$details_url = BeaconCommon::AbsoluteURL('/reportaproblem?uuid=' . urlencode($exception_id) . '&action=view');
 				$arr = array(
 					'attachments' => array(
 						array(

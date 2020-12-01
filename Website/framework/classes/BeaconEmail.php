@@ -22,7 +22,7 @@ abstract class BeaconEmail {
 		];
 		
 		$body = [
-			'From' => '"Beacon for Ark" <forgotmyparachute@beaconapp.cc>',
+			'From' => '"Beacon" <help@' . BeaconCommon::Domain() . '>',
 			'To' => $recipient,
 			'Subject' => $subject,
 			'HtmlBody' => $body_html,
@@ -45,20 +45,6 @@ abstract class BeaconEmail {
 		}
 		
 		return true;
-		
-		/*$headers = array(
-			'MIME-Version' => '1.0',
-			'Content-Type' => 'multipart/alternative; boundary="' . $boundary . '"',
-			'From' => '"Beacon for Ark" <forgotmyparachute@beaconapp.cc>'
-		);
-		
-		$parts = array(
-			"Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . quoted_printable_encode($body_plain),
-			"Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . quoted_printable_encode($body_html)
-		);
-		$body = "--$boundary\r\n" . implode("\r\n--$boundary\r\n", $parts) . "\r\n--$boundary--";
-		
-		return mail($recipient, $subject, $body, $headers, '-f noreply@beaconapp.cc');*/
 	}
 }
 

@@ -16,6 +16,10 @@ if (isset($_GET['session_id'])) {
 		$session->SendCookie($temporary);
 	}
 } else {
+	$session = BeaconSession::GetFromCookie();
+	if (is_null($session) === false) {
+		$session->Delete();
+	}
 	BeaconSession::RemoveCookie();
 }
 

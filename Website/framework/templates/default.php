@@ -12,6 +12,7 @@ $description = BeaconTemplate::PageDescription();
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<?php if (!empty($description)) { ?><meta name="description" content="<?php echo htmlentities($description); ?>">
 		<?php } ?><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
@@ -59,7 +60,7 @@ $description = BeaconTemplate::PageDescription();
 				<p>Beacon is an open source project by</p>
 				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="120" alt="The ZAZ Studios"></a></p>
 				<p>Copyright 2016-<?php echo date('Y'); ?></p>
-				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>" alt="Beacon on GitHub"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>" alt="Beacon Discord Server"></a></p>
+				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>" alt="Beacon on GitHub"></a><a class="external_logo" href="/discord" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>" alt="Beacon Discord Server"></a></p>
 				<p>Get in touch using <a href="/help/contact">our support form</a>.<span class="smaller"><br><a href="/help/about_user_privacy">Privacy Policy</a></span></p>
 			</div>
 		</div>
@@ -92,6 +93,14 @@ $description = BeaconTemplate::PageDescription();
 				<p id="dialog_buttons"><button id="dialog_cancel_button">Cancel</button><button id="dialog_action_button" class="default">Ok</button></p>
 			</div>
 		</div>
-		<?php BeaconTemplate::PhotoSwipeDOM(); ?>
+		<?php
+		
+		$modals = BeaconTemplate::Modals();
+		foreach ($modals as $modal_id) {
+			$modal_content = BeaconTemplate::ModalContent($modal_id);
+			echo '<div id="' . $modal_id . '" class="modal">' . $modal_content . '</div>';
+		}
+		
+		BeaconTemplate::PhotoSwipeDOM(); ?>
 	</body>
 </html>

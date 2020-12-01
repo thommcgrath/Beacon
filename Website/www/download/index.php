@@ -2,7 +2,7 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
-$results = $database->Query("SELECT mac_url, win_32_url, win_64_url, win_combo_url, build_display, build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
+$results = $database->Query("SELECT mac_url, win_32_url, win_64_url, win_combo_url, build_display, build_number, delta_version FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
 if ($results->RecordCount() != 1) {
 	echo 'Whoops, no version information was found.';
 	exit;
@@ -12,6 +12,7 @@ $primary_links = array();
 $alternate_links = array();
 $version = $results->Field('build_display');
 $build = intval($results->Field('build_number'));
+$stable_engrams_version = $results->Field('delta_version');
 
 if (BeaconCommon::IsMacOS()) {
 	$primary_links[] = array(
@@ -121,10 +122,16 @@ foreach ($alternate_links as $link) {
 	$alternate_html[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($link['url'])) . '" rel="nofollow">' . htmlentities($link['label']) . '</a>';
 }
 
-$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $build);
-$last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
-$prerelease = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;", $build);
-$stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_number = 10306300;");
+if ($stable_engrams_version >= 5) {
+	$results = $database->Query('SELECT path, created FROM update_files WHERE version = $1 AND type = \'Complete\';', $stable_engrams_version);
+	$last_database_update = new DateTime($results->Field('created'));
+	$engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
+} else {
+	$last_database_update = BeaconCommon::NewestUpdateTimestamp($build);
+	$engrams_url = 'classes?version=' . $build;
+}
+$prerelease = $database->Query('SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;', $build);
+$stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_number = 10306300;');
 
 ?><h1>Current Version</h1>
 <p class="text-center">Version <?php echo $version; ?></p>
@@ -132,7 +139,7 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 <p class="text-center"><?php foreach ($primary_links as $link) { ?><a class="button" href="<?php echo BeaconCommon::SignDownloadURL($link['url']); ?>" rel="nofollow"><?php echo htmlentities($link['label']); ?></a><?php } ?><br><span class="mini"><?php echo implode(' | ' , $alternate_html); ?></span></p>
 <h3>Engrams Database</h3>
 <div class="indent">
-	<p><a href="classes.php?version=<?php echo $build; ?>" rel="nofollow">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
+	<p><a href="<?php echo $engrams_url; ?>" rel="nofollow">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
 </div>
 <?php if ($prerelease->RecordCount() == 1) {
 	
@@ -158,8 +165,18 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 		}
 	}
 	
-	$prerelease_links[] = '<a href="/history.php?stage=' . htmlentities($prerelease->Field('stage')) . '#build' . htmlentities($prerelease->Field('build_number')) . '">Release Notes</a>';
-	$prerelease_links[] = '<a href="classes.php?version=' . $prerelease->Field('build_number') . '" rel="nofollow">Engrams Database</a>';
+	$prerelease_links[] = '<a href="/history?stage=' . htmlentities($prerelease->Field('stage')) . '#build' . htmlentities($prerelease->Field('build_number')) . '">Release Notes</a>';
+	
+	$prerelease_engrams_version = $prerelease->Field('delta_version');
+	if ($prerelease_engrams_version == $stable_engrams_version) {
+		$prerelease_engrams_url = $engrams_url;
+	} elseif ($prerelease_engrams_version >= 5) {
+		$results = $database->Query('SELECT path FROM update_files WHERE version = $1 AND type = \'Complete\';', $prerelease_engrams_version);
+		$prerelease_engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
+	} else {
+		$prerelease_engrams_url = 'classes?version=' . $prerelease->Field('build_number');
+	}
+	$prerelease_links[] = '<a href="' . $prerelease_engrams_url . '" rel="nofollow">Engrams Database</a>';
 ?>
 <h3 id="preview">Preview Release</h3>
 <div class="indent">

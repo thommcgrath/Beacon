@@ -22,7 +22,7 @@
 			</tr>
 			<tr style="font-size: 14px;">
 				<td>&nbsp;</td>
-				<td width="300" style="padding: 30px 15px 30px 30px;" align="left">This email was sent to <?php echo htmlentities($recipient); ?> because it was requested from <a href="https://beaconapp.cc">https://beaconapp.cc</a>.</td>
+				<td width="300" style="padding: 30px 15px 30px 30px;" align="left">This email was sent to <?php echo htmlentities($recipient); ?> because it was requested from <a href="https://<?php echo BeaconCommon::Domain(); ?>">https://<?php echo BeaconCommon::Domain(); ?></a>.</td>
 				<td width="300" style="padding: 30px 30px 30px 15px;" align="right">The ZAZ Studios<br><span style="font-size: 12px">PO Box 2311<br>Columbia, CT 06237</span></td>
 				<td>&nbsp;</td>
 			</tr>

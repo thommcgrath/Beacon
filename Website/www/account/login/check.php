@@ -22,7 +22,7 @@ if (is_null($user)) {
 	if (isset($_SESSION['login_email']) && isset($_SESSION['login_email_verified']) && strtolower($_SESSION['login_email']) === strtolower($email) && $_SESSION['login_email_verified'] === true) {
 		// skip this step, verification is already done, just update the password
 		$_SESSION['login_desired_password'] = $password;
-		header('Location: /account/login/password.php');
+		header('Location: /account/login/password');
 		exit;
 	}
 	
@@ -32,7 +32,7 @@ if (is_null($user)) {
 		$verify_code = BeaconCommon::GenerateRandomKey(6, '0123456789');
 	}
 	
-	$headers = "From: Beacon Support <forgotmyparachute@beaconapp.cc>";
+	$headers = "From: Beacon Support <help@' . BeaconCommon::Domain() . '>";
 	$subject = "Email Verification Code";
 	$body = "Your email verification is $verify_code";
 	if (!mail($email, $subject, $body, $headers)) {
@@ -43,7 +43,7 @@ if (is_null($user)) {
 	$_SESSION['login_desired_password'] = $password;
 	$_SESSION['login_verify_code'] = $verify_code;
 	$_SESSION['login_email'] = $email;
-	header('Location: /account/login/verify.php');
+	header('Location: /account/login/verify');
 	exit;
 } else {
 	// check password

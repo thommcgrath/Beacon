@@ -19,7 +19,7 @@ if (count($objects) == 0) {
 echo '<h1>Objects Tagged &quot;' . htmlentities(ucwords($tag)) . '&quot;</h1>';
 echo '<ul class="object_list">';
 foreach ($objects as $object) {
-	echo '<li><a href="/object/' . urlencode($object->ClassString()) . '">' . htmlentities($object->Label()) . '</a></li>';
+	echo '<li><a href="/object/' . urlencode($object->ObjectID()) . '">' . htmlentities($object->Label()) . '</a></li>';
 }
 echo '</ul>';
 

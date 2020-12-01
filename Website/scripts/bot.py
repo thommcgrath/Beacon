@@ -23,7 +23,7 @@ class BeaconBot(discord.Client):
 		if channel == None:
 			channel = await member.create_dm()
 		await channel.send('Hi there! So I can make sure you get the best help possible, tell me, on which platform do you play Ark?')
-		await channel.send('In the meantime, check out https://beaconapp.cc/help for solutions to most issues.')
+		await channel.send('In the meantime, check out https://usebeacon.app/help for solutions to most issues.')
 		
 	async def on_message(self, message):
 		if isinstance(message.channel, discord.DMChannel) == False:

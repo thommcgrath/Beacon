@@ -19,7 +19,7 @@ abstract class BeaconCommon {
 			} else {
 				session_name('beacon_dev');
 			}
-			session_set_cookie_params(0, '/', '.beaconapp.cc', true, true);
+			session_set_cookie_params(0, '/', '.' . self::Domain(), true, true);
 			session_start();
 		}
 	}
@@ -58,6 +58,12 @@ abstract class BeaconCommon {
 			}
 		}
 		return static::$min_version;
+	}
+	
+	public static function NewestUpdateTimestamp(int $build = 99999999) {
+		$database = static::Database();
+		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables) UNION (SELECT MAX(last_update) AS stamp FROM mods WHERE min_version <= $1 AND confirmed = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM maps INNER JOIN mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE)) AS merged;', $build);
+		return new DateTime($results->Field('stamp'));
 	}
 	
 	public static function AssetURI(string $asset_filename) {
@@ -144,12 +150,32 @@ abstract class BeaconCommon {
 		exit;
 	}
 	
+	public static function Domain() {
+		if (isset($_SERVER['HTTP_HOST']) && (strtolower(substr($_SERVER['HTTP_HOST'], -12)) === 'beaconapp.cc')) {
+			return 'beaconapp.cc';
+		} else {
+			return 'usebeacon.app';
+		}
+	}
+	
+	public static function APIDomain() {
+		$domain = self::Domain();
+		$environment = self::EnvironmentName();
+		if ($environment === 'live') {
+			return 'api.' . $domain;
+		} elseif ($domain === 'beaconapp.cc') {
+			return 'api.' . $environment . '.' . $domain;
+		} else {
+			return $environment . '-api.' . $domain;
+		}
+	}
+	
 	public static function AbsoluteURL(string $path) {
 		// Because the host can be spoofed, only trust it in development.
 		if (self::InProduction()) {
-			$url = 'https://beaconapp.cc' . $path;
+			$url = 'https://' . self::Domain() . $path;
 		} else {
-			$url = 'https://' . self::EnvironmentName() . '.beaconapp.cc' . $path;
+			$url = 'https://' . self::EnvironmentName() . '.' . self::Domain() . $path;
 		}
 		return $url;
 	}
@@ -515,18 +541,21 @@ abstract class BeaconCommon {
 	
 	public static function SignDownloadURL(string $url, int $expires = 3600) {
 		if (strtolower(substr($url, 0, 29)) === 'https://releases.beaconapp.cc') {
-			$key = static::GetGlobal('BunnyCDN_Signing_Key');
-			if (is_null($key)) {
-				return $url;
-			}
-			
 			$path = substr($url, 29);
-			$expires += time();
-			$token = str_replace('=', '', strtr(base64_encode(md5($key . $path . $expires, true)), '+/', '-_'));
-			return $url . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
+		} elseif (strtolower(substr($url, 0, 30)) === 'https://releases.usebeacon.app') {
+			$path = substr($url, 30);
 		} else {
 			return $url;
 		}
+		
+		$key = static::GetGlobal('BunnyCDN_Signing_Key');
+		if (is_null($key)) {
+			return $url;
+		}
+		
+		$expires += time();
+		$token = str_replace('=', '', strtr(base64_encode(md5($key . $path . $expires, true)), '+/', '-_'));
+		return 'https://releases.' . self::Domain() . $path . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
 	}
 	
 	public static function IsCompressed(string $content) {
@@ -555,6 +584,28 @@ abstract class BeaconCommon {
 	
 	public static function CompressedResponseAllowed() {
 		return (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && stripos(strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') !== false);
+	}
+	
+	public static function RemoteAddr() {
+		if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) === false) {
+			return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} elseif (empty($_SERVER['HTTP_CF_CONNECTING_IP']) === false) {
+			return $_SERVER['HTTP_CF_CONNECTING_IP'];
+		} else {
+			return $_SERVER['REMOTE_ADDR'];
+		}
+	}
+	
+	public static function RemoteCountry() {
+		if (empty($_SERVER['HTTP_CF_IPCOUNTRY']) === false) {
+			return $_SERVER['HTTP_CF_IPCOUNTRY'];
+		} else {
+			return 'XX';
+		}
+	}
+	
+	public static function TeamsEnabled() {
+		return self::GetGlobal('Teams Enabled', false);
 	}
 }
 

@@ -112,7 +112,7 @@
 
 <h1 id="the-user-object">The User Object</h1>
 <p>The User object represents the extremely minimal data available about a user. Users can be created, queried, and deleted.</p>
-<p>The endpoint is https://api.beaconapp.cc/v1/user.php</p>
+<p>The endpoint is https://api.usebeacon.app/v1/user.php</p>
 <h3 id="user-structure">User Structure</h3>
 <pre><code class="json">{
   &quot;user_id&quot;: &quot;f08d5f69-214b-4e1c-910b-9ea57406f8c5&quot;,
@@ -123,7 +123,7 @@
 <h2 id="get">GET</h2>
 <p>Authentication is not required. Must supply one or more user UUIDs as the final path component. Listing users is not allowed and will result in a 405 result code. UUIDs are not case sensitive.</p>
 <pre><code class="http">GET /beacon/api/user.php/f08d5f69-214b-4e1c-910b-9ea57406f8c5 HTTP/1.1
-Host: beaconapp.cc
+Host: usebeacon.app
 
 HTTP/1.1 200 OK
 Content-Type: text/plain
@@ -135,7 +135,7 @@ Content-Type: text/plain
 <h2 id="post">POST</h2>
 <p>Authentication is not required to create a user. POST body must contain one or more complete user structures. Content-Type header must be application/json. A 400 error will be returned if these rules are violated or the user already exists.</p>
 <pre><code class="http">POST /beacon/api/user.php/f08d5f69-214b-4e1c-910b-9ea57406f8c5 HTTP/1.1
-Host: beaconapp.cc
+Host: usebeacon.app
 Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjRCQzQ3NTY2RjZDQjlBNjdBMTA5QTMzMThCMEVFQ0FGMUE0MTZCQkM0NkQwQTNCMzVEMkYzRjEzRTFFNDRERjMxREUwRDU0QTIwNUFCRjgxODlGMTEyRUE5MkQzOUI1REE5NTVDMjI3MkY2MDZCRTdBMjJENTAxNEFGNkY3NERGNEY4NkQ1RDZFNTI2MjJERDNBODZBMzNDOTNFNEZGOUU3NTcwOEUzNUYwMTkwQjY2OTc0RDkwRDk0RTZEODgzN0M5ODQzRTRDRDMxMjU5MUY3NTc1QjVEMDczQjRFMUJBRTYwMjIwRDZGOEVDQTBFNkRBNjMxRkQ5NkM1QjI5MTY5NUFFMzFCRkU0RTFFNjI3QTc2Nzk2MDQzRDg0MUUwQ0U4OUVBNDlCQTc0ODI2N0Q0MjYwNjcxNTM2NzU4MURCMjZFRkY1OTVGQUVDRjQyMDU1MjAxMzJCQzdERjUxNTEwOTVERjUyNjk0NUY1MTQ1NjBDRDIyQ0ZCODhGQTRBQzFBNzRENUZGMzhDQzE5QTEwNkQxMDc5MkZFQjA2QTFEM0E5RDQ1NTRGMTBEMkE1QTFDQkQ1MjhDQUU2QkIwMzc2QzVFRjBFOURGMEIzQUVGMjRDQTUwN0NEOEE1MzNERjFFODhCRkExQUEwMzBEM0JCN0QzOTNBMUYxQTUzNTAx
 Content-Type: application/json
 
@@ -147,7 +147,7 @@ HTTP/1.1 200 OK
 <h2 id="delete">DELETE</h2>
 <p>Authentication is required. Final path component must be the authenticated user's UUID. Deleting other users is not possible. Deleting a user will remove all documents, mods, and engrams.</p>
 <pre><code class="http">DELETE /beacon/api/user.php/f08d5f69-214b-4e1c-910b-9ea57406f8c5 HTTP/1.1
-Host: beaconapp.cc
+Host: usebeacon.app
 Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4Ojg0QzIyMjJCMEJCRjFGMzlBMUMyNkM3OTNDQTc4NzFFM0NFM0I4Mjc1REIwNUEyRjBCQjY5NEU0QUVBQ0Y4ODcwOTQ2QzQ1RjdDOTE2RDU4QkFEODY5QUUyMzUzQTc1MjM0Q0I0NTM0ODM0QkQ0OEExMzMzRTdGMjdFOEM3OEYzNjJEMUZFM0IyNjczRDc1ODQ5NDkxQTEwRTNFNjQzMzNGRTFGRDhGM0E4Nzc1OUYzQ0UxMzJCODkzNTc4NkQyNDdGOTNENTE4REIzQ0ExNEIwRkI5OEFGMTg2NDE3OURCMTcxODQ3NjRFMzhCOTI3Q0RENjUwRjZGMEM4NzE2Q0UxNUE3NTcyMkUxMTFDOThDRUU5Mjg5ODQzRTJFRjJDQjBGOEQ0MURGNTA4ODk4QTYzQjdDRjJERjYyNkM3RUE5MThDMzhGQkY4QzMxMEQ2QTNCNjg2N0E2QTAzQTY5NzJDOTNEMEI1RERDODk2MjNFQUI2MEU2QzlDREUwM0VCN0Y0RDc5ODZCQTVCMEJDNDM4NkQxM0EzMEFGN0VENDhBQUM1QUE3OTE0MDg1QTJCQzE2MTE0QjBEQzZBMzhENDNENjBBQjUzOTE2QTk0MzU3RkE5ODAxQjEzMjNGNTg3MEYzM0M1MzdCNUFGQjdDODI2MEZDMTVDNzBBOTM4Q0FD
 
 HTTP/1.1 200 OK

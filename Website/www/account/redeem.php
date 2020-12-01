@@ -16,7 +16,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 $user = BeaconUser::GetByUserID($session->UserID());
-BeaconTemplate::SetTitle('Account: ' . $user->LoginKey());
+BeaconTemplate::SetTitle('Account: ' . $user->Username());
 
 BeaconTemplate::StartStyles(); ?>
 <style>
@@ -37,7 +37,7 @@ if (isset($_REQUEST['code'])) {
 	$code = '';
 }
 
-$email_id = $user->Email();
+$email_id = $user->EmailID();
 
 $results = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1 AND product_id = $2;', $email_id, OMNI_PRODUCT_ID);
 if ($results->RecordCount() > 0) {
@@ -86,7 +86,7 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
 
 ?><h1>Redeem a Code for Beacon Omni</h1>
 <div id="redeem_form">
-	<form action="redeem.php" method="post">
+	<form action="redeem" method="post">
 		<p>Got a code for Beacon Omni? Redeem it here!</p>
 		<?php if (isset($error)) { ?><p class="text-center text-red"><?php echo htmlentities($error); ?></p><?php } ?>
 		<p><input type="text" name="code" placeholder="Code" minlength="9" maxlength="9" value="<?php echo htmlentities($code); ?>"></p>

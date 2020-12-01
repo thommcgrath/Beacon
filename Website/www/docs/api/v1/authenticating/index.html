@@ -115,24 +115,24 @@
 <h2 id="content-to-sign">Content To Sign</h2>
 <p>The content which needs to be signed is two or three lines separated by line feeds (ASCII 10).</p>
 <p>The first line is always the uppercase HTTP method.</p>
-<p>Second line is the full url, starting with https://beaconapp.cc regardless of the request's <code>Host</code> header. For <code>GET</code> requests, the query string must be included on this line. The ? should not be included if there are no parameters.</p>
+<p>Second line is the full url, starting with https://usebeacon.app regardless of the request's <code>Host</code> header. For <code>GET</code> requests, the query string must be included on this line. The ? should not be included if there are no parameters.</p>
 <p>For requests other than <code>GET</code>, there should be a third line with the request body. Even if there is no content in the request body, a third line should be included.</p>
 <p>A few examples</p>
 <pre><code class="plain">GET
-https://api.beaconapp.cc/v1/mod.php
+https://api.usebeacon.app/v1/mod.php
 </code></pre>
 
 <pre><code class="plain">GET
-https://api.beaconapp.cc/v1/engram.php?mod_id=123456
+https://api.usebeacon.app/v1/engram.php?mod_id=123456
 </code></pre>
 
 <pre><code class="plain">POST
-https://api.beaconapp.cc/v1/engram.php
+https://api.usebeacon.app/v1/engram.php
 {&quot;class&quot;:&quot;Prefix_MyEngram_C&quot;,&quot;label&quot;:&quot;My Engram&quot;,&quot;environments&quot;:[&quot;Island&quot;,&quot;Scorched&quot;],&quot;can_blueprint&quot;: true,&quot;mod_id&quot;: 123456}
 </code></pre>
 
 <pre><code class="plain">DELETE
-https://api.beaconapp.cc/v1/engram.php/Prefix_MyEngram_C,Prefix_OtherEngram_C
+https://api.usebeacon.app/v1/engram.php/Prefix_MyEngram_C,Prefix_OtherEngram_C
 
 </code></pre>
 

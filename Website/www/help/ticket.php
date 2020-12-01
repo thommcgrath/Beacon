@@ -100,7 +100,7 @@ if ($has_expanded_parameters) {
 		$user = BeaconUser::GetByUserID($user_id);
 		if (is_null($user) === false) {
 			$user_has_omni = $user->OmniVersion() >= 1;
-			$user_matches_purchase = $user->Email() === $email_id;
+			$user_matches_purchase = $user->EmailID() === $email_id;
 		}
 	} catch (Exception $e) {
 	}

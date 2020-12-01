@@ -86,7 +86,7 @@ $values = array(
 	'build' => intval($results->Field('build_number')),
 	'version' => $results->Field('build_display'),
 	'preview' => $results->Field('preview'),
-	'notes_url' => BeaconCommon::AbsoluteURL('/history.php' . (intval($results->Field('stage')) != 3 ? '?stage=' . $results->Field('stage') : '')),
+	'notes_url' => BeaconCommon::AbsoluteURL('/history' . (intval($results->Field('stage')) != 3 ? '?stage=' . $results->Field('stage') : '')),
 	'mac' => array(
 		'url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
 		'signature' => $results->Field('mac_signature')

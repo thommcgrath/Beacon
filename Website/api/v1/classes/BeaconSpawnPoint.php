@@ -1,29 +1,11 @@
 <?php
 
-class BeaconSpawnPoint extends BeaconBlueprint {
-	private $groups = null;
-	private $limits = null;
-	
-	protected static function TableName() {
-		return 'spawn_points';
-	}
-	
+class BeaconSpawnPoint extends BeaconAPI\SpawnPoint {
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(groups_template))) FROM (SELECT label, group_id, weight, array_to_json(ARRAY(SELECT creatures.path FROM spawn_point_creatures INNER JOIN creatures ON (spawn_point_creatures.creature_id = creatures.object_id) WHERE spawn_point_creatures.group_id = spawn_point_groups.group_id)) AS creatures FROM spawn_point_groups WHERE spawn_point_groups.spawn_point_id = spawn_points.object_id) AS groups_template) AS spawn_groups';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT label, spawn_point_set_id AS group_id, weight, array_to_json(ARRAY(SELECT creatures.path FROM (SELECT DISTINCT spawn_point_set_entries.creature_id FROM spawn_point_set_entries WHERE spawn_point_set_entries.spawn_point_set_id = spawn_point_sets.spawn_point_set_id) AS entry_creatures INNER JOIN creatures ON (entry_creatures.creature_id = creatures.object_id))) AS creatures FROM spawn_point_sets WHERE spawn_point_sets.spawn_point_id = spawn_points.object_id) AS sets_template) AS spawn_groups';
 		$columns[] = 'json_object(array(SELECT array[creatures.path, max_percentage::text] FROM spawn_point_limits INNER JOIN creatures ON (spawn_point_limits.creature_id = creatures.object_id) WHERE spawn_point_limits.spawn_point_id = spawn_points.object_id)) AS spawn_limits';
 		return $columns;
-	}
-	
-	protected function GetColumnValue(string $column) {
-		switch ($column) {
-		case 'spawn_groups':
-			return $this->groups;
-		case 'spawn_limits':
-			return $this->limits;
-		default:
-			return parent::GetColumnValue($column);
-		}
 	}
 	
 	protected static function FromRow(BeaconRecordSet $row) {
@@ -38,7 +20,6 @@ class BeaconSpawnPoint extends BeaconBlueprint {
 	
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
-		$json['resource_url'] = BeaconAPI::URL('/spawn_point/' . urlencode($this->ObjectID()));
 		if (is_null($this->groups) || count($this->groups) == 0) {
 			$json['spawns'] = null;
 			$json['groups'] = null;
@@ -52,14 +33,6 @@ class BeaconSpawnPoint extends BeaconBlueprint {
 			$json['limits'] = $this->limits;
 		}
 		return $json;
-	}
-	
-	public function Spawns() {
-		return $this->groups;
-	}
-	
-	public function Limits() {
-		return $this->limits;
 	}
 }
 

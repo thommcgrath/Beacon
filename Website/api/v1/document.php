@@ -8,6 +8,7 @@ require(dirname(__FILE__) . '/loader.php');
 $document_id = BeaconAPI::ObjectID();
 $method = BeaconAPI::Method();
 $database = BeaconCommon::Database();
+$user_id = null;
 
 $subobject = BeaconAPI::ObjectID(1);
 if (is_null($subobject) == false) {
@@ -72,7 +73,9 @@ case 'HEAD':
 	break;
 case 'GET':
 	BeaconAPI::Authorize(true);
-	$user_id = BeaconAPI::UserID();
+	if (BeaconAPI::Authenticated()) {
+		$user_id = BeaconAPI::UserID();
+	}
 	
 	if ($document_id === null) {
 		// query documents
@@ -83,7 +86,7 @@ case 'GET':
 			$params['limit_user_id'] = $_GET['user_id'];
 		}
 		if (isset($user_id)) {
-			$clauses[] = '(user_id = ::current_user_id:: OR published = \'Approved\')';
+			$clauses[] = '(user_id = ::current_user_id:: OR (published = \'Approved\' AND role = \'Owner\'))';
 			$params['current_user_id'] = $user_id;
 		} else {
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
@@ -219,7 +222,7 @@ case 'POST':
 		$single_mode = false;
 	}
 	
-	$user_id = strtolower(BeaconAPI::UserID());
+	$user = BeaconAPI::User();
 	$documents = array();
 	$database->BeginTransaction();
 	foreach ($items as $document) {
@@ -229,12 +232,12 @@ case 'POST':
 			$this_document_id = $document['Identifier'];
 		}
 		$reason = '';
-		$saved = BeaconDocument::SaveFromContent($this_document_id, $user_id, $document, $reason);
+		$saved = BeaconDocument::SaveFromContent($this_document_id, $user, $document, $reason);
 		if ($saved === false) {
 			$database->Rollback();
 			BeaconAPI::ReplyError($reason, $document);
 		}
-		$documents[] = BeaconDocument::GetSharedDocumentByID($this_document_id, $user_id)[0];
+		$documents[] = BeaconDocument::GetSharedDocumentByID($this_document_id, $user->UserID())[0];
 	}
 	$database->Commit();
 	
@@ -261,8 +264,8 @@ case 'DELETE':
 			
 			// When a file is deleted, if it is shared with another user, ownership transfers to another user. Which user
 			// is not particularly important.
-			$database->BeginTransaction();
-			if ($role === 'Owner') {
+			if ($role === 'Owner' || $role === 'Team') {
+				$database->BeginTransaction();
 				$guest_results = $database->Query('SELECT user_id FROM guest_documents WHERE document_id = $1;', $document_id);
 				if ($guest_results->RecordCount() == 0) {
 					$database->Query('UPDATE documents SET deleted = TRUE WHERE document_id = $1;', $document_id);
@@ -271,11 +274,9 @@ case 'DELETE':
 					$database->Query('UPDATE documents SET user_id = $1 WHERE document_id = $2;', $guest_user_id, $document_id);
 					$database->Query('DELETE FROM guest_documents WHERE document_id = $2 AND user_id = $1;', $guest_user_id, $document_id);
 				}
-			} elseif ($role === 'Guest') {
-				$database->Query('DELETE FROM guest_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
+				$database->Commit();
+				$success = true;
 			}
-			$database->Commit();
-			$success = true;
 		} catch (Exception $e) {
 		}
 		

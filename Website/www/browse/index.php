@@ -10,7 +10,7 @@ $search_keys = array(
 $sort_order = 'download_count DESC';
 $limit = 25;
 $offset = 0;
-$selected_maps = BeaconMaps::All();
+$selected_maps = BeaconMap::CombinedMask(BeaconMap::GetAll());
 $map_operator = 'any';
 if (array_key_exists('maps_operator', $_GET) && $_GET['maps_operator'] === 'all') {
 	$map_operator = 'all';
@@ -50,6 +50,12 @@ $document_count = BeaconDocument::Search($search_keys, $sort_order, $limit, $off
 $documents = BeaconDocument::Search($search_keys, $sort_order, $limit, $offset, false);
 $end_time = microtime(true);
 
+$maps = BeaconMap::GetAll();
+$map_checkboxes = [];
+foreach ($maps as $map) {
+	$map_checkboxes[] = '<div><label class="checkbox"><input type="checkbox" name="maps[]" value="' . $map->Mask() . '" id="map_checkbox_' . $map->Mask() . '"' . (($selected_maps & $map->Mask()) == $map->Mask() ? ' checked' : '') . '><span></span>' . htmlentities($map->Name()) . '</label></div>';
+}
+
 ?><h1>Browse Documents</h1>
 <div id="search_form" class="separator-color">
 	<form action="" method="get">
@@ -58,15 +64,7 @@ $end_time = microtime(true);
 				<td class="label">Maps</td>
 				<td>
 					<div class="option_group">
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheIsland; ?>" id="map_checkbox_island"<?php if (($selected_maps & BeaconMaps::TheIsland) == BeaconMaps::TheIsland) { echo ' checked'; } ?>><span></span>The Island</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::ScorchedEarth; ?>" id="map_checkbox_scorched"<?php if (($selected_maps & BeaconMaps::ScorchedEarth) == BeaconMaps::ScorchedEarth) { echo ' checked'; } ?>><span></span>Scorched Earth</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Aberration; ?>" id="map_checkbox_aberration"<?php if (($selected_maps & BeaconMaps::Aberration) == BeaconMaps::Aberration) { echo ' checked'; } ?>><span></span>Aberration</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Extinction; ?>" id="map_checkbox_extinction"<?php if (($selected_maps & BeaconMaps::Extinction) == BeaconMaps::Extinction) { echo ' checked'; } ?>><span></span>Extinction</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Genesis; ?>" id="map_checkbox_genesis"<?php if (($selected_maps & BeaconMaps::Genesis) == BeaconMaps::Genesis) { echo ' checked'; } ?>><span></span>Genesis</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheCenter; ?>" id="map_checkbox_center"<?php if (($selected_maps & BeaconMaps::TheCenter) == BeaconMaps::TheCenter) { echo ' checked'; } ?>><span></span>The Center</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Ragnarok; ?>" id="map_checkbox_ragnarok"<?php if (($selected_maps & BeaconMaps::Ragnarok) == BeaconMaps::Ragnarok) { echo ' checked'; } ?>><span></span>Ragnarok</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Valguero; ?>" id="map_checkbox_valguero"<?php if (($selected_maps & BeaconMaps::Valguero) == BeaconMaps::Valguero) { echo ' checked'; } ?>><span></span>Valguero</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::CrystalIsles; ?>" id="map_checkbox_crystalisles"<?php if (($selected_maps & BeaconMaps::CrystalIsles) == BeaconMaps::CrystalIsles) { echo ' checked'; } ?>><span></span>Crystal Isles</label></div>
+						<?php echo implode("\n", $map_checkboxes); ?>
 					</div>
 				</td>
 			</tr>
@@ -109,13 +107,13 @@ if ($document_count == 0) {
 
 if (count($documents) > 0) {
 	echo '<table id="browse_results" class="generic">';
-	echo '<thead><tr><th>Name</th><th class="low-priority-detail">Downloads</th><th class="low-priority-detail">Updated</th><th class="low-priority-detail">Revision</th></thead><tbody>';
+	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Updated</th><th class="low-priority">Revision</th></thead><tbody>';
 	foreach ($documents as $document) {
 		echo '<tr>';
-		echo '<td><a href="' . urlencode($document->DocumentID()) . '?map_filter=' . $selected_maps . '" class="document_name">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="properties-text">Updated: ' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</div></td>';
-		echo '<td class="text-right low-priority-detail">' . number_format($document->DownloadCount()) . '</td>';
-		echo '<td class="nowrap text-center low-priority-detail"><time datetime="' . $document->LastUpdated()->format('c') . '">' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
-		echo '<td class="text-right low-priority-detail">' . number_format($document->Revision()) . '</td>';
+		echo '<td><a href="' . urlencode($document->DocumentID()) . '?map_filter=' . $selected_maps . '" class="document_name">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="row-details"><span class="detail">Updated: ' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</span></div></td>';
+		echo '<td class="text-right low-priority">' . number_format($document->DownloadCount()) . '</td>';
+		echo '<td class="nowrap text-center low-priority"><time datetime="' . $document->LastUpdated()->format('c') . '">' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
+		echo '<td class="text-right low-priority">' . number_format($document->Revision()) . '</td>';
 		echo '</tr>';
 	}
 	echo '</tbody></table>';

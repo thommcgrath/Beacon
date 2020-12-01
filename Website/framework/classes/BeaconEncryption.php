@@ -34,6 +34,15 @@ abstract class BeaconEncryption {
 		}
 	}
 	
+	public static function RSASign(string $private_key, string $data) {
+		$signature = null;
+		if (@openssl_sign($data, $signature, $private_key, OPENSSL_ALGO_SHA1)) {
+			return $signature;
+		} else {
+			throw new Exception('Unable to create signature: ' . openssl_error_string());
+		}
+	}
+	
 	public static function RSAVerify(string $public_key, string $data, string $signature) {
 		$status = @openssl_verify($data, $signature, $public_key, OPENSSL_ALGO_SHA1);
 		if ($status == -1) {
@@ -131,6 +140,16 @@ abstract class BeaconEncryption {
 		$public_key = openssl_pkey_get_details($handle);
 		$public_key = $public_key['key'];
 		openssl_pkey_free($handle);
+	}
+	
+	public static function ExtractPublicKey(string $private_key) {
+		$handle = @openssl_pkey_get_private($private_key);
+		$details = @openssl_pkey_get_details($handle);
+		if (is_array($details) && array_key_exists('key', $details)) {
+			return $details['key'];
+		} else {
+			return null;
+		}
 	}
 	
 	public static function IsEncrypted(string $data) {

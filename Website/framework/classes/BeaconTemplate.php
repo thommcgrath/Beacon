@@ -9,6 +9,8 @@ abstract class BeaconTemplate {
 	protected static $body_class = '';
 	protected static $page_description = '';
 	protected static $use_photoswipe = false;
+	protected static $current_modal = null;
+	protected static $modals = [];
 	
 	protected static function CacheKey() {
 		return md5($_SERVER['REQUEST_URI']);
@@ -121,12 +123,37 @@ abstract class BeaconTemplate {
 		return implode($separator, self::ExtraHeaderLines());
 	}
 	
+	private static function URLWithModificationTime($url) {
+ 		if (substr($url, 0, 1) == '/') {
+ 			$pos = strpos($url, '?');
+ 			if ($pos !== false) {
+ 				$url_path = substr($url, 0, $pos);
+ 				$url_query = substr($url, $pos + 1);
+ 			} else {
+ 				$url_path = $url;
+ 				$url_query = '';
+ 			}
+
+  			$path = $_SERVER['DOCUMENT_ROOT'] . $url_path;
+ 			if (substr($url_path, -5) == '.scss') {
+ 				$url_path = substr($url_path, 0, -5) . '.css';
+ 			}
+ 			if (file_exists($path)) {
+ 				$query = [];
+ 				parse_str($url_query, $query);
+ 				$query['mtime'] = filemtime($path);
+ 				$url = $url_path . '?' . http_build_query($query);
+ 			}
+ 		}
+ 		return $url;
+ 	}
+	
 	public static function AddStylesheet(string $url) {
-		self::$header_lines[] = '<link href="' . htmlentities($url) . '" type="text/css" rel="stylesheet" nonce="' . $_SERVER['CSP_NONCE'] . '">';
+		self::$header_lines[] = '<link href="' . htmlentities(static::URLWithModificationTime($url)) . '" type="text/css" rel="stylesheet" nonce="' . $_SERVER['CSP_NONCE'] . '">';
 	}
 	
 	public static function AddScript(string $url) {
-		self::$header_lines[] = '<script src="' . htmlentities($url) . '" nonce="' . $_SERVER['CSP_NONCE'] . '"></script>';
+		self::$header_lines[] = '<script src="' . htmlentities(static::URLWithModificationTime($url)) . '" nonce="' . $_SERVER['CSP_NONCE'] . '"></script>';
 	}
 	
 	public static function StartScript() {
@@ -165,6 +192,20 @@ abstract class BeaconTemplate {
 		}
 	}
 	
+	public static function StartModal(string $id) {
+		self::$current_modal = $id;
+		ob_start();
+	}
+	
+	public static function FinishModal() {
+		$content = trim(ob_get_contents());
+		ob_end_clean();
+		
+		$id = self::$current_modal;
+		self::$current_modal = null;
+		self::$modals[$id] = $content;
+	}
+	
 	public static function IsHTML() {
 		if (php_sapi_name() == "cli") {
 			return false;
@@ -190,6 +231,14 @@ abstract class BeaconTemplate {
 		} else {
 			return true;
 		}
+	}
+	
+	public static function Modals() {
+		return array_keys(self::$modals);
+	}
+	
+	public static function ModalContent(string $id) {
+		return self::$modals[$id];
 	}
 	
 	public static function BodyClass() {

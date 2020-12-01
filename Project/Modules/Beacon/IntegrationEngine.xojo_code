@@ -403,13 +403,13 @@ Protected Class IntegrationEngine
 		  
 		  Var RewriteErrored As Boolean
 		  
-		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.RewriteModeGameIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
+		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.ShooterGameHeader, Beacon.RewriteModeGameIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
 		  If RewriteErrored Then
 		    Self.SetError("Failed to produce Game.ini")
 		    Return
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
+		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.RewriteModeGameUserSettingsIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
 		  If RewriteErrored Then
 		    Self.SetError("Failed to produce GameUserSettings.ini")
 		    Return
