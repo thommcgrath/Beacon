@@ -799,7 +799,7 @@ End
 		  Case Self.PageBlueprints
 		    Self.BlueprintsComponent1.SwitchedFrom()
 		  Case Self.PagePresets
-		    
+		    Self.PresetsComponent1.SwitchedFrom()
 		  Case Self.PageHelp
 		    
 		  End Select
@@ -814,7 +814,7 @@ End
 		  Case Self.PageBlueprints
 		    Self.BlueprintsComponent1.SwitchedTo(Nil)
 		  Case Self.PagePresets
-		    
+		    Self.PresetsComponent1.SwitchedTo(Nil)
 		  Case Self.PageHelp
 		    If Self.mHelpLoaded = False Then
 		      Self.HelpViewer.LoadURL(Beacon.WebURL("/help"))
