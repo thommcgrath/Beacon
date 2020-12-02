@@ -270,8 +270,8 @@ Inherits Beacon.Thread
 		      End Select
 		    Next
 		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, "Game.ini", GameIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, "GameUserSettings.ini", GameUserSettingsIniArray)
 		  Next
 		  
 		  Var CustomContent As New BeaconConfigs.CustomContent

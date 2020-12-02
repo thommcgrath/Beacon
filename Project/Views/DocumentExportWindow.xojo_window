@@ -1081,7 +1081,7 @@ End
 		  For Each Group As Beacon.ConfigGroup In Groups
 		    Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
 		    If Options <> Nil And Options.LastIndex > -1 Then
-		      Beacon.ConfigValue.FillConfigDict(CLIDict, Options)
+		      Beacon.ConfigValue.FillConfigDict(CLIDict, "CommandLine", Options)
 		    End If
 		  Next
 		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)

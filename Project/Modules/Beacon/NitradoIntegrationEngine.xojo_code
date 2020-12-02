@@ -7,9 +7,9 @@ Inherits Beacon.IntegrationEngine
 		  
 		  If Self.mDoGuidedDeploy Then
 		    Var GameIniDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		    Beacon.ConfigValue.FillConfigDict(GameIniDict, "Game.ini", GameIniValues)
 		    Var GameUserSettingsIniDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, "GameUserSettings.ini", GameUserSettingsIniValues)
 		    
 		    Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
 		    For Each ConfigKey As Beacon.ConfigKey In AllConfigs
@@ -382,10 +382,10 @@ Inherits Beacon.IntegrationEngine
 		        Next
 		        
 		        Var GameIniDict As New Dictionary
-		        Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		        Beacon.ConfigValue.FillConfigDict(GameIniDict, "Game.ini", GameIniValues)
 		        
 		        Var GameUserSettingsIniDict As New Dictionary
-		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, "GameUserSettings.ini", GameUserSettingsIniValues)
 		        
 		        Var ExtraGameIniSuccess As Boolean
 		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, ExtraGameIniSuccess)

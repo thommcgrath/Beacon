@@ -462,7 +462,7 @@ Inherits Global.Thread
 		        Options = Group.GameUserSettingsIniValues(Document, Identity, Profile)
 		      End Select
 		      If Options <> Nil And Options.LastIndex > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
+		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Mode, Options)
 		      End If
 		    Next
 		    
@@ -475,7 +475,7 @@ Inherits Global.Thread
 		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, ConfigDict, Profile)
 		      End Select
 		      If Options <> Nil And Options.LastIndex > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
+		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Mode, Options)
 		      End If
 		    End If
 		    

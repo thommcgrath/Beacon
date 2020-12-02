@@ -345,11 +345,11 @@ Protected Class IntegrationEngine
 		    
 		    If (CustomContent Is Nil) = False Then
 		      Var GameIniDict As New Dictionary
-		      Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		      Beacon.ConfigValue.FillConfigDict(GameIniDict, "Game.ini", GameIniValues)
 		      GameIniValues.AddArray(CustomContent.GameIniValues(Self.Document, GameIniDict, Self.Profile))
 		      
 		      Var GameUserSettingsIniDict As New Dictionary
-		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, "GameUserSettings.ini", GameUserSettingsIniValues)
 		      GameUserSettingsIniValues.AddArray(CustomContent.GameUserSettingsIniValues(Self.Document, GameUserSettingsIniDict, Self.Profile))
 		      
 		      CommandLineValues.AddArray(CustomContent.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))

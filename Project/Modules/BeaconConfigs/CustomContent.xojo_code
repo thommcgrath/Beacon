@@ -160,7 +160,7 @@ Inherits Beacon.ConfigGroup
 		  If SupportedConfigs <> Nil Then
 		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs, Nil)
 		    Var ConfigDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
+		    Beacon.ConfigValue.FillConfigDict(ConfigDict, "Game.ini", ConfigValues)
 		    
 		    Var Errored As Boolean
 		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", Beacon.ShooterGameHeader, ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
@@ -238,7 +238,7 @@ Inherits Beacon.ConfigGroup
 		    Next
 		    
 		    Var ConfigDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
+		    Beacon.ConfigValue.FillConfigDict(ConfigDict, "GameUserSettings.ini", ConfigValues)
 		    
 		    Var Errored As Boolean
 		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", Beacon.ServerSettingsHeader, ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)

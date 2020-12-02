@@ -256,8 +256,8 @@ End
 		      End Select
 		    Next
 		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, "Game.ini", GameIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, "GameUserSettings.ini", GameUserSettingsIniArray)
 		    
 		    CreatedEditorNames.Add(Language.LabelForConfig(ConfigName))
 		  Next

@@ -9,7 +9,7 @@ Protected Class ConfigValue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub FillConfigDict(Dict As Dictionary, Values() As Beacon.ConfigValue)
+		Shared Sub FillConfigDict(Dict As Dictionary, File As String, Values() As Beacon.ConfigValue)
 		  If Values = Nil Then
 		    Return
 		  End If
@@ -26,10 +26,22 @@ Protected Class ConfigValue
 		    End If
 		    
 		    Var Arr() As String
+		    Var Unique As Boolean = False
 		    If Section.HasKey(SimplifiedKey) Then
 		      Arr = Section.Value(SimplifiedKey)
+		      
+		      Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, SimplifiedKey)
+		      Unique = Keys.Count = 1 And (Keys(0).MaxAllowed Is Nil) = False And Keys(0).MaxAllowed.DoubleValue = 1
 		    End If
-		    Arr.Add(Value.Key + "=" + Value.Value)
+		    If Unique And Arr.Count > 0 Then
+		      If Arr.Count > 1 Then
+		        Arr.ResizeTo(0)
+		      End If
+		      
+		      Arr(0) = Value.Key + "=" + Value.Value
+		    Else
+		      Arr.Add(Value.Key + "=" + Value.Value)
+		    End If
 		    Section.Value(SimplifiedKey) = Arr
 		    
 		    Dict.Value(Header) = Section

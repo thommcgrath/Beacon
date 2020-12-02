@@ -2785,9 +2785,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Idx As Integer = 1
 		  
 		  If File.IsEmpty = False Then
-		    Values.Value(Idx) = File
-		    Clauses.Add("file = ?" + Idx.ToString)
-		    Idx = Idx + 1
+		    If File = "CommandLine" Then
+		      Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
+		    ElseIf File.IndexOf("*") > -1 Then
+		      Values.Value(Idx) = File.ReplaceAll("*", "%")
+		      Clauses.Add("file LIKE ?" + Idx.ToString)
+		      Idx = Idx + 1
+		    Else
+		      Values.Value(Idx) = File
+		      Clauses.Add("file = ?" + Idx.ToString)
+		      Idx = Idx + 1
+		    End If
 		  End If
 		  If Header.IsEmpty = False Then
 		    Values.Value(Idx) = Header
