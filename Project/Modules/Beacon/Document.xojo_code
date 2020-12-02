@@ -8,13 +8,13 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigGroup(Group As Beacon.ConfigGroup, SetName As String = BaseConfigSetName)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  Var SetDict As Dictionary = Self.ConfigSet(Self.ActiveConfigSet)
 		  If SetDict Is Nil Then
 		    SetDict = New Dictionary
 		  End If
 		  SetDict.Value(Group.ConfigName) = Group
-		  Self.ConfigSet(SetName) = SetDict
+		  Self.ConfigSet(Self.ActiveConfigSet) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -132,10 +132,10 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      If Clones.HasKey(SetName) Then
-		        Call Beacon.ConfigGroup(Clones.Value(SetName)).Merge(Group)
+		      If Clones.HasKey(GroupName) And Group.SupportsMerging Then
+		        Call Beacon.ConfigGroup(Clones.Value(GroupName)).Merge(Group)
 		      Else
-		        Clones.Value(SetName) = Group.Clone(Identity, Self)
+		        Clones.Value(GroupName) = Group.Clone(Identity, Self)
 		      End If
 		    Next
 		  Next
@@ -150,12 +150,12 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ConfigGroup(GroupName As String, Create As Boolean = False) As Beacon.ConfigGroup
-		  Return Self.ConfigGroup(GroupName, Self.BaseConfigSetName, Create)
+		  Return Self.ConfigGroup(GroupName, Self.ActiveConfigSet, Create)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ConfigGroup(GroupName As String, SetName As String, Create As Boolean = False) As Beacon.ConfigGroup
+	#tag Method, Flags = &h1
+		Protected Function ConfigGroup(GroupName As String, SetName As String, Create As Boolean) As Beacon.ConfigGroup
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(GroupName) Then
 		    Return SetDict.Value(GroupName)
@@ -165,7 +165,7 @@ Implements ObservationKit.Observable
 		    Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
 		    If (Group Is Nil) = False Then
 		      Group.IsImplicit = True
-		      Self.AddConfigGroup(Group, SetName)
+		      Self.AddConfigGroup(Group)
 		    End If
 		    Return Group
 		  End If
@@ -175,7 +175,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h1
 		Protected Function ConfigSet(SetName As String) As Dictionary
 		  If SetName.IsEmpty Then
-		    SetName = Self.BaseConfigSetName
+		    SetName = Self.ActiveConfigSet
 		  End If
 		  
 		  If Self.mConfigSets.HasKey(SetName) Then
@@ -187,7 +187,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h1
 		Protected Sub ConfigSet(SetName As String, Assigns Dict As Dictionary)
 		  If SetName.IsEmpty Then
-		    SetName = Self.BaseConfigSetName
+		    SetName = Self.ActiveConfigSet
 		  End If
 		  
 		  // Empty sets are valid
@@ -283,9 +283,10 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  Self.mConfigSets = New Dictionary
+		  Self.mActiveConfigSet = Self.BaseConfigSetName
 		  Self.mIdentifier = New v4UUID
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
-		  Self.mConfigSets = New Dictionary
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
@@ -826,8 +827,8 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasConfigGroup(GroupName As String, SetName As String = BaseConfigSetName) As Boolean
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Function HasConfigGroup(GroupName As String) As Boolean
+		  Var SetDict As Dictionary = Self.ConfigSet(Self.ActiveConfigSet)
 		  If (SetDict Is Nil) = False Then
 		    Return SetDict.HasKey(GroupName)
 		  End If
@@ -841,7 +842,21 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImplementedConfigs(SetName As String = BaseConfigSetName) As Beacon.ConfigGroup()
+		Function ImplementedConfigs() As Beacon.ConfigGroup()
+		  Var Names() As String = Self.ConfigSetNames
+		  Var Groups() As Beacon.ConfigGroup
+		  For Each SetName As String In Names
+		    Var SetGroups() As Beacon.ConfigGroup = Self.ImplementedConfigs(SetName)
+		    For Each Group As Beacon.ConfigGroup In SetGroups
+		      Groups.Add(Group)
+		    Next
+		  Next
+		  Return Groups
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImplementedConfigs(SetName As String) As Beacon.ConfigGroup()
 		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  Var Groups() As Beacon.ConfigGroup
 		  If (SetDict Is Nil) = False Then
@@ -941,7 +956,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Metadata(Create As Boolean = False) As BeaconConfigs.Metadata
 		  Static GroupName As String = BeaconConfigs.Metadata.ConfigName
-		  Var Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
+		  Var Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Self.BaseConfigSetName, Create)
 		  If Group <> Nil Then
 		    Return BeaconConfigs.Metadata(Group)
 		  End If
@@ -1146,8 +1161,8 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(GroupName As String, SetName As String = BaseConfigSetName)
-		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
+		Sub RemoveConfigGroup(GroupName As String)
+		  Var SetDict As Dictionary = Self.ConfigSet(Self.ActiveConfigSet)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(GroupName) Then
 		    SetDict.Remove(GroupName)
 		    Self.mModified = True
@@ -1399,6 +1414,24 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mActiveConfigSet
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mConfigSets.HasKey(Value) Then
+			    Self.mActiveConfigSet = Value
+			  Else
+			    Self.mActiveConfigSet = Self.BaseConfigSetName
+			  End If
+			End Set
+		#tag EndSetter
+		ActiveConfigSet As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mAllowUCS
 			End Get
 		#tag EndGetter
@@ -1463,6 +1496,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mActiveConfigSet As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

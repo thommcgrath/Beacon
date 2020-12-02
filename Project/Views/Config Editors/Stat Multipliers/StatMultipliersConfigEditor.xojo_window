@@ -2905,7 +2905,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatMultipliers.ConfigName, Self.ConfigSetName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatMultipliers.ConfigName)
 		End Sub
 	#tag EndEvent
 
@@ -2935,16 +2935,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StatMultipliers(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Config = BeaconConfigs.StatMultipliers(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.StatMultipliers(Document.ConfigGroup(ConfigName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.StatMultipliers
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Document.AddConfigGroup(Config, Self.ConfigSetName)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
 		  End If
 		  
 		  Return Config

@@ -176,11 +176,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName, Self.ConfigSetName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName, Self.ConfigSetName))
+		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
 		  If OtherConfig = Nil Then
 		    Return True
 		  End If
@@ -200,7 +200,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName, Self.ConfigSetName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName)
 		End Sub
 	#tag EndEvent
 
@@ -236,16 +236,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.DinoAdjustments(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Config = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(ConfigName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.DinoAdjustments
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Document.AddConfigGroup(Config, Self.ConfigSetName)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
 		  End If
 		  
 		  Return Config

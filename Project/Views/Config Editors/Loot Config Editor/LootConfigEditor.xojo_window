@@ -388,11 +388,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName, Self.ConfigSetName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) = False Then
 		    Return False
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName, Self.ConfigSetName))
+		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
 		  If OtherConfig Is Nil Then
 		    Return False
 		  End If
@@ -453,7 +453,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootDrops.ConfigName, Self.ConfigSetName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootDrops.ConfigName)
 		End Sub
 	#tag EndEvent
 
@@ -594,16 +594,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.LootDrops(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Config = BeaconConfigs.LootDrops(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.LootDrops(Document.ConfigGroup(ConfigName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.LootDrops
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Document.AddConfigGroup(Config, Self.ConfigSetName)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
 		  End If
 		  
 		  Return Config

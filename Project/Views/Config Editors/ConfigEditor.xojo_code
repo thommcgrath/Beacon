@@ -60,12 +60,6 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ConfigSetName() As String
-		  Return Self.mConfigSetName
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  Self.SettingUp = True
@@ -73,9 +67,8 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As Beacon.DocumentController, ConfigSetName As String)
+		Sub Constructor(Controller As Beacon.DocumentController)
 		  Self.mController = Controller
-		  Self.mConfigSetName = ConfigSetName
 		  Self.Constructor()
 		End Sub
 	#tag EndMethod
@@ -160,19 +153,19 @@ Inherits BeaconSubview
 		  End If
 		  
 		  Var Label As String = Self.ConfigLabel
-		  If Document.HasConfigGroup(Label, Self.ConfigSetName) = False Then
+		  If Document.HasConfigGroup(Label) = False Then
 		    Return
 		  End If
 		  
-		  Var NewGroup As Beacon.ConfigGroup = Document.ConfigGroup(Label, Self.ConfigSetName)
+		  Var NewGroup As Beacon.ConfigGroup = Document.ConfigGroup(Label)
 		  
-		  If Self.Document.HasConfigGroup(Label, Self.ConfigSetName) Then
-		    Var OriginalGroup As Beacon.ConfigGroup = Self.Document.ConfigGroup(Label, Self.ConfigSetName)
+		  If Self.Document.HasConfigGroup(Label) Then
+		    Var OriginalGroup As Beacon.ConfigGroup = Self.Document.ConfigGroup(Label)
 		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("How would you like to merge " + Language.LabelForConfig(Label) + " into your existing editor?", "In the case of overlapping content, which should take priority?", "New Content", "Cancel", "Existing Content")
 		    Select Case Choice
 		    Case BeaconUI.ConfirmResponses.Action
 		      If NewGroup.Merge(OriginalGroup) Then
-		        Self.Document.AddConfigGroup(NewGroup, Self.ConfigSetName)
+		        Self.Document.AddConfigGroup(NewGroup)
 		      End If
 		    Case BeaconUI.ConfirmResponses.Cancel
 		      Return
@@ -182,7 +175,7 @@ Inherits BeaconSubview
 		      End If
 		    End Select
 		  Else
-		    Self.Document.AddConfigGroup(NewGroup, Self.ConfigSetName)
+		    Self.Document.AddConfigGroup(NewGroup)
 		  End If
 		  
 		  Self.SetupUI()
@@ -266,10 +259,6 @@ Inherits BeaconSubview
 		Event ShowIssue(Issue As Beacon.Issue)
 	#tag EndHook
 
-
-	#tag Property, Flags = &h21
-		Private mConfigSetName As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mController As Beacon.DocumentController

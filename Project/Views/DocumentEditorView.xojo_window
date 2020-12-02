@@ -668,8 +668,6 @@ End
 		  End If
 		  Self.mEditorRefs.Value(Controller.Document.DocumentID) = New WeakRef(Self)
 		  
-		  Self.mActiveConfigSet = Beacon.Document.BaseConfigSetName
-		  
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
@@ -1133,7 +1131,7 @@ End
 		        Continue
 		      End If
 		      
-		      Item.Unemphasized = Self.Document.HasConfigGroup(Tags(I), ActiveConfigSet) = False
+		      Item.Unemphasized = Self.Document.HasConfigGroup(Tags(I)) = False Or Self.Document.ConfigGroup(Tags(I)).IsImplicit = True
 		    End If
 		    SourceItems.Add(Item)
 		  Next
@@ -1209,30 +1207,19 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mActiveConfigSet
+			  Return Self.Document.ActiveConfigSet
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Value.IsEmpty Then
-			    Value = Beacon.Document.BaseConfigSetName
-			  Else
-			    Var SetNames() As String = Self.Document.ConfigSetNames
-			    If SetNames.IndexOf(Value) = -1 Then
-			      Value = Beacon.Document.BaseConfigSetName
-			    End If
-			  End If
+			  Var ConfigName As String = Self.CurrentConfigName
+			  Self.CurrentConfigName = "" // To unload the current version
 			  
-			  If Self.mActiveConfigSet.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-			    Var ConfigName As String = Self.CurrentConfigName
-			    Self.CurrentConfigName = "" // To unload the current version
-			    
-			    Self.mActiveConfigSet = Value
-			    Self.ConfigSetPicker.Invalidate
-			    Self.UpdateConfigList
-			    
-			    Self.CurrentConfigName = ConfigName
-			  End If
+			  Self.Document.ActiveConfigSet = Value
+			  Self.ConfigSetPicker.Invalidate
+			  Self.UpdateConfigList
+			  
+			  Self.CurrentConfigName = ConfigName
 			End Set
 		#tag EndSetter
 		ActiveConfigSet As String
@@ -1286,41 +1273,41 @@ End
 			    Else
 			      Select Case Value
 			      Case "deployments"
-			        NewPanel = New ServersConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New ServersConfigEditor(Self.mController)
 			      Case "accounts"
-			        NewPanel = New AccountsConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New AccountsConfigEditor(Self.mController)
 			      Case BeaconConfigs.LootDrops.ConfigName
-			        NewPanel = New LootConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New LootConfigEditor(Self.mController)
 			      Case BeaconConfigs.Difficulty.ConfigName
-			        NewPanel = New DifficultyConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New DifficultyConfigEditor(Self.mController)
 			      Case BeaconConfigs.LootScale.ConfigName
-			        NewPanel = New LootScaleConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New LootScaleConfigEditor(Self.mController)
 			      Case BeaconConfigs.Metadata.ConfigName
-			        NewPanel = New MetaDataConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New MetaDataConfigEditor(Self.mController)
 			      Case BeaconConfigs.ExperienceCurves.ConfigName
-			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
 			      Case BeaconConfigs.CustomContent.ConfigName
-			        NewPanel = New CustomContentConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New CustomContentConfigEditor(Self.mController)
 			      Case BeaconConfigs.CraftingCosts.ConfigName
-			        NewPanel = New CraftingCostsConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
 			      Case BeaconConfigs.StackSizes.ConfigName
-			        NewPanel = New StackSizesConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New StackSizesConfigEditor(Self.mController)
 			      Case BeaconConfigs.BreedingMultipliers.ConfigName
-			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
 			      Case BeaconConfigs.HarvestRates.ConfigName
-			        NewPanel = New HarvestRatesConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
 			      Case BeaconConfigs.DinoAdjustments.ConfigName
-			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
 			      Case BeaconConfigs.StatMultipliers.ConfigName
-			        NewPanel = New StatMultipliersConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
 			      Case BeaconConfigs.DayCycle.ConfigName
-			        NewPanel = New DayCycleConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New DayCycleConfigEditor(Self.mController)
 			      Case BeaconConfigs.SpawnPoints.ConfigName
-			        NewPanel = New SpawnPointsConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
 			      Case BeaconConfigs.StatLimits.ConfigName
-			        NewPanel = New StatLimitsConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New StatLimitsConfigEditor(Self.mController)
 			      Case BeaconConfigs.EngramControl.ConfigName
-			        NewPanel = New EngramControlConfigEditor(Self.mController, Self.ActiveConfigSet)
+			        NewPanel = New EngramControlConfigEditor(Self.mController)
 			      End Select
 			      If NewPanel <> Nil Then
 			        Self.Panels.Value(CacheKey) = NewPanel
@@ -1377,10 +1364,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private CurrentPanel As ConfigEditor
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mActiveConfigSet As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1685,6 +1668,22 @@ End
 		Sub Open()
 		  Self.UpdateConfigList()
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ShouldChange(DesiredIndex As Integer) As Boolean
+		  #Pragma Unused DesiredIndex
+		  
+		  Var CurrentItem As SourceListItem = Me.SelectedItem
+		  If (CurrentItem Is Nil) = False Then
+		    Try
+		      Var GroupName As String = CurrentItem.Tag
+		      CurrentItem.Unemphasized = Self.Document.HasConfigGroup(GroupName) = False Or Self.Document.ConfigGroup(GroupName).IsImplicit = True
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigSetPicker

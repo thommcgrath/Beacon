@@ -330,7 +330,7 @@ Protected Class IntegrationEngine
 		  
 		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
 		    Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
-		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		    Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
 		    Var CustomContent As BeaconConfigs.CustomContent
 		    For Each Group As Beacon.ConfigGroup In Groups
 		      If Group IsA BeaconConfigs.CustomContent Then
@@ -425,7 +425,7 @@ Protected Class IntegrationEngine
 		  
 		  Var CommandLine() As Beacon.ConfigValue
 		  If Self.SupportsWideSettings Then
-		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		    Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
 		    For Each Group As Beacon.ConfigGroup In Groups
 		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		        Continue

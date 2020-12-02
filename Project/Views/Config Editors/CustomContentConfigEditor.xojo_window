@@ -231,17 +231,17 @@ End
 		    
 		    ImportedConfigs.Add(CreatedConfig)
 		    
-		    If SelfDocument.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
+		    If SelfDocument.HasConfigGroup(ConfigName) Then
 		      Var CurrentConfig As Beacon.ConfigGroup = SelfDocument.ConfigGroup(ConfigName, False)
 		      If CurrentConfig <> Nil Then
 		        If Not CurrentConfig.Merge(CreatedConfig) Then
 		          Continue
 		        End If
 		      Else
-		        SelfDocument.AddConfigGroup(CreatedConfig, Self.ConfigSetName)
+		        SelfDocument.AddConfigGroup(CreatedConfig)
 		      End If
 		    Else
-		      SelfDocument.AddConfigGroup(CreatedConfig, Self.ConfigSetName)
+		      SelfDocument.AddConfigGroup(CreatedConfig)
 		    End If
 		    
 		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(SelfDocument, Identity, GenericProfile)
@@ -282,7 +282,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.CustomContent.ConfigName, Self.ConfigSetName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.CustomContent.ConfigName)
 		End Sub
 	#tag EndEvent
 
@@ -317,16 +317,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.CustomContent(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Config = BeaconConfigs.CustomContent(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.CustomContent(Document.ConfigGroup(ConfigName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.CustomContent
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Document.AddConfigGroup(Config, Self.ConfigSetName)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
 		  End If
 		  
 		  Return Config
@@ -340,11 +340,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As Beacon.DocumentController, ConfigSetName As String)
+		Sub Constructor(Controller As Beacon.DocumentController)
 		  Self.mGameUserSettingsIniState = New TextAreaState
 		  Self.mGameIniState = New TextAreaState
 		  
-		  Super.Constructor(Controller, ConfigSetName)
+		  Super.Constructor(Controller)
 		End Sub
 	#tag EndMethod
 

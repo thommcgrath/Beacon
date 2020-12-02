@@ -271,11 +271,11 @@ End
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the global multiplier, it would likely be confusing for users
 		  
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.StackSizes.ConfigName, Self.ConfigSetName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.StackSizes.ConfigName) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.StackSizes.ConfigName, Self.ConfigSetName))
+		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.StackSizes.ConfigName))
 		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
@@ -293,7 +293,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StackSizes.ConfigName, Self.ConfigSetName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.StackSizes.ConfigName)
 		End Sub
 	#tag EndEvent
 
@@ -314,16 +314,16 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StackSizes(Self.mConfigRef.Value)
-		  ElseIf Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Config = BeaconConfigs.StackSizes(Document.ConfigGroup(ConfigName, Self.ConfigSetName))
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.StackSizes(Document.ConfigGroup(ConfigName))
 		    Self.mConfigRef = New WeakRef(Config)
 		  Else
 		    Config = New BeaconConfigs.StackSizes
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  
-		  If ForWriting And Not Document.HasConfigGroup(ConfigName, Self.ConfigSetName) Then
-		    Document.AddConfigGroup(Config, Self.ConfigSetName)
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
 		  End If
 		  
 		  Return Config
