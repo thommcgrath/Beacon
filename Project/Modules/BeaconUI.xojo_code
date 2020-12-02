@@ -72,7 +72,7 @@ Protected Module BeaconUI
 		  #elseif TargetWin32
 		    Return G.FontAscent * 0.75
 		  #else
-		    Return G.FontAscent
+		    Return G.Font.Ascent
 		  #endif
 		End Function
 	#tag EndMethod

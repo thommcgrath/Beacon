@@ -54,7 +54,7 @@ Protected Module CallLater
 		  #if TargetDesktop
 		    AddHandler CallTimer.Action, AddressOf CallTimer_Action
 		  #else
-		    AddHandler CallTimer.Run, AddressOf CallTimer_Run
+		    AddHandler CallTimer.Run, AddressOf CallTimer_Action
 		  #endif
 		  CallTimer.Period = Delay
 		  CallTimer.RunMode = Timer.RunModes.Single
@@ -76,7 +76,7 @@ Protected Module CallLater
 		  #if TargetDesktop
 		    AddHandler CallTimer.Action, AddressOf CallTimer_Action
 		  #else
-		    AddHandler CallTimer.Run, AddressOf CallTimer_Run
+		    AddHandler CallTimer.Run, AddressOf CallTimer_Action
 		  #endif
 		  CallTimer.Period = Delay
 		  CallTimer.RunMode = Timer.RunModes.Single

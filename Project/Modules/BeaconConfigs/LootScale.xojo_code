@@ -26,8 +26,10 @@ Inherits Beacon.ConfigGroup
 		  If Self.mMultiplier <> 1.0 And Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
 		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToString + " < " + Self.DiscardBeforeVersion.ToString + ".")
 		    
-		    // This has been made thread safe
-		    BeaconUI.ShowAlert("Loot Quality Scale of " + Self.mMultiplier.ToString(Locale.Current, ",##0%") + " has been reset to default.", "Since the last time you used this file, Beacon's quality formulas have changed. To prevent unintended quality changes, Beacon has reset your Loot Quality Scale. You are welcome to set it back to " + Self.mMultiplier.ToString(Locale.Current, ",##0%") + " if you like, but you may find that value to be too high or low for the new quality values.")
+		    #if TargetDesktop
+		      // This has been made thread safe
+		      BeaconUI.ShowAlert("Loot Quality Scale of " + Self.mMultiplier.ToString(Locale.Current, ",##0%") + " has been reset to default.", "Since the last time you used this file, Beacon's quality formulas have changed. To prevent unintended quality changes, Beacon has reset your Loot Quality Scale. You are welcome to set it back to " + Self.mMultiplier.ToString(Locale.Current, ",##0%") + " if you like, but you may find that value to be too high or low for the new quality values.")
+		    #endif
 		    
 		    Self.mMultiplier = 1.0
 		  End If

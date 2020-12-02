@@ -82,7 +82,7 @@ Protected Module BeaconConfigs
 		  If Info Is Nil Then
 		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
 		    Return Nil
-		  ElseIf Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		  ElseIf Info.IsSubclassOf(TypeInfoForConfigName("")) = False Then
 		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
 		    Return Nil
 		  End If 
@@ -103,7 +103,7 @@ Protected Module BeaconConfigs
 		  If Info Is Nil Then
 		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
 		    Return Nil
-		  ElseIf Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		  ElseIf Info.IsSubclassOf(TypeInfoForConfigName("")) = False Then
 		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
 		    Return Nil
 		  End If 
@@ -130,7 +130,7 @@ Protected Module BeaconConfigs
 		  If Info Is Nil Then
 		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
 		    Return Nil
-		  ElseIf Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		  ElseIf Info.IsSubclassOf(TypeInfoForConfigName("")) = False Then
 		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
 		    Return Nil
 		  End If
@@ -142,7 +142,7 @@ Protected Module BeaconConfigs
 		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
 		  For Each Signature As Introspection.MethodInfo In Methods
 		    Try
-		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastIndex = 4 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
+		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastIndex = 4 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(TypeInfoForConfigName("")) Then
 		        Var Params(4) As Variant
 		        Params(0) = ParsedData
 		        Params(1) = CommandLineOptions
@@ -167,42 +167,64 @@ Protected Module BeaconConfigs
 
 	#tag Method, Flags = &h1
 		Protected Function TypeInfoForConfigName(ConfigName As String) As Introspection.TypeInfo
+		  If mTypeInfoCache Is Nil Then
+		    mTypeInfoCache = New Dictionary
+		  End If
+		  
+		  If mTypeInfoCache.HasKey(ConfigName) Then
+		    Return mTypeInfoCache.Value(ConfigName)
+		  End If
+		  
+		  Var Config As Beacon.ConfigGroup
 		  Select Case ConfigName
+		  Case ""
+		    Config = New Beacon.ConfigGroup
 		  Case BeaconConfigs.Difficulty.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.Difficulty)
+		    Config = New BeaconConfigs.Difficulty
 		  Case BeaconConfigs.LootDrops.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.LootDrops)
+		    Config = New BeaconConfigs.LootDrops
 		  Case BeaconConfigs.LootScale.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.LootScale)
+		    Config = New BeaconConfigs.LootScale
 		  Case BeaconConfigs.Metadata.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.Metadata)
+		    Config = New BeaconConfigs.Metadata
 		  Case BeaconConfigs.ExperienceCurves.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.ExperienceCurves)
+		    Config = New BeaconConfigs.ExperienceCurves
 		  Case BeaconConfigs.CustomContent.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.CustomContent)
+		    Config = New BeaconConfigs.CustomContent
 		  Case BeaconConfigs.CraftingCosts.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.CraftingCosts)
+		    Config = New BeaconConfigs.CraftingCosts
 		  Case BeaconConfigs.StackSizes.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.StackSizes)
+		    Config = New BeaconConfigs.StackSizes
 		  Case BeaconConfigs.BreedingMultipliers.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.BreedingMultipliers)
+		    Config = New BeaconConfigs.BreedingMultipliers
 		  Case BeaconConfigs.HarvestRates.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.HarvestRates)
+		    Config = New BeaconConfigs.HarvestRates
 		  Case BeaconConfigs.DinoAdjustments.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.DinoAdjustments)
+		    Config = New BeaconConfigs.DinoAdjustments
 		  Case BeaconConfigs.StatMultipliers.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.StatMultipliers)
+		    Config = New BeaconConfigs.StatMultipliers
 		  Case BeaconConfigs.DayCycle.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.DayCycle)
+		    Config = New BeaconConfigs.DayCycle
 		  Case BeaconConfigs.SpawnPoints.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.SpawnPoints)
+		    Config = New BeaconConfigs.SpawnPoints
 		  Case BeaconConfigs.StatLimits.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.StatLimits)
+		    Config = New BeaconConfigs.StatLimits
 		  Case BeaconConfigs.EngramControl.ConfigName
-		    Return GetTypeInfo(BeaconConfigs.EngramControl)
+		    Config = New BeaconConfigs.EngramControl
+		  Else
+		    Return Nil
 		  End Select
+		  
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Config)
+		  mTypeInfoCache.Value(ConfigName) = Info
+		  Return Info
 		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mTypeInfoCache As Dictionary
+	#tag EndProperty
 
 
 	#tag ViewBehavior
