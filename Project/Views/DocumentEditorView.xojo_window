@@ -1677,7 +1677,7 @@ End
 		  If (CurrentItem Is Nil) = False Then
 		    Try
 		      Var GroupName As String = CurrentItem.Tag
-		      CurrentItem.Unemphasized = Self.Document.HasConfigGroup(GroupName) = False Or Self.Document.ConfigGroup(GroupName).IsImplicit = True
+		      CurrentItem.Unemphasized = Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName And (Self.Document.HasConfigGroup(GroupName) = False Or Self.Document.ConfigGroup(GroupName).IsImplicit = True)
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
