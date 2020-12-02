@@ -10,7 +10,7 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 		  
 		  If Self.ScrollingEnabled And X >= Self.Width - Self.ScrollTrackWidth Then
 		    Var ThumbRect As Rect = Self.ScrollThumbRect
-		    If ThumbRect.Contains(X, Y) Then
+		    If (ThumbRect Is Nil) = False And ThumbRect.Contains(X, Y) Then
 		      Self.mMouseDownThumbPoint = New Point(X, Y)
 		    Else
 		      Self.mMouseDownThumbPoint = Nil
