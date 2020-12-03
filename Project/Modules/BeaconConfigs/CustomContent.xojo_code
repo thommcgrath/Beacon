@@ -48,7 +48,11 @@ Inherits Beacon.ConfigGroup
 		  Var Instance As New BeaconConfigs.CustomContent
 		  Instance.mGameIniContent = Self.mGameIniContent
 		  Instance.mGameUserSettingsIniContent = Self.mGameUserSettingsIniContent
-		  Instance.mEncryptedValues = Self.mEncryptedValues.Clone
+		  If (Self.mEncryptedValues Is Nil) = False Then
+		    Instance.mEncryptedValues = Self.mEncryptedValues.Clone
+		  Else
+		    Instance.mEncryptedValues = Nil
+		  End If
 		  Return Instance
 		End Function
 	#tag EndMethod
