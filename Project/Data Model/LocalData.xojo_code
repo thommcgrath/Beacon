@@ -513,19 +513,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var SearchFolders(1) As FolderItem
 		    SearchFolders(0) = BackupsFolder
 		    SearchFolders(1) = AppSupport
-		    Var SearchPrefix As String = "Library " + Self.SchemaVersion.ToString(Locale.Raw, "0")
-		    Var SearchSuffix As String = ".sqlite"
+		    Var Pattern As New RegEx
+		    Pattern.SearchPattern = "^Library " + Self.SchemaVersion.ToString(Locale.Raw, "0") + "(-(\d+))?\.sqlite$"
 		    For Each SearchFolder As FolderItem In SearchFolders
 		      Var Candidates() As FolderItem
 		      Var Versions() As Integer
 		      For I As Integer = 0 To SearchFolder.Count - 1
 		        Var Filename As String = SearchFolder.ChildAt(I).Name
-		        If Filename = SearchPrefix + SearchSuffix Then
-		          Candidates.Add(SearchFolder.ChildAt(I))
+		        Var Matches As RegexMatch = Pattern.Search(Filename)
+		        If Matches Is Nil Then
+		          Continue
+		        End If
+		        Candidates.Add(SearchFolder.ChildAt(I))
+		        If Matches.SubExpressionCount >= 3 Then
+		          Versions.Add(Integer.FromString(Matches.SubExpressionString(2)))
+		        Else
 		          Versions.Add(1)
-		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
-		          Candidates.Add(SearchFolder.ChildAt(I))
-		          Versions.Add(Integer.FromString(Filename.Middle(SearchPrefix.Length + 1, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length + 1))))
 		        End If
 		      Next
 		      
