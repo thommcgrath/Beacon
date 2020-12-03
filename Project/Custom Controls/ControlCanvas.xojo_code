@@ -94,7 +94,19 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
 		  If Self.mMouseDownInTrack = False Then
+		    Var DeltaX As Integer = System.MouseX - X
+		    Var DeltaY As Integer = System.MouseY - Y
 		    RaiseEvent MouseUp(X, Y)
+		    Var NewX As Integer = System.MouseX - DeltaX
+		    Var NewY As Integer = System.MouseY - DeltaY
+		    If NewX <> X Or NewY <> Y Then
+		      If NewX >= 0 And NewY >= 0 And NewX <= Self.Width And NewY <= Self.Height Then
+		        RaiseEvent MouseMove(NewX, NewY)
+		      Else
+		        RaiseEvent MouseExit()
+		      End If
+		    End If
+		    Return
 		  End If
 		  
 		  Self.mMouseDownInTrack = False
