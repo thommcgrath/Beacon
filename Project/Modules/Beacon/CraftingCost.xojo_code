@@ -29,7 +29,7 @@ Implements Beacon.NamedItem
 		  
 		  If LoadRecipe Then
 		    Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
-		    Self.mIngredients.ResizeTo(-1)
+		    Self.mIngredients.ResizeTo(Ingredients.LastIndex)
 		    For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		      Self.mIngredients(Idx) = Ingredients(Idx)
 		    Next
