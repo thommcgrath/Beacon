@@ -128,7 +128,11 @@ Protected Class ServerProfile
 		  End If
 		  
 		  If Dict.HasKey("Config Sets") Then
-		    Var Sets() As Variant = Dict.Value("Config Sets")
+		    Var Sets() As Dictionary
+		    Try
+		      Sets = Dict.Value("Config Sets").DictionaryArrayValue
+		    Catch Err As RuntimeException
+		    End Try
 		    For Each Set As Dictionary In Sets
 		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromDictionary(Set)
 		      If (State Is Nil) = False Then

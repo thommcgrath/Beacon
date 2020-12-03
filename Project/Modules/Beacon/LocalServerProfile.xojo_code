@@ -39,7 +39,7 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
-		  Return Self.mGameIniFile <> Nil
+		  Return Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil
 		End Function
 	#tag EndMethod
 
