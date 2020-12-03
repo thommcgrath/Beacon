@@ -727,7 +727,7 @@ End
 		  Var MissingCount As Integer = MissingHeaders.Count
 		  If MissingCount > 0 Then
 		    Var Message As String = "This content is missing required groups. Do you want to " + Verb.Lowercase + " it anyway?"
-		    Var Explanation As String = "The " + MissingHeaders.EnglishOxfordList + " " + If(MissingCount = 1, "group is", "groups are") + " missing. Ark will not start up correctly if this file is used in its current state. Use the ""Rewrite Clipboard"" or ""Update File"" buttons to have Beacon correctly update your existing ini content."
+		    Var Explanation As String = "The " + MissingHeaders.EnglishOxfordList + " " + If(MissingCount = 1, "group is", "groups are") + " missing. Ark will not start up correctly if this file is used in its current state. Use the ""Smart Copy"" or ""Smart Save"" buttons to have Beacon correctly update your existing ini content."
 		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, Verb + " Anyway", "Cancel", "Help")
 		    Select Case Choice
 		    Case BeaconUI.ConfirmResponses.Action
@@ -766,52 +766,6 @@ End
 		    Self.RewritingSpinner.Visible = Rewriting
 		    Self.RewritingStatusLabel.Visible = Rewriting
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckClipboard()
-		  #if false
-		    Var Mode As String = Self.CurrentMode
-		    If Mode = "" Then
-		      Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
-		      Return
-		    End If
-		    
-		    Var Board As New Clipboard
-		    If Board.TextAvailable = False Then
-		      Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
-		      Return
-		    End If
-		    
-		    Var SearchingFor As String
-		    Select Case Mode
-		    Case Beacon.RewriteModeGameIni
-		      SearchingFor = "[" + Beacon.ShooterGameHeader + "]"
-		    Case Beacon.RewriteModeGameUserSettingsIni
-		      SearchingFor = "[" + Beacon.ServerSettingsHeader + "]"
-		    Else
-		      Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
-		      Return
-		    End Select
-		    
-		    If Board.Text.IndexOf(SearchingFor) <= -1 Then
-		      Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
-		      Return
-		    End If
-		    
-		    If EncodeHex(Crypto.MD5(Board.Text)) = Self.mLastRewrittenHash Then
-		      Self.SetClipboardButtonCaption(False, Self.ReadyForPaste)
-		      Return
-		    End If
-		    
-		    If Self.ClipboardRewriter.ThreadState <> Thread.ThreadStates.NotRunning Then
-		      Self.SetClipboardButtonCaption(False, Self.UpdatingClipboard)
-		      Return
-		    End If
-		    
-		    Self.SetClipboardButtonCaption(True, Self.RewriteClipboard)
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -1152,7 +1106,6 @@ End
 			  If Self.mCurrentContent <> Value Then
 			    Self.mCurrentContent = Value
 			    Self.ContentArea.Text = Value
-			    Self.CheckClipboard()
 			  End If
 			End Set
 		#tag EndSetter
@@ -1258,12 +1211,6 @@ End
 		Private mLastRewrittenHash As String
 	#tag EndProperty
 
-
-	#tag Constant, Name = ReadyForPaste, Type = String, Dynamic = False, Default = \"Ready for Paste!", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = RewriteClipboard, Type = String, Dynamic = False, Default = \"Rewrite Clipboard", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = SmartCopyBusyExplanation, Type = String, Dynamic = False, Default = \"Smart Copy is not available while the \"Building Config\" message appears in the bottom left corner of the window.", Scope = Private
 	#tag EndConstant
