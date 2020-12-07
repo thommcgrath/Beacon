@@ -997,6 +997,17 @@ End
 		    App.StartTicket()
 		    Return True
 		  End If
+		  
+		  Static DiscordDetector As Regex
+		  If DiscordDetector Is Nil Then
+		    DiscordDetector = New Regex
+		    DiscordDetector.SearchPattern = "^https?://(.+\.)?((discord\.com)|(discord\.gg)|(discord\.media)|(discordapp\.com)|(discordapp\.net))/"
+		  End If
+		  Var Matches As RegexMatch = DiscordDetector.Search(URL)
+		  If (Matches Is Nil) = False Then
+		    ShowURL(URL)
+		    Return True
+		  End If
 		End Function
 	#tag EndEvent
 	#tag Event
