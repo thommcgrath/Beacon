@@ -2787,23 +2787,33 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Values As New Dictionary
 		  Var Idx As Integer = 1
 		  
-		  If File.IsEmpty = False Then
-		    If File = "CommandLine" Then
-		      Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
-		    ElseIf File.IndexOf("*") > -1 Then
-		      Values.Value(Idx) = File.ReplaceAll("*", "%")
-		      Clauses.Add("file LIKE ?" + Idx.ToString)
+		  If File = "GameUserSettings.ini" Then
+		    If Header.IsEmpty = False Then
+		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
+		      Values.Value(Idx) = Header
 		      Idx = Idx + 1
 		    Else
-		      Values.Value(Idx) = File
-		      Clauses.Add("file = ?" + Idx.ToString)
+		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
+		    End If
+		  Else
+		    If File.IsEmpty = False Then
+		      If File = "CommandLine" Then
+		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
+		      ElseIf File.IndexOf("*") > -1 Then
+		        Values.Value(Idx) = File.ReplaceAll("*", "%")
+		        Clauses.Add("file LIKE ?" + Idx.ToString)
+		        Idx = Idx + 1
+		      Else
+		        Values.Value(Idx) = File
+		        Clauses.Add("file = ?" + Idx.ToString)
+		        Idx = Idx + 1
+		      End If
+		    End If
+		    If Header.IsEmpty = False Then
+		      Values.Value(Idx) = Header
+		      Clauses.Add("header = ?" + Idx.ToString)
 		      Idx = Idx + 1
 		    End If
-		  End If
-		  If Header.IsEmpty = False Then
-		    Values.Value(Idx) = Header
-		    Clauses.Add("header = ?" + Idx.ToString)
-		    Idx = Idx + 1
 		  End If
 		  If Key.IsEmpty = False Then
 		    If Key.IndexOf("*") > -1 Then

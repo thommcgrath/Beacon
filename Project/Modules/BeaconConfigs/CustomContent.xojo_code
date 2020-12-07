@@ -2,6 +2,23 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused SourceDocument
+		  
+		  Var ParsedValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, New Dictionary, Profile)
+		  For Each ParsedValue As Beacon.ConfigValue In ParsedValues
+		    Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("CommandLine", "", ParsedValue.SimplifiedKey)
+		    If Keys.Count <> 1 Then
+		      Continue
+		    End If
+		    
+		    Var Key As Beacon.ConfigKey = Keys(0)
+		    Values.Add(New Beacon.ConfigValue(Key.Header, ParsedValue.Key, ParsedValue.Value))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.CustomContent = BeaconConfigs.CustomContent(Other)
 		  Var EOL As String = Encodings.ASCII.Chr(10)
