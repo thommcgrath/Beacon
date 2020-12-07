@@ -4,10 +4,25 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.CustomContent = BeaconConfigs.CustomContent(Other)
-		  Var MergedGameIni As String = Self.mGameIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Source.mGameIniContent
-		  Var MergedGameUserSettingsIni As String = Self.mGameUserSettingsIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Source.mGameUserSettingsIniContent
-		  MergedGameIni = MergedGameIni.Trim
-		  MergedGameUserSettingsIni = MergedGameUserSettingsIni.Trim
+		  Var EOL As String = Encodings.ASCII.Chr(10)
+		  
+		  Var GameIniPieces() As String
+		  If Self.mGameIniContent.IsEmpty = False Then
+		    GameIniPieces.Add(Self.mGameIniContent.Trim)
+		  End If
+		  If Source.mGameIniContent.IsEmpty = False Then
+		    GameIniPieces.Add("[" + Beacon.ShooterGameHeader + "]" + EOL + Source.mGameIniContent.Trim)
+		  End If
+		  Var MergedGameIni As String = GameIniPieces.Join(EOL + EOL)
+		  
+		  Var GameUserSettingsIniPieces() As String
+		  If Self.mGameUserSettingsIniContent.IsEmpty = False Then
+		    GameUserSettingsIniPieces.Add(Self.mGameUserSettingsIniContent.Trim)
+		  End If
+		  If Source.mGameUserSettingsIniContent.IsEmpty = False Then
+		    GameUserSettingsIniPieces.Add("[" + Beacon.ServerSettingsHeader + "]" + EOL + Source.mGameUserSettingsIniContent.Trim)
+		  End If
+		  Var MergedGameUserSettingsIni As String = GameUserSettingsIniPieces.Join(EOL + EOL)
 		  
 		  If Self.mGameIniContent <> MergedGameIni Or Self.mGameUserSettingsIniContent <> MergedGameUserSettingsIni Then
 		    Self.Modified = True
