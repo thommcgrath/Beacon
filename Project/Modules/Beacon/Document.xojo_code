@@ -104,11 +104,15 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function CombinedConfigs(States() As Beacon.ConfigSetState, Identity As Beacon.Identity) As Beacon.ConfigGroup()
 		  Var Names() As String
-		  For Each State As Beacon.ConfigSetState In States
-		    If State.Enabled Then
-		      Names.Add(State.Name)
-		    End If
-		  Next
+		  If States Is Nil Then
+		    Names.Add(Self.BaseConfigSetName)
+		  Else
+		    For Each State As Beacon.ConfigSetState In States
+		      If State.Enabled Then
+		        Names.Add(State.Name)
+		      End If
+		    Next
+		  End If
 		  Return Self.CombinedConfigs(Names, Identity)
 		End Function
 	#tag EndMethod
@@ -116,8 +120,10 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function CombinedConfigs(SetNames() As String, Identity As Beacon.Identity) As Beacon.ConfigGroup()
 		  Var Combined() As Beacon.ConfigGroup
-		  If SetNames Is Nil Or SetNames.Count = 0 Then
-		    Return Combined
+		  If SetNames Is Nil Then
+		    SetNames = Array(Self.BaseConfigSetName)
+		  ElseIf SetNames.Count = 0 Then
+		    SetNames.Add(Self.BaseConfigSetName)
 		  End If
 		  
 		  Var Clones As New Dictionary
@@ -1780,6 +1786,14 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ActiveConfigSet"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
