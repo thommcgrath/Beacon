@@ -441,9 +441,25 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
 		  
+		  Var Counts As New Dictionary
+		  Var ProfileBound As Integer = Self.mDocument.ServerProfileCount - 1
+		  For Idx As Integer = 0 To ProfileBound
+		    Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(Idx)
+		    Var States() As Beacon.ConfigSetState = Profile.ConfigSetStates
+		    If States Is Nil Or States.Count = 0 Then
+		      Counts.Value(Beacon.Document.BaseConfigSetName) = Counts.Lookup(Beacon.Document.BaseConfigSetName, 0).IntegerValue + 1
+		      Continue
+		    End If
+		    For Each State As Beacon.ConfigSetState In States
+		      If State.Enabled Then
+		        Counts.Value(State.Name) = Counts.Lookup(State.Name, 0).IntegerValue + 1
+		      End If
+		    Next
+		  Next
+		  
 		  Var SetNames() As String = Self.mDocument.ConfigSetNames
 		  For Each SetName As String In SetNames
-		    Me.AddRow(SetName, "0 Servers")
+		    Me.AddRow(SetName, Language.NounWithQuantity(Counts.Lookup(SetName, 0).IntegerValue, "Server", "Servers"))
 		    Me.RowTagAt(Me.LastAddedRowIndex) = SetName
 		    
 		    If SetName = Beacon.Document.BaseConfigSetName Then
