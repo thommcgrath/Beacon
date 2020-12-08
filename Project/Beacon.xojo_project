@@ -482,6 +482,7 @@ Window=DocumentVersionListWindow;Views/Main Window Components/Documents/Document
 Class=IntegrationTransfer;Modules/Beacon/IntegrationTransfer.xojo_code;&h00000000028C9FFF;&h0000000055ADDFFF;false
 Window=SetupTransferrableElementDialog;Views/Config Editors/Crafting Costs/SetupTransferrableElementDialog.xojo_window;&h0000000063BA87FF;&h00000000068D0FFF;false
 Class=NewsItem;Data Model/NewsItem.xojo_code;&h0000000014D48FFF;&h000000007CAFFFFF;false
+MultiImage=IconToolbarNotepad;Icons/IconToolbarNotepad.xojo_image;&h0000000022C3AFFF;&h0000000007F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5

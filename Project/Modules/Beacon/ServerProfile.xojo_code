@@ -101,6 +101,7 @@ Protected Class ServerProfile
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
 		  Self.mMask = Dict.Lookup("Map", 0)
+		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
 		  
 		  If Dict.HasKey("External Account") Then
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
@@ -271,6 +272,7 @@ Protected Class ServerProfile
 		  Dict.Value("Enabled") = Self.Enabled
 		  Dict.Value("Platform") = Self.mPlatform
 		  Dict.Value("Map") = Self.mMask
+		  Dict.Value("Admin Notes") = Self.mAdminNotes
 		  If Self.mExternalAccountUUID <> Nil Then
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
@@ -306,6 +308,29 @@ Protected Class ServerProfile
 		Event WriteToDictionary(Dict As Dictionary)
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mAdminNotes
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value.Encoding Is Nil Then
+			    Value = Value.GuessEncoding
+			  ElseIf Value.Encoding <> Encodings.UTF8 Then
+			    Value = Value.ConvertEncoding(Encodings.UTF8)
+			  End If
+			  Value = Value.Trim
+			  If Self.mAdminNotes.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mAdminNotes = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		AdminNotes As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -358,6 +383,10 @@ Protected Class ServerProfile
 		#tag EndGetter
 		IsConsole As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAdminNotes As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mConfigSetStates() As Beacon.ConfigSetState

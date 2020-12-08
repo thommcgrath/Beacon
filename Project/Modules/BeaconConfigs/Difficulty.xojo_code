@@ -69,6 +69,12 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function RunWhenBanned() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Note, Name = Source
 		https://forums.unrealengine.com/development-discussion/modding/ark-survival-evolved/93237-tutorial-understanding-arbitrary-item-quality

@@ -36,6 +36,7 @@ Implements ObservationKit.Observable
 		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ServerAdminPassword", "peanuts"))
 		    ElseIf Index = 10 Then
 		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "PlayerResistanceMultiplier", "9999"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "MaxFallSpeedMultiplier", "0.01"))
 		    ElseIf Index = 11 Then
 		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DinoCountMultiplier", "0"))
 		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DinoResistanceMultiplier", "9999"))
@@ -196,6 +197,12 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function RequiresOmni() As Boolean
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RunWhenBanned() As Boolean
+		  Return True
 		End Function
 	#tag EndMethod
 

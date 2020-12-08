@@ -15,7 +15,7 @@ Protected Class ConfigGroup
 		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var Values() As Beacon.ConfigValue
 		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
 		    RaiseEvent CommandLineOptions(SourceDocument, Values, Profile)
 		  End If
 		  
@@ -76,7 +76,7 @@ Protected Class ConfigGroup
 		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var Values() As Beacon.ConfigValue
 		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
 		    RaiseEvent GameIniValues(SourceDocument, Values, Profile)
 		  End If
 		  
@@ -88,7 +88,7 @@ Protected Class ConfigGroup
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var Values() As Beacon.ConfigValue
 		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
 		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values, Profile)
 		  End If
 		  
@@ -163,6 +163,12 @@ Protected Class ConfigGroup
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ResolveIssuesCallback()
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Function RunWhenBanned() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsConfigSets() As Boolean
