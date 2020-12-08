@@ -38,7 +38,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   40
+      Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -116,7 +116,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   485
+      Height          =   484
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -143,7 +143,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   40
+      Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

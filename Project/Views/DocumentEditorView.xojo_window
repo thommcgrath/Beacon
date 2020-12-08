@@ -108,75 +108,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Width           =   627
       End
    End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   13
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -107
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   858
-   End
-   Begin BeaconToolbar BeaconToolbar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -159
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   858
-   End
    Begin HelpDrawer HelpDrawer
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -243,7 +174,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   7
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -277,7 +208,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   8
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -297,7 +228,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Enabled         =   True
       EraseBackground =   True
       HasBackgroundColor=   False
-      Height          =   441
+      Height          =   437
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -307,7 +238,38 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockTop         =   True
       Scope           =   2
       SelectedRowIndex=   0
-      TabIndex        =   9
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   91
+      Transparent     =   True
+      Visible         =   True
+      Width           =   230
+   End
+   Begin ControlCanvas ConfigSetPicker
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   40
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -329,51 +291,20 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   10
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   491
-      Transparent     =   True
-      Visible         =   True
-      Width           =   230
-   End
-   Begin ControlCanvas ConfigSetPicker
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   36
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   492
+      Top             =   90
       Transparent     =   True
       Visible         =   True
       Width           =   230
@@ -807,7 +738,6 @@ End
 		    Return
 		  End If
 		  Self.mHelpDrawerOpen = False
-		  Self.BeaconToolbar1.HelpButton.Toggled = False
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
 		    Self.mHelpDrawerAnimation.Cancel
@@ -918,7 +848,6 @@ End
 		  
 		  If Self.Closed = False And Self.mHelpDrawerOpen = False Then
 		    Self.HelpDrawer.Visible = False
-		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.HelpDrawer.Body <> "")
 		    Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth)
 		  End If
 		End Sub
@@ -1053,7 +982,6 @@ End
 		    Return
 		  End If
 		  Self.mHelpDrawerOpen = True
-		  Self.BeaconToolbar1.HelpButton.Toggled = True
 		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + Self.HelpDrawer.Width
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
@@ -1147,7 +1075,6 @@ End
 		  Self.HelpDrawer.Title = Title
 		  Self.HelpDrawer.Body = Body
 		  Self.HelpDrawer.DetailURL = DetailURL
-		  Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.HelpDrawer.Body <> "")
 		End Sub
 	#tag EndMethod
 
@@ -1161,10 +1088,6 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.ViewTitle = Self.mController.Name
-		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
-		  #if DeployEnabled
-		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToExport
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -1510,57 +1433,6 @@ End
 		  If X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height Then
 		    ShowURL(Beacon.WebURL("/omni"))
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BeaconToolbar1
-	#tag Event
-		Sub Open()
-		  Var ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
-		  Var ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
-		  #if DeployEnabled
-		    Var DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
-		  #endif
-		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this project")
-		  Var MapsButton As New BeaconToolbarItem("MapsButton", IconToolbarMaps, "Change the maps for this project")
-		  
-		  Var HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
-		  
-		  Me.LeftItems.Append(ImportButton)
-		  Me.LeftItems.Append(ExportButton)
-		  #if DeployEnabled
-		    Me.LeftItems.Append(DeployButton)
-		  #endif
-		  Me.LeftItems.Append(ShareButton)
-		  Me.LeftItems.Append(MapsButton)
-		  
-		  Me.RightItems.Append(HelpButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "ImportButton"
-		    Self.BeginImport(False)
-		  Case "ExportButton"
-		    Self.BeginExport()
-		  Case "HelpButton"
-		    If Self.mHelpDrawerOpen Then
-		      Self.HideHelpDrawer()
-		    Else
-		      Self.ShowHelpDrawer()
-		    End If
-		  Case "ShareButton"
-		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
-		      SharingDialog.Present(Self, Self.Document)
-		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
-		    Else
-		      Self.ShowAlert("Project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
-		    End If
-		  Case "DeployButton"
-		    Self.BeginDeploy()
-		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
