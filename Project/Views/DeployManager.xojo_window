@@ -851,6 +851,20 @@ End
 		    Return
 		  End If
 		  
+		  // Prompt for the stop message
+		  Var StopMessage As String
+		  For Each Entry As DictionaryEntry In Self.Engines
+		    Var Engine As Beacon.IntegrationEngine = Entry.Key
+		    If Not Engine.SupportsStopMessage Then
+		      Continue
+		    End If
+		    
+		    StopMessage = StopMessageDialog.Present(Self)
+		    If StopMessage.IsEmpty Then
+		      Return
+		    End If
+		  Next
+		  
 		  // Hide the checkbox column
 		  Self.ServerList.ColumnWidths = "0,*"
 		  
@@ -878,14 +892,8 @@ End
 		  If Self.RunAdvisorCheckbox.Value Then
 		    Options = Options Or CType(Beacon.IntegrationEngine.OptionAnalyze, UInt64)
 		  End If
-		  Var StopMessage As String
-		  Var HasPromptedForStopMessage As Boolean
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    If Engine.SupportsStopMessage And HasPromptedForStopMessage = False Then
-		      StopMessage = StopMessageDialog.Present(Self)
-		      HasPromptedForStopMessage = True
-		    End If
 		    Engine.BeginDeploy(Self.DeployLabel, Self.Document, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
 		End Sub

@@ -1033,6 +1033,10 @@ End
 		  Var CLIDict As New Dictionary
 		  Var Groups() As Beacon.ConfigGroup = Self.mDocument.CombinedConfigs(Self.mCurrentProfile.ConfigSetStates, Identity)
 		  For Each Group As Beacon.ConfigGroup In Groups
+		    If Group Is Nil Then
+		      Continue
+		    End If
+		    
 		    Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
 		    If Options <> Nil And Options.LastIndex > -1 Then
 		      Beacon.ConfigValue.FillConfigDict(CLIDict, "CommandLine", Options)

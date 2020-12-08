@@ -449,6 +449,10 @@ Inherits Global.Thread
 		    
 		    Var Groups() As Beacon.ConfigGroup = Document.CombinedConfigs(Profile.ConfigSetStates, Identity)
 		    For Each Group As Beacon.ConfigGroup In Groups
+		      If Group Is Nil Then
+		        Continue
+		      End If
+		      
 		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		        CustomContentGroup = BeaconConfigs.CustomContent(Group)
 		        Continue

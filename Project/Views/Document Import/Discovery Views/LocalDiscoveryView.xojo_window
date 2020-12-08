@@ -666,8 +666,8 @@ End
 		  Var Profile As New Beacon.LocalServerProfile
 		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
 		  If Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil Then
-		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile.NativePath, FolderItem.PathModes.Native)
-		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile.NativePath, FolderItem.PathModes.Native)
+		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile)
+		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile)
 		  End If
 		  
 		  Var Data As New Beacon.DiscoveredData
