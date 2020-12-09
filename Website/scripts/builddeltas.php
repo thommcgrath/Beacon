@@ -3,6 +3,10 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
+while (ob_get_level() > 0) {
+	ob_end_clean();
+}
+
 define('MIN_VERSION', 99999999);
 
 $database = BeaconCommon::Database();
@@ -16,7 +20,7 @@ if ($last_database_update >= $cutoff) {
 }
 
 $required_versions = [5];
-$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d h:i:sO'));
+$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
 		$version = $results->Field('version');
@@ -35,7 +39,7 @@ if (count($required_versions) == 0) {
 }
 
 foreach ($required_versions as $version) {
-	echo "Building delta for version $version...\n";	
+	echo "Building delta for version $version...\n";
 	
 	$full_data = DataForVersion($version, null);
 	$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
