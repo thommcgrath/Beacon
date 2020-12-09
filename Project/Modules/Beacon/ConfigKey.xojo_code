@@ -1,6 +1,16 @@
 #tag Class
 Protected Class ConfigKey
 	#tag Method, Flags = &h0
+		Function ComparisonType() As ComparisonOptions
+		  If Self.mValueType = ValueTypes.TypeText Then
+		    Return ComparisonOptions.CaseSensitive
+		  Else
+		    Return ComparisonOptions.CaseInsensitive
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.ConfigKey)
 		  Self.mUUID = Source.mUUID
 		  Self.mLabel = Source.mLabel
@@ -11,7 +21,7 @@ Protected Class ConfigKey
 		  Self.mMaxAllowed = Source.mMaxAllowed
 		  Self.mDescription = Source.mDescription
 		  Self.mDefaultValue = Source.mDefaultValue
-		  Self.mNitradoPath = Source.mNitradoPath
+		  Self.mNitradoPaths = Source.NitradoPaths // Use this version to make a clone of the array
 		  Self.mNitradoFormat = Source.mNitradoFormat
 		End Sub
 	#tag EndMethod
@@ -35,8 +45,11 @@ Protected Class ConfigKey
 		  Self.mMaxAllowed = MaxAllowed
 		  Self.mDescription = Description
 		  Self.mDefaultValue = DefaultValue
-		  Self.mNitradoPath = NitradoPath
-		  Self.mNitradoFormat = NitradoFormat
+		  
+		  If (NitradoPath Is Nil) = False Then
+		    Self.mNitradoPaths = NitradoPath.Split(";")
+		    Self.mNitradoFormat = NitradoFormat
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -60,7 +73,7 @@ Protected Class ConfigKey
 
 	#tag Method, Flags = &h0
 		Function HasNitradoEquivalent() As Boolean
-		  Return IsNull(Self.mNitradoPath) = False And Self.mNitradoFormat <> Beacon.ConfigKey.NitradoFormats.Unsupported
+		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Beacon.ConfigKey.NitradoFormats.Unsupported
 		End Function
 	#tag EndMethod
 
@@ -95,8 +108,13 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoPath() As NullableString
-		  Return Self.mNitradoPath
+		Function NitradoPaths() As String()
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mNitradoPaths.LastIndex)
+		  For Idx As Integer = 0 To Clone.LastIndex
+		    Clone(Idx) = Self.mNitradoPaths(Idx)
+		  Next
+		  Return Clone
 		End Function
 	#tag EndMethod
 
@@ -175,7 +193,7 @@ Protected Class ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoPath As NullableString
+		Private mNitradoPaths() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

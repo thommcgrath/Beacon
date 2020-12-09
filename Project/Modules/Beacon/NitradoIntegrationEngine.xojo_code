@@ -66,20 +66,24 @@ Inherits Beacon.IntegrationEngine
 		        Return False
 		      End If
 		      
-		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, ConfigKey.NitradoPath)
-		      If CurrentValue.Compare(NewValue, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
-		        Var CategoryLength As Integer = ConfigKey.NitradoPath.IndexOf(".")
-		        Var Category As String = ConfigKey.NitradoPath.Left(CategoryLength)
-		        Var Key As String = ConfigKey.NitradoPath.Middle(CategoryLength + 1)
-		        
-		        Var FormData As New Dictionary
-		        FormData.Value("category") = Category
-		        FormData.Value("key") = Key
-		        FormData.Value("value") = NewValue
-		        GuidedChanges.Add(FormData)
-		        
-		        App.Log("Need to change " + ConfigKey.NitradoPath.StringValue + " from `" + CurrentValue + "` to `" + NewValue + "`")
-		      End If
+		      Var NitradoPaths() As String = ConfigKey.NitradoPaths
+		      Var ComparisonType As ComparisonOptions = ConfigKey.ComparisonType
+		      For Each NitradoPath As String In NitradoPaths
+		        Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
+		        If CurrentValue.Compare(NewValue, ComparisonType, Locale.Raw) <> 0 Then
+		          Var CategoryLength As Integer = NitradoPath.IndexOf(".")
+		          Var Category As String = NitradoPath.Left(CategoryLength)
+		          Var Key As String = NitradoPath.Middle(CategoryLength + 1)
+		          
+		          Var FormData As New Dictionary
+		          FormData.Value("category") = Category
+		          FormData.Value("key") = Key
+		          FormData.Value("value") = NewValue
+		          GuidedChanges.Add(FormData)
+		          
+		          App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
+		        End If
+		      Next
 		      
 		      Section.Remove(SimplifiedKey)
 		      If Section.KeyCount = 0 Then
@@ -143,20 +147,24 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		    
 		    Var NewValue As String = Option.Value
-		    Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, ConfigKey.NitradoPath)
-		    If CurrentValue.Compare(NewValue, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
-		      Var CategoryLength As Integer = ConfigKey.NitradoPath.IndexOf(".")
-		      Var Category As String = ConfigKey.NitradoPath.Left(CategoryLength)
-		      Var Key As String = ConfigKey.NitradoPath.Middle(CategoryLength + 1)
-		      
-		      Var FormData As New Dictionary
-		      FormData.Value("category") = Category
-		      FormData.Value("key") = Key
-		      FormData.Value("value") = NewValue
-		      GuidedChanges.Add(FormData)
-		      
-		      App.Log("Need to change " + ConfigKey.NitradoPath.StringValue + " from `" + CurrentValue + "` to `" + NewValue + "`")
-		    End If
+		    Var NitradoPaths() As String = ConfigKey.NitradoPaths
+		    Var ComparisonType As ComparisonOptions = ConfigKey.ComparisonType
+		    For Each NitradoPath As String In NitradoPaths
+		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
+		      If CurrentValue.Compare(NewValue, ComparisonType, Locale.Raw) <> 0 Then
+		        Var CategoryLength As Integer = NitradoPath.IndexOf(".")
+		        Var Category As String = NitradoPath.Left(CategoryLength)
+		        Var Key As String = NitradoPath.Middle(CategoryLength + 1)
+		        
+		        Var FormData As New Dictionary
+		        FormData.Value("category") = Category
+		        FormData.Value("key") = Key
+		        FormData.Value("value") = NewValue
+		        GuidedChanges.Add(FormData)
+		        
+		        App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
+		      End If
+		    Next
 		  Next
 		  
 		  For Each FormData As Dictionary In GuidedChanges
@@ -362,7 +370,8 @@ Inherits Beacon.IntegrationEngine
 		            Continue
 		          End Select
 		          
-		          Var Path As String = ConfigKey.NitradoPath
+		          Var Paths() As String = ConfigKey.NitradoPaths
+		          Var Path As String = Paths(0)
 		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
 		          Select Case ConfigKey.NitradoFormat
 		          Case Beacon.ConfigKey.NitradoFormats.Value
