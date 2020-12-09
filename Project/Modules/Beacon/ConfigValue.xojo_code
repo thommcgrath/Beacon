@@ -1,10 +1,16 @@
 #tag Class
 Protected Class ConfigValue
 	#tag Method, Flags = &h0
-		Sub Constructor(Header As String, Key As String, Value As String)
+		Sub Constructor(Header As String, Key As String, Value As String, OverrideCommand As String = "")
 		  Self.mHeader = Header
 		  Self.mKey = Key
 		  Self.mValue = Value
+		  
+		  If OverrideCommand.IsEmpty Then
+		    Self.mCommand = Key + "=" + Value
+		  Else
+		    Self.mCommand = OverrideCommand
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -38,9 +44,9 @@ Protected Class ConfigValue
 		        Arr.ResizeTo(0)
 		      End If
 		      
-		      Arr(0) = Value.Key + "=" + Value.Value
+		      Arr(0) = Value.Command
 		    Else
-		      Arr.Add(Value.Key + "=" + Value.Value)
+		      Arr.Add(Value.Command)
 		    End If
 		    Section.Value(SimplifiedKey) = Arr
 		    
@@ -49,6 +55,15 @@ Protected Class ConfigValue
 		End Sub
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCommand
+			End Get
+		#tag EndGetter
+		Command As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -67,6 +82,10 @@ Protected Class ConfigValue
 		#tag EndGetter
 		Key As String
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mCommand As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mHeader As String

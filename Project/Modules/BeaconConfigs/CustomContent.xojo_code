@@ -13,7 +13,23 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    Var Key As Beacon.ConfigKey = Keys(0)
-		    Values.Add(New Beacon.ConfigValue(Key.Header, ParsedValue.Key, ParsedValue.Value))
+		    Var OverrideCommand As String
+		    Var Value As String = ParsedValue.Value
+		    If Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
+		      Value = Value.Trim
+		      Var IsTrue As Boolean = Value = "true" Or Value = "1"
+		      
+		      If Key.Header = "-" Then
+		        If Not IsTrue Then
+		          Continue
+		        End If
+		        
+		        OverrideCommand = Key.Key
+		      Else
+		        Value = If(IsTrue, "true", "false")
+		      End If
+		    End If
+		    Values.Add(New Beacon.ConfigValue(Key.Header, ParsedValue.Key, Value, OverrideCommand))
 		  Next
 		End Sub
 	#tag EndEvent
