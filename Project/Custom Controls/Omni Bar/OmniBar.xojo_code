@@ -291,7 +291,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function IndexAtPoint(Point As Point) As Integer
-		  For Idx As Integer = 0 To Self.mItemRects.LastIndex
+		  For Idx As Integer = 0 To Min(Self.mItemRects.LastIndex, Self.mItems.LastIndex)
 		    If (Self.mItemRects(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
 		      If Not Self.mItems(Idx).Clickable Then
 		        Return -1
@@ -301,7 +301,6 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		  Next
 		  Return -1
-		  
 		End Function
 	#tag EndMethod
 
