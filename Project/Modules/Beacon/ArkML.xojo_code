@@ -16,7 +16,7 @@ Protected Class ArkML
 		  Var Bound As Integer = Self.mParts.LastIndex
 		  For Idx As Integer = 0 To Bound
 		    Var Dict As Dictionary = Self.mParts(Idx)
-		    Var Body As String = Dict.Value("Text").StringValue.ReplaceLineEndings(EndOfLine)
+		    Var Body As String = Dict.Value("Text").StringValue
 		    
 		    Var RunLen As Integer = Body.Length - 2
 		    For Offset As Integer = 0 To RunLen
@@ -52,7 +52,7 @@ Protected Class ArkML
 		      Var OpenTag As String = "<RichColor Color=""" + RedAmount.PrettyText(2) + "," + GreenAmount.PrettyText(2) + "," + BlueAmount.PrettyText(2) + "," + AlphaAmount.PrettyText(2) + """>"
 		      Var CloseTag As String = "</>"
 		      
-		      Var Pieces() As String = Body.Split(EndOfLine)
+		      Var Pieces() As String = Body.Split(EndOfLine.UNIX)
 		      For Piece As Integer = 0 To Pieces.LastIndex
 		        Var Match As RegexMatch = ColoredTextTrimmer.Search(Pieces(Piece))
 		        If (Match Is Nil) = False Then
@@ -62,7 +62,7 @@ Protected Class ArkML
 		        End If
 		      Next
 		      
-		      Body = Pieces.Join(EndOfLine)
+		      Body = Pieces.Join(EndOfLine.UNIX)
 		    End If
 		    
 		    Parts.Add(Body)
@@ -70,7 +70,7 @@ Protected Class ArkML
 		  
 		  // The first <RichColor> on each line gets replaced with a space. Whatever Ark...
 		  // So we need one more split on EndOfLine
-		  Parts = Parts.Join("").Split(EndOfLine)
+		  Parts = Parts.Join("").Split(EndOfLine.UNIX)
 		  For Idx As Integer = 0 To Parts.LastIndex
 		    Var Pos As Integer = Parts(Idx).IndexOf("<RichColor")
 		    If Pos > 0 And Parts(Idx).Middle(Pos - 1, 1) = " " Then
@@ -210,7 +210,7 @@ Protected Class ArkML
 		  Var ColorValue As Variant = TextColor
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("Text") = Value
+		  Dict.Value("Text") = Value.ReplaceLineEndings(EndOfLine.UNIX) // Always store consistent line endings
 		  Dict.Value("Color") = ColorValue.StringValue
 		  Return Dict
 		End Function
@@ -553,7 +553,7 @@ Protected Class ArkML
 		    
 		    For Idx As Integer = 0 To Self.mParts.LastIndex
 		      Var Dict As Dictionary = Self.mParts(Idx)
-		      Var Run As New StyleRun(Dict.Value("Text").StringValue)
+		      Var Run As New StyleRun(Dict.Value("Text").StringValue) // Use the platform line ending here
 		      Run.TextColor = Dict.Value("Color").ColorValue
 		      Styles.AddStyleRun(Run)
 		    Next
