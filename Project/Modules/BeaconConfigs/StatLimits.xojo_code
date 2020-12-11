@@ -2,55 +2,37 @@
 Protected Class StatLimits
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
+		  
+		  Var Values() As Beacon.ConfigValue
+		  Var EnableClamping As Boolean = False
 		  
 		  For I As Integer = 0 To Self.mValues.LastIndex
 		    If Self.mValues(I) = Nil Then
 		      Continue
 		    End If
 		    
-		    Values.Add(New Beacon.ConfigValue("?", "ClampItemStats", "true"))
-		    Return
-		  Next
-		  
-		  Values.Add(New Beacon.ConfigValue("?", "ClampItemStats", "false"))
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused SourceDocument
-		  #Pragma Unused Profile
-		  
-		  For I As Integer = 0 To Self.mValues.LastIndex
-		    If Self.mValues(I) = Nil Then
-		      Continue
-		    End If
+		    EnableClamping = True
 		    
 		    Var Value As Double = Self.mValues(I)
-		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]", Value.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]", Value.PrettyText))
 		  Next
-		End Sub
+		  
+		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ClampItemStats", If(EnableClamping, "true", "false"), "ClampItemStats=" + If(EnableClamping, "True", "False")))
+		  
+		  Return Values
+		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused SourceDocument
-		  #Pragma Unused Profile
-		  
-		  For I As Integer = 0 To Self.mValues.LastIndex
-		    If Self.mValues(I) = Nil Then
-		      Continue
-		    End If
-		    
-		    Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "True"))
-		    Return
-		  Next
-		  
-		  Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "False"))
-		End Sub
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ItemStatClamps"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ClampItemStats"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event

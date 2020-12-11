@@ -2,8 +2,10 @@
  Attributes ( OmniVersion = 1 ) Protected Class DinoAdjustments
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
+		  
+		  Var Values() As Beacon.ConfigValue
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
@@ -12,28 +14,43 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Behavior.ProhibitSpawning Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName="""")"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName="""")"))
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
 		    Else
 		      If Behavior.DamageMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.ResistanceMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.TamedDamageMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
 		      End If
 		      If Behavior.PreventTaming Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetCreature.ClassString + """"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetCreature.ClassString + """"))
 		      End If
 		    End If
 		  Next
-		End Sub
+		  
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassDamageMultipliers"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventDinoTameClassNames"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event

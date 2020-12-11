@@ -7,6 +7,7 @@ Protected Class ConfigKey
 		  Self.mFile = Source.mFile
 		  Self.mHeader = Source.mHeader
 		  Self.mKey = Source.mKey
+		  Self.mHash = Source.mHash
 		  Self.mValueType = Source.mValueType
 		  Self.mMaxAllowed = Source.mMaxAllowed
 		  Self.mDescription = Source.mDescription
@@ -22,16 +23,20 @@ Protected Class ConfigKey
 		  Self.mFile = File
 		  Self.mHeader = Header
 		  Self.mKey = Key
+		  #if DebugBuild
+		    Self.mHash = File.Lowercase + ":" + Header.Lowercase + ":" + Self.SimplifiedKey.Lowercase
+		  #else
+		    Self.mHash = EncodeHex(Crypto.SHA256(File.Lowercase + ":" + Header.Lowercase + ":" + Self.SimplifiedKey.Lowercase)).Lowercase
+		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles)
+		  Self.Constructor(File, Header, Key)
+		  
 		  Self.mUUID = ObjectID
 		  Self.mLabel = Label
-		  Self.mFile = File
-		  Self.mHeader = Header
-		  Self.mKey = Key
 		  Self.mValueType = ValueType
 		  Self.mMaxAllowed = MaxAllowed
 		  Self.mDescription = Description
@@ -60,6 +65,12 @@ Protected Class ConfigKey
 	#tag Method, Flags = &h0
 		Function File() As String
 		  Return Self.mFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Hash() As String
+		  Return Self.mHash
 		End Function
 	#tag EndMethod
 
@@ -136,12 +147,7 @@ Protected Class ConfigKey
 		Function SimplifiedKey() As String
 		  // Returns the key without its attribute
 		  
-		  Var Idx As Integer = Self.mKey.IndexOf("[")
-		  If Idx = -1 Then
-		    Return Self.mKey
-		  Else
-		    Return Self.mKey.Left(Idx)
-		  End If
+		  Return Beacon.ConfigValue.SimplifyKey(Self.mKey)
 		End Function
 	#tag EndMethod
 
@@ -190,6 +196,10 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mFile As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHash As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

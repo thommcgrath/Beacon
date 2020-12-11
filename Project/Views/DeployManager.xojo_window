@@ -945,12 +945,12 @@ End
 		      
 		      Var OutStream As TextOutputStream
 		      
-		      OutStream = TextOutputStream.Create(MomentFolder.Child("Game.ini"))
-		      OutStream.Write(UserData.Value("Game.ini").StringValue)
+		      OutStream = TextOutputStream.Create(MomentFolder.Child(Beacon.ConfigFileGame))
+		      OutStream.Write(UserData.Value(Beacon.ConfigFileGame).StringValue)
 		      OutStream.Close
 		      
-		      OutStream = TextOutputStream.Create(MomentFolder.Child("GameUserSettings.ini"))
-		      OutStream.Write(UserData.Value("GameUserSettings.ini").StringValue)
+		      OutStream = TextOutputStream.Create(MomentFolder.Child(Beacon.ConfigFileGameUserSettings))
+		      OutStream.Write(UserData.Value(Beacon.ConfigFileGameUserSettings).StringValue)
 		      OutStream.Close
 		      
 		      Var CurrentFolder As FolderItem = EngineFolder.Child("Current")
@@ -958,11 +958,11 @@ End
 		        CurrentFolder.CreateFolder
 		      End If
 		      
-		      OutStream = TextOutputStream.Create(CurrentFolder.Child("Game.ini"))
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child(Beacon.ConfigFileGame))
 		      OutStream.Write(UserData.Value("New Game.ini").StringValue)
 		      OutStream.Close
 		      
-		      OutStream = TextOutputStream.Create(CurrentFolder.Child("GameUserSettings.ini"))
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child(Beacon.ConfigFileGameUserSettings))
 		      OutStream.Write(UserData.Value("New GameUserSettings.ini").StringValue)
 		      OutStream.Close
 		    Catch Err As RuntimeException
@@ -1177,7 +1177,7 @@ End
 		  Var State As New TextAreaState
 		  State.ApplyTo(Self.ReviewArea)
 		  Self.ReviewSwitcher.SelectedIndex = 1
-		  Self.ReviewArea.Text = UserData.Lookup("GameUserSettings.ini", "").StringValue
+		  Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGameUserSettings, "").StringValue
 		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndMethod
@@ -1323,8 +1323,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
 		End Sub
@@ -1348,9 +1348,9 @@ End
 		  Var UserData As Dictionary = Controller.UserData
 		  Select Case Me.SelectedIndex
 		  Case 1
-		    Self.ReviewArea.Text = UserData.Lookup("GameUserSettings.ini", "").StringValue
+		    Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGameUserSettings, "").StringValue
 		  Case 2
-		    Self.ReviewArea.Text = UserData.Lookup("Game.ini", "").StringValue
+		    Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGame, "").StringValue
 		  End Select
 		  Self.UpdatingReviewContent = False
 		End Sub

@@ -8,9 +8,9 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Var File As FolderItem
 		  Select Case Transfer.Filename
-		  Case "Game.ini"
+		  Case Beacon.ConfigFileGame
 		    File = Beacon.LocalServerProfile(Self.Profile).GameIniFile
-		  Case "GameUserSettings.ini"
+		  Case Beacon.ConfigFileGameUserSettings
 		    File = Beacon.LocalServerProfile(Self.Profile).GameUserSettingsIniFile
 		  Else
 		    Transfer.SetError("Unknown file " + Transfer.Filename)
@@ -34,9 +34,9 @@ Inherits Beacon.IntegrationEngine
 		Sub UploadFile(Transfer As Beacon.IntegrationTransfer)
 		  Var File As FolderItem
 		  Select Case Transfer.Filename
-		  Case "Game.ini"
+		  Case Beacon.ConfigFileGame
 		    File = Beacon.LocalServerProfile(Self.Profile).GameIniFile
-		  Case "GameUserSettings.ini"
+		  Case Beacon.ConfigFileGameUserSettings
 		    File = Beacon.LocalServerProfile(Self.Profile).GameUserSettingsIniFile
 		  Else
 		    Transfer.SetError("Unknown file " + Transfer.Filename)

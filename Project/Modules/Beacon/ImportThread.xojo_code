@@ -227,6 +227,7 @@ Inherits Beacon.Thread
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
 		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
+		  Var Configs() As Beacon.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
 		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		      // Difficulty and custom content area special
@@ -246,41 +247,32 @@ Inherits Beacon.Thread
 		    End Try
 		    If Group <> Nil Then
 		      Document.AddConfigGroup(Group)
+		      Configs.Add(Group)
 		    End If
 		  Next
 		  
-		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
-		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
+		  // Now split the content into values and remove the ones controlled by the imported groups
 		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName) + ")"
-		  Var GameIniValues As New Dictionary
-		  Var GameUserSettingsIniValues As New Dictionary
-		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.UniversalMask)
-		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Var CustomConfigOrganizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mData.GameIniContent)
+		  CustomConfigOrganizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mData.GameUserSettingsIniContent)
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys(Identity)
-		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
-		      Select Case Key.File
-		      Case "Game.ini"
-		        GameIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      End Select
-		    Next
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, "Game.ini", GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, "GameUserSettings.ini", GameUserSettingsIniArray)
+		    Var ManagedKeys() As Beacon.ConfigKey = Config.ManagedKeys()
+		    CustomConfigOrganizer.Remove(ManagedKeys)
 		  Next
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Script/ShooterGame.ShooterGameUserSettings")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "ScalabilityGroups")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "Beacon")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGame, "Beacon")
 		  
 		  Var CustomContent As New BeaconConfigs.CustomContent
 		  Try
-		    CustomContent.GameIniContent(GameIniValues) = Self.mData.GameIniContent
+		    CustomContent.GameIniContent() = CustomConfigOrganizer
 		  Catch Err As RuntimeException
 		  End Try
 		  Try
-		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Self.mData.GameUserSettingsIniContent
+		    CustomContent.GameUserSettingsIniContent() = CustomConfigOrganizer
 		  Catch Err As RuntimeException
 		  End Try
 		  If CustomContent.Modified Then

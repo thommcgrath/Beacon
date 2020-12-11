@@ -465,13 +465,13 @@ End
 		  Case ConfigFileType.GameIni
 		    Self.mGameIniFile = File
 		    Self.mGameIniContent = Content
-		    OtherFilename = "GameUserSettings.ini"
+		    OtherFilename = Beacon.ConfigFileGameUserSettings
 		    OtherContent = Self.mGameUserSettingsIniContent
 		    OtherType = ConfigFileType.GameUserSettingsIni
 		  Case ConfigFileType.GameUserSettingsIni
 		    Self.mGameUserSettingsIniFile = File
 		    Self.mGameUserSettingsIniContent = Content
-		    OtherFilename = "Game.ini"
+		    OtherFilename = Beacon.ConfigFileGame
 		    OtherContent = Self.mGameIniContent
 		    OtherType = ConfigFileType.GameIni
 		  End Select
@@ -501,9 +501,9 @@ End
 		    Return ConfigFileType.GameUserSettingsIni
 		  ElseIf File <> Nil Then
 		    Select Case File.Name
-		    Case "Game.ini"
+		    Case Beacon.ConfigFileGame
 		      Return ConfigFileType.GameIni
-		    Case "GameUserSettings.ini"
+		    Case Beacon.ConfigFileGameUserSettings
 		      Return ConfigFileType.GameUserSettingsIni
 		    End Select
 		  End If
@@ -694,7 +694,7 @@ End
 		  End If
 		  
 		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, "GameUserSettings.ini", "Game.ini")
+		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGame)
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
@@ -708,8 +708,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = Self.GameUserSettingsIniIndex
 		End Sub

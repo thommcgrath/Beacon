@@ -2,16 +2,26 @@
 Protected Class LootScale
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
+		  Var Values() As Beacon.ConfigValue
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", "0.001"))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", "0.001"))
 		  Else
-		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
 		  End If
-		End Sub
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -76,6 +86,12 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function RequiresOmni() As Boolean
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RunWhenBanned() As Boolean
+		  Return True
 		End Function
 	#tag EndMethod
 

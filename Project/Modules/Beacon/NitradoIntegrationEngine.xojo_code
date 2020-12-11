@@ -2,108 +2,78 @@
 Protected Class NitradoIntegrationEngine
 Inherits Beacon.IntegrationEngine
 	#tag Event
-		Function ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue) As Boolean
-		  Var GuidedChanges() As Dictionary
+		Function ApplySettings(Organizer As Beacon.ConfigOrganizer) As Boolean
+		  Var Keys() As Beacon.ConfigKey = Organizer.DistinctKeys
+		  Var Changes() As Dictionary
+		  Var ExtraGameIniOrganizer As New Beacon.ConfigOrganizer
+		  
+		  // First we need to determine if guided mode *can* be supported.
+		  // Nitrado values are limited to 65,535 characters and not all GameUserSettings.ini
+		  // configs are supported in guided mode.
+		  
+		  For Each ConfigKey As Beacon.ConfigKey In Keys
+		    If Self.mDoGuidedDeploy And ConfigKey.File = Beacon.ConfigFileGameUserSettings And ConfigKey.HasNitradoEquivalent = False Then
+		      // Expert mode required because this config cannot be supported.
+		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
+		      Self.SwitchToExpertMode(ConfigKey.Key, 0)
+		      Return False
+		    End If
+		    
+		    If ConfigKey.HasNitradoEquivalent = False Then
+		      If Self.mDoGuidedDeploy And ConfigKey.File = Beacon.ConfigFileGame Then
+		        ExtraGameIniOrganizer.Add(Organizer.FilteredValues(ConfigKey))
+		      End If
+		      Continue
+		    End If
+		    
+		    Var SendToNitrado As Boolean = ConfigKey.NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Both Or ConfigKey.NitradoDeployStyle = If(Self.mDoGuidedDeploy, Beacon.ConfigKey.NitradoDeployStyles.Guided, Beacon.ConfigKey.NitradoDeployStyles.Expert)
+		    If SendToNitrado = False Then
+		      Continue
+		    End If
+		    
+		    Var Values() As Beacon.ConfigValue = Organizer.FilteredValues(ConfigKey)
+		    Var NewValue As String
+		    Select Case ConfigKey.NitradoFormat
+		    Case Beacon.ConfigKey.NitradoFormats.Line
+		      Var Lines() As String
+		      For Each Value As Beacon.ConfigValue In Values
+		        Lines.Add(Value.Command)
+		      Next
+		      NewValue = Lines.Join(EndOfLine.UNIX)
+		    Case Beacon.ConfigKey.NitradoFormats.Value
+		      If Values.Count <> 1 Then
+		        Break // WTF?
+		      Else
+		        NewValue = Values(0).Value
+		      End If
+		    End Select
+		    
+		    If Self.mDoGuidedDeploy And NewValue.Length > 65535 Then
+		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + NewValue.Length.ToString + " characters, and Nitrado has a limit of 65,535 characters.")
+		      Self.SwitchToExpertMode(ConfigKey.Key, NewValue.Length)
+		      Return False
+		    End If
+		    
+		    Var NitradoPaths() As String = ConfigKey.NitradoPaths
+		    For Each NitradoPath As String In NitradoPaths
+		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
+		      If ConfigKey.ValuesEqual(NewValue, CurrentValue) = False Then
+		        Var CategoryLength As Integer = NitradoPath.IndexOf(".")
+		        Var Category As String = NitradoPath.Left(CategoryLength)
+		        Var Key As String = NitradoPath.Middle(CategoryLength + 1)
+		        
+		        Var FormData As New Dictionary
+		        FormData.Value("category") = Category
+		        FormData.Value("key") = Key
+		        FormData.Value("value") = NewValue
+		        Changes.Add(FormData)
+		        
+		        App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
+		      End If
+		    Next
+		  Next
 		  
 		  If Self.mDoGuidedDeploy Then
-		    Var GameIniDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(GameIniDict, "Game.ini", GameIniValues)
-		    Var GameUserSettingsIniDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, "GameUserSettings.ini", GameUserSettingsIniValues)
-		    
-		    Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
-		    For Each ConfigKey As Beacon.ConfigKey In AllConfigs
-		      If ConfigKey.HasNitradoEquivalent = False And ConfigKey.File <> "GameUserSettings.ini" Then
-		        // See comments below for why GUS needs to be checked later
-		        Continue
-		      End If
-		      
-		      Var TargetDict As Dictionary
-		      Select Case ConfigKey.File
-		      Case "Game.ini"
-		        TargetDict = GameIniDict
-		      Case "GameUserSettings.ini"
-		        TargetDict = GameUserSettingsIniDict
-		      Else
-		        Continue
-		      End Select
-		      
-		      If TargetDict.HasKey(ConfigKey.Header) = False Then
-		        Continue
-		      End If
-		      
-		      Var SimplifiedKey As String = ConfigKey.SimplifiedKey
-		      Var Section As Dictionary = TargetDict.Value(ConfigKey.Header)
-		      If Section.HasKey(SimplifiedKey) = False Then
-		        Continue
-		      End If
-		      
-		      If ConfigKey.File = "GameUserSettings.ini" And ConfigKey.HasNitradoEquivalent = False Then
-		        // We need to put a setting in GUS but Nitrado doesn't have a key for it. That means expert mode is needed.
-		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		        Self.SwitchToExpertMode(ConfigKey.Key, 0)
-		        Return False
-		      End If
-		      
-		      Var NewLines() As String = Section.Value(SimplifiedKey)
-		      Var NewValue As String
-		      Select Case ConfigKey.NitradoFormat
-		      Case Beacon.ConfigKey.NitradoFormats.Line
-		        NewValue = NewLines.Join(EndOfLine.UNIX)
-		      Case Beacon.ConfigKey.NitradoFormats.Value
-		        If NewLines.Count <> 1 Then
-		          Break
-		        Else
-		          NewValue = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
-		        End If
-		      Else
-		        Continue
-		      End Select
-		      
-		      If NewValue.Length > 65535 Then
-		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs " + NewValue.Length.ToString + " characters, and Nitrado has a limit of 65,535 characters.")
-		        Self.SwitchToExpertMode(ConfigKey.Key, NewValue.Length)
-		        Return False
-		      End If
-		      
-		      Var NitradoPaths() As String = ConfigKey.NitradoPaths
-		      Var ComparisonType As ComparisonOptions = ConfigKey.ComparisonType
-		      For Each NitradoPath As String In NitradoPaths
-		        Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
-		        If CurrentValue.Compare(NewValue, ComparisonType, Locale.Raw) <> 0 Then
-		          Var CategoryLength As Integer = NitradoPath.IndexOf(".")
-		          Var Category As String = NitradoPath.Left(CategoryLength)
-		          Var Key As String = NitradoPath.Middle(CategoryLength + 1)
-		          
-		          Var FormData As New Dictionary
-		          FormData.Value("category") = Category
-		          FormData.Value("key") = Key
-		          FormData.Value("value") = NewValue
-		          GuidedChanges.Add(FormData)
-		          
-		          App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
-		        End If
-		      Next
-		      
-		      Section.Remove(SimplifiedKey)
-		      If Section.KeyCount = 0 Then
-		        TargetDict.Remove(ConfigKey.Header)
-		      End If
-		    Next
-		    
-		    For Each Entry As DictionaryEntry In GameUserSettingsIniDict
-		      Var SectionDict As Dictionary = Entry.Value
-		      For Each SectionEntry As DictionaryEntry In SectionDict
-		        Var Key As String = SectionEntry.Key
-		        Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", "", Key) // Allow any file so that command line options don't trigger this
-		        If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
-		          App.Log("Cannot use guided deploy because the key " + Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		          Self.SwitchToExpertMode(Key, 0)
-		          Return False
-		        End If
-		      Next
-		    Next
-		    
 		    // Create a checkpoint before making changes
 		    If Self.BackupEnabled Then
 		      Self.CreateCheckpoint()
@@ -112,6 +82,7 @@ Inherits Beacon.IntegrationEngine
 		      End If
 		    End If
 		    
+		    // Generate a new user-settings.ini file
 		    Self.Log("Updating 'Custom Game.ini Settings' field…")
 		    Var ExtraGameIniSuccess As Boolean
 		    Var ExtraGameIni As String = Self.GetFile(Self.mGamePath + "user-settings.ini", DownloadFailureMode.MissingAllowed, ExtraGameIniSuccess)
@@ -122,10 +93,10 @@ Inherits Beacon.IntegrationEngine
 		      ExtraGameIni = "[" + Beacon.ShooterGameHeader + "]" + EndOfLine.UNIX + ExtraGameIni
 		    End If
 		    
-		    Var GameIniErrored As Boolean
-		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, GameIniDict, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), GameIniErrored)
-		    If GameIniErrored Then
-		      Self.SetError("Unable to generate new value for Custom Game.ini Content field.")
+		    Var RewriteError As RuntimeException
+		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, ExtraGameIniOrganizer, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), RewriteError)
+		    If (RewriteError Is Nil) = False Then
+		      Self.SetError(RewriteError)
 		      Return False
 		    End If
 		    
@@ -140,34 +111,8 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		  End If
 		  
-		  For Each Option As Beacon.ConfigValue In CommandLineOptions
-		    Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", Option.Header, Option.Key)
-		    If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
-		      Continue
-		    End If
-		    
-		    Var NewValue As String = Option.Value
-		    Var NitradoPaths() As String = ConfigKey.NitradoPaths
-		    Var ComparisonType As ComparisonOptions = ConfigKey.ComparisonType
-		    For Each NitradoPath As String In NitradoPaths
-		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
-		      If CurrentValue.Compare(NewValue, ComparisonType, Locale.Raw) <> 0 Then
-		        Var CategoryLength As Integer = NitradoPath.IndexOf(".")
-		        Var Category As String = NitradoPath.Left(CategoryLength)
-		        Var Key As String = NitradoPath.Middle(CategoryLength + 1)
-		        
-		        Var FormData As New Dictionary
-		        FormData.Value("category") = Category
-		        FormData.Value("key") = Key
-		        FormData.Value("value") = NewValue
-		        GuidedChanges.Add(FormData)
-		        
-		        App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
-		      End If
-		    Next
-		  Next
-		  
-		  For Each FormData As Dictionary In GuidedChanges
+		  // Deploy changes
+		  For Each FormData As Dictionary In Changes
 		    Self.Log("Updating " + FormData.Value("key").StringValue + "…")
 		    
 		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
@@ -193,7 +138,7 @@ Inherits Beacon.IntegrationEngine
 		    End Try
 		    
 		    // So we don't go nuts
-		    Thread.SleepCurrent(50)
+		    Thread.SleepCurrent(100)
 		  Next
 		  
 		  Return True
@@ -354,56 +299,41 @@ Inherits Beacon.IntegrationEngine
 		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
 		        // Build our own ini files from known keys
 		        Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "") // To retrieve all
-		        Var GameUserSettingsIniValues(), GameIniValues() As Beacon.ConfigValue
+		        Var GuidedOrganizer As New Beacon.ConfigOrganizer
 		        For Each ConfigKey As Beacon.ConfigKey In AllConfigs
 		          If ConfigKey.HasNitradoEquivalent = False Then
 		            Continue
 		          End If
-		          
-		          Var TargetArray() As Beacon.ConfigValue
-		          Select Case ConfigKey.File
-		          Case "Game.ini"
-		            TargetArray = GameIniValues
-		          Case "GameUserSettings.ini"
-		            TargetArray = GameUserSettingsIniValues
-		          Else
-		            Continue
-		          End Select
 		          
 		          Var Paths() As String = ConfigKey.NitradoPaths
 		          Var Path As String = Paths(0)
 		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
 		          Select Case ConfigKey.NitradoFormat
 		          Case Beacon.ConfigKey.NitradoFormats.Value
-		            TargetArray.Add(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Value))
+		            GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, ConfigKey.Key, Value))
 		          Case Beacon.ConfigKey.NitradoFormats.Line
 		            Var Lines() As String = Value.Split(EndOfLine.UNIX)
 		            For Each Line As String In Lines
 		              Var Pos As Integer = Line.IndexOf("=")
 		              If Pos = -1 Then
-		                TargetArray.Add(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Line))
+		                GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, ConfigKey.Key, Line, Line))
 		                Continue
 		              End If
 		              
-		              TargetArray.Add(New Beacon.ConfigValue(ConfigKey.Header, Line.Left(Pos), Line.Middle(Pos + 1)))
+		              GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, Line.Left(Pos), Line.Middle(Pos + 1), Line))
 		            Next
 		          End Select
 		        Next
-		        
-		        Var GameIniDict As New Dictionary
-		        Beacon.ConfigValue.FillConfigDict(GameIniDict, "Game.ini", GameIniValues)
-		        
-		        Var GameUserSettingsIniDict As New Dictionary
-		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, "GameUserSettings.ini", GameUserSettingsIniValues)
 		        
 		        Var ExtraGameIniSuccess As Boolean
 		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, ExtraGameIniSuccess)
 		        If ExtraGameIniSuccess = False Or Self.Finished Then
 		          Return Nil
 		        End If
-		        Var Errored As Boolean
-		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
-		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", Beacon.ServerSettingsHeader, GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		        GuidedOrganizer.Add(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, ExtraGameIni)
+		        
+		        Server.GameIniContent = GuidedOrganizer.Build(Beacon.ConfigFileGame)
+		        Server.GameUserSettingsIniContent = GuidedOrganizer.Build(Beacon.ConfigFileGameUserSettings)
 		      Else
 		        // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
 		      End If

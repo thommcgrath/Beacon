@@ -14,7 +14,7 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
 		  If DifficultyConfig = Nil Then
 		    DifficultyConfig = New BeaconConfigs.Difficulty
@@ -40,6 +40,7 @@ Implements Iterable
 		    Set.MaxNumItems = 1
 		    Set.Append(Entry)
 		    
+		    Var Values() As Beacon.ConfigValue
 		    For Each Source As Beacon.LootSource In Sources
 		      If Not Source.ValidForMask(Profile.Mask) Then
 		        Continue
@@ -51,9 +52,10 @@ Implements Iterable
 		      
 		      Self.BuildOverrides(Source, Values, DifficultyConfig)
 		    Next
-		    Return
+		    Return Values
 		  End If
 		  
+		  Var Values() As Beacon.ConfigValue
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    If Not Source.ValidForMask(Profile.Mask) Then
 		      Continue
@@ -61,7 +63,16 @@ Implements Iterable
 		    
 		    Self.BuildOverrides(Source, Values, DifficultyConfig)
 		  Next
-		End Sub
+		  Return Values()
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -189,7 +200,7 @@ Implements Iterable
 		  
 		  Keys.Add("ItemSets=(" + GeneratedSets.Join(",") + ")")
 		  
-		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, "(" + Keys.Join(",") + ")"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, "(" + Keys.Join(",") + ")"))
 		End Sub
 	#tag EndMethod
 

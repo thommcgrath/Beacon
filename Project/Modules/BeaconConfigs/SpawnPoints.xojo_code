@@ -3,9 +3,10 @@
 Inherits Beacon.ConfigGroup
 Implements Iterable
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
+		  Var Values() As Beacon.ConfigValue
 		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
 		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
 		    
@@ -18,7 +19,18 @@ Implements Iterable
 		      Values.Add(Value)
 		    End If
 		  Next
-		End Sub
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideNPCSpawnEntriesContainer"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigSubtractNPCSpawnEntriesContainer"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -29,14 +41,6 @@ Implements Iterable
 		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
 		    Self.Add(New Beacon.SpawnPoint(SpawnPoint))
 		  Next
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigOverrideNPCSpawnEntriesContainer"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigSubtractNPCSpawnEntriesContainer"))
 		End Sub
 	#tag EndEvent
 
@@ -278,7 +282,7 @@ Implements Iterable
 		    End If
 		  End If
 		  
-		  Return New Beacon.ConfigValue(Beacon.ShooterGameHeader, Config, "(" + Pieces.Join(",") + ")")
+		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config, "(" + Pieces.Join(",") + ")")
 		End Function
 	#tag EndMethod
 

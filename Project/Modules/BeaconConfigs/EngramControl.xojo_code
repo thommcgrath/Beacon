@@ -2,9 +2,10 @@
  Attributes ( OmniVersion = 1 ) Protected Class EngramControl
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
 		  
+		  Var Values() As Beacon.ConfigValue
 		  Var Levels As Integer = Self.LevelsDefined
 		  Var OfficialLevels As Beacon.PlayerLevelData = Beacon.Data.OfficialPlayerLevelData
 		  For Level As Integer = 1 To Levels
@@ -21,11 +22,11 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
 		  Next
 		  
-		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams", If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams", If(Self.AutoUnlockAllEngrams, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams", If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams", If(Self.AutoUnlockAllEngrams, "True", "False")))
 		  
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As Beacon.ConfigValue
@@ -61,7 +62,7 @@ Inherits Beacon.ConfigGroup
 		      
 		      AutoUnlocked = True
 		      UnlockEntries.Add(EntryString)
-		      UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
+		      UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
 		    End If
 		    
 		    Var Arguments() As String
@@ -106,7 +107,7 @@ Inherits Beacon.ConfigGroup
 		    If Arguments.LastIndex > -1 Then
 		      Arguments.AddAt(0, "EngramClassName=""" + EntryString + """")
 		      OverrideEntries.Add(EntryString)
-		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
+		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
 		    End If
 		  Next
 		  
@@ -119,7 +120,22 @@ Inherits Beacon.ConfigGroup
 		  For Each Config As Beacon.ConfigValue In OverrideConfigs
 		    Values.Add(Config)
 		  Next
-		End Sub
+		  
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideEngramEntries"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideNamedEngramEntries"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -138,20 +154,6 @@ Inherits Beacon.ConfigGroup
 		    Self.mPointsPerLevel(Idx) = Source.mPointsPerLevel(Idx)
 		    Self.Modified = True
 		  Next
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
-		  // Include all the keys here to prevent them from going into Custom Config when
-		  // Beacon generates lines that are slightly different than imported.
-		  
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverrideEngramEntries"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverrideNamedEngramEntries"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams"))
-		  Keys.Add(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks"))
 		End Sub
 	#tag EndEvent
 

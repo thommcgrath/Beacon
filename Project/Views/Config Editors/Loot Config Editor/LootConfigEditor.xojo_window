@@ -995,7 +995,7 @@ End
 		  
 		  Var Lines() As String
 		  For Each Config As Beacon.ConfigValue In Configs
-		    Lines.Add(Config.Key + "=" + Config.Value)
+		    Lines.Add(Config.Command)
 		  Next
 		  
 		  Var RawData As String

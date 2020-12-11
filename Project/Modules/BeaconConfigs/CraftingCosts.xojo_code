@@ -2,9 +2,10 @@
  Attributes ( OmniVersion = 1 ) Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
 		  
+		  Var Values() As Beacon.ConfigValue
 		  For Each Entry As DictionaryEntry In Self.mCosts
 		    Var Cost As Beacon.CraftingCost = Entry.Value
 		    If Cost.Engram Is Nil Or Cost.Engram.ValidForDocument(SourceDocument) = False Then
@@ -18,7 +19,16 @@ Inherits Beacon.ConfigGroup
 		    
 		    Values.Add(ConfigValue)
 		  Next
-		End Sub
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -86,7 +96,7 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Return New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", Cost.StringValue)
+		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", Cost.StringValue)
 		End Function
 	#tag EndMethod
 

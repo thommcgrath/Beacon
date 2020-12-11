@@ -45,7 +45,7 @@ Protected Class CustomContentParser
 		      Next
 		    End If
 		    
-		    Self.mNestedParser = New CustomContentParser(Self.mCurrentHeader, Self.mExistingConfigs, Self.mProfile)
+		    Self.mNestedParser = New CustomContentParser(Self.mFile, Self.mCurrentHeader, Self.mExistingConfigs, Self.mProfile)
 		    Return Nil
 		  ElseIf Line = "#End" Then
 		    Return Self.mValues
@@ -58,7 +58,7 @@ Protected Class CustomContentParser
 		  
 		  Var Key As String = Line.Left(KeyPos).Trim
 		  Var Value As String = Line.Middle(KeyPos + 1).Trim
-		  Var ConfigValue As New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value)
+		  Var ConfigValue As New Beacon.ConfigValue(Self.mFile, Self.mCurrentHeader, Key, Value)
 		  If Self.mSkippedKeys.IndexOf(ConfigValue.SimplifiedKey) = -1 Then
 		    Self.mValues.Add(ConfigValue)
 		  End If
@@ -68,7 +68,8 @@ Protected Class CustomContentParser
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(InitialHeader As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile)
+		Sub Constructor(File As String, InitialHeader As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile)
+		  Self.mFile = File
 		  Self.mCurrentHeader = InitialHeader
 		  Self.mExistingConfigs = ExistingConfigs
 		  Self.mProfile = Profile
@@ -123,6 +124,10 @@ Protected Class CustomContentParser
 
 	#tag Property, Flags = &h21
 		Private mExistingConfigs As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFile As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -132,9 +132,9 @@ Inherits Beacon.IntegrationEngine
 		  If Transfer.Path.IsEmpty Then
 		    Path = Self.BaseURL
 		    Select Case Transfer.Filename
-		    Case "Game.ini"
+		    Case Beacon.ConfigFileGame
 		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameIniPath
-		    Case "GameUserSettings.ini"
+		    Case Beacon.ConfigFileGameUserSettings
 		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath
 		    End Select
 		  Else
@@ -164,9 +164,9 @@ Inherits Beacon.IntegrationEngine
 		  If Transfer.Path.IsEmpty Then
 		    Path = Self.BaseURL
 		    Select Case Transfer.Filename
-		    Case "Game.ini"
+		    Case Beacon.ConfigFileGame
 		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameIniPath
-		    Case "GameUserSettings.ini"
+		    Case Beacon.ConfigFileGameUserSettings
 		      Path = Path + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath
 		    End Select
 		  Else

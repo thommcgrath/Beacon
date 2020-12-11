@@ -792,6 +792,8 @@ Begin ServerViewContainer LocalServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648
@@ -805,6 +807,7 @@ Begin ServerViewContainer LocalServerView
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -864,12 +867,12 @@ End
 		  Var SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
 		  
 		  If GameIniPos > -1 And SettingsIniPos = -1 Then
-		    Return "Game.ini"
+		    Return Beacon.ConfigFileGame
 		  ElseIf SettingsIniPos > -1 And GameIniPos = -1 Then
-		    Return "GameUserSettings.ini"
+		    Return Beacon.ConfigFileGameUserSettings
 		  ElseIf File <> Nil Then
 		    Select Case File.Name
-		    Case "Game.ini", "GameUserSettings.ini"
+		    Case Beacon.ConfigFileGame, Beacon.ConfigFileGameUserSettings
 		      Return File.Name
 		    End Select
 		  End If
@@ -960,7 +963,7 @@ End
 		Sub Action()
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
-		  Dialog.SuggestedFileName = "GameUserSettings.ini"
+		  Dialog.SuggestedFileName = Beacon.ConfigFileGameUserSettings
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
@@ -968,7 +971,7 @@ End
 		  End If
 		  
 		  Var DetectedType As String = Self.DetectConfigType(File)
-		  If DetectedType <> "GameUserSettings.ini" And Self.ShowConfirm("The selected file does not appear to be a GameUserSettings.ini file.", "You can still choose this file if you really want, but its content does not look like a GameUserSettings.ini file. Proceed with caution.", "Use Anyway", "Cancel") = False Then
+		  If DetectedType <> Beacon.ConfigFileGameUserSettings And Self.ShowConfirm("The selected file does not appear to be a GameUserSettings.ini file.", "You can still choose this file if you really want, but its content does not look like a GameUserSettings.ini file. Proceed with caution.", "Use Anyway", "Cancel") = False Then
 		    Return
 		  End If
 		  
@@ -983,7 +986,7 @@ End
 		Sub Action()
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
-		  Dialog.SuggestedFileName = "Game.ini"
+		  Dialog.SuggestedFileName = Beacon.ConfigFileGame
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
@@ -991,7 +994,7 @@ End
 		  End If
 		  
 		  Var DetectedType As String = Self.DetectConfigType(File)
-		  If DetectedType <> "Game.ini" And Self.ShowConfirm("The selected file does not appear to be a Game.ini file.", "You can still choose this file if you really want, but its content does not look like a Game.ini file. Proceed with caution.", "Use Anyway", "Cancel") = False Then
+		  If DetectedType <> Beacon.ConfigFileGame And Self.ShowConfirm("The selected file does not appear to be a Game.ini file.", "You can still choose this file if you really want, but its content does not look like a Game.ini file. Proceed with caution.", "Use Anyway", "Cancel") = False Then
 		    Return
 		  End If
 		  

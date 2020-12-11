@@ -3,14 +3,14 @@ Protected Class LocalServerProfile
 Inherits Beacon.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
-		  If Dict.HasKey("Game.ini") Then
-		    Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Dict.Value("Game.ini").StringValue)
+		  If Dict.HasKey(Beacon.ConfigFileGame) Then
+		    Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Dict.Value(Beacon.ConfigFileGame).StringValue)
 		    If File <> Nil Then
 		      Self.mGameIniFile = File
 		    End If
 		  End If
-		  If Dict.HasKey("GameUserSettings.ini") Then
-		    Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Dict.Value("GameUserSettings.ini").StringValue)
+		  If Dict.HasKey(Beacon.ConfigFileGameUserSettings) Then
+		    Var File As BookmarkedFolderItem = BookmarkedFolderItem.FromSaveInfo(Dict.Value(Beacon.ConfigFileGameUserSettings).StringValue)
 		    If File <> Nil Then
 		      Self.mGameUserSettingsIniFile = File
 		    End If
@@ -21,10 +21,10 @@ Inherits Beacon.ServerProfile
 	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  If Self.mGameIniFile <> Nil Then
-		    Dict.Value("Game.ini") = Self.mGameIniFile.SaveInfo
+		    Dict.Value(Beacon.ConfigFileGame) = Self.mGameIniFile.SaveInfo
 		  End If
 		  If Self.mGameUserSettingsIniFile <> Nil Then
-		    Dict.Value("GameUserSettings.ini") = Self.mGameUserSettingsIniFile.SaveInfo
+		    Dict.Value(Beacon.ConfigFileGameUserSettings) = Self.mGameUserSettingsIniFile.SaveInfo
 		  End If
 		  Dict.Value("Provider") = "Local"
 		End Sub
@@ -120,6 +120,14 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AdminNotes"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackupFolderName"
 			Visible=false

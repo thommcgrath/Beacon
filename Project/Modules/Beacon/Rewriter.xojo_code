@@ -5,10 +5,97 @@ Inherits Global.Thread
 		Sub Run()
 		  Self.mFinished = False
 		  Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
-		  Var Errored As Boolean
-		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mDefaultHeader, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, If(Self.mDocument.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), Errored)
+		  
+		  Self.mFinishedGameIniContent = ""
+		  Self.mFinishedGameUserSettingsIniContent = ""
+		  Self.mFinishedCommandLineContent = ""
+		  
+		  // Load everything we need into local variables in case something changes while the process is running.
+		  Var TrustKey As String = Self.mDocument.TrustKey
+		  
+		  Var Format As EncodingFormat = EncodingFormat.ASCII
+		  If Self.mDocument.AllowUCS Then
+		    Format = EncodingFormat.UCS2AndASCII
+		  End If
+		  
+		  Var Document As Beacon.Document = Self.mDocument
+		  Var Identity As Beacon.Identity = Self.mIdentity
+		  Var Profile As Beacon.ServerProfile = Self.mProfile
+		  Var InitialGameIni As String = Self.mInitialGameIniContent
+		  Var InitialGameUserSettingsIni As String = Self.mInitialGameUserSettingsIniContent
+		  
+		  If Self.mOrganizer Is Nil Or Self.mRebuildOrganizer Then
+		    Self.mOrganizer = Document.CreateConfigOrganizer(Identity, Profile)
+		    Self.mRebuildOrganizer = False
+		  End If
+		  
+		  Var Error As RuntimeException
+		  
+		  If (Self.mOutputFlags And Self.FlagCreateGameIni) = Self.FlagCreateGameIni Then
+		    Var GameIni As String = Self.Rewrite(InitialGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Self.mOrganizer, TrustKey, Format, Error)
+		    If (Error Is Nil) = False Then
+		      Self.mFinished = True
+		      Self.mError = Error
+		      Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
+		      Return
+		    End If
+		    Self.mFinishedGameIniContent = GameIni
+		  End If
+		  
+		  If (Self.mOutputFlags And Self.FlagCreateGameUserSettingsIni) = Self.FlagCreateGameUserSettingsIni Then
+		    Var GameUserSettingsIni As String = Self.Rewrite(InitialGameUserSettingsIni, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Self.mOrganizer, TrustKey, Format, Error)
+		    If (Error Is Nil) = False Then
+		      Self.mFinished = True
+		      Self.mError = Error
+		      Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
+		      Return
+		    End If
+		    Self.mFinishedGameUserSettingsIniContent = GameUserSettingsIni
+		  End If
+		  
+		  If (Self.mOutputFlags And Self.FlagCreateCommandLine) = Self.FlagCreateCommandLine Then
+		    Var QuestionOptions() As Beacon.ConfigValue = Self.mOrganizer.FilteredValues("CommandLineOption", "?")
+		    Var QuestionFlags() As Beacon.ConfigValue = Self.mOrganizer.FilteredValues("CommandLineFlag", "?")
+		    Var HyphenOptions() As Beacon.ConfigValue = Self.mOrganizer.FilteredValues("CommandLineOption", "-")
+		    Var HyphenFlags() As Beacon.ConfigValue = Self.mOrganizer.FilteredValues("CommandLineFlag", "-")
+		    
+		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mProfile.Mask)
+		    Var QuestionParameters() As String
+		    If Maps.LastIndex = 0 Then
+		      QuestionParameters.Add(Maps(0).Identifier) 
+		    Else
+		      QuestionParameters.Add("Map")
+		    End If
+		    QuestionParameters.Add("listen")
+		    For Each Option As Beacon.ConfigValue In QuestionOptions
+		      If Option.Value.IsEmpty = False Then
+		        QuestionParameters.Add(Option.SimplifiedKey + "=" + Option.Value)
+		      End If
+		    Next
+		    For Each Flag As Beacon.ConfigValue In QuestionFlags
+		      If Flag.Value = "True" Then
+		        QuestionParameters.Add(Flag.SimplifiedKey)
+		      End If
+		    Next
+		    
+		    Var HyphenParameters() As String
+		    For Each Option As Beacon.ConfigValue In HyphenOptions
+		      If Option.Value.IsEmpty = False Then
+		        HyphenParameters.Add("-" + Option.SimplifiedKey + "=" + Option.Value)
+		      End If
+		    Next
+		    For Each Flag As Beacon.ConfigValue In HyphenFlags
+		      If Flag.Value = "True" Then
+		        HyphenParameters.Add("-" + Flag.SimplifiedKey)
+		      End If
+		    Next
+		    
+		    Self.mFinishedCommandLineContent = """" + QuestionParameters.Join("?") + """ " + HyphenParameters.Join(" ")
+		    Self.mFinishedCommandLineContent = Self.mFinishedCommandLineContent.Trim
+		  End If
+		  
 		  Self.mFinished = True
-		  Self.mErrored = Errored
+		  Self.mError = Error
 		  Self.mTriggers.Add(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
@@ -68,8 +155,14 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Error() As RuntimeException
+		  Return Self.mError
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Errored() As Boolean
-		  Return Self.mErrored
+		  Return (Self.mError Is Nil) = False
 		End Function
 	#tag EndMethod
 
@@ -80,412 +173,186 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mode() As String
-		  Return Self.mMode
+		Function OutputFlags() As Integer
+		  Return Self.mOutputFlags
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, ConfigDict As Dictionary, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
-		  Try
-		    // Normalize line endings
-		    Var EOL As String = InitialContent.DetectLineEnding
-		    InitialContent = InitialContent.ReplaceLineEndings(Encodings.UTF8.Chr(10))
-		    
-		    // Try to convert [ScalabilityGroups.sg] into [ScalabilityGroups]
-		    If ConfigDict.HasKey("ScalabilityGroups.sg") Then
-		      Var ScalabilityGroupsSuffixed As Dictionary = ConfigDict.Value("ScalabilityGroups.sg")
-		      Var ScalabilityGroups As Dictionary
-		      If ConfigDict.HasKey("ScalabilityGroups") Then
-		        ScalabilityGroups = ConfigDict.Value("ScalabilityGroups")
-		      Else
-		        ScalabilityGroups = New Dictionary
-		      End If
-		      
-		      For Each Entry As DictionaryEntry In ScalabilityGroupsSuffixed
-		        Var Key As String = Entry.Key
-		        Var Lines() As String = Entry.Value
-		        If Key.BeginsWith("sg.") = False Then
-		          Key = "sg." + Key
-		        End If
-		        For Idx As Integer = 0 To Lines.LastIndex
-		          If Lines(Idx).BeginsWith("sg.") = False Then
-		            Lines(Idx) = "sg." + Lines(Idx)
-		          End If
-		        Next
-		        
-		        If ScalabilityGroups.HasKey(Key) = False Then
-		          ScalabilityGroups.Value(Key) = Lines
-		        End If
-		      Next
-		      
-		      ConfigDict.Value("ScalabilityGroups") = ScalabilityGroups
-		      ConfigDict.Remove("ScalabilityGroups.sg")
-		    End If
-		    
-		    // Organize all existing content
-		    Var Lines() As String = InitialContent.Split(Encodings.ASCII.Chr(10))
-		    Var UntouchedConfigs As New Dictionary
-		    Var LastGroupHeader As String = DefaultHeader
-		    For I As Integer = 0 To Lines.LastIndex
-		      Var Line As String = Lines(I).Trim
-		      If Line.Length = 0 Then
-		        Continue
-		      End If
-		      
-		      If Line.BeginsWith("[") And Line.EndsWith("]") Then
-		        // This is a group header
-		        LastGroupHeader = Line.Middle(1, Line.Length - 2)
-		        If LastGroupHeader = "ScalabilityGroups.sg" Then
-		          LastGroupHeader = "ScalabilityGroups"
-		        End If
-		        Continue
-		      End If
-		      
-		      Var SectionDict As Dictionary
-		      If UntouchedConfigs.HasKey(LastGroupHeader) Then
-		        SectionDict = UntouchedConfigs.Value(LastGroupHeader)
-		      Else
-		        SectionDict = New Dictionary
-		      End If
-		      
-		      Var KeyPos As Integer = Line.IndexOf("=")
-		      If KeyPos = -1 Then
-		        Continue
-		      End If
-		      
-		      Var Key As String = Line.Left(KeyPos)
-		      Var ModifierPos As Integer = Key.IndexOf("[")
-		      If ModifierPos > -1 Then
-		        Key = Key.Left(ModifierPos)
-		      End If
-		      If LastGroupHeader = "ScalabilityGroups" And Key.BeginsWith("sg.") = False Then
-		        Key = "sg." + Key
-		        Line = "sg." + Line
-		      End If
-		      
-		      If ConfigDict.HasKey(LastGroupHeader) Then
-		        Var NewConfigSection As Dictionary = ConfigDict.Value(LastGroupHeader)
-		        If NewConfigSection.HasKey(Key) Then
-		          // This key is being overridden by Beacon
-		          Continue
-		        End If
-		      End If
-		      
-		      Var ConfigLines() As String
-		      If SectionDict.HasKey(Key) Then
-		        ConfigLines = SectionDict.Value(Key)
-		      End If
-		      ConfigLines.Add(Line)
-		      SectionDict.Value(Key) = ConfigLines
-		      UntouchedConfigs.Value(LastGroupHeader) = SectionDict
-		    Next
-		    
-		    Var AllSectionHeaders() As String
-		    Var UntouchedKeys() As Variant = UntouchedConfigs.Keys
-		    For Each UntouchedKey As String In UntouchedKeys
-		      AllSectionHeaders.Add(UntouchedKey)
-		    Next
-		    Var NewKeys() As Variant = ConfigDict.Keys
-		    For Each NewKey As String In NewKeys
-		      If AllSectionHeaders.IndexOf(NewKey) = -1 Then
-		        AllSectionHeaders.Add(NewKey)
-		      End If
-		    Next
-		    
-		    // Figure out which keys are managed by Beacon so they can be removed
-		    If UntouchedConfigs.HasKey("Beacon") Then
-		      // Generated by a version of Beacon that includes its own config section
-		      Var BeaconDict As Dictionary = UntouchedConfigs.Value("Beacon")
-		      Var BeaconGroupVersion As Integer = 10103300
-		      If BeaconDict.HasKey("Build") Then
-		        Var BuildLines() As String = BeaconDict.Value("Build")
-		        Var BuildLine As String = BuildLines(0)
-		        Var ValuePos As Integer = BuildLine.IndexOf("=") + 1
-		        Var Value As String = BuildLine.Middle(ValuePos)
-		        If Value.BeginsWith("""") And Value.EndsWith("""") Then
-		          Value = Value.Middle(1, Value.Length - 2)
-		        End If
-		        BeaconGroupVersion = Integer.FromString(Value, Locale.Raw)
-		      End If
-		      
-		      Var IsTrusted As Boolean
-		      If BeaconDict.HasKey("Trust") Then
-		        Var TrustLines() As String = BeaconDict.Value("Trust")
-		        For Each TrustLine As String In TrustLines
-		          If TrustLine = "Trust=" + TrustKey Then
-		            IsTrusted = True
-		            Exit
-		          End If
-		        Next
-		      Else
-		        IsTrusted = True
-		      End If
-		      
-		      If IsTrusted Then
-		        If BeaconDict.HasKey("ManagedKeys") Then
-		          Var ManagedKeyLines() As String = BeaconDict.Value("ManagedKeys")
-		          For Each KeyLine As String In ManagedKeyLines
-		            Var Header, ArrayTextContent As String
-		            
-		            If BeaconGroupVersion > 10103300 Then
-		              Var HeaderStartPos As Integer = KeyLine.IndexOf(13, "Section=""") + 9
-		              Var HeaderEndPos As Integer = KeyLine.IndexOf(HeaderStartPos, """")
-		              Header = KeyLine.Middle(HeaderStartPos, HeaderEndPos - HeaderStartPos)
-		              If Not UntouchedConfigs.HasKey(Header) Then
-		                Continue
-		              End If
-		              
-		              Var ArrayStartPos As Integer = KeyLine.IndexOf(13, "Keys=(") + 6
-		              Var ArrayEndPos As Integer = KeyLine.IndexOf(ArrayStartPos, ")")
-		              ArrayTextContent = KeyLine.Middle(ArrayStartPos, ArrayEndPos - ArrayStartPos)
-		            Else
-		              Var HeaderPos As Integer = KeyLine.IndexOf("['") + 2
-		              Var HeaderEndPos As Integer = KeyLine.IndexOf(HeaderPos, "']")
-		              Header = KeyLine.Middle(HeaderPos, HeaderEndPos - HeaderPos)
-		              If Not UntouchedConfigs.HasKey(Header) Then
-		                Continue
-		              End If
-		              
-		              Var ArrayPos As Integer = KeyLine.IndexOf(HeaderEndPos, "(") + 1
-		              Var ArrayEndPos As Integer = KeyLine.IndexOf(ArrayPos, ")")
-		              ArrayTextContent = KeyLine.Middle(ArrayPos, ArrayEndPos - ArrayPos)
-		            End If
-		            
-		            If BeaconGroupVersion < 10400000 Then
-		              // For safety, Beacon will pretend it didn't manage these sections in the past
-		              Select Case Header
-		              Case "/Script/Engine.GameSession", "/Script/ShooterGame.ShooterGameUserSettings", "ScalabilityGroups"
-		                Continue
-		              End Select
-		            End If
-		            
-		            If Header = "SessionSettings" Then
-		              // Never remove anything from SessionSettings, only add/replace
-		              Continue
-		            End If
-		            
-		            Var ManagedKeys() As String = ArrayTextContent.Split(",")
-		            Var SectionContents As Dictionary
-		            If UntouchedConfigs.HasKey(Header) Then
-		              SectionContents = UntouchedConfigs.Value(Header)
-		              For Each ManagedKey As String In ManagedKeys
-		                If SectionContents.HasKey(ManagedKey) Then
-		                  SectionContents.Remove(ManagedKey)
-		                End If
-		              Next
-		              If SectionContents.KeyCount = 0 Then
-		                UntouchedConfigs.Remove(Header)
-		              End If
-		            End If
-		          Next
-		        End If
-		      End If
-		      
-		      If UntouchedConfigs.HasKey("Beacon") Then
-		        UntouchedConfigs.Remove("Beacon")
-		      End If
-		      AllSectionHeaders.RemoveAt(AllSectionHeaders.IndexOf("Beacon"))
-		    Else
-		      // We'll need to use the legacy style of removing only what is being replaced
-		      For Each Header As String In NewKeys
-		        If Not UntouchedConfigs.HasKey(Header) Then
-		          Continue
-		        End If
-		        
-		        Var OldContents As Dictionary = UntouchedConfigs.Value(Header)
-		        Var NewContents As Dictionary = ConfigDict.Value(Header)
-		        Var NewContentKeys() As Variant = NewContents.Keys
-		        For Each NewContentKey As String In NewContentKeys
-		          If OldContents.HasKey(NewContentKey) Then
-		            OldContents.Remove(NewContentKey)
-		          End If
-		        Next
-		        If OldContents.KeyCount = 0 Then
-		          UntouchedConfigs.Remove(Header)
-		        End If
-		      Next
-		    End If
-		    
-		    // Setup the Beacon section
-		    If TrustKey <> "" Then
-		      Var BeaconKeys As New Dictionary
-		      For Each Header As String In NewKeys
-		        Var Keys() As String
-		        If BeaconKeys.HasKey(Header) Then
-		          Keys = BeaconKeys.Value(Header)
-		        End If
-		        
-		        Var Dict As Dictionary = ConfigDict.Value(Header)
-		        Var Entries() As Variant = Dict.Keys
-		        For Each Entry As String In Entries
-		          If Keys.IndexOf(Entry) = -1 Then
-		            Keys.Add(Entry)
-		          End If
-		        Next
-		        
-		        BeaconKeys.Value(Header) = Keys
-		      Next
-		      If BeaconKeys.KeyCount > 0 Then
-		        Var BeaconDict As New Dictionary
-		        Var BeaconKeysKeys() As Variant = BeaconKeys.Keys
-		        For Each Header As String In BeaconKeysKeys
-		          Var Keys() As String = BeaconKeys.Value(Header)
-		          Var SectionLines() As String
-		          If BeaconDict.HasKey("ManagedKeys") Then
-		            SectionLines = BeaconDict.Value("ManagedKeys")
-		          End If
-		          SectionLines.Add("ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))")
-		          BeaconDict.Value("ManagedKeys") = SectionLines
-		        Next
-		        BeaconDict.Value("Build") = Array("Build=" + App.BuildNumber.ToString(Locale.Raw, "0"))
-		        BeaconDict.Value("Trust") = Array("Trust=" + TrustKey)
-		        BeaconDict.Value("LastUpdated") = Array("LastUpdated=""" + DateTime.Now.SQLDateTimeWithOffset + """")
-		        AllSectionHeaders.Add("Beacon")
-		        ConfigDict.Value("Beacon") = BeaconDict
-		      End If
-		    End If
-		    
-		    // Build an ini file
-		    Var NewLines() As String
-		    AllSectionHeaders.Sort
-		    For Each Header As String In AllSectionHeaders
-		      If Header.IsEmpty Then
-		        Continue
-		      End If
-		      
-		      Var SectionUntouched, SectionConfig As Dictionary
-		      If UntouchedConfigs.HasKey(Header) Then
-		        SectionUntouched = UntouchedConfigs.Value(Header)
-		      End If
-		      If ConfigDict.HasKey(Header) Then
-		        SectionConfig = ConfigDict.Value(Header)
-		      End If
-		      
-		      Var HasUntouched As Boolean = (SectionUntouched Is Nil) = False And SectionUntouched.KeyCount > 0
-		      Var HasConfig As Boolean = (SectionConfig Is Nil) = False And SectionConfig.KeyCount > 0
-		      
-		      If HasUntouched = False And HasConfig = False Then
-		        Continue For Header
-		      End If
-		      
-		      Var SectionConfigs() As String
-		      
-		      If HasUntouched And UntouchedConfigs.HasKey(Header) And (Header <> "MessageOfTheDay" Or ConfigDict.HasKey(Header) = False) Then
-		        Var Section As Dictionary = UntouchedConfigs.Value(Header)
-		        Var SectionKeys() As Variant = Section.Keys
-		        For Each Key As Variant In SectionKeys
-		          If SectionConfigs.IndexOf(Key) = -1 Then
-		            SectionConfigs.Add(Key)
-		          End If
-		        Next
-		      End If
-		      
-		      If HasConfig And ConfigDict.HasKey(Header) Then
-		        Var Section As Dictionary = ConfigDict.Value(Header)
-		        Var SectionKeys() As Variant = Section.Keys
-		        For Each Key As Variant In SectionKeys
-		          If SectionConfigs.IndexOf(Key) = -1 Then
-		            SectionConfigs.Add(Key)
-		          End If
-		        Next
-		      End If
-		      
-		      SectionConfigs.Sort
-		      
-		      If NewLines.LastIndex > -1 Then
-		        NewLines.Add("")
-		      End If
-		      NewLines.Add("[" + Header + "]")
-		      
-		      For Each ConfigKey As String In SectionConfigs
-		        If HasUntouched Then
-		          If SectionUntouched.HasKey(ConfigKey) Then
-		            Var Values() As String = SectionUntouched.Value(ConfigKey)
-		            For Each Line As String In Values
-		              NewLines.Add(Line)
-		            Next
-		          End If
-		        End If
-		        If HasConfig Then
-		          If SectionConfig.HasKey(ConfigKey) Then
-		            Var Values() As String = SectionConfig.Value(ConfigKey)
-		            For Each Line As String In Values
-		              NewLines.Add(Line)
-		            Next
-		          End If
-		        End If
-		      Next
-		    Next
-		    
-		    Var Result As String = ConvertEncoding(NewLines.Join(EOL), Format)
-		    Errored = False
-		    Return Result
-		  Catch Err As RuntimeException
-		    Errored = True
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Rewrite(InitialContent As String, DefaultHeader As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
-		  Self.mWithMarkup = WithMarkup
-		  Self.mInitialContent = InitialContent.SanitizeIni
-		  Self.mDefaultHeader = DefaultHeader
-		  Self.mMode = Mode
-		  Self.mDocument = Document
-		  Self.mIdentity = Identity
-		  Self.mProfile = Profile
-		  
+		Sub Rewrite(Flags As Integer)
+		  Self.mOutputFlags = Flags And (Self.FlagCreateGameIni Or Self.FlagCreateGameUserSettingsIni Or Self.FlagCreateCommandLine)
 		  Super.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, TrustKey As String, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, File As String, Organizer As Beacon.ConfigOrganizer, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		  // This is the new master method
+		  
 		  Try
-		    Var ConfigDict As New Dictionary
-		    Var CustomContentGroup As BeaconConfigs.CustomContent
+		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
 		    
-		    Var Groups() As Beacon.ConfigGroup = Document.CombinedConfigs(Profile.ConfigSetStates, Identity)
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group Is Nil Then
+		    // Get the initial values into an organizer
+		    Var ParsedValues As New Beacon.ConfigOrganizer(File, DefaultHeader, InitialContent)
+		    
+		    // Use the old Beacon section to determine which values to remove
+		    Var TrustValues() As Beacon.ConfigValue = ParsedValues.FilteredValues(File, "Beacon", "Trust")
+		    Var Trusted As Boolean
+		    For Each TrustValue As Beacon.ConfigValue In TrustValues
+		      If TrustValue.Value = TrustKey Then
+		        Trusted = True
 		        Continue
-		      End If
-		      
-		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		        CustomContentGroup = BeaconConfigs.CustomContent(Group)
-		        Continue
-		      End If
-		      
-		      Var Options() As Beacon.ConfigValue
-		      Select Case Mode
-		      Case Beacon.RewriteModeGameIni
-		        Options = Group.GameIniValues(Document, Identity, Profile)
-		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = Group.GameUserSettingsIniValues(Document, Identity, Profile)
-		      End Select
-		      If Options <> Nil And Options.LastIndex > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Mode, Options)
 		      End If
 		    Next
-		    
-		    If CustomContentGroup <> Nil Then
-		      Var Options() As Beacon.ConfigValue
-		      Select Case Mode
-		      Case Beacon.RewriteModeGameIni
-		        Options = CustomContentGroup.GameIniValues(Document, ConfigDict, Profile)
-		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, ConfigDict, Profile)
-		      End Select
-		      If Options <> Nil And Options.LastIndex > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Mode, Options)
-		      End If
+		    If Trusted Then
+		      Var ManagedKeys() As Beacon.ConfigValue = ParsedValues.FilteredValues(File, "Beacon", "ManagedKeys")
+		      For Each ManagedKey As Beacon.ConfigValue In ManagedKeys
+		        Var ManagedSectionStartPos As Integer = ManagedKey.Value.IndexOf("Section=""")
+		        If ManagedSectionStartPos = -1 Then
+		          Continue
+		        End If
+		        ManagedSectionStartPos = ManagedSectionStartPos + 9
+		        Var ManagedSectionEndPos As Integer = ManagedKey.Value.IndexOf(ManagedSectionStartPos, """")
+		        If ManagedSectionEndPos = -1 Then
+		          Continue
+		        End If
+		        Var ManagedSection As String = ManagedKey.Value.Middle(ManagedSectionStartPos, ManagedSectionEndPos - ManagedSectionStartPos)
+		        
+		        Var KeysStartPos As Integer = ManagedKey.Value.IndexOf("Keys=(")
+		        If KeysStartPos = -1 Then
+		          Continue
+		        End If
+		        KeysStartPos = KeysStartPos + 6
+		        Var KeysEndPos As Integer = ManagedKey.Value.IndexOf(KeysStartPos, ")")
+		        If KeysEndPos = -1 Then
+		          Continue
+		        End If
+		        Var KeysString As String = ManagedKey.Value.Middle(KeysStartPos, KeysEndPos - KeysStartPos)
+		        
+		        Var Keys() As String = KeysString.Split(",")
+		        For Each Key As String In Keys
+		          ParsedValues.Remove(File, ManagedSection, Key)
+		        Next
+		      Next
 		    End If
 		    
-		    Return Rewrite(InitialContent, DefaultHeader, ConfigDict, TrustKey, Format, Errored)
+		    // Remove the old Beacon section
+		    ParsedValues.Remove(File, "Beacon")
+		    
+		    // Create a new organizer with the values from the original and unique values from the parsed
+		    Var FinalOrganizer As New Beacon.ConfigOrganizer
+		    FinalOrganizer.Add(Organizer.FilteredValues(File))
+		    If File = Beacon.ConfigFileGameUserSettings Then
+		      FinalOrganizer.Add(Organizer.FilteredValues("CommandLineOption"))
+		      FinalOrganizer.Add(Organizer.FilteredValues("CommandLineFlag"))
+		    End If
+		    FinalOrganizer.Add(ParsedValues.FilteredValues(File), True)
+		    
+		    If FinalOrganizer.Count = 0 Then
+		      Return ""
+		    End If
+		    
+		    If TrustKey.IsEmpty = False Then
+		      // Build the Beacon section
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build", App.BuildNumber.ToString(Locale.Raw)))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "LastUpdated", DateTime.Now.SQLDateTimeWithOffset))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Trust", TrustKey))
+		      Var ManagedHeaders() As String = Organizer.Headers(File)
+		      For Each Header As String In ManagedHeaders
+		        If Header = "Beacon" Then
+		          Continue
+		        End If
+		        
+		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
+		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "ManagedKeys", "(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))"))
+		      Next
+		    End If
+		    
+		    Const ScalabilityHeader = "ScalabilityGroups"
+		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, ScalabilityHeader) = False Then
+		      // Insert this crap
+		      Var ScalabilityValues() As Beacon.ConfigValue
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.AntiAliasingQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.EffectsQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.GroundClutterQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.GroundClutterRadius", "10000"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.HeightFieldShadowQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.IBLQuality", "1"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.PostProcessQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.ResolutionQuality", "100"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.ShadowQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.TextureQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.TrueSkyQuality", "3"))
+		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.ViewDistanceQuality", "3"))
+		      FinalOrganizer.Add(ScalabilityValues)
+		    End If
+		    
+		    Const QualityHeader = "/Script/ShooterGame.ShooterGameUserSettings"
+		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, QualityHeader) = False Then
+		      // More junk
+		      Var QualityValues() As Beacon.ConfigValue
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ActiveLingeringWorldTiles", "10"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bCameraViewBob", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bChatBubbles", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bCraftablesShowAllItems", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFilmGrain", "False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFirstPersonRiding", "False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFloatingNames", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bInvertLookY", "False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bJoinNotifications", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bMotionBlur", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bShowChatBox", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bShowStatusNotificationMessages", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bThirdPersonPlayer", "False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseDesktopResolutionForFullscreen", "False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseDFAO", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseSSAO", "True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseVSync", "False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "CameraShakeScale", "0.100000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "FOVMultiplier", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "FullscreenMode", "2"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "GraphicsQuality", "2"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "GroundClutterDensity", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastConfirmedFullscreenMode", "2"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeX", "1280"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeY", "720"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LookLeftRightSensitivity", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LookUpDownSensitivity", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "MasterAudioVolume", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "MusicAudioVolume", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeX", "1280"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeY", "720"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "SFXAudioVolume", "1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "TrueSkyQuality", "0.270000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "Version", "5"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosX", "-1"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosY", "-1"))
+		      FinalOrganizer.Add(QualityValues)
+		    End If
+		    
+		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession") = False Then
+		      // No way to know the correct value
+		      FinalOrganizer.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession", "MaxPlayers", "10"))
+		    End If
+		    
+		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, "SessionSettings") = False Then
+		      FinalOrganizer.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName", "An Ark Server Managed by Beacon"))
+		    End If
+		    
+		    Return ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
 		  Catch Err As RuntimeException
-		    Errored = True
+		    Error = Err
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, File As String, Document As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		  Try
+		    Var Organizer As Beacon.ConfigOrganizer = Document.CreateConfigOrganizer(Identity, Profile)
+		    Return Rewrite(InitialContent, DefaultHeader, File, Organizer, Document.TrustKey, Format, Error)
+		  Catch Err As RuntimeException
+		    Error = Err
 		  End Try
 		End Function
 	#tag EndMethod
@@ -508,12 +375,6 @@ Inherits Global.Thread
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function UpdatedContent() As String
-		  Return Self.mUpdatedContent
-		End Function
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event Finished()
@@ -524,16 +385,101 @@ Inherits Global.Thread
 	#tag EndHook
 
 
-	#tag Property, Flags = &h21
-		Private mDefaultHeader As String
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDocument
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mDocument <> Value Then
+			    Self.mDocument = Value
+			    Self.mRebuildOrganizer = True
+			  End If
+			End Set
+		#tag EndSetter
+		Document As Beacon.Document
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFinishedCommandLineContent
+			End Get
+		#tag EndGetter
+		FinishedCommandLineContent As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFinishedGameIniContent
+			End Get
+		#tag EndGetter
+		FinishedGameIniContent As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFinishedGameUserSettingsIniContent
+			End Get
+		#tag EndGetter
+		FinishedGameUserSettingsIniContent As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mIdentity
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mIdentity <> Value Then
+			    Self.mIdentity = Value
+			    Self.mRebuildOrganizer = True
+			  End If
+			End Set
+		#tag EndSetter
+		Identity As Beacon.Identity
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mInitialGameIniContent
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mInitialGameIniContent = Value.SanitizeIni
+			End Set
+		#tag EndSetter
+		InitialGameIniContent As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mInitialGameUserSettingsIniContent
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mInitialGameUserSettingsIniContent = Value.SanitizeIni
+			End Set
+		#tag EndSetter
+		InitialGameUserSettingsIniContent As String
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mErrored As Boolean
+		Private mError As RuntimeException
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -541,15 +487,35 @@ Inherits Global.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mFinishedCommandLineContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFinishedGameIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFinishedGameUserSettingsIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mInitialContent As String
+		Private mInitialGameIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMode As String
+		Private mInitialGameUserSettingsIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOrganizer As Beacon.ConfigOrganizer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOutputFlags As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -557,16 +523,39 @@ Inherits Global.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRebuildOrganizer As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTriggers() As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUpdatedContent As String
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProfile
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mProfile <> Value Then
+			    Self.mProfile = Value
+			    Self.mRebuildOrganizer = True
+			  End If
+			End Set
+		#tag EndSetter
+		Profile As Beacon.ServerProfile
+	#tag EndComputedProperty
 
-	#tag Property, Flags = &h21
-		Private mWithMarkup As Boolean
-	#tag EndProperty
+
+	#tag Constant, Name = FlagCreateCommandLine, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagCreateGameIni, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagCreateGameUserSettingsIni, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag Enum, Name = EncodingFormat, Type = Integer, Flags = &h0
@@ -663,6 +652,46 @@ Inherits Global.Thread
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialGameIniContent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialGameUserSettingsIniContent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FinishedGameIniContent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FinishedGameUserSettingsIniContent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FinishedCommandLineContent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

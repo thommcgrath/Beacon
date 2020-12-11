@@ -2,36 +2,39 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
-		  Var ParsedValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, New Dictionary, Profile)
-		  For Each ParsedValue As Beacon.ConfigValue In ParsedValues
+		  Var ValuesFromGUS() As Beacon.ConfigValue = Self.IniValues(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, New Dictionary, Profile)
+		  Var ValuesFromGame() As Beacon.ConfigValue = Self.IniValues(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mGameIniContent, New Dictionary, Profile)
+		  Var Values() As Beacon.ConfigValue
+		  
+		  For Each ParsedValue As Beacon.ConfigValue In ValuesFromGUS
+		    Values.Add(ParsedValue)
+		    
 		    Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("CommandLine", "", ParsedValue.SimplifiedKey)
 		    If Keys.Count <> 1 Then
 		      Continue
 		    End If
 		    
 		    Var Key As Beacon.ConfigKey = Keys(0)
-		    Var OverrideCommand As String
+		    Var OverrideCommand As String = ParsedValue.Command
 		    Var Value As String = ParsedValue.Value
 		    If Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
 		      Value = Value.Trim
 		      Var IsTrue As Boolean = Value = "true" Or Value = "1"
-		      
-		      If Key.Header = "-" Then
-		        If Not IsTrue Then
-		          Continue
-		        End If
-		        
-		        OverrideCommand = Key.Key
-		      Else
-		        Value = If(IsTrue, "true", "false")
-		      End If
+		      Value = If(IsTrue, "true", "false")
+		      OverrideCommand = Key.Key + "=" + Value.Titlecase
 		    End If
-		    Values.Add(New Beacon.ConfigValue(Key.Header, ParsedValue.Key, Value, OverrideCommand))
+		    Values.Add(New Beacon.ConfigValue(Key, Key.Key, Value, OverrideCommand))
 		  Next
-		End Sub
+		  
+		  For Each ParsedValue As Beacon.ConfigValue In ValuesFromGame
+		    Values.Add(ParsedValue)
+		  Next
+		  
+		  Return Values
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -73,15 +76,15 @@ Inherits Beacon.ConfigGroup
 
 	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
-		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity, Document)
-		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity, Document)
+		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup(Beacon.ConfigFileGame, ""), Identity, Document)
+		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup(Beacon.ConfigFileGameUserSettings, ""), Identity, Document)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
-		  Dict.Value("Game.ini") = Self.WriteContent(Self.mGameIniContent, Document)
-		  Dict.Value("GameUserSettings.ini") = Self.WriteContent(Self.mGameUserSettingsIniContent, Document)
+		  Dict.Value(Beacon.ConfigFileGame) = Self.WriteContent(Self.mGameIniContent, Document)
+		  Dict.Value(Beacon.ConfigFileGameUserSettings) = Self.WriteContent(Self.mGameUserSettingsIniContent, Document)
 		End Sub
 	#tag EndEvent
 
@@ -208,50 +211,22 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
-		  If SupportedConfigs <> Nil Then
-		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs, Nil)
-		    Var ConfigDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(ConfigDict, "Game.ini", ConfigValues)
-		    
-		    Var Errored As Boolean
-		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", Beacon.ShooterGameHeader, ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
-		    If Not Errored Then
-		      Value = Rewritten
-		    End If
-		  End If
-		  
-		  If Self.mGameIniContent.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-		    Self.mGameIniContent = Value
-		    Self.Modified = True
-		  End If
+		Sub GameIniContent(Assigns Organizer As Beacon.ConfigOrganizer)
+		  Self.GameIniContent = Organizer.Build(Beacon.ConfigFileGame)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  #Pragma Unused Identity
-		  #Pragma Unused Profile
+		Sub GameIniContent(Assigns Content As String)
+		  If Content.BeginsWith("[" + Beacon.ShooterGameHeader + "]") Then
+		    Content = Content.Middle(Content.IndexOf("]") + 1).TrimLeft
+		  End If
 		  
-		  Var Err As UnsupportedOperationException
-		  Err.Message = "Do not call this one!"
-		  Raise Err
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Return Self.GameIniValues(SourceDocument, New Dictionary, Profile)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Return Self.IniValues(Beacon.ShooterGameHeader, Self.mGameIniContent, ExistingConfigs, Profile)
-		End Function
+		  If Self.mGameIniContent.Compare(Content, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mGameIniContent = Content
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -261,84 +236,68 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameUserSettingsIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
-		  If SupportedConfigs <> Nil Then
-		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
-		    #if Beacon.MOTDEditingEnabled
-		      For Idx As Integer = ConfigValues.LastIndex DownTo 0
-		        If ConfigValues(Idx).Header = "MessageOfTheDay" Then
-		          ConfigValues.RemoveAt(Idx)
-		        End If
-		      Next
-		    #endif
-		    
-		    Var ProtectedKeys As New Dictionary
-		    ProtectedKeys.Value("ServerSettings.ServerAdminPassword") = True
-		    ProtectedKeys.Value("ServerSettings.ServerPassword") = True
-		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
-		    
-		    // Make sure passwords get encrypted on save
-		    For I As Integer = ConfigValues.LastIndex DownTo 0
-		      Var ConfigValue As Beacon.ConfigValue = ConfigValues(I)
-		      If ConfigValue.Value = "" Then
-		        Continue
-		      End If
-		      
-		      If ProtectedKeys.HasKey(ConfigValue.Header + "." + ConfigValue.Key) Then
-		        ConfigValues(I) = New Beacon.ConfigValue(ConfigValue.Header, ConfigValue.Key, Self.EncryptedTag + ConfigValue.Value + Self.EncryptedTag)
-		      End If
-		    Next
-		    
-		    Var ConfigDict As New Dictionary
-		    Beacon.ConfigValue.FillConfigDict(ConfigDict, "GameUserSettings.ini", ConfigValues)
-		    
-		    Var Errored As Boolean
-		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", Beacon.ServerSettingsHeader, ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
-		    If Not Errored Then
-		      Value = Rewritten
+		Sub GameUserSettingsIniContent(Assigns Organizer As Beacon.ConfigOrganizer)
+		  // Make a copy before editing
+		  Var WasCloned As Boolean
+		  
+		  // Remove MOTD
+		  #if Beacon.MOTDEditingEnabled
+		    If Organizer.HasHeader(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay") Then
+		      Organizer = Organizer.Clone
+		      WasCloned = True
+		      Organizer.Remove(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay")
 		    End If
+		  #endif
+		  
+		  // Encrypt some common passwords
+		  Var ProtectedKeys() As String = Array("CommandLineOption:?:ServerAdminPassword", Beacon.ConfigFileGameUserSettings + ":ServerSettings:ServerPassword", Beacon.ConfigFileGameUserSettings + ":AuctionHouse:MarketID")
+		  For Each KeyPath As String In ProtectedKeys
+		    Var Pos As Integer = KeyPath.IndexOf(":")
+		    Var File As String = KeyPath.Left(Pos)
+		    KeyPath = KeyPath.Middle(Pos + 1)
+		    Pos = KeyPath.IndexOf(":")
+		    Var Header As String = KeyPath.Left(Pos)
+		    Var Key As String = KeyPath.Middle(Pos + 1)
+		    Var Values() As Beacon.ConfigValue = Organizer.FilteredValues(File, Header, Key)
+		    If Values.Count = 0 Then
+		      Continue
+		    End If
+		    Var Value As String = Values(Values.LastIndex).Value
+		    If Value.IsEmpty Then
+		      Continue
+		    End If
+		    If WasCloned = False Then
+		      Organizer = Organizer.Clone
+		      WasCloned = True
+		    End If
+		    Organizer.Remove(File, Header, Key)
+		    Organizer.Add(New Beacon.ConfigValue(File, Header, Key, Self.EncryptedTag + Value + Self.EncryptedTag))
+		  Next
+		  
+		  Self.GameUserSettingsIniContent = Organizer.Build(Beacon.ConfigFileGameUserSettings)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GameUserSettingsIniContent(Assigns Content As String)
+		  If Content.BeginsWith("[" + Beacon.ServerSettingsHeader + "]") Then
+		    Content = Content.Middle(Content.IndexOf("]") + 1).TrimLeft
 		  End If
 		  
-		  If Self.mGameUserSettingsIniContent.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-		    Self.mGameUserSettingsIniContent = Value
+		  If Self.mGameUserSettingsIniContent.Compare(Content, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mGameUserSettingsIniContent = Content
 		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  #Pragma Unused Identity
-		  #Pragma Unused Profile
-		  
-		  Var Err As UnsupportedOperationException
-		  Err.Message = "Do not call this one!"
-		  Raise Err
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Return Self.GameUserSettingsIniValues(SourceDocument, New Dictionary, Profile)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Return Self.IniValues(Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, ExistingConfigs, Profile)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
-		Private Function IniValues(InitialHeader As String, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		Private Function IniValues(File As String, InitialHeader As String, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
 		  Source = Source.ReplaceLineEndings(Encodings.ASCII.Chr(10))
 		  
 		  Var Lines() As String = Source.Split(Encodings.ASCII.Chr(10))
-		  Var Parser As New CustomContentParser(InitialHeader, ExistingConfigs, Profile)
+		  Var Parser As New CustomContentParser(File, InitialHeader, ExistingConfigs, Profile)
 		  For Each Line As String In Lines
 		    Var ShouldAlwaysBeNil() As Beacon.ConfigValue = Parser.AddLine(Line)
 		    If ShouldAlwaysBeNil <> Nil Then

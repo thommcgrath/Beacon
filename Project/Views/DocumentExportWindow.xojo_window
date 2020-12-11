@@ -293,50 +293,6 @@ Begin BeaconDialog DocumentExportWindow
       Visible         =   True
       Width           =   597
    End
-   Begin Beacon.Rewriter GameIniRewriter
-      DebugIdentifier =   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
-   End
-   Begin Beacon.Rewriter GameUserSettingsRewriter
-      DebugIdentifier =   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
-   End
-   Begin Beacon.Rewriter FileRewriter
-      DebugIdentifier =   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
-   End
-   Begin Beacon.Rewriter ClipboardRewriter
-      DebugIdentifier =   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
-   End
    Begin OmniBar ExportToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -707,16 +663,21 @@ Begin BeaconDialog DocumentExportWindow
       VisualState     =   0
       Width           =   210
    End
+   Begin Beacon.Rewriter SharedRewriter
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  Self.ClipboardRewriter.Cancel
-		  Self.FileRewriter.Cancel
-		  Self.GameIniRewriter.Cancel
-		  Self.GameUserSettingsRewriter.Cancel
+		  Self.SharedRewriter.Cancel
 		End Sub
 	#tag EndEvent
 
@@ -750,13 +711,9 @@ End
 		    Return
 		  End If
 		  
-		  Var ClipboardRewriting As Boolean = Self.ClipboardRewriter.ThreadState <> Thread.ThreadStates.NotRunning
-		  Self.ExportToolbar.Item("SmartCopy").Enabled = Not ClipboardRewriting
-		  Self.ExportToolbar.Item("SmartCopy").Caption = If(ClipboardRewriting, "Working…", "Smart Copy")
-		  
-		  Var FileRewriting As Boolean = Self.FileRewriter.ThreadState <> Thread.ThreadStates.NotRunning
-		  Self.ExportToolbar.Item("SmartSave").Enabled = Not FileRewriting
-		  Self.ExportToolbar.Item("SmartSave").Caption = If(FileRewriting, "Working…", "Smart Save")
+		  Var Busy As Boolean = Self.IsRewriting
+		  Self.ExportToolbar.Item("SmartCopy").Enabled = Not Busy
+		  Self.ExportToolbar.Item("SmartSave").Enabled = Not Busy
 		  
 		  Self.ExportToolbar.Item("LazyCopy").Enabled = Self.ContentArea.Text <> ""
 		  Self.ExportToolbar.Item("LazySave").Enabled = Self.ExportToolbar.Item("LazyCopy").Enabled And Self.CurrentMode <> ""
@@ -810,6 +767,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub DoSmartCopy()
+		  If Self.IsRewriting Then
+		    // Busy
+		    Self.ShowAlert(Self.RewriterBusyMessage, Self.RewriterBusyExplanation)
+		    Return
+		  End If
+		  
 		  Var Mode As String = Self.CurrentMode
 		  If Mode.IsEmpty Then
 		    Self.ShowAlert(SmartCopyUnavailableMessage, SmartCopyUnavailableExplanation)
@@ -820,11 +783,6 @@ End
 		  Var Board As New Clipboard
 		  If Board.TextAvailable = False Then
 		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyInstructionsMessage, Filename), Language.ReplacePlaceholders(SmartCopyInstructionsExplanation, Filename))
-		    Return
-		  End If
-		  
-		  If Self.ClipboardRewriter.ThreadState <> Thread.ThreadStates.NotRunning Then
-		    Self.ShowAlert(SmartCopyBusyMessage, SmartCopyBusyExplanation)
 		    Return
 		  End If
 		  
@@ -842,21 +800,37 @@ End
 		    Return
 		  End If
 		  
-		  If EncodeHex(Crypto.MD5(ClipboardContents)) = Self.mLastRewrittenHash Then
+		  If EncodeHex(Crypto.SHA256(ClipboardContents)) = Self.mLastRewrittenHash Then
 		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyReadyMessage, Filename), Language.ReplacePlaceholders(SmartCopyReadyExplanation, Filename))
 		    Return
 		  End If
 		  
-		  Self.ClipboardRewriter.Rewrite(ClipboardContents, Self.CurrentDefaultHeader, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  Self.mLastRewrittenHash = ""
+		  Self.mCopyWhenFinished = True
+		  
+		  Select Case Self.CurrentMode
+		  Case Beacon.RewriteModeGameIni
+		    Self.SharedRewriter.InitialGameIniContent = ClipboardContents
+		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameIni)
+		  Case Beacon.RewriteModeGameUserSettingsIni
+		    Self.SharedRewriter.InitialGameUserSettingsIniContent = ClipboardContents
+		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameUserSettingsIni)
+		  End Select
+		  
+		  Self.CheckButtons()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DoSmartSave()
-		  Var Mode As String = Self.CurrentMode
+		  If Self.IsRewriting Then
+		    // Busy
+		    Self.ShowAlert(Self.RewriterBusyMessage, Self.RewriterBusyExplanation)
+		    Return
+		  End If
+		  
 		  Var RequiredHeader As String
-		  Select Case Mode
+		  Select Case Self.CurrentMode
 		  Case Beacon.RewriteModeGameIni
 		    RequiredHeader = "[" + Beacon.ShooterGameHeader + "]"
 		  Case Beacon.RewriteModeGameUserSettingsIni
@@ -891,26 +865,43 @@ End
 		    Return
 		  End If
 		  
-		  Self.FileRewriter.Rewrite(Content, Self.CurrentDefaultHeader, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  Self.mFileDestination = File
+		  
+		  Select Case Self.CurrentMode
+		  Case Beacon.RewriteModeGameIni
+		    Self.SharedRewriter.InitialGameIniContent = Content
+		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameIni)
+		  Case Beacon.RewriteModeGameUserSettingsIni
+		    Self.SharedRewriter.InitialGameUserSettingsIniContent = Content
+		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameUserSettingsIni)
+		  End Select
 		  
 		  Self.CheckButtons()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function IsRewriting() As Boolean
-		  Var Rewriters(3) As Beacon.Rewriter
-		  Rewriters(0) = Self.ClipboardRewriter
-		  Rewriters(1) = Self.FileRewriter
-		  Rewriters(2) = Self.GameIniRewriter
-		  Rewriters(3) = Self.GameUserSettingsRewriter
+		Private Sub Finish(Content As String)
+		  If Self.mCopyWhenFinished Then
+		    Var Board As New Clipboard
+		    Board.Text = Content
+		    Self.mLastRewrittenHash = EncodeHex(Crypto.SHA256(Content)).Lowercase
+		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyReadyMessage, "ini"), Language.ReplacePlaceholders(SmartCopyReadyExplanation, "ini"))
+		    Return
+		  End If
 		  
-		  For Each Rewriter As Beacon.Rewriter In Rewriters
-		    If Rewriter.ThreadState <> Thread.ThreadStates.NotRunning Then
-		      Return True
+		  If (Self.mFileDestination Is Nil) = False Then
+		    If Not Self.mFileDestination.Write(Content) Then
+		      Self.ShowAlert("Unable to update file", "There was an error trying to rewrite the ini content in the selected file.")
 		    End If
-		  Next
+		    Return
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IsRewriting() As Boolean
+		  Return Self.SharedRewriter.ThreadState <> Thread.ThreadStates.NotRunning
 		End Function
 	#tag EndMethod
 
@@ -976,6 +967,7 @@ End
 		  End Select
 		  If Self.ContentArea.Text <> IntendedContent Then
 		    Self.ContentArea.Text = IntendedContent
+		    Self.ContentArea.ScrollPositionX = 0
 		  End If
 		End Sub
 	#tag EndMethod
@@ -997,7 +989,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Setup()
-		  If Self.mDocument = Nil Or Self.GameIniRewriter.ThreadState <> Thread.ThreadStates.NotRunning Or Self.GameUserSettingsRewriter.ThreadState <> Thread.ThreadStates.NotRunning Then
+		  If Self.mDocument = Nil Or Self.IsRewriting Then
 		    Return
 		  End If
 		  
@@ -1024,52 +1016,72 @@ End
 		  Self.mGameUserSettingsContent = ""
 		  Self.mCommandLineContent = ""
 		  Self.mLastRewrittenHash = ""
+		  Self.mFileDestination = Nil
+		  Self.mCopyWhenFinished = False
 		  
-		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Self.SharedRewriter.Cancel
+		  Self.SharedRewriter.InitialGameIniContent = ""
+		  Self.SharedRewriter.InitialGameUserSettingsIniContent = ""
+		  Self.SharedRewriter.Document = Self.mDocument
+		  Self.SharedRewriter.Identity = App.IdentityManager.CurrentIdentity
+		  Self.SharedRewriter.Profile = Self.mCurrentProfile
 		  
-		  Self.GameIniRewriter.Rewrite("", Beacon.ShooterGameHeader, Beacon.RewriteModeGameIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
-		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.ServerSettingsHeader, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
-		  
-		  Var CLIDict As New Dictionary
-		  Var Groups() As Beacon.ConfigGroup = Self.mDocument.CombinedConfigs(Self.mCurrentProfile.ConfigSetStates, Identity)
-		  For Each Group As Beacon.ConfigGroup In Groups
-		    If Group Is Nil Then
-		      Continue
+		  Try
+		    If Profile IsA Beacon.LocalServerProfile Then
+		      Var LocalProfile As Beacon.LocalServerProfile = Beacon.LocalServerProfile(Profile)
+		      If (LocalProfile.GameIniFile Is Nil) = False And LocalProfile.GameIniFile.Exists And (LocalProfile.GameUserSettingsIniFile Is Nil) = False And LocalProfile.GameUserSettingsIniFile.Exists Then
+		        Self.SharedRewriter.InitialGameIniContent = LocalProfile.GameIniFile.Read
+		        Self.SharedRewriter.InitialGameUserSettingsIniContent = LocalProfile.GameUserSettingsIniFile.Read
+		      End If
 		    End If
-		    
-		    Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
-		    If Options <> Nil And Options.LastIndex > -1 Then
-		      Beacon.ConfigValue.FillConfigDict(CLIDict, "CommandLine", Options)
-		    End If
-		  Next
-		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
-		  Var QuestionParameters As String
-		  If Maps.LastIndex = 0 Then
-		    QuestionParameters = Maps(0).Identifier + "?listen"
-		  Else
-		    QuestionParameters = "Map?listen"
-		  End If
-		  If CLIDict.HasKey("?") Then
-		    Var Dict As Dictionary = CLIDict.Value("?")
-		    Var Keys() As Variant = Dict.Keys
-		    For Each Key As Variant In Keys
-		      Var Arr() As String = Dict.Value(Key)
-		      QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
+		  Catch Err As RuntimeException
+		    // It's not important
+		  End Try
+		  
+		  Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameIni Or Beacon.Rewriter.FlagCreateGameUserSettingsIni Or Beacon.Rewriter.FlagCreateCommandLine)
+		  
+		  #if false
+		    Var CLIDict As New Dictionary
+		    Var Groups() As Beacon.ConfigGroup = Self.mDocument.CombinedConfigs(Self.mCurrentProfile.ConfigSetStates, Identity)
+		    For Each Group As Beacon.ConfigGroup In Groups
+		      If Group Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
+		      If Options <> Nil And Options.LastIndex > -1 Then
+		        Beacon.ConfigValue.FillConfigDict(CLIDict, "CommandLine", Options)
+		      End If
 		    Next
-		  End If
-		  Var Parameters(0) As String
-		  Parameters(0) = """" + QuestionParameters + """"
-		  If CLIDict.HasKey("-") Then
-		    Var Dict As Dictionary = CLIDict.Value("-")
-		    Var Keys() As Variant = Dict.Keys
-		    For Each Key As Variant In Keys
-		      Var Arr() As String = Dict.Value(Key)
-		      For Each Command As String In Arr
-		        Parameters.Add("-" + Command)
+		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
+		    Var QuestionParameters As String
+		    If Maps.LastIndex = 0 Then
+		      QuestionParameters = Maps(0).Identifier + "?listen"
+		    Else
+		      QuestionParameters = "Map?listen"
+		    End If
+		    If CLIDict.HasKey("?") Then
+		      Var Dict As Dictionary = CLIDict.Value("?")
+		      Var Keys() As Variant = Dict.Keys
+		      For Each Key As Variant In Keys
+		        Var Arr() As String = Dict.Value(Key)
+		        QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
 		      Next
-		    Next
-		  End If
-		  Self.mCommandLineContent = Parameters.Join(" ")
+		    End If
+		    Var Parameters(0) As String
+		    Parameters(0) = """" + QuestionParameters + """"
+		    If CLIDict.HasKey("-") Then
+		      Var Dict As Dictionary = CLIDict.Value("-")
+		      Var Keys() As Variant = Dict.Keys
+		      For Each Key As Variant In Keys
+		        Var Arr() As String = Dict.Value(Key)
+		        For Each Command As String In Arr
+		          Parameters.Add("-" + Command)
+		        Next
+		      Next
+		    End If
+		    Self.mCommandLineContent = Parameters.Join(" ")
+		  #endif
 		  
 		  Self.RefreshContentArea()
 		  Self.CheckButtons()
@@ -1139,9 +1151,9 @@ End
 			Get
 			  Select Case Self.Switcher.SelectedIndex
 			  Case 1
-			    Return "GameUserSettings.ini"
+			    Return Beacon.ConfigFileGameUserSettings
 			  Case 2
-			    Return "Game.ini"
+			    Return Beacon.ConfigFileGame
 			  Else
 			    Return ""
 			  End Select
@@ -1188,6 +1200,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCopyWhenFinished As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCurrentContent As String
 	#tag EndProperty
 
@@ -1216,10 +1232,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = SmartCopyBusyExplanation, Type = String, Dynamic = False, Default = \"Smart Copy is not available while the \"Building Config\" message appears in the bottom left corner of the window.", Scope = Private
+	#tag Constant, Name = RewriterBusyExplanation, Type = String, Dynamic = False, Default = \"Beacon\'s ini generator is busy creating your content. Wait a moment\x2C and try again.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SmartCopyBusyMessage, Type = String, Dynamic = False, Default = \"Please wait a moment before using Smart Copy.", Scope = Private
+	#tag Constant, Name = RewriterBusyMessage, Type = String, Dynamic = False, Default = \"Please try again in a moment", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SmartCopyErrorExplanation, Type = String, Dynamic = False, Default = \"Smart Copy was unable to prepare your \?1 file. No changes have been made.", Scope = Private
@@ -1282,8 +1298,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
 		  Me.Add(IconCommandLine, "Command Line", "cli")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
@@ -1292,94 +1308,6 @@ End
 	#tag Event
 		Sub Action()
 		  Self.RefreshContentArea()
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameIniRewriter
-	#tag Event
-		Sub Finished()
-		  If Not Me.Errored Then
-		    Self.mGameIniContent = Me.UpdatedContent
-		  End If
-		  
-		  Self.RefreshContentArea()
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Started()
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GameUserSettingsRewriter
-	#tag Event
-		Sub Finished()
-		  If Not Me.Errored Then
-		    Self.mGameUserSettingsContent = Me.UpdatedContent
-		  End If
-		  
-		  Self.RefreshContentArea()
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Started()
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FileRewriter
-	#tag Event
-		Sub Finished()
-		  Var Errored As Boolean
-		  If Me.Errored = False And (Self.mFileDestination Is Nil) = False Then
-		    If Self.CanCopy(Me.UpdatedContent, Me.Mode, "Save") Then
-		      If Self.mFileDestination.Write(Me.UpdatedContent) = False Then
-		        Errored = True
-		      End If
-		    End If
-		  Else
-		    Errored = True
-		  End If
-		  If Errored Then
-		    Self.ShowAlert("Unable to update file", "There was an error trying to rewrite the ini content in the selected file.")
-		  End If
-		  
-		  Self.mFileDestination = Nil
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Started()
-		  Self.CheckButtons()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ClipboardRewriter
-	#tag Event
-		Sub Finished()
-		  If Me.Errored Then
-		    Self.CheckButtons()
-		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyErrorMessage, Me.Mode), Language.ReplacePlaceholders(SmartCopyErrorExplanation, Me.Mode))
-		    Return
-		  End If
-		  
-		  If Not Self.CanCopy(Me.UpdatedContent, Me.Mode) Then
-		    Return
-		  End If
-		  
-		  Var Board As New Clipboard
-		  Board.Text = Me.UpdatedContent
-		  
-		  Self.mLastRewrittenHash = EncodeHex(Crypto.MD5(Me.UpdatedContent))
-		  Self.CheckButtons()
-		  Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyReadyMessage, Me.Mode), Language.ReplacePlaceholders(SmartCopyReadyExplanation, Me.Mode))
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Started()
 		  Self.CheckButtons()
 		End Sub
 	#tag EndEvent
@@ -1441,6 +1369,47 @@ End
 		  Self.ConfigSetsField.Enabled = Me.Value
 		  Self.ConfigSetsButton.Enabled = Me.Value
 		  Self.Setup()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SharedRewriter
+	#tag Event
+		Sub Finished()
+		  If Me.Errored Then
+		    Break
+		  Else
+		    Var SpecialFinish As Boolean = (Self.mFileDestination Is Nil) = False Or Self.mCopyWhenFinished
+		    If (Me.OutputFlags And Beacon.Rewriter.FlagCreateGameIni) = Beacon.Rewriter.FlagCreateGameIni Then
+		      If SpecialFinish Then
+		        Self.Finish(Me.FinishedGameIniContent)
+		      Else
+		        Self.mGameIniContent = Me.FinishedGameIniContent
+		      End If
+		    End If
+		    
+		    If (Me.OutputFlags And Beacon.Rewriter.FlagCreateGameUserSettingsIni) = Beacon.Rewriter.FlagCreateGameUserSettingsIni Then
+		      If SpecialFinish Then
+		        Self.Finish(Me.FinishedGameUserSettingsIniContent)
+		      Else
+		        Self.mGameUserSettingsContent = Me.FinishedGameUserSettingsIniContent
+		      End If
+		    End If
+		    
+		    If (Me.OutputFlags And Beacon.Rewriter.FlagCreateCommandLine) = Beacon.Rewriter.FlagCreateCommandLine Then
+		      Self.mCommandLineContent = Me.FinishedCommandLineContent
+		    End If
+		  End If
+		  
+		  Self.mFileDestination = Nil
+		  Self.mCopyWhenFinished = False
+		  
+		  Self.RefreshContentArea()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.CheckButtons()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

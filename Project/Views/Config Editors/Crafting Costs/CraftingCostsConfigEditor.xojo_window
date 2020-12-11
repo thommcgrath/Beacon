@@ -858,7 +858,7 @@ End
 		    
 		    Var Config As Beacon.ConfigValue = BeaconConfigs.CraftingCosts.ConfigValueForCraftingCost(Cost)
 		    If (Config Is Nil) = False Then
-		      Lines.Add(Config.Key + "=" + Config.Value)
+		      Lines.Add(Config.Command)
 		    End If
 		  Next
 		  

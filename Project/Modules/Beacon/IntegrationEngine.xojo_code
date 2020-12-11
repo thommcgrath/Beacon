@@ -328,34 +328,26 @@ Protected Class IntegrationEngine
 		  End If
 		  Var InitialServerState As Integer = Self.State
 		  
-		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
-		    Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
-		    Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
-		    Var CustomContent As BeaconConfigs.CustomContent
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group IsA BeaconConfigs.CustomContent Then
-		        CustomContent = BeaconConfigs.CustomContent(Group)
-		        Continue
-		      End If
-		      
-		      GameIniValues.AddArray(Group.GameIniValues(Self.Document, Self.Identity, Self.Profile))
-		      GameUserSettingsIniValues.AddArray(Group.GameUserSettingsIniValues(Self.Document, Self.Identity, Self.Profile))
-		      CommandLineValues.AddArray(Group.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
-		    Next
-		    
-		    If (CustomContent Is Nil) = False Then
-		      Var GameIniDict As New Dictionary
-		      Beacon.ConfigValue.FillConfigDict(GameIniDict, "Game.ini", GameIniValues)
-		      GameIniValues.AddArray(CustomContent.GameIniValues(Self.Document, GameIniDict, Self.Profile))
-		      
-		      Var GameUserSettingsIniDict As New Dictionary
-		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, "GameUserSettings.ini", GameUserSettingsIniValues)
-		      GameUserSettingsIniValues.AddArray(CustomContent.GameUserSettingsIniValues(Self.Document, GameUserSettingsIniDict, Self.Profile))
-		      
-		      CommandLineValues.AddArray(CustomContent.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
+		  Var Organizer As New Beacon.ConfigOrganizer
+		  Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
+		  Var CustomContent As BeaconConfigs.CustomContent
+		  For Each Group As Beacon.ConfigGroup In Groups
+		    If Group IsA BeaconConfigs.CustomContent Then
+		      CustomContent = BeaconConfigs.CustomContent(Group)
+		      Continue
 		    End If
 		    
-		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(GameIniValues, GameUserSettingsIniValues, CommandLineValues)
+		    Var Generated() As Beacon.ConfigValue = Group.GenerateConfigValues(Self.Document, Self.Identity, Self.Profile)
+		    Organizer.Add(Generated, False)
+		  Next
+		  
+		  If (CustomContent Is Nil) = False Then
+		    Var Generated() As Beacon.ConfigValue = CustomContent.GenerateConfigValues(Self.Document, Self.Identity, Self.Profile)
+		    Organizer.Add(Generated, True)
+		  End If
+		  
+		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
+		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -380,12 +372,12 @@ Protected Class IntegrationEngine
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
 		  // Download the ini files
 		  Var DownloadSuccess As Boolean
-		  GameIniOriginal = Self.GetFile("Game.ini", DownloadFailureMode.MissingAllowed, DownloadSuccess)
+		  GameIniOriginal = Self.GetFile(Beacon.ConfigFileGame, DownloadFailureMode.MissingAllowed, DownloadSuccess)
 		  If Self.Finished Or DownloadSuccess = False Then
 		    Self.Finished = True
 		    Return
 		  End If
-		  GameUserSettingsIniOriginal = Self.GetFile("GameUserSettings.ini", DownloadFailureMode.MissingAllowed, DownloadSuccess)
+		  GameUserSettingsIniOriginal = Self.GetFile(Beacon.ConfigFileGameUserSettings, DownloadFailureMode.MissingAllowed, DownloadSuccess)
 		  If Self.Finished Or DownloadSuccess = False Then
 		    Self.Finished = True
 		    Return
@@ -401,41 +393,26 @@ Protected Class IntegrationEngine
 		    Format = Beacon.Rewriter.EncodingFormat.ASCII
 		  End If
 		  
-		  Var RewriteErrored As Boolean
+		  Var RewriteError As RuntimeException
 		  
-		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.ShooterGameHeader, Beacon.RewriteModeGameIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
-		  If RewriteErrored Then
-		    Self.SetError("Failed to produce Game.ini")
+		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Organizer, Self.Document.TrustKey, Format, RewriteError)
+		  If (RewriteError Is Nil) = False Then
+		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.RewriteModeGameUserSettingsIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
-		  If RewriteErrored Then
-		    Self.SetError("Failed to produce GameUserSettings.ini")
+		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Organizer, Self.Document.TrustKey, Format, RewriteError)
+		  If (RewriteError Is Nil) = False Then
+		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
 		  // Verify content looks acceptable
-		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, "GameUserSettings.ini") Then
+		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, Beacon.ConfigFileGameUserSettings) Then
 		    Return
 		  End If
-		  If Not Self.ValidateContent(GameIniRewritten, "Game.ini") Then
+		  If Not Self.ValidateContent(GameIniRewritten, Beacon.ConfigFileGame) Then
 		    Return
-		  End If
-		  
-		  Var CommandLine() As Beacon.ConfigValue
-		  If Self.SupportsWideSettings Then
-		    Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		        Continue
-		      End If
-		      
-		      Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.Document, Self.Identity, Self.mProfile)
-		      For Each Option As Beacon.ConfigValue In Options
-		        CommandLine.Add(Option)
-		      Next
-		    Next
 		  End If
 		  
 		  // Allow the user to review the new files if requested
@@ -445,8 +422,8 @@ Protected Class IntegrationEngine
 		    End If
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("Game.ini") = GameIniRewritten
-		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniRewritten
+		    Dict.Value(Beacon.ConfigFileGame) = GameIniRewritten
+		    Dict.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
 		    Dict.Value("Advice") = Nil // The results would go here
 		    
 		    Var Controller As New Beacon.TaskWaitController("Review Files", Dict)
@@ -461,8 +438,8 @@ Protected Class IntegrationEngine
 		  // Run the backup if requested
 		  If Self.BackupEnabled Then
 		    Var Dict As New Dictionary
-		    Dict.Value("Game.ini") = GameIniOriginal
-		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
+		    Dict.Value(Beacon.ConfigFileGame) = GameIniOriginal
+		    Dict.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniOriginal
 		    Dict.Value("New Game.ini") = GameIniRewritten
 		    Dict.Value("New GameUserSettings.ini") = GameUserSettingsIniRewritten
 		    
@@ -492,20 +469,19 @@ Protected Class IntegrationEngine
 		  RaiseEvent ReadyToUpload()
 		  
 		  // Put the new files on the server
-		  If Self.PutFile(GameIniRewritten, "Game.ini") = False Or Self.Finished Then
+		  If Self.PutFile(GameIniRewritten, Beacon.ConfigFileGame) = False Or Self.Finished Then
 		    Self.Finished = True
 		    Return
 		  End If 
-		  If Self.PutFile(GameUserSettingsIniRewritten, "GameUserSettings.ini") = False Or Self.Finished Then
+		  If Self.PutFile(GameUserSettingsIniRewritten, Beacon.ConfigFileGameUserSettings) = False Or Self.Finished Then
 		    Self.Finished = True
 		    Return
 		  End If
 		  
 		  // Make command line changes
-		  If Self.SupportsWideSettings And CommandLine.Count > 0 Then
+		  If Self.SupportsWideSettings Then
 		    Self.Log("Updating other settings…")
-		    Var Placeholder() As Beacon.ConfigValue
-		    Call RaiseEvent ApplySettings(Placeholder, Placeholder, CommandLine)
+		    Call RaiseEvent ApplySettings(Organizer)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -790,7 +766,7 @@ Protected Class IntegrationEngine
 
 
 	#tag Hook, Flags = &h0
-		Event ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue) As Boolean
+		Event ApplySettings(Organizer As Beacon.ConfigOrganizer) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

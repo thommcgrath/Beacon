@@ -3,11 +3,13 @@ Protected Class Metadata
 Inherits Beacon.ConfigGroup
 Implements ObservationKit.Observable
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
+		  Var Values() As Beacon.ConfigValue
+		  
 		  If (Profile Is Nil Or Profile IsA Beacon.GenericServerProfile Or Profile.Name.IsEmpty) = False Then
-		    Values.Add(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName", Profile.Name))
 		  End If
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
@@ -30,36 +32,50 @@ Implements ObservationKit.Observable
 		    Rand.RandomizeSeed
 		    Var Index As Integer = Rand.InRange(0, Messages.LastIndex)
 		    
-		    Values.Add(New Beacon.ConfigValue("MessageOfTheDay", "Message", Messages(Index)))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message", Messages(Index)))
 		    
 		    If Index = 9 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ServerAdminPassword", "peanuts"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerAdminPassword", "peanuts"))
 		    ElseIf Index = 10 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "PlayerResistanceMultiplier", "9999"))
-		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "MaxFallSpeedMultiplier", "0.01"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "PlayerResistanceMultiplier", "9999"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "MaxFallSpeedMultiplier", "0.01"))
 		    ElseIf Index = 11 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DinoCountMultiplier", "0"))
-		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DinoResistanceMultiplier", "9999"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DinoCountMultiplier", "0"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DinoResistanceMultiplier", "9999"))
 		    ElseIf Index = 12 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "300"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "300"))
 		    End If
 		    
 		    If Index = 7 Then
-		      Values.Add(New Beacon.ConfigValue("MessageOfTheDay", "Duration", "360"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration", "360"))
 		    Else
-		      Values.Add(New Beacon.ConfigValue("MessageOfTheDay", "Duration", "30"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration", "30"))
 		    End If
 		    
-		    Return
+		    Return Values
 		  End If
 		  
 		  #if Beacon.MOTDEditingEnabled Then
 		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
-		      Values.Add(New Beacon.ConfigValue("MessageOfTheDay", "Message", Profile.MessageOfTheDay.ArkMLValue))
-		      Values.Add(New Beacon.ConfigValue("MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message", Profile.MessageOfTheDay.ArkMLValue))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
 		    End If
 		  #endif
-		End Sub
+		  
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName"))
+		  #if Beacon.MOTDEditingEnabled Then
+		    Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message"))
+		    Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration"))
+		  #endif
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event

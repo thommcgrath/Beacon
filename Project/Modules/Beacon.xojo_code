@@ -1969,9 +1969,9 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function ValidateIniContent(Content As String, Filename As String) As String()
 		  Var RequiredHeaders() As String
-		  If Filename = "Game.ini" Then
+		  If Filename = Beacon.ConfigFileGame Then
 		    RequiredHeaders = Array("[/script/shootergame.shootergamemode]")
-		  ElseIf Filename = "GameUserSettings.ini" Then
+		  ElseIf Filename = Beacon.ConfigFileGameUserSettings Then
 		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]")
 		  End If
 		  Return Beacon.ValidateIniContent(Content, RequiredHeaders)
@@ -2071,6 +2071,12 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = CategorySpawnPoints, Type = String, Dynamic = False, Default = \"spawn_points", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ConfigFileGame, Type = String, Dynamic = False, Default = \"Game.ini", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ConfigFileGameUserSettings, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrettyDecimals, Type = Double, Dynamic = False, Default = \"9", Scope = Private

@@ -694,7 +694,7 @@ End
 		    Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
 		    Var Value As Beacon.ConfigValue = BeaconConfigs.SpawnPoints.ConfigValueForSpawnPoint(SpawnPoint)
 		    If Value <> Nil Then
-		      Lines.Add(Value.Key + "=" + Value.Value)
+		      Lines.Add(Value.Command)
 		    End If
 		  Next
 		  

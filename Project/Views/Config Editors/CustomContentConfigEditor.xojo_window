@@ -213,11 +213,10 @@ End
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var SelfDocument As Beacon.Document = Self.Document
 		  Var CreatedEditorNames() As String
-		  Var GenericProfile As New Beacon.GenericServerProfile(SelfDocument.Title, Beacon.Maps.UniversalMask)
-		  Var GameIniValues As New Dictionary
-		  Var GameUserSettingsIniValues As New Dictionary
+		  Var Config As BeaconConfigs.CustomContent = Self.Config(False)
+		  Var Organizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config.GameIniContent)
+		  Organizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Config.GameUserSettingsIniContent)
 		  
-		  Var ImportedConfigs() As Beacon.ConfigGroup
 		  For Each CreatedConfig As Beacon.ConfigGroup In Document.ImplementedConfigs
 		    Var ConfigName As String = CreatedConfig.ConfigName
 		    If ConfigName = BeaconConfigs.CustomContent.ConfigName Then
@@ -228,8 +227,6 @@ End
 		      // Do not import code for groups that the user has not purchased
 		      Continue
 		    End If
-		    
-		    ImportedConfigs.Add(CreatedConfig)
 		    
 		    If SelfDocument.HasConfigGroup(ConfigName) Then
 		      Var CurrentConfig As Beacon.ConfigGroup = SelfDocument.ConfigGroup(ConfigName, False)
@@ -244,28 +241,15 @@ End
 		      SelfDocument.AddConfigGroup(CreatedConfig)
 		    End If
 		    
-		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(SelfDocument, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = CreatedConfig.GameUserSettingsIniValues(SelfDocument, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = CreatedConfig.NonGeneratedKeys(Identity)
-		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
-		      Select Case Key.File
-		      Case "Game.ini"
-		        GameIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.Add(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      End Select
-		    Next
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, "Game.ini", GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, "GameUserSettings.ini", GameUserSettingsIniArray)
+		    Organizer.Remove(CreatedConfig.ManagedKeys)
 		    
 		    CreatedEditorNames.Add(Language.LabelForConfig(ConfigName))
 		  Next
 		  
 		  If CreatedEditorNames.Count > 0 Then
-		    Var Config As BeaconConfigs.CustomContent = Self.Config(True)
-		    Config.GameIniContent(GameIniValues) = Config.GameIniContent
-		    Config.GameUserSettingsIniContent(GameUserSettingsIniValues) = Config.GameUserSettingsIniContent
+		    Call Self.Config(True)
+		    Config.GameIniContent() = Organizer
+		    Config.GameUserSettingsIniContent() = Organizer
 		  End If
 		  
 		  Self.SetupUI()
@@ -519,8 +503,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
 		End Sub

@@ -1,13 +1,17 @@
 #tag Class
 Protected Class ConfigValue
 	#tag Method, Flags = &h0
-		Sub Constructor(Header As String, Key As String, Value As String, OverrideCommand As String = "")
-		  Self.mHeader = Header
-		  Self.mKey = Key
+		Sub Constructor(Key As Beacon.ConfigKey, AttributedKey As String, Value As String, OverrideCommand As String = "")
+		  Self.mKeyDetails = Key
+		  Self.mFile = Key.File
+		  Self.mHeader = Key.Header
+		  Self.mAttributedKey = AttributedKey
+		  Self.mSimplifiedKey = Key.SimplifiedKey
 		  Self.mValue = Value
+		  Self.mHash = Key.Hash
 		  
 		  If OverrideCommand.IsEmpty Then
-		    Self.mCommand = Key + "=" + Value
+		    Self.mCommand = AttributedKey + "=" + Value
 		  Else
 		    Self.mCommand = OverrideCommand
 		  End If
@@ -15,46 +19,41 @@ Protected Class ConfigValue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub FillConfigDict(Dict As Dictionary, File As String, Values() As Beacon.ConfigValue)
-		  If Values = Nil Then
-		    Return
+		Sub Constructor(File As String, Header As String, AttributedKey As String, Value As String, OverrideCommand As String = "")
+		  Var SimplifiedKey As String = Self.SimplifyKey(AttributedKey)
+		  
+		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, SimplifiedKey)
+		  Var ConfigKey As Beacon.ConfigKey
+		  If Keys.Count >= 1 Then
+		    ConfigKey = Keys(0)
+		  Else
+		    ConfigKey = New Beacon.ConfigKey(File, Header, SimplifiedKey)
 		  End If
 		  
-		  For Each Value As Beacon.ConfigValue In Values
-		    Var SimplifiedKey As String = Value.SimplifiedKey
-		    
-		    Var Header As String = Value.Header
-		    Var Section As Dictionary
-		    If Dict.HasKey(Header) Then
-		      Section = Dict.Value(Header)
-		    Else
-		      Section = New Dictionary
-		    End If
-		    
-		    Var Arr() As String
-		    Var Unique As Boolean = False
-		    If Section.HasKey(SimplifiedKey) Then
-		      Arr = Section.Value(SimplifiedKey)
-		      
-		      Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, SimplifiedKey)
-		      Unique = Keys.Count = 1 And (Keys(0).MaxAllowed Is Nil) = False And Keys(0).MaxAllowed.DoubleValue = 1
-		    End If
-		    If Unique And Arr.Count > 0 Then
-		      If Arr.Count > 1 Then
-		        Arr.ResizeTo(0)
-		      End If
-		      
-		      Arr(0) = Value.Command
-		    Else
-		      Arr.Add(Value.Command)
-		    End If
-		    Section.Value(SimplifiedKey) = Arr
-		    
-		    Dict.Value(Header) = Section
-		  Next
+		  Self.Constructor(ConfigKey, AttributedKey, Value, OverrideCommand)
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function SimplifyKey(Key As String) As String
+		  Var Idx As Integer = Key.IndexOf("[")
+		  If Idx = -1 Then
+		    Return Key
+		  Else
+		    Return Key.Left(Idx)
+		  End If
+		End Function
+	#tag EndMethod
+
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mAttributedKey
+			End Get
+		#tag EndGetter
+		AttributedKey As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -68,23 +67,53 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mKeyDetails
+			End Get
+		#tag EndGetter
+		Details As Beacon.ConfigKey
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFile
+			End Get
+		#tag EndGetter
+		File As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mHash
+			End Get
+		#tag EndGetter
+		Hash As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mHeader
 			End Get
 		#tag EndGetter
 		Header As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mKey
-			End Get
-		#tag EndGetter
-		Key As String
-	#tag EndComputedProperty
+	#tag Property, Flags = &h21
+		Private mAttributedKey As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCommand As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFile As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHash As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -92,7 +121,11 @@ Protected Class ConfigValue
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKey As String
+		Private mKeyDetails As Beacon.ConfigKey
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSimplifiedKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -102,15 +135,23 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Var Idx As Integer = Self.mKey.IndexOf("[")
-			  If Idx = -1 Then
-			    Return Self.mKey
-			  Else
-			    Return Self.mKey.Left(Idx)
-			  End If
+			  Return Self.mSimplifiedKey
 			End Get
 		#tag EndGetter
 		SimplifiedKey As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mKeyDetails Is Nil Then
+			    Return False
+			  Else
+			    Return (Self.mKeyDetails.MaxAllowed Is Nil) = False
+			  End If
+			End Get
+		#tag EndGetter
+		SingleInstance As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -165,14 +206,6 @@ Protected Class ConfigValue
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Key"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Value"
 			Visible=false
 			Group="Behavior"
@@ -195,6 +228,46 @@ Protected Class ConfigValue
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Command"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="File"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SingleInstance"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Hash"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AttributedKey"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

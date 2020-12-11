@@ -433,6 +433,42 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreateConfigOrganizer(Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigOrganizer
+		  Try
+		    Var Organizer As New Beacon.ConfigOrganizer
+		    Var Groups() As Beacon.ConfigGroup = Document.CombinedConfigs(Profile.ConfigSetStates, Identity)
+		    
+		    // Add custom content first so it can be overridden or removed later
+		    For Idx As Integer = 0 To Groups.LastIndex
+		      If Groups(Idx) Is Nil Then
+		        Continue
+		      End If
+		      
+		      If Groups(Idx).ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		        Organizer.Add(Groups(Idx).GenerateConfigValues(Self, Identity, Profile))
+		        Groups.RemoveAt(Idx)
+		        Exit
+		      End If
+		    Next
+		    
+		    For Each Group As Beacon.ConfigGroup In Groups
+		      If Group Is Nil Then
+		        Continue
+		      End If
+		      
+		      Organizer.Remove(Group.ManagedKeys) // Removes overlapping values found in custom config
+		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
+		    Next
+		    
+		    Return Organizer
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Generating a config organizer")
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Decrypt(Data As String) As String
 		  Return BeaconEncryption.SymmetricDecrypt(Self.mDocumentPassword, DecodeBase64(Data))
 		End Function
@@ -542,10 +578,10 @@ Implements ObservationKit.Observable
 		                Components.RemoveAt(Components.LastIndex)
 		              End If
 		            End If
-		            Components.Add("Game.ini")
+		            Components.Add(Beacon.ConfigFileGame)
 		            Profile.GameIniPath = Components.Join("/")
 		            
-		            Components(Components.LastIndex) = "GameUserSettings.ini"
+		            Components(Components.LastIndex) = Beacon.ConfigFileGameUserSettings
 		            Profile.GameUserSettingsIniPath = Components.Join("/")
 		            
 		            Doc.mServerProfiles.Add(Profile)
@@ -1794,7 +1830,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
