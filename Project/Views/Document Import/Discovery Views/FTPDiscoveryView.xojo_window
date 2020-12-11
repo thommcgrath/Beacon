@@ -901,7 +901,6 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin Timer StatusWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50

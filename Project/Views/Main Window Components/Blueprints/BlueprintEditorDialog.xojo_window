@@ -44,7 +44,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector

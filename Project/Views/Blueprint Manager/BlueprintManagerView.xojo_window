@@ -279,18 +279,14 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

@@ -664,7 +664,12 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   210
    End
    Begin Beacon.Rewriter SharedRewriter
+      FinishedCommandLineContent=   ""
+      FinishedGameIniContent=   ""
+      FinishedGameUserSettingsIniContent=   ""
       Index           =   -2147483648
+      InitialGameIniContent=   ""
+      InitialGameUserSettingsIniContent=   ""
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2

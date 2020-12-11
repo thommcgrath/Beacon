@@ -45,7 +45,7 @@ Begin ServerViewContainer FTPServerView
       Tooltip         =   ""
       Top             =   50
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ConfigSetField
@@ -1111,6 +1111,8 @@ Begin ServerViewContainer FTPServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   50
       Index           =   -2147483648
@@ -1124,6 +1126,7 @@ Begin ServerViewContainer FTPServerView
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
