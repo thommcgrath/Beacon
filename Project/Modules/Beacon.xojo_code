@@ -483,35 +483,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function FilterExcessSections(Input As String) As String
-		  Var EOL As String = Encodings.ASCII.Chr(10)
-		  Input = Input.ReplaceLineEndings(EOL)
-		  
-		  Var IgnoreLines As Boolean
-		  Var Lines() As String = Input.Split(EOL)
-		  Var FilteredLines() As String
-		  For I As Integer = 0 To Lines.LastIndex
-		    Var Line As String = Lines(I).Trim
-		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
-		      Select Case Line
-		      Case "[Beacon]", "[/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]", "[ScalabilityGroups.sg]"
-		        IgnoreLines = True
-		      Else
-		        IgnoreLines = False
-		      End Select
-		    End If
-		    
-		    If Not IgnoreLines Then
-		      FilteredLines.Add(Line)
-		    End If
-		  Next
-		  
-		  Input = FilteredLines.Join(EOL)
-		  Return Input.Trim
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function FindUniqueLabel(DesiredLabel As String, Siblings() As String) As String
 		  Var Counter As Integer = 1
@@ -1972,7 +1943,7 @@ Protected Module Beacon
 		  If Filename = Beacon.ConfigFileGame Then
 		    RequiredHeaders = Array("[/script/shootergame.shootergamemode]")
 		  ElseIf Filename = Beacon.ConfigFileGameUserSettings Then
-		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]")
+		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/ShooterGame.ShooterGameUserSettings]")
 		  End If
 		  Return Beacon.ValidateIniContent(Content, RequiredHeaders)
 		End Function

@@ -268,25 +268,6 @@ Inherits Global.Thread
 		      Next
 		    End If
 		    
-		    Const ScalabilityHeader = "ScalabilityGroups"
-		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, ScalabilityHeader) = False Then
-		      // Insert this crap
-		      Var ScalabilityValues() As Beacon.ConfigValue
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.AntiAliasingQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.EffectsQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.GroundClutterQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.GroundClutterRadius", "10000"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.HeightFieldShadowQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.IBLQuality", "1"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.PostProcessQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.ResolutionQuality", "100"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.ShadowQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.TextureQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.TrueSkyQuality", "3"))
-		      ScalabilityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, ScalabilityHeader, "sg.ViewDistanceQuality", "3"))
-		      FinalOrganizer.Add(ScalabilityValues)
-		    End If
-		    
 		    Const QualityHeader = "/Script/ShooterGame.ShooterGameUserSettings"
 		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, QualityHeader) = False Then
 		      // More junk
@@ -328,11 +309,6 @@ Inherits Global.Thread
 		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosX", "-1"))
 		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosY", "-1"))
 		      FinalOrganizer.Add(QualityValues)
-		    End If
-		    
-		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession") = False Then
-		      // No way to know the correct value
-		      FinalOrganizer.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession", "MaxPlayers", "10"))
 		    End If
 		    
 		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, "SessionSettings") = False Then

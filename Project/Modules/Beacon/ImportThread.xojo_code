@@ -263,6 +263,7 @@ Inherits Beacon.Thread
 		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession")
 		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Script/ShooterGame.ShooterGameUserSettings")
 		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "ScalabilityGroups")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "ScalabilityGroups.sg")
 		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "Beacon")
 		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGame, "Beacon")
 		  

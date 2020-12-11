@@ -63,14 +63,7 @@ Protected Class ConfigOrganizer
 		    
 		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		      Header = Line.Middle(1, Line.Length - 2)
-		      If Header = "ScalabilityGroups.sg" Then
-		        Header = "ScalabilityGroups"
-		      End If
 		      Continue
-		    End If
-		    
-		    If Header = "ScalabilityGroups" And Line.BeginsWith("sg.") = False Then
-		      Line = "sg." + Line
 		    End If
 		    
 		    Var Pos As Integer = Line.IndexOf("=")
