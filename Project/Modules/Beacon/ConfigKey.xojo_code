@@ -161,6 +161,7 @@ Protected Class ConfigKey
 		Function ValuesEqual(FirstValue As String, SecondValue As String) As Boolean
 		  Select Case Self.mValueType
 		  Case ValueTypes.TypeNumeric
+		    #Pragma BreakOnExceptions False
 		    Var FirstNumber, SecondNumber As Double
 		    Try
 		      FirstNumber = Double.FromString(FirstValue, Locale.Raw)
@@ -170,9 +171,14 @@ Protected Class ConfigKey
 		      SecondNumber = Double.FromString(SecondValue, Locale.Raw)
 		    Catch Err As RuntimeException
 		    End Try
+		    #Pragma BreakOnExceptions Default
 		    Return FirstNumber = SecondNumber
 		  Case ValueTypes.TypeText, ValueTypes.TypeArray, ValueTypes.TypeStructure
 		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
+		  Case ValueTypes.TypeBoolean
+		    Var FirstValueIsTrue As Boolean = (FirstValue = "True") Or (FirstValue = "1")
+		    Var SecondValueIsTrue As Boolean = (SecondValue = "True") Or (SecondValue = "1")
+		    Return FirstValueIsTrue = SecondValueIsTrue
 		  Else
 		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseInsensitive, Locale.Raw) = 0
 		  End Select

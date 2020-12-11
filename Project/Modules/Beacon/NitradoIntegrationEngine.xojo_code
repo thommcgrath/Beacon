@@ -308,6 +308,10 @@ Inherits Beacon.IntegrationEngine
 		          Var Paths() As String = ConfigKey.NitradoPaths
 		          Var Path As String = Paths(0)
 		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
+		          If ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
+		            Var IsTrue As Boolean = (Value = "True") Or (Value = "1")
+		            Value = If(IsTrue, "True", "False")
+		          End If
 		          Select Case ConfigKey.NitradoFormat
 		          Case Beacon.ConfigKey.NitradoFormats.Value
 		            GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, ConfigKey.Key, Value))
