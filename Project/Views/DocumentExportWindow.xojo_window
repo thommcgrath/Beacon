@@ -711,9 +711,9 @@ End
 		    Return
 		  End If
 		  
-		  Var Busy As Boolean = Self.IsRewriting
-		  Self.ExportToolbar.Item("SmartCopy").Enabled = Not Busy
-		  Self.ExportToolbar.Item("SmartSave").Enabled = Not Busy
+		  Var SmartButtonsEnabled As Boolean = Self.IsRewriting = False And Self.CurrentMode.IsEmpty = False
+		  Self.ExportToolbar.Item("SmartCopy").Enabled = SmartButtonsEnabled
+		  Self.ExportToolbar.Item("SmartSave").Enabled = SmartButtonsEnabled
 		  
 		  Self.ExportToolbar.Item("LazyCopy").Enabled = Self.ContentArea.Text <> ""
 		  Self.ExportToolbar.Item("LazySave").Enabled = Self.ExportToolbar.Item("LazyCopy").Enabled And Self.CurrentMode <> ""
