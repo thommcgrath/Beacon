@@ -373,7 +373,6 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Timer StatusWatchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100

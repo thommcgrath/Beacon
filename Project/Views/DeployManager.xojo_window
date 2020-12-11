@@ -666,7 +666,6 @@ Begin BeaconAutopositionWindow DeployManager
       End
    End
    Begin Timer DeployWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50

@@ -47,7 +47,7 @@ Begin BeaconDialog RegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   520
       Begin Label IntroMessageLabel

@@ -45,7 +45,7 @@ Begin ServerViewContainer NitradoServerView
       Tooltip         =   ""
       Top             =   50
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ConfigSetField

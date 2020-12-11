@@ -533,7 +533,6 @@ Begin BeaconDialog SharingDialog
       End
    End
    Begin Timer StatusCheckTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   200
