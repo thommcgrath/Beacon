@@ -109,7 +109,7 @@ Implements Beacon.MutableBlueprint
 		        End If
 		      Next
 		    End If
-		    
+		    Self.mLimits = Manager
 		    Self.Modified = True
 		  Catch Err As RuntimeException
 		  End Try
