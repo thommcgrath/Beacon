@@ -105,6 +105,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub AdvanceDeltaQueue()
 		  If Self.mDeltaDownloadQueue.Count = 0 Then
+		    Self.CheckingForEngramUpdates = False
 		    Return
 		  End If
 		  
@@ -361,7 +362,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub CheckForEngramUpdates(ForceRefresh As Boolean = False)
-		  If Self.mCheckingForUpdates Then
+		  If Self.CheckingForEngramUpdates Then
 		    Return
 		  End If
 		  
@@ -370,19 +371,38 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  If Self.mUpdater = Nil Then
-		    Self.mUpdater = New URLConnection
-		    Self.mUpdater.AllowCertificateValidation = True
-		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
-		    Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
-		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
-		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
-		  End If
+		  Self.mUpdater = New URLConnection
+		  Self.mUpdater.AllowCertificateValidation = True
+		  Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
+		  Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
+		  AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
+		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  
-		  Self.mCheckingForUpdates = True
+		  Self.CheckingForEngramUpdates = True
 		  Var CheckURL As String = Self.ClassesURL(ForceRefresh)
 		  App.Log("Checking for blueprint updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CheckingForEngramUpdates() As Boolean
+		  Return Self.mCheckingForUpdates
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckingForEngramUpdates(Assigns Value As Boolean)
+		  If Self.mCheckingForUpdates = Value Then
+		    Return
+		  End If
+		  
+		  Self.mCheckingForUpdates = Value
+		  If Value Then
+		    NotificationKit.Post(Self.Notification_EngramUpdateStarted, Nil)
+		  Else
+		    NotificationKit.Post(Self.Notification_EngramUpdateFinished, Self.LastSync)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -2113,7 +2133,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
 		    Self.mDeltaDownloadQueue.RemoveAll
 		    App.Log("Failed to download blueprints delta: HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
-		    Self.mCheckingForUpdates = False
+		    Self.CheckingForEngramUpdates = False
 		    Return
 		  End If
 		  
@@ -2130,7 +2150,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mDeltaDownloadQueue.RemoveAll
 		  
 		  App.Log("Failed to download blueprints delta: " + Err.Message)
-		  Self.mCheckingForUpdates = False
+		  Self.CheckingForEngramUpdates = False
 		End Sub
 	#tag EndMethod
 
@@ -2188,9 +2208,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
+		  Self.mUpdater = Nil
+		  
 		  If HTTPStatus <> 200 Then
 		    App.Log("Blueprint update returned HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
-		    Self.mCheckingForUpdates = False
+		    Self.CheckingForEngramUpdates = False
 		    Return
 		  End If
 		  
@@ -2198,14 +2220,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Parsed As Variant = Beacon.ParseJSON(Content)
 		    If Parsed Is Nil Or (Parsed IsA Dictionary) = False Then
 		      App.Log("No blueprint updates available.")
-		      Self.mCheckingForUpdates = False
+		      Self.CheckingForEngramUpdates = False
 		      Return
 		    End If
 		    
 		    Var Dict As Dictionary = Parsed
 		    If Not Dict.HasAllKeys("total_size", "files") Then
 		      App.Log("Blueprint update is missing keys.")
-		      Self.mCheckingForUpdates = False
+		      Self.CheckingForEngramUpdates = False
 		      Return
 		    End If
 		    
@@ -2224,14 +2246,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    If Self.mDeltaDownloadQueue.Count = 0 Then
 		      App.Log("No blueprint updates available.")
-		      Self.mCheckingForUpdates = False
+		      Self.CheckingForEngramUpdates = False
 		      Return
 		    End If
 		    
 		    Self.AdvanceDeltaQueue
 		  Catch Err As RuntimeException
 		    App.Log("Unable to parse blueprint delta JSON: " + Err.Message)
-		    Self.mCheckingForUpdates = False
+		    Self.CheckingForEngramUpdates = False
 		    Return
 		  End Try
 		End Sub
@@ -2241,8 +2263,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
+		  Self.mUpdater = Nil
+		  
 		  App.Log("Blueprint check error: " + Error.Reason)
-		  Self.mCheckingForUpdates = False
+		  Self.CheckingForEngramUpdates = False
 		End Sub
 	#tag EndMethod
 
@@ -3418,6 +3442,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_EngramsChanged, Type = String, Dynamic = False, Default = \"Engrams Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_EngramUpdateFinished, Type = String, Dynamic = False, Default = \"Engram Update Finished", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_EngramUpdateStarted, Type = String, Dynamic = False, Default = \"Engram Update Started", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ImportFailed, Type = String, Dynamic = False, Default = \"Import Failed", Scope = Public

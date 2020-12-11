@@ -323,7 +323,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, LocalData.Notification_EngramUpdateStarted, LocalData.Notification_EngramUpdateFinished)
 		End Sub
 	#tag EndEvent
 
@@ -337,7 +337,7 @@ End
 		  Self.MinimumHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinimumWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, LocalData.Notification_EngramUpdateStarted, LocalData.Notification_EngramUpdateFinished)
 		  
 		  Self.UpdateEngramStatus
 		End Sub
@@ -386,7 +386,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportFailed, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess
+		  Case LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportFailed, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_EngramUpdateStarted, LocalData.Notification_EngramUpdateFinished
 		    Var LastSync As DateTime = Notification.UserData
 		    Self.UpdateEngramStatus(LastSync)
 		  Case IdentityManager.Notification_IdentityChanged
@@ -397,17 +397,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEngramStatus(LastSync As DateTime = Nil)
-		  If LocalData.SharedInstance.Importing Then
-		    Self.SyncLabel.Text = "Importing engrams…"
+		  If LocalData.SharedInstance.CheckingForEngramUpdates Then
+		    Self.SyncLabel.Text = "Checking for blueprint updates…"
+		    Self.EngramImportIndicator.Visible = True
+		  ElseIf LocalData.SharedInstance.Importing Then
+		    Self.SyncLabel.Text = "Importing blueprints…"
 		    Self.EngramImportIndicator.Visible = True
 		  Else
 		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
 		    If IsNull(LastSync) Then
-		      Self.SyncLabel.Text = "No engram data available"
+		      Self.SyncLabel.Text = "No blueprint data available"
 		    Else
-		      Self.SyncLabel.Text = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
+		      Self.SyncLabel.Text = "Blueprints updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		    End If
 		    Self.EngramImportIndicator.Visible = False
 		  End If

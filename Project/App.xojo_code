@@ -53,9 +53,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    
 		    If Keyboard.OptionKey Then
-		      HelpUpdateEngrams.Text = "Refresh Engrams"
+		      HelpUpdateEngrams.Text = "Refresh Blueprints"
 		    Else
-		      HelpUpdateEngrams.Text = "Update Engrams"
+		      HelpUpdateEngrams.Text = "Update Blueprints"
 		    End If
 		    HelpUpdateEngrams.Enable
 		  Else
@@ -360,7 +360,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
-			LocalData.SharedInstance.CheckForEngramUpdates(Keyboard.OptionKey)
+			If Keyboard.OptionKey Then
+			Call Self.HandleURL(Beacon.URLScheme + "://action/refreshengrams")
+			Else
+			Call Self.HandleURL(Beacon.URLScheme + "://action/checkforengrams")
+			End If
 			Return True
 		End Function
 	#tag EndMenuHandler

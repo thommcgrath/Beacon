@@ -384,7 +384,7 @@ Begin Menu MainMenuBar
       Begin MenuItem HelpUpdateEngrams
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Update Engrams"
+         Text = "Update Blueprints"
          AutoEnabled = False
          AutoEnable = False
          Visible = True
