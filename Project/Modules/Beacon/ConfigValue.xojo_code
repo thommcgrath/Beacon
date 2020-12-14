@@ -32,7 +32,7 @@ Protected Class ConfigValue
 		    SortKey = AttributedKey
 		  End If
 		  
-		  Self.mSortValue = Key.File.Lowercase + ":" + Key.Header.Lowercase + ":" + SortKey.Lowercase + ":" + Value.Lowercase
+		  Self.mSortKey = SortKey.Lowercase + ":" + Value.Lowercase
 		End Sub
 	#tag EndMethod
 
@@ -147,7 +147,7 @@ Protected Class ConfigValue
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSortValue As String
+		Private mSortKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -179,10 +179,10 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mSortValue
+			  Return Self.mSortKey
 			End Get
 		#tag EndGetter
-		SortValue As String
+		SortKey As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -298,7 +298,7 @@ Protected Class ConfigValue
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -1818,7 +1818,7 @@ Protected Module Beacon
 		  Var Sorts() As String
 		  Sorts.ResizeTo(Values.LastIndex)
 		  For Idx As Integer = 0 To Sorts.LastIndex
-		    Sorts(Idx) = Values(Idx).SortValue
+		    Sorts(Idx) = Values(Idx).SortKey
 		  Next
 		  Sorts.SortWith(Values)
 		End Sub

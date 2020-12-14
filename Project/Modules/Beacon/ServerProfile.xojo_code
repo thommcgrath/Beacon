@@ -204,7 +204,7 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ServerProfile) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  

@@ -81,7 +81,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   "0"
       Visible         =   True
       Width           =   1200
       Begin HTMLViewer HelpViewer
@@ -487,19 +487,19 @@ End
 
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
-		  If Self.DocumentsComponent1.Busy Then
+		  If (Self.DocumentsComponent1 Is Nil) = False And Self.DocumentsComponent1.Busy Then
 		    Return True
 		  End If
 		  
-		  If Self.DashboardPane1.Busy Then
+		  If (Self.DashboardPane1 Is Nil) = False And Self.DashboardPane1.Busy Then
 		    Return True
 		  End If
 		  
-		  If Self.BlueprintsComponent1.Busy Then
+		  If (Self.BlueprintsComponent1 Is Nil) And Self.BlueprintsComponent1.Busy Then
 		    Return True
 		  End If
 		  
-		  If Self.PresetsComponent1.Busy Then
+		  If (Self.PresetsComponent1 Is Nil) And Self.PresetsComponent1.Busy Then
 		    Return True
 		  End If
 		  
