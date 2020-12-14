@@ -514,6 +514,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentAddBeacon() As Boolean Handles DocumentAddBeacon.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.ShowAddLootSource()
 			Return True
 		End Function
@@ -521,6 +525,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentDuplicateBeacon() As Boolean Handles DocumentDuplicateBeacon.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.ShowAddLootSource(True)
 			Return True
 			
@@ -529,6 +537,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentRebuildPresets() As Boolean Handles DocumentRebuildPresets.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.RebuildAllItemSets()
 			Return True
 		End Function
@@ -536,6 +548,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			If Self.List.CanDelete Then
 			Self.List.DoClear
 			End If

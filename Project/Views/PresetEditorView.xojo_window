@@ -843,6 +843,10 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
@@ -858,6 +862,10 @@ End
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.Save()
 			Return True
 		End Function
@@ -865,6 +873,10 @@ End
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset

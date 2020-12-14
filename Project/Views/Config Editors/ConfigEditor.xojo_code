@@ -39,6 +39,10 @@ Inherits BeaconSubview
 
 	#tag MenuHandler
 		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			If Not Self.SupportsRestore Then
 			Return True
 			End If

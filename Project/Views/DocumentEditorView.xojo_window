@@ -407,6 +407,10 @@ End
 
 	#tag MenuHandler
 		Function FileDeploy() As Boolean Handles FileDeploy.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.BeginDeploy()
 			Return True
 			
@@ -415,6 +419,10 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.BeginExport()
 			Return True
 			
@@ -423,6 +431,10 @@ End
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.Document.NewIdentifier()
 			Call Self.SaveAs()
 			Return True
