@@ -9,7 +9,7 @@
 		Name=Beacon Project
 		UTI=com.thezaz.beacon.document
 		UTIConformsTo=public.content, public.data
-		Description=Beacon's main document format contains all information about a cluster of servers.
+		Description=
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
@@ -42,7 +42,7 @@
 		Name=Beacon Identity
 		UTI=com.thezaz.beacon.identity
 		UTIConformsTo=public.text, public.data
-		Description=Contains the private key for a Beacon user account.
+		Description=
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
@@ -59,7 +59,7 @@
 		Name=Beacon Preset
 		UTI=com.thezaz.beacon.preset
 		UTIConformsTo=public.text, public.data
-		Description=A Beacon preset is a form of template used for building item sets in loot drops.
+		Description=
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
@@ -124,7 +124,7 @@
 		Name=Beacon Authorization
 		UTI=com.thezaz.beacon.auth
 		UTIConformsTo=public.text, public.data
-		Description=Used to generate an identity file using Beacon's website.
+		Description=
 		MimeType=
 		Imported=False
 		HandlerRank=&h9
@@ -141,7 +141,7 @@
 		Name=Beacon Data Update
 		UTI=com.thezaz.beacon.updatedelta
 		UTIConformsTo=public.content, public.data
-		Description=Contains updates to Beacon's blueprints and loot sources.
+		Description=
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
