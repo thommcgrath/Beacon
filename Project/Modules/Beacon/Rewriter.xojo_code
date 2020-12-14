@@ -315,6 +315,9 @@ Inherits Global.Thread
 		      FinalOrganizer.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName", "An Ark Server Managed by Beacon"))
 		    End If
 		    
+		    // Remove excess junk that sneaks in from who knows where.
+		    FinalOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
+		    
 		    Return ConvertEncoding(FinalOrganizer.Build(File).ReplaceLineEndings(DesiredLineEnding), Format)
 		  Catch Err As RuntimeException
 		    Error = Err
