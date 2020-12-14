@@ -1810,6 +1810,21 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Sort(Extends Values() As Beacon.ConfigValue)
+		  If Values.Count <= 1 Then
+		    Return
+		  End If
+		  
+		  Var Sorts() As String
+		  Sorts.ResizeTo(Values.LastIndex)
+		  For Idx As Integer = 0 To Sorts.LastIndex
+		    Sorts(Idx) = Values(Idx).SortValue
+		  Next
+		  Sorts.SortWith(Values)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function StringValue(Extends Dict As Dictionary, Key As Variant, Default As String, AllowArray As Boolean = False) As String
 		  Return GetValueAsType(Dict, Key, "String", Default, AllowArray, AddressOf CoerceToString)
 		End Function

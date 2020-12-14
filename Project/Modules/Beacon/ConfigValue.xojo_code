@@ -15,6 +15,24 @@ Protected Class ConfigValue
 		  Else
 		    Self.mCommand = OverrideCommand
 		  End If
+		  
+		  Var SortKey As String
+		  Var Pos As Integer = AttributedKey.IndexOf("[")
+		  If Pos > -1 Then
+		    Var EndPos As Integer = AttributedKey.IndexOf(Pos + 1, "]")
+		    Var AttributeStringValue As String = AttributedKey.Middle(Pos + 1, EndPos - (Pos + 1))
+		    Var AttributeValue As Integer
+		    Try
+		      AttributeValue = Double.FromString(AttributeStringValue, Locale.Raw)
+		      SortKey = AttributedKey.Left(Pos) + ":" + AttributeValue.ToString(Locale.Raw, "000000.000000")
+		    Catch Err As RuntimeException
+		      SortKey = AttributedKey.Left(Pos) + ":" + AttributeStringValue
+		    End Try
+		  Else
+		    SortKey = AttributedKey
+		  End If
+		  
+		  Self.mSortValue = Key.File.Lowercase + ":" + Key.Header.Lowercase + ":" + SortKey.Lowercase + ":" + Value.Lowercase
 		End Sub
 	#tag EndMethod
 
@@ -129,6 +147,10 @@ Protected Class ConfigValue
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSortValue As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mValue As String
 	#tag EndProperty
 
@@ -147,11 +169,20 @@ Protected Class ConfigValue
 			  If Self.mKeyDetails Is Nil Then
 			    Return False
 			  Else
-			    Return (Self.mKeyDetails.MaxAllowed Is Nil) = False
+			    Return (Self.mKeyDetails.MaxAllowed Is Nil) = False And Self.mKeyDetails.MaxAllowed.DoubleValue = 1
 			  End If
 			End Get
 		#tag EndGetter
 		SingleInstance As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSortValue
+			End Get
+		#tag EndGetter
+		SortValue As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

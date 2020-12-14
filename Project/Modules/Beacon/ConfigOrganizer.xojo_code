@@ -112,6 +112,7 @@ Protected Class ConfigOrganizer
 		    Else
 		      Values = Self.FilteredValues(ForFile, Header)
 		    End If
+		    Values.Sort
 		    For Each Value As Beacon.ConfigValue In Values
 		      Lines.Add(Value.Command)
 		    Next

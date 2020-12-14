@@ -1045,49 +1045,6 @@ End
 		  
 		  Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameIni Or Beacon.Rewriter.FlagCreateGameUserSettingsIni Or Beacon.Rewriter.FlagCreateCommandLine)
 		  
-		  #if false
-		    Var CLIDict As New Dictionary
-		    Var Groups() As Beacon.ConfigGroup = Self.mDocument.CombinedConfigs(Self.mCurrentProfile.ConfigSetStates, Identity)
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group Is Nil Then
-		        Continue
-		      End If
-		      
-		      Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
-		      If Options <> Nil And Options.LastIndex > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(CLIDict, "CommandLine", Options)
-		      End If
-		    Next
-		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
-		    Var QuestionParameters As String
-		    If Maps.LastIndex = 0 Then
-		      QuestionParameters = Maps(0).Identifier + "?listen"
-		    Else
-		      QuestionParameters = "Map?listen"
-		    End If
-		    If CLIDict.HasKey("?") Then
-		      Var Dict As Dictionary = CLIDict.Value("?")
-		      Var Keys() As Variant = Dict.Keys
-		      For Each Key As Variant In Keys
-		        Var Arr() As String = Dict.Value(Key)
-		        QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
-		      Next
-		    End If
-		    Var Parameters(0) As String
-		    Parameters(0) = """" + QuestionParameters + """"
-		    If CLIDict.HasKey("-") Then
-		      Var Dict As Dictionary = CLIDict.Value("-")
-		      Var Keys() As Variant = Dict.Keys
-		      For Each Key As Variant In Keys
-		        Var Arr() As String = Dict.Value(Key)
-		        For Each Command As String In Arr
-		          Parameters.Add("-" + Command)
-		        Next
-		      Next
-		    End If
-		    Self.mCommandLineContent = Parameters.Join(" ")
-		  #endif
-		  
 		  Self.RefreshContentArea()
 		  Self.CheckButtons()
 		End Sub
