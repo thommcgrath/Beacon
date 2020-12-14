@@ -5,7 +5,7 @@ namespace BeaconAPI;
 class ConfigLine extends \BeaconObject {
 	const FILE_GAME_INI = 'Game.ini';
 	const FILE_GAMEUSERSETTINGS_INI = 'GameUserSettings.ini';
-	const FILE_COMMANDLINE_FLAG = 'CommandLineFlag'; // A flag has no equals sign, it's presence means true.
+	const FILE_COMMANDLINE_FLAG = 'CommandLineFlag'; // A flag has no equals sign, its presence means true.
 	const FILE_COMMANDLINE_OPTION = 'CommandLineOption'; // An option, on the other hand, has a value assigned with an equals sign.
 	
 	const TYPE_NUMERIC = 'Numeric';
@@ -14,19 +14,24 @@ class ConfigLine extends \BeaconObject {
 	const TYPE_STRUCTURE = 'Structure';
 	const TYPE_BOOLEAN = 'Boolean';
 	
-	const NITRADO_FORMAT_VALUE = 'Value'; // In the returned JSON, the value is the raw value after the equal sign.
-	const NITRADO_FORMAT_LINE = 'Line'; // In the returned JSON, the value is the full line or lines.
+	const NITRADO_FORMAT_VALUE  = 'Value';  // In the returned JSON, the value is the raw value after the equal sign.
+	const NITRADO_FORMAT_LINE   = 'Line';   // In the returned JSON, the value is the full line or lines.
+	
+	const NITRADO_DEPLOY_GUIDED = 'Guided'; // Should only be set during guided deploys
+	const NITRADO_DEPLOY_EXPERT = 'Expert'; // Should only be set during expert deploys
+	const NITRADO_DEPLOY_BOTH   = 'Both';   // Should be set during any deploy
 	
 	protected $native_editor_version = null;
 	protected $file = '';
 	protected $header = '';
 	protected $key = '';
 	protected $value_type = '';
-	protected $max_allowed = 0;
+	protected $max_allowed = null;
 	protected $description = '';
 	protected $default_value = '';
 	protected $nitrado_path = null;
 	protected $nitrado_format = null;
+	protected $nitrado_deploy_style = null;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -40,6 +45,7 @@ class ConfigLine extends \BeaconObject {
 		$columns[] = 'default_value';
 		$columns[] = 'nitrado_path';
 		$columns[] = 'nitrado_format';
+		$columns[] = 'nitrado_deploy_style';
 		return $columns;
 	}
 	
@@ -57,11 +63,12 @@ class ConfigLine extends \BeaconObject {
 		$obj->header = $row->Field('header');
 		$obj->key = $row->Field('key');
 		$obj->value_type = $row->Field('value_type');
-		$obj->max_allowed = intval($row->Field('max_allowed'));
+		$obj->max_allowed = is_null($row->Field('max_allowed')) ? null : intval($row->Field('max_allowed'));
 		$obj->description = trim($row->Field('description'));
 		$obj->default_value = $row->Field('default_value');
 		$obj->nitrado_path = $row->Field('nitrado_path');
 		$obj->nitrado_format = $row->Field('nitrado_format');
+		$obj->nitrado_deploy_style = $row->Field('nitrado_deploy_style');
 		return $obj;
 	}
 	
@@ -76,10 +83,11 @@ class ConfigLine extends \BeaconObject {
 		$json['description'] = $this->description;
 		$json['default_value'] = $this->default_value;
 		$json['resource_url'] = \BeaconAPI::URL('/ini_option/' . urlencode($this->ObjectID()));
-		if (is_null($this->nitrado_path) == false && is_null($this->nitrado_format) == false) {
+		if (is_null($this->nitrado_path) == false && is_null($this->nitrado_format) == false && is_null($this->nitrado_deploy_style) == false) {
 			$json['nitrado_guided_equivalent'] = [
 				'path' => $this->nitrado_path,
-				'format' => $this->nitrado_format
+				'format' => $this->nitrado_format,
+				'deploy_style' => $this->nitrado_deploy_style
 			];
 		}
 		return $json;
@@ -107,6 +115,8 @@ class ConfigLine extends \BeaconObject {
 			return $this->nitrado_path;
 		case 'nitrado_format':
 			return $this->nitrado_format;
+		case 'nitrado_deploy_style':
+			return $this->nitrado_deploy_style;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -128,7 +138,11 @@ class ConfigLine extends \BeaconObject {
 			$this->value_type = $json['value_type'];
 		}
 		if (array_key_exists('max_allowed', $json)) {
-			$this->max_allowed = intval($json['max_allowed']);
+			if (is_null($json['max_allowed']) || is_numeric($json['max_allowed']) === false) {
+				$this->max_allowed = null;
+			} else {
+				$this->max_allowed = intval($json['max_allowed']);
+			}
 		}
 		if (array_key_exists('description', $json)) {
 			$this->description = $json['description'];
@@ -137,8 +151,15 @@ class ConfigLine extends \BeaconObject {
 			$this->default_value = $json['default_value'];
 		}
 		if (array_key_exists('nitrado_guided_equivalent', $json)) {
-			$this->nitrado_path = $json['nitrado_guided_equivalent']['path'];
-			$this->nitrado_format = $json['nitrado_guided_equivalent']['format'];
+			if (is_array($json['nitrado_guided_equivalent'])) {
+				$this->nitrado_path = $json['nitrado_guided_equivalent']['path'];
+				$this->nitrado_format = $json['nitrado_guided_equivalent']['format'];
+				$this->nitrado_deploy_style = $json['nitrado_guided_equivalent']['deploy_style'];
+			} else {
+				$this->nitrado_path = null;
+				$this->nitrado_format = null;
+				$this->nitrado_deploy_style = null;
+			}
 		}
 	}
 	
