@@ -262,16 +262,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE);")
 		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  
-		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
-		  
-		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
-		  Var Categories() As String = Beacon.Categories
-		  Var DeleteStatements() As String
-		  For Each Category As String In Categories
-		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
-		  Next
-		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
-		  
 		  For Each Category As String In Categories
 		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
@@ -284,6 +274,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
+		  
+		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
+		  
+		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
+		  Var Categories() As String = Beacon.Categories
+		  Var DeleteStatements() As String
+		  For Each Category As String In Categories
+		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
+		  Next
+		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
 		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id) VALUES (?1, ?2, ?3, ?4, ?5);", Beacon.UserModID, Beacon.UserModName, True, True, Beacon.UserModWorkshopID)
 		  Self.Commit()
@@ -572,6 +572,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
+		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 400;")
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
@@ -1912,6 +1913,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
 		    Self.Commit()
+		    
+		    // Force analyze
+		    Self.SQLExecute("VACUUM;")
+		    Self.SQLExecute("ANALYZE;")
 		    
 		    If ReloadPresets Then
 		      Self.LoadPresets()
