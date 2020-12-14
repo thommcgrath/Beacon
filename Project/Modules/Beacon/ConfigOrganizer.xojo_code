@@ -5,7 +5,19 @@ Protected Class ConfigOrganizer
 		  // This code is a little verbose, but it's easier to follow the logic this way.
 		  
 		  Self.mIndex.BeginTransaction
-		  For Each Value As Beacon.ConfigValue In Values
+		  
+		  Var Filtered() As Beacon.ConfigValue
+		  If UniqueOnly Then
+		    For Each Value As Beacon.ConfigValue In Values
+		      If Self.mValues.HasKey(Value.Hash) = False Then
+		        Filtered.Add(Value)
+		      End If
+		    Next
+		  Else
+		    Filtered = Values
+		  End If
+		  
+		  For Each Value As Beacon.ConfigValue In Filtered
 		    Var Siblings() As Beacon.ConfigValue
 		    
 		    If Self.mValues.HasKey(Value.Hash) = False Then
@@ -13,11 +25,6 @@ Protected Class ConfigOrganizer
 		      Siblings.Add(Value)
 		      Self.mValues.Value(Value.Hash) = Siblings
 		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, header, simplekey) VALUES (?1, ?2, ?3, ?4);", Value.Hash, Value.File, Value.Header, Value.SimplifiedKey)
-		      Continue
-		    End If
-		    
-		    If UniqueOnly Then
-		      // Do not add this value because one is already set
 		      Continue
 		    End If
 		    
