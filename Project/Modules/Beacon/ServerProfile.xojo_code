@@ -211,7 +211,10 @@ Protected Class ServerProfile
 		  If Other.ProfileID = Self.ProfileID Then
 		    Return 0
 		  Else
-		    Return Self.Name.Compare(Other.Name, ComparisonOptions.CaseSensitive)
+		    // Don't just compare names. We know these are not equal, but we need them to be sortable.
+		    Var SelfCompare As String = Self.Name + "    " + Self.ProfileID
+		    Var OtherCompare As String = Other.Name + "    " + Other.ProfileID
+		    Return SelfCompare.Compare(OtherCompare, ComparisonOptions.CaseSensitive)
 		  End If
 		End Function
 	#tag EndMethod
