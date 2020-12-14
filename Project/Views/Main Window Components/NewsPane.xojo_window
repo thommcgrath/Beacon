@@ -255,7 +255,7 @@ End
 		    Brush.BlurAmount = 6 * Ratio
 		    
 		    G.ShadowBrush = Brush
-		    G.DrawingColor = SystemColors.SeparatorColor
+		    G.DrawingColor = SystemColors.SeparatorColor.AtOpacity(Ratio)
 		    G.FillRectangle(-10, 0 - Me.Top, G.Width + 20, Me.Top + 1) // Draw it larger so the shadow has more effect
 		    G.ShadowBrush = Nil
 		  Else
