@@ -3,6 +3,10 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
+while (ob_get_level() > 0) {
+	ob_end_clean();
+}
+
 define('MIN_VERSION', 99999999);
 
 $database = BeaconCommon::Database();
@@ -16,7 +20,7 @@ if ($last_database_update >= $cutoff) {
 }
 
 $required_versions = [5];
-$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d h:i:sO'));
+$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
 		$version = $results->Field('version');
@@ -35,7 +39,7 @@ if (count($required_versions) == 0) {
 }
 
 foreach ($required_versions as $version) {
-	echo "Building delta for version $version...\n";	
+	echo "Building delta for version $version...\n";
 	
 	$full_data = DataForVersion($version, null);
 	$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
@@ -82,11 +86,11 @@ foreach ($required_versions as $version) {
 	
 	$results = $database->Query('SELECT file_id FROM update_files WHERE version = $1 AND type = \'Complete\';', $version);
 	if ($results->RecordCount() == 1) {
-		$database->Query('UPDATE update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;', $results->Field('file_id'), $last_database_update->format('Y-m-d h:i:sO'), $full_path, $full_size);
+		$database->Query('UPDATE update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;', $results->Field('file_id'), $last_database_update->format('Y-m-d H:i:sO'), $full_path, $full_size);
 	} else {
-		$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Complete\');', $last_database_update->format('Y-m-d h:i:sO'), $version, $full_path, $full_size);
+		$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Complete\');', $last_database_update->format('Y-m-d H:i:sO'), $version, $full_path, $full_size);
 	}
-	$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Delta\');', $last_database_update->format('Y-m-d h:i:sO'), $version, $delta_path, $delta_size);
+	$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Delta\');', $last_database_update->format('Y-m-d H:i:sO'), $version, $delta_path, $delta_size);
 	$database->Commit();
 	
 	echo "Delta for version $version uploaded to $delta_path\n";
