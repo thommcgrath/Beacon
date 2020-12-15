@@ -148,6 +148,19 @@ CREATE TYPE public.loot_source_kind AS ENUM (
 ALTER TYPE public.loot_source_kind OWNER TO thommcgrath;
 
 --
+-- Name: nitrado_deploy_style; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.nitrado_deploy_style AS ENUM (
+    'Guided',
+    'Expert',
+    'Both'
+);
+
+
+ALTER TYPE public.nitrado_deploy_style OWNER TO thommcgrath;
+
+--
 -- Name: nitrado_format; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -228,7 +241,8 @@ ALTER TYPE public.update_file_type OWNER TO thommcgrath;
 --
 
 CREATE TYPE public.video_host AS ENUM (
-    'YouTube'
+    'YouTube',
+    'Vimeo'
 );
 
 
@@ -1153,7 +1167,8 @@ CREATE TABLE public.client_notices (
     action_url text NOT NULL,
     min_version integer,
     max_version integer,
-    last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone
+    last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone,
+    publish_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -1402,7 +1417,11 @@ CREATE TABLE public.ini_options (
     description text NOT NULL,
     default_value text NOT NULL,
     nitrado_path public.citext,
-    nitrado_format public.nitrado_format
+    nitrado_format public.nitrado_format,
+    nitrado_deploy_style public.nitrado_deploy_style,
+    CONSTRAINT ini_options_check CHECK ((((nitrado_path IS NULL) AND (nitrado_format IS NULL) AND (nitrado_deploy_style IS NULL)) OR ((nitrado_path IS NOT NULL) AND (nitrado_format IS NOT NULL) AND (nitrado_deploy_style IS NOT NULL)))),
+    CONSTRAINT ini_options_check1 CHECK (((file IS DISTINCT FROM 'CommandLineFlag'::public.ini_file) OR ((file = 'CommandLineFlag'::public.ini_file) AND (value_type = 'Boolean'::public.ini_value_type)))),
+    CONSTRAINT ini_options_max_allowed_check CHECK (((max_allowed IS NULL) OR (max_allowed >= 1)))
 )
 INHERITS (public.objects);
 
@@ -1462,6 +1481,80 @@ CREATE TABLE public.mods (
 
 
 ALTER TABLE public.mods OWNER TO thommcgrath;
+
+--
+-- Name: updates; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.updates (
+    update_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    build_number integer NOT NULL,
+    build_display text NOT NULL,
+    notes text NOT NULL,
+    mac_url text NOT NULL,
+    mac_signature public.citext NOT NULL,
+    preview text DEFAULT ''::text NOT NULL,
+    stage integer DEFAULT 0 NOT NULL,
+    win_64_url text,
+    win_32_url text,
+    win_combo_url text,
+    win_64_signature text,
+    win_32_signature text,
+    win_combo_signature text,
+    min_mac_version public.os_version NOT NULL,
+    min_win_version public.os_version NOT NULL,
+    delta_version integer NOT NULL,
+    published timestamp with time zone,
+    CONSTRAINT updates_check CHECK (((published IS NOT NULL) OR (build_number < 10500000)))
+);
+
+
+ALTER TABLE public.updates OWNER TO thommcgrath;
+
+--
+-- Name: news; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.news AS
+ SELECT client_notices.notice_id AS uuid,
+    client_notices.message AS title,
+    client_notices.secondary_message AS detail,
+    client_notices.action_url AS url,
+    client_notices.min_version,
+    client_notices.max_version,
+    client_notices.publish_date AS moment,
+    NULL::text AS mac_os_version,
+    NULL::text AS win_os_version,
+    3 AS stage
+   FROM public.client_notices
+UNION
+ SELECT blog_articles.article_id AS uuid,
+    blog_articles.subject AS title,
+    blog_articles.preview AS detail,
+    ('/blog/'::text || (blog_articles.article_slug)::text) AS url,
+    NULL::integer AS min_version,
+    NULL::integer AS max_version,
+    blog_articles.last_updated AS moment,
+    NULL::text AS mac_os_version,
+    NULL::text AS win_os_version,
+    3 AS stage
+   FROM public.blog_articles
+UNION
+ SELECT updates.update_id AS uuid,
+    (('Beacon '::text || updates.build_display) || ' Now Available'::text) AS title,
+    updates.preview AS detail,
+    (((('/history'::text || '?stage='::text) || (updates.stage)::text) || '#build'::text) || (updates.build_number)::text) AS url,
+    NULL::integer AS min_version,
+    NULL::integer AS max_version,
+    updates.published AS moment,
+    updates.min_mac_version AS mac_os_version,
+    updates.min_win_version AS win_os_version,
+    updates.stage
+   FROM public.updates
+  WHERE (updates.published IS NOT NULL);
+
+
+ALTER TABLE public.news OWNER TO thommcgrath;
 
 --
 -- Name: oauth_requests; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1911,33 +2004,6 @@ CREATE TABLE public.update_files (
 
 
 ALTER TABLE public.update_files OWNER TO thommcgrath;
-
---
--- Name: updates; Type: TABLE; Schema: public; Owner: thommcgrath
---
-
-CREATE TABLE public.updates (
-    update_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    build_number integer NOT NULL,
-    build_display text NOT NULL,
-    notes text NOT NULL,
-    mac_url text NOT NULL,
-    mac_signature public.citext NOT NULL,
-    preview text DEFAULT ''::text NOT NULL,
-    stage integer DEFAULT 0 NOT NULL,
-    win_64_url text,
-    win_32_url text,
-    win_combo_url text,
-    win_64_signature text,
-    win_32_signature text,
-    win_combo_signature text,
-    min_mac_version public.os_version NOT NULL,
-    min_win_version public.os_version NOT NULL,
-    delta_version integer NOT NULL
-);
-
-
-ALTER TABLE public.updates OWNER TO thommcgrath;
 
 --
 -- Name: user_challenges; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -4225,6 +4291,20 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.mods TO thezaz_website;
 
 
 --
+-- Name: TABLE updates; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.updates TO thezaz_website;
+
+
+--
+-- Name: TABLE news; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.news TO thezaz_website;
+
+
+--
 -- Name: TABLE oauth_requests; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -4397,13 +4477,6 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_table_of_contents TO t
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.update_files TO thezaz_website;
-
-
---
--- Name: TABLE updates; Type: ACL; Schema: public; Owner: thommcgrath
---
-
-GRANT SELECT ON TABLE public.updates TO thezaz_website;
 
 
 --
