@@ -685,7 +685,7 @@ End
 		      UpdateItem.AlwaysUseActiveColor = True
 		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
 		      
-		      Var Idx As Integer = Self.NavBar.IndexOf("NavUpdate")
+		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
 		      If Idx > -1 Then
 		        Self.NavBar.Insert(Idx, UpdateItem)
 		      Else
