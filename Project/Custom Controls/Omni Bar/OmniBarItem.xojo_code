@@ -69,6 +69,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function Compact(G As Graphics) As Boolean
+		  Return G.Height < 50
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor(Type As OmniBarItem.Types, Name As String, Caption As String, Icon As Picture = Nil)
 		  Self.mType = Type
 		  Self.mActiveColor = OmniBarItem.ActiveColors.Accent
@@ -118,16 +124,27 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function CreateTitle(Name As String, Caption As String) As OmniBarItem
+		  Return New OmniBarItem(OmniBarItem.Types.Title, Name, Caption, Nil)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub DrawButton(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused LocalMousePoint
 		  
+		  Var Compact As Boolean = Self.Compact(G)
+		  
 		  Const CornerRadius = 6
-		  Const Spacing = 2
+		  Var Margins As Integer = Self.ButtonPadding
+		  If Compact Then
+		    Margins = Margins / 2
+		  End If
 		  
 		  Var CellHeight As Double = Self.ButtonIconSize
 		  If Self.Caption.IsEmpty = False Then
-		    CellHeight = CellHeight + Spacing + G.TextHeight
+		    CellHeight = CellHeight + (Margins / 2) + G.TextHeight
 		  End If
 		  Var CellTop As Double = NearestMultiple((G.Height - CellHeight) / 2, G.ScaleY)
 		  
@@ -156,7 +173,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var IconRect As New Rect(NearestMultiple((G.Width - Self.ButtonIconSize) / 2, G.ScaleX), CellTop, Self.ButtonIconSize, Self.ButtonIconSize)
-		  Var HighlightRect As New Rect(0, CellTop - Self.ButtonPadding, G.Width, CellHeight + (Self.ButtonPadding * 2))
+		  Var HighlightRect As New Rect(0, CellTop - Margins, G.Width, CellHeight + (Margins * 2))
 		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
 		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, ForeColor, Factor, Factor)
 		  Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor, Factor, Factor)
@@ -172,7 +189,7 @@ Implements ObservationKit.Observable
 		  If Self.Caption.IsEmpty = False Then
 		    Var CaptionWidth As Double = G.TextWidth(Self.Caption)
 		    Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
-		    Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + Spacing + G.FontAscent, G.ScaleY)
+		    Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + (Margins / 2) + G.FontAscent, G.ScaleY)
 		    
 		    G.DrawingColor = ShadowColor
 		    G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, G.Width, True)
@@ -191,6 +208,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub DrawInto(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  Self.SetFont(G)
+		  
 		  Select Case Self.Type
 		  Case OmniBarItem.Types.Tab
 		    Self.DrawTab(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
@@ -198,6 +217,8 @@ Implements ObservationKit.Observable
 		    Self.DrawButton(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Separator
 		    Self.DrawSeparator(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		  Case OmniBarItem.Types.Title
+		    Self.DrawTitle(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -278,7 +299,7 @@ Implements ObservationKit.Observable
 		  // Accessory comes first, as it may change the hover and pressed appearances
 		  
 		  Var AccessoryImage As Picture
-		  Var AccessoryRect As New Rect(G.Width - Self.IconSize, NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY), Self.IconSize, Self.IconSize)
+		  Var AccessoryRect As New Rect(G.Width - Self.AccessoryIconSize, NearestMultiple((G.Height - Self.AccessoryIconSize) / 2, G.ScaleY), Self.AccessoryIconSize, Self.AccessoryIconSize)
 		  Var AccessoryColor As Color
 		  Var WithAccessory As Boolean = True
 		  If Self.CanBeClosed And (MouseHover Or MouseDown) Then
@@ -316,13 +337,13 @@ Implements ObservationKit.Observable
 		  
 		  Var CaptionOffset As Double = 0
 		  If HasIcon = True Then
-		    CaptionOffset = Self.IconSize + Self.ElementSpacing
+		    CaptionOffset = Self.Icon.Width + Self.ElementSpacing
 		    
-		    Var IconTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
+		    Var IconTop As Double = NearestMultiple((G.Height - Self.Icon.Height) / 2, G.ScaleY)
 		    Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, Forecolor)
 		    Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor)
-		    G.DrawPicture(Shadow, 0, IconTop + 1, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
-		    G.DrawPicture(Icon, 0, IconTop, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
+		    G.DrawPicture(Shadow, 0, IconTop + 1, Icon.Width, Icon.Height, 0, 0, Icon.Width, Icon.Height)
+		    G.DrawPicture(Icon, 0, IconTop, Icon.Width, Icon.Height, 0, 0, Icon.Width, Icon.Height)
 		  End If
 		  
 		  If Self.Toggled Then
@@ -338,6 +359,32 @@ Implements ObservationKit.Observable
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
 		  G.Bold = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DrawTitle(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  G.Bold = True
+		  
+		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
+		  Var ForeColor, ShadowColor As Color
+		  If Self.Enabled = False Then
+		    ForeColor = Colors.DisabledTextColor
+		  ElseIf Highlighted = True Then
+		    If Self.Toggled Or Self.AlwaysUseActiveColor Or MouseDown Or MouseHover Then
+		      ForeColor = Self.ActiveColorToColor(Self.ActiveColor, Colors)
+		    Else
+		      ForeColor = Colors.TextColor
+		    End If
+		  Else
+		    ForeColor = Colors.TextColor
+		  End If
+		  ShadowColor = Colors.TextShadowColor
+		  
+		  G.DrawingColor = ShadowColor
+		  G.DrawText(Self.Caption, 0, CaptionBaseline + 1, Self.MaxCaptionWidth, True)
+		  G.DrawingColor = ForeColor
+		  G.DrawText(Self.Caption, 0, CaptionBaseline, Self.MaxCaptionWidth, True)
 		End Sub
 	#tag EndMethod
 
@@ -431,8 +478,21 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetFont(G As Graphics)
+		  G.FontUnit = FontUnits.Point
+		  If Self.Compact(G) And Self.mType = OmniBarItem.Types.Button Then
+		    G.FontSize = 10
+		  Else
+		    G.FontSize = 12
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Width(G As Graphics) As Integer
+		  Self.SetFont(G)
+		  
 		  Var Segments() As Double
 		  Select Case Self.mType
 		  Case OmniBarItem.Types.Space
@@ -449,14 +509,16 @@ Implements ObservationKit.Observable
 		    End If
 		    If (Self.Icon Is Nil) = False Then
 		      If Self.Caption.IsEmpty Then
-		        Segments.Add(Self.IconSize + (Self.ButtonPadding * 2))
+		        Segments.Add(Self.Icon.Width + (Self.ButtonPadding * 2))
 		      Else
-		        Segments.Add(Self.IconSize)
+		        Segments.Add(Self.Icon.Width)
 		      End If
 		    End If
 		    If Self.CanBeClosed Or Self.HasUnsavedChanges Then
-		      Segments.Add(Self.CloseIconSize)
+		      Segments.Add(Self.AccessoryIconSize)
 		    End If
+		  Case OmniBarItem.Types.Title
+		    Segments.Add(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth))
 		  End Select
 		  Return NearestMultiple(Segments.Sum(Self.ElementSpacing), 1.0) // Yes, round to nearest whole
 		End Function
@@ -802,19 +864,16 @@ Implements ObservationKit.Observable
 	#tag EndComputedProperty
 
 
+	#tag Constant, Name = AccessoryIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = ButtonIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ButtonPadding, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = CloseIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = ElementSpacing, Type = Double, Dynamic = False, Default = \"8", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = MaxCaptionWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
@@ -842,7 +901,8 @@ Implements ObservationKit.Observable
 		  Button
 		  Space
 		  FlexSpace
-		Separator
+		  Separator
+		Title
 	#tag EndEnum
 
 

@@ -114,7 +114,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		    Var FirePressed As Boolean = True
 		    If Item.CanBeClosed Then
-		      Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.IconSize, (Self.Height - OmniBarItem.IconSize) / 2, OmniBarItem.IconSize, OmniBarItem.IconSize)
+		      Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.AccessoryIconSize, (Self.Height - OmniBarItem.AccessoryIconSize) / 2, OmniBarItem.AccessoryIconSize, OmniBarItem.AccessoryIconSize)
 		      If AccessoryRect.Contains(Self.mMousePoint) Then
 		        FirePressed = False
 		        RaiseEvent ShouldCloseItem(Item)

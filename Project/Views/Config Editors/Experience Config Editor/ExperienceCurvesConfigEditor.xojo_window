@@ -25,109 +25,6 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   710
-   Begin BeaconToolbar LeftButtons
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   10
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   201
-   End
-   Begin Shelf Switcher
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   201
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   308
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   60
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   710
-   End
    Begin BeaconListbox List
       AllowInfiniteScroll=   False
       AutoDeactivate  =   True
@@ -150,7 +47,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   361
+      Height          =   381
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -177,7 +74,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -187,6 +84,37 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Width           =   710
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   710
    End
 End
 #tag EndWindow
@@ -221,14 +149,9 @@ End
 		  
 		  Var Tag As String = Issue.UserData
 		  Var Parts() As String = Tag.Split(":")
-		  Var Level As Integer = Integer.FromString(Parts(1))
-		  Select Case Parts(0)
-		  Case "Player"
-		    Self.Switcher.SelectedIndex = 1
-		  Case "Dino"
-		    Self.Switcher.SelectedIndex = 2
-		  End Select
+		  Self.ViewingPlayerStats = (Parts(0) = "Player")
 		  
+		  Var Level As Integer = Integer.FromString(Parts(1))
 		  Var Levels(0) As Integer
 		  Levels(0) = Level
 		  Self.UpdateList(Levels)
@@ -474,16 +397,32 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function ViewingPlayerStats() As Boolean
-		  Return Self.Switcher.SelectedIndex = 1
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return (Self.ConfigToolbar.Item("PlayersTab") Is Nil) = False And Self.ConfigToolbar.Item("PlayersTab").Toggled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var PlayersTab As OmniBarItem = Self.ConfigToolbar.Item("PlayersTab")
+			  Var TamesTab As OmniBarItem = Self.ConfigToolbar.Item("TamesTab")
+			  
+			  If (PlayersTab Is Nil) = False Then
+			    PlayersTab.Toggled = Value
+			  End If
+			  If (TamesTab Is Nil) = False Then
+			    TamesTab.Toggled = Not Value
+			  End If
+			End Set
+		#tag EndSetter
+		Private ViewingPlayerStats As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = ColumnAscension, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -504,54 +443,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events LeftButtons
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Self.ShowAddExperience()
-		  Case "WizardButton"
-		    Self.ShowAddExperienceWizard()
-		  Case "EditButton"
-		    Self.ShowEditExperience()
-		  Case "LoadXPButton"
-		    If Self.ViewingPlayerStats Then
-		      Self.LoadDefaultPlayerXP()
-		    Else
-		      Self.LoadDefaultDinoXP()
-		    End If
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add a level"))
-		  Me.LeftItems.Append(New BeaconToolbarItem("WizardButton", IconToolbarWizard, "Add multiple levels using a configuration wizard"))
-		  Me.LeftItems.Append(New BeaconToolbarItem("EditButton", IconToolbarEdit, False, "Edit the selected level"))
-		  Me.LeftItems.Append(New BeaconToolbarItem("LoadXPButton", IconToolbarExperience, "Load the default experience values"))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Switcher
-	#tag Event
-		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconPlayers, "Players", "players")
-		  Me.Add(IconTames, "Tames", "tames")
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Var SettingUp As Boolean = Self.SettingUp
-		  Self.SettingUp = True
-		  Var SelectedLevels() As Integer
-		  Self.UpdateList(SelectedLevels)
-		  Self.SettingUp = SettingUp
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -611,7 +502,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.LeftButtons.EditButton.Enabled = Me.SelectedRowCount = 1
+		  Var EditButton As OmniBarItem = Self.ConfigToolbar.Item("EditButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -624,6 +518,48 @@ End
 		  If Me.SelectedRowCount = 1 Then
 		    Self.ShowEditExperience()
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTab("PlayersTab", "Players", IconPlayers))
+		  Me.Append(OmniBarItem.CreateTab("TamesTab", "Tames", IconTames))
+		  Me.Append(OmniBaritem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Level", IconToolbarAdd, "Add a level."))
+		  Me.Append(OmniBarItem.CreateButton("WizardButton", "Wizard", IconToolbarWizard, "Add multiple levels using a configuration wizard."))
+		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit the selected level.", False))
+		  Me.Append(OmniBarItem.CreateButton("LoadXPButton", "Load Defaults", IconToolbarExperience, "Load the default experience values."))
+		  
+		  Me.Item("PlayersTab").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Self.ShowAddExperience()
+		  Case "WizardButton"
+		    Self.ShowAddExperienceWizard()
+		  Case "EditButton"
+		    Self.ShowEditExperience()
+		  Case "LoadXPButton"
+		    If Self.ViewingPlayerStats Then
+		      Self.LoadDefaultPlayerXP()
+		    Else
+		      Self.LoadDefaultDinoXP()
+		    End If
+		  Case "PlayersTab", "TamesTab"
+		    Var SettingUp As Boolean = Self.SettingUp
+		    Self.SettingUp = True
+		    Self.ViewingPlayerStats = (Item.Name = "PlayersTab")
+		    Var SelectedLevels() As Integer
+		    Self.UpdateList(SelectedLevels)
+		    Self.SettingUp = SettingUp
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

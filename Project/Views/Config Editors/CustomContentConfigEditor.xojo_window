@@ -25,40 +25,6 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    UseFocusRing    =   False
    Visible         =   True
    Width           =   608
-   Begin Shelf Switcher
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   150
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   308
-   End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
@@ -71,7 +37,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   321
+      Height          =   341
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -100,7 +66,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   41
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   0
@@ -108,74 +74,36 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   608
    End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
-      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   60
+      Tooltip         =   ""
+      Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   608
-   End
-   Begin BeaconToolbar LeftButtons
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   10
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   150
    End
 End
 #tag EndWindow
@@ -272,11 +200,11 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Select Case Self.Switcher.SelectedIndex
-		  Case 1
+		  Select Case Self.ActiveButtonName
+		  Case "GameUserSettingsIniButton"
 		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		  Case 2
+		  Case "GameIniButton"
 		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
@@ -417,19 +345,21 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEncryptButton()
-		  If Self.LeftButtons.EncryptButton = Nil Then
+		  Var EncryptButton As OmniBarItem = Self.ConfigToolbar.Item("EncryptButton")
+		  If EncryptButton Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
 		  If Self.SelectionIsEncrypted Then
-		    Button.HelpTag = "Convert the encrypted value to plain text."
-		    Button.Enabled = True
-		    Button.Icon = IconToolbarUnlock
+		    EncryptButton.HelpTag = "Convert the encrypted value to plain text."
+		    EncryptButton.Caption = "Decrypt"
+		    EncryptButton.Enabled = True
+		    EncryptButton.Icon = IconToolbarUnlock
 		  Else
-		    Button.HelpTag = "Encrypt the selected text when saving."
-		    Button.Enabled = Self.ConfigArea.SelectionLength > 0
-		    Button.Icon = IconToolbarLock
+		    EncryptButton.HelpTag = "Encrypt the selected text when saving."
+		    EncryptButton.Caption = "Encrypt"
+		    EncryptButton.Enabled = Self.ConfigArea.SelectionLength > 0
+		    EncryptButton.Icon = IconToolbarLock
 		  End If
 		End Sub
 	#tag EndMethod
@@ -480,6 +410,33 @@ End
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Var GameUserSettingsIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameUserSettingsIniButton")
+			  Var GameIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameIniButton")
+			  If (GameUserSettingsIniButton Is Nil) = False And GameUserSettingsIniButton.Toggled Then
+			    Return GameUserSettingsIniButton.Name
+			  ElseIf (GameIniButton Is Nil) = False And GameIniButton.Toggled Then
+			    Return GameIniButton.Name
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var GameUserSettingsIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameUserSettingsIniButton")
+			  Var GameIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameIniButton")
+			  If (GameUserSettingsIniButton Is Nil) = False Then
+			    GameUserSettingsIniButton.Toggled = (GameUserSettingsIniButton.Name = Value)
+			  End If
+			  If (GameIniButton Is Nil) = False Then
+			    GameIniButton.Toggled = (GameIniButton.Name = Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Private ActiveButtonName As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
 	#tag EndProperty
@@ -499,34 +456,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Switcher
-	#tag Event
-		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Var SettingUp As Boolean = Self.SettingUp
-		  Self.SettingUp = True
-		  Select Case Me.SelectedIndex
-		  Case 1
-		    Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
-		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		  Case 2
-		    Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
-		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
-		  End Select
-		  Self.SettingUp = SettingUp
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ConfigArea
 	#tag Event
 		Sub TextChange()
@@ -545,11 +474,11 @@ End
 		    Me.SelectionLength = SelectionLength
 		  End If
 		  
-		  Select Case Self.Switcher.SelectedIndex
-		  Case 1
+		  Select Case Self.ActiveButtonName
+		  Case "GameUserSettingsIniButton"
 		    Self.Config(True).GameUserSettingsIniContent = SanitizedText
 		    Self.Changed = True
-		  Case 2
+		  Case "GameIniButton"
 		    Self.Config(True).GameIniContent = SanitizedText
 		    Self.Changed = True
 		  End Select
@@ -561,18 +490,41 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LeftButtons
+#tag Events ConfigToolbar
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "EncryptButton"
-		    Self.ToggleEncryption
-		  End Select
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini", IconGameUserSettingsIni))
+		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini", IconGameIni))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("EncryptButton", "Encrypt", IconToolbarLock, "Encrypt the selected text when saving.", False))
+		  
+		  Me.Item("GameUserSettingsIniButton").Toggled = True
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("EncryptButton", IconToolbarLock, "Encrypt the selected text when saving."))
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "EncryptButton"
+		    Self.ToggleEncryption()
+		  Case "GameUserSettingsIniButton", "GameIniButton"
+		    Var SettingUp As Boolean = Self.SettingUp
+		    Self.SettingUp = True
+		    Select Case Item.Name
+		    Case "GameUserSettingsIniButton"
+		      Self.mGameIniState = New TextAreaState(Self.ConfigArea)
+		      Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
+		      Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
+		    Case "GameIniButton"
+		      Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
+		      Self.ConfigArea.Text = Self.Config(False).GameIniContent
+		      Self.mGameIniState.ApplyTo(Self.ConfigArea)
+		    End Select
+		    Me.Item("GameIniButton").Toggled = (Item.Name = "GameIniButton")
+		    Me.Item("GameUserSettingsIniButton").Toggled = (Item.Name = "GameUserSettingsIniButton")
+		    Self.SettingUp = SettingUp
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
