@@ -61,7 +61,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -97,7 +97,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -115,7 +115,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   384
+      Height          =   343
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -144,7 +144,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   0
@@ -181,7 +181,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -285,6 +285,37 @@ Begin ConfigEditor MetaDataConfigEditor
       Visible         =   True
       VisualState     =   0
       Width           =   476
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   628
    End
 End
 #tag EndWindow
@@ -417,6 +448,13 @@ End
 		  
 		  Self.Changed = True
 		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

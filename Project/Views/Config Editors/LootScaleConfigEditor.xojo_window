@@ -61,7 +61,7 @@ Begin ConfigEditor LootScaleConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -91,11 +91,42 @@ Begin ConfigEditor LootScaleConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       TickStyle       =   0
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Value           =   100
       Visible         =   True
       Width           =   595
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   732
    End
 End
 #tag EndWindow
@@ -200,6 +231,13 @@ End
 		  End If
 		  
 		  Self.LootScaleField.Text = Me.Value.ToString(Locale.Raw, "0") + "%"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

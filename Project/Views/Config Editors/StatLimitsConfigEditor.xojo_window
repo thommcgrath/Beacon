@@ -50,7 +50,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -83,7 +83,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -116,7 +116,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -149,7 +149,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -182,7 +182,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -215,7 +215,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -248,7 +248,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -281,7 +281,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -324,7 +324,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -367,7 +367,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -410,7 +410,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -453,7 +453,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -496,7 +496,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -539,7 +539,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -582,7 +582,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -625,7 +625,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -663,7 +663,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   296
+      Height          =   255
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Item	Armor	Durability	Damage	Ammo	Hypo	Hyper	Generic	Weight"
@@ -683,7 +683,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   200
+      Top             =   241
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -721,12 +721,43 @@ Begin ConfigEditor StatLimitsConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   168
+      Top             =   209
       Transparent     =   False
       Underline       =   False
       Value           =   "The items shown here are examples. Stat limits will permanently affect all items in the game."
       Visible         =   True
       Width           =   959
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   999
    End
 End
 #tag EndWindow
@@ -1261,6 +1292,13 @@ End
 		  Self.SettingUp = False
 		  Self.Changed = True
 		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

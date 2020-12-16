@@ -60,7 +60,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -103,7 +103,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -139,7 +139,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Value           =   "Day Time:"
@@ -174,7 +174,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "Night Time:"
@@ -209,7 +209,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Value           =   "Full Cycle:"
@@ -244,7 +244,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Value           =   "="
@@ -279,7 +279,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "="
@@ -321,7 +321,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -364,7 +364,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -400,7 +400,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Value           =   "minutes"
@@ -435,7 +435,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Value           =   "60"
@@ -470,7 +470,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Multiplier"
@@ -505,7 +505,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Result"
@@ -535,7 +535,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   154
+      Top             =   195
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -568,7 +568,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "Days Ending In 0, 1, 2, or 3:"
@@ -603,7 +603,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "Days Ending In 4, 5, or 6:"
@@ -638,7 +638,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "Days Ending In 7, 8, or 9:"
@@ -681,7 +681,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -725,7 +725,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -769,7 +769,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -805,7 +805,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "minutes"
@@ -840,7 +840,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "minutes"
@@ -875,7 +875,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "minutes"
@@ -918,7 +918,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -962,7 +962,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1006,7 +1006,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1042,7 +1042,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   190
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Value           =   "Day"
@@ -1077,7 +1077,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   190
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Value           =   "Night"
@@ -1112,7 +1112,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   190
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Value           =   "Cycle"
@@ -1147,7 +1147,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "60"
@@ -1182,7 +1182,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "60"
@@ -1217,7 +1217,7 @@ Begin ConfigEditor DayCycleConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "60"
@@ -1253,7 +1253,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Value           =   "minutes"
@@ -1288,12 +1288,43 @@ Begin ConfigEditor DayCycleConfigEditor
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "minutes"
       Visible         =   True
       Width           =   83
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   714
    End
 End
 #tag EndWindow
@@ -1621,6 +1652,13 @@ End
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

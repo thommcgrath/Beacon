@@ -61,7 +61,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -97,7 +97,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -126,7 +126,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -168,7 +168,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   158
+         Top             =   199
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -204,7 +204,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   158
+         Top             =   199
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -247,7 +247,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   131
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -283,7 +283,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   131
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -326,7 +326,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   233
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -362,7 +362,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   233
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -405,7 +405,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   124
+         Top             =   165
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -441,7 +441,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   124
+         Top             =   165
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -483,7 +483,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   226
+         Top             =   267
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -527,7 +527,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   260
+         Top             =   301
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -563,7 +563,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   226
+         Top             =   267
          Transparent     =   False
          Underline       =   False
          Value           =   "Max Tek Level:"
@@ -598,7 +598,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   260
+         Top             =   301
          Transparent     =   False
          Underline       =   False
          Value           =   "Max Wyvern Level:"
@@ -641,7 +641,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   294
+         Top             =   335
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -677,13 +677,44 @@ Begin ConfigEditor DifficultyConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   294
+         Top             =   335
          Transparent     =   False
          Underline       =   False
          Value           =   "Max Crystal Wyvern Level:"
          Visible         =   True
          Width           =   179
       End
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   884
    End
 End
 #tag EndWindow
@@ -746,6 +777,13 @@ End
 		    Self.FillReferenceFields(Self.Document.Difficulty)
 		    Self.Changed = Self.Document.Modified
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
