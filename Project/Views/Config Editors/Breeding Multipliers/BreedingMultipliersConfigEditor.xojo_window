@@ -1068,44 +1068,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Visible         =   True
       Width           =   346
    End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Breeding Multipliers"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   800
-   End
    Begin UITweaks.ResizedTextField MatingSpeedField
       AcceptTabs      =   False
       Alignment       =   2
@@ -1480,6 +1442,37 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Visible         =   True
       Width           =   346
    End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   39
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   800
+   End
 End
 #tag EndWindow
 
@@ -1608,7 +1601,7 @@ End
 		  Var Bottom As Integer
 		  For ColumnIdx As Integer = 1 To NumColumns
 		    Var ColumnWidth As Integer = StandardColumnWidth
-		    Var RowTop As Integer = Self.Header.Top + Self.Header.Height + 20
+		    Var RowTop As Integer = Self.ConfigToolbar.Top + Self.ConfigToolbar.Height + 20
 		    If ColumnIdx <= WidthRemainder Then
 		      ColumnWidth = ColumnWidth + 1
 		    End If
@@ -1919,35 +1912,6 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AutoTuneButton"
-		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
-		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
-		    If Interval > 0 Then
-		      Self.ImprintPeriodField.Text = Interval.PrettyText
-		      Self.UpdateStats
-		    End If
-		  Case "ShareLinkButton"
-		    Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		    Var Format As String = "0.0#######"
-		    Var MatureSpeedMultiplier As String = Config.BabyMatureSpeedMultiplier.ToString(Format)
-		    Var IncubationSpeedMultiplier As String = Config.EggHatchSpeedMultiplier.ToString(Format)
-		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
-		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
-		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("ShareLinkButton", IconToolbarLink, "Generates a link so you can share this breeding chart."))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events MatingSpeedField
 	#tag Event
 		Sub TextChange()
@@ -2004,6 +1968,39 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		  Self.UpdateStats()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AutoTuneButton", "Auto Imprint", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
+		  Me.Append(OmniBarItem.CreateButton("ShareLinkButton", "Share", IconToolbarLink, "Generates a link so you can share this breeding chart."))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AutoTuneButton"
+		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
+		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
+		    If Interval > 0 Then
+		      Self.ImprintPeriodField.Text = Interval.PrettyText
+		      Self.UpdateStats
+		    End If
+		  Case "ShareLinkButton"
+		    Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
+		    Var Format As String = "0.0#######"
+		    Var MatureSpeedMultiplier As String = Config.BabyMatureSpeedMultiplier.ToString(Format)
+		    Var IncubationSpeedMultiplier As String = Config.EggHatchSpeedMultiplier.ToString(Format)
+		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
+		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
+		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -231,11 +231,12 @@ Implements ObservationKit.Observable
 		  #Pragma Unused Highlighted
 		  
 		  Const Spacing = 10
+		  Var X As Integer = (G.Width - 2) / 2
 		  
 		  G.DrawingColor = Colors.SeparatorColor
-		  G.DrawLine(15, Spacing, 15, G.Height - Spacing)
+		  G.DrawLine(X, Spacing, X, G.Height - Spacing)
 		  G.DrawingColor = Colors.TextShadowColor
-		  G.DrawLine(16, Spacing + 1, 16, (G.Height - Spacing) + 1)
+		  G.DrawLine(X + 1, Spacing + 1, X + 1, (G.Height - Spacing) + 1)
 		End Sub
 	#tag EndMethod
 
@@ -395,12 +396,20 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Margin() As Integer
+		Function Margin(Against As OmniBarItem) As Integer
+		  If (Against Is Nil) = False And Against.Type = OmniBarItem.Types.FlexSpace Then
+		    Return 0
+		  End If
+		  
 		  Select Case Self.Type
-		  Case OmniBarItem.Types.Button
+		  Case OmniBarItem.Types.Button, OmniBarItem.Types.Separator
 		    Return 10
-		  Case OmniBarItem.Types.Tab
+		  Case OmniBarItem.Types.Tab, OmniBarItem.Types.Title
+		    // If (Against Is Nil) = False And Against.Type = OmniBarItem.Types.Separator Then
+		    // Return 10
+		    // Else
 		    Return 20
+		    // End If
 		  End Select
 		End Function
 	#tag EndMethod
@@ -495,12 +504,10 @@ Implements ObservationKit.Observable
 		  
 		  Var Segments() As Double
 		  Select Case Self.mType
-		  Case OmniBarItem.Types.Space
-		    Segments.Add(20)
 		  Case OmniBarItem.Types.FlexSpace
 		    Segments.Add(0)
-		  Case OmniBarItem.Types.Separator
-		    Segments.Add(32)
+		  Case OmniBarItem.Types.Separator, OmniBarItem.Types.Space
+		    Segments.Add(2)
 		  Case OmniBarItem.Types.Button
 		    Segments.Add(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
 		  Case OmniBarItem.Types.Tab
@@ -722,6 +729,18 @@ Implements ObservationKit.Observable
 			End Get
 		#tag EndGetter
 		IndeterminatePhase As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Select Case Self.mType
+			  Case Types.Button, Types.Tab, Types.Title
+			    Return True
+			  End Select
+			End Get
+		#tag EndGetter
+		IsContentItem As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

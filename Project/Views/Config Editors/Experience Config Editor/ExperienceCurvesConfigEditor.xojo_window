@@ -524,11 +524,11 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
-		  Me.Append(OmniBarItem.CreateTab("PlayersTab", "Players", IconPlayers))
-		  Me.Append(OmniBarItem.CreateTab("TamesTab", "Tames", IconTames))
+		  Me.Append(OmniBarItem.CreateTab("PlayersTab", "Players"))
+		  Me.Append(OmniBarItem.CreateTab("TamesTab", "Tames"))
 		  Me.Append(OmniBaritem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Level", IconToolbarAdd, "Add a level."))
-		  Me.Append(OmniBarItem.CreateButton("WizardButton", "Wizard", IconToolbarWizard, "Add multiple levels using a configuration wizard."))
+		  Me.Append(OmniBarItem.CreateButton("WizardButton", "Auto Levels", IconToolbarWizard, "Add multiple levels using a configuration wizard."))
 		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit the selected level.", False))
 		  Me.Append(OmniBarItem.CreateButton("LoadXPButton", "Load Defaults", IconToolbarExperience, "Load the default experience values."))
 		  

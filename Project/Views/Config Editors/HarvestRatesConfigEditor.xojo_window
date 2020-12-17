@@ -61,7 +61,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   53
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -97,49 +97,11 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   53
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   227
-   End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Harvest Rate Overrides"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
    End
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
@@ -166,7 +128,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   189
+      Top             =   205
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -194,7 +156,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   278
+      Height          =   262
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -221,7 +183,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   190
+      Top             =   206
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -231,37 +193,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Width           =   764
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
    End
    Begin CheckBox UseOptimizedRatesCheck
       AutoDeactivate  =   True
@@ -289,7 +220,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   62
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -332,7 +263,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   87
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -368,7 +299,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   87
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -410,7 +341,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   121
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -446,7 +377,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   121
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -488,7 +419,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   155
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -524,7 +455,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   155
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -556,12 +487,43 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   96
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   393
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   764
    End
 End
 #tag EndWindow
@@ -827,30 +789,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
-		  AddButton.HelpTag = "Override the harvest rate of an engram."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected harvest rate override."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEngram"
-		    Self.ShowAddOverride()
-		  Case "Duplicate"
-		    Self.ShowDuplicateOverride()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -861,7 +799,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -982,6 +923,11 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events UseOptimizedRatesCheck
 	#tag Event
@@ -1058,6 +1004,28 @@ End
 		  Config.ClampResourceHarvestDamage = Me.Value
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEngram", "New Rate", IconToolbarAdd, "Override the harvest rate of an engram."))
+		  Me.Append(OmniBarItem.CreateButton("Duplicate", "Duplicate", IconToolbarClone, "Duplicate the selected harvest rate override.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEngram"
+		    Self.ShowAddOverride()
+		  Case "Duplicate"
+		    Self.ShowDuplicateOverride()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

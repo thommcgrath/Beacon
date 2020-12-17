@@ -103,44 +103,6 @@ Begin ConfigEditor StackSizesConfigEditor
       Visible         =   True
       Width           =   177
    End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Stack Size Overrides"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
-   End
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -232,34 +194,34 @@ Begin ConfigEditor StackSizesConfigEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
-      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
+      Tooltip         =   ""
+      Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   764
    End
@@ -474,30 +436,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
-		  AddButton.HelpTag = "Override the stack size of an engram."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected stack size override."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEngram"
-		    Self.ShowAddOverride()
-		  Case "Duplicate"
-		    Self.ShowDuplicateOverride()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -507,7 +445,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -624,6 +565,33 @@ End
 		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEngram", "New Override", IconToolbarAdd, "Override the stack size of an engram."))
+		  Me.Append(OmniBarItem.CreateButton("Duplicate", "Duplicate", IconToolbarClone, "Duplicate the selected stack size override.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEngram"
+		    Self.ShowAddOverride()
+		  Case "Duplicate"
+		    Self.ShowDuplicateOverride()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

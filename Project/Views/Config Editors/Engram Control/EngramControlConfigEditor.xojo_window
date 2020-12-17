@@ -58,7 +58,7 @@ Begin ConfigEditor EngramControlConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   0
+      Top             =   -68
       Transparent     =   False
       Visible         =   True
       Width           =   681
@@ -95,44 +95,6 @@ Begin ConfigEditor EngramControlConfigEditor
       Transparent     =   True
       Visible         =   True
       Width           =   681
-   End
-   Begin BeaconToolbar PointsListHeader
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Unlock Points"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   682
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   300
    End
    Begin FadedSeparator PointsListSeparator
       AllowAutoDeactivate=   True
@@ -318,6 +280,68 @@ Begin ConfigEditor EngramControlConfigEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
+   Begin OmniBar EngramToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   681
+   End
+   Begin OmniBar PointsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   682
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   300
+   End
 End
 #tag EndWindow
 
@@ -340,14 +364,14 @@ End
 		  Var PointsLeft As Integer = EngramsWidth + 1
 		  
 		  Self.EngramList.Width = EngramsWidth
-		  Self.EngramListHeader.Width = EngramsWidth
+		  Self.EngramToolbar.Width = EngramsWidth
 		  Self.EngramListStatus.Width = EngramsWidth
 		  
 		  Self.PointsListSeparator.Left = EngramsWidth
 		  Self.PointsList.Left = PointsLeft
 		  Self.PointsList.Width = PointsWidth
-		  Self.PointsListHeader.Left = PointsLeft
-		  Self.PointsListHeader.Width = PointsWidth
+		  Self.PointsToolbar.Left = PointsLeft
+		  Self.PointsToolbar.Width = PointsWidth
 		  Self.PointsListStatus.Left = PointsLeft
 		  Self.PointsListStatus.Width = PointsWidth
 		End Sub
@@ -654,34 +678,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PointsListHeader
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Define a new engram points override."
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var EditButton As New BeaconToolbarItem("EditButton", IconToolbarEdit)
-		  EditButton.HelpTag = "Edit one or more engram point overrides."
-		  EditButton.Enabled = False
-		  Me.LeftItems.Append(EditButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Levels() As Integer
-		    If EngramControlPointOverrideWindow.Present(Self, Self.Document, Levels) Then
-		      Self.SetupPointsList()
-		      Self.Changed = True
-		    End If
-		  Case "EditButton"
-		    Self.PointsList.DoEdit
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
@@ -705,7 +701,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.EngramListHeader.EditButton.Enabled = Me.CanEdit
+		  Var EditButton As OmniBarItem = Self.EngramToolbar.Item("EditButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.CanEdit
+		  End If
 		  Self.UpdateEngramsListStatus()
 		End Sub
 	#tag EndEvent
@@ -818,7 +817,10 @@ End
 #tag Events PointsList
 	#tag Event
 		Sub Change()
-		  Self.PointsListHeader.EditButton.Enabled = Me.SelectedRowCount > 0
+		  Var EditButton As OmniBarItem = Self.PointsToolbar.Item("EditButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.SelectedRowCount > 0
+		  End If
 		  Self.UpdatePointsListStatus()
 		End Sub
 	#tag EndEvent
@@ -987,6 +989,71 @@ End
 		    Self.SetupPointsList()
 		    Self.Changed = True
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Engram", IconToolbarAdd, "Inform Beacon of an unlockable engram that it does not already know about."))
+		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit the selected engram overrides.", False))
+		  Me.Append(OmniBarItem.CreateButton("WizardButton", "Auto Control", IconToolbarWizard, "Quickly set engram behaviors."))
+		  Me.Append(OmniBarItem.CreateButton("SettingsButton", "Advanced", IconToolbarSettings, "Changed uncommon engram settings."))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Engrams() As Beacon.Engram
+		    Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
+		    If Engrams <> Nil And Engrams.LastIndex > -1 Then
+		      Self.SetupEngramsList(Engrams)
+		      Self.EngramList.EnsureSelectionIsVisible()
+		    End If
+		  Case "EditButton"
+		    Self.EngramList.DoEdit()
+		  Case "WizardButton"
+		    If EngramControlWizard.Present(Self, Self.Document) Then
+		      Self.SetupUI()
+		      Self.Changed = Self.Config(False).Modified
+		    End If
+		  Case "SettingsButton"
+		    Break
+		    #if Not DebugBuild
+		      #Pragma Error "Settings button not implemented"
+		    #else
+		      #Pragma Warning "Settings button not implemented"
+		    #endif
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PointsToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Levels() As Integer
+		    If EngramControlPointOverrideWindow.Present(Self, Self.Document, Levels) Then
+		      Self.SetupPointsList()
+		      Self.Changed = True
+		    End If
+		  Case "EditButton"
+		    Self.PointsList.DoEdit
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Unlock Points"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Level", IconToolbarAdd, "Define a new level to override engram points."))
+		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit one or more levels.", False))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

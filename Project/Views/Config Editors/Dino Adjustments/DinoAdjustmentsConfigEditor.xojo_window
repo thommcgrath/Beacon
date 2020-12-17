@@ -25,44 +25,6 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   730
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Creature Adjustments"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   730
-   End
    Begin BeaconListbox List
       AllowInfiniteScroll=   False
       AutoDeactivate  =   True
@@ -122,6 +84,37 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Width           =   730
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   730
    End
 End
 #tag EndWindow
@@ -375,32 +368,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Me.Caption = Self.ConfigLabel
-		  
-		  Var AddButton As New BeaconToolbarItem("AddCreature", IconToolbarAdd)
-		  AddButton.HelpTag = "Define new creature adjustments"
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected creature adjustments."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddCreature"
-		    Self.ShowAdd()
-		  Case "Duplicate"
-		    Self.ShowDuplicate()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -513,7 +480,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -525,6 +495,28 @@ End
 		Function CanEdit() As Boolean
 		  Return Me.SelectedRowCount = 1
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddCreature", "New Adjustment", IconToolbarAdd, "Define new creature adjustments."))
+		  Me.Append(OmniBarItem.CreateButton("Duplicate", "Duplicate", IconToolbarClone, "Duplicate the selected creature adjustment.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddCreature"
+		    Self.ShowAdd()
+		  Case "Duplicate"
+		    Self.ShowDuplicate()
+		  End Select
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

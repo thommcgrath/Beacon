@@ -28,7 +28,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
    Begin PagePanel PagePanel1
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   570
+      Height          =   590
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -43,7 +43,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   61
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -76,7 +76,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   453
+         Top             =   433
          Transparent     =   False
          Underline       =   False
          Value           =   "100"
@@ -111,7 +111,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   419
+         Top             =   399
          Transparent     =   False
          Underline       =   False
          Value           =   "100"
@@ -146,7 +146,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   382
+         Top             =   362
          Transparent     =   False
          Underline       =   False
          Value           =   "100"
@@ -181,7 +181,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   351
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "100"
@@ -216,7 +216,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   181
+         Top             =   161
          Transparent     =   False
          Underline       =   False
          Value           =   "1"
@@ -251,7 +251,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   453
+         Top             =   433
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -294,7 +294,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   453
+         Top             =   433
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -330,7 +330,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   453
+         Top             =   433
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -365,7 +365,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   419
+         Top             =   399
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -408,7 +408,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   419
+         Top             =   399
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -444,7 +444,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   419
+         Top             =   399
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -479,7 +479,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   385
+         Top             =   365
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -522,7 +522,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   385
+         Top             =   365
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -558,7 +558,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   385
+         Top             =   365
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -593,7 +593,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   351
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -636,7 +636,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   351
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -672,7 +672,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   351
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -707,7 +707,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   317
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -750,7 +750,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   317
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -786,7 +786,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   317
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -821,7 +821,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   283
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -864,7 +864,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   283
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -900,7 +900,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   283
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -935,7 +935,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   249
+         Top             =   229
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -978,7 +978,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   249
+         Top             =   229
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1014,7 +1014,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   249
+         Top             =   229
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -1049,7 +1049,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   215
+         Top             =   195
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -1092,7 +1092,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   215
+         Top             =   195
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1128,7 +1128,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   215
+         Top             =   195
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -1163,7 +1163,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   181
+         Top             =   161
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -1198,7 +1198,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   181
+         Top             =   161
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -1233,7 +1233,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   147
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -1276,7 +1276,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   147
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1312,7 +1312,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   147
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -1347,7 +1347,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   113
+         Top             =   93
          Transparent     =   False
          Underline       =   False
          Value           =   "= 10"
@@ -1390,7 +1390,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   113
+         Top             =   93
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1426,7 +1426,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   113
+         Top             =   93
          Transparent     =   False
          Underline       =   False
          Value           =   "10 x"
@@ -1461,7 +1461,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Value           =   "Per Level"
@@ -1496,7 +1496,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Value           =   "Base Value"
@@ -1531,7 +1531,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   453
+         Top             =   433
          Transparent     =   False
          Underline       =   False
          Value           =   "Crafting Speed:"
@@ -1566,7 +1566,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   419
+         Top             =   399
          Transparent     =   False
          Underline       =   False
          Value           =   "Fortitude:"
@@ -1601,7 +1601,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   385
+         Top             =   365
          Transparent     =   False
          Underline       =   False
          Value           =   "Speed:"
@@ -1636,7 +1636,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   351
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "Melee:"
@@ -1671,7 +1671,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   317
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "Weight:"
@@ -1714,7 +1714,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   317
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1750,7 +1750,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   283
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "Water:"
@@ -1793,7 +1793,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   283
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1829,7 +1829,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   249
+         Top             =   229
          Transparent     =   False
          Underline       =   False
          Value           =   "Food:"
@@ -1872,7 +1872,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   249
+         Top             =   229
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1908,7 +1908,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   215
+         Top             =   195
          Transparent     =   False
          Underline       =   False
          Value           =   "Oxygen:"
@@ -1951,7 +1951,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   215
+         Top             =   195
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1987,7 +1987,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   181
+         Top             =   161
          Transparent     =   False
          Underline       =   False
          Value           =   "Torpor:"
@@ -2030,7 +2030,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   181
+         Top             =   161
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -2066,7 +2066,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   147
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          Value           =   "Stamina:"
@@ -2109,7 +2109,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   147
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -2145,7 +2145,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   113
+         Top             =   93
          Transparent     =   False
          Underline       =   False
          Value           =   "Health:"
@@ -2188,7 +2188,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   113
+         Top             =   93
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -2222,7 +2222,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -2256,7 +2256,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Value           =   "Preview with Creature:"
@@ -2291,7 +2291,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   157
+         Top             =   137
          Transparent     =   False
          Underline       =   False
          Value           =   "Health:"
@@ -2326,7 +2326,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   191
+         Top             =   171
          Transparent     =   False
          Underline       =   False
          Value           =   "Stamina:"
@@ -2361,7 +2361,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   225
+         Top             =   205
          Transparent     =   False
          Underline       =   False
          Value           =   "Torpor:"
@@ -2396,7 +2396,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   259
+         Top             =   239
          Transparent     =   False
          Underline       =   False
          Value           =   "Oxygen:"
@@ -2431,7 +2431,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   293
+         Top             =   273
          Transparent     =   False
          Underline       =   False
          Value           =   "Food:"
@@ -2466,7 +2466,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   395
+         Top             =   375
          Transparent     =   False
          Underline       =   False
          Value           =   "Weight:"
@@ -2501,7 +2501,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   429
+         Top             =   409
          Transparent     =   False
          Underline       =   False
          Value           =   "Damage:"
@@ -2536,7 +2536,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   463
+         Top             =   443
          Transparent     =   False
          Underline       =   False
          Value           =   "Speed:"
@@ -2568,7 +2568,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   115
+         Top             =   95
          Transparent     =   True
          Visible         =   True
          Width           =   251
@@ -2598,7 +2598,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   115
+         Top             =   95
          Transparent     =   True
          Visible         =   True
          Width           =   251
@@ -2628,7 +2628,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   115
+         Top             =   95
          Transparent     =   True
          Visible         =   True
          Width           =   251
@@ -2658,7 +2658,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   115
+         Top             =   95
          Transparent     =   True
          Visible         =   True
          Width           =   251
@@ -2691,7 +2691,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   327
+         Top             =   307
          Transparent     =   False
          Underline       =   False
          Value           =   "Water:"
@@ -2726,7 +2726,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   361
+         Top             =   341
          Transparent     =   False
          Underline       =   False
          Value           =   "Temp:"
@@ -2761,7 +2761,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   497
+         Top             =   477
          Transparent     =   False
          Underline       =   False
          Value           =   "Fortitude:"
@@ -2796,7 +2796,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   531
+         Top             =   511
          Transparent     =   False
          Underline       =   False
          Value           =   "Crafting:"
@@ -2804,70 +2804,36 @@ Begin ConfigEditor StatMultipliersConfigEditor
          Width           =   78
       End
    End
-   Begin FadedSeparator FadedSeparator1
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
-      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   60
-      Transparent     =   True
-      Visible         =   True
-      Width           =   1122
-   End
-   Begin Shelf Switcher
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   232
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
-      Transparent     =   False
+      Transparent     =   True
       Visible         =   True
-      Width           =   658
+      Width           =   1122
    End
 End
 #tag EndWindow
@@ -3088,6 +3054,18 @@ End
 
 #tag EndWindowCode
 
+#tag Events PagePanel1
+	#tag Event
+		Sub Change()
+		  Var Bound As Integer = Self.ConfigToolbar.LastRowIndex
+		  For Idx As Integer = 0 To Bound
+		    If (Self.ConfigToolbar.Item(Idx) Is Nil) = False Then
+		      Self.ConfigToolbar.Item(Idx).Toggled = (Idx = Me.SelectedPanelIndex)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events PlayerPerLevelMultiplierField
 	#tag Event
 		Sub TextChange(index as Integer)
@@ -3179,19 +3157,23 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Switcher
+#tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconPlayers, "Players", "players")
-		  Me.Add(IconTames, "Creatures", "tames")
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
+		  Var PlayersButton As OmniBarItem = OmniBarItem.CreateTab("PlayersButton", "Players")
+		  PlayersButton.Toggled = True
+		  
+		  Var CreaturesButton As OmniBarItem = OmniBarItem.CreateTab("CreaturesButton", "Creatures")
+		  
+		  Me.Append(PlayersButton, CreaturesButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
-		  Self.PagePanel1.SelectedPanelIndex = Me.SelectedIndex - 1
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Var Idx As Integer = Me.IndexOf(Item)
+		  Self.PagePanel1.SelectedPanelIndex = Idx
 		End Sub
 	#tag EndEvent
 #tag EndEvents

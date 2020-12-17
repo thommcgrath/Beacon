@@ -83,6 +83,8 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  #Pragma Warning "Help tags are not implemented"
+		  
 		  Self.mMousePoint = New Point(X, Y)
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
@@ -150,7 +152,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  // First, compute the rectangles for each item. It's ok to assume left alignment here,
 		  // as we'll apply an offset later.
 		  
-		  Var NextPos As Double = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
+		  Var NextPos As Double = 0
 		  Var Rects() As Rect
 		  Var FlexSpaceIndexes() As Integer
 		  Rects.ResizeTo(Self.mItems.LastIndex)
@@ -166,9 +168,17 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
 		    Else
 		      Var ItemWidth As Double = Item.Width(G)
-		      Rects(Idx) = New Rect(NextPos, 0, ItemWidth, G.Height)
+		      Var LeftMargin As Integer
+		      If Idx = 0 Then
+		        LeftMargin = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
+		      Else
+		        Var PreviousItem As OmniBarItem = Self.mItems(Idx - 1)
+		        LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
+		      End If
+		      
+		      Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
 		      If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
-		        NextPos = NextPos + ItemWidth + Max(Item.Margin, Self.mItems(Idx + 1).Margin)
+		        NextPos = Rects(Idx).Right
 		      End If
 		    End If
 		  Next

@@ -493,8 +493,8 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
-		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini", IconGameUserSettingsIni))
-		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini", IconGameIni))
+		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini"))
+		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini"))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("EncryptButton", "Encrypt", IconToolbarLock, "Encrypt the selected text when saving.", False))
 		  
