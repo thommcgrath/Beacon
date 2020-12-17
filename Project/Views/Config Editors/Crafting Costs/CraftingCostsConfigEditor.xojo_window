@@ -25,75 +25,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   650
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Engrams"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   1
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin StatusBar ListStatusBar
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -336,20 +267,57 @@ Begin ConfigEditor CraftingCostsConfigEditor
       End
    End
    Begin Thread FibercraftBuilderThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
    Begin Thread AdjusterThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   10
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
    End
 End
 #tag EndWindow
@@ -384,6 +352,7 @@ End
 
 	#tag Event
 		Sub Open()
+		  Self.SetListWidth(Self.ListMinWidth)
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
 		End Sub
 	#tag EndEvent
@@ -416,13 +385,9 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  If Initial Then
-		    Self.SetListWidth(Preferences.CraftingSplitterPosition)
-		  Else
-		    Self.SetListWidth(Self.Header.Width)
-		  End If
+		  #Pragma Unused Initial
 		  
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Self.SetListWidth(Self.Width * 0.4)
 		End Sub
 	#tag EndEvent
 
@@ -559,15 +524,12 @@ End
 		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - CraftingCostEditor.MinimumWidth)
 		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
-		  Self.Header.Width = ListWidth
-		  Self.HeaderSeparator.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.List.Width = ListWidth
 		  Self.ListSeparator.Left = ListWidth
 		  Self.ListStatusBar.Width = ListWidth
 		  Self.Panel.Left = Self.ListSeparator.Left + Self.ListSeparator.Width
 		  Self.Panel.Width = EditorWidth
-		  
-		  Preferences.CraftingSplitterPosition = ListWidth
 		End Sub
 	#tag EndMethod
 
@@ -710,7 +672,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingcost", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"400", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageMultipleSelection, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -725,36 +687,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Me.Width
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
-		  AddButton.HelpTag = "Change the crafting cost for a new item."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected crafting override."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEngram"
-		    Self.ShowAddEngram()
-		  Case "Duplicate"
-		    Self.ShowDuplicateSelection()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Change()
@@ -772,7 +704,10 @@ End
 		    Self.Panel.SelectedPanelIndex = Self.PageMultipleSelection
 		  End If
 		  
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		  
 		  Self.UpdateStatus()
 		End Sub
@@ -1054,6 +989,26 @@ End
 		  Var NotifyDict As New Dictionary
 		  NotifyDict.Value("Finished") = True
 		  Me.AddUserInterfaceUpdate(NotifyDict)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddEngramButton"
+		    Self.ShowAddEngram()
+		  Case "DuplicateButton"
+		    Self.ShowDuplicateSelection()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("EngramsTitle", "Engrams"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEngramButton", "New Recipe", IconToolbarAdd, "Change the recipe for a new item."))
+		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected recipe.", False))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

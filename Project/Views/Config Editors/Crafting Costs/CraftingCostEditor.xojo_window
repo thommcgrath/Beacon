@@ -25,75 +25,6 @@ Begin BeaconContainer CraftingCostEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   350
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Resources Required"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   350
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   350
-   End
    Begin BeaconListbox List
       AllowInfiniteScroll=   False
       AutoDeactivate  =   True
@@ -184,6 +115,37 @@ Begin BeaconContainer CraftingCostEditor
       Top             =   279
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   350
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
       Width           =   350
    End
@@ -303,29 +265,12 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingresource", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"350", Scope = Public
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"200", Scope = Public
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddResource"
-		    Self.ShowAddResources()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddResource", IconToolbarAdd)
-		  AddButton.HelpTag = "Add resources to this crafting cost."
-		  Me.LeftItems.Append(AddButton)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -436,6 +381,23 @@ End
 		    Self.mTarget.RequireExactResource(Idx) = Me.CellCheckBoxValueAt(Row, Column)
 		    Self.Changed = True
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddResourceButton"
+		    Self.ShowAddResources()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("IngredientsTitle", "Ingredients"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddResourceButton", "Add Ingredient", IconToolbarAdd, "Add ingredients to this engram."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

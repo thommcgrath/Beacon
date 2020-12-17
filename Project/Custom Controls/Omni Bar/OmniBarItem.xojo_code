@@ -62,7 +62,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Clickable() As Boolean
 		  Select Case Self.Type
-		  Case OmniBarItem.Types.Tab, OmniBarItem.Types.Button
+		  Case OmniBarItem.Types.Tab, OmniBarItem.Types.Button, OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
 		    Return True
 		  End Select
 		End Function
@@ -107,6 +107,25 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateHorizontalResizer(Name As String = "") As OmniBarItem
+		  Return CreateResizer(Name, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateResizer(Name As String, Vertical As Boolean) As OmniBarItem
+		  If Name.IsEmpty Then
+		    Name = EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase
+		  End If
+		  If Vertical Then
+		    Return New OmniBarItem(OmniBarItem.Types.VerticalResizer, Name, "", IconToolbarVResize)
+		  Else
+		    Return New OmniBarItem(OmniBarItem.Types.HorizontalResizer, Name, "", IconToolbarHResize)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateSeparator() As OmniBarItem
 		  Return New OmniBarItem(OmniBarItem.Types.Separator, EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase, "")
 		End Function
@@ -127,6 +146,12 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Shared Function CreateTitle(Name As String, Caption As String) As OmniBarItem
 		  Return New OmniBarItem(OmniBarItem.Types.Title, Name, Caption, Nil)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateVerticalResizer(Name As String = "") As OmniBarItem
+		  Return CreateResizer(Name, True)
 		End Function
 	#tag EndMethod
 
@@ -219,7 +244,39 @@ Implements ObservationKit.Observable
 		    Self.DrawSeparator(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  Case OmniBarItem.Types.Title
 		    Self.DrawTitle(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
+		  Case OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
+		    Self.DrawResizer(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DrawResizer(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  #Pragma Unused LocalMousePoint
+		  
+		  Var ForeColor, BackColor, ShadowColor As Color = &c000000FF
+		  If Highlighted And (Self.AlwaysUseActiveColor Or MouseHover) Then
+		    ForeColor = Self.ActiveColorToColor(Self.ActiveColor, Colors, False)
+		    ShadowColor = Colors.TextShadowColor
+		  Else
+		    ForeColor = Colors.TextColor
+		    ShadowColor = Colors.TextShadowColor
+		  End If
+		  
+		  If Self.Enabled = False Then
+		    ForeColor = ForeColor.AtOpacity(0.5)
+		    ShadowColor = ShadowColor.AtOpacity(0.5)
+		  ElseIf MouseDown Then
+		    ForeColor = ForeColor.Darker(0.5)
+		  End If
+		  
+		  Var IconRect As New Rect(NearestMultiple((G.Width - Self.Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Self.Icon.Height) / 2, G.ScaleY), Self.Icon.Width, Self.Icon.Height)
+		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
+		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, ForeColor, Factor, Factor)
+		  Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor, Factor, Factor)
+		  
+		  G.DrawPicture(Shadow, IconRect.Left, IconRect.Top + 1, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
+		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		End Sub
 	#tag EndMethod
 
@@ -365,6 +422,11 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h21
 		Private Sub DrawTitle(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  #Pragma Unused MouseDown
+		  #Pragma Unused MouseHover
+		  #Pragma Unused LocalMousePoint
+		  #Pragma Unused Highlighted
+		  
 		  G.Bold = True
 		  
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
@@ -402,14 +464,10 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Select Case Self.Type
-		  Case OmniBarItem.Types.Button, OmniBarItem.Types.Separator
+		  Case OmniBarItem.Types.Button, OmniBarItem.Types.Separator, OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
 		    Return 10
 		  Case OmniBarItem.Types.Tab, OmniBarItem.Types.Title
-		    // If (Against Is Nil) = False And Against.Type = OmniBarItem.Types.Separator Then
-		    // Return 10
-		    // Else
 		    Return 20
-		    // End If
 		  End Select
 		End Function
 	#tag EndMethod
@@ -526,6 +584,8 @@ Implements ObservationKit.Observable
 		    End If
 		  Case OmniBarItem.Types.Title
 		    Segments.Add(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth))
+		  Case OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
+		    Segments.Add(Self.Icon.Width)
 		  End Select
 		  Return NearestMultiple(Segments.Sum(Self.ElementSpacing), 1.0) // Yes, round to nearest whole
 		End Function
@@ -735,12 +795,21 @@ Implements ObservationKit.Observable
 		#tag Getter
 			Get
 			  Select Case Self.mType
-			  Case Types.Button, Types.Tab, Types.Title
+			  Case Types.Button, Types.Tab, Types.Title, Types.HorizontalResizer, Types.VerticalResizer
 			    Return True
 			  End Select
 			End Get
 		#tag EndGetter
 		IsContentItem As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mType = Types.HorizontalResizer Or Self.mType = Types.VerticalResizer
+			End Get
+		#tag EndGetter
+		IsResizer As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -921,7 +990,9 @@ Implements ObservationKit.Observable
 		  Space
 		  FlexSpace
 		  Separator
-		Title
+		  Title
+		  HorizontalResizer
+		VerticalResizer
 	#tag EndEnum
 
 
@@ -1095,7 +1166,16 @@ Implements ObservationKit.Observable
 				"2 - Space"
 				"3 - FlexSpace"
 				"4 - Separator"
+				"5 - Title"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsContentItem"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

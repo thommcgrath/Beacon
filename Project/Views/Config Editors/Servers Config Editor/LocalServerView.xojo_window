@@ -28,7 +28,7 @@ Begin ServerViewContainer LocalServerView
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   550
+      Height          =   559
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -43,7 +43,7 @@ Begin ServerViewContainer LocalServerView
       TabIndex        =   1
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -74,7 +74,7 @@ Begin ServerViewContainer LocalServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   236
+         Top             =   227
          Transparent     =   True
          Visible         =   True
          Width           =   376
@@ -108,7 +108,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   104
+         Top             =   95
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -143,7 +143,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   104
+         Top             =   95
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -175,7 +175,7 @@ Begin ServerViewContainer LocalServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   104
+         Top             =   95
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -207,7 +207,7 @@ Begin ServerViewContainer LocalServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   136
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -241,7 +241,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   393
+         Top             =   384
          Transparent     =   False
          Underline       =   False
          Value           =   "Seconds"
@@ -285,7 +285,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   393
+         Top             =   384
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -321,7 +321,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   393
+         Top             =   384
          Transparent     =   False
          Underline       =   False
          Value           =   "Message Duration:"
@@ -356,7 +356,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   236
+         Top             =   227
          Transparent     =   False
          Underline       =   False
          Value           =   "Message of the Day:"
@@ -391,7 +391,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   202
+         Top             =   193
          Transparent     =   False
          Underline       =   False
          Value           =   "GameUserSettings.ini File:"
@@ -424,7 +424,7 @@ Begin ServerViewContainer LocalServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   203
+         Top             =   194
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -466,7 +466,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   202
+         Top             =   193
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -502,7 +502,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   168
+         Top             =   159
          Transparent     =   False
          Underline       =   False
          Value           =   "Game.ini File:"
@@ -535,7 +535,7 @@ Begin ServerViewContainer LocalServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   169
+         Top             =   160
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -577,7 +577,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   168
+         Top             =   159
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -613,7 +613,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   70
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Value           =   "Server Name:"
@@ -656,7 +656,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   70
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -692,7 +692,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   136
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          Value           =   "Build Config For:"
@@ -727,7 +727,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   136
+         Top             =   127
          Transparent     =   False
          Underline       =   False
          Value           =   "Does not change the map"
@@ -752,7 +752,7 @@ Begin ServerViewContainer LocalServerView
          HasBorder       =   True
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
-         Height          =   510
+         Height          =   519
          HideSelection   =   True
          Index           =   -2147483648
          InitialParent   =   "Pages"
@@ -776,7 +776,7 @@ Begin ServerViewContainer LocalServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   70
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          UnicodeMode     =   1
@@ -795,7 +795,7 @@ Begin ServerViewContainer LocalServerView
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   50
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0

@@ -28,7 +28,7 @@ Begin ServerViewContainer NitradoServerView
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   550
+      Height          =   559
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -43,7 +43,7 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   1
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -77,7 +77,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   167
+         Top             =   158
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -112,7 +112,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   167
+         Top             =   158
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -144,7 +144,7 @@ Begin ServerViewContainer NitradoServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   167
+         Top             =   158
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -178,7 +178,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   356
+         Top             =   347
          Transparent     =   False
          Underline       =   False
          Value           =   "Seconds"
@@ -222,7 +222,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   356
+         Top             =   347
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -258,7 +258,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   356
+         Top             =   347
          Transparent     =   False
          Underline       =   False
          Value           =   "Message Duration:"
@@ -293,7 +293,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   199
+         Top             =   190
          Transparent     =   False
          Underline       =   False
          Value           =   "Message of the Day:"
@@ -326,7 +326,7 @@ Begin ServerViewContainer NitradoServerView
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   199
+         Top             =   190
          Transparent     =   True
          Visible         =   True
          Width           =   412
@@ -360,7 +360,7 @@ Begin ServerViewContainer NitradoServerView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   133
+         Top             =   124
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -403,7 +403,7 @@ Begin ServerViewContainer NitradoServerView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   133
+         Top             =   124
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -435,7 +435,7 @@ Begin ServerViewContainer NitradoServerView
          TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   112
+         Top             =   103
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
@@ -470,7 +470,7 @@ Begin ServerViewContainer NitradoServerView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   70
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -505,7 +505,7 @@ Begin ServerViewContainer NitradoServerView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   70
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -529,7 +529,7 @@ Begin ServerViewContainer NitradoServerView
          HasBorder       =   True
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
-         Height          =   510
+         Height          =   519
          HideSelection   =   True
          Index           =   -2147483648
          InitialParent   =   "Pages"
@@ -553,7 +553,7 @@ Begin ServerViewContainer NitradoServerView
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   70
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          UnicodeMode     =   1
@@ -578,7 +578,7 @@ Begin ServerViewContainer NitradoServerView
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   50
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -906,14 +906,14 @@ End
 #tag Events ControlToolbar
 	#tag Event
 		Sub Open()
-		  Var GeneralButton As OmniBarItem = OmniBarItem.CreateButton("PageGeneral", "General", IconToolbarSettings, "Common server settings", True)
+		  Var GeneralButton As OmniBarItem = OmniBarItem.CreateTab("PageGeneral", "General")
 		  GeneralButton.Toggled = True
 		  
-		  Var NotesButton As OmniBarItem = OmniBarItem.CreateButton("PageNotes", "Notes", IconToolbarNotepad, "Server notes", True)
+		  Var NotesButton As OmniBarItem = OmniBarItem.CreateTab("PageNotes", "Notes")
 		  
 		  Var PowerButton As OmniBarItem = OmniBarItem.CreateButton("PowerButton", "Stop", IconToolbarPower, "Stop the server", False)
 		  
-		  Me.Append(GeneralButton, NotesButton, OmniBarItem.CreateFlexibleSpace, PowerButton)
+		  Me.Append(GeneralButton, NotesButton, OmniBarItem.CreateSeparator, PowerButton)
 		End Sub
 	#tag EndEvent
 	#tag Event

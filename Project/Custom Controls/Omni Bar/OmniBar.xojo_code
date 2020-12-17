@@ -97,6 +97,14 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Self.Invalidate(Self.mMouseOverIndex)
 		  End If
 		  
+		  If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.HorizontalResizer Then
+		    Self.MouseCursor = System.Cursors.SplitterEastWest
+		  ElseIf Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.VerticalResizer Then
+		    Self.MouseCursor = System.Cursors.SplitterNorthSouth
+		  Else
+		    Self.MouseCursor = System.Cursors.StandardPointer
+		  End If
+		  
 		  #if TargetMacOS
 		    Self.TrueWindow.NSWindowMBS.Movable = Self.mMouseOverIndex = -1
 		  #endif
