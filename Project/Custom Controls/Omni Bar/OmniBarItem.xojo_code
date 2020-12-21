@@ -88,6 +88,7 @@ Implements ObservationKit.Observable
 		  Self.mIcon = Icon
 		  Self.mName = Name
 		  Self.mProgress = 0
+		  Self.mPriority = 10
 		End Sub
 	#tag EndMethod
 
@@ -101,14 +102,29 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFlexibleSpace() As OmniBarItem
-		  Return New OmniBarItem(OmniBarItem.Types.FlexSpace, EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase, "")
+		Shared Function CreateFlexibleSpace(Name As String = "") As OmniBarItem
+		  If Name.IsEmpty Then
+		    Name = EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase
+		  End If
+		  Return New OmniBarItem(OmniBarItem.Types.FlexSpace, Name, "")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function CreateHorizontalResizer(Name As String = "") As OmniBarItem
 		  Return CreateResizer(Name, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateMenu(Name As String, Caption As String, Icon As Picture, HelpTag As String, Enabled As Boolean = True) As OmniBarItem
+		  Var Item As OmniBarItem = CreateButton(Name, Caption, Icon, HelpTag, Enabled)
+		  #if DebugBuild
+		    #Pragma Warning "Set the menu"
+		  #else
+		    #Pragma Error "Set the menu"
+		  #endif
+		  Return Item
 		End Function
 	#tag EndMethod
 
@@ -126,14 +142,20 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateSeparator() As OmniBarItem
-		  Return New OmniBarItem(OmniBarItem.Types.Separator, EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase, "")
+		Shared Function CreateSeparator(Name As String = "") As OmniBarItem
+		  If Name.IsEmpty Then
+		    Name = EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase
+		  End If
+		  Return New OmniBarItem(OmniBarItem.Types.Separator, Name, "")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateSpace() As OmniBarItem
-		  Return New OmniBarItem(OmniBarItem.Types.Space, EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase, "")
+		Shared Function CreateSpace(Name As String = "") As OmniBarItem
+		  If Name.IsEmpty Then
+		    Name = EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase
+		  End If
+		  Return New OmniBarItem(OmniBarItem.Types.Space, Name, "")
 		End Function
 	#tag EndMethod
 
@@ -254,7 +276,7 @@ Implements ObservationKit.Observable
 		Private Sub DrawResizer(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
 		  #Pragma Unused LocalMousePoint
 		  
-		  Var ForeColor, BackColor, ShadowColor As Color = &c000000FF
+		  Var ForeColor, ShadowColor As Color = &c000000FF
 		  If Highlighted And (Self.AlwaysUseActiveColor Or MouseHover) Then
 		    ForeColor = Self.ActiveColorToColor(Self.ActiveColor, Colors, False)
 		    ShadowColor = Colors.TextShadowColor
@@ -877,6 +899,10 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPriority As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProgress As Double
 	#tag EndProperty
 
@@ -895,6 +921,23 @@ Implements ObservationKit.Observable
 			End Get
 		#tag EndGetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPriority
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mPriority <> Value Then
+			    Self.mPriority = Value
+			    Self.NotifyObservers("MinorChange", Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Priority As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -1167,10 +1210,20 @@ Implements ObservationKit.Observable
 				"3 - FlexSpace"
 				"4 - Separator"
 				"5 - Title"
+				"6 - HorizontalResizer"
+				"7 - VerticalResizer"
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsContentItem"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsResizer"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

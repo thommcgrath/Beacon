@@ -35,6 +35,27 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  Self.mMousePoint = New Point(X, Y)
 		  
+		  If Self.mMouseDownIndex > -1 And Self.mItems(Self.mMouseDownIndex).IsResizer Then
+		    Var DeltaX As Integer = Self.mMousePoint.X - Self.mMouseDownPoint.X
+		    Var DeltaY As Integer = Self.mMousePoint.Y - Self.mMouseDownPoint.Y
+		    If DeltaX <> 0 Or DeltaY <> 0 Then
+		      Var OriginalRect As New Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		      RaiseEvent ShouldResize(Self.mItems(Self.mMouseDownIndex), DeltaX, DeltaY)
+		      Var ChangedRect As New Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		      If OriginalRect.Left <> ChangedRect.Left Or OriginalRect.Top <> ChangedRect.Top Or OriginalRect.Width <> ChangedRect.Width Or OriginalRect.Height <> ChangedRect.Height Then
+		        // Determine how the button has moved
+		        Var OriginalButtonRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		        Self.Refresh(False)
+		        Var NewButtonRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		        
+		        Var ButtonDeltaX As Double = NewButtonRect.Left - OriginalButtonRect.Left
+		        Var ButtonDeltaY As Double = NewButtonRect.Top - OriginalButtonRect.Top
+		        Self.mMouseDownPoint = New Point(Self.mMouseDownPoint.X + ButtonDeltaX, Self.mMouseDownPoint.Y + ButtonDeltaY)
+		      End If
+		    End If
+		    Return
+		  End If
+		  
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
@@ -97,9 +118,9 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Self.Invalidate(Self.mMouseOverIndex)
 		  End If
 		  
-		  If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.HorizontalResizer Then
+		  If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.HorizontalResizer And Self.mItems(Self.mMouseOverIndex).Enabled = True Then
 		    Self.MouseCursor = System.Cursors.SplitterEastWest
-		  ElseIf Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.VerticalResizer Then
+		  ElseIf Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.VerticalResizer And Self.mItems(Self.mMouseOverIndex).Enabled = True Then
 		    Self.MouseCursor = System.Cursors.SplitterNorthSouth
 		  Else
 		    Self.MouseCursor = System.Cursors.StandardPointer
@@ -119,7 +140,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  Self.mMousePoint = New Point(X, Y)
 		  
-		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex And Self.mItems(Self.mMouseDownIndex).Enabled = True Then
+		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
 		    Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
 		    Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		    Var FirePressed As Boolean = True
@@ -151,76 +172,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused SafeArea
 		  
-		  Const DefaultEdgePadding = 20
-		  
 		  If Self.mColorProfile Is Nil Then
 		    Self.mColorProfile = New OmniBarColorProfile
 		  End If
 		  
-		  // First, compute the rectangles for each item. It's ok to assume left alignment here,
-		  // as we'll apply an offset later.
-		  
-		  Var NextPos As Double = 0
-		  Var Rects() As Rect
-		  Var FlexSpaceIndexes() As Integer
-		  Rects.ResizeTo(Self.mItems.LastIndex)
-		  G.Bold = True // Assume all are toggled for the sake of spacing
-		  For Idx As Integer = 0 To Self.mItems.LastIndex
-		    Var Item As OmniBarItem = Self.mItems(Idx)
-		    If Item Is Nil Then
-		      Continue
-		    End If
-		    
-		    If Item.Type = OmniBarItem.Types.FlexSpace Then
-		      FlexSpaceIndexes.Add(Idx)
-		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
-		    Else
-		      Var ItemWidth As Double = Item.Width(G)
-		      Var LeftMargin As Integer
-		      If Idx = 0 Then
-		        LeftMargin = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
-		      Else
-		        Var PreviousItem As OmniBarItem = Self.mItems(Idx - 1)
-		        LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
-		      End If
-		      
-		      Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
-		      If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
-		        NextPos = Rects(Idx).Right
-		      End If
-		    End If
-		  Next
-		  
-		  If FlexSpaceIndexes.Count > 0 Then
-		    Var MinX, MaxX As Integer
-		    For Idx As Integer = 0 To Rects.LastIndex
-		      If Idx = 0 Then
-		        MinX = Rects(Idx).Left
-		        MaxX = Rects(Idx).Right
-		      Else
-		        MinX = Min(MinX, Rects(Idx).Left)
-		        MaxX = Max(MaxX, Rects(Idx).Right)
-		      End If
-		    Next
-		    
-		    Var AvailableWidth As Integer = Self.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
-		    Var ItemsWidth As Integer = MaxX - MinX
-		    Var FlexWidth As Integer = AvailableWidth - ItemsWidth
-		    Var FlexItemWidth As Integer = Floor(FlexWidth / FlexSpaceIndexes.Count)
-		    Var FlexRemainder As Integer = AvailableWidth - (FlexItemWidth * FlexSpaceIndexes.Count)
-		    
-		    For FlexNum As Integer = 0 To FlexSpaceIndexes.LastIndex
-		      Var Idx As Integer = FlexSpaceIndexes(FlexNum)
-		      Var ItemWidth As Integer = FlexItemWidth + If(FlexNum < FlexRemainder, 1, 0)
-		      Rects(Idx) = New Rect(Rects(Idx).Left, Rects(Idx).Top, ItemWidth, Rects(Idx).Height)
-		      For ItemIdx As Integer = Idx + 1 To Rects.LastIndex
-		        Rects(ItemIdx).Offset(ItemWidth, 0)
-		      Next
-		    Next
-		  End If
-		  
-		  Self.mItemRects = Rects
-		  G.Bold = False
+		  Self.mItemRects = Self.ComputeRects(G)
 		  
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
@@ -228,7 +184,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
-		    Var ItemRect As Rect = Rects(Idx)
+		    Var ItemRect As Rect = Self.mItemRects(Idx)
 		    If Item Is Nil Or ItemRect Is Nil Then
 		      Continue
 		    End If
@@ -248,7 +204,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		    
 		    Var MouseHover, MouseDown As Boolean
-		    If Self.mMouseDown And Self.mMouseOverIndex = Idx Then
+		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx Then
 		      // Pressed
 		      MouseDown = True
 		      MouseHover = True
@@ -279,6 +235,118 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ComputeRects(G As Graphics) As Rect()
+		  Var UniquePriorities As New Dictionary
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
+		    UniquePriorities.Value(Self.mItems(Idx).Priority) = True
+		  Next
+		  Var Priorities() As Integer
+		  For Each Entry As DictionaryEntry In UniquePriorities
+		    Priorities.Add(Entry.Key)
+		  Next
+		  Var Fits As Boolean
+		  If Priorities.Count = 1 Then
+		    Return Self.ComputeRects(G, Priorities(0), Fits)
+		  End If
+		  Priorities.Sort
+		  
+		  For Idx As Integer = 0 To Priorities.LastIndex
+		    Var Priority As Integer = Priorities(Idx)
+		    Var Rects() As Rect = Self.ComputeRects(G, Priority, Fits)
+		    If Fits Or Idx = Priorities.LastIndex Then
+		      Return Rects
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ComputeRects(G As Graphics, MinPriority As Integer, ByRef Fits As Boolean) As Rect()
+		  // First, compute the rectangles for each item. It's ok to assume left alignment here,
+		  // as we'll apply an offset later.
+		  
+		  Const DefaultEdgePadding = 20
+		  
+		  Var NextPos As Double = 0
+		  Var Rects() As Rect
+		  Var FlexSpaceIndexes() As Integer
+		  Rects.ResizeTo(Self.mItems.LastIndex)
+		  G.Bold = True // Assume all are toggled for the sake of spacing
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
+		    Var Item As OmniBarItem = Self.mItems(Idx)
+		    If Item Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Item.Type = OmniBarItem.Types.FlexSpace Then
+		      FlexSpaceIndexes.Add(Idx)
+		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		    ElseIf Item.Priority < MinPriority Then
+		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		    Else
+		      Var ItemWidth As Double = Item.Width(G)
+		      Var Previousitem As OmniBarItem
+		      For PreviousIdx As Integer = Idx - 1 DownTo 0
+		        If Rects(PreviousIdx).Width > 0 Then
+		          PreviousItem = Self.mItems(PreviousIdx)
+		          Exit For PreviousIdx
+		        End If
+		      Next
+		      
+		      Var LeftMargin As Integer
+		      If PreviousItem Is Nil Then
+		        LeftMargin = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
+		      Else
+		        LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
+		      End If
+		      
+		      Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
+		      If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
+		        NextPos = Rects(Idx).Right
+		      End If
+		    End If
+		  Next
+		  
+		  If FlexSpaceIndexes.Count > 0 Then
+		    Var MinX, MaxX As Integer
+		    Var First As Boolean = True
+		    For Idx As Integer = 0 To Rects.LastIndex
+		      If Rects(Idx).Width = 0 Then
+		        Continue
+		      End If
+		      If First Then
+		        MinX = Rects(Idx).Left
+		        MaxX = Rects(Idx).Right
+		        First = False
+		      Else
+		        MinX = Min(MinX, Rects(Idx).Left)
+		        MaxX = Max(MaxX, Rects(Idx).Right)
+		      End If
+		    Next
+		    
+		    Var AvailableWidth As Integer = G.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
+		    Var ItemsWidth As Integer = MaxX - MinX
+		    Fits = (ItemsWidth <= AvailableWidth)
+		    Var FlexWidth As Integer = AvailableWidth - ItemsWidth
+		    Var FlexItemWidth As Integer = Max(Floor(FlexWidth / FlexSpaceIndexes.Count), 0)
+		    Var FlexRemainder As Integer = AvailableWidth - (FlexItemWidth * FlexSpaceIndexes.Count)
+		    
+		    For FlexNum As Integer = 0 To FlexSpaceIndexes.LastIndex
+		      Var Idx As Integer = FlexSpaceIndexes(FlexNum)
+		      Var ItemWidth As Integer = FlexItemWidth + If(FlexNum < FlexRemainder, 1, 0)
+		      Rects(Idx) = New Rect(Rects(Idx).Left, Rects(Idx).Top, ItemWidth, Rects(Idx).Height)
+		      For ItemIdx As Integer = Idx + 1 To Rects.LastIndex
+		        Rects(ItemIdx).Offset(ItemWidth, 0)
+		      Next
+		    Next
+		  End If
+		  
+		  G.Bold = False
+		  Return Rects
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -481,6 +549,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Hook, Flags = &h0
 		Event ShouldCloseItem(Item As OmniBarItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldResize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
 	#tag EndHook
 
 
