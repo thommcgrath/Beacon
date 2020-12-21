@@ -361,7 +361,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Item Sets Splitter Position", LootSourceEditor.ListMinWidth)
+			  Return mManager.IntegerValue("Item Sets Splitter Position", LootSourceEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -536,7 +536,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Sources Splitter Position", LootConfigEditor.ListMinWidth)
+			  Return mManager.IntegerValue("Sources Splitter Position", LootConfigEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter

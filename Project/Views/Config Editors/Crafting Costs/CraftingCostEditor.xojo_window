@@ -387,6 +387,8 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
 		  Select Case Item.Name
 		  Case "AddResourceButton"
 		    Self.ShowAddResources()

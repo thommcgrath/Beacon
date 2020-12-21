@@ -25,44 +25,6 @@ Begin ConfigEditor LootConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   702
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Sources"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   1
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -272,37 +234,6 @@ Begin ConfigEditor LootConfigEditor
          Width           =   451
       End
    End
-   Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -333,6 +264,40 @@ Begin ConfigEditor LootConfigEditor
       Top             =   415
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
       Width           =   250
    End
@@ -444,10 +409,13 @@ End
 		  If Initial Then
 		    Self.SetListWidth(Preferences.SourcesSplitterPosition, False)
 		  Else
-		    Self.SetListWidth(Self.Header.Width)
+		    Self.SetListWidth(Self.ConfigToolbar.Width)
 		  End If
 		  
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinEditorWidth
+		  Var Resizer As OmniBarItem = Self.ConfigToolbar.Item("Resizer")
+		  If (Resizer Is Nil) = False Then
+		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -601,6 +569,52 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub BuildQuickDropMenu(Menu As MenuItem)
+		  Var Data As LocalData = LocalData.SharedInstance
+		  Var Labels As Dictionary = Data.LootSourceLabels(Self.Document.MapCompatibility)
+		  Var LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
+		  Var HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(False)
+		  Var Mask As UInt64 = Self.Document.MapCompatibility
+		  If Config <> Nil Then
+		    For I As Integer = LootSources.LastIndex DownTo 0
+		      Var Source As Beacon.LootSource = LootSources(I)
+		      If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
+		        LootSources.RemoveAt(I)
+		        Continue For I
+		      End If
+		    Next
+		  End If
+		  
+		  If LootSources.LastIndex = -1 Then
+		    Var Warning As MenuItem
+		    If Mask = CType(0, UInt64) Then
+		      Warning = New MenuItem("List is empty because no maps have been selected.")
+		    Else
+		      Warning = New MenuItem("List is empty because all drops have been implemented.")
+		    End If
+		    Warning.Enabled = False
+		    Menu.AddMenu(Warning)
+		    Return
+		  End If
+		  
+		  Beacon.Sort(LootSources)
+		  
+		  For Each LootSource As Beacon.LootSource In LootSources
+		    Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.Path, LootSource.Label), LootSource))
+		  Next
+		  
+		  If HasExperimentalSources Then
+		    Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Var ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
+		    ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
+		    Menu.AddMenu(ExpItem)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootDrops
 		  Static ConfigName As String = BeaconConfigs.LootDrops.ConfigName
@@ -650,6 +664,27 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub HandleQuickDropMenu(ChosenItem As MenuItem)
+		  Var Tag As Variant = ChosenItem.Tag
+		  If Tag.IsNull Then
+		    Return
+		  End If
+		  
+		  If Tag.Type = Variant.TypeString Then
+		    Select Case Tag.StringValue
+		    Case "toggle_experimental"
+		      Preferences.ShowExperimentalLootSources = Not Preferences.ShowExperimentalLootSources
+		      Self.UpdateSourceList()
+		    End Select
+		  ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Beacon.LootSource Then
+		    Var Source As Beacon.LootSource = ChosenItem.Tag
+		    Self.AddLootSource(Source)
+		    Self.Focus = Self.List
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function MinEditorWidth() As Integer
 		  Return ListMinWidth + LootSourceEditor.MinEditorWidth + 1
@@ -687,10 +722,9 @@ End
 		    EditorWidth = AvailableSpace - ListWidth
 		  End If
 		  
-		  Self.Header.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.List.Width = ListWidth
-		  Self.FadedSeparator2.Width = ListWidth
 		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
@@ -779,7 +813,10 @@ End
 		    Panel.SelectedPanelIndex = 1
 		  End If
 		  
-		  Self.Header.Rebuild.Enabled = VisibleSources.LastIndex > -1
+		  Var RebuildButton As OmniBarItem = Self.ConfigToolbar.Item("RebuildButton")
+		  If (RebuildButton Is Nil) = False Then
+		    RebuildButton.Enabled = VisibleSources.LastIndex > -1
+		  End If
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
@@ -813,124 +850,15 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"345", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddSource", IconToolbarAdd)
-		  AddButton.HasMenu = True
-		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
-		  
-		  Var RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).LastRowIndex > -1)
-		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		  Me.RightItems.Append(RebuildButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Me.Width
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddSource"
-		    Self.ShowAddLootSource()
-		  Case "Duplicate"
-		    Self.ShowAddLootSource(True)
-		  Case "Rebuild"
-		    Self.RebuildAllItemSets()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSource"
-		    Var Data As LocalData = LocalData.SharedInstance
-		    Var Labels As Dictionary = Data.LootSourceLabels(Self.Document.MapCompatibility)
-		    Var LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
-		    Var HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
-		    Var Config As BeaconConfigs.LootDrops = Self.Config(False)
-		    Var Mask As UInt64 = Self.Document.MapCompatibility
-		    If Config <> Nil Then
-		      For I As Integer = LootSources.LastIndex DownTo 0
-		        Var Source As Beacon.LootSource = LootSources(I)
-		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
-		          LootSources.RemoveAt(I)
-		          Continue For I
-		        End If
-		      Next
-		    End If
-		    
-		    If LootSources.LastIndex = -1 Then
-		      Var Warning As MenuItem
-		      If Mask = CType(0, UInt64) Then
-		        Warning = New MenuItem("List is empty because no maps have been selected.")
-		      Else
-		        Warning = New MenuItem("List is empty because all drops have been implemented.")
-		      End If
-		      Warning.Enabled = False
-		      Menu.AddMenu(Warning)
-		      Return
-		    End If
-		    
-		    Beacon.Sort(LootSources)
-		    
-		    For Each LootSource As Beacon.LootSource In LootSources
-		      Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.Path, LootSource.Label), LootSource))
-		    Next
-		    
-		    If HasExperimentalSources Then
-		      Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		      
-		      Var ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
-		      ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
-		      Menu.AddMenu(ExpItem)
-		    End If
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSource"
-		    If ChosenItem = Nil Then
-		      Return
-		    End If
-		    
-		    Var Tag As Variant = ChosenItem.Tag
-		    If Tag = Nil Then
-		      Return
-		    End If
-		    
-		    If Tag.Type = Variant.TypeString Then
-		      Select Case Tag.StringValue
-		      Case "toggle_experimental"
-		        Preferences.ShowExperimentalLootSources = Not Preferences.ShowExperimentalLootSources
-		        Self.UpdateSourceList()
-		      End Select
-		    ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Beacon.LootSource Then
-		      Var Source As Beacon.LootSource = ChosenItem.Tag
-		      Self.AddLootSource(Source)
-		      Self.Focus = Self.List
-		    End If
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
@@ -1066,7 +994,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		  
 		  If Self.mBlockSelectionChanged Then
 		    Return
@@ -1137,6 +1068,61 @@ End
 	#tag Event
 		Function GetDocument() As Beacon.Document
 		  Return Self.Document
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddSourceButton", "New Drop", IconToolbarAddMenu, "Define an additional loot drop override. Hold to quickly add a source from a menu."))
+		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected loot drop.", False))
+		  Me.Append(OmniBarItem.CreateButton("RebuildButton", "Rebuild", IconToolbarRebuild, "Rebuild all item sets using their presets.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddSourceButton"
+		    Self.ShowAddLootSource()
+		  Case "DuplicateButton"
+		    Self.ShowAddLootSource(True)
+		  Case "RebuildButton"
+		    Self.RebuildAllItemSets()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Var NewWidth As Integer = Me.Width + DeltaX
+		  Self.SetListWidth(NewWidth)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+		  Select Case Item.Name
+		  Case "AddSourceButton"
+		    Var Base As New MenuItem
+		    Self.BuildQuickDropMenu(Base)
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Call Self.HandleQuickDropMenu(Choice)
+		    End If
+		    Return True
+		  End Select
 		End Function
 	#tag EndEvent
 #tag EndEvents

@@ -1,6 +1,6 @@
 #tag Interface
 Protected Interface LootSource
-Implements  Beacon.DocumentItem, Beacon.NamedItem
+Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function AppendMode() As Boolean
 		  

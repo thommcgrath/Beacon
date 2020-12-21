@@ -85,44 +85,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Item Sets"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   1
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin PagePanel Panel
       AutoDeactivate  =   True
       Enabled         =   True
@@ -301,37 +263,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
-   Begin FadedSeparator FadedSeparator3
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin LootSourceSettingsContainer SettingsContainer
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -424,6 +355,40 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
@@ -446,11 +411,14 @@ End
 		    
 		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition, False)
 		  Else
-		    Self.SetListWidth(Self.Header.Width)
+		    Self.SetListWidth(Self.ConfigToolbar.Width)
 		  End If
 		  
 		  Self.mSavePositions = True
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinEditorWidth
+		  Var Resizer As OmniBarItem = Self.ConfigToolbar.Item("Resizer")
+		  If (Resizer Is Nil) = False Then
+		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -745,13 +713,12 @@ End
 		    EditorWidth = AvailableSpace - ListWidth
 		  End If
 		  
-		  Self.Header.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.HintsContainer.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.SetList.Width = ListWidth
 		  Self.Simulator.Width = ListWidth
 		  Self.SettingsContainer.Width = ListWidth
-		  Self.FadedSeparator3.Width = ListWidth
 		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
@@ -794,6 +761,11 @@ End
 		  End If
 		  
 		  Preferences.SimulatorVisible = Value
+		  
+		  Var SimulatorButton As OmniBarItem = Self.ConfigToolbar.Item("SimulatorButton")
+		  If (SimulatorButton Is Nil) = False Then
+		    SimulatorButton.Toggled = Value
+		  End If
 		  
 		  Var NewPosition As Integer
 		  If Value Then
@@ -952,11 +924,16 @@ End
 		  Self.SetList.Sort
 		  Self.SetList.SelectionChangeBlocked = False
 		  
+		  Var SimulatorButton As OmniBarItem = Self.ConfigToolbar.Item("SimulatorButton")
 		  If Self.mSources.LastIndex = 0 Then
-		    Self.Header.Simulate.Enabled = True
+		    If (SimulatorButton Is Nil) = False Then
+		      SimulatorButton.Enabled = True
+		    End If
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  Else
-		    Self.Header.Simulate.Enabled = False
+		    If (SimulatorButton Is Nil) = False Then
+		      SimulatorButton.Enabled = False
+		    End If
 		    Self.Simulator.Clear()
 		  End If
 		End Sub
@@ -1014,6 +991,9 @@ End
 
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.itemset", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
@@ -1358,55 +1338,6 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
-		  AddButton.HasMenu = True
-		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
-		  
-		  Var SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
-		  SimulateButton.Enabled = False
-		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.RightItems.Append(SimulateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddSet"
-		    Self.AddSet(New Beacon.ItemSet)
-		  Case "Simulate"
-		    Self.SimulatorVisible = True
-		    Self.Simulator.Simulate(Self.mSources(0))
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSet"
-		    Self.BuildPresetMenu(Menu)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSet"
-		    Call Self.HandlePresetMenu(ChosenItem)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Self.Header.Width
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Editor
 	#tag Event
 		Sub Updated()
@@ -1506,6 +1437,63 @@ End
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  End If
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Sets"))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddSetButton", "New Item Set", IconToolbarAddMenu, "Add a new empty item set. Hold to add a preset from a menu."))
+		  Me.Append(OmniBarItem.CreateButton("SimulatorButton", "Simulator", IconToolbarSimulate, "Simulate loot selection for this loot source.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddSetButton"
+		    Self.AddSet(New Beacon.ItemSet)
+		  Case "SimulatorButton"
+		    If Self.SimulatorVisible Then
+		      Self.SimulatorVisible = False
+		    Else
+		      Self.Simulator.Simulate(Self.mSources(0))
+		      Self.SimulatorVisible = True
+		    End If
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Var NewWidth As Integer = Me.Width + DeltaX
+		  Self.SetListWidth(NewWidth)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+		  Select Case Item.Name
+		  Case "AddSetButton"
+		    Var Base As New MenuItem
+		    Self.BuildPresetMenu(Base)
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Call Self.HandlePresetMenu(Choice)
+		    End If
+		    Return True
+		  End Select
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

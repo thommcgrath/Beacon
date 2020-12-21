@@ -8,7 +8,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
-   Height          =   680
+   Height          =   820
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
@@ -26,7 +26,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
    SystemUIVisible =   "True"
    Title           =   "Beacon"
    Visible         =   True
-   Width           =   1200
+   Width           =   1420
    Begin OmniBar NavBar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -59,12 +59,12 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   1200
+      Width           =   1420
    End
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   642
+      Height          =   782
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -83,11 +83,11 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   1200
+      Width           =   1420
       Begin HTMLViewer HelpViewer
          AllowAutoDeactivate=   True
          Enabled         =   True
-         Height          =   642
+         Height          =   782
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
@@ -104,7 +104,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Tooltip         =   ""
          Top             =   38
          Visible         =   True
-         Width           =   1200
+         Width           =   1420
       End
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
@@ -116,7 +116,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   642
+         Height          =   782
          HelpTag         =   ""
          InitialParent   =   "Pages"
          IsFrontmost     =   False
@@ -139,7 +139,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewIcon        =   0
          ViewTitle       =   "Home"
          Visible         =   True
-         Width           =   899
+         Width           =   1119
       End
       Begin BlueprintsComponent BlueprintsComponent1
          AllowAutoDeactivate=   True
@@ -152,7 +152,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   642
+         Height          =   782
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -174,7 +174,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewIcon        =   0
          ViewTitle       =   "Blueprints"
          Visible         =   True
-         Width           =   1200
+         Width           =   1420
       End
       Begin DocumentsComponent DocumentsComponent1
          AllowAutoDeactivate=   True
@@ -187,7 +187,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   642
+         Height          =   782
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -209,7 +209,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewIcon        =   0
          ViewTitle       =   "Projects"
          Visible         =   True
-         Width           =   1200
+         Width           =   1420
       End
       Begin PresetsComponent PresetsComponent1
          AllowAutoDeactivate=   True
@@ -222,7 +222,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   642
+         Height          =   782
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -244,7 +244,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ViewIcon        =   0
          ViewTitle       =   ""
          Visible         =   True
-         Width           =   1200
+         Width           =   1420
       End
       Begin NewsPane NotificationsPane1
          AllowAutoDeactivate=   True
@@ -257,10 +257,10 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   642
+         Height          =   782
          InitialParent   =   "Pages"
          IsFrontmost     =   False
-         Left            =   900
+         Left            =   1120
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -290,10 +290,10 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
-         Height          =   642
+         Height          =   782
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   899
+         Left            =   1119
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False

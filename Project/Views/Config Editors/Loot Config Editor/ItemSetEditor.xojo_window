@@ -85,75 +85,6 @@ Begin BeaconContainer ItemSetEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Item Set Contents"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   ""
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
    Begin ItemSetSettingsContainer Settings
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -213,6 +144,37 @@ Begin BeaconContainer ItemSetEditor
       Top             =   407
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin OmniBar EditorToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
       Width           =   560
    End
@@ -674,7 +636,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.EditEntry.Enabled = Me.CanEdit
+		  Var EditButton As OmniBarItem = Self.EditorToolbar.Item("EditEntryButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.CanEdit
+		  End If
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -729,40 +694,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEntry"
-		    Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
-		    If Entries = Nil Then
-		      Return
-		    End If
-		    
-		    For Each Entry As Beacon.SetEntry In Entries
-		      Self.mSet.Append(Entry)
-		    Next
-		    
-		    Self.UpdateEntryList(Entries)
-		    RaiseEvent Updated
-		  Case "EditEntry"
-		    Self.EditSelectedEntries()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEntry", IconToolbarAdd)
-		  AddButton.HelpTag = "Add engrams to this item set."
-		  
-		  Var EditButton As New BeaconToolbarItem("EditEntry", IconToolbarEdit, False)
-		  EditButton.HelpTag = "Edit the selected entries."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(EditButton)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Settings
 	#tag Event
 		Sub Resized()
@@ -779,6 +710,41 @@ End
 	#tag Event
 		Sub SettingsChanged()
 		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditorToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEntryButton"
+		    Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
+		    If Entries = Nil Then
+		      Return
+		    End If
+		    
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Self.mSet.Append(Entry)
+		    Next
+		    
+		    Self.UpdateEntryList(Entries)
+		    RaiseEvent Updated
+		  Case "EditEntryButton"
+		    Self.EditSelectedEntries()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Set Entries"))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddEntryButton", "New Entry", IconToolbarAdd, "Add engrams to this item set."))
+		  Me.Append(OmniBarItem.CreateButton("EditEntryButton", "Edit", IconToolbarEdit, "Edit the selected entries.", False))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -21,7 +21,18 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Self.mMouseDownPoint = New Point(X, Y)
 		  Self.mMouseDownIndex = Self.IndexAtPoint(Self.mMouseDownPoint)
 		  Self.mMouseOverIndex = Self.mMouseDownIndex
+		  Self.mMouseHeld = False
+		  Self.mUsedLongAction = False
 		  Self.Invalidate(Self.mMouseDownIndex)
+		  
+		  If Self.mMouseDownIndex > -1 Then
+		    Self.mHoldTimer.Reset
+		    Self.mHoldTimer.RunMode = Timer.RunModes.Single
+		    
+		    If Self.mItems(Self.mMouseDownIndex).IsResizer Then
+		      RaiseEvent ResizeStarted(Self.mItems(Self.mMouseDownIndex))
+		    End If
+		  End If
 		  
 		  Return True
 		End Function
@@ -29,7 +40,8 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  If Not Self.mMouseDown Then
+		  If Self.mMouseDown = False Or ((Self.mMousePoint Is Nil) = False And Self.mMousePoint.X = X And Self.mMousePoint.Y = Y) Then
+		    // Don't act if we're not tracking mouse events OR if the cursor has not moved
 		    Return
 		  End If
 		  
@@ -40,7 +52,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Var DeltaY As Integer = Self.mMousePoint.Y - Self.mMouseDownPoint.Y
 		    If DeltaX <> 0 Or DeltaY <> 0 Then
 		      Var OriginalRect As New Rect(Self.Left, Self.Top, Self.Width, Self.Height)
-		      RaiseEvent ShouldResize(Self.mItems(Self.mMouseDownIndex), DeltaX, DeltaY)
+		      RaiseEvent Resize(Self.mItems(Self.mMouseDownIndex), DeltaX, DeltaY)
 		      Var ChangedRect As New Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 		      If OriginalRect.Left <> ChangedRect.Left Or OriginalRect.Top <> ChangedRect.Top Or OriginalRect.Width <> ChangedRect.Width Or OriginalRect.Height <> ChangedRect.Height Then
 		        // Determine how the button has moved
@@ -64,9 +76,24 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Self.Invalidate(OldRect.Left, OldRect.Top, OldRect.Width, OldRect.Height)
 		  End If
 		  
-		  If Self.mMouseOverIndex > -1 Then
+		  If Self.mMouseOverIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
 		    Var OverRect As Rect = Self.mItemRects(Self.mMouseOverIndex)
 		    Self.Invalidate(OverRect.Left, OverRect.Top, OverRect.Width, OverRect.Height)
+		  End If
+		  
+		  If Self.mMouseDownIndex > -1 Then
+		    Var DownRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		    If (DownRect Is Nil) = False Then
+		      If DownRect.Contains(Self.mMousePoint) Then
+		        If Not Self.mMouseHeld Then
+		          Self.mHoldTimer.Reset
+		          Self.mHoldTimer.RunMode = Timer.RunModes.Single
+		        End If
+		      Else
+		        Self.mHoldTimer.Reset
+		        Self.mHoldTimer.RunMode = Timer.RunModes.Off
+		      End If
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -139,8 +166,13 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  End If
 		  
 		  Self.mMousePoint = New Point(X, Y)
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  
-		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
+		  If Self.mMouseDownIndex > -1 And Self.mItems(Self.mMouseDownIndex).IsResizer Then
+		    RaiseEvent ResizeFinished(Self.mItems(Self.mMouseDownIndex))
+		  End If
+		  
+		  If Self.mMouseDownIndex > -1 And Self.mUsedLongAction = False And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
 		    Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
 		    Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		    Var FirePressed As Boolean = True
@@ -163,6 +195,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  Self.mMouseDown = False
 		  Self.mMouseDownIndex = -1
+		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
 		  Self.Invalidate
 		End Sub
@@ -208,7 +241,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      // Pressed
 		      MouseDown = True
 		      MouseHover = True
-		    ElseIf Self.mMouseOverIndex = Idx Then
+		    ElseIf Self.mMouseOverIndex = Idx And Item.Enabled Then
 		      // Hover
 		      MouseHover = True
 		    End If
@@ -310,26 +343,27 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		  Next
 		  
+		  Var MinX, MaxX As Integer
+		  Var First As Boolean = True
+		  For Idx As Integer = 0 To Rects.LastIndex
+		    If Rects(Idx).Width = 0 Then
+		      Continue
+		    End If
+		    If First Then
+		      MinX = Rects(Idx).Left
+		      MaxX = Rects(Idx).Right
+		      First = False
+		    Else
+		      MinX = Min(MinX, Rects(Idx).Left)
+		      MaxX = Max(MaxX, Rects(Idx).Right)
+		    End If
+		  Next
+		  
+		  Var AvailableWidth As Integer = G.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
+		  Var ItemsWidth As Integer = MaxX - MinX
+		  Fits = (ItemsWidth <= AvailableWidth)
+		  
 		  If FlexSpaceIndexes.Count > 0 Then
-		    Var MinX, MaxX As Integer
-		    Var First As Boolean = True
-		    For Idx As Integer = 0 To Rects.LastIndex
-		      If Rects(Idx).Width = 0 Then
-		        Continue
-		      End If
-		      If First Then
-		        MinX = Rects(Idx).Left
-		        MaxX = Rects(Idx).Right
-		        First = False
-		      Else
-		        MinX = Min(MinX, Rects(Idx).Left)
-		        MaxX = Max(MaxX, Rects(Idx).Right)
-		      End If
-		    Next
-		    
-		    Var AvailableWidth As Integer = G.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
-		    Var ItemsWidth As Integer = MaxX - MinX
-		    Fits = (ItemsWidth <= AvailableWidth)
 		    Var FlexWidth As Integer = AvailableWidth - ItemsWidth
 		    Var FlexItemWidth As Integer = Max(Floor(FlexWidth / FlexSpaceIndexes.Count), 0)
 		    Var FlexRemainder As Integer = AvailableWidth - (FlexItemWidth * FlexSpaceIndexes.Count)
@@ -352,6 +386,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
+		  
+		  Self.mHoldTimer = New Timer
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
+		  Self.mHoldTimer.Period = 250
+		  AddHandler Self.mHoldTimer.Action, WeakAddressOf Self.mHoldTimer_Action
 		  
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
@@ -469,6 +508,27 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mHoldTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  If Self.mMouseHeld Or Self.mMouseDownIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
+		  Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		  Self.mMouseHeld = True
+		  
+		  Var InsetRect As Rect = ItemRect
+		  If (Item.InsetRect Is Nil) = False Then
+		    InsetRect = New Rect(ItemRect.Left + Item.InsetRect.Left, ItemRect.Top + Item.InsetRect.Top, Min(ItemRect.Width, Item.InsetRect.Width), Min(ItemRect.Height, Item.InsetRect.Height))
+		  End If
+		  
+		  Self.mUsedLongAction = RaiseEvent ItemHeld(Item, InsetRect)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
@@ -544,15 +604,27 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 
 	#tag Hook, Flags = &h0
+		Event ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldCloseItem(Item As OmniBarItem)
+		Event Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldResize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		Event ResizeFinished(DraggedResizer As OmniBarItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ResizeStarted(DraggedResizer As OmniBarItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldCloseItem(Item As OmniBarItem)
 	#tag EndHook
 
 
@@ -599,6 +671,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHoldTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mItemRects() As Rect
 	#tag EndProperty
 
@@ -623,6 +699,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMouseHeld As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMouseOverIndex As Integer = -1
 	#tag EndProperty
 
@@ -632,6 +712,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mRightPadding As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsedLongAction As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

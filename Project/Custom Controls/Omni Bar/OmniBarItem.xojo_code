@@ -117,18 +117,6 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateMenu(Name As String, Caption As String, Icon As Picture, HelpTag As String, Enabled As Boolean = True) As OmniBarItem
-		  Var Item As OmniBarItem = CreateButton(Name, Caption, Icon, HelpTag, Enabled)
-		  #if DebugBuild
-		    #Pragma Warning "Set the menu"
-		  #else
-		    #Pragma Error "Set the menu"
-		  #endif
-		  Return Item
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function CreateResizer(Name As String, Vertical As Boolean) As OmniBarItem
 		  If Name.IsEmpty Then
 		    Name = EncodeHex(Crypto.GenerateRandomBytes(3)).Lowercase
