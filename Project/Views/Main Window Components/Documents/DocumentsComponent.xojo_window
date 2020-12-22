@@ -203,11 +203,17 @@ End
 	#tag Event
 		Sub PageChanged(OldIndex As Integer, NewIndex As Integer)
 		  If OldIndex > -1 Then
-		    Self.Nav.Item(OldIndex).Toggled = False
+		    Var Page As BeaconSubview = Self.Page(OldIndex)
+		    If (Page Is Nil) = False And (Page.LinkedOmniBarItem Is Nil) = False Then
+		      Page.LinkedOmniBarItem.Toggled = False
+		    End If
 		  End If
 		  
 		  If NewIndex > -1 Then
-		    Self.Nav.Item(NewIndex).Toggled = True
+		    Var Page As BeaconSubview = Self.Page(NewIndex)
+		    If (Page Is Nil) = False And (Page.LinkedOmniBarItem Is Nil) = False Then
+		      Page.LinkedOmniBarItem.Toggled = True
+		    End If
 		  End If
 		  
 		  Self.Views.SelectedPanelIndex = NewIndex
