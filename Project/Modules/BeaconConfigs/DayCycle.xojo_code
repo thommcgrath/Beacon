@@ -49,8 +49,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "DayCycle"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameDayCycle
 		End Function
 	#tag EndMethod
 

@@ -426,8 +426,8 @@ End
 		Sub Run()
 		  Var Config As BeaconConfigs.EngramControl
 		  Var AddWhenFinished As Boolean
-		  If Self.mDocument.HasConfigGroup(BeaconConfigs.EngramControl.ConfigName) Then
-		    Config = BeaconConfigs.EngramControl(Self.mDocument.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False))
+		  If Self.mDocument.HasConfigGroup(BeaconConfigs.NameEngramControl) Then
+		    Config = BeaconConfigs.EngramControl(Self.mDocument.ConfigGroup(BeaconConfigs.NameEngramControl, False))
 		  Else
 		    Config = New BeaconConfigs.EngramControl
 		    AddWhenFinished = True
@@ -516,8 +516,8 @@ End
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexGrantExactPoints
 		    Var PlayerLevelCap As Integer = LocalData.SharedInstance.OfficialPlayerLevelData.MaxLevel
-		    If Self.mDocument.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
-		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName, False))
+		    If Self.mDocument.HasConfigGroup(BeaconConfigs.NameExperienceCurves) Then
+		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.NameExperienceCurves, False))
 		      If ExperienceConfig <> Nil Then
 		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
 		      End If

@@ -13,26 +13,9 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function ConfigName() As String
-		  If Self.mConfigName.IsEmpty Then
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
-		    Var Methods() As Introspection.MethodInfo = Info.GetMethods
-		    Var Found As Boolean
-		    For Each Signature As Introspection.MethodInfo In Methods
-		      If Signature.IsShared And Signature.Name = "ConfigName" And Signature.GetParameters.LastIndex = -1 And Signature.ReturnType.Name = "String" Then
-		        Self.mConfigName = Signature.Invoke(Self)
-		        Found = True
-		        Exit
-		      End If
-		    Next
-		    
-		    If Not Found Then
-		      Var Err As New UnsupportedOperationException
-		      Err.Message = "Class " + Info.FullName + " is missing its ConfigName() As String shared method."
-		      Raise Err
-		    End If
-		  End If
-		  
-		  Return Self.mConfigName
+		  Var Err As New UnsupportedOperationException
+		  Err.Message = "ConfigGroup.ConfigName was not overridden"
+		  Raise Err
 		End Function
 	#tag EndMethod
 
@@ -231,10 +214,6 @@ Protected Class ConfigGroup
 		#tag EndSetter
 		IsImplicit As Boolean
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mConfigName As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIsImplicit As Boolean

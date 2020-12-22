@@ -131,7 +131,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameExperienceCurves)
 		End Sub
 	#tag EndEvent
 
@@ -161,7 +161,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.ExperienceCurves
-		  Static ConfigName As String = BeaconConfigs.ExperienceCurves.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameExperienceCurves
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.ExperienceCurves
@@ -186,7 +186,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.ExperienceCurves.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameExperienceCurves)
 		End Function
 	#tag EndMethod
 

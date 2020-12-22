@@ -1,5 +1,5 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class StackSizes
+Protected Class StackSizes
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
@@ -101,8 +101,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "StackSizes"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameStackSizes
 		End Function
 	#tag EndMethod
 

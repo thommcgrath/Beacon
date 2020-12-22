@@ -138,11 +138,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameDinoAdjustments) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
+		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.NameDinoAdjustments))
 		  If OtherConfig = Nil Then
 		    Return True
 		  End If
@@ -162,7 +162,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameDinoAdjustments)
 		End Sub
 	#tag EndEvent
 
@@ -191,7 +191,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DinoAdjustments
-		  Static ConfigName As String = BeaconConfigs.DinoAdjustments.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameDinoAdjustments
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.DinoAdjustments
@@ -216,7 +216,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.DinoAdjustments.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameDinoAdjustments)
 		End Function
 	#tag EndMethod
 

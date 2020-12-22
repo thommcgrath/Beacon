@@ -1,5 +1,5 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class CraftingCosts
+Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
@@ -85,8 +85,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return ConfigKey
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameCraftingCosts
 		End Function
 	#tag EndMethod
 
@@ -245,10 +245,6 @@ Inherits Beacon.ConfigGroup
 	#tag Property, Flags = &h21
 		Private mCosts As Dictionary
 	#tag EndProperty
-
-
-	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"CraftingCosts", Scope = Private
-	#tag EndConstant
 
 
 	#tag ViewBehavior

@@ -128,8 +128,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "StatLimits"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameStatLimits
 		End Function
 	#tag EndMethod
 

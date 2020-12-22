@@ -1,5 +1,5 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class EngramControl
+Protected Class EngramControl
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
@@ -293,8 +293,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return ConfigKey
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameEngramControl
 		End Function
 	#tag EndMethod
 
@@ -806,9 +806,6 @@ Inherits Beacon.ConfigGroup
 		OnlyAllowSpecifiedEngrams As Boolean
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"EngramControl", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = KeyAutoUnlockLevel, Type = String, Dynamic = False, Default = \"Auto Unlock Level", Scope = Private
 	#tag EndConstant

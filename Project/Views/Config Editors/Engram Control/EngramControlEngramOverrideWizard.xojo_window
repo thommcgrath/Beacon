@@ -768,7 +768,7 @@ End
 		  Self.mEngrams = Engrams
 		  Self.mSettingUp = True
 		  
-		  Var Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False)
+		  Var Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.NameEngramControl, False)
 		  If Config = Nil Then
 		    Self.mConfig = New BeaconConfigs.EngramControl
 		    Self.mAddConfigGroup = True

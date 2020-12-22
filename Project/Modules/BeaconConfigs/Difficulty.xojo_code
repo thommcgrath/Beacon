@@ -43,8 +43,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "Difficulty"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameDifficulty
 		End Function
 	#tag EndMethod
 

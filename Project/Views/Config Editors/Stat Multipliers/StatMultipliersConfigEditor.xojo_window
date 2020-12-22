@@ -2871,7 +2871,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatMultipliers.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStatMultipliers)
 		End Sub
 	#tag EndEvent
 
@@ -2894,7 +2894,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatMultipliers
-		  Static ConfigName As String = BeaconConfigs.StatMultipliers.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameStatMultipliers
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.StatMultipliers
@@ -2919,7 +2919,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.StatMultipliers.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameStatMultipliers)
 		End Function
 	#tag EndMethod
 

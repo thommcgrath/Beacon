@@ -1506,7 +1506,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.BreedingMultipliers.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameBreedingMultipliers)
 		End Sub
 	#tag EndEvent
 
@@ -1539,7 +1539,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
-		  Static ConfigName As String = BeaconConfigs.BreedingMultipliers.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameBreedingMultipliers
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.BreedingMultipliers
@@ -1564,7 +1564,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.BreedingMultipliers.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameBreedingMultipliers)
 		End Function
 	#tag EndMethod
 

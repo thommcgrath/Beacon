@@ -469,8 +469,8 @@ End
 		  Self.mDefinedSpawns = New Dictionary
 		  Self.mUIMode = UIMode
 		  
-		  If Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName) Then
-		    Var Config As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, False))
+		  If Document.HasConfigGroup(BeaconConfigs.NameSpawnPoints) Then
+		    Var Config As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.NameSpawnPoints, False))
 		    If Config <> Nil Then
 		      Var SpawnPoints() As Beacon.SpawnPoint = Config.All
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints

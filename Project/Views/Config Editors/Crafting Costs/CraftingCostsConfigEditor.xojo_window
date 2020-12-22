@@ -359,11 +359,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.CraftingCosts.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameCraftingCosts) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.CraftingCosts.ConfigName))
+		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.NameCraftingCosts))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return True
 		  End If
@@ -393,7 +393,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.CraftingCosts.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCraftingCosts)
 		End Sub
 	#tag EndEvent
 
@@ -472,7 +472,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
-		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameCraftingCosts
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.CraftingCosts
@@ -497,7 +497,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.CraftingCosts.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameCraftingCosts)
 		End Function
 	#tag EndMethod
 
@@ -775,7 +775,7 @@ End
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
 		  
-		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.CraftingCosts.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.NameCraftingCosts, App.IdentityManager.CurrentIdentity.OmniVersion) Then
 		    Return
 		  End If
 		  

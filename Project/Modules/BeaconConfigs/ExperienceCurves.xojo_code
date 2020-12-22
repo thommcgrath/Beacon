@@ -1,11 +1,11 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class ExperienceCurves
+Protected Class ExperienceCurves
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 		  #Pragma Unused Document
 		  
-		  Var ConfigName As String = ConfigKey
+		  Var ConfigName As String = Self.ConfigName
 		  Var Locale As Locale = Locale.Current
 		  
 		  If Self.mPlayerLevels.LastIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
@@ -189,8 +189,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return ConfigKey
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameExperienceCurves
 		End Function
 	#tag EndMethod
 
@@ -521,9 +521,6 @@ Inherits Beacon.ConfigGroup
 		PlayerSoftLevelCap As Integer
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"ExperienceCurves", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"2147483647", Scope = Public
 	#tag EndConstant

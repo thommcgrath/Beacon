@@ -757,8 +757,8 @@ End
 		    Var Editors() As DocumentEditorView = Win.DocumentEditors
 		    For Each View As DocumentEditorView In Editors
 		      Var Document As Beacon.Document = View.Document
-		      If Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
-		        Var Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		      If Document.HasConfigGroup(BeaconConfigs.NameLootDrops) Then
+		        Var Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.NameLootDrops))
 		        Var Sources As Beacon.LootSourceCollection = Config.DefinedSources
 		        Var SourcesBound As Integer = Sources.LastRowIndex
 		        For X As Integer = 0 To SourcesBound

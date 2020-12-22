@@ -57,8 +57,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "LootScale"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameLootScale
 		End Function
 	#tag EndMethod
 

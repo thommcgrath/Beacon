@@ -79,8 +79,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "BreedingMultipliers"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameBreedingMultipliers
 		End Function
 	#tag EndMethod
 

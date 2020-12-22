@@ -771,7 +771,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatLimits.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStatLimits)
 		End Sub
 	#tag EndEvent
 
@@ -841,7 +841,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatLimits
-		  Static ConfigName As String = BeaconConfigs.StatLimits.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameStatLimits
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.StatLimits
@@ -866,7 +866,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.StatLimits.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameStatLimits)
 		End Function
 	#tag EndMethod
 

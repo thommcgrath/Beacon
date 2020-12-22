@@ -142,7 +142,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootScale.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootScale)
 		End Sub
 	#tag EndEvent
 
@@ -157,7 +157,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootScale
-		  Static ConfigName As String = BeaconConfigs.LootScale.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameLootScale
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.LootScale
@@ -182,7 +182,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.LootScale.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameLootScale)
 		End Function
 	#tag EndMethod
 

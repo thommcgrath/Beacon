@@ -4,7 +4,7 @@ Inherits Beacon.ConfigGroup
 Implements Iterable
 	#tag Event
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
-		  Var ConfigName As String = ConfigKey
+		  Var ConfigName As String = Self.ConfigName()
 		  Var Cache As New Dictionary
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
@@ -205,8 +205,8 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return ConfigKey
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameLootDrops
 		End Function
 	#tag EndMethod
 
@@ -488,9 +488,6 @@ Implements Iterable
 		Private mSources() As Beacon.LootSource
 	#tag EndProperty
 
-
-	#tag Constant, Name = ConfigKey, Type = String, Dynamic = False, Default = \"LootDrops", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = ConfigOverrideSupplyCrateItems, Type = String, Dynamic = True, Default = \"ConfigOverrideSupplyCrateItems", Scope = Private
 	#tag EndConstant

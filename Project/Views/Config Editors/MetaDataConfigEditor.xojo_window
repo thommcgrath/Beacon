@@ -323,7 +323,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameMetadata)
 		  Self.Document.Mods.ResizeTo(-1)
 		End Sub
 	#tag EndEvent
@@ -349,7 +349,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameMetadata)
 		End Function
 	#tag EndMethod
 

@@ -334,11 +334,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameSpawnPoints) = False Then
 		    Return True
 		  End If
 		  
-		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName))
+		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.NameSpawnPoints))
 		  If ParsedConfig = Nil Or ParsedConfig.Count = 0 Then
 		    Self.ShowAlert("No spawn points to import", "The parsed ini content did not contain any spawn point data.")
 		    Return True
@@ -363,7 +363,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.SpawnPoints.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameSpawnPoints)
 		End Sub
 	#tag EndEvent
 
@@ -400,7 +400,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.SpawnPoints
-		  Static ConfigName As String = BeaconConfigs.SpawnPoints.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameSpawnPoints
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.SpawnPoints
@@ -425,7 +425,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.SpawnPoints.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameSpawnPoints)
 		End Function
 	#tag EndMethod
 
@@ -681,7 +681,7 @@ End
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(SaveData, False)
 		  
-		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.SpawnPoints.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.NameSpawnPoints, App.IdentityManager.CurrentIdentity.OmniVersion) Then
 		    Return
 		  End If
 		  

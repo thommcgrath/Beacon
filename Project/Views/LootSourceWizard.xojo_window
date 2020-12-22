@@ -1355,7 +1355,7 @@ End
 		  
 		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
 		  If Maps.LastIndex = -1 Then
-		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName) + """ to select ""Maps"" and choose tha maps for this file.")
+		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.NameLootDrops) + """ to select ""Maps"" and choose tha maps for this file.")
 		    Return False
 		  End If
 		  

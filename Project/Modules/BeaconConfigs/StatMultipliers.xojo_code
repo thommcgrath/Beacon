@@ -112,8 +112,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "StatMultipliers"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameStatMultipliers
 		End Function
 	#tag EndMethod
 

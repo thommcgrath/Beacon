@@ -635,11 +635,11 @@ End
 		    Self.mImportProgress = Nil
 		  End If
 		  
-		  If Not Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
+		  If Not Document.HasConfigGroup(BeaconConfigs.NameLootDrops) Then
 		    Return
 		  End If
 		  
-		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.NameLootDrops))
 		  Var NewItemSets() As Beacon.ItemSet
 		  For Each SourceDrop As Beacon.LootSource In Drops
 		    For Each ItemSet As Beacon.ItemSet In SourceDrop.ItemSets

@@ -4,22 +4,22 @@ Protected Module BeaconConfigs
 		Protected Function AllConfigNames(Human As Boolean = False) As String()
 		  Static Names() As String
 		  If Names.LastIndex = -1 Then
-		    Names.Add(BeaconConfigs.Difficulty.ConfigName)
-		    Names.Add(BeaconConfigs.LootDrops.ConfigName)
-		    Names.Add(BeaconConfigs.LootScale.ConfigName)
-		    Names.Add(BeaconConfigs.Metadata.ConfigName)
-		    Names.Add(BeaconConfigs.ExperienceCurves.ConfigName)
-		    Names.Add(BeaconConfigs.CustomContent.ConfigName)
-		    Names.Add(BeaconConfigs.CraftingCosts.ConfigName)
-		    Names.Add(BeaconConfigs.StackSizes.ConfigName)
-		    Names.Add(BeaconConfigs.BreedingMultipliers.ConfigName)
-		    Names.Add(BeaconConfigs.HarvestRates.ConfigName)
-		    Names.Add(BeaconConfigs.DinoAdjustments.ConfigName)
-		    Names.Add(BeaconConfigs.StatMultipliers.ConfigName)
-		    Names.Add(BeaconConfigs.DayCycle.ConfigName)
-		    Names.Add(BeaconConfigs.SpawnPoints.ConfigName)
-		    Names.Add(BeaconConfigs.StatLimits.ConfigName)
-		    Names.Add(BeaconConfigs.EngramControl.ConfigName)
+		    Names.Add(NameDifficulty)
+		    Names.Add(NameLootDrops)
+		    Names.Add(NameLootScale)
+		    Names.Add(NameMetadata)
+		    Names.Add(NameExperienceCurves)
+		    Names.Add(NameCustomContent)
+		    Names.Add(NameCraftingCosts)
+		    Names.Add(NameStackSizes)
+		    Names.Add(NameBreedingMultipliers)
+		    Names.Add(NameHarvestRates)
+		    Names.Add(NameDinoAdjustments)
+		    Names.Add(NameStatMultipliers)
+		    Names.Add(NameDayCycle)
+		    Names.Add(NameSpawnPoints)
+		    Names.Add(NameStatLimits)
+		    Names.Add(NameEngramControl)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -45,117 +45,142 @@ Protected Module BeaconConfigs
 
 	#tag Method, Flags = &h1
 		Protected Function ConfigPurchased(ConfigName As String, PurchasedVersion As Integer) As Boolean
-		  Var Info As Introspection.TypeInfo = TypeInfoForConfigName(ConfigName)
-		  If Info = Nil Then
-		    Return True
-		  End If
+		  Var RequiredVersion As Integer = 0
+		  Select Case ConfigName
+		  Case NameCraftingCosts, NameDinoAdjustments, NameEngramControl, NameExperienceCurves, NameHarvestRates, NameSpawnPoints, NameStackSizes
+		    RequiredVersion = 1
+		  End Select
 		  
-		  Var ConfigAttributes() As Introspection.AttributeInfo = Info.GetAttributes
-		  For Each ConfigAttribute As Introspection.AttributeInfo In ConfigAttributes
-		    If ConfigAttribute.Name <> "OmniVersion" Then
-		      Continue
-		    End If
-		    
-		    Var AttributeValue As Variant = ConfigAttribute.Value
-		    Var RequiredVersion As Integer
-		    Select Case AttributeValue.Type
-		    Case Variant.TypeInt32
-		      RequiredVersion = AttributeValue.Int32Value
-		    Case Variant.TypeInt64
-		      RequiredVersion = AttributeValue.Int64Value
-		    Case Variant.TypeString
-		      RequiredVersion = Integer.FromString(AttributeValue.StringValue)
-		    Case Variant.TypeText
-		      RequiredVersion = Integer.FromText(AttributeValue.TextValue)
-		    End Select
-		    
-		    Return PurchasedVersion >= RequiredVersion
-		  Next
-		  
-		  Return True
+		  Return PurchasedVersion >= RequiredVersion
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String) As Beacon.ConfigGroup
-		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
-		  If Info Is Nil Then
-		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
-		    Return Nil
-		  ElseIf Info.IsSubclassOf(TypeInfoForConfigName("")) = False Then
-		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
-		    Return Nil
-		  End If 
-		  
-		  Var Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
-		  For Each Signature As Introspection.ConstructorInfo In Constructors
-		    Var Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.LastIndex = -1 Then
-		      Return Signature.Invoke()
-		    End If
-		  Next
+		  Select Case GroupName
+		  Case NameBreedingMultipliers
+		    Return New BreedingMultipliers()
+		  Case NameCraftingCosts
+		    Return New CraftingCosts()
+		  Case NameCustomContent
+		    Return New CustomContent()
+		  Case NameDayCycle
+		    Return New DayCycle()
+		  Case NameDifficulty
+		    Return New Difficulty()
+		  Case NameDinoAdjustments
+		    Return New DinoAdjustments()
+		  Case NameEngramControl
+		    Return New EngramControl()
+		  Case NameExperienceCurves
+		    Return New ExperienceCurves()
+		  Case NameHarvestRates
+		    Return New HarvestRates()
+		  Case NameLootDrops
+		    Return New LootDrops()
+		  Case NameLootScale
+		    Return New LootScale()
+		  Case NameMetadata
+		    Return New Metadata()
+		  Case NameSpawnPoints
+		    Return New SpawnPoints()
+		  Case NameStackSizes
+		    Return New StackSizes()
+		  Case NameStatLimits
+		    Return New StatLimits()
+		  Case NameStatMultipliers
+		    Return New StatMultipliers()
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + GroupName + """ is not known."
+		    Raise Err
+		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String, GroupData As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
-		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
-		  If Info Is Nil Then
-		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
-		    Return Nil
-		  ElseIf Info.IsSubclassOf(TypeInfoForConfigName("")) = False Then
-		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
-		    Return Nil
-		  End If 
-		  
-		  Var Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
-		  For Each Signature As Introspection.ConstructorInfo In Constructors
-		    Var Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.LastIndex = 2 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" And Params(2).IsByRef = False And Params(2).ParameterType.FullName = "Beacon.Document" Then
-		      Var Values(2) As Variant
-		      Values(0) = GroupData
-		      Values(1) = Identity
-		      Values(2) = Document
-		      Return Signature.Invoke(Values)
-		    End If
-		  Next
-		  
-		  App.Log("Could not create config group """ + GroupName + """ because the correct constructor could not be found.")
+		  Select Case GroupName
+		  Case NameBreedingMultipliers
+		    Return New BreedingMultipliers(GroupData, Identity, Document)
+		  Case NameCraftingCosts
+		    Return New CraftingCosts(GroupData, Identity, Document)
+		  Case NameCustomContent
+		    Return New CustomContent(GroupData, Identity, Document)
+		  Case NameDayCycle
+		    Return New DayCycle(GroupData, Identity, Document)
+		  Case NameDifficulty
+		    Return New Difficulty(GroupData, Identity, Document)
+		  Case NameDinoAdjustments
+		    Return New DinoAdjustments(GroupData, Identity, Document)
+		  Case NameEngramControl
+		    Return New EngramControl(GroupData, Identity, Document)
+		  Case NameExperienceCurves
+		    Return New ExperienceCurves(GroupData, Identity, Document)
+		  Case NameHarvestRates
+		    Return New HarvestRates(GroupData, Identity, Document)
+		  Case NameLootDrops
+		    Return New LootDrops(GroupData, Identity, Document)
+		  Case NameLootScale
+		    Return New LootScale(GroupData, Identity, Document)
+		  Case NameMetadata
+		    Return New Metadata(GroupData, Identity, Document)
+		  Case NameSpawnPoints
+		    Return New SpawnPoints(GroupData, Identity, Document)
+		  Case NameStackSizes
+		    Return New StackSizes(GroupData, Identity, Document)
+		  Case NameStatLimits
+		    Return New StatLimits(GroupData, Identity, Document)
+		  Case NameStatMultipliers
+		    Return New StatMultipliers(GroupData, Identity, Document)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + GroupName + """ is not known."
+		    Raise Err
+		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, Document As Beacon.Document) As Beacon.ConfigGroup
-		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
-		  If Info Is Nil Then
-		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
+		  Select Case GroupName
+		  Case NameBreedingMultipliers
+		    Return BreedingMultipliers.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameCraftingCosts
+		    Return CraftingCosts.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameCustomContent
 		    Return Nil
-		  ElseIf Info.IsSubclassOf(TypeInfoForConfigName("")) = False Then
-		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
+		  Case NameDayCycle
+		    Return DayCycle.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameDifficulty
 		    Return Nil
-		  End If
-		  
-		  Var MapCompatibility As UInt64 = Document.MapCompatibility
-		  Var Difficulty As BeaconConfigs.Difficulty = Document.Difficulty
-		  Var Mods As Beacon.StringList = Document.Mods
-		  
-		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
-		  For Each Signature As Introspection.MethodInfo In Methods
-		    Try
-		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastIndex = 4 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(TypeInfoForConfigName("")) Then
-		        Var Params(4) As Variant
-		        Params(0) = ParsedData
-		        Params(1) = CommandLineOptions
-		        Params(2) = MapCompatibility
-		        Params(3) = Difficulty
-		        Params(4) = Mods
-		        Return Signature.Invoke(Nil, Params)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  
-		  App.Log("Could not create config group """ + GroupName + """ because the correct constructor could not be found.")
+		  Case NameDinoAdjustments
+		    Return DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameEngramControl
+		    Return EngramControl.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameExperienceCurves
+		    Return ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameHarvestRates
+		    Return HarvestRates.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameLootDrops
+		    Return LootDrops.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameLootScale
+		    Return LootScale.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameMetadata
+		    Return Metadata.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameSpawnPoints
+		    Return SpawnPoints.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameStackSizes
+		    Return StackSizes.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameStatLimits
+		    Return StatLimits.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Case NameStatMultipliers
+		    Return StatMultipliers.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + GroupName + """ is not known."
+		    Raise Err
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -165,66 +190,59 @@ Protected Module BeaconConfigs
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function TypeInfoForConfigName(ConfigName As String) As Introspection.TypeInfo
-		  If mTypeInfoCache Is Nil Then
-		    mTypeInfoCache = New Dictionary
-		  End If
-		  
-		  If mTypeInfoCache.HasKey(ConfigName) Then
-		    Return mTypeInfoCache.Value(ConfigName)
-		  End If
-		  
-		  Var Config As Beacon.ConfigGroup
-		  Select Case ConfigName
-		  Case ""
-		    Config = New Beacon.ConfigGroup
-		  Case BeaconConfigs.Difficulty.ConfigName
-		    Config = New BeaconConfigs.Difficulty
-		  Case BeaconConfigs.LootDrops.ConfigName
-		    Config = New BeaconConfigs.LootDrops
-		  Case BeaconConfigs.LootScale.ConfigName
-		    Config = New BeaconConfigs.LootScale
-		  Case BeaconConfigs.Metadata.ConfigName
-		    Config = New BeaconConfigs.Metadata
-		  Case BeaconConfigs.ExperienceCurves.ConfigName
-		    Config = New BeaconConfigs.ExperienceCurves
-		  Case BeaconConfigs.CustomContent.ConfigName
-		    Config = New BeaconConfigs.CustomContent
-		  Case BeaconConfigs.CraftingCosts.ConfigName
-		    Config = New BeaconConfigs.CraftingCosts
-		  Case BeaconConfigs.StackSizes.ConfigName
-		    Config = New BeaconConfigs.StackSizes
-		  Case BeaconConfigs.BreedingMultipliers.ConfigName
-		    Config = New BeaconConfigs.BreedingMultipliers
-		  Case BeaconConfigs.HarvestRates.ConfigName
-		    Config = New BeaconConfigs.HarvestRates
-		  Case BeaconConfigs.DinoAdjustments.ConfigName
-		    Config = New BeaconConfigs.DinoAdjustments
-		  Case BeaconConfigs.StatMultipliers.ConfigName
-		    Config = New BeaconConfigs.StatMultipliers
-		  Case BeaconConfigs.DayCycle.ConfigName
-		    Config = New BeaconConfigs.DayCycle
-		  Case BeaconConfigs.SpawnPoints.ConfigName
-		    Config = New BeaconConfigs.SpawnPoints
-		  Case BeaconConfigs.StatLimits.ConfigName
-		    Config = New BeaconConfigs.StatLimits
-		  Case BeaconConfigs.EngramControl.ConfigName
-		    Config = New BeaconConfigs.EngramControl
-		  Else
-		    Return Nil
-		  End Select
-		  
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Config)
-		  mTypeInfoCache.Value(ConfigName) = Info
-		  Return Info
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mTypeInfoCache As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = NameBreedingMultipliers, Type = String, Dynamic = False, Default = \"BreedingMultipliers", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameCraftingCosts, Type = String, Dynamic = False, Default = \"CraftingCosts", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameCustomContent, Type = String, Dynamic = False, Default = \"CustomContent", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameDayCycle, Type = String, Dynamic = False, Default = \"DayCycle", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameDifficulty, Type = String, Dynamic = False, Default = \"Difficulty", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameDinoAdjustments, Type = String, Dynamic = False, Default = \"DinoAdjustments", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameEngramControl, Type = String, Dynamic = False, Default = \"EngramControl", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameExperienceCurves, Type = String, Dynamic = False, Default = \"ExperienceCurves", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameHarvestRates, Type = String, Dynamic = False, Default = \"HarvestRates", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameLootDrops, Type = String, Dynamic = False, Default = \"LootDrops", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameLootScale, Type = String, Dynamic = False, Default = \"LootScale", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameMetadata, Type = String, Dynamic = False, Default = \"Metadata", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameSpawnPoints, Type = String, Dynamic = False, Default = \"SpawnPoints", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameStackSizes, Type = String, Dynamic = False, Default = \"StackSizes", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameStatLimits, Type = String, Dynamic = False, Default = \"StatLimits", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = NameStatMultipliers, Type = String, Dynamic = False, Default = \"StatMultipliers", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

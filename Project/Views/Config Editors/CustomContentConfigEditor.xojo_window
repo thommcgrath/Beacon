@@ -147,7 +147,7 @@ End
 		  
 		  For Each CreatedConfig As Beacon.ConfigGroup In Document.ImplementedConfigs
 		    Var ConfigName As String = CreatedConfig.ConfigName
-		    If ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		    If ConfigName = BeaconConfigs.NameCustomContent Then
 		      Continue
 		    End If
 		    
@@ -194,7 +194,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.CustomContent.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCustomContent)
 		End Sub
 	#tag EndEvent
 
@@ -222,7 +222,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CustomContent
-		  Static ConfigName As String = BeaconConfigs.CustomContent.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameCustomContent
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.CustomContent
@@ -247,7 +247,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameCustomContent)
 		End Function
 	#tag EndMethod
 

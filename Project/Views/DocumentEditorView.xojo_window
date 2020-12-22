@@ -372,9 +372,9 @@ End
 		    Var LastConfig As String = Preferences.LastUsedConfigName(DocumentID)
 		    If LastConfig.IsEmpty Then
 		      If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeWeb Then
-		        LastConfig = BeaconConfigs.Metadata.ConfigName
+		        LastConfig = BeaconConfigs.NameMetadata
 		      Else
-		        LastConfig = BeaconConfigs.LootDrops.ConfigName
+		        LastConfig = BeaconConfigs.NameLootDrops
 		      End If
 		    End If
 		    Self.CurrentConfigName = LastConfig
@@ -1210,37 +1210,37 @@ End
 			        NewPanel = New ServersConfigEditor(Self.mController)
 			      Case "accounts"
 			        NewPanel = New AccountsConfigEditor(Self.mController)
-			      Case BeaconConfigs.LootDrops.ConfigName
+			      Case BeaconConfigs.NameLootDrops
 			        NewPanel = New LootConfigEditor(Self.mController)
-			      Case BeaconConfigs.Difficulty.ConfigName
+			      Case BeaconConfigs.NameDifficulty
 			        NewPanel = New DifficultyConfigEditor(Self.mController)
-			      Case BeaconConfigs.LootScale.ConfigName
+			      Case BeaconConfigs.NameLootScale
 			        NewPanel = New LootScaleConfigEditor(Self.mController)
-			      Case BeaconConfigs.Metadata.ConfigName
+			      Case BeaconConfigs.NameMetadata
 			        NewPanel = New MetaDataConfigEditor(Self.mController)
-			      Case BeaconConfigs.ExperienceCurves.ConfigName
+			      Case BeaconConfigs.NameExperienceCurves
 			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
-			      Case BeaconConfigs.CustomContent.ConfigName
+			      Case BeaconConfigs.NameCustomContent
 			        NewPanel = New CustomContentConfigEditor(Self.mController)
-			      Case BeaconConfigs.CraftingCosts.ConfigName
+			      Case BeaconConfigs.NameCraftingCosts
 			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
-			      Case BeaconConfigs.StackSizes.ConfigName
+			      Case BeaconConfigs.NameStackSizes
 			        NewPanel = New StackSizesConfigEditor(Self.mController)
-			      Case BeaconConfigs.BreedingMultipliers.ConfigName
+			      Case BeaconConfigs.NameBreedingMultipliers
 			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
-			      Case BeaconConfigs.HarvestRates.ConfigName
+			      Case BeaconConfigs.NameHarvestRates
 			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
-			      Case BeaconConfigs.DinoAdjustments.ConfigName
+			      Case BeaconConfigs.NameDinoAdjustments
 			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
-			      Case BeaconConfigs.StatMultipliers.ConfigName
+			      Case BeaconConfigs.NameStatMultipliers
 			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
-			      Case BeaconConfigs.DayCycle.ConfigName
+			      Case BeaconConfigs.NameDayCycle
 			        NewPanel = New DayCycleConfigEditor(Self.mController)
-			      Case BeaconConfigs.SpawnPoints.ConfigName
+			      Case BeaconConfigs.NameSpawnPoints
 			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
-			      Case BeaconConfigs.StatLimits.ConfigName
+			      Case BeaconConfigs.NameStatLimits
 			        NewPanel = New StatLimitsConfigEditor(Self.mController)
-			      Case BeaconConfigs.EngramControl.ConfigName
+			      Case BeaconConfigs.NameEngramControl
 			        NewPanel = New EngramControlConfigEditor(Self.mController)
 			      End Select
 			      If NewPanel <> Nil Then

@@ -312,11 +312,11 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ConvertDinoReplacementsToSpawnOverrides() As Integer
-		  If Self.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		  If Self.HasConfigGroup(BeaconConfigs.NameDinoAdjustments) = False Then
 		    Return 0
 		  End If
 		  
-		  Var DinoConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Self.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
+		  Var DinoConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Self.ConfigGroup(BeaconConfigs.NameDinoAdjustments))
 		  If DinoConfig = Nil Then
 		    Return 0
 		  End If
@@ -392,7 +392,7 @@ Implements ObservationKit.Observable
 		      
 		      If NewSets.Count > 0 Then
 		        If SpawnConfig = Nil Then
-		          SpawnConfig = BeaconConfigs.SpawnPoints(Self.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, True))
+		          SpawnConfig = BeaconConfigs.SpawnPoints(Self.ConfigGroup(BeaconConfigs.NameSpawnPoints, True))
 		        End If
 		        
 		        Var Override As Beacon.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Beacon.SpawnPoint.ModeAppend)
@@ -444,7 +444,7 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      If Groups(Idx).ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      If Groups(Idx).ConfigName = BeaconConfigs.NameCustomContent Then
 		        Organizer.Add(Groups(Idx).GenerateConfigValues(Self, Identity, Profile))
 		        Groups.RemoveAt(Idx)
 		        Exit
@@ -476,7 +476,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  Static GroupName As String = BeaconConfigs.Difficulty.ConfigName
+		  Static GroupName As String = BeaconConfigs.NameDifficulty
 		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))
 		End Function
 	#tag EndMethod
@@ -997,7 +997,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function Metadata(Create As Boolean = False) As BeaconConfigs.Metadata
-		  Static GroupName As String = BeaconConfigs.Metadata.ConfigName
+		  Static GroupName As String = BeaconConfigs.NameMetadata
 		  Var Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Self.BaseConfigSetName, Create)
 		  If Group <> Nil Then
 		    Return BeaconConfigs.Metadata(Group)

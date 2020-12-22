@@ -550,11 +550,11 @@ End
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the properties, it would likely be confusing for users
 		  
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.HarvestRates.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameHarvestRates) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName))
+		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.NameHarvestRates))
 		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
@@ -572,7 +572,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.HarvestRates.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameHarvestRates)
 		End Sub
 	#tag EndEvent
 
@@ -600,7 +600,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.HarvestRates
-		  Static ConfigName As String = BeaconConfigs.HarvestRates.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameHarvestRates
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.HarvestRates
@@ -625,7 +625,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.HarvestRates.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameHarvestRates)
 		End Function
 	#tag EndMethod
 

@@ -229,7 +229,7 @@ Inherits Beacon.Thread
 		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
 		  Var Configs() As Beacon.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
-		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		    If ConfigName = BeaconConfigs.NameDifficulty Or ConfigName = BeaconConfigs.NameCustomContent Then
 		      // Difficulty and custom content area special
 		      Continue For ConfigName
 		    End If
@@ -252,7 +252,7 @@ Inherits Beacon.Thread
 		  Next
 		  
 		  // Now split the content into values and remove the ones controlled by the imported groups
-		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName) + ")"
+		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(BeaconConfigs.NameCustomContent) + ")"
 		  Var CustomConfigOrganizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mData.GameIniContent)
 		  CustomConfigOrganizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mData.GameUserSettingsIniContent)
 		  For Each Config As Beacon.ConfigGroup In Configs

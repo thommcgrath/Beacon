@@ -1,5 +1,5 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class HarvestRates
+Protected Class HarvestRates
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
@@ -114,8 +114,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "HarvestRates"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameHarvestRates
 		End Function
 	#tag EndMethod
 

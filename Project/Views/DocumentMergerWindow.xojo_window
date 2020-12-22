@@ -374,7 +374,7 @@ End
 		    Return True
 		  End If
 		  
-		  If Self.mDestination.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		  If Self.mDestination.HasConfigGroup(BeaconConfigs.NameCustomContent) Then
 		    // Since the destination already has custom content, don't warn them again.
 		    Self.mHasWarnedAboutCustomConfig = True
 		    Return True

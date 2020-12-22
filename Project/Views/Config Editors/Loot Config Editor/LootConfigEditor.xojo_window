@@ -353,11 +353,11 @@ End
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameLootDrops) = False Then
 		    Return False
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.NameLootDrops))
 		  If OtherConfig Is Nil Then
 		    Return False
 		  End If
@@ -421,7 +421,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootDrops.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootDrops)
 		End Sub
 	#tag EndEvent
 
@@ -617,7 +617,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootDrops
-		  Static ConfigName As String = BeaconConfigs.LootDrops.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameLootDrops
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.LootDrops
@@ -642,7 +642,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameLootDrops)
 		End Function
 	#tag EndMethod
 

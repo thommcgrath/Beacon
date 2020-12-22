@@ -233,11 +233,11 @@ End
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the global multiplier, it would likely be confusing for users
 		  
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.StackSizes.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameStackSizes) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.StackSizes.ConfigName))
+		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.NameStackSizes))
 		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
@@ -255,7 +255,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StackSizes.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStackSizes)
 		End Sub
 	#tag EndEvent
 
@@ -269,7 +269,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
-		  Static ConfigName As String = BeaconConfigs.StackSizes.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameStackSizes
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.StackSizes
@@ -294,7 +294,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.StackSizes.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameStackSizes)
 		End Function
 	#tag EndMethod
 

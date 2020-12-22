@@ -1,5 +1,5 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class SpawnPoints
+Protected Class SpawnPoints
 Inherits Beacon.ConfigGroup
 Implements Iterable
 	#tag Event
@@ -97,8 +97,8 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return ConfigKey
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameSpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -759,9 +759,6 @@ Implements Iterable
 		Private mSpawnPoints As Dictionary
 	#tag EndProperty
 
-
-	#tag Constant, Name = ConfigKey, Type = String, Dynamic = False, Default = \"SpawnPoints", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = ModeAdd, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant

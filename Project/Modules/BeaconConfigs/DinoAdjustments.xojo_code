@@ -1,5 +1,5 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class DinoAdjustments
+Protected Class DinoAdjustments
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
@@ -137,8 +137,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "DinoAdjustments"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameDinoAdjustments
 		End Function
 	#tag EndMethod
 

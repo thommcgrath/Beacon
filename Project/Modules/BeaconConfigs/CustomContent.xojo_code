@@ -109,8 +109,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "CustomContent"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameCustomContent
 		End Function
 	#tag EndMethod
 

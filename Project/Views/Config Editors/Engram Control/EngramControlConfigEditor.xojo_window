@@ -347,7 +347,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.EngramControl.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameEngramControl)
 		End Sub
 	#tag EndEvent
 
@@ -369,7 +369,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.EngramControl
-		  Static ConfigName As String = BeaconConfigs.EngramControl.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameEngramControl
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.EngramControl
@@ -394,7 +394,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.EngramControl.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameEngramControl)
 		End Function
 	#tag EndMethod
 

@@ -756,7 +756,7 @@ End
 		    Var Description As String = Self.mDocument.Description.Trim
 		    If Description.IsEmpty Then
 		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
-		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.Metadata.ConfigName)
+		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.NameMetadata)
 		      Self.Hide()
 		      Return
 		    End If

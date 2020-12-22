@@ -134,8 +134,8 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "Metadata"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameMetadata
 		End Function
 	#tag EndMethod
 

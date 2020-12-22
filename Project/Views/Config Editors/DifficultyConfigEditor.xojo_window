@@ -738,7 +738,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.Difficulty.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameDifficulty)
 		End Function
 	#tag EndMethod
 

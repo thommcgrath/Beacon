@@ -54,37 +54,37 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
-		  Case BeaconConfigs.Difficulty.ConfigName
+		  Case BeaconConfigs.NameDifficulty
 		    Return "Difficulty"
-		  Case BeaconConfigs.LootDrops.ConfigName
+		  Case BeaconConfigs.NameLootDrops
 		    Return "Loot Drops"
-		  Case BeaconConfigs.LootScale.ConfigName
+		  Case BeaconConfigs.NameLootScale
 		    Return "Loot Quality Scaling"
-		  Case BeaconConfigs.Metadata.ConfigName
+		  Case BeaconConfigs.NameMetadata
 		    Return "Project Settings"
-		  Case BeaconConfigs.ExperienceCurves.ConfigName
+		  Case BeaconConfigs.NameExperienceCurves
 		    Return "Levels and XP"
-		  Case BeaconConfigs.CustomContent.ConfigName
+		  Case BeaconConfigs.NameCustomContent
 		    Return "Custom Config"
-		  Case BeaconConfigs.CraftingCosts.ConfigName
+		  Case BeaconConfigs.NameCraftingCosts
 		    Return "Crafting Costs"
-		  Case BeaconConfigs.StackSizes.ConfigName
+		  Case BeaconConfigs.NameStackSizes
 		    Return "Stack Sizes"
-		  Case BeaconConfigs.BreedingMultipliers.ConfigName
+		  Case BeaconConfigs.NameBreedingMultipliers
 		    Return "Breeding Multipliers"
-		  Case BeaconConfigs.HarvestRates.ConfigName
+		  Case BeaconConfigs.NameHarvestRates
 		    Return "Harvest Rates"
-		  Case BeaconConfigs.DinoAdjustments.ConfigName
+		  Case BeaconConfigs.NameDinoAdjustments
 		    Return "Creature Adjustments"
-		  Case BeaconConfigs.StatMultipliers.ConfigName
+		  Case BeaconConfigs.NameStatMultipliers
 		    Return "Stat Multipliers"
-		  Case BeaconConfigs.DayCycle.ConfigName
+		  Case BeaconConfigs.NameDayCycle
 		    Return "Day and Night Cycle"
-		  Case BeaconConfigs.SpawnPoints.ConfigName
+		  Case BeaconConfigs.NameSpawnPoints
 		    Return "Creature Spawns"
-		  Case BeaconConfigs.StatLimits.ConfigName
+		  Case BeaconConfigs.NameStatLimits
 		    Return "Item Stat Limits"
-		  Case BeaconConfigs.EngramControl.ConfigName
+		  Case BeaconConfigs.NameEngramControl
 		    Return "Engram Control"
 		  Case "deployments"
 		    Return "Servers"
