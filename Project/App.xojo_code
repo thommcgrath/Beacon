@@ -181,6 +181,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SubmitExceptions)
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -508,6 +509,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ExceptionsFolder(Create As Boolean = True) As FolderItem
+		  Var AppSupport As FolderItem = Self.ApplicationSupport()
+		  Var ErrorsFolder As FolderItem = AppSupport.Child("Error Reporting")
+		  If Create = True Then
+		    Self.CheckFolder(ErrorsFolder)
+		  End If
+		  Return ErrorsFolder
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GenericLootSourceIcon() As Picture
 		  Return IconLootStandard
 		End Function
@@ -832,6 +844,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		    Preferences.LastUsedScreenSize = ScreenSize
 		  End If
+		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 
@@ -946,6 +959,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mPendingURLs.RemoveAt(0)
 		  Wend
 		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SubmitExceptions()
+		  ExceptionWindow.SubmitPendingReports()
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod

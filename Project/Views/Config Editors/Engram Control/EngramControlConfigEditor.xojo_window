@@ -25,44 +25,6 @@ Begin ConfigEditor EngramControlConfigEditor
    Transparent     =   True
    Visible         =   True
    Width           =   982
-   Begin BeaconToolbar EngramListHeader
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Engrams"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   0
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   -68
-      Transparent     =   False
-      Visible         =   True
-      Width           =   681
-   End
    Begin StatusBar EngramListStatus
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -287,6 +249,8 @@ Begin ConfigEditor EngramControlConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -300,6 +264,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   9
@@ -318,6 +283,8 @@ Begin ConfigEditor EngramControlConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -331,6 +298,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   10
@@ -598,86 +566,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events EngramListHeader
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Define a new engram entry."
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var EditButton As New BeaconToolbarItem("EditButton", IconToolbarEdit)
-		  EditButton.HelpTag = "Edit one or more engram overrides."
-		  EditButton.Enabled = False
-		  Me.LeftItems.Append(EditButton)
-		  
-		  Var WizardButton As New BeaconToolbarItem("WizardButton", IconToolbarWizard)
-		  WizardButton.HelpTag = "Quickly set engram behaviors."
-		  Me.LeftItems.Append(WizardButton)
-		  
-		  Var SettingsButton As New BeaconToolbarItem("SettingsButton", IconToolbarSettings)
-		  SettingsButton.HelpTag = "Change advanced options."
-		  SettingsButton.HasMenu = True
-		  Me.LeftItems.Append(SettingsButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Engrams() As Beacon.Engram
-		    Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
-		    If Engrams <> Nil And Engrams.LastIndex > -1 Then
-		      Self.SetupEngramsList(Engrams)
-		      Self.EngramList.EnsureSelectionIsVisible()
-		    End If
-		  Case "EditButton"
-		    Self.EngramList.DoEdit()
-		  Case "WizardButton"
-		    If EngramControlWizard.Present(Self, Self.Document) Then
-		      Self.SetupUI()
-		      Self.Changed = Self.Config(False).Modified
-		    End If
-		  Case "SettingsButton"
-		    Me.ShowMenu(Item)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
-		  Select Case Item.Name
-		  Case "SettingsButton"
-		    Var Config As BeaconConfigs.EngramControl = Self.Config(False)
-		    
-		    Var UnlockAll As New MenuItem("Unlock All Obtainable Engrams While Leveling (Laggy)", "unlockall")
-		    UnlockAll.HasCheckMark = Config.AutoUnlockAllEngrams
-		    Menu.AddMenu(UnlockAll)
-		    
-		    Var WhitelistMode As New MenuItem("Engrams Should be Disabled Unless Explicitly Enabled", "whitelist")
-		    WhitelistMode.HasCheckMark = Config.OnlyAllowSpecifiedEngrams
-		    Menu.AddMenu(WhitelistMode)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
-		  Select Case Item.Name
-		  Case "SettingsButton"
-		    Var Config As BeaconConfigs.EngramControl = Self.Config(True)
-		    
-		    Select Case ChosenItem.Tag
-		    Case "unlockall"
-		      Config.AutoUnlockAllEngrams = Not Config.AutoUnlockAllEngrams
-		    Case "whitelist"
-		      Config.OnlyAllowSpecifiedEngrams = Not Config.OnlyAllowSpecifiedEngrams
-		    Else
-		      Return
-		    End Select
-		    
-		    Self.SetupUI()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
