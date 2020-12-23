@@ -20,16 +20,14 @@ abstract class BeaconExceptions {
 		return $meaningful_lines;
 	}
 	
-	// Records the exception and returns the uuid or null on error.
-	public static function RecordException(string $trace, string $type, string $reason, string $client_hash, int $client_build, $user_id) {
-		// First, see if this client hash is already known. There could be more than one.
+	// Finds an exception based on its trace, but does not change anything.
+	public static function FindException(string $trace, string $type, string $client_hash) {
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT DISTINCT exception_id FROM exception_signatures WHERE client_hash = $1 LIMIT 1;', $client_hash);
-		if ($results->RecordCount() == 1 && static::UpdateException($results->Field('exception_id'), $trace, $client_hash, $client_build, $user_id)) {
+		if ($results->RecordCount() === 1) {
 			return $results->Field('exception_id');
 		}
-			
-		// Ok, this hash hasn't been reported yet, but that doesn't mean it is unique.	
+		
 		$trace_cleaned = static::CleanupStackTrace($trace);
 		if (count($trace_cleaned) == 0) {
 			return null;
@@ -42,10 +40,7 @@ abstract class BeaconExceptions {
 		while (!$results->EOF()) {
 			$score = static::CompareTraces($trace_cleaned, static::CleanupStackTrace($results->Field('trace')));
 			if ($score == 1.0) {
-				// Perfect match
-				if (static::UpdateException($results->Field('exception_id'), $trace, $client_hash, $client_build, $user_id)) {
-					return $results->Field('exception_id');
-				}
+				return $results->Field('exception_id');
 			} elseif ($score > 0.6 && (is_null($best_id) || $score > $best_score)) {
 				$best_id = $results->Field('exception_id');
 				$best_score = $score;
@@ -53,12 +48,21 @@ abstract class BeaconExceptions {
 			$results->MoveNext();
 		}
 		
-		if (is_null($best_id) == false && static::UpdateException($best_id, $trace, $client_hash, $client_build, $user_id)) {
+		if (is_null($best_id) === false) {
 			// Didn't find a perfect match, but found a good match.
 			return $best_id;
 		}
 		
-		// No match at all, create a new exception.
+		return null;
+	}	
+	
+	// Records the exception and returns the uuid or null on error.
+	public static function RecordException(string $trace, string $type, string $reason, string $client_hash, int $client_build, $user_id) {
+		$exception_id = static::FindException($trace, $type, $client_hash);
+		if (is_null($exception_id) === false && static::UpdateException($exception_id, $trace, $client_hash, $client_build, $user_id)) {
+			return $exception_id;
+		}
+		
 		return static::CreateException($trace, $type, $reason, $client_hash, $client_build, $user_id);
 	}
 	

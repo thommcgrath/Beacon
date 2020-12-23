@@ -199,42 +199,71 @@ case 'POST':
 	
 	header('Content-Type: application/json');
 	
-	if (!BeaconCommon::HasAllKeys($_POST, 'build', 'type', 'reason', 'trace')) {
-		http_response_code(400);
-		echo json_encode(array(
-			'reported' => false,
-			'solution' => null,
-			'error_reason' => 'POST request requires build, hash, type, location, reason, and trace keys.'
-		), JSON_PRETTY_PRINT);
-		exit;
-	}
-	
-	$build = intval($_POST['build']);
-	$type = $_POST['type'];
-	$reason = trim($_POST['reason']);
-	$trace = trim($_POST['trace']);
-	$hash = $_POST['hash'];
-	$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
-	
-	if ($build < 34) {
-		http_response_code(400);
-		echo json_encode(array(
-			'reported' => false,
-			'solution' => null,
-			'error_reason' => 'Build number does not make any sense.'
-		), JSON_PRETTY_PRINT);
-		exit;
-	}
-	
-	$exception_id = BeaconExceptions::RecordException($trace, $type, $reason, $hash, $build, $user_id);
-	if (is_null($exception_id)) {
-		http_response_code(500);
-		echo json_encode(array(
-			'reported' => false,
-			'solution' => null,
-			'error_reason' => 'Unable to save exception data.'
-		), JSON_PRETTY_PRINT);
-		exit;
+	$lookup_mode = isset($_POST['lookup']);
+	if ($lookup_mode) {
+		if (!BeaconCommon::HasAllKeys($_POST, 'trace', 'type', 'hash')) {
+			http_response_code(400);
+			echo json_encode(array(
+				'reported' => false,
+				'solution' => null,
+				'error_reason' => 'POST request requires trace, type, and hash keys.'
+			), JSON_PRETTY_PRINT);
+			exit;
+		}
+		
+		$type = $_POST['type'];
+		$trace = trim($_POST['trace']);
+		$hash = $_POST['hash'];
+		
+		$exception_id = BeaconExceptions::FindException($trace, $type, $hash);
+		if (is_null($exception_id)) {
+			http_response_code(404);
+			echo json_encode(array(
+				'reported' => false,
+				'solution' => null,
+				'error_reason' => 'Exception has not been reported yet.'
+			), JSON_PRETTY_PRINT);
+			exit;
+		}
+	} else {
+		if (!BeaconCommon::HasAllKeys($_POST, 'trace', 'type', 'hash', 'build', 'reason')) {
+			http_response_code(400);
+			echo json_encode(array(
+				'reported' => false,
+				'solution' => null,
+				'error_reason' => 'POST request requires build, hash, type, reason, and trace keys.'
+			), JSON_PRETTY_PRINT);
+			exit;
+		}
+		
+		$type = $_POST['type'];
+		$trace = trim($_POST['trace']);
+		$hash = $_POST['hash'];
+		$build = intval($_POST['build']);
+		$reason = trim($_POST['reason']);
+		$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
+		$comments = isset($_POST['comments']) ? $_POST['comments'] : null;
+		
+		if ($build < 34) {
+			http_response_code(400);
+			echo json_encode(array(
+				'reported' => false,
+				'solution' => null,
+				'error_reason' => 'Build number does not make any sense.'
+			), JSON_PRETTY_PRINT);
+			exit;
+		}
+		
+		$exception_id = BeaconExceptions::RecordException($trace, $type, $reason, $hash, $build, $user_id);
+		if (is_null($exception_id)) {
+			http_response_code(500);
+			echo json_encode(array(
+				'reported' => false,
+				'solution' => null,
+				'error_reason' => 'Unable to save exception data.'
+			), JSON_PRETTY_PRINT);
+			exit;
+		}
 	}
 	
 	$response = array('reported' => true, 'error_reason' => null, 'solution' => null);
