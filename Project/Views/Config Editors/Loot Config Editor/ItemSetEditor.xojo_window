@@ -187,6 +187,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  Var ShouldUseCompactMode As Boolean = Self.Width < 600
 		  If ShouldUseCompactMode = Self.mUsingCompactMode Then
 		    Return

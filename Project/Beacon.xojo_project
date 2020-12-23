@@ -486,6 +486,7 @@ MultiImage=IconToolbarNotepad;Icons/IconToolbarNotepad.xojo_image;&h0000000022C3
 Class=ConfigOrganizer;Modules/Beacon/ConfigOrganizer.xojo_code;&h0000000006E227FF;&h0000000055ADDFFF;false
 MultiImage=IconToolbarRoll;Icons/IconToolbarRoll.xojo_image;&h000000004308C7FF;&h0000000007F977FF;false
 MultiImage=IconToolbarAddMenu;Icons/IconToolbarAddMenu.xojo_image;&h000000004A8ECFFF;&h0000000007F977FF;false
+Window=EngramControlSettingsView;Views/Config Editors/Engram Control/EngramControlSettingsView.xojo_window;&h0000000074525FFF;&h0000000045FF37FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5

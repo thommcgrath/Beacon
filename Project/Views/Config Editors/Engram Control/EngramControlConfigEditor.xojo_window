@@ -399,6 +399,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SettingsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Config As BeaconConfigs.EngramControl = Self.Config(True)
+		    Config.OnlyAllowSpecifiedEngrams = EngramControlSettingsView(Sender.Container).OnlyAllowSpecifiedEngrams
+		    Config.AutoUnlockAllEngrams = EngramControlSettingsView(Sender.Container).AutoUnlockEngrams
+		    Self.SetupEngramsList
+		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  Self.EngramToolbar.Item("SettingsButton").Toggled = False
+		  Self.mSettingsPopoverController = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SetupEngramsList(SelectEngrams() As Beacon.Engram = Nil)
 		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.Engrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.Document.Mods, ""))
@@ -554,6 +569,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSettingsPopoverController As PopoverController
 	#tag EndProperty
 
 
@@ -893,8 +912,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Var Engrams() As Beacon.Engram
@@ -911,12 +928,24 @@ End
 		      Self.Changed = Self.Config(False).Modified
 		    End If
 		  Case "SettingsButton"
-		    Break
-		    #if Not DebugBuild
-		      #Pragma Error "Settings button not implemented"
-		    #else
-		      #Pragma Warning "Settings button not implemented"
-		    #endif
+		    If (Self.mSettingsPopoverController Is Nil) = False And Self.mSettingsPopoverController.Visible Then
+		      Self.mSettingsPopoverController.Dismiss(False)
+		      Self.mSettingsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		    Var SettingsView As New EngramControlSettingsView
+		    Var Controller As New PopoverController(SettingsView)
+		    SettingsView.AutoUnlockEngrams = Config.AutoUnlockAllEngrams
+		    SettingsView.OnlyAllowSpecifiedEngrams = Config.OnlyAllowSpecifiedEngrams
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf SettingsPopoverController_Finished
+		    Self.mSettingsPopoverController = Controller
 		  End Select
 		End Sub
 	#tag EndEvent
