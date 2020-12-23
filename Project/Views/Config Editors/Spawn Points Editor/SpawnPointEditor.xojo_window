@@ -434,6 +434,8 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  Self.SetsListWidth = Preferences.SpawnPointEditorSetsSplitterPosition
 		  Self.LimitsListHeight = Preferences.SpawnPointEditorLimitsSplitterPosition
 		  
@@ -1127,6 +1129,8 @@ End
 #tag Events LimitsToolbar
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Self.PresentLimitsDialog()
