@@ -25,6 +25,9 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Self.mUsedLongAction = False
 		  Self.Invalidate(Self.mMouseDownIndex)
 		  
+		  App.HideTooltip
+		  CallLater.Cancel(Self.mHoverCallbackKey)
+		  
 		  If Self.mMouseDownIndex > -1 Then
 		    Self.mHoldTimer.Reset
 		    Self.mHoldTimer.RunMode = Timer.RunModes.Single
@@ -143,6 +146,15 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  If Self.mMouseOverIndex > -1 Then
 		    Self.Invalidate(Self.mMouseOverIndex)
+		  End If
+		  
+		  If OldIndex <> Self.mMouseOverIndex Then
+		    App.HideTooltip
+		    CallLater.Cancel(Self.mHoverCallbackKey)
+		    
+		    If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).HelpTag.IsEmpty = False Then
+		      Self.mHoverCallbackKey = CallLater.Schedule(1000, WeakAddressOf ShowHoverTooltip)
+		    End If
 		  End If
 		  
 		  If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.HorizontalResizer And Self.mItems(Self.mMouseOverIndex).Enabled = True Then
@@ -405,6 +417,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
+		  CallLater.Cancel(Self.mHoverCallbackKey)
 		End Sub
 	#tag EndMethod
 
@@ -602,6 +615,16 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowHoverTooltip()
+		  If Self.mMouseOverIndex = -1 Then
+		    Return
+		  End If
+		  
+		  App.ShowTooltip(Self.mItems(Self.mMouseOverIndex).HelpTag, System.MouseX, System.MouseY + 16)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
@@ -672,6 +695,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mHoldTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHoverCallbackKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
