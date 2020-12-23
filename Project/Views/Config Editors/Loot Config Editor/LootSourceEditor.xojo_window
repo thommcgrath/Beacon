@@ -401,20 +401,15 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  If Initial Then
-		    Self.Simulator.Height = Preferences.SimulatorSize
-		    If Self.SimulatorVisible Then
-		      Self.SimulatorPosition = Self.Height - Self.Simulator.Height
-		    Else
-		      Self.SimulatorPosition = Self.Height
-		    End If
-		    
-		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition, False)
-		  Else
-		    Self.SetListWidth(Self.ConfigToolbar.Width)
-		  End If
+		  #Pragma Unused Initial
 		  
-		  Self.mSavePositions = True
+		  If Self.SimulatorVisible Then
+		    Self.SimulatorHeight = Preferences.SimulatorSize
+		  Else
+		    Self.SimulatorPosition = Self.Height
+		  End If
+		  Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
+		  
 		  Var Resizer As OmniBarItem = Self.ConfigToolbar.Item("Resizer")
 		  If (Resizer Is Nil) = False Then
 		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
@@ -627,6 +622,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function MaxSimulatorHeight() As Integer
+		  Return Self.Height - (Self.ConfigToolbar.Height + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mImporter_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
 		  #Pragma Unused Sender
 		  
@@ -694,15 +695,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function MinSimulatorPosition() As Integer
-		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
-		  #Pragma Unused Remember
-		  
+		Private Sub SetListWidth(NewSize As Integer)
 		  Var ListWidth, EditorWidth As Integer
 		  If Self.Width <= Self.MinEditorWidth Then
 		    ListWidth = Self.ListMinWidth
@@ -722,10 +715,19 @@ End
 		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
-		  
-		  If Self.mSavePositions Then
-		    Preferences.ItemSetsSplitterPosition = ListWidth
-		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SimulatorHeight() As Integer
+		  Return Self.Simulator.Height
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SimulatorHeight(Assigns Value As Integer)
+		  Self.Simulator.Height = Max(Min(Value, Self.MaxSimulatorHeight), Self.MinSimulatorHeight)
+		  Self.SimulatorPosition = Self.Height - Self.Simulator.Height
 		End Sub
 	#tag EndMethod
 
@@ -736,14 +738,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SimulatorPosition(Assigns Pos As Integer)
-		  // This does not save the position in preferences, it is only for coordinating
-		  // the size and position of controls
-		  
-		  Pos = Max(Pos, Self.MinSimulatorPosition)
-		  
-		  Self.Simulator.Top = Pos
-		  Self.StatusBar1.Top = Pos - Self.StatusBar1.Height
+		Private Sub SimulatorPosition(Assigns Value As Integer)
+		  Self.Simulator.Top = Value
+		  Self.StatusBar1.Top = Value - Self.StatusBar1.Height
 		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
 		End Sub
 	#tag EndMethod
@@ -769,12 +766,11 @@ End
 		  
 		  Var NewPosition As Integer
 		  If Value Then
-		    NewPosition = Self.Height - Preferences.SimulatorSize
-		    Self.Simulator.Height = Preferences.SimulatorSize
+		    Self.Simulator.Height = Min(Preferences.SimulatorSize, Self.MaxSimulatorHeight)
+		    NewPosition = Self.Height - Self.Simulator.Height
 		  Else
 		    NewPosition = Self.Height
 		  End If
-		  NewPosition = Max(NewPosition, Self.MinSimulatorPosition)
 		  
 		  If Not Animated Then
 		    Self.SimulatorPosition = NewPosition
@@ -962,10 +958,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSavePositions As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mSimulatorTask As AnimationKit.ValueTask
 	#tag EndProperty
 
@@ -997,6 +989,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MinSimulatorHeight, Type = Double, Dynamic = False, Default = \"100", Scope = Private
 	#tag EndConstant
 
 
@@ -1371,21 +1366,12 @@ End
 #tag Events Simulator
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  NewSize = Min(NewSize, Self.Height - Self.MinSimulatorPosition)
-		  
-		  Me.Height = NewSize
-		  Me.Top = Self.Height - NewSize
-		  Self.StatusBar1.Top = Self.Height - (NewSize + Self.StatusBar1.Height)
-		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
+		  Self.SimulatorHeight = NewSize
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ResizeFinished()
-		  If Me.Height < 100 Then
-		    Self.SimulatorVisible = False
-		  ElseIf Self.mSavePositions Then
-		    Preferences.SimulatorSize = Me.Height
-		  End If
+		  Preferences.SimulatorSize = Me.Height
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1451,6 +1437,10 @@ End
 		  
 		  Me.Item("Title").Priority = 5
 		  Me.Item("TitleSeparator").Priority = 5
+		  
+		  If Self.SimulatorVisible Then
+		    Me.Item("SimulatorButton").Toggled = True
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1494,6 +1484,13 @@ End
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.ItemSetsSplitterPosition = Self.SetList.Width
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
