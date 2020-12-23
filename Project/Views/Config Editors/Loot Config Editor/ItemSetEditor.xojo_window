@@ -154,6 +154,8 @@ Begin BeaconContainer ItemSetEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -167,6 +169,7 @@ Begin BeaconContainer ItemSetEditor
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -182,6 +185,45 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  Var ShouldUseCompactMode As Boolean = Self.Width < 600
+		  If ShouldUseCompactMode = Self.mUsingCompactMode Then
+		    Return
+		  End If
+		  
+		  If ShouldUseCompactMode Then
+		    Self.mExpandedSortColumn = Self.EntryList.HeadingIndex
+		    Self.mExpandedSortDirection = Self.EntryList.ColumnSortDirectionAt(Self.EntryList.HeadingIndex)
+		    
+		    Self.EntryList.ColumnCount = 1
+		    
+		    Self.EntryList.HeadingIndex = 0
+		    Self.EntryList.ColumnSortDirectionAt(0) = Self.mCompactSortDirection
+		    Self.EntryList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
+		  Else
+		    Self.mCompactSortDirection = Self.EntryList.ColumnSortDirectionAt(0)
+		    
+		    Self.EntryList.ColumnCount = 4
+		    
+		    Self.EntryList.HeadingIndex = Self.mExpandedSortColumn
+		    Self.EntryList.ColumnSortDirectionAt(Self.mExpandedSortColumn) = Self.mExpandedSortDirection
+		    Self.EntryList.DefaultRowHeight = BeaconListbox.StandardRowHeight
+		  End If
+		  
+		  Self.mUsingCompactMode = ShouldUseCompactMode
+		  
+		  Self.UpdateEntryList()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mCompactSortDirection = Listbox.SortDirections.Ascending
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument()
@@ -298,6 +340,11 @@ End
 		    Return
 		  End If
 		  
+		  Var RangeSeparator As String = " - "
+		  If Self.mUsingCompactMode Then
+		    RangeSeparator = "-"
+		  End If
+		  
 		  For I As Integer = 0 To Self.mSet.LastRowIndex
 		    Var Entry As Beacon.SetEntry = Self.mSet(I)
 		    If Entry = Nil Then
@@ -317,36 +364,61 @@ End
 		    If Entry.MinQuality = Entry.MaxQuality Then
 		      QualityText = Language.LabelForQuality(Entry.MinQuality)
 		    Else
-		      QualityText = Language.LabelForQuality(Entry.MinQuality, True) + " - " + Language.LabelForQuality(Entry.MaxQuality, True)
+		      QualityText = Language.LabelForQuality(Entry.MinQuality, True) + RangeSeparator + Language.LabelForQuality(Entry.MaxQuality, True)
 		    End If
 		    
 		    Var QuantityText As String
 		    If Entry.MinQuantity = Entry.MaxQuantity Then
 		      QuantityText = Entry.MinQuantity.ToString
 		    Else
-		      QuantityText = Entry.MinQuantity.ToString + " - " + Entry.MaxQuantity.ToString
+		      QuantityText = Entry.MinQuantity.ToString + RangeSeparator + Entry.MaxQuantity.ToString
 		    End If
 		    
-		    Var FiguresText As String
+		    Var WeightText As String
 		    Var Weight As Double = Entry.RawWeight
 		    If Floor(Weight) = Weight Then
-		      FiguresText = Weight.ToString(Locale.Current, ",##0")
+		      WeightText = Weight.ToString(Locale.Current, ",##0")
 		    Else
-		      FiguresText = Weight.ToString(Locale.Current, ",##0.0####")
+		      WeightText = Weight.ToString(Locale.Current, ",##0.0####")
 		    End If
-		    FiguresText = FiguresText + " wt"
 		    
-		    If Entry.CanBeBlueprint Then
-		      FiguresText = FiguresText + ", " + BlueprintChance.ToString(Locale.Current, "0%") + " bp"
+		    Var BlueprintText As String = BlueprintChance.ToString(Locale.Current, "0%")
+		    
+		    Var FiguresText As String
+		    
+		    Var MainColumnTag As String = Entry.Label
+		    Var MainColumnText As String
+		    If Self.mUsingCompactMode Then
+		      If Entry.Count > 1 Then
+		        MainColumnText = QuantityText + " of " + MainColumnTag
+		      Else
+		        MainColumnText = QuantityText + " " + MainColumnTag
+		      End If
+		      MainColumnText = MainColumnText + EndOfLine + "Quality: " + QualityText + Encodings.UTF8.Chr(9) + "Weight: " + WeightText 
+		      If Entry.CanBeBlueprint Then
+		        MainColumnText = MainColumnText + Encodings.UTF8.Chr(9) + "Blueprint Chance: " + BlueprintText
+		      End If
+		    Else
+		      MainColumnText = MainColumnTag
+		      
+		      FiguresText = WeightText + " wt"
+		      
+		      If Entry.CanBeBlueprint Then
+		        FiguresText = FiguresText + ", " + BlueprintText + " bp"
+		      End If
 		    End If
 		    
 		    EntryList.AddRow("")
 		    Var Idx As Integer = EntryList.LastAddedRowIndex
-		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = Entry.Label
-		    EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
-		    EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
-		    EntryList.CellValueAt(Idx, Self.ColumnFigures) = FiguresText
+		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = MainColumnText
+		    If Self.mUsingCompactMode Then
+		    Else
+		      EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
+		      EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
+		      EntryList.CellValueAt(Idx, Self.ColumnFigures) = FiguresText
+		    End If
 		    
+		    EntryList.CellTagAt(Idx, Self.ColumnLabel) = MainColumnTag
 		    EntryList.RowTagAt(Idx) = Entry
 		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UniqueID) > -1
 		  Next
@@ -391,7 +463,23 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mCompactSortDirection As Listbox.SortDirections
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExpandedSortColumn As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExpandedSortDirection As Listbox.SortDirections
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSet As Beacon.ItemSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsingCompactMode As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -426,7 +514,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.setentry", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinEditorWidth, Type = Double, Dynamic = False, Default = \"519", Scope = Public
+	#tag Constant, Name = MinEditorWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
 
@@ -651,7 +739,8 @@ End
 		  Var Value1, Value2 As Double
 		  Select Case Column
 		  Case Self.ColumnLabel
-		    Return False
+		    Result = Me.CellTagAt(Row1, Column).StringValue.Compare(Me.CellTagAt(Row2, Column).StringValue, ComparisonOptions.CaseInsensitive, Locale.Raw)
+		    Return True
 		  Case Self.ColumnQuantity
 		    If Entry1.MinQuantity = Entry2.MinQuantity Then
 		      Value1 = Entry1.MaxQuantity
