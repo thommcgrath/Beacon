@@ -602,10 +602,6 @@ End
 		Sub Connected()
 		  Me.Close
 		  
-		  #if DocumentImportView.ConnectorEnabled
-		    #Pragma Error "Connector discover UI not connected to integration engine."
-		  #endif
-		  
 		  Var Data() As Beacon.DiscoveredData
 		  Self.ShouldFinish(Data)
 		End Sub

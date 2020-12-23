@@ -450,7 +450,7 @@ Begin ContainerControl DocumentImportView
          Transparent     =   False
          Underline       =   False
          Value           =   False
-         Visible         =   True
+         Visible         =   False
          Width           =   560
       End
       Begin Label OtherDocsMessageLabel
@@ -608,7 +608,7 @@ Begin ContainerControl DocumentImportView
          Transparent     =   False
          Underline       =   False
          Value           =   False
-         Visible         =   True
+         Visible         =   False
          Width           =   560
       End
       Begin BeaconListbox StatusList
@@ -733,6 +733,7 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -748,15 +749,22 @@ End
 		Sub Open()
 		  RaiseEvent Open
 		  
-		  #if Not Self.ConnectorEnabled
-		    Self.SourceRadio(4).Top = -100
-		    Self.SourceRadio(4).Visible = False
-		    For I As Integer = 1 To 3
-		      Self.SourceRadio(I).Top = Self.SourceRadio(I).Top - 32
-		    Next
-		    Self.SourceCancelButton.Top = Self.SourceRadio(3).Bottom + 12
-		    Self.SourceActionButton.Top = Self.SourceCancelButton.Top
-		  #endif
+		  Const FirstRadioIndex = 0
+		  Const LastRadioIndex = 4
+		  
+		  Var Pos As Integer = Self.ImportSourceMessage.Top + Self.ImportSourceMessage.Height + 20
+		  For Idx As Integer = FirstRadioIndex To LastRadioIndex
+		    If Self.SourceRadio(Idx).Visible = False Then
+		      Continue
+		    End If
+		    
+		    Self.SourceRadio(Idx).Top = Pos
+		    Pos = Pos + Self.SourceRadio(Idx).Height + 12
+		  Next
+		  
+		  Self.SourceCancelButton.Top = Pos + 8
+		  Self.SourceActionButton.Top = Self.SourceCancelButton.Top
+		  Self.mSourcesPageHeight = Self.SourceCancelButton.Top + Self.SourceCancelButton.Height + 20
 		  
 		  Self.SwapButtons
 		  Self.Reset
@@ -838,7 +846,7 @@ End
 		  If Self.Views.SelectedPanelIndex <> 0 Then
 		    Self.Views.SelectedPanelIndex = 0
 		  Else
-		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -848,6 +856,12 @@ End
 		  Self.mOtherDocuments = Documents
 		  Self.SourceRadio(3).Caption = "Other Beacon Project" + If(Self.SourceRadio(3).Enabled, "", " (No Other Projects Open)")
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SourcesPageHeight() As Integer
+		  Return Self.mSourcesPageHeight
+		End Function
 	#tag EndMethod
 
 
@@ -884,13 +898,14 @@ End
 		Private mOtherDocuments() As Beacon.Document
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSourcesPageHeight As Integer
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		QuickCancel As Boolean
 	#tag EndProperty
 
-
-	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
@@ -927,7 +942,7 @@ End
 		Sub Change()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
-		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
 		  Case Self.PageNitrado
 		    NitradoDiscoveryView1.Begin
 		  Case Self.PageFTP
