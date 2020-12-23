@@ -249,7 +249,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Crafting Costs Splitter Position", 250)
+			  Return mManager.IntegerValue("Crafting Costs Splitter Position", CraftingCostsConfigEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter

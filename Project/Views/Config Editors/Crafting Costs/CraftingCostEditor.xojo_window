@@ -125,6 +125,8 @@ Begin BeaconContainer CraftingCostEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -138,6 +140,7 @@ Begin BeaconContainer CraftingCostEditor
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
@@ -265,7 +268,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingresource", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"200", Scope = Public
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"495", Scope = Public
 	#tag EndConstant
 
 

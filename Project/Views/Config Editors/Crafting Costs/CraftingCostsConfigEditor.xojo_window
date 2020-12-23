@@ -295,6 +295,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -308,6 +310,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockTop         =   True
       RightPadding    =   10
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
@@ -387,7 +390,7 @@ End
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
-		  Self.SetListWidth(Self.Width * 0.4)
+		  Self.SetListWidth(Preferences.CraftingSplitterPosition)
 		End Sub
 	#tag EndEvent
 
@@ -672,7 +675,10 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingcost", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"400", Scope = Public
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageMultipleSelection, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -1008,9 +1014,29 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("EngramsTitle", "Engrams"))
-		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateSeparator("EngramsTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddEngramButton", "New Recipe", IconToolbarAdd, "Change the recipe for a new item."))
 		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected recipe.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("EngramsTitle").Priority = 5
+		  Me.Item("EngramsTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Self.SetListWidth(Me.Width + DeltaX)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.CraftingSplitterPosition = Me.Width
 		End Sub
 	#tag EndEvent
 #tag EndEvents
