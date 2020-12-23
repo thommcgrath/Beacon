@@ -134,8 +134,6 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  #Pragma Warning "Help tags are not implemented"
-		  
 		  Self.mMousePoint = New Point(X, Y)
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)

@@ -552,7 +552,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", SpawnPointEditor.LimitsListMinHeight)
+			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", SpawnPointEditor.LimitsListDefaultHeight)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -568,7 +568,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", SpawnPointEditor.SetsListMinWidth)
+			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", SpawnPointEditor.SetsListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -584,7 +584,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Points Splitter Position", SpawnPointsConfigEditor.ListMinWidth)
+			  Return mManager.IntegerValue("Spawn Points Splitter Position", SpawnPointsConfigEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter

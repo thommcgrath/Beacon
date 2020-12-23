@@ -25,44 +25,6 @@ Begin ConfigEditor SpawnPointsConfigEditor
    Transparent     =   True
    Visible         =   True
    Width           =   980
-   Begin BeaconToolbar ControlToolbar
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Spawn Points"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   1
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   250
-   End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
@@ -305,6 +267,37 @@ Begin ConfigEditor SpawnPointsConfigEditor
          Width           =   729
       End
    End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
@@ -351,13 +344,14 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  If Initial Then
-		    Self.SetListWidth(Preferences.SpawnPointsSplitterPosition, False)
-		  Else
-		    Self.SetListWidth(Self.ControlToolbar.Width)
-		  End If
+		  #Pragma Unused Initial
 		  
-		  Self.ControlToolbar.ResizerEnabled = Self.Width > Self.MinEditorWidth
+		  Self.SetListWidth(Preferences.SpawnPointsSplitterPosition)
+		  
+		  Var Resizer As OmniBarItem = Self.ConfigToolbar.Item("Resizer")
+		  If (Resizer Is Nil) = False Then
+		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -452,7 +446,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
+		Private Sub SetListWidth(NewSize As Integer)
 		  Var ListWidth, EditorWidth As Integer
 		  If Self.Width <= Self.MinEditorWidth Then
 		    ListWidth = Self.ListMinWidth
@@ -463,16 +457,12 @@ End
 		    EditorWidth = AvailableSpace - ListWidth
 		  End If
 		  
-		  Self.ControlToolbar.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.MainSeparator.Left = ListWidth
 		  Self.List.Width = ListWidth
 		  Self.ListStatus.Width = ListWidth
 		  Self.Pages.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
 		  Self.Pages.Width = EditorWidth
-		  
-		  If Remember Then
-		    Preferences.SpawnPointsSplitterPosition = ListWidth
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -549,71 +539,15 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawnpoint", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"310", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events ControlToolbar
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Override a spawn point."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("DuplicateButton", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected spawn point."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var SpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document)
-		    If SpawnPoints.LastIndex = -1 Then
-		      Return
-		    End If
-		    
-		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
-		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		      Config.Add(SpawnPoint)
-		    Next
-		    
-		    Self.Changed = Config.Modified
-		    Self.UpdateList(SpawnPoints)
-		  Case "DuplicateButton"
-		    Var TargetSpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document, AddSpawnPointDialog.UIModeDuplicate)
-		    If TargetSpawnPoints.LastIndex = -1 Then
-		      Return
-		    End If
-		    
-		    Var SourceSpawnPoint As Beacon.SpawnPoint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		    Var SourceLimits As String = SourceSpawnPoint.LimitsString
-		    Var SourceSets As String = SourceSpawnPoint.SetsString
-		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
-		    For Each Target As Beacon.SpawnPoint In TargetSpawnPoints
-		      Var SpawnPoint As New Beacon.MutableSpawnPoint(Target)
-		      SpawnPoint.Mode = SourceSpawnPoint.Mode
-		      SpawnPoint.LimitsString = SourceLimits
-		      SpawnPoint.SetsString = SourceSets
-		      Config.Add(SpawnPoint)
-		    Next
-		    
-		    Self.Changed = Config.Modified
-		    Self.UpdateList(TargetSpawnPoints)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Me.Width
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Change()
@@ -626,7 +560,10 @@ End
 		  Next
 		  
 		  Self.Editor.SpawnPoints = SpawnPoints
-		  Self.ControlToolbar.DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		  Self.Pages.SelectedPanelIndex = If(SpawnPoints.LastIndex = -1, 0, 1)
 		  Self.UpdateStatus()
 		End Sub
@@ -803,6 +740,77 @@ End
 		  Next
 		  
 		  Self.Changed = Self.Config(False).Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var SpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document)
+		    If SpawnPoints.LastIndex = -1 Then
+		      Return
+		    End If
+		    
+		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      Config.Add(SpawnPoint)
+		    Next
+		    
+		    Self.Changed = Config.Modified
+		    Self.UpdateList(SpawnPoints)
+		  Case "DuplicateButton"
+		    Var TargetSpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document, AddSpawnPointDialog.UIModeDuplicate)
+		    If TargetSpawnPoints.LastIndex = -1 Then
+		      Return
+		    End If
+		    
+		    Var SourceSpawnPoint As Beacon.SpawnPoint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		    Var SourceLimits As String = SourceSpawnPoint.LimitsString
+		    Var SourceSets As String = SourceSpawnPoint.SetsString
+		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		    For Each Target As Beacon.SpawnPoint In TargetSpawnPoints
+		      Var SpawnPoint As New Beacon.MutableSpawnPoint(Target)
+		      SpawnPoint.Mode = SourceSpawnPoint.Mode
+		      SpawnPoint.LimitsString = SourceLimits
+		      SpawnPoint.SetsString = SourceSets
+		      Config.Add(SpawnPoint)
+		    Next
+		    
+		    Self.Changed = Config.Modified
+		    Self.UpdateList(TargetSpawnPoints)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("EditorTitle", "Spawn Points"))
+		  Me.Append(OmniBarItem.CreateSeparator("EditorTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Point", IconToolbarAdd, "Override a spawn point."))
+		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected spawn point.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("EditorTitle").Priority = 5
+		  Me.Item("EditorTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Self.SetListWidth(Me.Width + DeltaX)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.SpawnPointsSplitterPosition = Self.List.Width
 		End Sub
 	#tag EndEvent
 #tag EndEvents

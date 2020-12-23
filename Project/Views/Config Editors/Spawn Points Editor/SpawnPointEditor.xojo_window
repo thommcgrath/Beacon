@@ -56,82 +56,6 @@ Begin BeaconContainer SpawnPointEditor
       Visible         =   True
       Width           =   1
    End
-   Begin BeaconToolbar LimitsToolbar
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Limits"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Resizer         =   2
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   371
-      Transparent     =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin BeaconToolbar SetsToolbar
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Spawn Sets"
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   1
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   200
-   End
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
@@ -436,6 +360,68 @@ Begin BeaconContainer SpawnPointEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
+   Begin OmniBar LimitsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   371
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
+   Begin OmniBar SetsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
+   End
 End
 #tag EndWindow
 
@@ -448,15 +434,13 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  If Initial Then
-		    Self.SetsListWidth(False) = Preferences.SpawnPointEditorSetsSplitterPosition
-		    Self.LimitsListHeight(False) = Preferences.SpawnPointEditorLimitsSplitterPosition
-		  Else
-		    Self.SetsListWidth = Self.SetsListWidth
-		    Self.LimitsListHeight = Self.LimitsListHeight
-		  End If
+		  Self.SetsListWidth = Preferences.SpawnPointEditorSetsSplitterPosition
+		  Self.LimitsListHeight = Preferences.SpawnPointEditorLimitsSplitterPosition
 		  
-		  Self.SetsToolbar.ResizerEnabled = Self.Width > Self.MinEditorWidth
+		  Var Resizer As OmniBarItem = Self.SetsToolbar.Item("Resizer")
+		  If (Resizer Is Nil) = False Then
+		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -474,7 +458,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LimitsListHeight(Remember As Boolean = True, Assigns Value As Integer)
+		Private Sub LimitsListHeight(Assigns Value As Integer)
 		  // Remember, this works BACKWARDS so a value of 100 means 100 from the bottom of the window
 		  
 		  Const SetsListMinHeight = 200
@@ -490,10 +474,6 @@ End
 		  
 		  Self.SetsStatusBar.Top = Top - Self.SetsStatusBar.Height
 		  Self.SetsList.Height = Self.SetsStatusBar.Top - Self.SetsList.Top
-		  
-		  If Remember Then
-		    Preferences.SpawnPointEditorLimitsSplitterPosition = Value
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -576,7 +556,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetsListWidth(Remember As Boolean = True, Assigns Value As Integer)
+		Private Sub SetsListWidth(Assigns Value As Integer)
 		  Var ListWidth, EditorWidth As Integer
 		  If Self.Width <= Self.MinEditorWidth Then
 		    ListWidth = Self.SetsListMinWidth
@@ -596,10 +576,6 @@ End
 		  Self.LimitsStatusBar.Width = ListWidth
 		  Self.Pages.Left = Self.ColumnSeparator.Left + Self.ColumnSeparator.Width
 		  Self.Pages.Width = EditorWidth
-		  
-		  If Remember Then
-		    Preferences.SpawnPointEditorSetsSplitterPosition = ListWidth
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -705,7 +681,10 @@ End
 		    Self.LimitsStatusBar.Caption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
 		  End If
 		  
-		  Self.LimitsToolbar.EditButton.Enabled = Self.LimitsList.SelectedRowCount > 0
+		  Var EditButton As OmniBarItem = Self.LimitsToolbar.Item("EditButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Self.LimitsList.SelectedRowCount > 0
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -804,6 +783,9 @@ End
 	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.set", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = LimitsListDefaultHeight, Type = Double, Dynamic = False, Default = \"192", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = LimitsListMinHeight, Type = Double, Dynamic = False, Default = \"150", Scope = Public
 	#tag EndConstant
 
@@ -813,102 +795,15 @@ End
 	#tag Constant, Name = PageSetEditor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = SetsListDefaultWidth, Type = Double, Dynamic = False, Default = \"310", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events LimitsToolbar
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Self.PresentLimitsDialog()
-		  Case "EditButton"
-		    Var SelectedCreatures() As Beacon.Creature
-		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		      If Self.LimitsList.Selected(I) Then
-		        SelectedCreatures.Add(Beacon.Data.GetCreatureByID(Self.LimitsList.RowTagAt(I).StringValue))
-		      End If
-		    Next
-		    Self.PresentLimitsDialog(SelectedCreatures)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Define a new creature limit."
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var EditButton As New BeaconToolbarItem("EditButton", IconToolbarEdit, False)
-		  EditButton.HelpTag = "Edit the selected creature limit or limits."
-		  Me.RightItems.Append(EditButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.LimitsListHeight = Self.Height - NewSize
-		  NewSize = Self.LimitsListHeight
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SetsToolbar
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Organizer As New SpawnSetOrganizer
-		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
-		      Organizer.Attach(Point)
-		    Next
-		    
-		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
-		    Self.SetsList.RowTagAt(Self.SetsList.LastAddedRowIndex) = Organizer
-		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastAddedRowIndex
-		    Self.SetsList.Sort
-		    Self.SetsList.EnsureSelectionIsVisible
-		  Case "WizardButton"
-		    Var Organizer As New SpawnSetOrganizer
-		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
-		      Organizer.Attach(Point)
-		    Next
-		    
-		    If SpawnSetWizard.Present(Self, Organizer, Self.Document.Mods) = False Then
-		      Return
-		    End If
-		    
-		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
-		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
-		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
-		    Self.SetsList.Sort
-		    Self.SetsList.EnsureSelectionIsVisible
-		    
-		    Self.UpdateLimitsList
-		    
-		    RaiseEvent Changed
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Create a new spawn set."
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var WizardButton As New BeaconToolbarItem("WizardButton", IconToolbarWizard)
-		  WizardButton.HelpTag = "Quickly add a creature to this spawn point using a wizard."
-		  Me.LeftItems.Append(WizardButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetsListWidth = NewSize
-		  NewSize = Self.SetsListWidth
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SetEditor
 	#tag Event
 		Sub Changed()
@@ -1226,6 +1121,120 @@ End
 		  
 		  RaiseEvent Changed
 		  Self.UpdateLimitsList(SelectCreatures)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LimitsToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Self.PresentLimitsDialog()
+		  Case "EditButton"
+		    Var SelectedCreatures() As Beacon.Creature
+		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		      If Self.LimitsList.Selected(I) Then
+		        SelectedCreatures.Add(Beacon.Data.GetCreatureByID(Self.LimitsList.RowTagAt(I).StringValue))
+		      End If
+		    Next
+		    Self.PresentLimitsDialog(SelectedCreatures)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("LimitsTitle", "Limits"))
+		  Me.Append(OmniBarItem.CreateSeparator("LimitsTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Limit", IconToolbarAdd, "Define a new creature limit."))
+		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit the selected creature limit or limits.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateVerticalResizer("Resizer"))
+		  
+		  Me.Item("LimitsTitle").Priority = 5
+		  Me.Item("LimitsTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaX
+		  
+		  Self.LimitsListHeight = Self.LimitsListHeight - DeltaY
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.SpawnPointEditorLimitsSplitterPosition = Self.LimitsListHeight
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SetsToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Organizer As New SpawnSetOrganizer
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Organizer.Attach(Point)
+		    Next
+		    
+		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
+		    Self.SetsList.RowTagAt(Self.SetsList.LastAddedRowIndex) = Organizer
+		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastAddedRowIndex
+		    Self.SetsList.Sort
+		    Self.SetsList.EnsureSelectionIsVisible
+		  Case "WizardButton"
+		    Var Organizer As New SpawnSetOrganizer
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Organizer.Attach(Point)
+		    Next
+		    
+		    If SpawnSetWizard.Present(Self, Organizer, Self.Document.Mods) = False Then
+		      Return
+		    End If
+		    
+		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastIndex > 0))
+		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
+		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
+		    Self.SetsList.Sort
+		    Self.SetsList.EnsureSelectionIsVisible
+		    
+		    Self.UpdateLimitsList
+		    
+		    RaiseEvent Changed
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("SetsTitle", "Spawn Sets"))
+		  Me.Append(OmniBarItem.CreateSeparator("SetsTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Set", IconToolbarAdd, "Create a new spawn set."))
+		  Me.Append(OmniBarItem.CreateButton("WizardButton", "Auto Creature", IconToolbarWizard, "Quickly add a creature to this spawn point using a wizard."))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("SetsTitle").Priority = 5
+		  Me.Item("SetsTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Self.SetsListWidth = Self.SetsListWidth + DeltaX
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.SpawnPointEditorSetsSplitterPosition = Self.SetsListWidth
 		End Sub
 	#tag EndEvent
 #tag EndEvents

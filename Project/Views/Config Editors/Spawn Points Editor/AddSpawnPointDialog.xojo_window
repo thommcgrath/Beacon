@@ -313,7 +313,7 @@ Begin BeaconDialog AddSpawnPointDialog
    Begin RadioButton OverrideRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Override Spawn Point"
+      Caption         =   "Replace Default Spawns"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0

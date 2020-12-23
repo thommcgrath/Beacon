@@ -33,7 +33,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   348
+      Height          =   307
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -48,7 +48,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   62
+      Top             =   103
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -179,7 +179,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   260
+         Height          =   219
          Index           =   -2147483648
          InitialParent   =   "EntriesGroup"
          InitialValue    =   ""
@@ -199,7 +199,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   98
+         Top             =   139
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -218,7 +218,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   348
+      Height          =   307
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -233,7 +233,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   62
+      Top             =   103
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -364,7 +364,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   260
+         Height          =   219
          Index           =   -2147483648
          InitialParent   =   "ReplaceGroup"
          InitialValue    =   ""
@@ -384,7 +384,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   98
+         Top             =   139
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -430,7 +430,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -474,7 +474,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -510,7 +510,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Name:"
@@ -545,7 +545,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Weight:"
@@ -570,7 +570,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Visible         =   True
       Width           =   13
@@ -1241,6 +1241,37 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   89
       End
+   End
+   Begin OmniBar SpawnSetToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   784
    End
 End
 #tag EndWindow
@@ -2198,6 +2229,13 @@ End
 		  If Self.SpawnSet.Modified Then
 		    RaiseEvent Changed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SpawnSetToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("SetTitle", "Spawn Set Contents"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
