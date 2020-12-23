@@ -53,6 +53,7 @@ Begin ContainerControl EngramControlSettingsView
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   0
       Width           =   448
@@ -120,6 +121,7 @@ Begin ContainerControl EngramControlSettingsView
       Top             =   152
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   0
       Width           =   448

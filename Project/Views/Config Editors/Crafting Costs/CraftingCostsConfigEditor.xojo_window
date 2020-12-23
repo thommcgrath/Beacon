@@ -267,26 +267,20 @@ Begin ConfigEditor CraftingCostsConfigEditor
       End
    End
    Begin Thread FibercraftBuilderThread
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin Thread AdjusterThread
-      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      ThreadID        =   0
-      ThreadState     =   0
    End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
