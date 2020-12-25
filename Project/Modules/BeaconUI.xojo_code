@@ -410,7 +410,7 @@ Protected Module BeaconUI
 		  Dialog.Explanation = Explanation
 		  
 		  Try
-		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
+		    If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
 		      Call Dialog.ShowModal()
 		    Else
 		      Var FocusControl As RectControl = Win.Focus
@@ -501,7 +501,7 @@ Protected Module BeaconUI
 		  
 		  Var Result As MessageDialogButton
 		  Try
-		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
+		    If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
 		      Result = Dialog.ShowModal()
 		    Else
 		      Var FocusControl As RectControl = Win.Focus
