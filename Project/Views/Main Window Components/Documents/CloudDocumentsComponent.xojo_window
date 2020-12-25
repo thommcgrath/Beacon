@@ -899,6 +899,12 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  #Pragma Unused Warn
 		  
+		  #if DebugBuild
+		    #Pragma Warning "Deleting cloud files is not implemented"
+		  #else
+		    #Pragma Error "Deleting cloud files is not implemented"
+		  #endif
+		  
 		  System.Beep
 		End Sub
 	#tag EndEvent
