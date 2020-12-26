@@ -819,6 +819,9 @@ End
 		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
 		    Self.ViewTitle = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
+		    If (Self.LinkedOmniBarItem Is Nil) = False And (Self.LinkedOmniBarItem.Name <> Self.mController.URL.Hash) Then
+		      Self.LinkedOmniBarItem.Name = Self.mController.URL.Hash
+		    End If
 		    Self.UpdateViewIcon()
 		  End If
 		  
@@ -911,7 +914,7 @@ End
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
 		  Case "Title"
-		    Self.ViewTitle = Self.mController.Document.Title
+		    Self.ViewTitle = Self.mController.Name
 		    Self.Changed = True
 		  End Select
 		End Sub

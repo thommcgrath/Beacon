@@ -534,8 +534,38 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_DeleteDocument(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Response.Success Then
+		    // Remove from recents
+		    Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		    Var Changed As Boolean
+		    For Idx As Integer = Recents.LastIndex DownTo 0
+		      If Recents(Idx).URL(Beacon.DocumentURL.URLTypes.Writing) = Request.URL Then
+		        Recents.Remove(Idx)
+		        Changed = True
+		      End If
+		    Next
+		    If Changed Then
+		      Preferences.RecentDocuments = Recents
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  Var Message As String = Response.Message
+		  If Message.IsEmpty Then
+		    Message = "An unknown error occurred."
+		  End If
+		  
+		  Self.ShowAlert("A document was not deleted.", Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_ListDocumentsWithIdentity(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
+		  
+		  Self.mRefreshing = False
 		  
 		  If Response.HTTPStatus = 401 Then
 		    Self.Pages.SelectedPanelIndex = Self.PageLogin
@@ -549,6 +579,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListDocumentsWithToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
+		  
+		  Self.mRefreshing = False
 		  
 		  If Response.HTTPStatus = 401 Then
 		    Var Params As New Dictionary
@@ -627,28 +659,31 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshList()
+		  If Self.mRefreshing Then
+		    Return
+		  End If
+		  
 		  If Preferences.OnlineEnabled = False Or App.IdentityManager.CurrentIdentity Is Nil Then
 		    Self.Pages.SelectedPanelIndex = Self.PagePermission
 		    Return
 		  End If
 		  
-		  If Self.APISocket.Working = False Then
-		    Var Params As New Dictionary
-		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
-		    
-		    Var Request As BeaconAPI.Request
-		    Var Token As String = Preferences.OnlineToken
-		    If Token.IsEmpty Then
-		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
-		      Request.Sign(App.IdentityManager.CurrentIdentity)
-		    Else
-		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
-		      Request.Authenticate(Token)
-		    End If
-		    Self.APISocket.Start(Request)
+		  Var Params As New Dictionary
+		  Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
+		  
+		  Var Request As BeaconAPI.Request
+		  Var Token As String = Preferences.OnlineToken
+		  If Token.IsEmpty Then
+		    Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		    Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Else
+		    Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
+		    Request.Authenticate(Token)
 		  End If
+		  Self.APISocket.Start(Request)
 		  
 		  Self.Pages.SelectedPanelIndex = Self.PageLoading
+		  Self.mRefreshing = True
 		End Sub
 	#tag EndMethod
 
@@ -747,6 +782,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDocuments() As BeaconAPI.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRefreshing As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -897,15 +936,47 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  #Pragma Unused Warn
+		  Var URLs() As Beacon.DocumentURL
+		  For Row As Integer = 0 To Me.LastRowIndex
+		    If Me.Selected(Row) = False Then
+		      Continue
+		    End If
+		    
+		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
+		    URLs.Add(Self.URLForDocument(Document))
+		  Next
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Deleting cloud files is not implemented"
-		  #else
-		    #Pragma Error "Deleting cloud files is not implemented"
-		  #endif
+		  If URLs.Count = 0 Then
+		    Return
+		  End If
 		  
-		  System.Beep
+		  If Warn Then
+		    Var Names() As String
+		    For Each URL As Beacon.DocumentURL In URLs
+		      Names.Add(URL.Name)
+		    Next
+		    
+		    If Self.ShowDeleteConfirmation(Names, "project", "projects") = False Then
+		      Return
+		    End If
+		  End If
+		  
+		  Var ShouldRefresh As Boolean
+		  Var Token As String = Preferences.OnlineToken
+		  For Each URL As Beacon.DocumentURL In URLs
+		    If Self.CloseDocument(URL) = False Then
+		      Continue
+		    End If
+		    
+		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.DocumentURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteDocument)
+		    Request.Authenticate(Token)
+		    Self.APISocket.Start(Request)
+		    ShouldRefresh = True
+		  Next
+		  
+		  If ShouldRefresh Then
+		    Self.RefreshList()
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event

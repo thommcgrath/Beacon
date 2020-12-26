@@ -1,5 +1,5 @@
 #tag Window
-Begin DocumentsComponentView RecentDocumentsComponent
+Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit.Receiver
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -154,6 +154,18 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, Preferences.Notification_RecentsChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  NotificationKit.Watch(Self, Preferences.Notification_RecentsChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
@@ -162,6 +174,17 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case Preferences.Notification_RecentsChanged
+		    Self.UpdateList()
+		  End Select
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub UpdateList()

@@ -762,7 +762,7 @@ End
 		    End If
 		    
 		    If Self.mDocument.Modified Then
-		      Var ShouldCancel As Boolean = Self.ShowConfirm("Your project should be saved first.", "Your publish request will be based on the last time your saved your document. You have made changes since your last save, so you should save before requesting the document be published.", "Cancel", "Request Anyway")
+		      Var ShouldCancel As Boolean = Self.ShowConfirm("Your project should be saved first.", "Your publish request will be based on the last time your saved your project. You have made changes since your last save, so you should save before requesting the project be published.", "Cancel", "Request Anyway")
 		      If ShouldCancel Then
 		        Return
 		      End If

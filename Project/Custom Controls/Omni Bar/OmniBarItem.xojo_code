@@ -908,6 +908,14 @@ Implements ObservationKit.Observable
 			  Return Self.mName
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mName = Value
+			    Self.NotifyObservers("MinorChange", Value)
+			  End If
+			End Set
+		#tag EndSetter
 		Name As String
 	#tag EndComputedProperty
 

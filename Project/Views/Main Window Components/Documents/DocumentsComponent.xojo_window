@@ -358,8 +358,6 @@ End
 		    Return False
 		  End If
 		  
-		  Self.CurrentPage = Self.RecentDocumentsComponent1
-		  
 		  Var NavItem As OmniBarItem = Page.LinkedOmniBarItem
 		  If (NavItem Is Nil) = False Then
 		    Self.Nav.Remove(NavItem)
@@ -372,6 +370,8 @@ End
 		  
 		  Self.RemovePage(Page)
 		  Page.Close
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -540,6 +540,25 @@ End
 		Sub NewDocument()
 		  Self.NewDocument()
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CloseDocument(URL As Beacon.DocumentURL) As Boolean
+		  Var Hash As String = URL.Hash
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
+		  If NavItem Is Nil Then
+		    // Document is not open
+		    Return True
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.LastPageIndex
+		    Var Page As BeaconSubview = Self.Page(Idx)
+		    If Page.LinkedOmniBarItem <> NavItem Then
+		      Continue
+		    End If
+		    
+		    Return Self.DiscardView(Page)
+		  Next
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events CommunityDocumentsComponent1
