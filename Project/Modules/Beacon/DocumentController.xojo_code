@@ -120,7 +120,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  If Self.mDocument <> Nil Then
+		  If Self.mDocument <> Nil And Self.mDocument.Title.IsEmpty = False Then
 		    Return Self.mDocument.Title
 		  Else
 		    Return Self.mDocumentURL.Name
