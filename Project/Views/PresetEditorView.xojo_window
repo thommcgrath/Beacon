@@ -1071,6 +1071,9 @@ End
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Start
 		  End If
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.Caption = Self.mPreset.Label
+		  End If
 		  Self.Changed = False
 		  NotificationKit.Post("Preset Saved", Self.mPreset)
 		End Sub
