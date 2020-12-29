@@ -525,7 +525,11 @@ End
 
 	#tag Method, Flags = &h0
 		Function CurrentComponent() As BeaconSubview
-		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
+		  Var CurrentIndex As Integer = -1
+		  If (Self.Pages Is Nil) = False Then
+		    CurrentIndex = Self.Pages.SelectedPanelIndex
+		  End If
+		  
 		  Select Case CurrentIndex
 		  Case Self.PageHome
 		    Return Self.DashboardPane1
