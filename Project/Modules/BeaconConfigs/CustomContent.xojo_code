@@ -23,10 +23,10 @@ Inherits Beacon.ConfigGroup
 		    If Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
 		      Value = Value.Trim
 		      Var IsTrue As Boolean = Value = "true" Or Value = "1"
-		      Value = If(IsTrue, "true", "false")
+		      Value = If(IsTrue, "True", "False")
 		      OverrideCommand = Key.Key + "=" + Value.Titlecase
 		    End If
-		    Values.Add(New Beacon.ConfigValue(Key, Key.Key, Value, OverrideCommand))
+		    Values.Add(New Beacon.ConfigValue(Key, OverrideCommand))
 		  Next
 		  
 		  For Each ParsedValue As Beacon.ConfigValue In ValuesFromGame
@@ -271,7 +271,7 @@ Inherits Beacon.ConfigGroup
 		      WasCloned = True
 		    End If
 		    Organizer.Remove(File, Header, Key)
-		    Organizer.Add(New Beacon.ConfigValue(File, Header, Key, Self.EncryptedTag + Value + Self.EncryptedTag))
+		    Organizer.Add(New Beacon.ConfigValue(File, Header, Key + "=" + Self.EncryptedTag + Value + Self.EncryptedTag))
 		  Next
 		  
 		  Self.GameUserSettingsIniContent = Organizer.Build(Beacon.ConfigFileGameUserSettings)

@@ -8,16 +8,16 @@ Inherits Beacon.ConfigGroup
 		  Var Values() As Beacon.ConfigValue
 		  
 		  If Self.mGlobalMultiplier >= Self.MaximumQuantity Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", "1.0"))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier=1.0"))
 		  Else
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier=" + Self.mGlobalMultiplier.PrettyText))
 		  End If
 		  
 		  Var Engrams() As Beacon.Engram = Self.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ValidForDocument(SourceDocument) Then
 		      Var StackSize As UInt64 = Min(Self.mOverrides.Value(Engram, "Stack Size"), Self.MaximumQuantity)
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity=(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))", "ConfigOverrideItemMaxQuantity:" + Engram.ClassString))
 		    End If
 		  Next
 		  
@@ -29,7 +29,7 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If
 		      
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + Self.MaximumQuantity.ToString + ",bIgnoreMultiplier=true))"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity=(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + Self.MaximumQuantity.ToString + ",bIgnoreMultiplier=true))", "ConfigOverrideItemMaxQuantity:" + Engram.ClassString))
 		    Next
 		  End If
 		  

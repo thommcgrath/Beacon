@@ -62,8 +62,8 @@ Protected Class ConfigOrganizer
 		  Var Header As String = DefaultHeader
 		  Var MessageOfTheDay As String
 		  Var Values() As Beacon.ConfigValue
-		  For Each Line As String In Lines
-		    Line = Line.Trim
+		  For LineIdx As Integer = 0 To Lines.LastIndex
+		    Var Line As String = Lines(LineIdx).Trim
 		    If Line.IsEmpty Then
 		      Continue
 		    End If
@@ -83,18 +83,16 @@ Protected Class ConfigOrganizer
 		      Continue
 		    End If
 		    
-		    Var AttributedKey As String = Line.Left(Pos)
-		    Var SimpleKey As String = Beacon.ConfigValue.SimplifyKey(AttributedKey)
-		    Var Value As String = Line.Middle(Pos + 1)
-		    If Header = "MessageOfTheDay" And SimpleKey = "Message" Then
-		      MessageOfTheDay = Value
+		    Var Config As New Beacon.ConfigValue(File, Header, Line, LineIdx)
+		    If Config.File = Beacon.ConfigFileGameUserSettings And Config.Header = "MessageOfTheDay" And Config.SimplifiedKey = "Message" Then
+		      MessageOfTheDay = Config.Value
 		      Continue
 		    End If
 		    
-		    Values.Add(New Beacon.ConfigValue(File, Header, AttributedKey, Value, Line))
+		    Values.Add(Config)
 		  Next
 		  If MessageOfTheDay.IsEmpty = False Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message", MessageOfTheDay))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + MessageOfTheDay, 0))
 		  End If
 		  Tracker.Log("Took %elapsed% to parse " + Content.Length.ToString + " characters of content.")
 		  Self.Add(Values)
@@ -290,10 +288,12 @@ Protected Class ConfigOrganizer
 		Sub Remove(Keys() As Beacon.ConfigKey)
 		  Self.mIndex.BeginTransaction
 		  For Each Key As Beacon.ConfigKey In Keys
-		    If Self.mValues.HasKey(Key.Hash) Then
-		      Self.mValues.Remove(Key.Hash)
-		      Self.mIndex.ExecuteSQL("DELETE FROM keymap WHERE hash = ?1;", Key.Hash)
-		    End If
+		    Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND simplekey = ?3;", Key.File, Key.Header, Key.Key)
+		    For Each Row As DatabaseRow In Rows
+		      Var Hash As String = Row.Column("hash").StringValue
+		      Self.mValues.Remove(Hash)
+		      Self.mIndex.ExecuteSQL("DELETE FROM keymap WHERE hash = ?1;", Hash)
+		    Next
 		  Next
 		  Self.mIndex.CommitTransaction
 		End Sub

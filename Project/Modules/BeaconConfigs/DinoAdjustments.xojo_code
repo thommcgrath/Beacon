@@ -14,24 +14,24 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Behavior.ProhibitSpawning Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName="""")"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements=(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName="""")", "NPCReplacements:" + Behavior.TargetCreature.ClassString))
 		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "NPCReplacements=(FromClassName=""" + Behavior.TargetCreature.ClassString + """,ToClassName=""" + Behavior.ReplacementCreature.ClassString + """)", "NPCReplacements:" + Behavior.TargetCreature.ClassString))
 		    Else
 		      If Behavior.DamageMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassDamageMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")", "DinoClassDamageMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
 		      If Behavior.ResistanceMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")", "DinoClassResistanceMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
 		      If Behavior.TamedDamageMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")", "TamedDinoClassDamageMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")", "TamedDinoClassResistanceMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
 		      If Behavior.PreventTaming Then
-		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetCreature.ClassString + """"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventDinoTameClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventDinoTameClassNames:" + Behavior.TargetCreature.ClassString))
 		      End If
 		    End If
 		  Next

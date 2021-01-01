@@ -7,22 +7,22 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Values() As Beacon.ConfigValue
 		  
-		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false"), "UseOptimizedHarvestingHealth=" + If(Self.mUseOptimizedRates, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "UseOptimizedHarvestingHealth=" + If(Self.mUseOptimizedRates, "True", "False")))
 		  
 		  Var Engrams() As Beacon.Engram = Self.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ValidForDocument(SourceDocument) Then
 		      Var ClassString As String = Engram.ClassString
 		      Var Rate As Double = Self.mOverrides.Value(Engram, Self.RateAttribute)
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers=(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")", "HarvestResourceItemAmountClassMultipliers:" + ClassString))
 		    End If
 		  Next
 		  
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier", Self.mDinoHarvestingDamageMultiplier.PrettyText))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier=" + Self.mPlayerHarvestingDamageMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier=" + Self.mDinoHarvestingDamageMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "HarvestAmountMultiplier=" + Self.mHarvestAmountMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "HarvestHealthMultiplier=" + Self.mHarvestHealthMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage=" + If(Self.mClampResourceHarvestDamage, "True", "False")))
 		  
 		  Return Values
 		End Function

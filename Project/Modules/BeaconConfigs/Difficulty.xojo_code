@@ -7,8 +7,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Var Values() As Beacon.ConfigValue
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DifficultyOffset=1.0"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty=" + Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
 		  Return Values
 		End Function
 	#tag EndEvent

@@ -58,7 +58,7 @@ Protected Class CustomContentParser
 		  
 		  Var Key As String = Line.Left(KeyPos).Trim
 		  Var Value As String = Line.Middle(KeyPos + 1).Trim
-		  Var ConfigValue As New Beacon.ConfigValue(Self.mFile, Self.mCurrentHeader, Key, Value)
+		  Var ConfigValue As New Beacon.ConfigValue(Self.mFile, Self.mCurrentHeader, Key + "=" + Value)
 		  If Self.mSkippedKeys.IndexOf(ConfigValue.SimplifiedKey) = -1 Then
 		    Self.mValues.Add(ConfigValue)
 		  End If

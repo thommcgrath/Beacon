@@ -7,9 +7,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  Var Values() As Beacon.ConfigValue
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "1.0"))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayTimeSpeedScale", Self.DaySpeedMultiplier.PrettyText))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "NightTimeSpeedScale", Self.NightSpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale=1.0"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayTimeSpeedScale=" + Self.DaySpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "NightTimeSpeedScale=" + Self.NightSpeedMultiplier.PrettyText))
 		  Return Values
 		End Function
 	#tag EndEvent

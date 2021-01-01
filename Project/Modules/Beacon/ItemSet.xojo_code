@@ -613,7 +613,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Add("MaxNumItems=" + Self.MaxNumItems.ToString)
 		  Values.Add("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
 		  Values.Add("SetWeight=" + Self.mSetWeight.PrettyText)
-		  Values.Add("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
+		  Values.Add("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "True", "False"))
 		  Values.Add("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, Difficulty) + ")")
 		  Return "(" + Values.Join(",") + ")"
 		End Function

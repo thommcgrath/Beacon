@@ -96,7 +96,7 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", Cost.StringValue)
+		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts=" + Cost.StringValue, "ConfigOverrideItemCraftingCosts:" + Cost.Engram.ClassString)
 		End Function
 	#tag EndMethod
 

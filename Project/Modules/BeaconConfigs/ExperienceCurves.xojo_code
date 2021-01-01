@@ -64,10 +64,10 @@ Inherits Beacon.ConfigGroup
 		      LastXP = XP
 		    Next
 		    
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToString))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LevelExperienceRampOverrides=(" + Chunks.Join(",") + ")", 0))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer=" + MaxXP.ToString))
 		  ElseIf Self.mPlayerLevels.LastIndex = -1 And Self.mDinoLevels.LastIndex > -1 Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", ""))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LevelExperienceRampOverrides=", 0))
 		  Else
 		    Return Values
 		  End If
@@ -86,8 +86,8 @@ Inherits Beacon.ConfigGroup
 		      LastXP = XP
 		    Next
 		    
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToString))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LevelExperienceRampOverrides=(" + Chunks.Join(",") + ")", 1))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino=" + MaxXP.ToString))
 		  End If
 		  Return Values
 		End Function

@@ -261,7 +261,7 @@ Implements Iterable
 		    End If
 		    
 		    If IncludeMinLevelMultiplier Or IncludeMaxLevelMultiplier Or IncludeMinLevelOffset Or IncludeMaxLevelOffset Or IncludeLevelOverride Then
-		      Members.Add("bAddLevelOffsetBeforeMultiplier=" + If(Set.LevelOffsetBeforeMultiplier, "true", "false"))
+		      Members.Add("bAddLevelOffsetBeforeMultiplier=" + If(Set.LevelOffsetBeforeMultiplier, "True", "False"))
 		    End If
 		    
 		    RenderedEntries.Add("(" + Members.Join(",") + ")")
@@ -282,7 +282,7 @@ Implements Iterable
 		    End If
 		  End If
 		  
-		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config, "(" + Pieces.Join(",") + ")")
+		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config + "(" + Pieces.Join(",") + ")", Config + ":" + SpawnPoint.ClassString)
 		End Function
 	#tag EndMethod
 

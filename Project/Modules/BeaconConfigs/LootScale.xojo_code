@@ -8,9 +8,9 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Values() As Beacon.ConfigValue
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", "0.001"))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier=0.001"))
 		  Else
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier=" + Self.mMultiplier.PrettyText))
 		  End If
 		  Return Values
 		End Function

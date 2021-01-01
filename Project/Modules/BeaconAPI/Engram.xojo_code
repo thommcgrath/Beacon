@@ -119,7 +119,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function Hash() As String
-		  Var Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToString + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Var Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToString + ":" + if(Self.CanBeBlueprint, "True", "False")
 		  Return EncodeHex(Crypto.MD5(Value))
 		End Function
 	#tag EndMethod

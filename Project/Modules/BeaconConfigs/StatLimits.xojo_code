@@ -17,10 +17,10 @@ Inherits Beacon.ConfigGroup
 		    EnableClamping = True
 		    
 		    Var Value As Double = Self.mValues(I)
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]", Value.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]=" + Value.PrettyText, I))
 		  Next
 		  
-		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ClampItemStats", If(EnableClamping, "true", "false"), "ClampItemStats=" + If(EnableClamping, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ClampItemStats=" + If(EnableClamping, "True", "False")))
 		  
 		  Return Values
 		End Function

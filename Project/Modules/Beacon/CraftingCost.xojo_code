@@ -328,7 +328,7 @@ Implements Beacon.NamedItem
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Var ClassString As String = Self.mIngredients(Idx).ClassString
 		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
-		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "true", "false")
+		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "True", "False")
 		    Components.Add("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  

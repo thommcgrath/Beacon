@@ -254,17 +254,18 @@ Inherits Global.Thread
 		    
 		    If TrustKey.IsEmpty = False Then
 		      // Build the Beacon section
-		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build", App.BuildNumber.ToString(Locale.Raw)))
-		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "LastUpdated", DateTime.Now.SQLDateTimeWithOffset))
-		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Trust", TrustKey))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build=" + App.BuildNumber.ToString(Locale.Raw)))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "LastUpdated=" + DateTime.Now.SQLDateTimeWithOffset))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Trust=" + TrustKey))
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
-		      For Each Header As String In ManagedHeaders
+		      For HeaderIdx As Integer = 0 To ManagedHeaders.LastIndex
+		        Var Header As String = ManagedHeaders(HeaderIdx)
 		        If Header = "Beacon" Then
 		          Continue
 		        End If
 		        
 		        Var Keys() As String = FinalOrganizer.Keys(File, Header)
-		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "ManagedKeys", "(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))"))
+		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
 		      Next
 		    End If
 		    
@@ -272,47 +273,47 @@ Inherits Global.Thread
 		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, QualityHeader) = False Then
 		      // More junk
 		      Var QualityValues() As Beacon.ConfigValue
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ActiveLingeringWorldTiles", "10"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bCameraViewBob", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bChatBubbles", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bCraftablesShowAllItems", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFilmGrain", "False"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFirstPersonRiding", "False"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFloatingNames", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bInvertLookY", "False"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bJoinNotifications", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bMotionBlur", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bShowChatBox", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bShowStatusNotificationMessages", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bThirdPersonPlayer", "False"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseDesktopResolutionForFullscreen", "False"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseDFAO", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseSSAO", "True"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseVSync", "False"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "CameraShakeScale", "0.100000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "FOVMultiplier", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "FullscreenMode", "2"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "GraphicsQuality", "2"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "GroundClutterDensity", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastConfirmedFullscreenMode", "2"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeX", "1280"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeY", "720"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LookLeftRightSensitivity", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LookUpDownSensitivity", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "MasterAudioVolume", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "MusicAudioVolume", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeX", "1280"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeY", "720"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "SFXAudioVolume", "1.000000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "TrueSkyQuality", "0.270000"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "Version", "5"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosX", "-1"))
-		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosY", "-1"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ActiveLingeringWorldTiles=10"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bCameraViewBob=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bChatBubbles=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bCraftablesShowAllItems=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFilmGrain=False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFirstPersonRiding=False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bFloatingNames=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bInvertLookY=False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bJoinNotifications=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bMotionBlur=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bShowChatBox=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bShowStatusNotificationMessages=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bThirdPersonPlayer=False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseDesktopResolutionForFullscreen=False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseDFAO=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseSSAO=True"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "bUseVSync=False"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "CameraShakeScale=0.100000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "FOVMultiplier=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "FullscreenMode=2"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "GraphicsQuality=2"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "GroundClutterDensity=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastConfirmedFullscreenMode=2"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeX=1280"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LastUserConfirmedResolutionSizeY=720"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LookLeftRightSensitivity=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "LookUpDownSensitivity=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "MasterAudioVolume=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "MusicAudioVolume=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeX=1280"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "ResolutionSizeY=720"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "SFXAudioVolume=1.000000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "TrueSkyQuality=0.270000"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "Version=5"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosX=-1"))
+		      QualityValues.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, QualityHeader, "WindowPosY=-1"))
 		      FinalOrganizer.Add(QualityValues)
 		    End If
 		    
 		    If FinalOrganizer.HasHeader(Beacon.ConfigFileGameUserSettings, "SessionSettings") = False Then
-		      FinalOrganizer.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName", "An Ark Server Managed by Beacon"))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName=An Ark Server Managed by Beacon"))
 		    End If
 		    
 		    // Remove excess junk that sneaks in from who knows where.
@@ -545,6 +546,53 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DebugIdentifier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThreadID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThreadState"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="ThreadStates"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Paused"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

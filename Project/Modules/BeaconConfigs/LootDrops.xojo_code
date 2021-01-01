@@ -185,7 +185,7 @@ Implements Iterable
 		    Keys.Add("MinItemSets=" + MinSets.ToString)
 		    Keys.Add("MaxItemSets=" + MaxSets.ToString)
 		    Keys.Add("NumItemSetsPower=1.0")
-		    Keys.Add("bSetsRandomWithoutReplacement=" + if(Source.PreventDuplicates, "true", "false"))
+		    Keys.Add("bSetsRandomWithoutReplacement=" + if(Source.PreventDuplicates, "True", "False"))
 		  End If
 		  
 		  Var GeneratedSets() As String
@@ -200,7 +200,7 @@ Implements Iterable
 		  
 		  Keys.Add("ItemSets=(" + GeneratedSets.Join(",") + ")")
 		  
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, "(" + Keys.Join(",") + ")"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems + "=(" + Keys.Join(",") + ")", ConfigOverrideSupplyCrateItems + ":" + Source.ClassString))
 		End Sub
 	#tag EndMethod
 

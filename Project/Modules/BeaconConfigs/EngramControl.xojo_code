@@ -22,11 +22,11 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints=" + Points.ToString, Level))
 		  Next
 		  
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams", If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams", If(Self.AutoUnlockAllEngrams, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams=" + If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams=" + If(Self.AutoUnlockAllEngrams, "True", "False")))
 		  
 		  Var UnlockEntries(), OverrideEntries() As String
 		  Var UnlockConfigs(), OverrideConfigs() As Beacon.ConfigValue
@@ -62,7 +62,7 @@ Inherits Beacon.ConfigGroup
 		      
 		      AutoUnlocked = True
 		      UnlockEntries.Add(EntryString)
-		      UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
+		      UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks=(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")", "EngramEntryAutoUnlocks:" + EntryString))
 		    End If
 		    
 		    Var Arguments() As String
@@ -107,7 +107,7 @@ Inherits Beacon.ConfigGroup
 		    If Arguments.LastIndex > -1 Then
 		      Arguments.AddAt(0, "EngramClassName=""" + EntryString + """")
 		      OverrideEntries.Add(EntryString)
-		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
+		      OverrideConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "OverrideNamedEngramEntries=(" + Arguments.Join(",") + ")", "OverrideNamedEngramEntries:" + EntryString))
 		    End If
 		  Next
 		  

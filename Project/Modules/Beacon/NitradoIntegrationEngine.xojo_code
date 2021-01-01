@@ -314,17 +314,11 @@ Inherits Beacon.IntegrationEngine
 		          End If
 		          Select Case ConfigKey.NitradoFormat
 		          Case Beacon.ConfigKey.NitradoFormats.Value
-		            GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, ConfigKey.Key, Value))
+		            GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, ConfigKey.Key + "=" + Value))
 		          Case Beacon.ConfigKey.NitradoFormats.Line
 		            Var Lines() As String = Value.Split(EndOfLine.UNIX)
-		            For Each Line As String In Lines
-		              Var Pos As Integer = Line.IndexOf("=")
-		              If Pos = -1 Then
-		                GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, ConfigKey.Key, Line, Line))
-		                Continue
-		              End If
-		              
-		              GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, Line.Left(Pos), Line.Middle(Pos + 1), Line))
+		            For LineIdx As Integer = 0 To Lines.LastIndex
+		              GuidedOrganizer.Add(New Beacon.ConfigValue(ConfigKey, Lines(LineIdx), LineIdx))
 		            Next
 		          End Select
 		        Next
