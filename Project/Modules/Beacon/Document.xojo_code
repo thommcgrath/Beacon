@@ -903,7 +903,10 @@ Implements ObservationKit.Observable
 		  Var Groups() As Beacon.ConfigGroup
 		  If (SetDict Is Nil) = False Then
 		    For Each Entry As DictionaryEntry In SetDict
-		      Groups.Add(Entry.Value)
+		      Var Group As Beacon.ConfigGroup = Entry.Value
+		      If Group.IsImplicit = False Or SetName = Self.BaseConfigSetName Then
+		        Groups.Add(Group)
+		      End If
 		    Next
 		  End If
 		  Return Groups
