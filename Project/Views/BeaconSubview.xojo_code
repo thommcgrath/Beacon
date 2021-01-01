@@ -231,8 +231,10 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ViewID() As String
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
-		  Return Info.Name
+		  If Self.mViewID.IsEmpty Then
+		    Self.mViewID = New v4UUID
+		  End If
+		  Return Self.mViewID
 		End Function
 	#tag EndMethod
 
@@ -385,6 +387,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mViewIcon As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mViewID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

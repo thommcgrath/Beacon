@@ -123,28 +123,14 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  Self.AppendPage(Self.ModsListView1)
-		End Sub
+		Function GetPagePanel() As PagePanel
+		  Return Self.Views
+		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub PageChanged(OldIndex As Integer, NewIndex As Integer)
-		  If OldIndex > -1 Then
-		    Var Page As BeaconSubview = Self.Page(OldIndex)
-		    If (Page Is Nil) = False And (Page.LinkedOmniBarItem Is Nil) = False Then
-		      Page.LinkedOmniBarItem.Toggled = False
-		    End If
-		  End If
-		  
-		  If NewIndex > -1 Then
-		    Var Page As BeaconSubview = Self.Page(NewIndex)
-		    If (Page Is Nil) = False And (Page.LinkedOmniBarItem Is Nil) = False Then
-		      Page.LinkedOmniBarItem.Toggled = True
-		    End If
-		  End If
-		  
-		  Self.Views.SelectedPanelIndex = NewIndex
+		Sub Open()
+		  Self.AppendPage(Self.ModsListView1)
 		End Sub
 	#tag EndEvent
 
@@ -181,11 +167,8 @@ End
 		    Return False
 		  End If
 		  
-		  Var Idx As Integer = Self.IndexOf(View)
-		  
-		  Self.RemovePage(Idx)
-		  Self.Views.RemovePanelAt(Idx)
 		  Self.Nav.Remove(View.LinkedOmniBarItem)
+		  Self.RemovePage(View)
 		  Return True
 		End Function
 	#tag EndMethod
@@ -193,10 +176,6 @@ End
 	#tag Method, Flags = &h21
 		Private Sub EmbedView(View As BeaconSubview)
 		  Self.AppendPage(View)
-		  
-		  Self.Views.AddPanel
-		  Var ViewIdx As Integer = Self.Views.LastAddedPanelIndex
-		  View.EmbedWithinPanel(Self.Views, ViewIdx, 0, 0, Self.Views.Width, Self.Views.Height)
 		  
 		  Var NavButton As OmniBarItem = OmniBarItem.CreateTab(View.ViewID, View.ViewTitle)
 		  NavButton.CanBeClosed = True
@@ -243,6 +222,15 @@ End
 		      End If
 		      Return
 		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Views
+	#tag Event
+		Sub Change()
+		  For Idx As Integer = 0 To Self.Nav.LastRowIndex
+		    Self.Nav.Item(Idx).Toggled = (Me.SelectedPanelIndex = Idx)
 		  Next
 		End Sub
 	#tag EndEvent

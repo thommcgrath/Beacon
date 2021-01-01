@@ -193,30 +193,16 @@ End
 
 #tag WindowCode
 	#tag Event
+		Function GetPagePanel() As PagePanel
+		  Return Self.Views
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.AppendPage(Self.RecentDocumentsComponent1)
 		  Self.AppendPage(Self.CloudDocumentsComponent1)
 		  Self.AppendPage(Self.CommunityDocumentsComponent1)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub PageChanged(OldIndex As Integer, NewIndex As Integer)
-		  If OldIndex > -1 Then
-		    Var Page As BeaconSubview = Self.Page(OldIndex)
-		    If (Page Is Nil) = False And (Page.LinkedOmniBarItem Is Nil) = False Then
-		      Page.LinkedOmniBarItem.Toggled = False
-		    End If
-		  End If
-		  
-		  If NewIndex > -1 Then
-		    Var Page As BeaconSubview = Self.Page(NewIndex)
-		    If (Page Is Nil) = False And (Page.LinkedOmniBarItem Is Nil) = False Then
-		      Page.LinkedOmniBarItem.Toggled = True
-		    End If
-		  End If
-		  
-		  Self.Views.SelectedPanelIndex = NewIndex
 		End Sub
 	#tag EndEvent
 
@@ -275,9 +261,9 @@ End
 		    View.ViewIcon = IconCommunityDocument
 		  End Select
 		  
-		  Self.Views.AddPanel
-		  Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
-		  View.EmbedWithinPanel(Self.Views, PanelIndex, 0, 0, Self.Views.Width, Self.Views.Height)
+		  // Self.Views.AddPanel
+		  // Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
+		  // View.EmbedWithinPanel(Self.Views, PanelIndex, 0, 0, Self.Views.Width, Self.Views.Height)
 		  
 		  Self.AppendPage(View)
 		  Self.CurrentPage = View
@@ -361,11 +347,6 @@ End
 		  Var NavItem As OmniBarItem = Page.LinkedOmniBarItem
 		  If (NavItem Is Nil) = False Then
 		    Self.Nav.Remove(NavItem)
-		  End If
-		  
-		  Var PanelIndex As Integer = Self.IndexOf(Page)
-		  If PanelIndex > -1 Then
-		    Self.Views.RemovePanelAt(PanelIndex)
 		  End If
 		  
 		  Self.RemovePage(Page)
@@ -514,6 +495,15 @@ End
 		      Call Self.DiscardView(Page)
 		      Return
 		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Views
+	#tag Event
+		Sub Change()
+		  For Idx As Integer = 0 To Self.Nav.LastRowIndex
+		    Self.Nav.Item(Idx).Toggled = (Me.SelectedPanelIndex = Idx)
 		  Next
 		End Sub
 	#tag EndEvent
