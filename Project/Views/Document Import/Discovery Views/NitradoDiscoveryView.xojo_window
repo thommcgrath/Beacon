@@ -373,6 +373,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Timer StatusWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
@@ -702,9 +703,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AuthenticationError()
-		  If Self.ShowConfirm("Beacon is unable to communicate with its server", "If your internet connection is working, make sure Beacon can contact its server at usebeacon.app. Press the ""More Info"" button for some troubleshooting tips.", "More Info", "Cancel") Then
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Beacon is unable to communicate with its server", "Check Beacon's ""System Status"" page to make sure this isn't a problem with Beacon. It Beacon is working normally, check your internet connection.", "System Status", "Cancel", "Help")
+		  Select Case Choice
+		  Case BeaconUI.ConfirmResponses.Action
+		    ShowURL("https://status.usebeacon.app/")
+		  Case BeaconUI.ConfirmResponses.Alternate
 		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
-		  End If
+		  End Select
 		  
 		  If (Self.mAuthController Is Nil) = False Then
 		    Self.mAuthController.Cancelled = True

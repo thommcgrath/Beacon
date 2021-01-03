@@ -1886,6 +1886,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowError(Message As String, HTTPStatus As Integer)
+		  App.Log(Message + " HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " error.")
+		  
 		  Select Case HTTPStatus
 		  Case 404
 		    Self.ShowAlert(Message, "The connector was not found. Please contact help@usebeacon.app for support.")
@@ -1903,14 +1905,17 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowError(Message As String, Err As RuntimeException)
-		  Var Explanation As String
-		  If Err.ErrorNumber <> 0 Then
-		    Explanation = "Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message
-		  Else
-		    Explanation = "Reason: " + Err.Message
-		  End If
+		  App.Log(Err, CurrentMethodName, Message)
 		  
-		  Self.ShowAlert(Message, Explanation)
+		  Const Explanation = "Press the ""System Status"" button to check on the status of Beacon's services. If Beacon is working correctly, check your internet connection."
+		  
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "System Status", "Cancel", "Help")
+		  Select Case Choice
+		  Case BeaconUI.ConfirmResponses.Action
+		    ShowURL("https://status.usebeacon.app/")
+		  Case BeaconUI.ConfirmResponses.Alternate
+		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
+		  End Select
 		End Sub
 	#tag EndMethod
 

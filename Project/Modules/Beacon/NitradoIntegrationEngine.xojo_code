@@ -798,6 +798,11 @@ Inherits Beacon.IntegrationEngine
 		    ElseIf (HTTPResponse Is Nil) = False And HTTPResponse.Size > 0 Then
 		      Message = Message + ": " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
 		    End If
+		    
+		    If Message.EndsWith(".") = False Then
+		      Message = Message + "."
+		    End If
+		    Message = Message + " Check the Nitrado API status at https://status.usebeacon.app/ for more information."
 		  Else
 		    Message = ""
 		    Return False

@@ -541,7 +541,7 @@ End
 		    Var Changed As Boolean
 		    For Idx As Integer = Recents.LastIndex DownTo 0
 		      If Recents(Idx).URL(Beacon.DocumentURL.URLTypes.Writing) = Request.URL Then
-		        Recents.Remove(Idx)
+		        Recents.RemoveAt(Idx)
 		        Changed = True
 		      End If
 		    Next

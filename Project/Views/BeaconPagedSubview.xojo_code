@@ -159,7 +159,7 @@ Inherits BeaconSubview
 		    Var NewPage As BeaconSubview = Self.mPages(Idx)
 		    Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(NewPage.ViewID)
 		    If HistoryIdx > -1 Then
-		      Self.mPageHistory.Remove(HistoryIdx)
+		      Self.mPageHistory.RemoveAt(HistoryIdx)
 		    End If
 		    If Self.mPageHistory.Count > 0 Then
 		      Self.mPageHistory.AddAt(0, NewPage.ViewID)
@@ -276,7 +276,7 @@ Inherits BeaconSubview
 		  Var Page As BeaconSubview = Self.mPages(Idx)
 		  Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(Page.ViewID)
 		  If HistoryIdx > -1 Then
-		    Self.mPageHistory.Remove(HistoryIdx)
+		    Self.mPageHistory.RemoveAt(HistoryIdx)
 		  End If
 		  
 		  Var FiredSwitchedFrom As Boolean
