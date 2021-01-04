@@ -55,7 +55,7 @@ Begin BeaconSubview ModsListView
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   250
+      Height          =   259
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Status"
@@ -75,7 +75,7 @@ Begin BeaconSubview ModsListView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -95,7 +95,7 @@ Begin BeaconSubview ModsListView
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   50
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0

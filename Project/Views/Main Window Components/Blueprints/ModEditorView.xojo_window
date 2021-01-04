@@ -55,7 +55,7 @@ Begin BeaconSubview ModEditorView
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   382
+      Height          =   391
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Name	Type"
@@ -75,7 +75,7 @@ Begin BeaconSubview ModEditorView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -86,6 +86,7 @@ Begin BeaconSubview ModEditorView
       _ScrollWidth    =   -1
    End
    Begin ClipboardWatcher Watcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   1000
@@ -103,7 +104,7 @@ Begin BeaconSubview ModEditorView
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   50
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0

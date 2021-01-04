@@ -28,7 +28,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   478
+      Height          =   487
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -43,7 +43,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      Top             =   50
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -69,7 +69,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Top             =   50
+         Top             =   41
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   False
@@ -84,7 +84,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
-         Height          =   478
+         Height          =   487
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -101,7 +101,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   50
+         Top             =   41
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
@@ -119,7 +119,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       DetailURL       =   ""
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   478
+      Height          =   487
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -137,13 +137,14 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Title           =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   False
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -160,7 +161,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   478
+      Height          =   487
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   230
@@ -177,7 +178,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   True
       Visible         =   True
       Width           =   1
@@ -192,7 +193,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   50
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -227,7 +228,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Enabled         =   True
       EraseBackground =   True
       HasBackgroundColor=   False
-      Height          =   437
+      Height          =   446
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -241,7 +242,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   91
+      Top             =   82
       Transparent     =   True
       Visible         =   True
       Width           =   230
@@ -272,7 +273,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   True
       Visible         =   True
       Width           =   230
@@ -303,7 +304,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   90
+      Top             =   81
       Transparent     =   True
       Visible         =   True
       Width           =   230

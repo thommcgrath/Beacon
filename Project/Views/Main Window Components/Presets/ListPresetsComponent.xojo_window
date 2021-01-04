@@ -55,7 +55,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   0
-      Height          =   388
+      Height          =   397
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Preset Name	Type"
@@ -75,7 +75,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   50
+      Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -95,7 +95,7 @@ Begin PresetsComponentView ListPresetsComponent Implements NotificationKit.Recei
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   50
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0

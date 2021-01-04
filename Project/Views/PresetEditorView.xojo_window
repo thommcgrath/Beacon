@@ -25,113 +25,10 @@ Begin BeaconSubview PresetEditorView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   740
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   ""
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   10
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   200
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   60
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   740
-   End
-   Begin Shelf ViewSelector
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   200
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   340
-   End
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   495
+      Height          =   515
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -146,7 +43,7 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      Top             =   61
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -170,7 +67,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Visible         =   True
          Width           =   660
@@ -228,7 +125,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   183
+         Top             =   163
          Transparent     =   False
          Visible         =   True
          Width           =   13
@@ -251,7 +148,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   149
+         Top             =   129
          Transparent     =   False
          Visible         =   True
          Width           =   13
@@ -293,7 +190,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   183
+         Top             =   163
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -329,7 +226,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   183
+         Top             =   163
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -372,7 +269,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   149
+         Top             =   129
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -408,7 +305,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   149
+         Top             =   129
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -443,7 +340,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   115
+         Top             =   95
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -478,7 +375,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -521,7 +418,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   115
+         Top             =   95
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -565,7 +462,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -598,7 +495,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -630,7 +527,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -662,7 +559,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -690,7 +587,7 @@ Begin BeaconSubview PresetEditorView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   "#ColumnDescription"
-         Height          =   379
+         Height          =   399
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -717,7 +614,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   125
+         Top             =   105
          Transparent     =   True
          TypeaheadColumn =   1
          Underline       =   False
@@ -750,7 +647,7 @@ Begin BeaconSubview PresetEditorView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
-         Height          =   415
+         Height          =   435
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -777,7 +674,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   121
+         Top             =   101
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -788,6 +685,37 @@ Begin BeaconSubview PresetEditorView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+   End
+   Begin OmniBar PresetToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   740
    End
 End
 #tag EndWindow
@@ -1106,6 +1034,7 @@ End
 		    Self.Changed = True
 		  Next
 		  Self.ContentsList.Sort
+		  Self.Pages.SelectedPanelIndex = Self.PageContents
 		  Self.ContentsList.EnsureSelectionIsVisible
 		  Self.UpdateMinAndMaxFields
 		End Sub
@@ -1268,50 +1197,35 @@ End
 	#tag Constant, Name = ModifierClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.presetmodifier", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageSettings, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageModifiers, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageSettings, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Header
+#tag Events Pages
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEntries"
-		    Self.ShowAddDialog()
-		  Case "EditEntries"
-		    Self.EditSelectedEntries()
-		  Case "DeleteEntries"
-		    Self.DeleteSelectedEntries(True)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", IconToolbarAdd))
-		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", IconToolbarEdit, False))
-		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", IconRemove, False))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ViewSelector
-	#tag Event
-		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconPresetSettings, "General", "settings")
-		  Me.Add(IconPresetContents, "Contents", "contents")
-		  Me.Add(IconPresetModifiers, "Modifiers", "modifiers")
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Self.Pages.SelectedPanelIndex = Me.SelectedIndex - 1
+		Sub Change()
+		  Var GeneralTab As OmniBarItem = Self.PresetToolbar.Item("GeneralTab")
+		  If (GeneralTab Is Nil) = False Then
+		    GeneralTab.Toggled = Me.SelectedPanelIndex = Self.PageSettings
+		  End If
+		  
+		  Var ContentsTab As OmniBarItem = Self.PresetToolbar.Item("ContentsTab")
+		  If (ContentsTab Is Nil) = False Then
+		    ContentsTab.Toggled = Me.SelectedPanelIndex = Self.PageContents
+		  End If
+		  
+		  Var ModifiersTab As OmniBarItem = Self.PresetToolbar.Item("ModifiersTab")
+		  If (ModifiersTab Is Nil) = False Then
+		    ModifiersTab.Toggled = Me.SelectedPanelIndex = Self.PageModifiers
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1646,8 +1560,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Header.EditEntries.Enabled = Me.SelectedRowCount > 0
-		  Header.DeleteEntries.Enabled = Me.SelectedRowCount > 0
+		  Var EditEntriesButton As OmniBarItem = Self.PresetToolbar.Item("EditEntriesButton")
+		  If (EditEntriesButton Is Nil) = False Then
+		    EditEntriesButton.Enabled = Me.SelectedRowCount > 0
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1755,6 +1671,38 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  Self.ShowModifierEditor(True)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PresetToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTab("GeneralTab", "General"))
+		  Me.Append(OmniBarItem.CreateTab("ContentsTab", "Contents"))
+		  Me.Append(OmniBarItem.CreateTab("ModifiersTab", "Modifiers"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEntriesButton", "New Entry", IconToolbarAdd, "Add engrams to this preset."))
+		  Me.Append(OmniBarItem.CreateButton("EditEntriesButton", "Edit", IconToolbarEdit, "Edit the selected entries.", False))
+		  
+		  Me.Item("GeneralTab").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEntriesButton"
+		    Self.ShowAddDialog()
+		  Case "EditEntriesButton"
+		    Self.EditSelectedEntries()
+		  Case "GeneralTab"
+		    Self.Pages.SelectedPanelIndex = Self.PageSettings
+		  Case "ContentsTab"
+		    Self.Pages.SelectedPanelIndex = Self.PageContents
+		  Case "ModifiersTab"
+		    Self.Pages.SelectedPanelIndex = Self.PageModifiers
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
