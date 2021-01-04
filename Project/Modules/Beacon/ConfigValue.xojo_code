@@ -3,7 +3,7 @@ Protected Class ConfigValue
 	#tag Method, Flags = &h0
 		Sub Constructor(Key As Beacon.ConfigKey, Command As String, Index As Integer = 0)
 		  Self.ParseCommand(Command)
-		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
+		  Self.mSortKey = Self.mAttributedKey + ":" + Index.ToString("00000")
 		  Self.mKeyDetails = Key
 		End Sub
 	#tag EndMethod
@@ -19,7 +19,7 @@ Protected Class ConfigValue
 	#tag Method, Flags = &h0
 		Sub Constructor(File As String, Header As String, Command As String, Index As Integer = 0)
 		  Self.ParseCommand(Command)
-		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
+		  Self.mSortKey = Self.mAttributedKey + ":" + Index.ToString("00000")
 		  
 		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey)
 		  Var ConfigKey As Beacon.ConfigKey

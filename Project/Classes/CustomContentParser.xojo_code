@@ -58,7 +58,9 @@ Protected Class CustomContentParser
 		  
 		  Var Key As String = Line.Left(KeyPos).Trim
 		  Var Value As String = Line.Middle(KeyPos + 1).Trim
-		  Var ConfigValue As New Beacon.ConfigValue(Self.mFile, Self.mCurrentHeader, Key + "=" + Value)
+		  Var KeyIndex As Integer = Self.mKeyCounts.Lookup(Key, 0).IntegerValue
+		  Self.mKeyCounts.Value(Key) = KeyIndex + 1
+		  Var ConfigValue As New Beacon.ConfigValue(Self.mFile, Self.mCurrentHeader, Key + "=" + Value, KeyIndex)
 		  If Self.mSkippedKeys.IndexOf(ConfigValue.SimplifiedKey) = -1 Then
 		    Self.mValues.Add(ConfigValue)
 		  End If
@@ -73,6 +75,7 @@ Protected Class CustomContentParser
 		  Self.mCurrentHeader = InitialHeader
 		  Self.mExistingConfigs = ExistingConfigs
 		  Self.mProfile = Profile
+		  Self.mKeyCounts = New Dictionary
 		  Self.mSkippedKeys = Self.GetSkippedKeys(Self.mCurrentHeader, Self.mExistingConfigs)
 		End Sub
 	#tag EndMethod
@@ -128,6 +131,10 @@ Protected Class CustomContentParser
 
 	#tag Property, Flags = &h21
 		Private mFile As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKeyCounts As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

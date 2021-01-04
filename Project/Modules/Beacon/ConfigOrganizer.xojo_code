@@ -62,6 +62,7 @@ Protected Class ConfigOrganizer
 		  Var Header As String = DefaultHeader
 		  Var MessageOfTheDay As String
 		  Var Values() As Beacon.ConfigValue
+		  Var KeyCounts As New Dictionary
 		  For LineIdx As Integer = 0 To Lines.LastIndex
 		    Var Line As String = Lines(LineIdx).Trim
 		    If Line.IsEmpty Then
@@ -83,7 +84,10 @@ Protected Class ConfigOrganizer
 		      Continue
 		    End If
 		    
-		    Var Config As New Beacon.ConfigValue(File, Header, Line, LineIdx)
+		    Var AttributedKey As String = Line.Left(Pos)
+		    Var KeyIndex As Integer = KeyCounts.Lookup(AttributedKey, 0).IntegerValue
+		    KeyCounts.Value(AttributedKey) = KeyIndex + 1
+		    Var Config As New Beacon.ConfigValue(File, Header, Line, KeyIndex)
 		    If Config.File = Beacon.ConfigFileGameUserSettings And Config.Header = "MessageOfTheDay" And Config.SimplifiedKey = "Message" Then
 		      MessageOfTheDay = Config.Value
 		      Continue
@@ -275,7 +279,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function Keys(ForFile As String, ForHeader As String) As String()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY simplekey;", ForFile, ForHeader)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY simplekey;", ForFile, ForHeader)
 		  Var Keys() As String
 		  For Each Row As DatabaseRow In Rows
 		    Keys.Add(Row.Column("simplekey").StringValue)
