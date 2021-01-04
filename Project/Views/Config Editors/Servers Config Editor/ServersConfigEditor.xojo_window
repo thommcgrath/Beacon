@@ -46,7 +46,7 @@ Begin ConfigEditor ServersConfigEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   False
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   465
       HelpTag         =   ""
       Hierarchical    =   False
@@ -180,12 +180,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
-		    
-		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
-		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		  Next
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 
@@ -281,6 +276,57 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UpdateList()
+		  // Updates the list, maintaining the current selection
+		  
+		  Var Profiles() As Beacon.ServerProfile
+		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Self.ServerList.Selected(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Profiles.Add(Self.ServerList.RowTagAt(Idx))
+		  Next
+		  Self.UpdateList(Profiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile)
+		  Self.ServerList.SelectionChangeBlocked = True
+		  Self.ServerList.RemoveAllRows
+		  
+		  Var SelectIDs() As String
+		  For Each Profile As Beacon.ServerProfile In SelectProfiles
+		    If Profile Is Nil Then
+		      Continue
+		    End If
+		    SelectIDs.Add(Profile.ProfileID)
+		  Next
+		  
+		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
+		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
+		    
+		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
+		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
+		    Self.ServerList.Selected(Self.ServerList.LastAddedRowIndex) = SelectIDs.IndexOf(Profile.ProfileID) > -1
+		  Next
+		  Self.ServerList.Sort
+		  Self.ServerList.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList(SelectProfile As Beacon.ServerProfile)
+		  // Updates the list, selecting the requested profile
+		  
+		  Var Profiles(0) As Beacon.ServerProfile
+		  Profiles(0) = SelectProfile
+		  Self.UpdateList(Profiles)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
 		  Self.Changed = Sender.Changed
@@ -372,6 +418,8 @@ End
 		        View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
 		      Case IsA Beacon.LocalServerProfile
 		        View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
+		      Case IsA Beacon.SimpleServerProfile
+		        View = New SimpleServerView(Self.Document, Beacon.SimpleServerProfile(Profile))
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return
@@ -496,11 +544,42 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  #Pragma Unused Column
+		  
+		  Var Profile1 As Beacon.ServerProfile = Me.RowTagAt(Row1)
+		  Var Profile2 As Beacon.ServerProfile = Me.RowTagAt(Row2)
+		  
+		  Result = Profile1.Operator_Compare(Profile2)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddServerButton", "New Server", IconToolbarAdd, "Add a new simple server."))
+		  
+		  Me.Item("ConfigTitle").Priority = 5
+		  Me.Item("ConfigTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddServerButton"
+		    Var Profile As New Beacon.SimpleServerProfile
+		    Profile.Name = "An Ark Server"
+		    
+		    Self.Document.AddServerProfile(Profile)
+		    Self.UpdateList(Profile)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

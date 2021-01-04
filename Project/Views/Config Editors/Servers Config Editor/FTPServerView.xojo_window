@@ -1341,12 +1341,9 @@ End
 #tag Events ControlToolbar
 	#tag Event
 		Sub Open()
-		  Var GeneralButton As OmniBarItem = OmniBarItem.CreateTab("PageGeneral", "General")
-		  GeneralButton.Toggled = True
-		  
-		  Var NotesButton As OmniBarItem = OmniBarItem.CreateTab("PageNotes", "Notes")
-		  
-		  Me.Append(GeneralButton, NotesButton)
+		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
+		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Item("PageGeneral").Toggled = True
 		End Sub
 	#tag EndEvent
 	#tag Event

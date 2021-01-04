@@ -173,6 +173,8 @@ Protected Class ServerProfile
 		    Return New Beacon.ConnectorServerProfile(Dict)
 		  Case "Local"
 		    Return New Beacon.LocalServerProfile(Dict)
+		  Case "Simple"
+		    Return New Beacon.SimpleServerProfile(Dict)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -214,7 +216,7 @@ Protected Class ServerProfile
 		    // Don't just compare names. We know these are not equal, but we need them to be sortable.
 		    Var SelfCompare As String = Self.Name + "    " + Self.ProfileID
 		    Var OtherCompare As String = Other.Name + "    " + Other.ProfileID
-		    Return SelfCompare.Compare(OtherCompare, ComparisonOptions.CaseSensitive)
+		    Return SelfCompare.Compare(OtherCompare, ComparisonOptions.CaseInsensitive)
 		  End If
 		End Function
 	#tag EndMethod
