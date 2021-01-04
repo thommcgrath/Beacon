@@ -3044,6 +3044,7 @@ End
 		    If PerLevelComputedLabel <> Nil Then
 		      Var PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
 		      PerLevelComputedLabel.Text = "= " + CreatureStatContainer.FormatStat(PerLevelAmount) + If(Stat.IsPercentage, "%", "")
+		      PerLevelComputedLabel.Tooltip = PerLevelComputedLabel.Text.Middle(2)
 		    End If
 		  Next
 		End Sub

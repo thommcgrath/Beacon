@@ -1577,6 +1577,7 @@ End
 		      Else
 		        StatBaseLabel.Text = Self.FormatStat(PerLevel) + " x"
 		      End If
+		      StatBaseLabel.Tooltip = StatBaseLabel.Text.Left(StatBaseLabel.Text.Length - 2)
 		    End If
 		    
 		    If StatMultiplierField <> Nil And Focus <> StatMultiplierField Then
@@ -1592,6 +1593,7 @@ End
 		      Else
 		        StatComputedLabel.Text = "= " + Self.FormatStat(Amount)
 		      End If
+		      StatComputedLabel.Tooltip = StatComputedLabel.Text.Middle(2)
 		    End If
 		  Next
 		  Self.mSettingUp = False
