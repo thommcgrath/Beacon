@@ -275,7 +275,7 @@ Implements Iterable
 		    
 		    Var Engram As Beacon.Engram = Option.Engram
 		    If Document.ModEnabled(Engram.ModID) = False Then
-		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		      Issues.Add(New Beacon.Issue(ConfigName, "'" + Engram.Label + "' is provided by the '" + Engram.ModName + "' mod, which is turned off.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
 		      Issues.Add(New Beacon.Issue(ConfigName, Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		    End If
