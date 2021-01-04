@@ -102,6 +102,8 @@
 	$separator-color: mix($foreground-color, $background-color, 15%);
 	$explore-color: $background-color;
 	$explore-border-color: $separator-color;
+	$tag-red-fill: contrasting-color($background-color, #a61c2c);
+	$tag-red-text: contrasting-color($tag-red-fill, #ffffff);
 	
 	body {
 		color: $foreground-color;
@@ -132,6 +134,13 @@
 		&.nintendo {
 			background-color: $switch-fill;
 			color: $switch-text;
+		}
+	}
+	
+	.tag {
+		&.red {
+			background-color: $tag-red-fill;
+			color: $tag-red-text;
 		}
 	}
 	

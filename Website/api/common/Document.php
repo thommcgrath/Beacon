@@ -460,7 +460,7 @@ class Document implements \JsonSerializable {
 		} else {
 			if ($user->IsChildAccount()) {
 				$role = 'Team';
-				$owner_id = $user->ParentAccount();
+				$owner_id = $user->ParentAccountID();
 			} else {
 				$role = 'Owner';
 				$owner_id = $user->UserID();

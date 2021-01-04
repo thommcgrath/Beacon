@@ -104,19 +104,19 @@ abstract class BeaconErrors {
 						),
 						array(
 							'title' => 'GET',
-							'value' => var_export($_GET, true)
+							'value' => isset($_GET) ? var_export($_GET, true) : 'null'
 						),
 						array(
 							'title' => 'POST',
-							'value' => var_export($_POST, true)
+							'value' => isset($_POST) ? var_export($_POST, true) : 'null'
 						),
 						array(
 							'title' => 'SESSION',
-							'value' => var_export($_SESSION, true)
+							'value' => isset($_SESSION) ? var_export($_SESSION, true) : 'null'
 						),
 						array(
 							'title' => 'COOKIE',
-							'value' => var_export($_COOKIE, true)
+							'value' => isset($_COOKIE) ? var_export($_COOKIE, true) : 'null'
 						)
 					),
 					'ts' => time()
