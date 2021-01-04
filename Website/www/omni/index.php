@@ -182,7 +182,7 @@ var validate_email = function(email) {
 
 document.addEventListener('DOMContentLoaded', function() {
 	stw_quantity_field = document.getElementById('stw_quantity_field');
-	slot_quantity_field = document.getElementById('slow_quantity_field');
+	slot_quantity_field = document.getElementById('slot_quantity_field');
 	gift_quantity_field = document.getElementById('gift_quantity_field');
 	
 	update_checkout_components();
@@ -459,7 +459,7 @@ BeaconTemplate::FinishScript();
 			<td class="price_column"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
 		</tr>
 		<?php if ($teams_enabled) { ?><tr id="slots_row">
- 			<td>Team Member Account<br><span class="smaller text-lighter">Need to purchase Beacon Omni for another admin on your team? Additional team member licenses can be purchased at any time. <a href="#">Learn more about Beacon for teams</a>.</span></td>
+ 			<td>Team Member Account<br><span class="smaller text-lighter">Need to purchase Beacon Omni for another admin on your team? Additional team member licenses can be purchased at any time. <a href="team">Learn more about Beacon for teams</a>.</span></td>
  			<td class="quantity_column"><input class="text-center" type="number" value="0" id="slot_quantity_field" min="0" max="20"><span id="slot_quantity_prohibited" class="hidden">N/A</span></td>
  			<td class="price_column"><?php echo htmlentities($product_details['slot']['price_formatted']); ?>
  		</tr><?php } ?>

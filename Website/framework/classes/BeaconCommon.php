@@ -605,7 +605,12 @@ abstract class BeaconCommon {
 	}
 	
 	public static function TeamsEnabled() {
-		return self::GetGlobal('Teams Enabled', false);
+		$enabled = self::GetGlobal('Teams Enabled', false);
+		if ($enabled === false) {
+			return false;
+		}
+		
+		return isset($_SERVER['HTTP_HOST']) && substr($_SERVER['HTTP_HOST'], -13) === 'usebeacon.app';
 	}
 }
 
