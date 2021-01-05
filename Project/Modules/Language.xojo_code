@@ -86,6 +86,8 @@ Protected Module Language
 		    Return "Item Stat Limits"
 		  Case BeaconConfigs.NameEngramControl
 		    Return "Engram Control"
+		  Case BeaconConfigs.NameSpoilTimers
+		    Return "Decay and Spoil"
 		  Case "deployments"
 		    Return "Servers"
 		  Case "accounts"

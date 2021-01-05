@@ -132,6 +132,17 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ParseDouble(Input As String, ByRef Value As Double) As Boolean
+		  If IsNumeric(Input) Then
+		    Value = CDbl(Input)
+		    Return True
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Parser_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished

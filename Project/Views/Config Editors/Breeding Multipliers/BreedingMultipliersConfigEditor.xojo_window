@@ -1572,17 +1572,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ParseDouble(Input As String, ByRef Value As Double) As Boolean
-		  If IsNumeric(Input) Then
-		    Value = CDbl(Input)
-		    Return True
-		  Else
-		    Return False
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub PlaceControlGroups()
 		  Const MaxColumnWidth = 340
 		  

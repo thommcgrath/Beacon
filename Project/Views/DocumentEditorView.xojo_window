@@ -1246,6 +1246,8 @@ End
 			        NewPanel = New StatLimitsConfigEditor(Self.mController)
 			      Case BeaconConfigs.NameEngramControl
 			        NewPanel = New EngramControlConfigEditor(Self.mController)
+			      Case BeaconConfigs.NameSpoilTimers
+			        NewPanel = New SpoilTimersConfigEditor(Self.mController)
 			      End Select
 			      If NewPanel <> Nil Then
 			        Self.Panels.Value(CacheKey) = NewPanel

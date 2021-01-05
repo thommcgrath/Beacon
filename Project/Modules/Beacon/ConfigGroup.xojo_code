@@ -162,19 +162,7 @@ Protected Class ConfigGroup
 
 
 	#tag Hook, Flags = &h0
-		Event CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
