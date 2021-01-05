@@ -32,6 +32,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -45,6 +47,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
       LockTop         =   True
       RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -152,6 +155,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             RequiresSelection=   False
             RowSelectionType=   0
             Scope           =   2
+            SelectionChangeBlocked=   False
             TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
@@ -161,7 +165,9 @@ Begin ConfigEditor SpoilTimersConfigEditor
             TypeaheadColumn =   0
             Underline       =   False
             Visible         =   True
+            VisibleRowCount =   0
             Width           =   455
+            _ScrollOffset   =   0
             _ScrollWidth    =   -1
          End
       End
@@ -351,43 +357,65 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Visible         =   True
             Width           =   187
          End
-         Begin CheckBox PvEDinoDecayCheck
+         Begin SwitchControl PvEStructureDecaySwitch
             AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Enable Creature Decay"
-            DataField       =   ""
-            DataSource      =   ""
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
             Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
             Height          =   20
             Index           =   -2147483648
             InitialParent   =   "PvEGroup"
-            Italic          =   False
-            Left            =   423
+            Left            =   622
             LockBottom      =   False
             LockedInPosition=   False
             LockLeft        =   True
-            LockRight       =   True
+            LockRight       =   False
             LockTop         =   True
             Scope           =   2
-            TabIndex        =   1
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   6
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   97
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
+         End
+         Begin SwitchControl PvEDinoDecaySwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "PvEGroup"
+            Left            =   622
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   7
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
             Top             =   129
-            Transparent     =   False
-            Underline       =   False
-            Value           =   False
+            Transparent     =   True
             Visible         =   True
-            VisualState     =   0
-            Width           =   455
+            Width           =   40
          End
-         Begin CheckBox PvEStructureDecayCheck
+         Begin Label PvEStructureDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            Caption         =   "Enable Structure Decay"
             DataField       =   ""
             DataSource      =   ""
             Enabled         =   True
@@ -402,19 +430,58 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockBottom      =   False
             LockedInPosition=   False
             LockLeft        =   True
-            LockRight       =   True
+            LockRight       =   False
             LockTop         =   True
+            Multiline       =   False
             Scope           =   2
-            TabIndex        =   0
+            Selectable      =   False
+            TabIndex        =   8
             TabPanelIndex   =   1
             TabStop         =   True
+            Text            =   "Enable PvE Structure Decay:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
             Tooltip         =   ""
             Top             =   97
             Transparent     =   False
             Underline       =   False
             Visible         =   True
-            VisualState     =   0
-            Width           =   455
+            Width           =   187
+         End
+         Begin Label PvEDinoDecayLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "PvEGroup"
+            Italic          =   False
+            Left            =   423
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   9
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Enable PvE Dino Decay:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   129
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   187
          End
       End
       Begin GroupBox PvPGroup
@@ -445,10 +512,9 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Underline       =   False
          Visible         =   True
          Width           =   371
-         Begin CheckBox PvPDinoDecayCheck
+         Begin Label PvPStructureDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
-            Caption         =   "Enable Creature Decay"
             DataField       =   ""
             DataSource      =   ""
             Enabled         =   True
@@ -458,350 +524,6 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Height          =   20
             Index           =   -2147483648
             InitialParent   =   "PvPGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   1
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   129
-            Transparent     =   False
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-         Begin CheckBox PvPStructureDecayCheck
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Enable Structure Decay"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   20
-            Index           =   -2147483648
-            InitialParent   =   "PvPGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   97
-            Transparent     =   False
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-      End
-      Begin GroupBox CommonGroup
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Common"
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   593
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   181
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   371
-         Begin CheckBox AutoDestroyStructuresCheck
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Auto Destroy Structures"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   20
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   4
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   315
-            Transparent     =   False
-            Underline       =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-         Begin CheckBox AutoDestroyDinosCheck
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Auto Destroy Creatures"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   20
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   8
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   413
-            Transparent     =   False
-            Underline       =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-         Begin CheckBox OnlyDestroyCoreStructuresCheck
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Only Auto Destroy Core Structures"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   20
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   7
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   381
-            Transparent     =   False
-            Underline       =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-         Begin CheckBox OnlyDecayUnsnappedCoreStructuresCheck
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Only Decay Unsnapped Core Structures"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   20
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   217
-            Transparent     =   False
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-         Begin CheckBox FastDecayUnsnappedCoreStructuresCheck
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            Caption         =   "Fast Decay Unsnapped Core Structures"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   20
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            TabIndex        =   1
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   249
-            Transparent     =   False
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            VisualState     =   0
-            Width           =   331
-         End
-         Begin UITweaks.ResizedTextField AutoDestroyPeriodMultiplierField
-            AllowAutoDeactivate=   True
-            AllowFocusRing  =   True
-            AllowSpellChecking=   False
-            AllowTabs       =   False
-            BackgroundColor =   &cFFFFFF00
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Format          =   ""
-            HasBorder       =   True
-            Height          =   22
-            Hint            =   ""
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   291
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            MaximumCharactersAllowed=   0
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   6
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextAlignment   =   2
-            TextColor       =   &c00000000
-            Tooltip         =   ""
-            Top             =   347
-            Transparent     =   False
-            Underline       =   False
-            ValidationMask  =   ""
-            Visible         =   True
-            Width           =   80
-         End
-         Begin UITweaks.ResizedTextField FastDecayPeriodField
-            AllowAutoDeactivate=   True
-            AllowFocusRing  =   True
-            AllowSpellChecking=   False
-            AllowTabs       =   False
-            BackgroundColor =   &cFFFFFF00
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Format          =   ""
-            HasBorder       =   True
-            Height          =   22
-            Hint            =   ""
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   291
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            MaximumCharactersAllowed=   0
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   3
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextAlignment   =   2
-            TextColor       =   &c00000000
-            Tooltip         =   ""
-            Top             =   281
-            Transparent     =   False
-            Underline       =   False
-            ValidationMask  =   ""
-            Visible         =   True
-            Width           =   80
-         End
-         Begin UITweaks.ResizedLabel AutoDestroyPeriodMultiplierLabel
-            AllowAutoDeactivate=   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   22
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
             Italic          =   False
             Left            =   40
             LockBottom      =   False
@@ -812,20 +534,20 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   5
+            TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
-            Text            =   "Auto Destroy Structures Multiplier:"
+            Text            =   "Enable PvP Structure Decay:"
             TextAlignment   =   3
             TextColor       =   &c00000000
             Tooltip         =   ""
-            Top             =   347
+            Top             =   97
             Transparent     =   False
             Underline       =   False
             Visible         =   True
-            Width           =   239
+            Width           =   254
          End
-         Begin UITweaks.ResizedLabel FastDecayPeriodLabel
+         Begin Label PvPDinoDecayLabel
             AllowAutoDeactivate=   True
             Bold            =   False
             DataField       =   ""
@@ -834,9 +556,9 @@ Begin ConfigEditor SpoilTimersConfigEditor
             FontName        =   "System"
             FontSize        =   0.0
             FontUnit        =   0
-            Height          =   22
+            Height          =   20
             Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
+            InitialParent   =   "PvPGroup"
             Italic          =   False
             Left            =   40
             LockBottom      =   False
@@ -850,94 +572,77 @@ Begin ConfigEditor SpoilTimersConfigEditor
             TabIndex        =   2
             TabPanelIndex   =   1
             TabStop         =   True
-            Text            =   "Fast Decay Period:"
+            Text            =   "Enable PvP Dino Decay:"
             TextAlignment   =   3
             TextColor       =   &c00000000
             Tooltip         =   ""
-            Top             =   281
+            Top             =   129
             Transparent     =   False
             Underline       =   False
             Visible         =   True
-            Width           =   239
+            Width           =   254
          End
-         Begin UITweaks.ResizedLabel CropDecaySpeedMultiplierLabel
+         Begin SwitchControl PvPStructureDecaySwitch
             AllowAutoDeactivate=   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Height          =   22
-            Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   9
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "Crop Decay Speed Multiplier:"
-            TextAlignment   =   3
-            TextColor       =   &c00000000
-            Tooltip         =   ""
-            Top             =   445
-            Transparent     =   False
-            Underline       =   False
-            Visible         =   True
-            Width           =   239
-         End
-         Begin UITweaks.ResizedTextField CropDecaySpeedMultiplierField
-            AllowAutoDeactivate=   True
+            AllowFocus      =   False
             AllowFocusRing  =   True
-            AllowSpellChecking=   False
             AllowTabs       =   False
-            BackgroundColor =   &cFFFFFF00
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
+            Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
-            FontName        =   "System"
-            FontSize        =   0.0
-            FontUnit        =   0
-            Format          =   ""
-            HasBorder       =   True
-            Height          =   22
-            Hint            =   ""
+            Height          =   20
             Index           =   -2147483648
-            InitialParent   =   "CommonGroup"
-            Italic          =   False
-            Left            =   291
+            InitialParent   =   "PvPGroup"
+            Left            =   306
             LockBottom      =   False
             LockedInPosition=   False
             LockLeft        =   True
             LockRight       =   False
             LockTop         =   True
-            MaximumCharactersAllowed=   0
-            Password        =   False
-            ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   10
+            ScrollActive    =   False
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   1
             TabPanelIndex   =   1
             TabStop         =   True
-            Text            =   ""
-            TextAlignment   =   2
-            TextColor       =   &c00000000
             Tooltip         =   ""
-            Top             =   445
-            Transparent     =   False
-            Underline       =   False
-            ValidationMask  =   ""
+            Top             =   97
+            Transparent     =   True
             Visible         =   True
-            Width           =   80
+            Width           =   40
+         End
+         Begin SwitchControl PvPDinoDecaySwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "PvPGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollActive    =   False
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   3
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   129
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
          End
       End
       Begin TextField SpoilTimeMultiplierField
@@ -970,7 +675,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -1005,13 +710,14 @@ Begin ConfigEditor SpoilTimersConfigEditor
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   62
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   630
@@ -1038,7 +744,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Spoil Time Multiplier:"
@@ -1096,6 +802,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          RequiresSelection=   False
          RowSelectionType=   0
          Scope           =   2
+         SelectionChangeBlocked=   False
          TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
@@ -1105,8 +812,591 @@ Begin ConfigEditor SpoilTimersConfigEditor
          TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   878
+         _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin GroupBox CommonGroup
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Common"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   593
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   181
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   371
+         Begin UITweaks.ResizedTextField AutoDestroyPeriodMultiplierField
+            AllowAutoDeactivate=   True
+            AllowFocusRing  =   True
+            AllowSpellChecking=   False
+            AllowTabs       =   False
+            BackgroundColor =   &cFFFFFF00
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Format          =   ""
+            HasBorder       =   True
+            Height          =   22
+            Hint            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            MaximumCharactersAllowed=   0
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   6
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextAlignment   =   2
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   347
+            Transparent     =   False
+            Underline       =   False
+            ValidationMask  =   ""
+            Visible         =   True
+            Width           =   65
+         End
+         Begin UITweaks.ResizedTextField FastDecayPeriodField
+            AllowAutoDeactivate=   True
+            AllowFocusRing  =   True
+            AllowSpellChecking=   False
+            AllowTabs       =   False
+            BackgroundColor =   &cFFFFFF00
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Format          =   ""
+            HasBorder       =   True
+            Height          =   22
+            Hint            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            MaximumCharactersAllowed=   0
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   3
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextAlignment   =   2
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   281
+            Transparent     =   False
+            Underline       =   False
+            ValidationMask  =   ""
+            Visible         =   True
+            Width           =   65
+         End
+         Begin UITweaks.ResizedLabel AutoDestroyPeriodMultiplierLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   22
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   5
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Auto Destroy Structures Multiplier:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   347
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin UITweaks.ResizedLabel FastDecayPeriodLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   22
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   2
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Fast Decay Period:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   281
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin UITweaks.ResizedLabel CropDecaySpeedMultiplierLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   22
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   9
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Crop Decay Speed Multiplier:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   445
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin UITweaks.ResizedTextField CropDecaySpeedMultiplierField
+            AllowAutoDeactivate=   True
+            AllowFocusRing  =   True
+            AllowSpellChecking=   False
+            AllowTabs       =   False
+            BackgroundColor =   &cFFFFFF00
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Format          =   ""
+            HasBorder       =   True
+            Height          =   22
+            Hint            =   ""
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            MaximumCharactersAllowed=   0
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   10
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextAlignment   =   2
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   445
+            Transparent     =   False
+            Underline       =   False
+            ValidationMask  =   ""
+            Visible         =   True
+            Width           =   65
+         End
+         Begin Label OnlyDecayUnsnappedCoreStructuresLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   11
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Only Decay Unsnapped Core Structures:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   217
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin Label FastDecayUnsnappedCoreStructuresLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   12
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Fast Decay Unsnapped Core Structures:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   249
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin Label AutoDestroyStructuresLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   13
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Auto Destroy Structures:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   315
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin Label OnlyDestroyCoreStructuresLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   14
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Only Auto Destroy Core Structures:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   381
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin Label AutoDestroyDinosLabel
+            AllowAutoDeactivate=   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "System"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   15
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Auto Destroy Creatures:"
+            TextAlignment   =   3
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   413
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   254
+         End
+         Begin SwitchControl OnlyDecayUnsnappedCoreStructuresSwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   16
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   217
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
+         End
+         Begin SwitchControl FastDecayUnsnappedCoreStructuresSwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   17
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   249
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
+         End
+         Begin SwitchControl AutoDestroyStructuresSwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   18
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   315
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
+         End
+         Begin SwitchControl OnlyDestroyCoreStructuresSwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   19
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   381
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
+         End
+         Begin SwitchControl AutoDestroyDinosSwitch
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            Enabled         =   True
+            Height          =   20
+            Index           =   -2147483648
+            InitialParent   =   "CommonGroup"
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   20
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   413
+            Transparent     =   True
+            Visible         =   True
+            Width           =   40
+         End
       End
    End
 End
@@ -1180,19 +1470,19 @@ End
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(False)
 		  
-		  Self.PvEDinoDecayCheck.Value = Not Config.DisableDinoDecayPvE
-		  Self.PvEStructureDecayCheck.Value = Not Config.DisableStructureDecayPvE
-		  Self.PvPDinoDecayCheck.Value = Config.PvPDinoDecay
-		  Self.PvPStructureDecayCheck.Value = Config.PvPStructureDecay
+		  Self.PvEDinoDecaySwitch.Value(False) = Not Config.DisableDinoDecayPvE
+		  Self.PvEStructureDecaySwitch.Value(False) = Not Config.DisableStructureDecayPvE
+		  Self.PvPDinoDecaySwitch.Value(False) = Config.PvPDinoDecay
+		  Self.PvPStructureDecaySwitch.Value(False) = Config.PvPStructureDecay
 		  Self.PvEStructureDecayMultiplierField.Text = Config.PvEStructureDecayPeriodMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.PvEDinoDecayMultiplierField.Text = Config.PvEDinoDecayPeriodMultiplier.ToString(Locale.Current, "0.0#####")
-		  Self.AutoDestroyStructuresCheck.Value = Config.AutoDestroyStructures
-		  Self.AutoDestroyDinosCheck.Value = Config.AutoDestroyDecayedDinos
+		  Self.AutoDestroyStructuresSwitch.Value(False) = Config.AutoDestroyStructures
+		  Self.AutoDestroyDinosSwitch.Value(False) = Config.AutoDestroyDecayedDinos
 		  Self.FastDecayPeriodField.Text = Beacon.SecondsToString(Config.FastDecayInterval)
 		  Self.AutoDestroyPeriodMultiplierField.Text = Config.AutoDestroyOldStructuresMultiplier.ToString(Locale.Current, "0.0#####")
-		  Self.OnlyDecayUnsnappedCoreStructuresCheck.Value = Config.OnlyDecayUnsnappedCoreStructures
-		  Self.OnlyDestroyCoreStructuresCheck.Value = Config.OnlyAutoDestroyCoreStructures
-		  Self.FastDecayUnsnappedCoreStructuresCheck.Value = Config.FastDecayUnsnappedCoreStructures
+		  Self.OnlyDecayUnsnappedCoreStructuresSwitch.Value(False) = Config.OnlyDecayUnsnappedCoreStructures
+		  Self.OnlyDestroyCoreStructuresSwitch.Value(False) = Config.OnlyAutoDestroyCoreStructures
+		  Self.FastDecayUnsnappedCoreStructuresSwitch.Value(False) = Config.FastDecayUnsnappedCoreStructures
 		  Self.CropDecaySpeedMultiplierField.Text = Config.CropDecaySpeedMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.SpoilTimeMultiplierField.Text = Config.GlobalSpoilingTimeMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.ClampItemSpoilTimesCheck.Value = Config.ClampItemSpoilingTimes
@@ -1434,23 +1724,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PvEDinoDecayCheck
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.DisableDinoDecayPvE = Not Me.Value
-		  Self.Changed = Config.Modified
-		  Self.UpdateDecayFigures()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PvEStructureDecayCheck
+#tag Events PvEStructureDecaySwitch
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -1466,7 +1740,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PvPDinoDecayCheck
+#tag Events PvEDinoDecaySwitch
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -1475,14 +1749,14 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.PvPDinoDecay = Me.Value
+		  Config.DisableDinoDecayPvE = Not Me.Value
 		  Self.Changed = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PvPStructureDecayCheck
+#tag Events PvPStructureDecaySwitch
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -1498,7 +1772,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AutoDestroyStructuresCheck
+#tag Events PvPDinoDecaySwitch
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -1507,30 +1781,35 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.AutoDestroyStructures = Me.Value
+		  Config.PvPDinoDecay = Me.Value
 		  Self.Changed = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AutoDestroyDinosCheck
+#tag Events SpoilTimeMultiplierField
 	#tag Event
-		Sub Action()
+		Sub TextChange()
 		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Var Value As Double
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.AutoDestroyDecayedDinos = Me.Value
+		  Config.GlobalSpoilingTimeMultiplier = Value
 		  Self.Changed = Config.Modified
-		  Self.UpdateDecayFigures()
+		  Self.UpdateSpoilFigures()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events OnlyDestroyCoreStructuresCheck
+#tag Events ClampItemSpoilTimesCheck
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -1539,37 +1818,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.OnlyAutoDestroyCoreStructures = Me.Value
-		  Self.Changed = Config.Modified
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events OnlyDecayUnsnappedCoreStructuresCheck
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.OnlyDecayUnsnappedCoreStructures = Me.Value
-		  Self.Changed = Config.Modified
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FastDecayUnsnappedCoreStructuresCheck
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.FastDecayUnsnappedCoreStructures = Me.Value
+		  Config.ClampItemSpoilingTimes = Me.Value
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
@@ -1636,28 +1885,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events SpoilTimeMultiplierField
-	#tag Event
-		Sub TextChange()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Text, Value) Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.GlobalSpoilingTimeMultiplier = Value
-		  Self.Changed = Config.Modified
-		  Self.UpdateSpoilFigures()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ClampItemSpoilTimesCheck
+#tag Events OnlyDecayUnsnappedCoreStructuresSwitch
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -1666,8 +1894,70 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.ClampItemSpoilingTimes = Me.Value
+		  Config.OnlyDecayUnsnappedCoreStructures = Me.Value
 		  Self.Changed = Config.Modified
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FastDecayUnsnappedCoreStructuresSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.FastDecayUnsnappedCoreStructures = Me.Value
+		  Self.Changed = Config.Modified
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AutoDestroyStructuresSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.AutoDestroyStructures = Me.Value
+		  Self.Changed = Config.Modified
+		  Self.UpdateDecayFigures()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OnlyDestroyCoreStructuresSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.OnlyAutoDestroyCoreStructures = Me.Value
+		  Self.Changed = Config.Modified
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AutoDestroyDinosSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.AutoDestroyDecayedDinos = Me.Value
+		  Self.Changed = Config.Modified
+		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent

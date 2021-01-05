@@ -354,6 +354,8 @@ Inherits Listbox
 		      System.Beep
 		    End If
 		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(9) Then // Tab
+		    Return False
 		  ElseIf RaiseEvent KeyDown(Key) Then
 		    Self.mForwardKeyUp = True
 		  Else

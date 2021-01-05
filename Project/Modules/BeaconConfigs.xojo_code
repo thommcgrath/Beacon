@@ -257,7 +257,7 @@ Protected Module BeaconConfigs
 	#tag Constant, Name = NameStatMultipliers, Type = String, Dynamic = False, Default = \"StatMultipliers", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = SpoilingEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Constant, Name = SpoilingEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
 

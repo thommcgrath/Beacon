@@ -620,7 +620,7 @@ Inherits Beacon.ConfigGroup
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Boolean"
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -644,7 +644,7 @@ Inherits Beacon.ConfigGroup
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Boolean"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -660,7 +660,7 @@ Inherits Beacon.ConfigGroup
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Boolean"
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -676,7 +676,7 @@ Inherits Beacon.ConfigGroup
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Boolean"
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -684,7 +684,7 @@ Inherits Beacon.ConfigGroup
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Boolean"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -692,7 +692,7 @@ Inherits Beacon.ConfigGroup
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Boolean"
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -705,6 +705,30 @@ Inherits Beacon.ConfigGroup
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PvPStructureDecay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoDestroyOldStructuresMultiplier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoDestroyStructures"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="OnlyAutoDestroyCoreStructures"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
