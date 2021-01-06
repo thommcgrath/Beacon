@@ -19,12 +19,6 @@ Protected Interface Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CleanupConfigBackups()
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GenericLootSourceIcon() As Picture
 		  
 		End Function

@@ -224,7 +224,6 @@ Inherits ControlCanvas
 		  // We're really only going to take the left position
 		  
 		  Var ThumbWidth As Integer = Min(Self.Width, Self.Height) - (Self.ThumbPadding * 2)
-		  Var ThumbHeight As Integer = ThumbWidth
 		  Var ThumbMinX As Integer = Self.ThumbPadding
 		  Var ThumbMaxX As Integer = Self.Width - ((Self.ThumbPadding * 2) + ThumbWidth)
 		  Var ThumbRange As Integer = ThumbMaxX - ThumbMinX

@@ -374,11 +374,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
-		  Self.CheckFolder(AppSupport)
+		  Call AppSupport.CheckIsFolder
 		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
-		  Self.CheckFolder(CompanyFolder)
+		  Call CompanyFolder.CheckIsFolder
 		  Var AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
-		  Self.CheckFolder(AppFolder)
+		  Call AppFolder.CheckIsFolder
 		  Return AppFolder
 		End Function
 	#tag EndMethod
@@ -412,19 +412,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub CheckFolder(Folder As FolderItem)
-		  If Folder.Exists Then
-		    If Not Folder.IsFolder Then
-		      Folder.Remove
-		      Folder.CreateFolder
-		    End If
-		  Else
-		    Folder.CreateFolder
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub CheckForUpdates(Silent As Boolean)
 		  If Silent Then
@@ -445,78 +432,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub CleanupConfigBackups()
-		  Var BackupsRoot As FolderItem = Self.BackupsFolder
-		  If BackupsRoot = Nil Or BackupsRoot.Exists = False Then
-		    Return
-		  End If
-		  
-		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "^(\d{4})-(\d{2})-(\d{2}) (\d{2}).(\d{2}).(\d{2}) GMT"
-		  
-		  Var Zone As New TimeZone(0)
-		  For Each ServerFolder As FolderItem In BackupsRoot.Children
-		    If ServerFolder.IsFolder = False Then
-		      Continue
-		    End If
-		    
-		    Var Timestamps() As Integer
-		    Var Folders() As FolderItem
-		    For Each BackupFolder As FolderItem In ServerFolder.Children
-		      Try
-		        If BackupFolder.IsFolder = False Then
-		          Continue
-		        End If
-		        
-		        Var Matches As RegexMatch = Matcher.Search(BackupFolder.Name)
-		        If Matches = Nil Then
-		          Continue
-		        End If
-		        
-		        Var Year As Integer = Matches.SubExpressionString(1).ToInteger
-		        Var Month As Integer = Matches.SubExpressionString(2).ToInteger
-		        Var Day As Integer = Matches.SubExpressionString(3).ToInteger
-		        Var Hour As Integer = Matches.SubExpressionString(4).ToInteger
-		        Var Minute As Integer = Matches.SubExpressionString(5).ToInteger
-		        Var Second As Integer = Matches.SubExpressionString(6).ToInteger
-		        
-		        Var BackupTime As New DateTime(Year, Month, Day, Hour, Minute, Second, 0, Zone)
-		        Timestamps.Add(BackupTime.SecondsFrom1970)
-		        Folders.Add(BackupFolder)
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
-		    
-		    // Keep the very first and the most recent three
-		    If Timestamps.Count < 5 Then
-		      Continue
-		    End If
-		    
-		    Timestamps.SortWith(Folders)
-		    
-		    For I As Integer = 1 To Timestamps.LastIndex - 3
-		      If Folders(I).DeepDelete Then
-		        App.Log("Removed backup " + Folders(I).NativePath)
-		      Else
-		        App.Log("Unable to clean up backup " + Folders(I).NativePath)
-		      End If
-		    Next
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ExceptionsFolder(Create As Boolean = True) As FolderItem
-		  Var AppSupport As FolderItem = Self.ApplicationSupport()
-		  Var ErrorsFolder As FolderItem = AppSupport.Child("Error Reporting")
-		  If Create = True Then
-		    Self.CheckFolder(ErrorsFolder)
-		  End If
-		  Return ErrorsFolder
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -860,7 +775,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CleanupConfigBackups()
-		  Self.CleanupConfigBackups()
+		  Beacon.CleanupConfigBackups()
 		  Self.NextLaunchQueueTask
 		End Sub
 	#tag EndMethod

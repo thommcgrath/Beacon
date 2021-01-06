@@ -1625,7 +1625,7 @@ End
 		    List.AddRow(Name)
 		    Var RowIndex As Integer = List.LastAddedRowIndex
 		    
-		    For Idx As Integer = 0 To Keys.LastRowIndex
+		    For Idx As Integer = 0 To Keys.LastIndex
 		      Var Multiplier As Double = Self.mSpoilMultipliers.Value(Keys(Idx))
 		      Var ColumnIndex As Integer = Idx + 1
 		      

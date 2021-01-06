@@ -163,6 +163,67 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub CleanupConfigBackups()
+		  Var BackupsRoot As FolderItem = App.BackupsFolder
+		  If BackupsRoot = Nil Or BackupsRoot.Exists = False Then
+		    Return
+		  End If
+		  
+		  Var Matcher As New Regex
+		  Matcher.SearchPattern = "^(\d{4})-(\d{2})-(\d{2}) (\d{2}).(\d{2}).(\d{2}) GMT"
+		  
+		  Var Zone As New TimeZone(0)
+		  For Each ServerFolder As FolderItem In BackupsRoot.Children
+		    If ServerFolder.IsFolder = False Then
+		      Continue
+		    End If
+		    
+		    Var Timestamps() As Integer
+		    Var Folders() As FolderItem
+		    For Each BackupFolder As FolderItem In ServerFolder.Children
+		      Try
+		        If BackupFolder.IsFolder = False Then
+		          Continue
+		        End If
+		        
+		        Var Matches As RegexMatch = Matcher.Search(BackupFolder.Name)
+		        If Matches = Nil Then
+		          Continue
+		        End If
+		        
+		        Var Year As Integer = Matches.SubExpressionString(1).ToInteger
+		        Var Month As Integer = Matches.SubExpressionString(2).ToInteger
+		        Var Day As Integer = Matches.SubExpressionString(3).ToInteger
+		        Var Hour As Integer = Matches.SubExpressionString(4).ToInteger
+		        Var Minute As Integer = Matches.SubExpressionString(5).ToInteger
+		        Var Second As Integer = Matches.SubExpressionString(6).ToInteger
+		        
+		        Var BackupTime As New DateTime(Year, Month, Day, Hour, Minute, Second, 0, Zone)
+		        Timestamps.Add(BackupTime.SecondsFrom1970)
+		        Folders.Add(BackupFolder)
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    // Keep the very first and the most recent three
+		    If Timestamps.Count < 5 Then
+		      Continue
+		    End If
+		    
+		    Timestamps.SortWith(Folders)
+		    
+		    For I As Integer = 1 To Timestamps.LastIndex - 3
+		      If Folders(I).DeepDelete Then
+		        App.Log("Removed backup " + Folders(I).NativePath)
+		      Else
+		        App.Log("Unable to clean up backup " + Folders(I).NativePath)
+		      End If
+		    Next
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source As DateInterval) As DateInterval
 		  Return New DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
@@ -480,6 +541,14 @@ Protected Module Beacon
 		    End If
 		  Next
 		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExceptionsFolder(Extends Target As Beacon.Application, Create As Boolean = True) As FolderItem
+		  Var ErrorsFolder As FolderItem = Target.ApplicationSupport.Child("Errors")
+		  Call ErrorsFolder.CheckIsFolder(Create)
+		  Return ErrorsFolder
 		End Function
 	#tag EndMethod
 
