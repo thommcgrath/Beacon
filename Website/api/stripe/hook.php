@@ -178,6 +178,23 @@ case 'charge.refunded':
 	exit;
 	
 	break;
+case 'charge.dispute.created':
+	$dispute = $data['object'];
+	$merchant_reference = $dispute['payment_intent'];
+	
+	$database->BeginTransaction();
+	$results = $database->Query('SELECT purchase_id, purchaser_email FROM purchases WHERE merchant_reference = $1;', $merchant_reference);
+	if ($results->RecordCount() != 1) {
+		$database->Rollback();
+		http_response_code(404);
+		echo 'PaymentIntent not found';
+		exit;
+	}
+	$database->Query('UPDATE users SET banned = TRUE WHERE email_id = $1;', $results->Field('purchaser_email'));
+	$database->Query('UPDATE purchases SET refunded = TRUE WHERE purchase_id = $1 AND refunded = FALSE;', $results->Field('purchase_id'));
+	$database->Commit();
+	
+	break;
 default:
 	http_response_code(200);
 	echo 'Unknown hook type. Just assumed this worked, ok?';

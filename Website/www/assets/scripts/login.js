@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
 				url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
 				url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
-				url = url.replace('{{temporary}}', (loginRemember == false ? 'false' : 'true'));
+				url = url.replace('{{temporary}}', (loginRemember == false ? 'true' : 'false'));
 				
 				window.location = url;
 			}, function(http_status, error_body) {

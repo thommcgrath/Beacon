@@ -3,7 +3,7 @@
 namespace BeaconAPI;
 
 class Session implements \JsonSerializable {
-	const COOKIE_NAME = 'BeaconAuth';
+	const COOKIE_NAME = 'beacon_auth';
 	
 	protected $session_hash = '';
 	protected $session_id = '';
@@ -136,11 +136,11 @@ class Session implements \JsonSerializable {
 	}
 	
 	public function SendCookie(bool $temporary = false) {
-		setcookie(self::COOKIE_NAME, $this->session_id, ($temporary ? 0 : $this->Expiration()->getTimestamp()), '/', \BeaconCommon::Domain(), true, true);
+		setcookie(self::COOKIE_NAME, $this->session_id, ($temporary ? 0 : $this->Expiration()->getTimestamp()), '/', '', true, true);
 	}
 	
 	public static function RemoveCookie() {
-		setcookie(self::COOKIE_NAME, '', 0, '/', \BeaconCommon::Domain(), true, true);
+		setcookie(self::COOKIE_NAME, '', 0, '/', '', true, true);
 	}
 	
 	public static function GetFromCookie() {

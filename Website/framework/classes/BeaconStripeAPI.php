@@ -1,8 +1,6 @@
 <?php
 
 class BeaconStripeAPI {
-	private const StripeVersion = '2019-03-14';
-	
 	private $api_secret = '';
 	
 	public function __construct(string $api_secret) {
@@ -16,7 +14,7 @@ class BeaconStripeAPI {
 		}
 		
 		$curl = curl_init('https://api.stripe.com/v1/payment_intents/' . $intent_id);
-		$headers = array('Authorization: Bearer ' . $this->api_secret, 'Stripe-Version: ' . self::StripeVersion);
+		$headers = array('Authorization: Bearer ' . $this->api_secret);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$pi_body = curl_exec($curl);
@@ -37,7 +35,7 @@ class BeaconStripeAPI {
 	
 	public function GetCustomer(string $customer_id) {
 		$curl = curl_init('https://api.stripe.com/v1/customers/' . $customer_id);
-		$headers = array('Authorization: Bearer ' . $this->api_secret, 'Stripe-Version: ' . self::StripeVersion);
+		$headers = array('Authorization: Bearer ' . $this->api_secret);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$customer_body = curl_exec($curl);
@@ -92,7 +90,7 @@ class BeaconStripeAPI {
 	
 	public function UpdateCustomer(string $customer_id, array $fields) {
 		$curl = curl_init('https://api.stripe.com/v1/customers/' . $customer_id);
-		$headers = array('Authorization: Bearer ' . $this->api_secret, 'Stripe-Version: ' . self::StripeVersion);
+		$headers = array('Authorization: Bearer ' . $this->api_secret);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_POST, 1);

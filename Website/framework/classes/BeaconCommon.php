@@ -14,12 +14,8 @@ abstract class BeaconCommon {
 	
 	public static function StartSession() {
 		if (session_status() == PHP_SESSION_NONE) {
-			if (self::InProduction()) {
-				session_name('beacon');
-			} else {
-				session_name('beacon_dev');
-			}
-			session_set_cookie_params(0, '/', '.' . self::Domain(), true, true);
+			session_name('beacon');
+			session_set_cookie_params(0, '/', '', true, true);
 			session_start();
 		}
 	}
@@ -605,7 +601,12 @@ abstract class BeaconCommon {
 	}
 	
 	public static function TeamsEnabled() {
-		return self::GetGlobal('Teams Enabled', false);
+		$enabled = self::GetGlobal('Teams Enabled', false);
+		if ($enabled === false) {
+			return false;
+		}
+		
+		return isset($_SERVER['HTTP_HOST']) && substr($_SERVER['HTTP_HOST'], -13) === 'usebeacon.app';
 	}
 }
 
