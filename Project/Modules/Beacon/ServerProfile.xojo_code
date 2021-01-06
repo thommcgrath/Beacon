@@ -171,10 +171,8 @@ Protected Class ServerProfile
 		    Return New Beacon.FTPServerProfile(Dict)
 		  Case "Connector"
 		    Return New Beacon.ConnectorServerProfile(Dict)
-		  Case "Local"
+		  Case "Local", "Simple"
 		    Return New Beacon.LocalServerProfile(Dict)
-		  Case "Simple"
-		    Return New Beacon.SimpleServerProfile(Dict)
 		  End Select
 		End Function
 	#tag EndMethod

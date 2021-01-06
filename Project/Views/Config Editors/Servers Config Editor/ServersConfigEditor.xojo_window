@@ -418,8 +418,6 @@ End
 		        View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
 		      Case IsA Beacon.LocalServerProfile
 		        View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
-		      Case IsA Beacon.SimpleServerProfile
-		        View = New SimpleServerView(Self.Document, Beacon.SimpleServerProfile(Profile))
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return
@@ -574,7 +572,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AddServerButton"
-		    Var Profile As New Beacon.SimpleServerProfile
+		    Var Profile As New Beacon.LocalServerProfile
 		    Profile.Name = "An Ark Server"
 		    
 		    Self.Document.AddServerProfile(Profile)
