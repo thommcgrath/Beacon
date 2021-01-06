@@ -79,7 +79,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   918
       Begin GroupBox DecayPreviewGroup
@@ -363,6 +363,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -374,6 +376,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   6
@@ -391,6 +394,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -402,6 +407,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   7
@@ -1263,6 +1269,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1274,6 +1282,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   16
@@ -1291,6 +1300,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1302,6 +1313,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   17
@@ -1319,6 +1331,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1330,6 +1344,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   18
@@ -1347,6 +1362,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1358,6 +1375,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   19
@@ -1375,6 +1393,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
             Enabled         =   True
             Height          =   20
             Index           =   -2147483648
@@ -1386,6 +1406,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             LockRight       =   False
             LockTop         =   True
             Scope           =   2
+            ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
             TabIndex        =   20
