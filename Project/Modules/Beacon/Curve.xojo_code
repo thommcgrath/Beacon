@@ -17,31 +17,21 @@ Protected Class Curve
 		  
 		  Const NumFigures = 1000
 		  
-		  #if DebugBuild
-		    Var Start As Double = System.Microseconds
-		  #endif
-		  #if TargetiOS
-		  #else
-		    Self.Database = New SQLiteDatabase
-		    Call Self.Database.Connect
-		    Self.Database.ExecuteSQL("BEGIN TRANSACTION")
-		    Self.Database.ExecuteSQL("CREATE TABLE precomputed (time REAL, x REAL, y REAL)")
-		    Var Statement As SQLitePreparedStatement = Self.Database.Prepare("INSERT INTO precomputed (time, x, y) VALUES (?1, ?2, ?3)")
-		    Statement.BindType(0, SQLitePreparedStatement.SQLITE_DOUBLE)
-		    Statement.BindType(1, SQLitePreparedStatement.SQLITE_DOUBLE)
-		    Statement.BindType(2, SQLitePreparedStatement.SQLITE_DOUBLE)
-		    For I As Integer = 0 To NumFigures
-		      Var Time As Double = I / NumFigures
-		      Var X As Double = Self.XForT(Time)
-		      Var Y As Double = Self.YForT(Time)
-		      Statement.SQLExecute(Time, X, Y)
-		    Next
-		    Self.Database.ExecuteSQL("COMMIT")
-		  #endif
-		  #if DebugBuild
-		    Var Elapsed As Double = (System.Microseconds - Start) * 0.001
-		    System.DebugLog("Precomputed curve values in " + Elapsed.ToString(Locale.Raw, "0") + "ms")
-		  #endif
+		  Self.Database = New SQLiteDatabase
+		  Call Self.Database.Connect
+		  Self.Database.ExecuteSQL("BEGIN TRANSACTION")
+		  Self.Database.ExecuteSQL("CREATE TABLE precomputed (time REAL, x REAL, y REAL)")
+		  Var Statement As SQLitePreparedStatement = Self.Database.Prepare("INSERT INTO precomputed (time, x, y) VALUES (?1, ?2, ?3)")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_DOUBLE)
+		  Statement.BindType(1, SQLitePreparedStatement.SQLITE_DOUBLE)
+		  Statement.BindType(2, SQLitePreparedStatement.SQLITE_DOUBLE)
+		  For I As Integer = 0 To NumFigures
+		    Var Time As Double = I / NumFigures
+		    Var X As Double = Self.XForT(Time)
+		    Var Y As Double = Self.YForT(Time)
+		    Statement.SQLExecute(Time, X, Y)
+		  Next
+		  Self.Database.ExecuteSQL("COMMIT")
 		End Sub
 	#tag EndMethod
 
@@ -149,16 +139,12 @@ Protected Class Curve
 
 	#tag Method, Flags = &h1
 		Protected Function YForX(X As Double) As Double
-		  #if TargetiOS
-		    
-		  #else
-		    Var Results As RowSet = Self.Database.SelectSQL("SELECT y FROM precomputed ORDER BY ABS(x - ?1) LIMIT 1;", X)
-		    If Results <> Nil Then
-		      Return Results.Column("y").DoubleValue
-		    Else
-		      Return 0
-		    End If
-		  #endif
+		  Var Results As RowSet = Self.Database.SelectSQL("SELECT y FROM precomputed ORDER BY ABS(x - ?1) LIMIT 1;", X)
+		  If Results <> Nil Then
+		    Return Results.Column("y").DoubleValue
+		  Else
+		    Return 0
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -179,7 +165,7 @@ Protected Class Curve
 		Private C3 As Point
 	#tag EndProperty
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Property, Flags = &h21
 		Private Database As SQLiteDatabase
 	#tag EndProperty
 
