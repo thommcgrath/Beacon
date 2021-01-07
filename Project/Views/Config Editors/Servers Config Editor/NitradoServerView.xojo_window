@@ -48,368 +48,6 @@ Begin ServerViewContainer NitradoServerView
       Value           =   0
       Visible         =   True
       Width           =   600
-      Begin UITweaks.ResizedLabel ConfigSetField
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   168
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Base"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   158
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   320
-      End
-      Begin UITweaks.ResizedLabel ConfigSetLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Config Sets:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   158
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   136
-      End
-      Begin UITweaks.ResizedPushButton ConfigSetChooseButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Choose…"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   500
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   158
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   260
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   12
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   347
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Seconds"
-         Visible         =   True
-         Width           =   320
-      End
-      Begin RangeField MessageDurationField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         DoubleValue     =   0.0
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   168
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   11
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   347
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedLabel MessageDurationLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   10
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   347
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Message Duration:"
-         Visible         =   True
-         Width           =   136
-      End
-      Begin UITweaks.ResizedLabel MessageOfTheDayLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   190
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Message of the Day:"
-         Visible         =   True
-         Width           =   136
-      End
-      Begin ArkMLEditor MessageOfTheDayArea
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   145
-         InitialParent   =   "Pages"
-         JSONData        =   ""
-         Left            =   168
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RTFData         =   ""
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   190
-         Transparent     =   True
-         Visible         =   True
-         Width           =   412
-      End
-      Begin UITweaks.ResizedLabel ServerNameLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Server Name:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   124
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   136
-      End
-      Begin UITweaks.ResizedTextField ServerNameField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   168
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   124
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   412
-      End
       Begin FadedSeparator FadedSeparator1
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -561,6 +199,37 @@ Begin ServerViewContainer NitradoServerView
          Visible         =   True
          Width           =   560
       End
+      Begin CommonServerSettingsView SettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   496
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SettingUp       =   False
+         ShowsMapMenu    =   False
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   104
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
    End
    Begin Beacon.OAuth2Client Auth
       Index           =   -2147483648
@@ -631,21 +300,8 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.ServerNameField.Text = Self.mProfile.Name
 		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
-		  
-		  #if Beacon.MOTDEditingEnabled
-		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay.RTFValue
-		    Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
-		  #endif
-		  
-		  Self.MessageOfTheDayArea.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageOfTheDayLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
-		  
-		  Self.UpdateConfigSetUI()
+		  Self.SettingsView.RefreshUI()
 		  Self.UpdateStatusDisplay()
 		End Sub
 	#tag EndEvent
@@ -746,12 +402,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateConfigSetUI()
-		  Self.UpdateConfigSetUI(Self.mDocument, Self.mProfile, Self.ConfigSetField, Self.ConfigSetChooseButton)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateStatusDisplay()
 		  Var Started As Boolean = Self.mServerState = "started"
 		  Var ButtonEnabled As Boolean
@@ -815,54 +465,28 @@ End
 
 #tag EndWindowCode
 
-#tag Events ConfigSetChooseButton
-	#tag Event
-		Sub Action()
-		  Var States() As Beacon.ConfigSetState = Self.mProfile.ConfigSetStates(Self.mDocument)
-		  Var ChangedStates() As Beacon.ConfigSetState = ConfigSetSelectorDialog.Present(Self, States)
-		  Self.mProfile.ConfigSetStates = ChangedStates
-		  Self.UpdateConfigSetUI()
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MessageDurationField
-	#tag Event
-		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0
-		  MaxValue = 86400
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub TextChange()
-		  If IsNumeric(Me.Text) Then
-		    Self.mProfile.MessageDuration = Me.DoubleValue
-		    Self.Changed = Self.mProfile.Modified
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MessageOfTheDayArea
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.MessageOfTheDay = Beacon.ArkML.FromRTF(Me.RTFData)
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerNameField
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.Name = Me.Text
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events AdminNotesField
 	#tag Event
 		Sub TextChange()
 		  Self.mProfile.AdminNotes = Me.Text
 		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Changed = Me.Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.mDocument
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Profile = Self.mProfile
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -156,16 +156,9 @@ End
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  #if Beacon.MOTDEditingEnabled
-		    If Self.ServerList.SelectedRowCount > 0 Then
-		      Self.EnableEditorMenuItem("CopyMOTDToAllServers")
-		    End If
-		  #else
-		    Var CopyItem As MenuItem = EditorMenu.Child("CopyMOTDToAllServers")
-		    If (CopyItem Is Nil) = False Then
-		      CopyItem.Visible = False
-		    End If
-		  #endif
+		  If Self.ServerList.SelectedRowCount > 0 Then
+		    Self.EnableEditorMenuItem("CopyMOTDToAllServers")
+		  End If
 		End Sub
 	#tag EndEvent
 

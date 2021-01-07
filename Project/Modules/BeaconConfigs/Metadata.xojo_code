@@ -55,12 +55,22 @@ Implements ObservationKit.Observable
 		    Return Values
 		  End If
 		  
-		  #if Beacon.MOTDEditingEnabled Then
-		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=" + Profile.MessageDuration.ToString))
+		  If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=" + Profile.MessageDuration.ToString))
+		  End If
+		  
+		  If (Profile Is Nil) = False Then
+		    If (Profile.AdminPassword Is Nil) = False Then
+		      Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ServerAdminPassword=" + Profile.AdminPassword.StringValue))
 		    End If
-		  #endif
+		    If (Profile.SpectatorPassword Is Nil) = False Then
+		      Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "SpectatorPassword=" + Profile.SpectatorPassword.StringValue))
+		    End If
+		    If (Profile.ServerPassword Is Nil) = False Then
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerPassword=" + Profile.ServerPassword.StringValue))
+		    End If
+		  End If
 		  
 		  Return Values
 		End Function
@@ -70,10 +80,11 @@ Implements ObservationKit.Observable
 		Function GetManagedKeys() As Beacon.ConfigKey()
 		  Var Keys() As Beacon.ConfigKey
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName"))
-		  #if Beacon.MOTDEditingEnabled Then
-		    Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message"))
-		    Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration"))
-		  #endif
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerPassword"))
+		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "ServerAdminPassword"))
+		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "SpectatorPassword"))
 		  Return Keys
 		End Function
 	#tag EndEvent

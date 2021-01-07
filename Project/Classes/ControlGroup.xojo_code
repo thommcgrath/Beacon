@@ -13,6 +13,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Constructor(ParamArray Controls() As RectControl)
 		  For Each Ctl As RectControl In Controls
+		    Self.mVisible = Self.mVisible Or Ctl.Visible
 		    Self.mMembers.Add(New WeakRef(Ctl))
 		  Next
 		  Self.UpdateBounds()
@@ -188,6 +189,10 @@ Implements Iterable
 		Private mMembers() As WeakRef
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mVisible As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -216,6 +221,27 @@ Implements Iterable
 			End Set
 		#tag EndSetter
 		Top As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mVisible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  For Each Ref As WeakRef In Self.mMembers
+			    If Ref.Value = Nil Then
+			      Continue
+			    End If
+			    
+			    Var Ctl As RectControl = RectControl(Ref.Value)
+			    Ctl.Visible = Value
+			  Next
+			End Set
+		#tag EndSetter
+		Visible As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -299,6 +325,14 @@ Implements Iterable
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Visible"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

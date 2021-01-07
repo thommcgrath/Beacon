@@ -142,6 +142,18 @@ Protected Class ServerProfile
 		    Next
 		  End If
 		  
+		  If Dict.HasKey("Admin Password") Then
+		    Self.mAdminPassword = Dict.Value("Admin Password").StringValue
+		  End If
+		  
+		  If Dict.HasKey("Server Password") Then
+		    Self.mServerPassword = Dict.Value("Server Password").StringValue
+		  End If
+		  
+		  If Dict.HasKey("Spectator Password") Then
+		    Self.mSpectatorPassword = Dict.Value("Spectator Password").StringValue
+		  End If
+		  
 		  RaiseEvent ReadFromDictionary(Dict)
 		  
 		  Self.Modified = False
@@ -290,6 +302,15 @@ Protected Class ServerProfile
 		    Next
 		    Dict.Value("Config Sets") = Priorities
 		  End If
+		  If (Self.mAdminPassword Is Nil) = False Then
+		    Dict.Value("Admin Password") = Self.mAdminPassword.StringValue
+		  End If
+		  If (Self.mServerPassword Is Nil) = False Then
+		    Dict.Value("Server Password") = Self.mServerPassword.StringValue
+		  End If
+		  If (Self.mSpectatorPassword Is Nil) = False Then
+		    Dict.Value("Spectator Password") = Self.mSpectatorPassword.StringValue
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -333,6 +354,23 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		AdminNotes As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mAdminPassword
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAdminPassword <> Value Then
+			    Self.mAdminPassword = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		AdminPassword As NullableString
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -389,6 +427,10 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mAdminNotes As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAdminPassword As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -465,6 +507,14 @@ Protected Class ServerProfile
 		Private mProfileID As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mServerPassword As NullableString
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSpectatorPassword As NullableString
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -484,6 +534,40 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mServerPassword
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mServerPassword <> Value Then
+			    Self.mServerPassword = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ServerPassword As NullableString
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSpectatorPassword
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSpectatorPassword <> Value Then
+			    Self.mSpectatorPassword = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		SpectatorPassword As NullableString
 	#tag EndComputedProperty
 
 

@@ -25,288 +25,6 @@ Begin ServerViewContainer MultiServerView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin ArkMLEditor MessageOfTheDayArea
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackgroundColor=   False
-      Height          =   145
-      InitialParent   =   ""
-      JSONData        =   ""
-      Left            =   168
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RTFData         =   ""
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   93
-      Transparent     =   True
-      Visible         =   True
-      Width           =   412
-   End
-   Begin UITweaks.ResizedLabel MessageOfTheDayLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Message of the Day:"
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   93
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   136
-   End
-   Begin UITweaks.ResizedLabel MessageDurationLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Message Duration:"
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   250
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   136
-   End
-   Begin RangeField MessageDurationField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      DoubleValue     =   0.0
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   168
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   2
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   250
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   260
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Seconds"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   250
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   320
-   End
-   Begin UITweaks.ResizedPushButton ConfigSetChooseButton
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Choose…"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   500
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedLabel ConfigSetLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Config Sets:"
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   136
-   End
-   Begin UITweaks.ResizedLabel ConfigSetField
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   168
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Base"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   320
-   End
    Begin OmniBar ConfigToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
@@ -341,6 +59,37 @@ Begin ServerViewContainer MultiServerView
       Visible         =   True
       Width           =   600
    End
+   Begin CommonServerSettingsView SettingsView
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   393
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      SettingUp       =   False
+      ShowsMapMenu    =   True
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
+      Visible         =   True
+      Width           =   600
+   End
 End
 #tag EndWindow
 
@@ -349,18 +98,7 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  #if Beacon.MOTDEditingEnabled
-		    Self.MessageOfTheDayArea.RTFData = Self.mProfiles(0).MessageOfTheDay.RTFValue
-		    Self.MessageDurationField.DoubleValue = Self.mProfiles(0).MessageDuration
-		  #endif
-		  
-		  Self.MessageOfTheDayArea.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageOfTheDayLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
-		  
-		  Self.UpdateConfigSetUI()
+		  Self.SettingsView.RefreshUI()
 		End Sub
 	#tag EndEvent
 
@@ -369,12 +107,6 @@ End
 		Sub Constructor(Document As Beacon.Document, Profiles() As Beacon.ServerProfile)
 		  Self.mDocument = Document
 		  Self.mProfiles = Profiles
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateConfigSetUI()
-		  Self.UpdateConfigSetUI(Self.mDocument, Self.mProfiles(0), Self.ConfigSetField, Self.ConfigSetChooseButton)
 		End Sub
 	#tag EndMethod
 
@@ -390,52 +122,27 @@ End
 
 #tag EndWindowCode
 
-#tag Events MessageOfTheDayArea
-	#tag Event
-		Sub TextChange()
-		  For Each Profile As Beacon.ServerProfile In Self.mProfiles
-		    Profile.MessageOfTheDay = Beacon.ArkML.FromRTF(Me.RTFData)
-		    Self.Changed = Self.Changed Or Profile.Modified
-		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MessageDurationField
-	#tag Event
-		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0
-		  MaxValue = 86400
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub TextChange()
-		  If IsNumeric(Me.Text) Then
-		    Var Value As Double = Me.DoubleValue
-		    For Each Profile As Beacon.ServerProfile In Self.mProfiles
-		      Profile.MessageDuration = Value
-		      Self.Changed = Self.Changed Or Profile.Modified
-		    Next
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConfigSetChooseButton
-	#tag Event
-		Sub Action()
-		  Var States() As Beacon.ConfigSetState = Self.mProfiles(0).ConfigSetStates(Self.mDocument)
-		  Var ChangedStates() As Beacon.ConfigSetState = ConfigSetSelectorDialog.Present(Self, States)
-		  For Each Profile As Beacon.ServerProfile In Self.mProfiles
-		    Profile.ConfigSetStates = ChangedStates
-		    Self.Changed = Self.Changed Or Profile.Modified
-		  Next
-		  Self.UpdateConfigSetUI()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Multiple Servers"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Changed = Me.Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.mDocument
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Profiles = Self.mProfiles
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -241,13 +241,11 @@ Inherits Beacon.ConfigGroup
 		  Var WasCloned As Boolean
 		  
 		  // Remove MOTD
-		  #if Beacon.MOTDEditingEnabled
-		    If Organizer.HasHeader(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay") Then
-		      Organizer = Organizer.Clone
-		      WasCloned = True
-		      Organizer.Remove(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay")
-		    End If
-		  #endif
+		  If Organizer.HasHeader(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay") Then
+		    Organizer = Organizer.Clone
+		    WasCloned = True
+		    Organizer.Remove(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay")
+		  End If
 		  
 		  // Encrypt some common passwords
 		  Var ProtectedKeys() As String = Array("CommandLineOption:?:ServerAdminPassword", Beacon.ConfigFileGameUserSettings + ":ServerSettings:ServerPassword", Beacon.ConfigFileGameUserSettings + ":AuctionHouse:MarketID")

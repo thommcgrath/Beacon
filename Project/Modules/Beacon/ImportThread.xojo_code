@@ -210,17 +210,35 @@ Inherits Beacon.Thread
 		      Next
 		    End If
 		    
-		    #if Beacon.MOTDEditingEnabled
-		      If ParsedData.HasKey("Message") Then
-		        Var Duration As Integer = 30
-		        If ParsedData.HasKey("Duration") Then
-		          Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
-		        End If
-		        
-		        Profile.MessageOfTheDay = Beacon.ArkML.FromArkML(ParsedData.StringValue("Message", "", True).Trim())
-		        Profile.MessageDuration = Duration
+		    Var ServerPassword, AdminPassword, SpectatorPassword As String
+		    If ParsedData.HasKey("ServerPassword") Then
+		      ServerPassword = ParsedData.StringValue("ServerPassword", "")
+		    ElseIf CommandLineOptions.HasKey("ServerPassword") Then
+		      ServerPassword = CommandLineOptions.StringValue("ServerPassword", "")
+		    End If
+		    If CommandLineOptions.HasKey("SpectatorPassword") Then
+		      SpectatorPassword = CommandLineOptions.StringValue("SpectatorPassword", "")
+		    ElseIf ParsedData.HasKey("SpectatorPassword") Then
+		      SpectatorPassword = ParsedData.StringValue("SpectatorPassword", "")
+		    End If
+		    If CommandLineOptions.HasKey("ServerAdminPassword") Then
+		      AdminPassword = CommandLineOptions.StringValue("ServerAdminPassword", "")
+		    ElseIf ParsedData.HasKey("ServerAdminPassword") Then
+		      AdminPassword = ParsedData.StringValue("ServerAdminPassword", "")
+		    End If
+		    Profile.ServerPassword = ServerPassword
+		    Profile.SpectatorPassword = SpectatorPassword
+		    Profile.AdminPassword = AdminPassword
+		    
+		    If ParsedData.HasKey("Message") Then
+		      Var Duration As Integer = 30
+		      If ParsedData.HasKey("Duration") Then
+		        Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
 		      End If
-		    #endif
+		      
+		      Profile.MessageOfTheDay = Beacon.ArkML.FromArkML(ParsedData.StringValue("Message", "", True).Trim())
+		      Profile.MessageDuration = Duration
+		    End If
 		    
 		    Document.AddServerProfile(Profile)
 		  End If

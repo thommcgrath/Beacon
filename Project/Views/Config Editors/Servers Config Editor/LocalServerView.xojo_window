@@ -37,7 +37,7 @@ Begin ServerViewContainer LocalServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       TabIndex        =   1
@@ -48,692 +48,6 @@ Begin ServerViewContainer LocalServerView
       Value           =   0
       Visible         =   True
       Width           =   600
-      Begin ArkMLEditor MessageOfTheDayArea
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   145
-         InitialParent   =   "Pages"
-         JSONData        =   ""
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RTFData         =   ""
-         Scope           =   2
-         TabIndex        =   15
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   227
-         Transparent     =   True
-         Visible         =   True
-         Width           =   376
-      End
-      Begin UITweaks.ResizedLabel ConfigSetField
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Base"
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   95
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   284
-      End
-      Begin UITweaks.ResizedLabel ConfigSetLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Config Sets:"
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   95
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedPushButton ConfigSetChooseButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Choose…"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   500
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   95
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPopupMenu MapMenu
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         SelectedRowIndex=   0
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   127
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   165
-      End
-      Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   296
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   18
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   384
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Seconds"
-         Visible         =   True
-         Width           =   284
-      End
-      Begin RangeField MessageDurationField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         DoubleValue     =   0.0
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   17
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   2
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   384
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedLabel MessageDurationLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   16
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   384
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Message Duration:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedLabel MessageOfTheDayLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   14
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   227
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Message of the Day:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   11
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   193
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "GameUserSettings.ini File:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedPushButton GameUserSettingsIniChooseButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Choose…"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   490
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   13
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   194
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   90
-      End
-      Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   12
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   193
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   274
-      End
-      Begin UITweaks.ResizedLabel GameIniPathLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   159
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Game.ini File:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedPushButton GameIniChooseButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Choose…"
-         Default         =   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   490
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         MacButtonStyle  =   0
-         Scope           =   2
-         TabIndex        =   10
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   160
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   90
-      End
-      Begin UITweaks.ResizedTextField GameIniPathField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   159
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   274
-      End
-      Begin UITweaks.ResizedLabel ServerNameLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   22
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Server Name:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedTextField ServerNameField
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   True
-         Height          =   22
-         Hint            =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   204
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   61
-         Transparent     =   False
-         Underline       =   False
-         ValidationMask  =   ""
-         Value           =   ""
-         Visible         =   True
-         Width           =   376
-      End
-      Begin UITweaks.ResizedLabel MapLabel
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   3
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   127
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Build Config For:"
-         Visible         =   True
-         Width           =   172
-      End
-      Begin UITweaks.ResizedLabel MapHelp
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   True
-         Left            =   381
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
-         Tooltip         =   ""
-         Top             =   127
-         Transparent     =   False
-         Underline       =   False
-         Value           =   "Does not change the map"
-         Visible         =   True
-         Width           =   199
-      End
       Begin BeaconTextArea AdminNotesField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
@@ -770,7 +84,7 @@ Begin ServerViewContainer LocalServerView
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
          TextAlignment   =   0
@@ -783,6 +97,259 @@ Begin ServerViewContainer LocalServerView
          ValidationMask  =   ""
          Visible         =   True
          Width           =   560
+      End
+      Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   95
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "GameUserSettings.ini File:"
+         Visible         =   True
+         Width           =   172
+      End
+      Begin UITweaks.ResizedLabel GameIniPathLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Game.ini File:"
+         Visible         =   True
+         Width           =   172
+      End
+      Begin UITweaks.ResizedTextField GameIniPathField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   204
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   274
+      End
+      Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   204
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   95
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   274
+      End
+      Begin UITweaks.ResizedPushButton GameUserSettingsIniChooseButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Choose…"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   490
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   96
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin UITweaks.ResizedPushButton GameIniChooseButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Choose…"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   490
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   62
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin CommonServerSettingsView SettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   559
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SettingUp       =   False
+         ShowsMapMenu    =   True
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   41
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
       End
    End
    Begin OmniBar ControlToolbar
@@ -827,9 +394,7 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.ServerNameField.Text = Self.mProfile.Name
 		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
-		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
 		  If Self.mProfile.GameIniFile <> Nil Then
 		    Self.GameIniPathField.Text = Self.mProfile.GameIniFile.NativePath
 		  End If
@@ -837,18 +402,7 @@ End
 		    Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniFile.NativePath
 		  End If
 		  
-		  #if Beacon.MOTDEditingEnabled
-		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay.RTFValue
-		    Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
-		  #endif
-		  
-		  Self.MessageOfTheDayArea.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageOfTheDayLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
-		  
-		  Self.UpdateConfigSetUI()
+		  Self.SettingsView.RefreshUI()
 		End Sub
 	#tag EndEvent
 
@@ -881,12 +435,6 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub UpdateConfigSetUI()
-		  Self.UpdateConfigSetUI(Self.mDocument, Self.mProfile, Self.ConfigSetField, Self.ConfigSetChooseButton)
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
@@ -899,62 +447,20 @@ End
 
 #tag EndWindowCode
 
-#tag Events MessageOfTheDayArea
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.MessageOfTheDay = Beacon.ArkML.FromRTF(Me.RTFData)
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConfigSetChooseButton
-	#tag Event
-		Sub Action()
-		  Var States() As Beacon.ConfigSetState = Self.mProfile.ConfigSetStates(Self.mDocument)
-		  Var ChangedStates() As Beacon.ConfigSetState = ConfigSetSelectorDialog.Present(Self, States)
-		  Self.mProfile.ConfigSetStates = ChangedStates
-		  Self.UpdateConfigSetUI()
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MapMenu
+#tag Events Pages
 	#tag Event
 		Sub Change()
-		  Var Mask As UInt64
-		  If Me.SelectedRowIndex = -1 Then
-		    Mask = Beacon.Maps.UniversalMask
-		  Else
-		    Mask = Me.RowTagAt(Me.SelectedRowIndex)
-		  End If
-		  Self.mProfile.Mask = Mask
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.AddRow("All Maps", Beacon.Maps.UniversalMask)
-		  
-		  Var Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    Me.AddRow(Map.Name, Map.Mask)
+		  For Idx As Integer = 0 To Self.ControlToolbar.LastIndex
+		    Self.ControlToolbar.Item(Idx).Toggled = Me.SelectedPanelIndex = Idx
 		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MessageDurationField
-	#tag Event
-		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0
-		  MaxValue = 86400
-		End Sub
-	#tag EndEvent
+#tag Events AdminNotesField
 	#tag Event
 		Sub TextChange()
-		  If IsNumeric(Me.Text) Then
-		    Self.mProfile.MessageDuration = Me.DoubleValue
-		    Self.Changed = Self.mProfile.Modified
-		  End If
+		  Self.mProfile.AdminNotes = Me.Text
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1004,26 +510,28 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ServerNameField
+#tag Events SettingsView
 	#tag Event
-		Sub TextChange()
-		  Self.mProfile.Name = Me.Text
-		  Self.Changed = Self.mProfile.Modified
+		Sub Open()
+		  Me.Profile = Self.mProfile
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events AdminNotesField
 	#tag Event
-		Sub TextChange()
-		  Self.mProfile.AdminNotes = Me.Text
-		  Self.Changed = Self.mProfile.Modified
+		Sub ContentsChanged()
+		  Self.Changed = Me.Changed
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.mDocument
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
+		  Me.Append(OmniBarItem.CreateTab("PageFiles", "Files"))
 		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
 		  Me.Item("PageGeneral").Toggled = True
 		End Sub
@@ -1035,12 +543,10 @@ End
 		  Select Case Item.Name
 		  Case "PageGeneral"
 		    Self.Pages.SelectedPanelIndex = 0
-		    Item.Toggled = True
-		    Me.Item("PageNotes").Toggled = False
-		  Case "PageNotes"
+		  Case "PageFiles"
 		    Self.Pages.SelectedPanelIndex = 1
-		    Item.Toggled = True
-		    Me.Item("PageGeneral").Toggled = False
+		  Case "PageNotes"
+		    Self.Pages.SelectedPanelIndex = 2
 		  End Select
 		End Sub
 	#tag EndEvent
