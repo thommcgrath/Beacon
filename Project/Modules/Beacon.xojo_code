@@ -811,8 +811,8 @@ Protected Module Beacon
 		  End If
 		  
 		  // See if the value starts with 1F8B
-		  Var MagicBytes As String = StringValue.LeftBytes(2)
-		  Return MagicBytes = Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B)
+		  Var MagicBytes As String = EncodeHex(StringValue.LeftBytes(2))
+		  Return MagicBytes = "1F8B"
 		End Function
 	#tag EndMethod
 

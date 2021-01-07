@@ -380,9 +380,26 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target64Bit))
+		Sub ShowAlert(Extends Win As MobileScreen, Message As String, Explanation As String)
+		  Win.ShowAlert(Message, Explanation)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
 		  ShowAlert(Win, Message, Explanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetIOS and (Target64Bit))
+		Protected Sub ShowAlert(Win As MobileScreen = Nil, Message As String, Explanation As String)
+		  #Pragma Unused Win
+		  
+		  Var Dialog As New MobileMessageBox
+		  Dialog.Title = Message
+		  Dialog.Message = Explanation
+		  Dialog.Show
 		End Sub
 	#tag EndMethod
 
