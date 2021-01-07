@@ -414,7 +414,7 @@ End
 		    For Idx As Integer = 0 To Self.LastPageIndex
 		      Var Page As BeaconSubview = Self.Page(Idx)
 		      If Page.LinkedOmniBarItem = NavItem Then
-		        Self.CurrentPageIndex = Idx
+		        Self.CurrentPage = Page
 		        Return
 		      End If
 		    Next
@@ -479,7 +479,7 @@ End
 		  For Idx As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.Page(Idx)
 		    If Page.LinkedOmniBarItem = Item Then
-		      Self.CurrentPageIndex = Idx
+		      Self.CurrentPageID = Page.ViewID
 		      Return
 		    End If
 		  Next
@@ -502,8 +502,13 @@ End
 #tag Events Views
 	#tag Event
 		Sub Change()
-		  For Idx As Integer = 0 To Self.Nav.LastRowIndex
-		    Self.Nav.Item(Idx).Toggled = (Me.SelectedPanelIndex = Idx)
+		  Var CurrentPage As BeaconSubview = Self.CurrentPage
+		  Var CurrentItemName As String
+		  If (CurrentPage Is Nil) = False And (CurrentPage.LinkedOmniBarItem Is Nil) = False Then
+		    CurrentItemName = CurrentPage.LinkedOmniBarItem.Name
+		  End If
+		  For Idx As Integer = 0 To Self.Nav.LastIndex
+		    Self.Nav.Item(Idx).Toggled = (Self.Nav.Item(Idx).Name = CurrentItemName)
 		  Next
 		End Sub
 	#tag EndEvent

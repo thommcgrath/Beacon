@@ -2125,7 +2125,7 @@ End
 #tag Events TypeMenu
 	#tag Event
 		Sub Change()
-		  For Idx As Integer = Self.PageSelector.LastRowIndex DownTo 1
+		  For Idx As Integer = Self.PageSelector.LastIndex DownTo 1
 		    Self.PageSelector.Remove(Idx)
 		  Next
 		  
@@ -2507,7 +2507,7 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  #Pragma Unused ItemRect
 		  
-		  For Idx As Integer = 0 To Me.LastRowIndex
+		  For Idx As Integer = 0 To Me.LastIndex
 		    Me.Item(Idx).Toggled = (Me.Item(Idx) = Item)
 		  Next
 		  

@@ -514,7 +514,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastRowIndex() As Integer
+		Function LastIndex() As Integer
 		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod

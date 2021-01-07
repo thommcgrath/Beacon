@@ -825,7 +825,7 @@ End
 		    End If
 		  End Select
 		  
-		  For Idx As Integer = 0 To Self.NavBar.LastRowIndex
+		  For Idx As Integer = 0 To Self.NavBar.LastIndex
 		    Self.NavBar.Item(Idx).Toggled = (Idx = Index)
 		  Next
 		End Sub

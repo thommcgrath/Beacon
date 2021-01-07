@@ -3061,7 +3061,7 @@ End
 #tag Events PagePanel1
 	#tag Event
 		Sub Change()
-		  Var Bound As Integer = Self.ConfigToolbar.LastRowIndex
+		  Var Bound As Integer = Self.ConfigToolbar.LastIndex
 		  For Idx As Integer = 0 To Bound
 		    If (Self.ConfigToolbar.Item(Idx) Is Nil) = False Then
 		      Self.ConfigToolbar.Item(Idx).Toggled = (Idx = Me.SelectedPanelIndex)

@@ -22,8 +22,9 @@ Inherits BeaconSubview
 
 	#tag Event
 		Sub Hidden()
-		  If Self.mCurrentPageIndex > -1 Then
-		    Self.mPages(Self.mCurrentPageIndex).SwitchedFrom()
+		  Var CurrentPage As BeaconSubview = Self.CurrentPage
+		  If (CurrentPage Is Nil) = False Then
+		    CurrentPage.SwitchedFrom()
 		  End If
 		  
 		  RaiseEvent Hidden()
@@ -34,8 +35,9 @@ Inherits BeaconSubview
 		Sub Shown(UserData As Variant = Nil)
 		  RaiseEvent Shown(UserData)
 		  
-		  If Self.mCurrentPageIndex > -1 Then
-		    Self.mPages(Self.mCurrentPageIndex).SwitchedTo(UserData)
+		  Var CurrentPage As BeaconSubview = Self.CurrentPage
+		  If (CurrentPage Is Nil) = False Then
+		    CurrentPage.SwitchedTo(UserData)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -49,8 +51,8 @@ Inherits BeaconSubview
 		  End If
 		  
 		  Self.mPages.Add(Page)
-		  If Self.CurrentPageIndex = -1 Then
-		    Self.CurrentPageIndex = 0
+		  If Self.CurrentPageID = "" Then
+		    Self.CurrentPageID = Page.ViewID
 		  End If
 		  
 		  Var Panel As PagePanel = Self.ViewsPanel
@@ -117,64 +119,61 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Function CurrentPage() As BeaconSubview
-		  If Self.mCurrentPageIndex >= Self.mPages.FirstIndex And Self.mCurrentPageIndex <= Self.mPages.LastIndex Then
-		    Return Self.mPages(Self.mCurrentPageIndex)
-		  End If
+		  For Each Page As BeaconSubview In Self.mPages
+		    If Page.ViewID = Self.mCurrentPageID Then
+		      Return Page
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub CurrentPage(Assigns Page As BeaconSubview)
-		  Var Idx As Integer = Self.IndexOf(Page)
-		  If Idx > -1 Then
-		    Self.CurrentPageIndex = Idx
+		  If (Page Is Nil) = False Then
+		    Self.CurrentPageID = Page.ViewID
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CurrentPageIndex() As Integer
-		  Return Self.mCurrentPageIndex
+		Function CurrentPageID() As String
+		  Return Self.mCurrentPageID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CurrentPageIndex(Assigns Idx As Integer)
-		  Idx = Min(Idx, Self.mPages.LastIndex)
+		Sub CurrentPageID(Assigns PageID As String)
+		  Var OldPageID As String = Self.mCurrentPageID
+		  Var OldPageIdx As Integer = Self.IndexOf(OldPageID)
+		  If Self.IsFrontmost And OldPageIdx > -1 Then
+		    Self.mPages(OldPageIdx).SwitchedFrom()
+		  End If
 		  
-		  If Self.mCurrentPageIndex = Idx Then
+		  Self.mCurrentPageID = PageID
+		  
+		  Var NewPageIdx As Integer = Self.IndexOf(PageID)
+		  If NewPageIdx = -1 Then
 		    Return
 		  End If
 		  
-		  Var OldIndex As Integer = Self.mCurrentPageIndex
-		  
-		  If Self.IsFrontmost And OldIndex > -1 Then
-		    // Tell the current page that it is being switched from
-		    Self.mPages(OldIndex).SwitchedFrom()
+		  Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(PageID)
+		  If HistoryIdx > -1 Then
+		    Self.mPageHistory.RemoveAt(HistoryIdx)
+		  End If
+		  If Self.mPageHistory.Count > 0 Then
+		    Self.mPageHistory.AddAt(0, PageID)
+		  Else
+		    Self.mPageHistory.Add(PageID)
 		  End If
 		  
-		  Self.mCurrentPageIndex = Idx
-		  
-		  If Idx > -1 Then
-		    Var NewPage As BeaconSubview = Self.mPages(Idx)
-		    Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(NewPage.ViewID)
-		    If HistoryIdx > -1 Then
-		      Self.mPageHistory.RemoveAt(HistoryIdx)
-		    End If
-		    If Self.mPageHistory.Count > 0 Then
-		      Self.mPageHistory.AddAt(0, NewPage.ViewID)
-		    Else
-		      Self.mPageHistory.Add(NewPage.ViewID)
-		    End If
-		    
-		    If Self.IsFrontmost Then
-		      NewPage.SwitchedTo(Nil)
-		    End If
+		  Var NewPage As BeaconSubview = Self.mPages(NewPageIdx)
+		  If Self.IsFrontmost Then
+		    NewPage.SwitchedTo(Nil)
 		  End If
 		  
 		  Var Panel As PagePanel = Self.ViewsPanel
 		  If (Panel Is Nil) = False Then
-		    Panel.SelectedPanelIndex = Idx
+		    Panel.SelectedPanelIndex = NewPageIdx
 		  End If
 		End Sub
 	#tag EndMethod
@@ -213,20 +212,6 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub InsertPage(Idx As Integer, Page As BeaconSubview)
-		  If Self.IndexOf(Page) = -1 Then
-		    Self.mPages.AddAt(Idx, Page)
-		    
-		    If Self.CurrentPageIndex = -1 Then
-		      Self.CurrentPageIndex = 0
-		    ElseIf Self.mCurrentPageIndex >= Idx Then
-		      Self.mCurrentPageIndex = Self.mCurrentPageIndex + 1
-		    End If
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function LastPageIndex() As Integer
 		  Return Self.mPages.LastIndex
 		End Function
@@ -260,6 +245,10 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Sub RemovePage(Page As BeaconSubview)
+		  If (Page Is Nil) = False Then
+		    Self.RemovePage(Page.ViewID)
+		  End If
+		  
 		  Var Idx As Integer = Self.IndexOf(Page)
 		  If Idx > -1 Then
 		    Self.RemovePage(Idx)
@@ -273,39 +262,106 @@ Inherits BeaconSubview
 		    Return
 		  End If
 		  
-		  Var Page As BeaconSubview = Self.mPages(Idx)
-		  Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(Page.ViewID)
+		  Var PageID As String = Self.mPages(Idx).ViewID
+		  Self.RemovePage(PageID)
+		  
+		  #if false
+		    Var Page As BeaconSubview = Self.mPages(Idx)
+		    Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(Page.ViewID)
+		    If HistoryIdx > -1 Then
+		      Self.mPageHistory.RemoveAt(HistoryIdx)
+		    End If
+		    
+		    If Self.mCurrentPageIndex = Idx Then
+		      // Removing the current page
+		      Self.mPages.RemoveAt(Idx)
+		      
+		      Var NewPageID As String
+		      If Self.mPageHistory.Count > 0 Then
+		        NewPageID = Self.mPageHistory(0)
+		      Else
+		        NewPageID = Self.mPages(0).ViewID
+		      End If
+		      Var NewPageIdx As Integer = Self.IndexOf(NewPageID)
+		      
+		      Self.CurrentPageIndex = NewPageIdx
+		    Else
+		      // Removing another page, do so silently
+		      Var PageID As String = Self.mPages(Self.mCurrentPageIndex).ViewID
+		      Self.mPages.RemoveAt(Idx)
+		      Self.mCurrentPageIndex = Self.IndexOf(PageID)
+		    End If
+		    
+		    #if false
+		      Var OldCurrentPageIndex As Integer = Self.mCurrentPageIndex
+		      Var FiredSwitchedFrom As Boolean
+		      If Self.mCurrentPageIndex > Idx Then
+		        // Removing a page "left" of the current page.
+		        // Decrement the current index, but don't trigger Switched events.
+		        Self.mCurrentPageIndex = Self.mCurrentPageIndex - 1
+		      ElseIf Self.mCurrentPageIndex = Idx Then
+		        // Removing the current page, so we need to switch to something else
+		        Var NewPageID As String
+		        If Self.mPageHistory.Count > 0 Then
+		          NewPageID = Self.mPageHistory(0)
+		        Else
+		          NewPageID = Self.mPages(0).ViewID
+		        End If
+		        Var NewPageIdx As Integer = Self.IndexOf(NewPageID)
+		        
+		        Self.CurrentPageIndex = NewPageIdx
+		        FiredSwitchedFrom = True
+		      End If
+		      #if DebugBuild
+		        System.DebugLog("CurrentPageIndex changed from " + OldCurrentPageIndex.ToString + " to " + Self.mCurrentPageIndex.ToString)
+		      #endif
+		      
+		      If Not FiredSwitchedFrom Then
+		        Self.mPages(Idx).SwitchedFrom()
+		      End If
+		      Self.mPages.RemoveAt(Idx)
+		    #endif
+		    
+		    If Self.mCurrentPageIndex > Self.mPages.LastIndex Then
+		      // Problem
+		      Break
+		    End If
+		    
+		    Var Panel As PagePanel = Self.ViewsPanel
+		    If (Panel Is Nil) = False Then
+		      Panel.RemovePanelAt(Idx)
+		      Panel.SelectedPanelIndex = Self.mCurrentPageIndex
+		    End If
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemovePage(PageID As String)
+		  Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(PageID)
 		  If HistoryIdx > -1 Then
 		    Self.mPageHistory.RemoveAt(HistoryIdx)
 		  End If
 		  
-		  Var FiredSwitchedFrom As Boolean
-		  If Self.mCurrentPageIndex > Idx Then
-		    // Decrement the current index, but don't trigger Switched events.
-		    Self.mCurrentPageIndex = Self.mCurrentPageIndex - 1
-		  ElseIf Self.mCurrentPageIndex = Idx Then
-		    // Removing the current page, so we need to switch to something else
+		  Var Idx As Integer = Self.IndexOf(PageID)
+		  Self.mPages.RemoveAt(Idx)
+		  
+		  If Self.mCurrentPageID = PageID Then
+		    // Find a new page
 		    Var NewPageID As String
 		    If Self.mPageHistory.Count > 0 Then
 		      NewPageID = Self.mPageHistory(0)
 		    Else
 		      NewPageID = Self.mPages(0).ViewID
 		    End If
-		    Var NewPageIdx As Integer = Self.IndexOf(NewPageID)
 		    
-		    Self.CurrentPageIndex = NewPageIdx
-		    FiredSwitchedFrom = True
+		    Self.CurrentPageID = NewPageID
 		  End If
 		  
-		  If Not FiredSwitchedFrom Then
-		    Self.mPages(Idx).SwitchedFrom()
-		  End If
 		  Var Panel As PagePanel = Self.ViewsPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.RemovePanelAt(Idx)
-		    Panel.SelectedPanelIndex = Self.mCurrentPageIndex
 		  End If
-		  Self.mPages.RemoveAt(Idx)
 		End Sub
 	#tag EndMethod
 
@@ -344,7 +400,7 @@ Inherits BeaconSubview
 
 
 	#tag Property, Flags = &h21
-		Private mCurrentPageIndex As Integer = -1
+		Private mCurrentPageID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
