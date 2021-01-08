@@ -1003,6 +1003,16 @@ div.results {
 }
 
 #knowledge_wrapper {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: column-reverse;
+	-ms-flex-direction: column-reverse;
+	flex-direction: column-reverse;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	
 	#knowledge_main {
 		line-height: 1.4em;
 		
@@ -1257,15 +1267,10 @@ div.comment-block {
 	}
 	
 	#knowledge_wrapper {
-		display: -webkit-box;
-		display: -ms-flexbox;
-		display: flex;
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
 		-ms-flex-direction: row;
 		flex-direction: row;
-		-ms-flex-wrap: nowrap;
-		flex-wrap: nowrap;
 		
 		#knowledge_main {
 			display: -webkit-box;
