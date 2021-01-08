@@ -1973,12 +1973,11 @@ ALTER TABLE public.support_article_groups OWNER TO thommcgrath;
 CREATE TABLE public.support_images (
     image_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     hint text,
-    image_data bytea NOT NULL,
-    image_data_2x bytea,
-    image_data_3x bytea,
-    content_type public.citext NOT NULL,
     width_points numeric(4,0) NOT NULL,
-    height_points numeric(4,0) NOT NULL
+    height_points numeric(4,0) NOT NULL,
+    min_scale integer DEFAULT 1 NOT NULL,
+    max_scale integer DEFAULT 1 NOT NULL,
+    extension text DEFAULT '.png'::text NOT NULL
 );
 
 

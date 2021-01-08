@@ -70,7 +70,7 @@ if (is_null($article_data)) {
 			$match = $matches[0];
 			$use_photoswipe = false;
 			
-			$imagedata = $database->Query('SELECT image_id, width_points, height_points, min_scale, max_scale FROM support_images WHERE image_id = $1;', $image_id);
+			$imagedata = $database->Query('SELECT image_id, width_points, height_points, min_scale, max_scale, extension FROM support_images WHERE image_id = $1;', $image_id);
 			if ($imagedata->RecordCount() === 0) {
 				$html = '';
 			} else {
@@ -79,6 +79,7 @@ if (is_null($article_data)) {
 				$height_points = $imagedata->Field('height_points');
 				$min_scale = $imagedata->Field('min_scale');
 				$max_scale = $imagedata->Field('max_scale');
+				$extension = $imagedata->Field('extension');
 				$urls = [];
 				$srcset = [];
 				for ($scale = $min_scale; $scale <= $max_scale; $scale++) {
@@ -87,7 +88,7 @@ if (is_null($article_data)) {
 					} else {
 						$suffix = '';
 					}
-					$urls[$scale] = 'https://assets.usebeacon.app/images/help/' . $image_id . $suffix . '.png';
+					$urls[$scale] = 'https://assets.usebeacon.app/images/help/' . $image_id . $suffix . $extension;
 					$srcset[] = $urls[$scale] . ' ' . $scale . 'x';
 				}
 				$full_scale_url = $urls[$max_scale];
@@ -123,7 +124,7 @@ PSWP;
 			$alt = $matches[1];
 			$image_id = $matches[2];
 			$match = $matches[0];
-			$imagedata = $database->Query('SELECT image_id, width_points, height_points, min_scale, max_scale FROM support_images WHERE image_id = $1;', $image_id);
+			$imagedata = $database->Query('SELECT image_id, width_points, height_points, min_scale, max_scale, extension FROM support_images WHERE image_id = $1;', $image_id);
 			if ($imagedata->RecordCount() === 0) {
 				$html = '';
 			} else {
@@ -132,6 +133,7 @@ PSWP;
 				$height_points = $imagedata->Field('height_points');
 				$min_scale = $imagedata->Field('min_scale');
 				$max_scale = $imagedata->Field('max_scale');
+				$extension = $imagedata->Field('extension');
 				$urls = [];
 				$srcset = [];
 				for ($scale = $min_scale; $scale <= $max_scale; $scale++) {
@@ -140,7 +142,7 @@ PSWP;
 					} else {
 						$suffix = '';
 					}
-					$urls[$scale] = 'https://assets.usebeacon.app/images/help/' . $image_id . $suffix . '.png';
+					$urls[$scale] = 'https://assets.usebeacon.app/images/help/' . $image_id . $suffix . $extension;
 					$srcset[] = $urls[$scale] . ' ' . $scale . 'x';
 				}
 				$low_scale_url = $urls[1];
