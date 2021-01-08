@@ -2,11 +2,11 @@
 
 function ShowKnowledgeContent(string $html, string $current_slug) {
 	$database = BeaconCommon::Database();
+	$current_version = BeaconCommon::BeaconVersion();
 	
 	echo '<div id="knowledge_wrapper">';
-	echo '<div id="knowledge_main">' . $html . '</div>';
 	
-	$results = $database->Query('SELECT support_articles.article_slug, support_articles.subject, support_articles.forward_url, support_article_groups.group_name, support_article_groups.sort_order, support_table_of_contents.sort_order FROM (support_article_groups INNER JOIN support_table_of_contents ON (support_table_of_contents.group_id = support_article_groups.group_id)) LEFT JOIN support_articles ON (support_table_of_contents.article_id = support_articles.article_id) WHERE support_articles.published = TRUE ORDER BY support_article_groups.sort_order, support_table_of_contents.sort_order, support_article_groups.group_name, support_articles.subject;');
+	$results = $database->Query('SELECT support_articles.article_slug, support_articles.subject, support_articles.forward_url, support_article_groups.group_name, support_article_groups.sort_order AS group_sort_order, support_articles.sort_order AS article_sort_order FROM support_articles INNER JOIN support_article_groups ON (support_articles.group_id = support_article_groups.group_id) WHERE support_articles.published = TRUE AND min_version <= $1 AND max_version >= $1 ORDER BY support_article_groups.sort_order, support_article_groups.sort_order, support_articles.sort_order, support_articles.subject;', $current_version);
 	$toc = array();
 	while (!$results->EOF()) {
 		$group_name = $results->Field('group_name');
@@ -45,6 +45,8 @@ function ShowKnowledgeContent(string $html, string $current_slug) {
 	
 	echo '<div id="knowledge_search_block"><form action="/help/search" method="get" id="knowledge_search_form"><input type="search" placeholder="Search For Help" name="query" id="knowledge_search_field" recents="0" value="' . (isset($_GET['query']) ? htmlentities($_GET['query']) : '') . '"></form></div>';
 	
+	echo '<p id="knowledge_version">Version: ' . htmlentities(BeaconCommon::BuildNumberToVersion($current_version)) . '</p>';
+	
 	foreach ($toc as $group_name => $group_contents) {
 		echo '<p>' . htmlentities($group_name) . '</p><ul>';
 		foreach ($group_contents as $article) {
@@ -59,6 +61,7 @@ function ShowKnowledgeContent(string $html, string $current_slug) {
 		echo '</ul>';
 	}
 	echo '</div>';
+	echo '<div id="knowledge_main">' . $html . '</div>';
 	echo '</div>';
 }
 

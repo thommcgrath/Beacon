@@ -32,36 +32,7 @@ if (isset($_GET['version'])) {
 	if ((string)(int)$_GET['version'] == $_GET['version']) {
 		$min_version = intval($_GET['version']);
 	} else {
-		if (preg_match('/^(\d+)\.(\d+)(\.(\d+))?(([ab\.]+)(\d+))?$/', $_GET['version'], $matches) == 1) {
-			$major_version = intval($matches[1]);
-			$minor_version = intval($matches[2]);
-			if (isset($matches[3])) {
-				$bug_version = intval($matches[4]);
-			} else {
-				$bug_version = 0;
-			}
-			$stage_code = 3;
-			$non_release_version = 0;
-			if (isset($matches[5])) {
-				$non_release_version = intval($matches[7]);
-				switch ($matches[6]) {
-				case 'a':
-					$stage_code = 1;
-					break;
-				case 'b':
-					$stage_code = 2;
-					break;
-				case '.':
-					break;
-				default:
-					$stage_code = 0;
-					break;
-				}
-			}
-			$min_version = ($major_version * 10000000) + ($minor_version * 100000) + ($bug_version * 1000) + ($stage_code * 100) + $non_release_version;
-		} else {
-			$min_version = 0;
-		}
+		$min_version = BeaconCommon::VersionToBuildNumber($_GET['version']);
 	}
 } else {
 	$min_version = 0;
