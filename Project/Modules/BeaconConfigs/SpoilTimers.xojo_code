@@ -23,6 +23,8 @@ Inherits Beacon.ConfigGroup
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "CropDecaySpeedMultiplier=" + Self.mCropDecaySpeedMultiplier.PrettyText))
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "FastDecayInterval=" + Self.mFastDecayInterval.ToString(Locale.Raw, "0")))
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "GlobalSpoilingTimeMultiplier=" + Self.mGlobalSpoilingTimeMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "GlobalCorpseDecompositionTimeMultiplier=" + Self.mGlobalCorpseDecompositionTimeMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "GlobalItemDecompositionTimeMultiplier=" + Self.mGlobalItemDecompositionTimeMultiplier.PrettyText))
 		  
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DisableDinoDecayPvE=" + If(Self.mDisableDinoDecayPvE, "True", "False")))
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DisableStructureDecayPvE=" + If(Self.mDisableStructureDecayPvE, "True", "False")))
@@ -52,6 +54,8 @@ Inherits Beacon.ConfigGroup
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "CropDecaySpeedMultiplier"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "FastDecayInterval"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "GlobalSpoilingTimeMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "GlobalItemDecompositionTimeMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "GlobalCorpseDecompositionTimeMultiplier"))
 		  
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DisableDinoDecayPvE"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DisableStructureDecayPvE"))
@@ -76,6 +80,8 @@ Inherits Beacon.ConfigGroup
 		  Self.mDisableStructureDecayPvE = Dict.Value("DisableStructureDecayPvE")
 		  Self.mFastDecayInterval = Dict.Value("FastDecayInterval")
 		  Self.mFastDecayUnsnappedCoreStructures = Dict.Value("FastDecayUnsnappedCoreStructures")
+		  Self.mGlobalCorpseDecompositionTimeMultiplier = Dict.Value("GlobalCorpseDecompositionTimeMultiplier")
+		  Self.mGlobalItemDecompositionTimeMultiplier = Dict.Value("GlobalItemDecompositionTimeMultiplier")
 		  Self.mGlobalSpoilingTimeMultiplier = Dict.Value("GlobalSpoilingTimeMultiplier")
 		  Self.mOnlyAutoDestroyCoreStructures = Dict.Value("OnlyAutoDestroyCoreStructures")
 		  Self.mOnlyDecayUnsnappedCoreStructures = Dict.Value("OnlyDecayUnsnappedCoreStructures")
@@ -100,6 +106,8 @@ Inherits Beacon.ConfigGroup
 		  Dict.Value("DisableStructureDecayPvE") = Self.mDisableStructureDecayPvE
 		  Dict.Value("FastDecayInterval") = Self.mFastDecayInterval
 		  Dict.Value("FastDecayUnsnappedCoreStructures") = Self.mFastDecayUnsnappedCoreStructures
+		  Dict.Value("GlobalCorpseDecompositionTimeMultiplier") = Self.mGlobalCorpseDecompositionTimeMultiplier
+		  Dict.Value("GlobalItemDecompositionTimeMultiplier") = Self.mGlobalItemDecompositionTimeMultiplier
 		  Dict.Value("GlobalSpoilingTimeMultiplier") = Self.mGlobalSpoilingTimeMultiplier
 		  Dict.Value("OnlyAutoDestroyCoreStructures") = Self.mOnlyAutoDestroyCoreStructures
 		  Dict.Value("OnlyDecayUnsnappedCoreStructures") = Self.mOnlyDecayUnsnappedCoreStructures
@@ -169,6 +177,12 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  If ParsedData.HasKey("GlobalSpoilingTimeMultiplier") Then
 		    Spoil.GlobalSpoilingTimeMultiplier = ParsedData.DoubleValue("GlobalSpoilingTimeMultiplier", Spoil.GlobalSpoilingTimeMultiplier)
+		  End If
+		  If ParsedData.HasKey("GlobalCorpseDecompositionTimeMultiplier") Then
+		    Spoil.GlobalCorpseDecompositionTimeMultiplier = ParsedData.DoubleValue("GlobalCorpseDecompositionTimeMultiplier", Spoil.GlobalCorpseDecompositionTimeMultiplier)
+		  End If
+		  If ParsedData.HasKey("GlobalItemDecompositionTimeMultiplier") Then
+		    Spoil.GlobalItemDecompositionTimeMultiplier = ParsedData.DoubleValue("GlobalItemDecompositionTimeMultiplier", Spoil.GlobalItemDecompositionTimeMultiplier)
 		  End If
 		  
 		  // GameUserSettings.ini
@@ -348,6 +362,40 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mGlobalCorpseDecompositionTimeMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mGlobalCorpseDecompositionTimeMultiplier <> Value Then
+			    Self.mGlobalCorpseDecompositionTimeMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		GlobalCorpseDecompositionTimeMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mGlobalItemDecompositionTimeMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mGlobalItemDecompositionTimeMultiplier <> Value Then
+			    Self.mGlobalItemDecompositionTimeMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		GlobalItemDecompositionTimeMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mGlobalSpoilingTimeMultiplier
 			End Get
 		#tag EndGetter
@@ -396,6 +444,14 @@ Inherits Beacon.ConfigGroup
 
 	#tag Property, Flags = &h21
 		Private mFastDecayUnsnappedCoreStructures As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGlobalCorpseDecompositionTimeMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGlobalItemDecompositionTimeMultiplier As Double = 1.0
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

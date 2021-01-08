@@ -671,7 +671,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   168
+         Left            =   281
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -694,39 +694,6 @@ Begin ConfigEditor SpoilTimersConfigEditor
          ValidationMask  =   ""
          Visible         =   True
          Width           =   80
-      End
-      Begin CheckBox ClampItemSpoilTimesCheck
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Caption         =   "Clamp Item Spoil Times"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   268
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   62
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         VisualState     =   0
-         Width           =   630
       End
       Begin Label SpoilTimeMultiplierLabel
          AllowAutoDeactivate=   True
@@ -761,7 +728,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   136
+         Width           =   249
       End
       Begin BeaconListbox SpoilTimesList
          AllowAutoDeactivate=   True
@@ -793,7 +760,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   671
+         Height          =   571
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Item"
@@ -813,7 +780,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   103
+         Top             =   203
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -1419,6 +1386,315 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Width           =   40
          End
       End
+      Begin UITweaks.ResizedTextField CorpseDecomposeMultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   281
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   95
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField ItemDecomposeMultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   281
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   129
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label CorpseDecomposeMultiplierLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Corpse Decomposition Time Multiplier:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   95
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   249
+      End
+      Begin Label ItemDecomposeMultiplierLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Item Decomposition Time Multiplier:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   129
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   249
+      End
+      Begin UITweaks.ResizedTextField CorpseDecomposePreviewField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   373
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   8
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   95
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField ItemDecomposePreviewField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   373
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   129
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label ClampSpoilTimesLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Clamp Item Spoil Times:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   163
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   249
+      End
+      Begin SwitchControl ClampSpoilTimesSwitch
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   281
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   11
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   163
+         Transparent     =   True
+         Visible         =   True
+         Width           =   40
+      End
    End
 End
 #tag EndWindow
@@ -1506,7 +1782,9 @@ End
 		  Self.FastDecayUnsnappedCoreStructuresSwitch.Value(False) = Config.FastDecayUnsnappedCoreStructures
 		  Self.CropDecaySpeedMultiplierField.Text = Config.CropDecaySpeedMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.SpoilTimeMultiplierField.Text = Config.GlobalSpoilingTimeMultiplier.ToString(Locale.Current, "0.0#####")
-		  Self.ClampItemSpoilTimesCheck.Value = Config.ClampItemSpoilingTimes
+		  Self.ClampSpoilTimesSwitch.Value(False) = Config.ClampItemSpoilingTimes
+		  Self.CorpseDecomposeMultiplierField.Text = Config.GlobalCorpseDecompositionTimeMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ItemDecomposeMultiplierField.Text = Config.GlobalItemDecompositionTimeMultiplier.ToString(Locale.Current, "0.0#####")
 		  
 		  Self.UpdateFigures()
 		End Sub
@@ -1830,21 +2108,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ClampItemSpoilTimesCheck
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
-		  Config.ClampItemSpoilingTimes = Me.Value
-		  Self.Changed = Config.Modified
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events AutoDestroyPeriodMultiplierField
 	#tag Event
 		Sub TextChange()
@@ -1979,6 +2242,113 @@ End
 		  Config.AutoDestroyDecayedDinos = Me.Value
 		  Self.Changed = Config.Modified
 		  Self.UpdateDecayFigures()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CorpseDecomposeMultiplierField
+	#tag Event
+		Sub TextChange()
+		  Var Value As Double
+		  If Not Self.ParseDouble(Me.Text, Value) Then
+		    Return
+		  End If
+		  
+		  If Self.Focus <> Self.CorpseDecomposePreviewField Then
+		    Var Duration As Double = LocalData.SharedInstance.GetDoubleVariable("Corpse Decompose Time", 900) * Value
+		    Self.CorpseDecomposePreviewField.Text = Beacon.SecondsToString(Duration)
+		  End If
+		  
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.GlobalCorpseDecompositionTimeMultiplier = Value
+		  Self.Changed = Config.Modified
+		  Self.UpdateSpoilFigures()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ItemDecomposeMultiplierField
+	#tag Event
+		Sub TextChange()
+		  Var Value As Double
+		  If Not Self.ParseDouble(Me.Text, Value) Then
+		    Return
+		  End If
+		  
+		  If Self.Focus <> Self.ItemDecomposePreviewField Then
+		    Var Duration As Double = LocalData.SharedInstance.GetDoubleVariable("Item Decompose Time", 120) * Value
+		    Self.ItemDecomposePreviewField.Text = Beacon.SecondsToString(Duration)
+		  End If
+		  
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.GlobalItemDecompositionTimeMultiplier = Value
+		  Self.Changed = Config.Modified
+		  Self.UpdateSpoilFigures()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CorpseDecomposePreviewField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Or (Self.Focus <> Me) Then
+		    Return
+		  End If
+		  
+		  Var Interval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If Interval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Seconds As Integer = Interval.TotalSeconds
+		  Var DefaultTime As Double = LocalData.SharedInstance.GetDoubleVariable("Corpse Decompose Time", 900)
+		  Var Multiplier As Double = Seconds / DefaultTime
+		  
+		  Self.CorpseDecomposeMultiplierField.Text = Multiplier.ToString(Locale.Current, "0.0#####")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ItemDecomposePreviewField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Or (Self.Focus <> Me) Then
+		    Return
+		  End If
+		  
+		  Var Interval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If Interval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Seconds As Integer = Interval.TotalSeconds
+		  Var DefaultTime As Double = LocalData.SharedInstance.GetDoubleVariable("Item Decompose Time", 120)
+		  Var Multiplier As Double = Seconds / DefaultTime
+		  
+		  Self.ItemDecomposeMultiplierField.Text = Multiplier.ToString(Locale.Current, "0.0#####")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClampSpoilTimesSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
+		  Config.ClampItemSpoilingTimes = Me.Value
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
