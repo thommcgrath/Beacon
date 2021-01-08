@@ -70,22 +70,49 @@ if (is_null($article_data)) {
 			$match = $matches[0];
 			$use_photoswipe = false;
 			
-			$imagedata = $database->Query('SELECT width_points, height_points FROM support_images WHERE image_id = $1;', $image_id);
-			if ($imagedata->RecordCount() == 1 && ($imagedata->Field('width_points') >= 300 || $imagedata->Field('height_points') >= 300)) {
-				$image_url = '/help/image/' . $image_id . '@3x';
-				$use_photoswipe = true;
-				$photoswipe_trigger = 'pswp' . BeaconCommon::GenerateRandomKey();
-				$article_data['pswp_js'][] = "document.getElementById('$photoswipe_trigger').addEventListener('click', function(ev) {
-		var pswpElement = document.querySelectorAll('.pswp')[0];
-		var items = [{src: '$image_url', w: {$imagedata->Field('width_points')}, h: {$imagedata->Field('height_points')}, title: " . json_encode($alt) . "}];
-		var options = {};
-		var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
-		gallery.init();
-		ev.preventDefault();
-	});";
+			$imagedata = $database->Query('SELECT image_id, width_points, height_points, min_scale, max_scale FROM support_images WHERE image_id = $1;', $image_id);
+			if ($imagedata->RecordCount() === 0) {
+				$html = '';
+			} else {
+				$image_id = $imagedata->Field('image_id');
+				$width_points = $imagedata->Field('width_points');
+				$height_points = $imagedata->Field('height_points');
+				$min_scale = $imagedata->Field('min_scale');
+				$max_scale = $imagedata->Field('max_scale');
+				$urls = [];
+				$srcset = [];
+				for ($scale = $min_scale; $scale <= $max_scale; $scale++) {
+					if ($scale > 1) {
+						$suffix = '@' . $scale . 'x';
+					} else {
+						$suffix = '';
+					}
+					$urls[$scale] = 'https://assets.usebeacon.app/images/help/' . $image_id . $suffix . '.png';
+					$srcset[] = $urls[$scale] . ' ' . $scale . 'x';
+				}
+				$full_scale_url = $urls[$max_scale];
+				$low_scale_url = $urls[1];
+				$srcset = implode(', ', $srcset);
+				
+				if ($width_points >= 300 || $height_points >= 300) {
+					$photoswipe_trigger = 'pswp' . BeaconCommon::GenerateRandomKey();
+					$json_alt = json_encode($alt);
+					$article_data['pswp_js'][] = <<<PSWP
+document.getElementById('$photoswipe_trigger').addEventListener('click', function(ev) {
+	var pswpElement = document.querySelectorAll('.pswp')[0];
+	var items = [{src: '$full_scale_url', w: $width_points, h: $height_points, title: $json_alt}];
+	var options = {};
+	var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+	gallery.init();
+	ev.preventDefault();
+});					
+PSWP;
+					
+					$html = '<p class="text-center"><a href="' . $full_scale_url . '" id="' . $photoswipe_trigger . '"><img class="standalone" src="' . $low_scale_url . '" srcset="' . $srcset . '" alt="' . htmlentities($alt) . '"></a></p>';
+				} else {
+					$html = '<p class="text-center"><img class="standalone" src="' . $low_scale_url . '" srcset="' . $srcset . '" alt="' . htmlentities($alt) . '"></p>';
+				}
 			}
-			
-			$html = '<p class="text-center">' . ($use_photoswipe ? '<a href="' . $image_url . '" id="' . $photoswipe_trigger . '">' : '') . '<img class="standalone" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '">' . ($use_photoswipe ? '</a>' : '') . '</p>';
 			
 			$markdown = str_replace($match, $html, $markdown);
 		}
@@ -96,7 +123,31 @@ if (is_null($article_data)) {
 			$alt = $matches[1];
 			$image_id = $matches[2];
 			$match = $matches[0];
-			$html = '<img class="inline" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '">';
+			$imagedata = $database->Query('SELECT image_id, width_points, height_points, min_scale, max_scale FROM support_images WHERE image_id = $1;', $image_id);
+			if ($imagedata->RecordCount() === 0) {
+				$html = '';
+			} else {
+				$image_id = $imagedata->Field('image_id');
+				$width_points = $imagedata->Field('width_points');
+				$height_points = $imagedata->Field('height_points');
+				$min_scale = $imagedata->Field('min_scale');
+				$max_scale = $imagedata->Field('max_scale');
+				$urls = [];
+				$srcset = [];
+				for ($scale = $min_scale; $scale <= $max_scale; $scale++) {
+					if ($scale > 1) {
+						$suffix = '@' . $scale . 'x';
+					} else {
+						$suffix = '';
+					}
+					$urls[$scale] = 'https://assets.usebeacon.app/images/help/' . $image_id . $suffix . '.png';
+					$srcset[] = $urls[$scale] . ' ' . $scale . 'x';
+				}
+				$low_scale_url = $urls[1];
+				$srcset = implode(', ', $srcset);
+			}
+			
+			$html = '<img class="inline" src="' . $low_scale_url . '" srcset="' . $srcset . '" alt="' . htmlentities($alt) . '">';
 			
 			$markdown = str_replace($match, $html, $markdown);
 		}
