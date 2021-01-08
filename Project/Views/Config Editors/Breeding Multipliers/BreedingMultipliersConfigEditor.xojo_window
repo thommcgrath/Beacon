@@ -1531,14 +1531,6 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.SetupUI
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers

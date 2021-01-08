@@ -36,6 +36,16 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  If IsEventImplemented("Shown") Then
+		    RaiseEvent Shown(UserData)
+		  Else
+		    Self.SetupUI()
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
@@ -272,6 +282,10 @@ Inherits BeaconSubview
 
 	#tag Hook, Flags = &h0
 		Event ShowIssue(Issue As Beacon.Issue)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
 

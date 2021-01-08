@@ -471,14 +471,6 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.UpdateSourceList()
-		End Sub
-	#tag EndEvent
-
 
 	#tag MenuHandler
 		Function DocumentAddBeacon() As Boolean Handles DocumentAddBeacon.Action

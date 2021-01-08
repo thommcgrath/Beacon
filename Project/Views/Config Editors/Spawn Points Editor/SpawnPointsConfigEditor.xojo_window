@@ -370,14 +370,6 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.UpdateList()
-		End Sub
-	#tag EndEvent
-
 
 	#tag MenuHandler
 		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
