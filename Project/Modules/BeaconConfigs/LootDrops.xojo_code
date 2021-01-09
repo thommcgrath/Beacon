@@ -489,7 +489,7 @@ Implements Iterable
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigOverrideSupplyCrateItems, Type = String, Dynamic = True, Default = \"ConfigOverrideSupplyCrateItems", Scope = Private
+	#tag Constant, Name = ConfigOverrideSupplyCrateItems, Type = String, Dynamic = False, Default = \"ConfigOverrideSupplyCrateItems", Scope = Private
 	#tag EndConstant
 
 

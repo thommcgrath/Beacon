@@ -84,28 +84,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Value           =   0
       Visible         =   True
       Width           =   1420
-      Begin HTMLViewer HelpViewer
-         AllowAutoDeactivate=   True
-         Enabled         =   True
-         Height          =   782
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Renderer        =   0
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   38
-         Visible         =   True
-         Width           =   1420
-      End
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -211,41 +189,6 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Visible         =   True
          Width           =   1420
       End
-      Begin PresetsComponent PresetsComponent1
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   782
-         InitialParent   =   "Pages"
-         IsFrontmost     =   False
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Progress        =   0.0
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   38
-         Transparent     =   True
-         ViewIcon        =   0
-         ViewTitle       =   ""
-         Visible         =   True
-         Width           =   1420
-      End
       Begin NewsPane NotificationsPane1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -311,6 +254,72 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Transparent     =   True
          Visible         =   True
          Width           =   1
+      End
+      Begin HelpComponent HelpComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Help"
+         Visible         =   True
+         Width           =   1420
+      End
+      Begin PresetsComponent PresetsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Presets"
+         Visible         =   True
+         Width           =   1420
       End
    End
 End
@@ -788,13 +797,6 @@ End
 		    Return
 		  End If
 		  
-		  #if TargetWindows
-		    If Index = Self.PageHelp And SystemInformationMBS.IsWindows10(True) = False Then
-		      ShowURL(Beacon.WebURL("/help"))
-		      Return
-		    End If
-		  #endif
-		  
 		  Select Case CurrentIndex
 		  Case Self.PageHome
 		    Self.DashboardPane1.SwitchedFrom()
@@ -805,7 +807,7 @@ End
 		  Case Self.PagePresets
 		    Self.PresetsComponent1.SwitchedFrom()
 		  Case Self.PageHelp
-		    
+		    Self.HelpComponent1.SwitchedFrom()
 		  End Select
 		  
 		  Self.Pages.SelectedPanelIndex = Index
@@ -820,9 +822,7 @@ End
 		  Case Self.PagePresets
 		    Self.PresetsComponent1.SwitchedTo(Nil)
 		  Case Self.PageHelp
-		    If Self.mHelpLoaded = False Then
-		      Self.HelpViewer.LoadURL(Beacon.WebURL("/help"))
-		    End If
+		    Self.HelpComponent1.SwitchedTo(Nil)
 		  End Select
 		  
 		  For Idx As Integer = 0 To Self.NavBar.LastIndex
@@ -863,10 +863,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mBusyWatcher As Timer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mHelpLoaded As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -925,8 +921,10 @@ End
 		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
 		  
 		  Var Presets As OmniBarItem = OmniBarItem.CreateTab("NavPresets", "Presets")
+		  Self.PresetsComponent1.LinkedOmniBarItem = Presets
 		  
 		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Support")
+		  Self.HelpComponent1.LinkedOmniBarItem = Help
 		  
 		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
 		  
@@ -958,65 +956,6 @@ End
 		  End Select
 		  
 		  Self.SwitchView(NewIndex)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events HelpViewer
-	#tag Event
-		Sub DocumentComplete(url as String)
-		  #Pragma Unused URL
-		  
-		  Self.NavBar.Item("NavHelp").HasProgressIndicator = False
-		  Self.mHelpLoaded = True
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DocumentProgressChanged(URL as String, percentageComplete as Integer)
-		  #Pragma Unused URL
-		  
-		  Self.NavBar.Item("NavHelp").Progress = PercentageComplete
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DocumentBegin(url as String)
-		  #Pragma Unused URL
-		  
-		  Var Item As OmniBarItem = Self.NavBar.Item("NavHelp")
-		  Item.HasProgressIndicator = True
-		  Item.Progress = OmniBarItem.ProgressIndeterminate
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CancelLoad(URL as String) As Boolean
-		  If Beacon.IsBeaconURL(URL) Then
-		    Call App.HandleURL(URL, True)
-		    Return True
-		  End If
-		  
-		  Static TicketURL As String
-		  If TicketURL.IsEmpty Then
-		    TicketURL = Beacon.WebURL("/help/contact")
-		  End If
-		  If URL = TicketURL Then
-		    App.StartTicket()
-		    Return True
-		  End If
-		  
-		  Static DiscordDetector As Regex
-		  If DiscordDetector Is Nil Then
-		    DiscordDetector = New Regex
-		    DiscordDetector.SearchPattern = "^https?://(.+\.)?((discord\.com)|(discord\.gg)|(discord\.media)|(discordapp\.com)|(discordapp\.net))/"
-		  End If
-		  Var Matches As RegexMatch = DiscordDetector.Search(URL)
-		  If (Matches Is Nil) = False Then
-		    ShowURL(URL)
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.UserAgent = App.UserAgent
 		End Sub
 	#tag EndEvent
 #tag EndEvents
