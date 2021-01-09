@@ -501,6 +501,14 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Event
 		Sub RefreshServerStatus()
+		  If Self.mAccount Is Nil Then
+		    Self.Authenticate()
+		    If Self.mAccount Is Nil Then
+		      Self.SetError("Cannot check server status because there is no Nitrado account assigned to this process. Start the deploy again to authenticate again.")
+		      Return
+		    End If
+		  End If
+		  
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.Send("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
