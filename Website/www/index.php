@@ -74,10 +74,14 @@ BeaconTemplate::StartStyles();
 	margin-top: 40px;
 }
 
-#hero {
-	width: 100%;
+#hero_container {
+	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+#hero {
+	width: 100%;
 	display: block;
 	background-size: contain;
 	height: 0px;
@@ -94,22 +98,33 @@ BeaconTemplate::StartStyles();
 }
 
 #nitrado_container {
-	margin-bottom: 10px;
-	padding-top: 0px;
-	text-align: center;
-	
-	#nitrado_logo {
-		height: 110px;
-		max-width: 80%;
-		vertical-align: top;
-	}
+	margin-bottom: 2.5%;
+	padding-top: 2.5%;
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-@media (min-width: 400px) {
+#nitrado_logo {
+	width: 100%;
+	display: block;
+	background-size: contain;
+	height: 0px;
+	background-image: url(<?php echo BeaconCommon::AssetURI('nitrado.svg'); ?>);
+	background-repeat: no-repeat;
+	background-position: center;
+	padding-top: calc(110 / 800 * 100%);
+}
+
+@media (min-width: 840px) {
 	#nitrado_container {
 		margin-bottom: 20px;
 		padding-top: 20px;
 	}
+	
+	/*#nitrado_logo {
+		padding-top: calc(110 / 800 * 100%);
+	}*/
 }
 
 @media (prefers-color-scheme: dark) {
@@ -166,7 +181,7 @@ BeaconTemplate::FinishStyles();
 
 ?>
 <div id="nitrado_container">
-	<a href="https://nitra.do/beaconapp"><img id="nitrado_logo" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('nitrado.svg'); ?>"></a>
+	<a href="https://nitra.do/beaconapp"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png"></a>
 </div>
 <div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png"></div>
 <div id="index_body">
