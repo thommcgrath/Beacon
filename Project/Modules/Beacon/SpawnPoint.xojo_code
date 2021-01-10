@@ -417,8 +417,14 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function UniqueKey() As String
-		  Var Key As String = Self.ObjectID
-		  Select Case Self.Mode
+		  Return Self.UniqueKey(Self.ObjectID, Self.Mode)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function UniqueKey(ObjectID As String, Mode As Integer) As String
+		  Var Key As String = ObjectID
+		  Select Case Mode
 		  Case Beacon.SpawnPoint.ModeOverride
 		    Key = Key + ":Override"
 		  Case Beacon.SpawnPoint.ModeAppend

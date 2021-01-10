@@ -39,6 +39,15 @@ Implements Iterable
 		  
 		  For Each Entry As DictionaryEntry In Source.mSpawnPoints
 		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
+		    If SpawnPoint.Mode = Beacon.SpawnPoint.ModeOverride Then
+		      // Remove add and subtract
+		      Self.Remove(Beacon.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Beacon.SpawnPoint.ModeAppend))
+		      Self.Remove(Beacon.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Beacon.SpawnPoint.ModeRemove))
+		    Else
+		      // Remove replace
+		      Self.Remove(Beacon.SpawnPoint.UniqueKey(SpawnPoint.ObjectID, Beacon.SpawnPoint.ModeOverride))
+		    End If
+		    
 		    Self.Add(New Beacon.SpawnPoint(SpawnPoint))
 		  Next
 		End Sub
@@ -58,7 +67,7 @@ Implements Iterable
 		    For Each PointData As Dictionary In Points
 		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.SpawnPoint.FromSaveData(PointData)
 		      If SpawnPoint <> Nil Then
-		        Self.mSpawnPoints.Value(Self.DictionaryKey(SpawnPoint)) = SpawnPoint
+		        Self.mSpawnPoints.Value(SpawnPoint.UniqueKey) = SpawnPoint
 		      End If
 		    Next
 		  Catch Err As RuntimeException
@@ -81,8 +90,10 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Add(SpawnPoint As Beacon.SpawnPoint)
-		  Self.mSpawnPoints.Value(Self.DictionaryKey(SpawnPoint)) = SpawnPoint.ImmutableVersion
-		  Self.Modified = True
+		  If (SpawnPoint Is Nil) = False Then
+		    Self.mSpawnPoints.Value(SpawnPoint.UniqueKey) = SpawnPoint.ImmutableVersion
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -300,16 +311,6 @@ Implements Iterable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function DictionaryKey(Point As Beacon.SpawnPoint) As String
-		  If Point = Nil Then
-		    Return ""
-		  End If
-		  
-		  Return Point.UniqueKey
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.SpawnPoints
 		  #Pragma Unused CommandLineOptions
@@ -390,7 +391,7 @@ Implements Iterable
 		        Var Mutable As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
 		        Mutable.Mode = Mode
 		        SpawnPoint = Mutable
-		        SpawnClasses.Value(ClassString) = DictionaryKey(SpawnPoint)
+		        SpawnClasses.Value(ClassString) = SpawnPoint.UniqueKey
 		      End If
 		      
 		      Var Clone As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
@@ -565,7 +566,7 @@ Implements Iterable
 		        Next
 		      End If
 		      
-		      SpawnPoints.mSpawnPoints.Value(DictionaryKey(Clone)) = Clone.ImmutableVersion
+		      SpawnPoints.mSpawnPoints.Value(Clone.UniqueKey) = Clone.ImmutableVersion
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
@@ -574,11 +575,17 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function HasSpawnPoint(SpawnPoint As Beacon.SpawnPoint) As Boolean
-		  If SpawnPoint = Nil Then
+		  If SpawnPoint Is Nil Then
 		    Return False
 		  End If
 		  
-		  Return Self.mSpawnPoints.HasKey(Self.DictionaryKey(SpawnPoint))
+		  Return Self.HasSpawnPoint(SpawnPoint.UniqueKey)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function HasSpawnPoint(UniqueKey As String) As Boolean
+		  Return Self.mSpawnPoints.HasKey(UniqueKey)
 		End Function
 	#tag EndMethod
 
@@ -596,8 +603,16 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(SpawnPoint As Beacon.SpawnPoint)
-		  If Self.HasSpawnPoint(SpawnPoint) Then
-		    Self.mSpawnPoints.Remove(Self.DictionaryKey(SpawnPoint))
+		  If (SpawnPoint Is Nil) = False Then
+		    Self.Remove(SpawnPoint.UniqueKey)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Remove(UniqueKey As String)
+		  If Self.HasSpawnPoint(UniqueKey) Then
+		    Self.mSpawnPoints.Remove(UniqueKey)
 		    Self.Modified = True
 		  End If
 		End Sub
