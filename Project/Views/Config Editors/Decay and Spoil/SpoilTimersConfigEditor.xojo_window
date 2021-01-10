@@ -229,7 +229,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   5
+            TabIndex        =   7
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   ""
@@ -273,7 +273,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   3
+            TabIndex        =   5
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   ""
@@ -309,7 +309,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   4
+            TabIndex        =   6
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Creature Decay Multiplier:"
@@ -344,7 +344,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   2
+            TabIndex        =   4
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Structure Decay Multiplier:"
@@ -379,7 +379,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   6
+            TabIndex        =   1
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -410,7 +410,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   7
+            TabIndex        =   3
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -441,7 +441,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   8
+            TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Enable PvE Structure Decay:"
@@ -476,7 +476,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   9
+            TabIndex        =   2
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Enable PvE Dino Decay:"
@@ -776,7 +776,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          RowSelectionType=   0
          Scope           =   2
          SelectionChangeBlocked=   False
-         TabIndex        =   3
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
@@ -848,7 +848,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   6
+            TabIndex        =   9
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   ""
@@ -892,7 +892,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   3
+            TabIndex        =   5
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   ""
@@ -928,7 +928,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   5
+            TabIndex        =   8
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Auto Destroy Structures Multiplier:"
@@ -963,7 +963,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   2
+            TabIndex        =   4
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Fast Decay Period:"
@@ -998,7 +998,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   9
+            TabIndex        =   14
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Crop Decay Speed Multiplier:"
@@ -1041,7 +1041,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   10
+            TabIndex        =   15
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   ""
@@ -1077,7 +1077,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   11
+            TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Only Decay Unsnapped Core Structures:"
@@ -1112,7 +1112,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   12
+            TabIndex        =   2
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Fast Decay Unsnapped Core Structures:"
@@ -1147,7 +1147,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   13
+            TabIndex        =   6
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Auto Destroy Structures:"
@@ -1182,7 +1182,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   14
+            TabIndex        =   10
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Only Auto Destroy Core Structures:"
@@ -1217,7 +1217,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   15
+            TabIndex        =   12
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Auto Destroy Creatures:"
@@ -1252,7 +1252,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   16
+            TabIndex        =   1
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -1283,7 +1283,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   17
+            TabIndex        =   3
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -1314,7 +1314,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   18
+            TabIndex        =   7
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -1345,7 +1345,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   19
+            TabIndex        =   11
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -1376,7 +1376,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             ScrollActive    =   False
             ScrollingEnabled=   False
             ScrollSpeed     =   20
-            TabIndex        =   20
+            TabIndex        =   13
             TabPanelIndex   =   1
             TabStop         =   True
             Tooltip         =   ""
@@ -1416,7 +1416,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -1460,7 +1460,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -1496,7 +1496,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Corpse Decomposition Time Multiplier:"
@@ -1531,7 +1531,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Item Decomposition Time Multiplier:"
@@ -1574,7 +1574,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -1618,7 +1618,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -1654,7 +1654,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   10
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Clamp Item Spoil Times:"
@@ -1673,6 +1673,8 @@ Begin ConfigEditor SpoilTimersConfigEditor
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   20
          Index           =   -2147483648
@@ -1684,9 +1686,10 @@ Begin ConfigEditor SpoilTimersConfigEditor
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
          ScrollingEnabled=   False
          ScrollSpeed     =   20
-         TabIndex        =   11
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
