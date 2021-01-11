@@ -146,6 +146,7 @@ Protected Class IntegrationEngine
 		    
 		    If Transfer.Success Then
 		      Success = True
+		      Self.Log("Downloaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(Transfer.Content.Length) + ", md5: " + EncodeHex(Crypto.MD5(Transfer.Content)).Lowercase)
 		      Return Transfer.Content
 		    End If
 		    
