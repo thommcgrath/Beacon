@@ -41,10 +41,11 @@ Inherits Beacon.IntegrationEngine
 		      Next
 		      NewValue = Lines.Join(EndOfLine.UNIX)
 		    Case Beacon.ConfigKey.NitradoFormats.Value
-		      If Values.Count <> 1 Then
-		        Break // WTF?
-		      Else
+		      If Values.Count >= 1 Then
 		        NewValue = Values(0).Value
+		      Else
+		        // What?
+		        Break
 		      End If
 		    End Select
 		    
@@ -400,6 +401,27 @@ Inherits Beacon.IntegrationEngine
 		    Return
 		  End If
 		  
+		  // After this point, don't respect FailureMode. The logic has already been taken care of.
+		  // If the initial request returned a 200, the next requests must as well.
+		  
+		  Var SizeSocket As New SimpleHTTP.SynchronousHTTPSocket
+		  SizeSocket.RequestHeader("Cache-Control") = "no-cache"
+		  SizeSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  SizeSocket.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath))
+		  If SizeSocket.LastHTTPStatus <> 200 Then
+		    Call Self.CheckSocketForError(Sock, Transfer)
+		    Return
+		  End If
+		  Var RequiredFileSize As Integer
+		  Try
+		    Var Response As Dictionary = Beacon.ParseJSON(SizeSocket.LastContent)
+		    RequiredFileSize = Dictionary(Response.Value("data")).Value("size")
+		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
+		    Transfer.SetError(Err.Message)
+		    Return
+		  End Try
+		  
 		  Var FetchURL As String
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
@@ -422,14 +444,20 @@ Inherits Beacon.IntegrationEngine
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  FetchSocket.Send("GET", FetchURL)
 		  
-		  If (FetchSocket.LastHTTPStatus <> 200 And FailureMode = DownloadFailureMode.ErrorsAllowed) Or (FetchSocket.LastHTTPStatus = 404 And FailureMode = DownloadFailureMode.MissingAllowed) Then
-		    Transfer.Success = True
-		    Transfer.Content = ""
-		  ElseIf Self.CheckSocketForError(FetchSocket, Transfer) Then
-		    // The previous method took care of it
+		  If Self.CheckSocketForError(FetchSocket, Transfer) Then
+		    Return
+		  End If
+		  
+		  Var DownloadedContent As MemoryBlock = FetchSocket.LastContent
+		  If (DownloadedContent Is Nil) = False Then
+		    If DownloadedContent.Size = RequiredFileSize Then
+		      Transfer.Success = True
+		      Transfer.Content = DownloadedContent
+		    Else
+		      Transfer.SetError("Nitrado returned " + Beacon.BytesToString(DownloadedContent.Size) + " but told Beacon to expect " + Beacon.BytesToString(RequiredFileSize) + ".")
+		    End If
 		  Else
-		    Transfer.Success = True
-		    Transfer.Content = FetchSocket.LastString
+		    Transfer.SetError("Nitrado returned no content")
 		  End If
 		  
 		End Sub
