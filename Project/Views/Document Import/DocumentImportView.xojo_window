@@ -450,7 +450,7 @@ Begin ContainerControl DocumentImportView
          Transparent     =   False
          Underline       =   False
          Value           =   False
-         Visible         =   False
+         Visible         =   True
          Width           =   560
       End
       Begin Label OtherDocsMessageLabel
@@ -733,6 +733,7 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -1092,8 +1093,10 @@ End
 		      Continue
 		    End If
 		    
-		    Var Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
-		    Documents.Add(Doc)
+		    Var Doc As Beacon.Document = Beacon.Document(OtherDocsList.RowTagAt(I)).Clone(App.IdentityManager.CurrentIdentity)
+		    If (Doc Is Nil) = False Then
+		      Documents.Add(Doc)
+		    End If
 		  Next
 		  Self.Finish(Documents)
 		End Sub

@@ -102,6 +102,23 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone(Identity As Beacon.Identity) As Beacon.Document
+		  // Yes, run this through JSON first to ensure parsing is exactly as compatible as coming from the
+		  // disk or cloud. The object types put into the dictionary are not always the same as comes back
+		  // in the parsed JSON.
+		  
+		  Try
+		    Var Dict As Dictionary = Self.ToDictionary(Identity)
+		    Var JSONValue As String = Beacon.GenerateJSON(Dict, False)
+		    Var FailureReason As String
+		    Return FromString(JSONValue, Identity, FailureReason)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CombinedConfigs(States() As Beacon.ConfigSetState, Identity As Beacon.Identity) As Beacon.ConfigGroup()
 		  Var Names() As String
 		  If States Is Nil Then
