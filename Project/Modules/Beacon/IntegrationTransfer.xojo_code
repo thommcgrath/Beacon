@@ -40,6 +40,18 @@ Protected Class IntegrationTransfer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SHA256() As String
+		  Return EncodeHex(Crypto.SHA256(Self.Content)).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Size() As Integer
+		  Return Self.Content.Bytes
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		Content As String
@@ -108,7 +120,23 @@ Protected Class IntegrationTransfer
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ErrorMessage"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Success"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

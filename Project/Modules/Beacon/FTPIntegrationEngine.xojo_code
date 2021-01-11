@@ -293,7 +293,7 @@ Inherits Beacon.IntegrationEngine
 		      Filenames.Sort
 		      For Idx As Integer = Filenames.LastIndex DownTo 0
 		        Var LogFileDownloaded As Boolean
-		        Var Contents As String = Self.GetFile(LogsPath + "/" + Filenames(Idx), DownloadFailureMode.Required, LogFileDownloaded)
+		        Var Contents As String = Self.GetFile(LogsPath + "/" + Filenames(Idx), DownloadFailureMode.Required, False, LogFileDownloaded)
 		        If LogFileDownloaded And Self.ParseLogFile(Data, Contents) Then
 		          Exit
 		        End If
@@ -302,14 +302,14 @@ Inherits Beacon.IntegrationEngine
 		  End If
 		  
 		  Var FileDownloaded As Boolean
-		  Var FileContent As String = Self.GetFile(BaseURL + Profile.GameIniPath, DownloadFailureMode.MissingAllowed, FileDownloaded)
+		  Var FileContent As String = Self.GetFile(BaseURL + Profile.GameIniPath, DownloadFailureMode.MissingAllowed, False, FileDownloaded)
 		  If FileDownloaded Then
 		    Data.GameIniContent = FileContent.GuessEncoding
 		  Else
 		    Self.SetError("Could not download Game.ini")
 		    Return Nil
 		  End If
-		  FileContent = Self.GetFile(BaseURL + Profile.GameUserSettingsIniPath, DownloadFailureMode.MissingAllowed, FileDownloaded)
+		  FileContent = Self.GetFile(BaseURL + Profile.GameUserSettingsIniPath, DownloadFailureMode.MissingAllowed, False, FileDownloaded)
 		  If FileDownloaded Then
 		    Data.GameUserSettingsIniContent = FileContent.GuessEncoding
 		  Else

@@ -84,10 +84,10 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		    
 		    // Generate a new user-settings.ini file
-		    Self.Log("Updating 'Custom Game.ini Settings' field…")
 		    Var ExtraGameIniSuccess As Boolean
-		    Var ExtraGameIni As String = Self.GetFile(Self.mGamePath + "user-settings.ini", DownloadFailureMode.MissingAllowed, ExtraGameIniSuccess)
+		    Var ExtraGameIni As String = Self.GetFile(Self.mGamePath + "user-settings.ini", DownloadFailureMode.MissingAllowed, False, ExtraGameIniSuccess)
 		    If ExtraGameIniSuccess = False Or Self.Finished Then
+		      Self.Finished = True
 		      Return False
 		    End If
 		    If ExtraGameIni.BeginsWith("[" + Beacon.ShooterGameHeader + "]") = False Then
@@ -105,6 +105,7 @@ Inherits Beacon.IntegrationEngine
 		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
 		    
 		    If Not Self.PutFile(ExtraGameIni, Self.mGamePath + "user-settings.ini") Then
+		      Self.Finished = True
 		      Return False
 		    End If
 		    If Self.Finished Then
@@ -325,7 +326,7 @@ Inherits Beacon.IntegrationEngine
 		        Next
 		        
 		        Var ExtraGameIniSuccess As Boolean
-		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, ExtraGameIniSuccess)
+		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, False, ExtraGameIniSuccess)
 		        If ExtraGameIniSuccess = False Or Self.Finished Then
 		          Return Nil
 		        End If
@@ -478,7 +479,7 @@ Inherits Beacon.IntegrationEngine
 		  End Try
 		  
 		  Var LogContentSuccess As Boolean
-		  Var LogContent As String = Self.GetFile(Self.mLogFilePath, DownloadFailureMode.ErrorsAllowed, LogContentSuccess)
+		  Var LogContent As String = Self.GetFile(Self.mLogFilePath, DownloadFailureMode.ErrorsAllowed, False, LogContentSuccess)
 		  Var ServerStopTime As DateTime
 		  
 		  If LogContentSuccess Then

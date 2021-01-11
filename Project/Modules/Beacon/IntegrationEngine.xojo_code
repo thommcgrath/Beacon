@@ -131,7 +131,7 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile, ByRef Success As Boolean) As String
+		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile, Silent As Boolean, ByRef Success As Boolean) As String
 		  Var Counter As Integer = 0
 		  Var Message As String
 		  While Counter < 3
@@ -141,12 +141,16 @@ Protected Class IntegrationEngine
 		    End If
 		    
 		    Var Transfer As New Beacon.IntegrationTransfer(Filename)
-		    Self.Log("Downloading " + Transfer.Filename + "…")
+		    If Not Silent Then
+		      Self.Log("Downloading " + Transfer.Filename + "…")
+		    End If
 		    RaiseEvent DownloadFile(Transfer, FailureMode, Profile)
 		    
 		    If Transfer.Success Then
 		      Success = True
-		      Self.Log("Downloaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(Transfer.Content.Length) + ", md5: " + EncodeHex(Crypto.MD5(Transfer.Content)).Lowercase)
+		      If Not Silent Then
+		        Self.Log("Downloaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(Transfer.Size))
+		      End If
 		      Return Transfer.Content
 		    End If
 		    
@@ -154,7 +158,9 @@ Protected Class IntegrationEngine
 		    Counter = Counter + 1
 		  Wend
 		  
-		  Self.Log("Unable to download " + Filename + ": " + Message)
+		  If Not Silent Then
+		    Self.Log("Unable to download " + Filename + ": " + Message)
+		  End If
 		  
 		  Success = False
 		  Return ""
@@ -162,8 +168,8 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, ByRef Success As Boolean) As String
-		  Return Self.GetFile(Filename, FailureMode, Self.mProfile, Success)
+		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Silent As Boolean, ByRef Success As Boolean) As String
+		  Return Self.GetFile(Filename, FailureMode, Self.mProfile, Silent, Success)
 		End Function
 	#tag EndMethod
 
@@ -236,17 +242,19 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Function PutFile(Contents As String, Filename As String, TriesRemaining As Integer = 2) As Boolean
-		  Var DesiredHash As String = EncodeHex(Crypto.SHA256(Contents)).Lowercase
 		  Var Transfer As New Beacon.IntegrationTransfer(Filename, Contents)
+		  Var DesiredHash As String = Transfer.SHA256
+		  Var OriginalSize As Integer = Transfer.Size // Beacuse the transfer size will change after the event
 		  Self.Log("Uploading " + Transfer.Filename + "…")
 		  RaiseEvent UploadFile(Transfer)
 		  
 		  If Transfer.Success Then
 		    Var DownloadSuccess As Boolean
-		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, DownloadSuccess)
+		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, True, DownloadSuccess)
 		    If DownloadSuccess Then
 		      Var CheckedHash As String = EncodeHex(Crypto.SHA256(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
+		        Self.Log("Uploaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(OriginalSize))
 		        Return True
 		      Else
 		        Self.Log(Filename + " checksum does not match.")
@@ -373,12 +381,12 @@ Protected Class IntegrationEngine
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
 		  // Download the ini files
 		  Var DownloadSuccess As Boolean
-		  GameIniOriginal = Self.GetFile(Beacon.ConfigFileGame, DownloadFailureMode.MissingAllowed, DownloadSuccess)
+		  GameIniOriginal = Self.GetFile(Beacon.ConfigFileGame, DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
 		  If Self.Finished Or DownloadSuccess = False Then
 		    Self.Finished = True
 		    Return
 		  End If
-		  GameUserSettingsIniOriginal = Self.GetFile(Beacon.ConfigFileGameUserSettings, DownloadFailureMode.MissingAllowed, DownloadSuccess)
+		  GameUserSettingsIniOriginal = Self.GetFile(Beacon.ConfigFileGameUserSettings, DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
 		  If Self.Finished Or DownloadSuccess = False Then
 		    Self.Finished = True
 		    Return
