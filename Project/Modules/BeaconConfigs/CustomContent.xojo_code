@@ -5,13 +5,12 @@ Inherits Beacon.ConfigGroup
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
-		  Var ValuesFromGUS() As Beacon.ConfigValue = Self.IniValues(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, New Dictionary, Profile)
-		  Var ValuesFromGame() As Beacon.ConfigValue = Self.IniValues(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mGameIniContent, New Dictionary, Profile)
-		  Var Values() As Beacon.ConfigValue
+		  Var Organizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent.ReplaceAll(Self.EncryptedTag, ""))
+		  Organizer.Add(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mGameIniContent.ReplaceAll(Self.EncryptedTag, ""))
 		  
-		  For Each ParsedValue As Beacon.ConfigValue In ValuesFromGUS
-		    Values.Add(ParsedValue)
-		    
+		  Var PotentialCommandLineValues() As Beacon.ConfigValue = Organizer.FilteredValues(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader)
+		  
+		  For Each ParsedValue As Beacon.ConfigValue In PotentialCommandLineValues
 		    Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("CommandLine", "", ParsedValue.SimplifiedKey)
 		    If Keys.Count <> 1 Then
 		      Continue
@@ -26,39 +25,30 @@ Inherits Beacon.ConfigGroup
 		      Value = If(IsTrue, "True", "False")
 		      OverrideCommand = Key.Key + "=" + Value.Titlecase
 		    End If
-		    Values.Add(New Beacon.ConfigValue(Key, OverrideCommand))
+		    Organizer.Add(New Beacon.ConfigValue(Key, OverrideCommand), True)
 		  Next
 		  
-		  For Each ParsedValue As Beacon.ConfigValue In ValuesFromGame
-		    Values.Add(ParsedValue)
-		  Next
-		  
-		  Return Values
+		  Return Organizer.FilteredValues()
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.CustomContent = BeaconConfigs.CustomContent(Other)
-		  Var EOL As String = Encodings.ASCII.Chr(10)
 		  
-		  Var GameIniPieces() As String
-		  If Self.mGameIniContent.IsEmpty = False Then
-		    GameIniPieces.Add(Self.mGameIniContent.Trim)
-		  End If
-		  If Source.mGameIniContent.IsEmpty = False Then
-		    GameIniPieces.Add("[" + Beacon.ShooterGameHeader + "]" + EOL + Source.mGameIniContent.Trim)
-		  End If
-		  Var MergedGameIni As String = GameIniPieces.Join(EOL + EOL)
+		  Var SelfOrganizer As New Beacon.ConfigOrganizer
+		  SelfOrganizer.Add(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mGameIniContent)
+		  SelfOrganizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent)
 		  
-		  Var GameUserSettingsIniPieces() As String
-		  If Self.mGameUserSettingsIniContent.IsEmpty = False Then
-		    GameUserSettingsIniPieces.Add(Self.mGameUserSettingsIniContent.Trim)
-		  End If
-		  If Source.mGameUserSettingsIniContent.IsEmpty = False Then
-		    GameUserSettingsIniPieces.Add("[" + Beacon.ServerSettingsHeader + "]" + EOL + Source.mGameUserSettingsIniContent.Trim)
-		  End If
-		  Var MergedGameUserSettingsIni As String = GameUserSettingsIniPieces.Join(EOL + EOL)
+		  Var SourceOrganizer As New Beacon.ConfigOrganizer
+		  SourceOrganizer.Add(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Source.mGameIniContent)
+		  SourceOrganizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Source.mGameUserSettingsIniContent)
+		  
+		  SelfOrganizer.Remove(SourceOrganizer.DistinctKeys)
+		  SelfOrganizer.Add(SourceOrganizer.FilteredValues)
+		  
+		  Var MergedGameIni As String = SelfOrganizer.Build(Beacon.ConfigFileGame)
+		  Var MergedGameUserSettingsIni As String = SelfOrganizer.Build(Beacon.ConfigFileGameUserSettings)
 		  
 		  If Self.mGameIniContent <> MergedGameIni Or Self.mGameUserSettingsIniContent <> MergedGameUserSettingsIni Then
 		    Self.Modified = True
@@ -287,23 +277,6 @@ Inherits Beacon.ConfigGroup
 		    Self.Modified = True
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function IniValues(File As String, InitialHeader As String, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
-		  Source = Source.ReplaceLineEndings(Encodings.ASCII.Chr(10))
-		  
-		  Var Lines() As String = Source.Split(Encodings.ASCII.Chr(10))
-		  Var Parser As New CustomContentParser(File, InitialHeader, ExistingConfigs, Profile)
-		  For Each Line As String In Lines
-		    Var ShouldAlwaysBeNil() As Beacon.ConfigValue = Parser.AddLine(Line)
-		    If ShouldAlwaysBeNil <> Nil Then
-		      Break
-		    End If
-		  Next
-		  Return Parser.RemainingValues
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

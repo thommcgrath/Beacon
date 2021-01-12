@@ -303,7 +303,6 @@ Window=BreedingMultipliersConfigEditor;Views/Config Editors/Breeding Multipliers
 Window=BreedingTunerDialog;Views/Config Editors/Breeding Multipliers/BreedingTunerDialog.xojo_window;&h000000005B44C7FF;&h0000000010C39FFF;false
 Class=HarvestRates;Modules/BeaconConfigs/HarvestRates.xojo_code;&h000000006914D7FF;&h0000000068EBAFFF;false
 Window=HarvestRatesConfigEditor;Views/Config Editors/HarvestRatesConfigEditor.xojo_window;&h0000000004CA3FFF;&h00000000434D97FF;false
-Class=CustomContentParser;Classes/CustomContentParser.xojo_code;&h000000000B7F97FF;&h00000000056D5FFF;false
 Class=CreatureBehavior;Modules/Beacon/CreatureBehavior.xojo_code;&h000000001236BFFF;&h0000000055ADDFFF;false
 Class=MutableCreatureBehavior;Modules/Beacon/MutableCreatureBehavior.xojo_code;&h0000000069B057FF;&h0000000055ADDFFF;false
 Class=DinoAdjustments;Modules/BeaconConfigs/DinoAdjustments.xojo_code;&h000000001DFA97FF;&h0000000068EBAFFF;false
