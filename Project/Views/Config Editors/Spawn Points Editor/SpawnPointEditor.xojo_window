@@ -663,8 +663,13 @@ End
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
 		      Var UUID As String = CombinedLimits.Key(RowIndex)
 		      Var Limit As Double = CombinedLimits.Value(UUID)
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(UUID)
+		      If (Creature Is Nil) Then
+		        Self.LimitsList.CellValueAt(RowIndex, 0) = "Unknown Creature"
+		      Else
+		        Self.LimitsList.CellValueAt(RowIndex, 0) = Creature.Label
+		      End If
 		      
-		      Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByID(UUID).Label
 		      Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
 		      Self.LimitsList.RowTagAt(RowIndex) = UUID
 		      Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(UUID) > -1
