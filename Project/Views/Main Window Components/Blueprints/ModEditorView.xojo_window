@@ -516,7 +516,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
