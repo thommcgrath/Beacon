@@ -4,6 +4,7 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
+		  #Pragma Unused Profile
 		  
 		  Var Organizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent.ReplaceAll(Self.EncryptedTag, ""))
 		  Organizer.Add(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mGameIniContent.ReplaceAll(Self.EncryptedTag, ""))

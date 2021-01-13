@@ -61,6 +61,22 @@ End
 
 #tag WindowCode
 	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused Base
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  Return False
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		  #Pragma Unused HitItem
+		  Return False
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.mSelectedRowIndex = -1
 		  
@@ -194,6 +210,23 @@ End
 		Function LastItemIndex() As Integer
 		  Return Self.mItems.LastIndex
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Refresh(Idx As Integer)
+		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
+		    Self.Content.Refresh(False)
+		    Return
+		  End If
+		  
+		  Var ItemRect As Rect = Self.mItemRects(Idx)
+		  If ItemRect Is Nil Then
+		    Self.Content.Refresh(False)
+		    Return
+		  End If
+		  
+		  Self.Content.Refresh(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, False)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -385,6 +418,10 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ContextualClick(MouseX As Integer, MouseY As Integer, ItemIndex As Integer, ItemRect As Rect)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -435,6 +472,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mSelectedRowIndex As Integer = -1
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWasContextualClick As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -496,7 +537,20 @@ End
 		  Self.mMouseDownPoint = MousePoint
 		  Self.mMouseDownIndex = Idx
 		  Self.mMouseOverIndex = Idx
+		  Self.mWasContextualClick = IsContextualClick
 		  Self.Invalidate(Self.mMouseDownIndex)
+		  
+		  If Self.mWasContextualClick Then
+		    // Force the refresh now
+		    Self.Refresh(Self.mMouseDownIndex)
+		    
+		    Var ItemRect As Rect
+		    If Idx >= Self.mItemRects.FirstRowIndex And Idx <= Self.mItemRects.LastRowIndex Then
+		      ItemRect = Self.mItemRects(Idx)
+		    End If
+		    
+		    RaiseEvent ContextualClick(X, Y, Idx, ItemRect)
+		  End If
 		  
 		  Return True
 		End Function
@@ -572,7 +626,7 @@ End
 		  
 		  Self.mMousePoint = New Point(X, Y)
 		  
-		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex Then
+		  If Self.mWasContextualClick = False And Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex Then
 		    Self.SelectedRowIndex = Self.mMouseDownIndex
 		  End If
 		  
