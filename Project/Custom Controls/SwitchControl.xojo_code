@@ -185,6 +185,12 @@ Inherits ControlCanvas
 		  FullMask.Graphics.ScaleX = G.ScaleX
 		  FullMask.Graphics.ScaleY = G.ScaleY
 		  FullMask.Graphics.DrawPicture(White, 0, 0)
+		  
+		  If Not Self.Enabled Then
+		    FullMask.Graphics.DrawingColor = &cFFFFFF80
+		    FullMask.Graphics.FillRectangle(0, 0, FullMask.Graphics.Width, FullMask.Graphics.Height)
+		  End If
+		  
 		  Full.ApplyMask(FullMask)
 		  
 		  G.DrawPicture(Full, 0, 0)

@@ -1789,6 +1789,9 @@ End
 		  Self.CorpseDecomposeMultiplierField.Text = Config.GlobalCorpseDecompositionTimeMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.ItemDecomposeMultiplierField.Text = Config.GlobalItemDecompositionTimeMultiplier.ToString(Locale.Current, "0.0#####")
 		  
+		  Self.PvEDinoDecaySwitch.Enabled = Not Self.PvPDinoDecaySwitch.Value
+		  Self.PvEStructureDecaySwitch.Enabled = Not Self.PvEStructureDecaySwitch.Value
+		  
 		  Self.UpdateFigures()
 		End Sub
 	#tag EndEvent
@@ -1827,6 +1830,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateDecayFigures()
+		  Var SelectedKeys() As String
+		  For Idx As Integer = 0 To Self.DecayPreviewList.LastRowIndex
+		    If Self.DecayPreviewList.Selected(Idx) Then
+		      SelectedKeys.Add(Self.DecayPreviewList.CellValueAt(Idx, 0))
+		    End If
+		  Next
+		  
 		  Self.DecayPreviewList.RemoveAllRows
 		  
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(False)
@@ -1849,7 +1859,7 @@ End
 		      End If
 		      
 		      If Config.PvPDinoDecay Then
-		        Var PvPDecayPeriod As Integer = Entry.Value
+		        Var PvPDecayPeriod As Integer = Entry.Value * Config.PvEDinoDecayPeriodMultiplier
 		        PvPDecayString = Beacon.SecondsToString(PvPDecayPeriod)
 		        
 		        If Config.AutoDestroyDecayedDinos Then
@@ -1868,7 +1878,7 @@ End
 		      End If
 		      
 		      If Config.PvPStructureDecay Then
-		        Var PvPDecayPeriod As Integer = Entry.Value
+		        Var PvPDecayPeriod As Integer = Entry.Value * Config.PvEStructureDecayPeriodMultiplier
 		        PvPDecayString = Beacon.SecondsToString(PvPDecayPeriod)
 		        
 		        If Config.AutoDestroyStructures Then
@@ -1879,6 +1889,7 @@ End
 		    End If
 		    
 		    Self.DecayPreviewList.AddRow(Key, PvEDecayString, PvEDestroyString, PvPDecayString, PvPDestroyString)
+		    Self.DecayPreviewList.Selected(Self.DecayPreviewList.LastAddedRowIndex) = SelectedKeys.IndexOf(Key) > -1
 		  Next
 		  
 		End Sub
@@ -1894,6 +1905,13 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateSpoilFigures()
 		  Var List As BeaconListbox = Self.SpoilTimesList
+		  
+		  Var SelectedNames() As String
+		  For Idx As Integer = 0 To List.LastRowIndex
+		    If List.Selected(Idx) Then
+		      SelectedNames.Add(List.CellValueAt(Idx, 0))
+		    End If
+		  Next
 		  
 		  List.RemoveAllRows()
 		  
@@ -1911,6 +1929,7 @@ End
 		      Var ColumnIndex As Integer = Idx + 1
 		      
 		      List.CellValueAt(RowIndex, ColumnIndex) = Beacon.SecondsToString(BasePeriod * Multiplier)
+		      List.Selected(List.LastAddedRowIndex) = SelectedNames.IndexOf(Name) > -1
 		    Next
 		  Next
 		End Sub
@@ -2068,6 +2087,13 @@ End
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
 		  Config.PvPStructureDecay = Me.Value
+		  
+		  If Me.Value Then
+		    Config.DisableStructureDecayPvE = False
+		    Self.PvEStructureDecaySwitch.Value = True
+		  End If
+		  Self.PvEStructureDecaySwitch.Enabled = Not Me.Value
+		  
 		  Self.Changed = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
@@ -2084,6 +2110,13 @@ End
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(True)
 		  Config.PvPDinoDecay = Me.Value
+		  
+		  If Me.Value Then
+		    Config.DisableDinoDecayPvE = False
+		    Self.PvEDinoDecaySwitch.Value = True
+		  End If
+		  Self.PvEDinoDecaySwitch.Enabled = Not Me.Value
+		  
 		  Self.Changed = Config.Modified
 		  Self.UpdateDecayFigures()
 		  Self.SettingUp = False
