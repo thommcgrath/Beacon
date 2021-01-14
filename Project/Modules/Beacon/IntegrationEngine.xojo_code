@@ -134,6 +134,7 @@ Protected Class IntegrationEngine
 		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile, Silent As Boolean, ByRef Success As Boolean) As String
 		  Var Counter As Integer = 0
 		  Var Message As String
+		  Var Basename As String
 		  While Counter < 3
 		    If Self.Finished Then
 		      Success = False
@@ -141,6 +142,7 @@ Protected Class IntegrationEngine
 		    End If
 		    
 		    Var Transfer As New Beacon.IntegrationTransfer(Filename)
+		    Basename = Transfer.Filename
 		    If Not Silent Then
 		      Self.Log("Downloading " + Transfer.Filename + "…")
 		    End If
@@ -159,7 +161,7 @@ Protected Class IntegrationEngine
 		  Wend
 		  
 		  If Not Silent Then
-		    Self.Log("Unable to download " + Filename + ": " + Message)
+		    Self.Log("Unable to download " + Basename + ": " + Message)
 		  End If
 		  
 		  Success = False
@@ -257,7 +259,7 @@ Protected Class IntegrationEngine
 		        Self.Log("Uploaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(OriginalSize))
 		        Return True
 		      Else
-		        Self.Log(Filename + " checksum does not match.")
+		        Self.Log(Transfer.Filename + " checksum does not match.")
 		        #if DebugBuild
 		          Self.Log("Expected hash " + DesiredHash + ", got " + CheckedHash)
 		        #endif
@@ -274,7 +276,7 @@ Protected Class IntegrationEngine
 		    Return Self.PutFile(Contents, Filename, TriesRemaining - 1)
 		  End If
 		  
-		  Self.Log("Could not upload " + Filename + " and verify its content is correct on the server.")
+		  Self.Log("Could not upload " + Transfer.Filename + " and verify its content is correct on the server.")
 		  
 		  If Transfer.ErrorMessage.IsEmpty = False Then
 		    Self.Log("Reason: " + Transfer.ErrorMessage)

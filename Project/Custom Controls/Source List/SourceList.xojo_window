@@ -545,7 +545,7 @@ End
 		    Self.Refresh(Self.mMouseDownIndex)
 		    
 		    Var ItemRect As Rect
-		    If Idx >= Self.mItemRects.FirstRowIndex And Idx <= Self.mItemRects.LastRowIndex Then
+		    If Idx >= Self.mItemRects.FirstIndex And Idx <= Self.mItemRects.LastIndex Then
 		      ItemRect = Self.mItemRects(Idx)
 		    End If
 		    

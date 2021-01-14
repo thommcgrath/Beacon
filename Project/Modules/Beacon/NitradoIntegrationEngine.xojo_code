@@ -402,9 +402,6 @@ Inherits Beacon.IntegrationEngine
 		    Return
 		  End If
 		  
-		  // After this point, don't respect FailureMode. The logic has already been taken care of.
-		  // If the initial request returned a 200, the next requests must as well.
-		  
 		  Var SizeSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  SizeSocket.RequestHeader("Cache-Control") = "no-cache"
 		  SizeSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
@@ -418,8 +415,10 @@ Inherits Beacon.IntegrationEngine
 		    Var Response As Dictionary = Beacon.ParseJSON(SizeSocket.LastContent)
 		    RequiredFileSize = Dictionary(Response.Value("data")).Value("size")
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
-		    Transfer.SetError(Err.Message)
+		    If FailureMode <> DownloadFailureMode.ErrorsAllowed Then
+		      App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
+		      Transfer.SetError(Err.Message)
+		    End If
 		    Return
 		  End Try
 		  
@@ -427,7 +426,7 @@ Inherits Beacon.IntegrationEngine
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    If Response.Value("status") <> "success" Then
-		      Transfer.SetError("Error: Could not download " + FullPath + ".")
+		      Transfer.SetError("Error: Could not download " + Filename + ".")
 		      Return
 		    End If
 		    
@@ -451,7 +450,7 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Var DownloadedContent As MemoryBlock = FetchSocket.LastContent
 		  If (DownloadedContent Is Nil) = False Then
-		    If DownloadedContent.Size = RequiredFileSize Then
+		    If DownloadedContent.Size = RequiredFileSize Or FailureMode = DownloadFailureMode.ErrorsAllowed Then
 		      Transfer.Success = True
 		      Transfer.Content = DownloadedContent
 		    Else
