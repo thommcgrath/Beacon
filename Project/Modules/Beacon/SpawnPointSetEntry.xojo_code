@@ -106,13 +106,13 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Offset"))
 		  End If
 		  
-		  Var Levels() As Variant
+		  Var Levels() As Dictionary
 		  If Dict.HasKey("Level Overrides") And Dict.Value("Level Overrides").IsNull = False Then
-		    Levels = Dict.Value("Level Overrides")
+		    Levels = Dict.Value("Level Overrides").DictionaryArrayValue
 		  ElseIf Dict.HasKey("level_overrides") And Dict.Value("level_overrides").IsNull = False Then
-		    Levels = Dict.Value("level_overrides")
+		    Levels = Dict.Value("level_overrides").DictionaryArrayValue
 		  ElseIf Dict.HasKey("Levels") And Dict.Value("Levels").IsNull = False Then
-		    Levels = Dict.Value("Levels")
+		    Levels = Dict.Value("Levels").DictionaryArrayValue
 		  End If
 		  For Each LevelData As Dictionary In Levels
 		    Var Level As Beacon.SpawnPointLevel = Beacon.SpawnPointLevel.FromSaveData(LevelData)
