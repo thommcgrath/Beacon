@@ -490,6 +490,7 @@ Window=SpoilTimersConfigEditor;Views/Config Editors/Decay and Spoil/SpoilTimersC
 Class=SwitchControl;Custom Controls/SwitchControl.xojo_code;&h00000000733CDFFF;&h0000000030DCFFFF;false
 Folder=Support;Views/Main Window Components/Support;&h000000002219AFFF;&h0000000008626FFF;false
 Window=HelpComponent;Views/Main Window Components/Support/HelpComponent.xojo_window;&h0000000054D6B7FF;&h000000002219AFFF;false
+Class=IntervalField;Custom Controls/IntervalField.xojo_code;&h0000000035D6BFFF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5
