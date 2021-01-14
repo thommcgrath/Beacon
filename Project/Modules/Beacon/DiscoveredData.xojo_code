@@ -20,7 +20,7 @@ Protected Class DiscoveredData
 
 	#tag Method, Flags = &h0
 		Sub GameIniContent(Assigns Value As String)
-		  Self.mGameIniContent = Beacon.FilterExcessSections(Value)
+		  Self.mGameIniContent = Beacon.FilterExcessSections(Value.GuessEncoding)
 		End Sub
 	#tag EndMethod
 
@@ -32,7 +32,7 @@ Protected Class DiscoveredData
 
 	#tag Method, Flags = &h0
 		Sub GameUserSettingsIniContent(Assigns Value As String)
-		  Self.mGameUserSettingsIniContent = Beacon.FilterExcessSections(Value)
+		  Self.mGameUserSettingsIniContent = Beacon.FilterExcessSections(Value.GuessEncoding)
 		End Sub
 	#tag EndMethod
 
