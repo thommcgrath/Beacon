@@ -555,8 +555,13 @@ End
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
 		      Var Path As String = CombinedLimits.Key(RowIndex)
 		      Var Limit As Double = CombinedLimits.Value(Path)
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		      If (Creature Is Nil) Then
+		        Self.LimitsList.CellValueAt(RowIndex, 0) = "Unknown Creature"
+		      Else
+		        Self.LimitsList.CellValueAt(RowIndex, 0) = Creature.Label
+		      End If
 		      
-		      Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByPath(Path).Label
 		      Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
 		      Self.LimitsList.RowTagAt(RowIndex) = Path
 		      Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(Path) > -1
