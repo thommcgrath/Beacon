@@ -79,12 +79,6 @@ Implements ObservationKit.Observable
 	#tag Event
 		Function GetManagedKeys() As Beacon.ConfigKey()
 		  Var Keys() As Beacon.ConfigKey
-		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName"))
-		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message"))
-		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration"))
-		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerPassword"))
-		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "ServerAdminPassword"))
-		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "SpectatorPassword"))
 		  Return Keys
 		End Function
 	#tag EndEvent
