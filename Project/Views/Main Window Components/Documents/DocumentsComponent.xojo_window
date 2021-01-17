@@ -188,6 +188,15 @@ Begin BeaconPagedSubview DocumentsComponent
          Width           =   896
       End
    End
+   Begin Timer AutosavePromptTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   2000
+      RunMode         =   1
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -239,6 +248,25 @@ End
 		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
 		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
 		  AddHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AutosaveController_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  RemoveHandler Sender.Loaded, AddressOf AutosaveController_Loaded
+		  
+		  // Create a modified transient document
+		  Document.Modified = True
+		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
+		  Controller.AutosaveURL = Sender.URL
+		  Self.OpenController(Controller, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AutosaveController_LoadError(Sender As Beacon.DocumentController, Reason As String)
+		  App.Log("Failed to restore autosave file: " + Reason)
+		  Sender.Delete
 		End Sub
 	#tag EndMethod
 
@@ -405,6 +433,23 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub OpenController(Controller As Beacon.DocumentController, AddToRecents As Boolean = True)
+		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  Self.Nav.Append(NavItem)
+		  
+		  Self.AttachControllerEvents(Controller)
+		  
+		  Controller.Load()
+		  
+		  If AddToRecents Then
+		    Preferences.AddToRecentDocuments(Controller.URL)
+		  End If
+		  
+		  Self.RequestFrontmost()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub OpenDocument(URL As Beacon.DocumentURL, AddToRecents As Boolean = True)
 		  Var Hash As String = URL.Hash
@@ -423,16 +468,7 @@ End
 		  End If
 		  
 		  Var Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
-		  NavItem = OmniBarItem.CreateTab(Hash, Controller.Name)
-		  Self.Nav.Append(NavItem)
-		  
-		  Self.AttachControllerEvents(Controller)
-		  
-		  Controller.Load()
-		  
-		  If AddToRecents Then
-		    Preferences.AddToRecentDocuments(URL)
-		  End If
+		  Self.OpenController(Controller, AddToRecents)
 		End Sub
 	#tag EndMethod
 
@@ -440,6 +476,50 @@ End
 		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean = True)
 		  Var URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File))
 		  Self.OpenDocument(URL, AddToRecents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RestoreAutosave()
+		  Var AutosaveFolder As FolderItem = App.AutosaveFolder()
+		  If AutosaveFolder Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Extension As String = Beacon.FileExtensionProject
+		  Var Files() As FolderItem
+		  For Each Child As FolderItem In AutosaveFolder.Children
+		    If Child.Name.EndsWith(Extension) Then
+		      Files.Add(Child)
+		    End If
+		  Next
+		  
+		  If Files.Count = 0 Then
+		    Return
+		  End If
+		  
+		  If Self.ShowConfirm("Beacon found " + Language.NounWithQuantity(Files.Count, "unsaved document", "unsaved documents") + ". Would you like to recover the " + If(Files.Count = 1, "file", "files") + "?", "This can happen if Beacon finishes unexpectedly, such as during a crash. If the " + If(Files.Count = 1, "file is", "files are") + " not restored, " + If(Files.Count = 1, "it", "they") + " will be permanently deleted.", "Recover", "Discard") Then
+		    For Idx As Integer = 0 To Files.LastIndex
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
+		      
+		      Var FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		      App.Log("Attempting to restore autosave " + FileURL.URL(Beacon.DocumentURL.URLTypes.Reading))
+		      
+		      Var Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
+		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
+		      AddHandler Controller.LoadError, AddressOf AutosaveController_LoadError
+		      Controller.Load()
+		    Next
+		  Else
+		    For Idx As Integer = Files.LastIndex DownTo 0
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
+		      
+		      Try
+		        File.Remove
+		      Catch Err As IOException
+		      End Try
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -565,6 +645,13 @@ End
 	#tag Event
 		Sub NewDocument()
 		  Self.NewDocument()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AutosavePromptTimer
+	#tag Event
+		Sub Action()
+		  Self.RestoreAutosave()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

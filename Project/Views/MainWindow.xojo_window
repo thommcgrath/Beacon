@@ -966,6 +966,46 @@ End
 		  Self.DocumentsComponent1.NewDocument()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageHome)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BlueprintsComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageBlueprints)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DocumentsComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageDocuments)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NotificationsPane1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageHome)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HelpComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageHelp)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PresetsComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PagePresets)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
