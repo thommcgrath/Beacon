@@ -755,6 +755,7 @@ End
 		      End If
 		    Next
 		    Self.UpdateSourceList(NewSources)
+		    Self.Changed = Self.Document.Modified
 		    Self.Focus = Self.List
 		  End If
 		End Sub
