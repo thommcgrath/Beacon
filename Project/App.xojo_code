@@ -182,6 +182,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SubmitExceptions)
+		  #if false
+		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
+		  #endif
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -881,6 +884,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SubmitExceptions()
 		  ExceptionWindow.SubmitPendingReports()
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_WelcomeWindow()
+		  If Preferences.NewestUsedBuild < 10500000 Then
+		    // Show what's new window.
+		    WhatsNewWindow.Present
+		  End If
+		  
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod

@@ -341,22 +341,6 @@ Protected Module Preferences
 		Protected HasShownExperimentalWarning As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.BooleanValue("Has Shown Subscribe Dialog", False)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.BooleanValue("Has Shown Subscribe Dialog") = Value
-			End Set
-		#tag EndSetter
-		Protected HasShownSubscribeDialog As Boolean
-	#tag EndComputedProperty
-
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
@@ -440,6 +424,26 @@ Protected Module Preferences
 	#tag Property, Flags = &h21
 		Private mManager As PreferencesManager
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Var HasLaunchedBefore As Boolean = mManager.BooleanValue("Has Shown Subscribe Dialog", False)
+			  Return mManager.IntegerValue("Newest Used Build", If(HasLaunchedBefore, 10408304, 0))
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  // Don't need Init here because NewestUsedBuild will do that
+			  Var OldValue As Integer = NewestUsedBuild
+			  If Value > OldValue Then
+			    mManager.IntegerValue("Newest Used Build") = Value
+			  End If
+			End Set
+		#tag EndSetter
+		Protected NewestUsedBuild As Integer
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter

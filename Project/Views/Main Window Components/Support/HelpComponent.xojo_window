@@ -36,7 +36,7 @@ Begin BeaconSubview HelpComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   0
+      Renderer        =   1
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -59,13 +59,6 @@ End
 		  End If
 		  
 		  Var URL As String = Beacon.WebURL("/help")
-		  
-		  #if TargetWindows
-		    If SystemInformationMBS.IsWindows10(True) = False Then
-		      ShowURL(URL)
-		      Return
-		    End If
-		  #endif
 		  
 		  Self.HelpViewer.LoadURL(URL)
 		End Sub
