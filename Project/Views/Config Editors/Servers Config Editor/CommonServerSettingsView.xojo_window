@@ -555,6 +555,8 @@ Begin ContainerControl CommonServerSettingsView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -566,6 +568,7 @@ Begin ContainerControl CommonServerSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   11
@@ -653,6 +656,8 @@ Begin ContainerControl CommonServerSettingsView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -664,6 +669,7 @@ Begin ContainerControl CommonServerSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   14
@@ -681,6 +687,8 @@ Begin ContainerControl CommonServerSettingsView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -692,6 +700,7 @@ Begin ContainerControl CommonServerSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   17

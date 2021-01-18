@@ -189,7 +189,6 @@ Begin BeaconPagedSubview DocumentsComponent
       End
    End
    Begin Timer AutosavePromptTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   2000

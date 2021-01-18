@@ -1482,6 +1482,8 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -1493,6 +1495,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   22
@@ -1510,6 +1513,8 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   20
       Index           =   -2147483648
@@ -1521,6 +1526,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   43

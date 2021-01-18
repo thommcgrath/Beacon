@@ -791,6 +791,22 @@ Inherits Beacon.ConfigGroup
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GlobalCorpseDecompositionTimeMultiplier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GlobalItemDecompositionTimeMultiplier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

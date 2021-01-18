@@ -124,7 +124,7 @@ Protected Module SystemColors
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return New ColorGroup(&c713A9A00)
+		  Return New ColorGroup(&c5c248700, &c8030bf00)
 		End Function
 	#tag EndMethod
 
@@ -373,7 +373,7 @@ Protected Module SystemColors
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return New ColorGroup(&c0063E100, &c0058D000)
+		  Return New ColorGroup(&c47156d00, &c5b188e00)
 		End Function
 	#tag EndMethod
 

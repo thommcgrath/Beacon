@@ -638,11 +638,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
-		  #if UseVibrancyView = False And TargetMacOS = False
-		    G.DrawingColor = SystemColors.WindowBackgroundColor
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		  #endif
-		  
 		  Var Rects() As Rect
 		  Rects.ResizeTo(Self.mItems.LastIndex)
 		  

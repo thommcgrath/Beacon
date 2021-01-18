@@ -28,6 +28,9 @@ Protected Class PopoverController
 		  Self.mDialog = New PopoverDialog(Self)
 		  Self.mDialog.Visible = False
 		  Var Instance As RectControl = Self.mDialog.Embed(Container, Self.mPaddingX, Self.mPaddingY)
+		  #if Not TargetMacOS
+		    #Pragma Unused Instance
+		  #endif
 		  
 		  If Container IsA BeaconSubview Then
 		    Try

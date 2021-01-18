@@ -268,12 +268,16 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          HasBackgroundColor=   False
          Height          =   782
          InitialParent   =   "Pages"
+         IsFrontmost     =   False
          Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   5
