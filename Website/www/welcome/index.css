@@ -1,0 +1,156 @@
+body {
+	margin: 0px;
+	font-family: source-code-pro, monospace;
+	font-weight: 400;
+	font-style: normal;
+	overflow: hidden;
+	background-color: #713a9a;
+	color: #ffffff;
+}
+
+a {
+	color: #c6dcf5;
+}
+
+#main_wrapper {
+	overflow: hidden;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+}
+
+#main_wrapper.animated .page {
+	transition: left 0.15s ease-out;
+}
+
+.page {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	width: 100%;
+	left: 0%;
+	padding: 20px;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.page.left {
+	left: -100%;
+}
+
+.page.right {
+	left: 100%;
+}
+
+.page.noanimation {
+	transition-duration: 0s !important;
+}
+
+#navigator {
+	position: absolute;
+	z-index: 900;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+	display: flex;
+	padding: 20px;
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
+	align-items: center;
+	box-sizing: border-box;
+	background-color: rgba(113, 58, 154, 0.5);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+}
+
+#navigator_left, #navigator_center, #navigator_right {
+	flex: 1 1 33%;
+}
+
+#navigator_left {
+	text-align: left;
+}
+
+#navigator_center {
+	text-align: center;
+	height: 14px;
+}
+
+#navigator_right {
+	text-align: right;
+}
+
+button {
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	background-color: rgba(0, 0, 0, 0.1);
+	border-radius:5px;
+	color: #ffffff;
+	padding: 3px 12px;
+	min-width: 80px;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: color, background-color, border-color, width;
+	outline: none;
+	-webkit-appearance: none;
+}
+
+button+button {
+	margin-left: 12px;
+}
+
+button:disabled {
+	opacity: 0.5;
+}
+
+button:enabled:active {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #808080;
+	border-color: rgba(0, 0, 0, 0.0);
+}
+
+#navigator_pips {
+	background-color: rgba(255, 255, 255, 0.15);
+	display: inline-flex;
+	border-radius: 12px;
+	padding: 0px 4px;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+	width: auto;
+	margin: 0px;
+}
+
+#navigator_pips .pip {
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.5);
+	overflow: hidden;
+	width: 6px;
+	height: 6px;
+	display: block;
+	flex: 0 0 6px;
+	margin: 4px;
+	transition: background-color 0.15s ease-out;
+}
+
+#navigator_pips .pip.active {
+	background-color: #ffffff;
+}
+
+#navigator_pips .pip:hover {
+	cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+	body {
+		background-color: #262626;
+	}
+	
+	#navigator {
+		background-color: rgba(38, 38, 38, 0.5);
+	}
+	
+	a {
+		color: #3486FE;
+	}
+}
