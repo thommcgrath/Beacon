@@ -158,7 +158,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             SelectionChangeBlocked=   False
             TabIndex        =   0
             TabPanelIndex   =   1
-            TabStop         =   True
+            TabStop         =   False
             Tooltip         =   ""
             Top             =   282
             Transparent     =   False
@@ -1061,7 +1061,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
          SelectionChangeBlocked=   False
          TabIndex        =   10
          TabPanelIndex   =   2
-         TabStop         =   True
+         TabStop         =   False
          Tooltip         =   ""
          Top             =   203
          Transparent     =   False
