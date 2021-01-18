@@ -1448,7 +1448,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub AuthenticationError()
+		Sub AuthenticationError(Reason As String)
+		  #Pragma Unused Reason
+		  
 		  Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Me.Account)
 		  For Each Engine As Beacon.IntegrationEngine In Engines
 		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
