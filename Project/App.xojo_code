@@ -182,9 +182,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SubmitExceptions)
-		  #if false
-		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
-		  #endif
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32

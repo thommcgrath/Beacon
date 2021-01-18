@@ -27,7 +27,7 @@ Begin Window WhatsNewWindow
    Begin HTMLViewer Viewer
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   413
+      Height          =   414
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -136,9 +136,7 @@ End
 		  Self.Visible = True
 		  Self.Show
 		  
-		  #if Not DebugBuild
-		    Preferences.NewestUsedBuild = App.BuildNumber
-		  #endif
+		  Preferences.NewestUsedBuild = App.BuildNumber
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -152,6 +150,11 @@ End
 		Function CancelLoad(URL as String) As Boolean
 		  If URL = "beacon://finished" Then
 		    Call CallLater.Schedule(1, AddressOf CloseLater)
+		    Return True
+		  End If
+		  
+		  If URL.BeginsWith(Beacon.WebURL("/welcome")) = False Then
+		    ShowURL(URL)
 		    Return True
 		  End If
 		End Function
