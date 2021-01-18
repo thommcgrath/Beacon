@@ -1557,7 +1557,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   36
       TabPanelIndex   =   0
       TabStop         =   False
-      Text            =   "Turn on to disable stat bonuses on imprinted creatures."
+      Text            =   "Turn on to disable stat bonuses on imprinted creatures"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -1627,7 +1627,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   False
-      Text            =   "Turn on to allow any player to perform imprint events."
+      Text            =   "Turn on to allow any player to perform imprint events"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
