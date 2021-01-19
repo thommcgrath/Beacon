@@ -254,7 +254,7 @@ Inherits Global.Thread
 		    
 		    If TrustKey.IsEmpty = False Then
 		      // Build the Beacon section
-		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build=" + App.BuildNumber.ToString(Locale.Raw)))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build=" + App.BuildNumber.ToString(Locale.Raw, "0")))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "LastUpdated=" + DateTime.Now.SQLDateTimeWithOffset))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Trust=" + TrustKey))
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
