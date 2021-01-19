@@ -148,6 +148,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #EndIf
 		  Self.RebuildRecentMenu
 		  
+		  SystemColors.Init
+		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
 		  ConfigNames.Add("accounts")
 		  ConfigNames.Add("deployments")

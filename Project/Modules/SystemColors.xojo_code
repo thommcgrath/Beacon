@@ -120,6 +120,10 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      Return New ColorGroup("controlAccentColor")
+		    #elseif TargetWindows
+		      If UseWindowsColors Then
+		        Return WindowsAccentColor
+		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
@@ -193,6 +197,52 @@ Protected Module SystemColors
 		End Function
 	#tag EndMethod
 
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Function GetColorValueFunc(this As Ptr, desiredColor As WindowsColorTypes, ByRef value As UInt32) As Int32
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h21
+		Private Function GetWindowsColorValue(DesiredColor As WindowsColorTypes) As Color
+		  #if TargetWindows
+		    'Information provided by William here 'https://blog.xojo.com/2019/07/02/accessing-windows-runtime-winrt/ made this a lot easier to do, thanks William
+		    
+		    Declare Function WindowsCreateString Lib "combase.dll" (source As WString, length As UInt32, ByRef out As Ptr) As Integer
+		    Declare Function WindowsDeleteString Lib "combase.dll" (hstring As Ptr) As Integer
+		    Declare Function RoActivateInstance Lib "combase.dll" (classId As Ptr, ByRef inspectable As Ptr) As Integer
+		    
+		    Dim classUUID As String = "{03021BE4-5254-4781-8194-5168F7D06D7B}"
+		    Dim className As String = "Windows.UI.ViewManagement.UISettings"
+		    Dim classId As Ptr
+		    Dim result As Integer = WindowsCreateString(className, className.Length, classId)
+		    
+		    Dim inspectable As Ptr
+		    result = RoActivateInstance(classId, inspectable)
+		    
+		    Dim unknown As New COM.IUnknown(inspectable)
+		    Dim interfacePtr As Ptr
+		    
+		    result = unknown.QueryInterface(COM.IIDFromString(classUUID), interfacePtr)
+		    
+		    '0-2 for IUnknown, 3-5 for IInspectable, 6 for GetColorValue
+		    Dim func As New GetColorValueFunc(interfacePtr.Ptr(0).Ptr(6 * COM.SIZEOF_PTR))
+		    
+		    Dim colorValue As UInt32
+		    result = func.Invoke(interfacePtr, desiredColor, colorValue)
+		    
+		    Dim r As UInt8 = Bitwise.ShiftRight(colorValue And &hFF00, 8, 32)
+		    Dim g As UInt8 = Bitwise.ShiftRight(colorValue And &hFF0000, 16, 32)
+		    Dim b As UInt8 = Bitwise.ShiftRight(colorValue And &hFF000000, 24, 32)
+		    Dim a As UInt8 = Not Bitwise.ShiftRight(colorValue And &hFF, 0, 32)
+		    
+		    Dim convertedColor As Color = Color.RGB(r, g, b, a)
+		    
+		    Return convertedColor
+		  #else
+		    #Pragma Unused DesiredColor
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GridColor() As Color
 		  Try
@@ -230,6 +280,20 @@ Protected Module SystemColors
 		  
 		  Return New ColorGroup(&cFFFFFF00, &cB4B4B400)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Init()
+		  #if TargetWindows
+		    Try
+		      If SystemInformationMBS.IsWindows10(True) Then
+		        WindowsAccentColor = GetWindowsColorValue(WindowsColorTypes.Accent)
+		        UseWindowsColors = True
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  #endif
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -369,6 +433,10 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      Return New ColorGroup("selectedContentBackgroundColor")
+		    #elseif TargetWindows
+		      If UseWindowsColors Then
+		        Return WindowsAccentColor
+		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
@@ -721,6 +789,20 @@ Protected Module SystemColors
 		  Return New ColorGroup(&c00000027, &cFFFFFF27)
 		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private UseWindowsColors As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private WindowsAccentColor As Color
+	#tag EndProperty
+
+
+	#tag Enum, Name = WindowsColorTypes, Type = Integer, Flags = &h21
+		Accent = 5
+	#tag EndEnum
 
 
 	#tag ViewBehavior
