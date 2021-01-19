@@ -381,7 +381,7 @@ Inherits Beacon.IntegrationEngine
 		    Select Case FailureMode
 		    Case DownloadFailureMode.MissingAllowed
 		      Var Message As String
-		      Call Self.CheckResponseForError(Status, Content, Sock.LastException, Message)
+		      Call Self.CheckResponseForError(Sock.LastURL, Status, Content, Sock.LastException, Message)
 		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
 		        // Bad Nitrado
 		        Status = 404
@@ -784,23 +784,23 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException) As Boolean
+		Private Function CheckError(Socket As SimpleHTTP.SynchronousHTTPSocket) As Boolean
+		  Return Self.CheckError(Socket.LastURL, Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckError(URL As String, HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException) As Boolean
 		  Var Message As String
-		  If Self.CheckResponseForError(HTTPStatus, HTTPResponse, HTTPException, Message) Then
+		  If Self.CheckResponseForError(URL, HTTPStatus, HTTPResponse, HTTPException, Message) Then
 		    Self.SetError(Message)
 		    Return True
 		  End If
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function CheckError(Socket As SimpleHTTP.SynchronousHTTPSocket) As Boolean
-		  Return Self.CheckError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Shared Function CheckResponseForError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException, ByRef Message As String) As Boolean
+		Shared Function CheckResponseForError(URL As String, HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException, ByRef Message As String) As Boolean
 		  Select Case HTTPStatus
 		  Case 401
 		    Message = "Error: Authorization failed."
@@ -838,6 +838,9 @@ Inherits Beacon.IntegrationEngine
 		    If Message.EndsWith(".") = False Then
 		      Message = Message + "."
 		    End If
+		    App.Log(Message)
+		    App.Log("Target: " + URL)
+		    
 		    Message = Message + " Check the Nitrado API status at https://status.usebeacon.app/ for more information."
 		  Else
 		    Message = ""
@@ -851,7 +854,7 @@ Inherits Beacon.IntegrationEngine
 	#tag Method, Flags = &h0
 		Shared Function CheckSocketForError(Socket As SimpleHTTP.SynchronousHTTPSocket, Transfer As Beacon.IntegrationTransfer) As Boolean
 		  Var Message As String
-		  If CheckResponseForError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException, Message) Then
+		  If CheckResponseForError(Socket.LastURL, Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException, Message) Then
 		    Transfer.ErrorMessage = Message
 		    Transfer.Success = False
 		  Else
@@ -864,7 +867,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Shared Function CheckSocketForError(Socket As SimpleHTTP.SynchronousHTTPSocket, ByRef Message As String) As Boolean
-		  Return CheckResponseForError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException, Message)
+		  Return CheckResponseForError(Socket.LastURL, Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException, Message)
 		End Function
 	#tag EndMethod
 

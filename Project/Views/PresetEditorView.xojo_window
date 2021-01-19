@@ -43,6 +43,7 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -1117,8 +1118,8 @@ End
 		    Var MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
 		    Var BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
 		    
-		    Var QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current)
-		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current)
+		    Var QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current, "0")
+		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current, "0")
 		    Var MinQualityLabel, MaxQualityLabel As String
 		    If MinQualityModifier = 0 Then
 		      MinQualityLabel = "No Change"
