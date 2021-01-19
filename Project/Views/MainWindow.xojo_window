@@ -801,6 +801,11 @@ End
 		    Return
 		  End If
 		  
+		  If Index = Self.PageHelp And BeaconUI.WebContentSupported = False Then
+		    ShowURL(HelpComponent.HelpURL)
+		    Return
+		  End If
+		  
 		  Select Case CurrentIndex
 		  Case Self.PageHome
 		    Self.DashboardPane1.SwitchedFrom()

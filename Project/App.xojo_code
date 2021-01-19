@@ -184,7 +184,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SubmitExceptions)
-		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
+		  If BeaconUI.WebContentSupported Then
+		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
+		  End If
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32

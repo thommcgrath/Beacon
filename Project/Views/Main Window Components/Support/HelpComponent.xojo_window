@@ -36,7 +36,7 @@ Begin BeaconSubview HelpComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   1
+      Renderer        =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -54,15 +54,22 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Self.mHelpLoaded Then
+		  If Self.mHelpLoaded Or BeaconUI.WebContentSupported = False Then
 		    Return
 		  End If
 		  
-		  Var URL As String = Beacon.WebURL("/help")
+		  Var URL As String = Self.HelpURL
 		  
 		  Self.HelpViewer.LoadURL(URL)
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Shared Function HelpURL() As String
+		  Return Beacon.WebURL("/help")
+		End Function
+	#tag EndMethod
 
 
 	#tag Property, Flags = &h21

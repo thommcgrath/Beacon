@@ -599,6 +599,16 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function WebContentSupported() As Boolean
+		  #if TargetMacOS
+		    Return SystemInformationMBS.IsHighSierra(True)
+		  #elseif TargetWindows
+		    Return SystemInformationMBS.IsWindows10(True)
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function WithColor(Extends Icon As Picture, FillColor As Color) As Picture
 		  Return BeaconUI.IconWithColor(Icon, FillColor)

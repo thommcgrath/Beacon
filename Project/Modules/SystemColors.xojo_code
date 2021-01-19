@@ -206,35 +206,35 @@ Protected Module SystemColors
 		  #if TargetWindows
 		    'Information provided by William here 'https://blog.xojo.com/2019/07/02/accessing-windows-runtime-winrt/ made this a lot easier to do, thanks William
 		    
-		    Declare Function WindowsCreateString Lib "combase.dll" (source As WString, length As UInt32, ByRef out As Ptr) As Integer
-		    Declare Function WindowsDeleteString Lib "combase.dll" (hstring As Ptr) As Integer
-		    Declare Function RoActivateInstance Lib "combase.dll" (classId As Ptr, ByRef inspectable As Ptr) As Integer
+		    Soft Declare Function WindowsCreateString Lib "combase.dll" (source As WString, length As UInt32, ByRef out As Ptr) As Integer
+		    Soft Declare Function WindowsDeleteString Lib "combase.dll" (hstring As Ptr) As Integer
+		    Soft Declare Function RoActivateInstance Lib "combase.dll" (classId As Ptr, ByRef inspectable As Ptr) As Integer
 		    
-		    Dim classUUID As String = "{03021BE4-5254-4781-8194-5168F7D06D7B}"
-		    Dim className As String = "Windows.UI.ViewManagement.UISettings"
-		    Dim classId As Ptr
-		    Dim result As Integer = WindowsCreateString(className, className.Length, classId)
+		    Var classUUID As String = "{03021BE4-5254-4781-8194-5168F7D06D7B}"
+		    Var className As String = "Windows.UI.ViewManagement.UISettings"
+		    Var classId As Ptr
+		    Var result As Integer = WindowsCreateString(className, className.Length, classId)
 		    
-		    Dim inspectable As Ptr
+		    Var inspectable As Ptr
 		    result = RoActivateInstance(classId, inspectable)
 		    
-		    Dim unknown As New COM.IUnknown(inspectable)
-		    Dim interfacePtr As Ptr
+		    Var unknown As New COM.IUnknown(inspectable)
+		    Var interfacePtr As Ptr
 		    
 		    result = unknown.QueryInterface(COM.IIDFromString(classUUID), interfacePtr)
 		    
 		    '0-2 for IUnknown, 3-5 for IInspectable, 6 for GetColorValue
-		    Dim func As New GetColorValueFunc(interfacePtr.Ptr(0).Ptr(6 * COM.SIZEOF_PTR))
+		    Var func As New GetColorValueFunc(interfacePtr.Ptr(0).Ptr(6 * COM.SIZEOF_PTR))
 		    
-		    Dim colorValue As UInt32
+		    Var colorValue As UInt32
 		    result = func.Invoke(interfacePtr, desiredColor, colorValue)
 		    
-		    Dim r As UInt8 = Bitwise.ShiftRight(colorValue And &hFF00, 8, 32)
-		    Dim g As UInt8 = Bitwise.ShiftRight(colorValue And &hFF0000, 16, 32)
-		    Dim b As UInt8 = Bitwise.ShiftRight(colorValue And &hFF000000, 24, 32)
-		    Dim a As UInt8 = Not Bitwise.ShiftRight(colorValue And &hFF, 0, 32)
+		    Var r As UInt8 = Bitwise.ShiftRight(colorValue And &hFF00, 8, 32)
+		    Var g As UInt8 = Bitwise.ShiftRight(colorValue And &hFF0000, 16, 32)
+		    Var b As UInt8 = Bitwise.ShiftRight(colorValue And &hFF000000, 24, 32)
+		    Var a As UInt8 = Not Bitwise.ShiftRight(colorValue And &hFF, 0, 32)
 		    
-		    Dim convertedColor As Color = Color.RGB(r, g, b, a)
+		    Var convertedColor As Color = Color.RGB(r, g, b, a)
 		    
 		    Return convertedColor
 		  #else

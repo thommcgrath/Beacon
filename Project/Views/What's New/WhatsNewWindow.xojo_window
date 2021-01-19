@@ -35,7 +35,7 @@ Begin Window WhatsNewWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   1
+      Renderer        =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -148,7 +148,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CancelLoad(URL as String) As Boolean
-		  If URL = "beacon://finished" Then
+		  If URL = "beacon://finished" Or URL = "beacon://finished/" Then
 		    Call CallLater.Schedule(1, AddressOf CloseLater)
 		    Return True
 		  End If
