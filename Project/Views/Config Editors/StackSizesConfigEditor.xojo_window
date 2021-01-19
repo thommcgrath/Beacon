@@ -330,9 +330,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateOverride()
-		  If Self.List.SelectedRowCount <> 1 Then
+		  If (Self.List Is Nil) Or Self.List.SelectedRowCount <> 1 Then
 		    Return
 		  End If
+		  
+		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
@@ -342,7 +344,6 @@ End
 		    Return
 		  End If
 		  
-		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  Var Size As UInt64 = Config.Override(SourceEngram)
 		  
 		  Config = Self.Config(True)
