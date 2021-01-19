@@ -40,6 +40,7 @@ if (count($pages) === 0) {
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Welcome to Beacon</title>
 		<script>
 		var original_version = <?php echo json_encode($original_version); ?>;
