@@ -252,7 +252,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
 			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.ShowView(Nil)
+			Self.mMainWindow.ShowHome()
 			End If
 			Return True
 		End Function
