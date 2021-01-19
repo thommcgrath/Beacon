@@ -293,7 +293,7 @@ Implements Iterable
 		    End If
 		  End If
 		  
-		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config + "(" + Pieces.Join(",") + ")", Config + ":" + SpawnPoint.ClassString)
+		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config + "=(" + Pieces.Join(",") + ")", Config + ":" + SpawnPoint.ClassString)
 		End Function
 	#tag EndMethod
 
