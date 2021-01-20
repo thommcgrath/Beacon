@@ -15,7 +15,7 @@ $max_content_width: 1200px;
 
 $breakpoint_mini: 400px;
 $breakpoint_mobile: 635px;
-$breakpoint_desktop: $max_content_width + ($page_margins * 2);
+$breakpoint_desktop: 800px + ($page_margins * 2);
 
 $animation-timing: 0.15s;
 
@@ -151,9 +151,14 @@ a {
 }
 
 .pagebody {
-	margin-left: $page_margins;
-	margin-right: $page_margins;
 	min-width: 280px;
+	width: auto;
+	max-width: $max_content_width;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: $page_margins;
+	padding-right: $page_margins;
+	box-sizing: border-box;
 }
 
 .indent {
@@ -1250,12 +1255,6 @@ div.comment-block {
 }
 
 @media (min-width: $breakpoint_desktop) {
-	.pagebody {
-		width: $max_content_width;
-		margin-left: auto;
-		margin-right: auto;
-	}
-	
 	div.double_column div.column {
 		display: table-cell;
 		width: 50%;
