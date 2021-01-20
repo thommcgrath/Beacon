@@ -75,7 +75,7 @@ BeaconTemplate::StartStyles();
 }
 
 #hero_container {
-	max-width: 800px;
+	max-width: 1000px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -89,12 +89,12 @@ BeaconTemplate::StartStyles();
 
 #hero.mac {
 	background-image: url(/assets/images/hero-mac.png);
-	padding-top: calc(493 / 800 * 100%);
+	padding-top: calc(764 / 1312 * 100%);
 }
 
 #hero.windows {
 	background-image: url(/assets/images/hero-windows.png);
-	padding-top: calc(523 / 800 * 100%);
+	padding-top: calc(764 / 1312 * 100%);
 }
 
 #nitrado_container {
