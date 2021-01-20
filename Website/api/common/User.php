@@ -168,6 +168,7 @@ class User implements \JsonSerializable {
 	
 	public function OmniVersion() {
 		if ($this->purchased_omni_version === -1) {
+			$this->purchased_omni_version = 0;
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
 			} elseif ($this->enabled === true) {

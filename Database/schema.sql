@@ -1726,6 +1726,10 @@ CREATE TABLE public.support_articles (
     forward_url text,
     article_hash public.hex NOT NULL,
     affected_ini_keys public.citext[] DEFAULT '{}'::public.citext[] NOT NULL,
+    group_id uuid,
+    sort_order integer DEFAULT 0 NOT NULL,
+    min_version integer DEFAULT 0 NOT NULL,
+    max_version integer DEFAULT 99999999 NOT NULL,
     CONSTRAINT support_articles_check CHECK (((content_markdown IS NOT NULL) OR (forward_url IS NOT NULL)))
 );
 
@@ -1755,11 +1759,12 @@ CREATE VIEW public.search_contents AS
  SELECT support_articles.article_id AS id,
     support_articles.subject AS title,
     COALESCE(support_articles.preview, support_articles.content_markdown, ''::public.citext) AS body,
-    ((setweight(to_tsvector((support_articles.subject)::text), 'A'::"char") || ''::tsvector) || setweight(to_tsvector((COALESCE(support_articles.content_markdown, support_articles.preview, ''::public.citext))::text), 'B'::"char")) AS lexemes,
+    (((setweight(to_tsvector((support_articles.subject)::text), 'A'::"char") || ''::tsvector) || setweight(to_tsvector((COALESCE(support_articles.content_markdown, support_articles.preview, ''::public.citext))::text), 'B'::"char")) || setweight(to_tsvector((support_articles.affected_ini_keys)::text), 'C'::"char")) AS lexemes,
     'Help'::text AS type,
     ''::text AS subtype,
     COALESCE(support_articles.forward_url, ('/help/'::text || (support_articles.article_slug)::text)) AS uri,
-    0 AS min_version,
+    support_articles.min_version,
+    support_articles.max_version,
     NULL::uuid AS mod_id
    FROM public.support_articles
   WHERE (support_articles.published = true)
@@ -1772,6 +1777,7 @@ UNION
     ''::text AS subtype,
     ('/videos/'::text || (support_videos.video_slug)::text) AS uri,
     0 AS min_version,
+    99999999 AS max_version,
     NULL::uuid AS mod_id
    FROM public.support_videos
 UNION
@@ -1785,6 +1791,7 @@ UNION
           WHERE (pg_class.oid = blueprints.tableoid)))::text AS subtype,
     ('/object/'::text || (blueprints.object_id)::text) AS uri,
     blueprints.min_version,
+    99999999 AS max_version,
     blueprints.mod_id
    FROM public.blueprints
 UNION
@@ -1796,6 +1803,7 @@ UNION
     ''::text AS subtype,
     ('/mods/'::text || mods.mod_id) AS uri,
     0 AS min_version,
+    99999999 AS max_version,
     mods.mod_id
    FROM public.mods
   WHERE (mods.confirmed = true)
@@ -1808,6 +1816,7 @@ UNION
     ''::text AS subtype,
     ('/browse/'::text || documents.document_id) AS uri,
     0 AS min_version,
+    99999999 AS max_version,
     NULL::uuid AS mod_id
    FROM public.documents
   WHERE (documents.published = 'Approved'::public.publish_status);
@@ -1964,12 +1973,11 @@ ALTER TABLE public.support_article_groups OWNER TO thommcgrath;
 CREATE TABLE public.support_images (
     image_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     hint text,
-    image_data bytea NOT NULL,
-    image_data_2x bytea,
-    image_data_3x bytea,
-    content_type public.citext NOT NULL,
     width_points numeric(4,0) NOT NULL,
-    height_points numeric(4,0) NOT NULL
+    height_points numeric(4,0) NOT NULL,
+    min_scale integer DEFAULT 1 NOT NULL,
+    max_scale integer DEFAULT 1 NOT NULL,
+    extension text DEFAULT '.png'::text NOT NULL
 );
 
 
@@ -4024,6 +4032,14 @@ ALTER TABLE ONLY public.stw_purchases
 
 ALTER TABLE ONLY public.stw_purchases
     ADD CONSTRAINT stw_purchases_original_purchase_id_fkey FOREIGN KEY (original_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: support_articles support_articles_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_articles
+    ADD CONSTRAINT support_articles_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.support_article_groups(group_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --

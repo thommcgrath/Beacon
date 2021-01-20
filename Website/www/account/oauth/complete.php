@@ -1,6 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
+header('Cache-Control: no-cache');
 
 BeaconTemplate::SetBodyClass('purple');
 

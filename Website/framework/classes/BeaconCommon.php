@@ -453,6 +453,39 @@ abstract class BeaconCommon {
 		return $major_version . '.' . $minor_version . '.' . $bug_version . $prerelease;
 	}
 	
+	public static function VersionToBuildNumber(string $version) {
+		if (preg_match('/^(\d+)\.(\d+)(\.(\d+))?(([ab\.]+)(\d+))?$/', $version, $matches) == 1) {
+			$major_version = intval($matches[1]);
+			$minor_version = intval($matches[2]);
+			if (isset($matches[3])) {
+				$bug_version = intval($matches[4]);
+			} else {
+				$bug_version = 0;
+			}
+			$stage_code = 3;
+			$non_release_version = 0;
+			if (isset($matches[5])) {
+				$non_release_version = intval($matches[7]);
+				switch ($matches[6]) {
+				case 'a':
+					$stage_code = 1;
+					break;
+				case 'b':
+					$stage_code = 2;
+					break;
+				case '.':
+					break;
+				default:
+					$stage_code = 0;
+					break;
+				}
+			}
+			return ($major_version * 10000000) + ($minor_version * 100000) + ($bug_version * 1000) + ($stage_code * 100) + $non_release_version;
+		}
+		
+		return 0;
+	}
+	
 	public static function BooleanValue($value) {
 		if (is_bool($value) === true) {
 			return $value;
@@ -607,6 +640,30 @@ abstract class BeaconCommon {
 		}
 		
 		return isset($_SERVER['HTTP_HOST']) && substr($_SERVER['HTTP_HOST'], -13) === 'usebeacon.app';
+	}
+	
+	public static function BeaconVersion() {
+		$build_number = 0;
+		
+		if (static::IsBeacon()) {
+			$pos = strpos($_SERVER['HTTP_USER_AGENT'], ' ', 7);
+			$version = substr($_SERVER['HTTP_USER_AGENT'], 7, $pos - 7);
+			$build_number = static::VersionToBuildNumber($version);
+		}
+		
+		if ($build_number === 0) {
+			$database = static::Database();
+			$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
+			if ($builds->RecordCount() == 1) {
+				$build_number = intval($builds->Field('build_number'));
+			}
+		}
+		
+		return $build_number;
+	}
+	
+	public static function IsBeacon() {
+		return (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, 7) === 'Beacon/');
 	}
 }
 

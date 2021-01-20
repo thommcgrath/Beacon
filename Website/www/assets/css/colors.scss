@@ -500,6 +500,10 @@
 		#knowledge_contents {
 			border-color: $separator-color;
 			
+			#knowledge_version {
+				color: mix($foreground-color, $background-color, 50%);
+			}
+			
 			ul {
 				li {
 					&.current {
