@@ -1548,17 +1548,25 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function SanitizeFilename(Filename As String, MaxLength As Integer = 0) As String
-		  Filename = Filename.ReplaceAll("/", "-")
-		  Filename = Filename.ReplaceAll("\", "-")
-		  Filename = Filename.ReplaceAll(":", "-")
-		  Filename = Filename.ReplaceAll("""", "")
-		  Filename = Filename.ReplaceAll("<", "")
-		  Filename = Filename.ReplaceAll(">", "")
-		  Filename = Filename.ReplaceAll("|", "")
-		  Filename = Filename.ReplaceAll("*", "")
-		  Filename = Filename.ReplaceAll("?", "")
+		  Var Searcher As New Regex
+		  Searcher.Options.ReplaceAllMatches = True
+		  
+		  Searcher.SearchPattern = "[/\\:]"
+		  Searcher.ReplacementPattern = "-"
+		  Filename = Searcher.Replace(Filename)
+		  
+		  Searcher.SearchPattern = "[<>""|?*\x00-\x1F]+"
+		  Searcher.ReplacementPattern = ""
+		  Filename = Searcher.Replace(Filename)
+		  
+		  Searcher.SearchPattern = "(\s+-+)|(-+\s+)|(\s{2,})"
+		  Searcher.ReplacementPattern = " "
+		  Filename = Searcher.Replace(Filename)
 		  
 		  If MaxLength > 0 And Filename.Length > MaxLength Then
+		    // Remove hyphens first
+		    Filename = Filename.ReplaceAll("-", "")
+		    
 		    // Extension cannot be truncated
 		    Var Parts() As String = Filename.Split(".")
 		    Var Basename, Extension As String

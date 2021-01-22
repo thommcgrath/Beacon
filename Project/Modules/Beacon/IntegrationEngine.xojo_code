@@ -53,6 +53,15 @@ Protected Class IntegrationEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CleanupCallbacks()
+		  While Self.mPendingCalls.Count > 0
+		    CallLater.Cancel(Self.mPendingCalls(0))
+		    Self.mPendingCalls.RemoveAt(0)
+		  Wend
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Profile As Beacon.ServerProfile)
 		  Self.mProfile = Profile
@@ -63,10 +72,7 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  While Self.mPendingCalls.Count > 0
-		    CallLater.Cancel(Self.mPendingCalls(0))
-		    Self.mPendingCalls.RemoveAt(0)
-		  Wend
+		  Self.CleanupCallbacks()
 		End Sub
 	#tag EndMethod
 
@@ -692,9 +698,15 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Sub Terminate()
+		  If Not Self.mFinished Then
+		    Self.SetError("Terminated")
+		  End If
+		  
 		  If Self.mRunThread <> Nil And Self.mRunThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.mRunThread.Stop
 		  End If
+		  
+		  Self.CleanupCallbacks()
 		End Sub
 	#tag EndMethod
 

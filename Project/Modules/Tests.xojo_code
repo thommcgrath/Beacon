@@ -208,7 +208,7 @@ Protected Module Tests
 		  Var SanitizedAndShort As String = Beacon.SanitizeFilename(Filename, 20)
 		  Var SanitizedAndVeryShort As String = Beacon.SanitizeFilename(Filename, 11)
 		  
-		  Call Assert(Sanitized = "Frog Blast- The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
+		  Call Assert(Sanitized = "Frog Blast The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
 		  Call Assert(SanitizedAndShort = "Frog…Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 20 characters correctly. Expected `Frog…Core.extension`, got `" + SanitizedAndShort + "`.")
 		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
 		End Sub

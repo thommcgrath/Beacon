@@ -695,14 +695,17 @@ End
 
 	#tag Event
 		Sub Close()
-		  If (Engines Is Nil) Then
+		  If (Self.Engines Is Nil) Then
 		    Return
 		  End If
 		  
-		  For Each Entry As DictionaryEntry In Engines
+		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
 		    Engine.Terminate
 		  Next
+		  
+		  Self.Engines.RemoveAll
+		  Self.Engines = Nil
 		End Sub
 	#tag EndEvent
 
@@ -967,6 +970,7 @@ End
 		    Catch Err As RuntimeException
 		      Controller.Cancelled = True
 		      
+		      App.Log(Err, CurrentMethodName)
 		      Self.ShowAlert("Beacon was unable to save ini files for " + Sender.Name + ".", "Check that there is space available on the disk. Use ""Open Data Folder"" from the ""Help"" menu to find the backup destination.")
 		    End Try
 		    
