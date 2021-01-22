@@ -512,6 +512,11 @@ End
 		  Case "EncryptButton"
 		    Self.ToggleEncryption()
 		  Case "GameUserSettingsIniButton", "GameIniButton"
+		    If Item.Toggled Then
+		      // Don't do anything
+		      Return
+		    End If
+		    
 		    Var SettingUp As Boolean = Self.SettingUp
 		    Self.SettingUp = True
 		    Select Case Item.Name
