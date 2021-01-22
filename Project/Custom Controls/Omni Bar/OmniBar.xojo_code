@@ -247,7 +247,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		    
 		    Var MouseHover, MouseDown As Boolean
-		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx Then
+		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx And Item.Enabled Then
 		      // Pressed
 		      MouseDown = True
 		      MouseHover = True
