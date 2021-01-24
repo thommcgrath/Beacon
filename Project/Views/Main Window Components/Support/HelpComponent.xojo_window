@@ -67,7 +67,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function HelpURL() As String
-		  Return Beacon.WebURL("/help")
+		  Return Beacon.WebURL("/help/" + App.BuildVersion)
 		End Function
 	#tag EndMethod
 
