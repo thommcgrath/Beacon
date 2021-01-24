@@ -4,6 +4,7 @@ abstract class BeaconCommon {
 	protected static $database = null;
 	protected static $globals = array();
 	protected static $min_version = -1;
+	protected static $versions = [];
 	
 	public static function GenerateUUID() {
 		$data = random_bytes(16);
@@ -45,15 +46,21 @@ abstract class BeaconCommon {
 			if (static::InDevelopment()) {
 				static::$min_version = 99999999;
 			} else {
-				static::$min_version = 0;
-				$database = static::Database();
-				$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
-				if ($builds->RecordCount() == 1) {
-					static::$min_version = intval($builds->Field('build_number'));
-				}
+				static::$min_version = max(static::NewestVersionForStage(3), 0);
 			}
 		}
 		return static::$min_version;
+	}
+	
+	public static function NewestVersionForStage(int $stage) {
+		if (array_key_exists($stage, static::$versions) === false) {
+			$database = static::Database();
+			$builds = $database->Query('SELECT build_number FROM updates WHERE stage >= $1 ORDER BY build_number DESC LIMIT 1;', $stage);
+			if ($builds->RecordCount() == 1) {
+				static::$versions[$stage] = intval($builds->Field('build_number'));
+			}
+		}
+		return static::$versions[$stage];
 	}
 	
 	public static function NewestUpdateTimestamp(int $build = 99999999) {
