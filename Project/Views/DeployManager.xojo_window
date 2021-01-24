@@ -864,6 +864,8 @@ End
 		    StopMessage = StopMessageDialog.Present(Self)
 		    If StopMessage.IsEmpty Then
 		      Return
+		    Else
+		      Exit
 		    End If
 		  Next
 		  
