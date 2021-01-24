@@ -39,14 +39,15 @@ BeaconTemplate::FinishStyles();
 $slug = $_GET['slug'];
 $database = BeaconCommon::Database();
 
-$results = $database->Query('SELECT article_id, article_hash FROM support_articles WHERE article_slug = $1 AND published = TRUE;', $slug);
+$results = $database->Query('SELECT article_id, article_updated FROM support_articles WHERE article_slug = $1 AND published = TRUE;', $slug);
 if ($results->RecordCount() == 0) {
 	echo 'Article not found';
 	http_response_code(404);
 	exit;
 }
 $article_id = $results->Field('article_id');
-$cache_key = $results->Field('article_hash');
+$article_updated = $results->Field('article_updated');
+$cache_key = md5($article_id . ':' . $article_updated);
 $photoswipe_triggers = array();
 
 $article_data = BeaconCache::Get($cache_key);
@@ -61,6 +62,21 @@ if (is_null($article_data)) {
 	
 	if (is_null($results->Field('forward_url'))) {
 		$markdown = $results->Field('content_markdown');
+		
+		// Replace module content
+		$pattern = '/\[module:([a-z]+)\]/i';
+		while (preg_match($pattern, $markdown, $matches) === 1) {
+			$module_name = $matches[1];
+			$module_markdown = '';
+			$match = $matches[0];
+			
+			$module_results = $database->Query('SELECT module_markdown FROM support_article_modules WHERE module_name = $1;', $module_name);
+			if ($module_results->RecordCount() === 1) {
+				$module_markdown = $module_results->Field('module_markdown');
+			}
+			
+			$markdown = str_replace($match, $module_markdown, $markdown);
+		}
 		
 		// This is for images alone, they need to be centered.
 		$pattern = '/\n\!\[([^\[\]]*)\]\(([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})\)\n/';
@@ -190,6 +206,12 @@ if (count($article_data['pswp_js']) > 0) {
 	echo "\n</script>";
 	BeaconTemplate::FinishScript();
 }
+
+$last_modified = new DateTime($article_updated);
+
+header('ETag: "' . $cache_key . '"');
+header('Cache-Control: max-age 86400');
+header('Last-Modified: ' . $last_modified->format('D, d M Y H:i:s') . ' GMT');
 
 BeaconTemplate::SetTitle($article_data['title']);
 BeaconTemplate::SetPageDescription($article_data['preview']);
