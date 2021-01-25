@@ -64,7 +64,7 @@ if (is_null($article_data)) {
 		$markdown = $results->Field('content_markdown');
 		
 		// Replace module content
-		$pattern = '/\[module:([a-z]+)\]/i';
+		$pattern = '/\[module:([a-z_]+)\]/i';
 		while (preg_match($pattern, $markdown, $matches) === 1) {
 			$module_name = $matches[1];
 			$module_markdown = '';
@@ -166,6 +166,25 @@ PSWP;
 			}
 			
 			$html = '<img class="inline" src="' . $low_scale_url . '" srcset="' . $srcset . '" alt="' . htmlentities($alt) . '">';
+			
+			$markdown = str_replace($match, $html, $markdown);
+		}
+		
+		// This is for article links.
+		$pattern = '/\[([^\[\]]*)\]\(([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})\)/';
+		while (preg_match($pattern, $markdown, $matches) === 1) {
+			$match = $matches[0];
+			$caption = $matches[1];
+			$article_id = $matches[2];
+			$link_data = $database->Query('SELECT article_slug, subject FROM support_articles WHERE article_id = $1;', $article_id);
+			if ($link_data->RecordCount() !== 1) {
+				$html = '<a href="' . $article_id . '">' . htmlentities($caption) . '</a>';
+			} else {
+				if (empty($caption)) {
+					$caption = $link_data->Field('subject');
+				}
+				$html = '<a href="' . $link_data->Field('article_slug') . '">' . htmlentities($caption) . '</a>';
+			}
 			
 			$markdown = str_replace($match, $html, $markdown);
 		}
