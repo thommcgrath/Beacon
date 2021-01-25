@@ -853,6 +853,7 @@ End
 	#tag Method, Flags = &h0
 		Sub SetOtherDocuments(Documents() As Beacon.Document)
 		  Self.mOtherDocuments = Documents
+		  Self.SourceRadio(3).Enabled = Documents.Count > 0
 		  Self.SourceRadio(3).Caption = "Other Beacon Project" + If(Self.SourceRadio(3).Enabled, "", " (No Other Projects Open)")
 		End Sub
 	#tag EndMethod

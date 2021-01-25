@@ -25,41 +25,6 @@ Begin DiscoveryView LocalDiscoveryView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
-   Begin Label SetupMessageLabel
-      AutoDeactivate  =   True
-      Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Simple Config Import"
-      TextAlign       =   1
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   6
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-   End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
@@ -72,7 +37,7 @@ Begin DiscoveryView LocalDiscoveryView
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   193
+      Height          =   221
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -102,7 +67,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   151
+      Top             =   123
       Transparent     =   False
       Underline       =   False
       UnicodeMode     =   0
@@ -234,7 +199,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   28
+      Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -265,7 +230,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   88
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -300,7 +265,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   73
       Transparent     =   True
       Underline       =   False
       Visible         =   True
