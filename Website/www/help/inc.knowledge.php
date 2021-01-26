@@ -11,9 +11,6 @@ function ShowKnowledgeContent(string $html, string $current_slug) {
 			$version = $parsed_version;
 		}
 	}
-	if ($version === 0) {
-		$version = $stable_version;
-	}
 	$stage = intval(substr($version, -3, 1));
 	$latest_version = BeaconCommon::NewestVersionForStage($stage);
 	if ($version !== $latest_version) {
@@ -56,7 +53,7 @@ function ShowKnowledgeContent(string $html, string $current_slug) {
 	document.addEventListener('DOMContentLoaded', function() {
 		document.getElementById('knowledge_search_form').addEventListener('submit', function(ev) {
 			var query = document.getElementById('knowledge_search_field').value;
-			var url = '/help/search/' + encodeURIComponent(query);
+			var url = '/help/<?php echo ($include_url_version ? urlencode($version_formatted) . '/' : ''); ?>search/' + encodeURIComponent(query);
 			
 			window.location = url;
 			this.disabled = true;
@@ -68,7 +65,7 @@ function ShowKnowledgeContent(string $html, string $current_slug) {
 	<?php
 	BeaconTemplate::FinishScript();
 	
-	echo '<div id="knowledge_search_block"><form action="/help/search" method="get" id="knowledge_search_form"><input type="search" placeholder="Search For Help" name="query" id="knowledge_search_field" recents="0" value="' . (isset($_GET['query']) ? htmlentities($_GET['query']) : '') . '"></form></div>';
+	echo '<div id="knowledge_search_block"><form action="/help/search" method="get" id="knowledge_search_form"><input type="hidden" name="version" value="' . htmlentities($version_formatted) . '"><input type="search" placeholder="Search For Help" name="query" id="knowledge_search_field" recents="0" value="' . (isset($_GET['query']) ? htmlentities($_GET['query']) : '') . '"></form></div>';
 	
 	echo '<p id="knowledge_version">Version: ' . htmlentities($version_formatted) . '</p>';
 	
