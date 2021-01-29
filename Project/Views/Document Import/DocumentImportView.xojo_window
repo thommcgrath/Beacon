@@ -120,36 +120,6 @@ Begin ContainerControl DocumentImportView
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
-         Index           =   3
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   148
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin RadioButton SourceRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Single Player, Local Files, or Copy + Paste"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
          Index           =   4
          InitialParent   =   "Views"
          Italic          =   False
@@ -167,6 +137,36 @@ Begin ContainerControl DocumentImportView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   180
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin RadioButton SourceRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Single Player, Local Files, or Copy + Paste"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   3
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   148
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -994,13 +994,13 @@ End
 	#tag Constant, Name = RadioConnector, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
