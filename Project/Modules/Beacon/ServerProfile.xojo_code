@@ -185,6 +185,8 @@ Protected Class ServerProfile
 		    Return New Beacon.ConnectorServerProfile(Dict)
 		  Case "Local", "Simple"
 		    Return New Beacon.LocalServerProfile(Dict)
+		  Case "GameServerApp"
+		    Return New Beacon.GSAServerProfile(Dict)
 		  End Select
 		End Function
 	#tag EndMethod

@@ -411,6 +411,8 @@ End
 		        View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
 		      Case IsA Beacon.LocalServerProfile
 		        View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
+		      Case IsA Beacon.GSAServerProfile
+		        View = New GSAServerView(Self.Document, Beacon.GSAServerProfile(Profile))
 		      Else
 		        Self.CurrentProfileID = ""
 		        Return

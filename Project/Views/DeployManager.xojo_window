@@ -828,6 +828,8 @@ End
 		      //DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
 		    Case IsA Beacon.LocalServerProfile
 		      Engine = New Beacon.LocalIntegrationEngine(Profile)
+		    Case IsA Beacon.GSAServerProfile
+		      Engine = New Beacon.GSAIntegrationEngine(Profile)
 		    End Select
 		    If Engine Is Nil Then
 		      Var ProfileInfo As Introspection.TypeInfo = Introspection.GetType(Profile)
