@@ -1517,6 +1517,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End Try
 		  
+		  If ChangeDict.HasKey("game") And ChangeDict.Value("game").IsNull = False And ChangeDict.Value("game").Type = Variant.TypeString And ChangeDict.Value("game").StringValue <> "ark" Then
+		    App.Log("Cannot import classes because the data is for the wrong game.")
+		    Return False
+		  End If
+		  
 		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As String In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
