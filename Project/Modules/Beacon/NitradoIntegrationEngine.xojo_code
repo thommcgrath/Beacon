@@ -66,7 +66,11 @@ Inherits Beacon.IntegrationEngine
 		        Var FormData As New Dictionary
 		        FormData.Value("category") = Category
 		        FormData.Value("key") = Key
-		        FormData.Value("value") = NewValue
+		        If ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
+		          FormData.Value("value") = NewValue.Lowercase
+		        Else
+		          FormData.Value("value") = NewValue
+		        End If
 		        Changes.Add(FormData)
 		        
 		        App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
