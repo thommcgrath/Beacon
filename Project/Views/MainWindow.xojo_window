@@ -553,7 +553,7 @@ End
 		  Case Self.PagePresets
 		    Return Self.PresetsComponent1
 		  Case Self.PageHelp
-		    
+		    Return Self.HelpComponent1
 		  End Select
 		End Function
 	#tag EndMethod
