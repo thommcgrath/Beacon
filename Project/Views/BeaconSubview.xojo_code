@@ -165,7 +165,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -184,7 +184,7 @@ Implements ObservationKit.Observable
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -242,6 +242,16 @@ Implements ObservationKit.Observable
 		  End If
 		  Return Self.mViewID
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ViewID(Assigns Value As String)
+		  If Self.mViewID <> Value Then
+		    Var OldViewID As String = Self.mViewID
+		    Self.mViewID = Value
+		    Self.NotifyObservers("ViewID", OldViewID, Value)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -345,8 +355,9 @@ Implements ObservationKit.Observable
 			Set
 			  Value = Max(Value, 32)
 			  If Self.mMinimumHeight <> Value Then
+			    Var OldValue As Integer = Self.mMinimumHeight
 			    Self.mMinimumHeight = Value
-			    Self.NotifyObservers("MinimumHeight", Value)
+			    Self.NotifyObservers("MinimumHeight", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -363,8 +374,9 @@ Implements ObservationKit.Observable
 			Set
 			  Value = Max(Value, 32)
 			  If Self.mMinimumWidth <> Value Then
+			    Var OldValue As Integer = Self.mMinimumWidth
 			    Self.mMinimumWidth = Value
-			    Self.NotifyObservers("MinimumWidth", Value)
+			    Self.NotifyObservers("MinimumWidth", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -422,8 +434,9 @@ Implements ObservationKit.Observable
 			  End If
 			  
 			  If Self.mProgress <> Value Then
+			    Var OldValue As Double = Self.mProgress
 			    Self.mProgress = Value
-			    Self.NotifyObservers("BeaconSubview.Progress", Value)
+			    Self.NotifyObservers("BeaconSubview.Progress", OldValue, Value)
 			  End If
 			  
 			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
@@ -451,8 +464,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mViewIcon <> Value Then
+			    Var OldValue As Picture = Self.mViewIcon
 			    Self.mViewIcon = Value
-			    Self.NotifyObservers("ViewIcon", Value)
+			    Self.NotifyObservers("ViewIcon", OldValue, Value)
 			  End If
 			  
 			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
@@ -478,8 +492,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mViewTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mViewTitle
 			    Self.mViewTitle = Value
-			    Self.NotifyObservers("ViewTitle", Value)
+			    Self.NotifyObservers("ViewTitle", OldValue, Value)
 			  End If
 			  
 			  If (Self.mLinkedOmniBarItem Is Nil) = False Then

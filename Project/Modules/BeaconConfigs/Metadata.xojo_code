@@ -166,7 +166,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -185,7 +185,7 @@ Implements ObservationKit.Observable
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -243,9 +243,10 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mDescription.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mDescription
 			    Self.mDescription = Value
 			    Self.Modified = True
-			    Self.NotifyObservers("Description", Self.mDescription)
+			    Self.NotifyObservers("Description", OldValue, Self.mDescription)
 			  End If
 			End Set
 		#tag EndSetter
@@ -273,9 +274,10 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mTitle
 			    Self.mTitle = Value
 			    Self.Modified = True
-			    Self.NotifyObservers("Title", Self.mTitle)
+			    Self.NotifyObservers("Title", OldValue, Self.mTitle)
 			  End If
 			End Set
 		#tag EndSetter

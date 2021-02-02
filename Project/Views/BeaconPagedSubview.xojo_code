@@ -1,12 +1,15 @@
 #tag Class
 Protected Class BeaconPagedSubview
 Inherits BeaconSubview
+Implements ObservationKit.Observer
 	#tag Event
 		Sub EnableMenuItems()
 		  RaiseEvent EnableMenuItems()
 		  
 		  If (Self.CurrentPage Is Nil) = False Then
 		    Self.CurrentPage.EnableMenuItems()
+		  Else
+		    App.Log("CurrentPage is Nil")
 		  End If
 		End Sub
 	#tag EndEvent
@@ -51,6 +54,8 @@ Inherits BeaconSubview
 		  End If
 		  
 		  Self.mPages.Add(Page)
+		  
+		  Page.AddObserver(Self, "ViewID")
 		  
 		  Var Panel As PagePanel = Self.ViewsPanel
 		  If (Panel Is Nil) = False And Panel.PanelCount < Self.mPages.Count Then
@@ -230,6 +235,28 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  #Pragma Unused Source
+		  
+		  Select Case Key
+		  Case "ViewID"
+		    Break
+		    
+		    If Self.mCurrentPageID = OldValue Then
+		      Self.mCurrentPageID = NewValue
+		    End If
+		    
+		    Var HistoryIdx As Integer = Self.mPageHistory.IndexOf(OldValue)
+		    If HistoryIdx > -1 Then
+		      Self.mPageHistory(HistoryIdx) = NewValue
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Page(Idx As Integer) As BeaconSubview
 		  If Idx <= Self.mPages.LastIndex And Idx >= 0 Then
 		    Return Self.mPages(Idx)
@@ -270,6 +297,10 @@ Inherits BeaconSubview
 		  End If
 		  
 		  Var Idx As Integer = Self.IndexOf(PageID)
+		  If Idx = -1 Then
+		    Return
+		  End If
+		  Self.mPages(Idx).RemoveObserver(Self, "ViewID")
 		  Self.mPages.RemoveAt(Idx)
 		  
 		  Var Panel As PagePanel = Self.ViewsPanel

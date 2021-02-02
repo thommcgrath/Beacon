@@ -52,8 +52,9 @@ Implements ObservationKit.Observable
 		  
 		  Var Amount As Double = Self.PulseAmount
 		  If Self.mLastPulseAmount <> Amount Then
-		    Self.NotifyObservers("PulseAmount", Amount)
+		    Var OldAmount As Double = Self.mLastPulseAmount
 		    Self.mLastPulseAmount = Amount
+		    Self.NotifyObservers("PulseAmount", OldAmount, Amount)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -71,7 +72,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -90,7 +91,7 @@ Implements ObservationKit.Observable
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -153,7 +154,7 @@ Implements ObservationKit.Observable
 			  Self.mLoading = Value
 			  Self.mLoadingState = 0
 			  Self.mLastLoadingLoopTime = System.Microseconds
-			  Self.NotifyObservers("Loading", Value)
+			  Self.NotifyObservers("Loading", Not Value, Value)
 			End Set
 		#tag EndSetter
 		Loading As Boolean
@@ -250,7 +251,7 @@ Implements ObservationKit.Observable
 			      Self.mPulseTimer.RunMode = Timer.RunModes.Multiple
 			      AddHandler mPulseTimer.Action, WeakAddressOf mPulseTimer_Action
 			    End If
-			    Self.NotifyObservers("PulseAmount", 0.0)
+			    Self.NotifyObservers("PulseAmount", Self.mLastPulseAmount, 0.0)
 			  End If
 			End Set
 		#tag EndSetter

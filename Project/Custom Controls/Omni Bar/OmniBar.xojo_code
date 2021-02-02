@@ -552,10 +552,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  If Key = "MajorChange" Then
 		    Self.Invalidate(False)

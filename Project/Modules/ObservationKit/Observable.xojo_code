@@ -7,7 +7,7 @@ Protected Interface Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  
 		End Sub
 	#tag EndMethod

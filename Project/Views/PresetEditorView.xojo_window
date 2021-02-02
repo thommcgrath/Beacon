@@ -838,6 +838,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Preset As Beacon.Preset, SourceFile As FolderItem = Nil)
 		  Self.mPreset = New Beacon.MutablePreset(Preset)
+		  Self.ViewID = Preset.PresetID
 		  Self.mSaveFile = SourceFile
 		End Sub
 	#tag EndMethod
@@ -997,6 +998,7 @@ End
 		Private Sub Save()
 		  If Self.mSaveFile = Nil Then
 		    Beacon.Data.SavePreset(Self.mPreset)
+		    Self.ViewID = Self.mPreset.PresetID
 		  Else
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
@@ -1141,16 +1143,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As String
-		  If Self.mSaveFile <> Nil Then
-		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath))
-		  Else
-		    Return Self.mPreset.PresetID
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
 		  If Plural Then
 		    Return If(Lowercase, "presets", "Presets")
@@ -1163,9 +1155,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
 		  #Pragma Unused Sender
-		  #Pragma Unused Destination
 		  
 		  Self.Progress = BeaconSubview.ProgressNone
+		  Self.ViewID = EncodeHex(Crypto.MD5(Destination.NativePath))
 		End Sub
 	#tag EndMethod
 

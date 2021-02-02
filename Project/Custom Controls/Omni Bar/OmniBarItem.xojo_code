@@ -490,13 +490,14 @@ Implements ObservationKit.Observable
 		    Self.mIndeterminateStep = Sender.Period / 1000
 		  End If
 		  
+		  Var OldPhase As Double = Self.mIndeterminatePhase
 		  Self.mIndeterminatePhase = Self.mIndeterminatePhase + Self.mIndeterminateStep
-		  Self.NotifyObservers("MinorChange", Self.mIndeterminatePhase)
+		  Self.NotifyObservers("MinorChange", OldPhase, Self.mIndeterminatePhase)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -515,7 +516,7 @@ Implements ObservationKit.Observable
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -611,8 +612,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mActiveColor <> Value Then
+			    Var OldValue As OmniBarItem.ActiveColors = Self.mActiveColor
 			    Self.mActiveColor = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -629,7 +631,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mAlwaysUseActiveColor <> Value Then
 			    Self.mAlwaysUseActiveColor = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -650,9 +652,9 @@ Implements ObservationKit.Observable
 			    Var IsWide As Boolean = Self.mCanBeClosed Or Self.mHasUnsavedChanges
 			    
 			    If WasWide <> IsWide Then
-			      Self.NotifyObservers("MajorChange", Value)
+			      Self.NotifyObservers("MajorChange", Not Value, Value)
 			    Else
-			      Self.NotifyObservers("MinorChange", Value)
+			      Self.NotifyObservers("MinorChange", Not Value, Value)
 			    End If
 			  End If
 			End Set
@@ -669,8 +671,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mCaption
 			    Self.mCaption = Value
-			    Self.NotifyObservers("MajorChange", Value)
+			    Self.NotifyObservers("MajorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -687,7 +690,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mEnabled <> Value Then
 			    Self.mEnabled = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -704,7 +707,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mHasMenu <> Value Then
 			    Self.mHasMenu = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -721,7 +724,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mHasProgressIndicator <> Value Then
 			    Self.mHasProgressIndicator = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -742,9 +745,9 @@ Implements ObservationKit.Observable
 			    Var IsWide As Boolean = Self.mCanBeClosed Or Self.mHasUnsavedChanges
 			    
 			    If WasWide <> IsWide Then
-			      Self.NotifyObservers("MajorChange", Value)
+			      Self.NotifyObservers("MajorChange", Not Value, Value)
 			    Else
-			      Self.NotifyObservers("MinorChange", Value)
+			      Self.NotifyObservers("MinorChange", Not Value, Value)
 			    End If
 			  End If
 			End Set
@@ -761,8 +764,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mHelpTag.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mHelpTag
 			    Self.mHelpTag = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -780,12 +784,13 @@ Implements ObservationKit.Observable
 			  Var Major As Boolean
 			  Major = ((Self.mIcon Is Nil) And (Value Is Nil) = False) Or ((Self.mIcon Is Nil) = False And (Value Is Nil))
 			  
+			  Var OldValue As Picture = Self.mIcon
 			  Self.mIcon = Value
 			  
 			  If Major Then
-			    Self.NotifyObservers("MajorChange", Value)
+			    Self.NotifyObservers("MajorChange", OldValue, Value)
 			  Else
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -911,8 +916,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mName
 			    Self.mName = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -928,8 +934,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mPriority <> Value Then
+			    Var OldValue As Integer = Self.mPriority
 			    Self.mPriority = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -945,6 +952,7 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mProgress <> Value Then
+			    Var OldValue As Double = Self.mProgress
 			    Self.mProgress = Value
 			    
 			    If Value = Self.ProgressIndeterminate And Self.mIndeterminateTimer Is Nil Then
@@ -957,7 +965,7 @@ Implements ObservationKit.Observable
 			      Self.mIndeterminateTimer.RunMode = Timer.RunModes.Off
 			      Self.mIndeterminateTimer = Nil
 			    End If
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -974,7 +982,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mToggled <> Value Then
 			    Self.mToggled = Value
-			    Self.NotifyObservers("MinorChange", Value)
+			    Self.NotifyObservers("MinorChange", Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -1224,6 +1232,14 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Priority"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

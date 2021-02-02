@@ -616,6 +616,8 @@ End
 		  Self.ViewTitle = Controller.Name
 		  Self.UpdateViewIcon
 		  
+		  Self.ViewID = Controller.URL.Hash
+		  
 		  Self.Panels = New Dictionary
 		End Sub
 	#tag EndMethod
@@ -827,6 +829,8 @@ End
 		  
 		  Preferences.AddToRecentDocuments(Sender.URL)
 		  
+		  Self.ViewID = Sender.URL.Hash
+		  
 		  If Self.Document = Nil Or Sender.Document.Modified = False Then
 		    // Safe to cleanup the autosave
 		    Self.CleanupAutosave()
@@ -905,11 +909,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  Select Case Key
 		  Case "MinimumWidth", "MinimumHeight"
@@ -1122,12 +1127,6 @@ End
 	#tag Method, Flags = &h0
 		Function URL() As Beacon.DocumentURL
 		  Return Self.mController.URL
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ViewID() As String
-		  Return Self.mController.URL.Hash
 		End Function
 	#tag EndMethod
 

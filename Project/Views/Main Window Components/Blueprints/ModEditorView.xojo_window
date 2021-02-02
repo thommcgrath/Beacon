@@ -174,6 +174,7 @@ End
 		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
 		  
 		  Self.mController = Controller
+		  Self.ViewID = Controller.ModID
 		End Sub
 	#tag EndMethod
 
@@ -477,12 +478,6 @@ End
 		  End If
 		  Self.Changed = PublishEnabled
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ViewID() As String
-		  Return Self.mController.ModID
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

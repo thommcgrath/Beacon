@@ -195,6 +195,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.ViewID = "ModsListView"
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub FinishJob()
 		  Self.mJobCount = Self.mJobCount - 1
@@ -235,12 +241,6 @@ End
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ViewID() As String
-		  Return "ModsListView"
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

@@ -40,7 +40,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Item.AddObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
 		  
-		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
+		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -69,7 +69,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Item.AddObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
 		  
-		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
+		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -88,7 +88,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -107,18 +107,18 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
 		  
-		  Self.NotifyObservers(Key, Value)
+		  Self.NotifyObservers(Key, OldValue, NewValue)
 		End Sub
 	#tag EndMethod
 
@@ -141,7 +141,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Value.AddObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
 		  
-		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
+		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -163,7 +163,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  Self.mItems.RemoveAt(Index)
 		  
-		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
+		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -207,7 +207,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  Self.mItems.ResizeTo(NewBound)
 		  
-		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
+		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil, Nil)
 		End Sub
 	#tag EndMethod
 
