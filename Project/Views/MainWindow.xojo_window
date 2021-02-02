@@ -508,11 +508,15 @@ End
 		    Return True
 		  End If
 		  
-		  If (Self.BlueprintsComponent1 Is Nil) And Self.BlueprintsComponent1.Busy Then
+		  If (Self.BlueprintsComponent1 Is Nil) = False And Self.BlueprintsComponent1.Busy Then
 		    Return True
 		  End If
 		  
-		  If (Self.PresetsComponent1 Is Nil) And Self.PresetsComponent1.Busy Then
+		  If (Self.PresetsComponent1 Is Nil) = False And Self.PresetsComponent1.Busy Then
+		    Return True
+		  End If
+		  
+		  If (Self.HelpComponent1 Is Nil) = False And Self.HelpComponent1.Busy Then
 		    Return True
 		  End If
 		  
