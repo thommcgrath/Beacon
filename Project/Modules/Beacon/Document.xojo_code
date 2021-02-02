@@ -217,9 +217,9 @@ Implements ObservationKit.Observable
 		  If Dict Is Nil Then
 		    If Self.mConfigSets.HasKey(SetName) Then
 		      Self.mConfigSets.Remove(SetName)
-		      For Idx As Integer = Self.mConfigSetStates.LastRowIndex DownTo 1
+		      For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
 		        If Self.mConfigSetStates(Idx).Name = SetName Then
-		          Self.mConfigSetStates.Remove(Idx)
+		          Self.mConfigSetStates.RemoveAt(Idx)
 		        End If
 		      Next
 		      Self.mModified = True
@@ -229,7 +229,7 @@ Implements ObservationKit.Observable
 		  
 		  If Self.mConfigSets.HasKey(SetName) = False Then
 		    Var Add As Boolean = True
-		    For Idx As Integer = 1 To Self.mConfigSetStates.LastRowIndex
+		    For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
 		      If Self.mConfigSetStates(Idx).Name = SetName Then
 		        Add = False
 		        Exit
