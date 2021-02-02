@@ -242,8 +242,6 @@ Implements ObservationKit.Observer
 		  
 		  Select Case Key
 		  Case "ViewID"
-		    Break
-		    
 		    If Self.mCurrentPageID = OldValue Then
 		      Self.mCurrentPageID = NewValue
 		    End If
