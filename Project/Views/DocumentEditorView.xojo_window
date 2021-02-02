@@ -852,6 +852,7 @@ End
 		  Next
 		  
 		  Self.Autosave()
+		  Self.UpdateConfigList()
 		  Self.Panel_ContentsChanged(Nil)
 		End Sub
 	#tag EndMethod
