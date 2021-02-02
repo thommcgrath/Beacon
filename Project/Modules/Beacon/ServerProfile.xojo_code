@@ -192,6 +192,18 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As String
+		  Var Raw As String
+		  Try
+		    Raw = Beacon.GenerateJSON(Self.ToDictionary, False)
+		  Catch Err As RuntimeException
+		    Raw = Self.Name + "    " + Self.ProfileID
+		  End Try
+		  Return EncodeHex(Crypto.SHA256(Raw)).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LinkPrefix() As String
 		  Return "Server"
 		End Function
@@ -222,12 +234,15 @@ Protected Class ServerProfile
 		    Return 1
 		  End If
 		  
-		  If Other.ProfileID = Self.ProfileID Then
+		  Var MyHash As String = Self.Hash
+		  Var TheirHash As String = Other.Hash
+		  
+		  If MyHash = TheirHash Then
 		    Return 0
 		  Else
 		    // Don't just compare names. We know these are not equal, but we need them to be sortable.
-		    Var SelfCompare As String = Self.Name + "    " + Self.ProfileID
-		    Var OtherCompare As String = Other.Name + "    " + Other.ProfileID
+		    Var SelfCompare As String = Self.Name + "    " + MyHash
+		    Var OtherCompare As String = Other.Name + "    " + TheirHash
 		    Return SelfCompare.Compare(OtherCompare, ComparisonOptions.CaseInsensitive)
 		  End If
 		End Function
