@@ -217,13 +217,27 @@ Implements ObservationKit.Observable
 		  If Dict Is Nil Then
 		    If Self.mConfigSets.HasKey(SetName) Then
 		      Self.mConfigSets.Remove(SetName)
+		      For Idx As Integer = Self.mConfigSetStates.LastRowIndex DownTo 1
+		        If Self.mConfigSetStates(Idx).Name = SetName Then
+		          Self.mConfigSetStates.Remove(Idx)
+		        End If
+		      Next
 		      Self.mModified = True
 		    End If
 		    Return
 		  End If
 		  
 		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
+		    Var Add As Boolean = True
+		    For Idx As Integer = 1 To Self.mConfigSetStates.LastRowIndex
+		      If Self.mConfigSetStates(Idx).Name = SetName Then
+		        Add = False
+		        Exit
+		      End If
+		    Next
+		    If Add Then
+		      Self.mConfigSetStates.Add(New Beacon.ConfigSetState(SetName, False))
+		    End If
 		  End If
 		  Self.mConfigSets.Value(SetName) = Dict
 		  Self.mModified = True
@@ -1295,6 +1309,12 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
+		  For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
+		    If Self.mConfigSetStates(Idx).Name = OldName Then
+		      Self.mConfigSetStates(Idx) = New Beacon.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
+		    End If
+		  Next
+		  
 		  Var OldSet As Dictionary = Self.mConfigSets.Value(OldName)
 		  Self.ConfigSet(OldName) = Nil
 		  Self.ConfigSet(NewName) = OldSet
@@ -1308,12 +1328,6 @@ Implements ObservationKit.Observable
 		      End If
 		    Next
 		    Profile.ConfigSetStates = ConfigSets
-		  Next
-		  
-		  For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		    If Self.mConfigSetStates(Idx).Name = OldName Then
-		      Self.mConfigSetStates(Idx) = New Beacon.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
-		    End If
 		  Next
 		  
 		  Self.Modified = True

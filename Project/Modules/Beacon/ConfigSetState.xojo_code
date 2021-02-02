@@ -36,7 +36,7 @@ Protected Class ConfigSetState
 		    Return 1
 		  End If
 		  
-		  Var Compare As Integer = Self.mName.Compare(Other.mName, ComparisonOptions.CaseSensitive)
+		  Var Compare As Integer = Self.mName.Compare(Other.mName, ComparisonOptions.CaseInsensitive)
 		  If Compare <> 0 Then
 		    Return Compare
 		  End If
@@ -108,14 +108,6 @@ Protected Class ConfigSetState
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mName"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
