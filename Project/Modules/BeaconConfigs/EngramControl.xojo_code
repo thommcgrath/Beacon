@@ -141,6 +141,10 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.EngramControl = BeaconConfigs.EngramControl(Other)
+		  
+		  Self.AutoUnlockAllEngrams = Source.AutoUnlockAllEngrams
+		  Self.OnlyAllowSpecifiedEngrams = Source.OnlyAllowSpecifiedEngrams
+		  
 		  Var Engrams() As Beacon.Engram = Source.Engrams
 		  Var Keys() As String = Self.AllAttributeKeys
 		  For Each Engram As Beacon.Engram In Engrams

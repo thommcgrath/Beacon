@@ -49,6 +49,9 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Other)
+		  
+		  Self.GlobalMultiplier = Source.GlobalMultiplier
+		  
 		  Var Engrams() As Beacon.Engram = Source.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
 		    Self.Override(Engram) = Source.Override(Engram)

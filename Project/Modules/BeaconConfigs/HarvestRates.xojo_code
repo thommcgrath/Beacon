@@ -45,10 +45,20 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Other)
+		  
+		  Self.ClampResourceHarvestDamage = Source.ClampResourceHarvestDamage
+		  Self.DinoHarvestingDamageMultiplier = Source.DinoHarvestingDamageMultiplier
+		  Self.HarvestAmountMultiplier = Source.HarvestAmountMultiplier
+		  Self.HarvestHealthMultiplier = Source.HarvestHealthMultiplier
+		  Self.PlayerHarvestingDamageMultiplier = Source.PlayerHarvestingDamageMultiplier
+		  Self.UseOptimizedRates = Source.UseOptimizedRates
+		  
 		  Var Engrams() As Beacon.Engram = Source.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
 		    Self.Override(Engram) = Source.Override(Engram)
 		  Next
+		  
+		  
 		End Sub
 	#tag EndEvent
 
