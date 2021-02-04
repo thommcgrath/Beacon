@@ -128,7 +128,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Document Name:"
+      Text            =   "Project Name:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -255,7 +255,7 @@ End
 		  
 		  Var Win As New DocumentSaveToCloudWindow
 		  Win.mController = Controller
-		  Win.TitleField.Value = Controller.Name
+		  Win.TitleField.Text = Controller.Name
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Var State As Integer = Win.mResponseState
@@ -291,7 +291,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Document.DocumentID).Middle(8)
-		  Self.mController.Document.Title = Self.TitleField.Value
+		  Self.mController.Document.Title = Self.TitleField.Text
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved
 		  Self.Hide

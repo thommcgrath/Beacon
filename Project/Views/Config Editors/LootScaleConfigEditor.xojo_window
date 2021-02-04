@@ -61,7 +61,7 @@ Begin ConfigEditor LootScaleConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -91,11 +91,45 @@ Begin ConfigEditor LootScaleConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       TickStyle       =   0
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Value           =   100
       Visible         =   True
       Width           =   595
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   732
    End
 End
 #tag EndWindow
@@ -111,14 +145,14 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootScale.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootScale)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
 		  Var Multiplier As Double = Self.Config(False).Multiplier
-		  Self.LootScaleField.Value = Str(Multiplier, "0%")
+		  Self.LootScaleField.Text = Multiplier.ToString(Locale.Current, "0%")
 		  Self.ScaleSlider.Value = Multiplier * 100
 		End Sub
 	#tag EndEvent
@@ -126,7 +160,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootScale
-		  Static ConfigName As String = BeaconConfigs.LootScale.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameLootScale
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.LootScale
@@ -151,7 +185,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.LootScale.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameLootScale)
 		End Function
 	#tag EndMethod
 
@@ -179,7 +213,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Double = CDbl(Me.Value)
+		  Var Value As Double = CDbl(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -199,17 +233,48 @@ End
 		    Return
 		  End If
 		  
-		  Self.LootScaleField.Value = Str(Me.Value, "-0") + "%"
+		  Self.LootScaleField.Text = Me.Value.ToString(Locale.Raw, "0") + "%"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -277,14 +342,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -299,14 +356,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

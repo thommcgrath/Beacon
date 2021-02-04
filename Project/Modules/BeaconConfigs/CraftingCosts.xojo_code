@@ -1,10 +1,11 @@
 #tag Class
- Attributes ( OmniVersion = 1 ) Protected Class CraftingCosts
+Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
 		  
+		  Var Values() As Beacon.ConfigValue
 		  For Each Entry As DictionaryEntry In Self.mCosts
 		    Var Cost As Beacon.CraftingCost = Entry.Value
 		    If Cost.Engram Is Nil Or Cost.Engram.ValidForDocument(SourceDocument) = False Then
@@ -16,9 +17,18 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
-		    Values.AddRow(ConfigValue)
+		    Values.Add(ConfigValue)
 		  Next
-		End Sub
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -40,11 +50,11 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Costs") Then
-		    Var Costs() As Variant = Dict.Value("Costs")
+		    Var Costs() As Dictionary = Dict.Value("Costs").DictionaryArrayValue
 		    For Each CostData As Dictionary In Costs
 		      Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
-		        Self.mCosts.Value(Cost.Engram.Path) = Cost
+		        Self.mCosts.Value(Cost.Engram.ObjectID) = Cost
 		      End If
 		    Next
 		  End If
@@ -57,7 +67,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Costs() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mCosts
-		    Costs.AddRow(Beacon.CraftingCost(Entry.Value).Export)
+		    Costs.Add(Beacon.CraftingCost(Entry.Value).Export)
 		  Next
 		  Dict.Value("Costs") = Costs
 		End Sub
@@ -75,8 +85,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return ConfigKey
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameCraftingCosts
 		End Function
 	#tag EndMethod
 
@@ -86,7 +96,7 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Return New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", Cost.StringValue)
+		  Return New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts=" + Cost.StringValue, "ConfigOverrideItemCraftingCosts:" + Cost.Engram.ClassString)
 		End Function
 	#tag EndMethod
 
@@ -103,8 +113,8 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  If Self.mCosts.HasKey(Engram.Path) Then
-		    Return Self.mCosts.Value(Engram.Path)
+		  If Self.mCosts.HasKey(Engram.ObjectID) Then
+		    Return Self.mCosts.Value(Engram.ObjectID)
 		  End If
 		End Function
 	#tag EndMethod
@@ -116,14 +126,14 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If Cost = Nil Then
-		    If Self.mCosts.HasKey(Engram.Path) Then
-		      Self.mCosts.Remove(Engram.Path)
+		    If Self.mCosts.HasKey(Engram.ObjectID) Then
+		      Self.mCosts.Remove(Engram.ObjectID)
 		      Self.Modified = True
 		    End If
 		    Return
 		  End If
 		  
-		  Var Key As String = Cost.Engram.Path
+		  Var Key As String = Cost.Engram.ObjectID
 		  If Self.mCosts.HasKey(Key) And Beacon.CraftingCost(Self.mCosts.Value(Key)) = Cost Then
 		    Return
 		  End If
@@ -143,14 +153,14 @@ Inherits Beacon.ConfigGroup
 		Function Engrams() As Beacon.Engram()
 		  Var Results() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mCosts
-		    Results.AddRow(Beacon.CraftingCost(Entry.Value).Engram)
+		    Results.Add(Beacon.CraftingCost(Entry.Value).Engram)
 		  Next
 		  Return Results
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.CraftingCosts
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.CraftingCosts
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
@@ -165,14 +175,14 @@ Inherits Beacon.ConfigGroup
 		  If ValuesInfo.FullName = "Object()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then
-		    Overrides.AddRow(Values)
+		    Overrides.Add(Values)
 		  Else
 		    Return Nil
 		  End If
 		  
 		  Var Config As New BeaconConfigs.CraftingCosts
 		  For Each Dict As Dictionary In Overrides
-		    Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromConfig(Dict)
+		    Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromConfig(Dict, Mods)
 		    If Cost <> Nil Then
 		      Config.Add(Cost)
 		    End If
@@ -225,14 +235,16 @@ Inherits Beacon.ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCosts As Dictionary
 	#tag EndProperty
-
-
-	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"CraftingCosts", Scope = Private
-	#tag EndConstant
 
 
 	#tag ViewBehavior

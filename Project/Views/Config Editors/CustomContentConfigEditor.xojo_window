@@ -25,37 +25,6 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    UseFocusRing    =   False
    Visible         =   True
    Width           =   608
-   Begin Shelf Switcher
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   150
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   308
-   End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
@@ -68,7 +37,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   321
+      Height          =   341
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -97,75 +66,47 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   41
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   0
       UseFocusRing    =   False
       Visible         =   True
       Width           =   608
    End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   60
+      Tooltip         =   ""
+      Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   608
-   End
-   Begin BeaconToolbar LeftButtons
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   10
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   150
    End
 End
 #tag EndWindow
@@ -188,7 +129,7 @@ End
 		  Var ScanItem As New MenuItem("Setup Guided Editors")
 		  ScanItem.Name = "EditorLookforSupportedConfigLines"
 		  ScanItem.Enabled = True
-		  Items.AddRow(ScanItem)
+		  Items.Add(ScanItem)
 		End Sub
 	#tag EndEvent
 
@@ -203,14 +144,13 @@ End
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  Var SelfDocument As Beacon.Document = Self.Document
 		  Var CreatedEditorNames() As String
-		  Var GenericProfile As New Beacon.GenericServerProfile(SelfDocument.Title, Beacon.Maps.All.Mask)
-		  Var GameIniValues As New Dictionary
-		  Var GameUserSettingsIniValues As New Dictionary
+		  Var Config As BeaconConfigs.CustomContent = Self.Config(False)
+		  Var Organizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Config.GameIniContent)
+		  Organizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Config.GameUserSettingsIniContent)
 		  
-		  Var ImportedConfigs() As Beacon.ConfigGroup
 		  For Each CreatedConfig As Beacon.ConfigGroup In Document.ImplementedConfigs
 		    Var ConfigName As String = CreatedConfig.ConfigName
-		    If ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		    If ConfigName = BeaconConfigs.NameCustomContent Then
 		      Continue
 		    End If
 		    
@@ -218,8 +158,6 @@ End
 		      // Do not import code for groups that the user has not purchased
 		      Continue
 		    End If
-		    
-		    ImportedConfigs.AddRow(CreatedConfig)
 		    
 		    If SelfDocument.HasConfigGroup(ConfigName) Then
 		      Var CurrentConfig As Beacon.ConfigGroup = SelfDocument.ConfigGroup(ConfigName, False)
@@ -234,28 +172,15 @@ End
 		      SelfDocument.AddConfigGroup(CreatedConfig)
 		    End If
 		    
-		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(SelfDocument, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = CreatedConfig.GameUserSettingsIniValues(SelfDocument, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = CreatedConfig.NonGeneratedKeys(Identity)
-		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
-		      Select Case Key.File
-		      Case "Game.ini"
-		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      End Select
-		    Next
+		    Organizer.Remove(CreatedConfig.ManagedKeys)
 		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
-		    
-		    CreatedEditorNames.AddRow(Language.LabelForConfig(ConfigName))
+		    CreatedEditorNames.Add(Language.LabelForConfig(ConfigName))
 		  Next
 		  
 		  If CreatedEditorNames.Count > 0 Then
-		    Var Config As BeaconConfigs.CustomContent = Self.Config(True)
-		    Config.GameIniContent(GameIniValues) = Config.GameIniContent
-		    Config.GameUserSettingsIniContent(GameUserSettingsIniValues) = Config.GameUserSettingsIniContent
+		    Call Self.Config(True)
+		    Config.GameIniContent() = Organizer
+		    Config.GameUserSettingsIniContent() = Organizer
 		  End If
 		  
 		  Self.SetupUI()
@@ -272,18 +197,18 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.CustomContent.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCustomContent)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
-		  Select Case Self.Switcher.SelectedIndex
-		  Case 1
-		    Self.ConfigArea.Value = Self.Config(False).GameUserSettingsIniContent
+		  Select Case Self.ActiveButtonName
+		  Case "GameUserSettingsIniButton"
+		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		  Case 2
-		    Self.ConfigArea.Value = Self.Config(False).GameIniContent
+		  Case "GameIniButton"
+		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		End Sub
@@ -300,7 +225,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CustomContent
-		  Static ConfigName As String = BeaconConfigs.CustomContent.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameCustomContent
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.CustomContent
@@ -325,7 +250,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameCustomContent)
 		End Function
 	#tag EndMethod
 
@@ -365,7 +290,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
-		  If Self.ConfigArea.SelectionStart >= Self.ConfigArea.Value.Length Then
+		  If Self.ConfigArea.SelectionStart >= Self.ConfigArea.Text.Length Then
 		    Return False
 		  End If
 		  
@@ -383,7 +308,7 @@ End
 		Private Sub ToggleEncryption()
 		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
-		  Var Source As String = Self.ConfigArea.Value
+		  Var Source As String = Self.ConfigArea.Text
 		  
 		  If Self.SelectionIsEncrypted Then
 		    Var StartPos As Integer = Self.ConfigArea.SelectionStart
@@ -404,7 +329,7 @@ End
 		    Var Content As String = Source.Middle(StartPos, ContentLen)
 		    Var Suffix As String = Source.Middle(EndPos + TagLen)
 		    
-		    Self.ConfigArea.Value = Prefix + Content + Suffix
+		    Self.ConfigArea.Text = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  Else
@@ -414,7 +339,7 @@ End
 		    Var Content As String = Source.Middle(Start, Length)
 		    Var Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
-		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix
+		    Self.ConfigArea.Text = Prefix + Tag + Content + Tag + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  End If
@@ -423,19 +348,21 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEncryptButton()
-		  If Self.LeftButtons.EncryptButton = Nil Then
+		  Var EncryptButton As OmniBarItem = Self.ConfigToolbar.Item("EncryptButton")
+		  If EncryptButton Is Nil Then
 		    Return
 		  End If
 		  
-		  Var Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
 		  If Self.SelectionIsEncrypted Then
-		    Button.HelpTag = "Convert the encrypted value to plain text."
-		    Button.Enabled = True
-		    Button.Icon = IconToolbarUnlock
+		    EncryptButton.HelpTag = "Convert the encrypted value to plain text."
+		    EncryptButton.Caption = "Decrypt"
+		    EncryptButton.Enabled = True
+		    EncryptButton.Icon = IconToolbarUnlock
 		  Else
-		    Button.HelpTag = "Encrypt the selected text when saving."
-		    Button.Enabled = Self.ConfigArea.SelectionLength > 0
-		    Button.Icon = IconToolbarLock
+		    EncryptButton.HelpTag = "Encrypt the selected text when saving."
+		    EncryptButton.Caption = "Encrypt"
+		    EncryptButton.Enabled = Self.ConfigArea.SelectionLength > 0
+		    EncryptButton.Icon = IconToolbarLock
 		  End If
 		End Sub
 	#tag EndMethod
@@ -445,7 +372,7 @@ End
 		  Self.mEncryptedRanges.ResizeTo(-1)
 		  
 		  Var Pos As Integer
-		  Var Source As String = Self.ConfigArea.Value
+		  Var Source As String = Self.ConfigArea.Text
 		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
 		  Var Styles As StyledText = Self.ConfigArea.StyledText
@@ -467,7 +394,7 @@ End
 		      EndPos = Source.Length
 		    End If
 		    
-		    Self.mEncryptedRanges.AddRow(New Beacon.Range(StartPos, EndPos))
+		    Self.mEncryptedRanges.Add(New Beacon.Range(StartPos, EndPos))
 		    
 		    If Styles <> Nil Then
 		      Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
@@ -485,6 +412,33 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Var GameUserSettingsIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameUserSettingsIniButton")
+			  Var GameIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameIniButton")
+			  If (GameUserSettingsIniButton Is Nil) = False And GameUserSettingsIniButton.Toggled Then
+			    Return GameUserSettingsIniButton.Name
+			  ElseIf (GameIniButton Is Nil) = False And GameIniButton.Toggled Then
+			    Return GameIniButton.Name
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var GameUserSettingsIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameUserSettingsIniButton")
+			  Var GameIniButton As OmniBarItem = Self.ConfigToolbar.Item("GameIniButton")
+			  If (GameUserSettingsIniButton Is Nil) = False Then
+			    GameUserSettingsIniButton.Toggled = (GameUserSettingsIniButton.Name = Value)
+			  End If
+			  If (GameIniButton Is Nil) = False Then
+			    GameIniButton.Toggled = (GameIniButton.Name = Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Private ActiveButtonName As String
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
@@ -505,34 +459,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Switcher
-	#tag Event
-		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Var SettingUp As Boolean = Self.SettingUp
-		  Self.SettingUp = True
-		  Select Case Me.SelectedIndex
-		  Case 1
-		    Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Value = Self.Config(False).GameUserSettingsIniContent
-		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		  Case 2
-		    Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Value = Self.Config(False).GameIniContent
-		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
-		  End Select
-		  Self.SettingUp = SettingUp
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ConfigArea
 	#tag Event
 		Sub TextChange()
@@ -542,20 +468,20 @@ End
 		    Return
 		  End If
 		  
-		  Var SanitizedText As String = Self.SanitizeText(Me.Value)
-		  If SanitizedText <> Me.Value Then
+		  Var SanitizedText As String = Self.SanitizeText(Me.Text)
+		  If SanitizedText <> Me.Text Then
 		    Var SelectionStart As Integer = Me.SelectionStart
 		    Var SelectionLength As Integer = Me.SelectionLength
-		    Me.Value = SanitizedText
+		    Me.Text = SanitizedText
 		    Me.SelectionStart = SelectionStart
 		    Me.SelectionLength = SelectionLength
 		  End If
 		  
-		  Select Case Self.Switcher.SelectedIndex
-		  Case 1
+		  Select Case Self.ActiveButtonName
+		  Case "GameUserSettingsIniButton"
 		    Self.Config(True).GameUserSettingsIniContent = SanitizedText
 		    Self.Changed = True
-		  Case 2
+		  Case "GameIniButton"
 		    Self.Config(True).GameIniContent = SanitizedText
 		    Self.Changed = True
 		  End Select
@@ -567,28 +493,80 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LeftButtons
+#tag Events ConfigToolbar
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "EncryptButton"
-		    Self.ToggleEncryption
-		  End Select
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini"))
+		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("EncryptButton", "Encrypt", IconToolbarLock, "Encrypt the selected text when saving.", False))
+		  
+		  Me.Item("GameUserSettingsIniButton").Toggled = True
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("EncryptButton", IconToolbarLock, "Encrypt the selected text when saving."))
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "EncryptButton"
+		    Self.ToggleEncryption()
+		  Case "GameUserSettingsIniButton", "GameIniButton"
+		    If Item.Toggled Then
+		      // Don't do anything
+		      Return
+		    End If
+		    
+		    Var SettingUp As Boolean = Self.SettingUp
+		    Self.SettingUp = True
+		    Select Case Item.Name
+		    Case "GameUserSettingsIniButton"
+		      Self.mGameIniState = New TextAreaState(Self.ConfigArea)
+		      Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
+		      Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
+		    Case "GameIniButton"
+		      Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
+		      Self.ConfigArea.Text = Self.Config(False).GameIniContent
+		      Self.mGameIniState.ApplyTo(Self.ConfigArea)
+		    End Select
+		    Me.Item("GameIniButton").Toggled = (Item.Name = "GameIniButton")
+		    Me.Item("GameUserSettingsIniButton").Toggled = (Item.Name = "GameUserSettingsIniButton")
+		    Self.SettingUp = SettingUp
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -656,14 +634,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -678,14 +648,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

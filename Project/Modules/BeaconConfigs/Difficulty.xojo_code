@@ -2,22 +2,24 @@
 Protected Class Difficulty
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
-		End Sub
+		  Var Values() As Beacon.ConfigValue
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DifficultyOffset=1.0"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty=" + Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
+		  Return Values
+		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused Profile
-		  #Pragma Unused SourceDocument
-		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
-		End Sub
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DifficultyOffset"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -41,8 +43,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "Difficulty"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameDifficulty
 		End Function
 	#tag EndMethod
 
@@ -57,7 +59,7 @@ Inherits Beacon.ConfigGroup
 		Function Levels() As Integer()
 		  Var Results() As Integer
 		  For I As Integer = 1 To 30
-		    Results.AddRow(Floor(Self.DifficultyValue * I))
+		    Results.Add(Floor(Self.DifficultyValue * I))
 		  Next
 		  Return Results
 		End Function
@@ -66,6 +68,12 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function RequiresOmni() As Boolean
 		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RunWhenBanned() As Boolean
+		  Return True
 		End Function
 	#tag EndMethod
 

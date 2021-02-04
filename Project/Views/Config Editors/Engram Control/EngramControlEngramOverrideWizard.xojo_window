@@ -3,7 +3,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
    MinimumWidth    =   475
    Resizeable      =   False
    Title           =   "Set Engram Properties"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   475
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -111,7 +111,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -155,7 +155,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -191,7 +191,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -291,7 +291,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   216
    End
    Begin UITweaks.ResizedTextField RequiredLevelField
@@ -326,7 +326,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -362,7 +362,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -404,7 +404,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -440,7 +440,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -480,7 +480,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   216
    End
    Begin CheckBox HiddenEditCheck
@@ -513,7 +513,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   80
    End
    Begin CheckBox AutoUnlockEditCheck
@@ -546,7 +546,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   80
    End
    Begin CheckBox LevelEditCheck
@@ -579,7 +579,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   80
    End
    Begin CheckBox PointsEditCheck
@@ -612,7 +612,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   80
    End
    Begin CheckBox PrereqEditCheck
@@ -645,7 +645,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   80
    End
 End
@@ -658,7 +658,7 @@ End
 		  Self.UpdateUI()
 		  Self.SwapButtons()
 		  
-		  If Self.mEngrams.LastRowIndex = -1 Then
+		  If Self.mEngrams.LastIndex = -1 Then
 		    // New entry
 		    Self.EnabledRadio.Value = True
 		  Else
@@ -682,11 +682,11 @@ End
 		        DoesAutoUnlock = IsNull(Self.mConfig.AutoUnlockEngram(Engram)) = False And NullableBoolean(Self.mConfig.AutoUnlockEngram(Engram)).BooleanValue = True
 		      End If
 		      
-		      AutoUnlocks.AddRow(DoesAutoUnlock)
-		      Hiddens.AddRow(Self.mConfig.EffectivelyHidden(Engram))
-		      RequiredLevels.AddRow(LevelRequirement)
-		      RequiredPointses.AddRow(PointRequirement)
-		      RemovePrereqs.AddRow(Self.mConfig.RemovePrerequisites(Engram))
+		      AutoUnlocks.Add(DoesAutoUnlock)
+		      Hiddens.Add(Self.mConfig.EffectivelyHidden(Engram))
+		      RequiredLevels.Add(LevelRequirement)
+		      RequiredPointses.Add(PointRequirement)
+		      RemovePrereqs.Add(Self.mConfig.RemovePrerequisites(Engram))
 		    Next
 		    
 		    If Beacon.AreElementsEqual(AutoUnlocks) Then
@@ -702,32 +702,32 @@ End
 		      End If
 		    End If
 		    
-		    If Self.mEngrams.LastRowIndex = 0 Then
-		      Self.EntryStringField.Value = Self.mConfig.EntryString(Self.mEngrams(0))
+		    If Self.mEngrams.LastIndex = 0 Then
+		      Self.EntryStringField.Text = Self.mConfig.EntryString(Self.mEngrams(0))
 		    Else
-		      Self.EntryStringField.Value = "Multiple"
+		      Self.EntryStringField.Text = "Multiple"
 		    End If
 		    Self.EntryStringField.Enabled = False
 		    
 		    If Beacon.AreElementsEqual(RequiredLevels) Then
 		      Var RequiredLevel As NullableDouble = RequiredLevels(0)
 		      If (RequiredLevel Is Nil) = False Then
-		        Self.RequiredLevelField.Value = RequiredLevel.IntegerValue.ToString
+		        Self.RequiredLevelField.Text = RequiredLevel.IntegerValue.ToString
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
-		        Self.RequiredLevelField.Value = "0"
+		        Self.RequiredLevelField.Text = "0"
 		      Else
-		        Self.RequiredLevelField.Value = "Tek"
+		        Self.RequiredLevelField.Text = "Tek"
 		      End If
 		    End If
 		    
 		    If Beacon.AreElementsEqual(RequiredPointses) Then
 		      Var RequiredPoints As NullableDouble = RequiredPointses(0)
 		      If (RequiredPoints Is Nil) = False Then
-		        Self.RequiredPointsField.Value = RequiredPoints.IntegerValue.ToString
+		        Self.RequiredPointsField.Text = RequiredPoints.IntegerValue.ToString
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
-		        Self.RequiredPointsField.Value = ""
+		        Self.RequiredPointsField.Text = ""
 		      Else
-		        Self.RequiredPointsField.Value = ""
+		        Self.RequiredPointsField.Text = ""
 		      End If
 		    End If
 		    
@@ -741,7 +741,7 @@ End
 		    End If
 		  End If
 		  
-		  If Self.mEngrams.LastRowIndex > 0 Then
+		  If Self.mEngrams.LastIndex > 0 Then
 		    Self.AutoUnlockEditCheck.Visible = True
 		    Self.HiddenEditCheck.Visible = True
 		    Self.LevelEditCheck.Visible = True
@@ -768,7 +768,7 @@ End
 		  Self.mEngrams = Engrams
 		  Self.mSettingUp = True
 		  
-		  Var Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False)
+		  Var Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.NameEngramControl, False)
 		  If Config = Nil Then
 		    Self.mConfig = New BeaconConfigs.EngramControl
 		    Self.mAddConfigGroup = True
@@ -811,7 +811,7 @@ End
 		    Self.RequiredPointsField.Enabled = False
 		    Self.RequiredPointsLabel.Enabled = False
 		    
-		    Var Multi As Boolean = Self.mEngrams.LastRowIndex > 0
+		    Var Multi As Boolean = Self.mEngrams.LastIndex > 0
 		    Self.AutoUnlockEditCheck.Visible = Multi
 		    Self.HiddenEditCheck.Visible = Multi
 		    Self.LevelEditCheck.Visible = Multi
@@ -876,17 +876,19 @@ End
 	#tag Event
 		Sub Action()
 		  Var Engrams() As Beacon.Engram
-		  If Self.mEngrams.LastRowIndex = -1 Then
-		    If Not Self.EntryStringField.Value.EndsWith("_C") Then
+		  If Self.mEngrams.LastIndex = -1 Then
+		    If Not Self.EntryStringField.Text.EndsWith("_C") Then
 		      Self.ShowAlert("The entered Entry String is not correct.", "Ark Entry Strings usually begin with EngramEntry and always end with _C.")
 		      Return
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(Self.EntryStringField.Value)
-		    If IsNull(Engram) Then
-		      Engram = Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Value)
+		    Var ExistingEngrams() As Beacon.Engram = Beacon.Data.GetEngramsByEntryString(Self.EntryStringField.Text, Nil)
+		    If ExistingEngrams.Count = 0 Then
+		      ExistingEngrams.Add(Beacon.Engram.CreateFromEntryString(Self.EntryStringField.Text))
 		    End If
-		    Engrams.AddRow(Engram)
+		    For Each Engram As Beacon.Engram In ExistingEngrams
+		      Engrams.Add(Engram)
+		    Next
 		  Else
 		    Engrams = Self.mEngrams
 		  End If
@@ -904,15 +906,15 @@ End
 		  Var EditLevel As Boolean = Self.LevelEditCheck.Value And Self.LevelEditCheck.Enabled
 		  Var RequiredLevel As NullableDouble
 		  If EditLevel Then
-		    If Self.RequiredLevelField.Value = "Tek" Then
+		    If Self.RequiredLevelField.Text = "Tek" Then
 		      RequiredLevel = Nil
-		    ElseIf Self.RequiredLevelField.Value = "Spawn" Then
+		    ElseIf Self.RequiredLevelField.Text = "Spawn" Then
 		      RequiredLevel = 0
-		    ElseIf IsNumeric(Self.RequiredLevelField.Value) = False Then
+		    ElseIf IsNumeric(Self.RequiredLevelField.Text) = False Then
 		      Self.ShowAlert("Please enter a number for the level field.", "The value entered is not a number.")
 		      Return
 		    Else
-		      RequiredLevel = CDbl(Self.RequiredLevelField.Value)
+		      RequiredLevel = CDbl(Self.RequiredLevelField.Text)
 		    End If
 		  End If
 		  
@@ -925,13 +927,13 @@ End
 		  Var EditPoints As Boolean = Self.PointsEditCheck.Value And Self.PointsEditCheck.Enabled
 		  Var RequiredPoints As NullableDouble
 		  If EditPoints Then
-		    If Self.RequiredPointsField.Value = "Tek" Then
+		    If Self.RequiredPointsField.Text = "Tek" Then
 		      RequiredPoints = Nil
-		    ElseIf IsNumeric(Self.RequiredPointsField.Value) = False Then
+		    ElseIf IsNumeric(Self.RequiredPointsField.Text) = False Then
 		      Self.ShowAlert("Please enter a number for the points field.", "The value entered is not a number.")
 		      Return
 		    Else
-		      RequiredPoints = CDbl(Self.RequiredPointsField.Value)
+		      RequiredPoints = CDbl(Self.RequiredPointsField.Text)
 		    End If
 		  End If
 		  
@@ -942,7 +944,7 @@ End
 		  End If
 		  
 		  Var HasOfficialEngram As Boolean
-		  For Idx As Integer = 0 To Self.mEngrams.LastRowIndex
+		  For Idx As Integer = 0 To Self.mEngrams.LastIndex
 		    If Self.mEngrams(Idx) Is Nil Then
 		      Continue
 		    End If
@@ -1033,9 +1035,9 @@ End
 	#tag Event
 		Sub Action()
 		  If Me.Value Then
-		    Self.RequiredLevelLabel.Value = "Auto Unlocks At:"
+		    Self.RequiredLevelLabel.Text = "Auto Unlocks At:"
 		  Else
-		    Self.RequiredLevelLabel.Value = "Required Level:"
+		    Self.RequiredLevelLabel.Text = "Required Level:"
 		  End If
 		  If Not Self.mSettingUp Then
 		    Self.AutoUnlockEditCheck.Value = True

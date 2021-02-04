@@ -11,9 +11,7 @@ Implements Beacon.NamedItem
 		    Return
 		  End If
 		  
-		  Self.mResources.AddRow(Resource)
-		  Self.mQuantities.AddRow(Quantity)
-		  Self.mRequireExacts.AddRow(RequireExact)
+		  Self.mIngredients.Add(New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -25,64 +23,97 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Reference As Beacon.BlueprintReference, LoadRecipe As Boolean = False)
+		  Self.Constructor()
+		  Self.mEngram = Reference
+		  
+		  If LoadRecipe Then
+		    Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
+		    Self.mIngredients.ResizeTo(Ingredients.LastIndex)
+		    For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		      Self.mIngredients(Idx) = Ingredients(Idx)
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.CraftingCost)
 		  Self.Constructor()
-		  Self.Engram = Source.Engram
-		  For I As Integer = 0 To Source.LastRowIndex
-		    Self.Append(Source.Resource(I), Source.Quantity(I), Source.RequireExactResource(I))
+		  Self.mEngram = Source.mEngram
+		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
+		  For Idx As Integer = 0 To Source.mIngredients.LastIndex
+		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
 		  Next
 		  Self.Modified = Source.Modified
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Engram As Beacon.Engram)
-		  Self.Constructor()
-		  Self.Engram = Engram
+		Sub Constructor(Engram As Beacon.Engram, LoadRecipe As Boolean = False)
+		  Self.Constructor(New Beacon.BlueprintReference(Engram.ImmutableVersion), LoadRecipe)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return Self.mIngredients.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Var Dict As New Dictionary
-		  
-		  If Self.mEngram <> Nil Then
-		    Dict.Value("Engram") = Self.mEngram.ClassString
-		    Dict.Value("EngramID") = Self.mEngram.ObjectID.StringValue
+		  If Self.mEngram Is Nil Then
+		    Return Nil
 		  End If
 		  
-		  Var Resources() As Dictionary
-		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    Var Engram As Beacon.Engram = Self.mResources(I)
-		    Var Quantity As Integer = Self.mQuantities(I)
-		    Var RequireExact As Boolean = Self.mRequireExacts(I)
-		    
-		    Var Resource As New Dictionary
-		    Resource.Value("Class") = Engram.ClassString
-		    Resource.Value("EngramID") = Engram.ObjectID.StringValue
-		    Resource.Value("Quantity") = Quantity
-		    Resource.Value("Exact") = RequireExact
-		    
-		    Resources.AddRow(Resource)
+		  Var Ingredients() As Dictionary
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		    Var Resource As Dictionary = Self.mIngredients(Idx).ToDictionary
+		    If (Resource Is Nil) = False Then
+		      Ingredients.Add(Resource)
+		    End If
 		  Next
-		  Dict.Value("Resources") = Resources
 		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Blueprint") = Self.mEngram.SaveData
+		  Dict.Value("Ingredients") = Ingredients
 		  Return Dict
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "Engram", ""))
+		  Var Cost As Beacon.CraftingCost
+		  If Dict.HasKey("Blueprint") Then
+		    Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
+		    If Reference Is Nil Then
+		      Return Nil
+		    End If
+		    Cost = New Beacon.CraftingCost(Reference)
+		  ElseIf Dict.HasAnyKey("EngramID", "Engram") Then
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "EngramID", "", "Engram", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Cost = New Beacon.CraftingCost(Engram)
+		  End If
 		  
-		  If Dict.HasKey("Resources") Then
-		    Var Resources() As Variant = Dict.Value("Resources")
+		  If Dict.HasKey("Ingredients") Then
+		    Var Ingredients() As Dictionary = Dict.Value("Ingredients").DictionaryArrayValue
+		    For Each Ingredient As Dictionary In Ingredients
+		      Var Ref As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Ingredient, Nil)
+		      If (Ref Is Nil) = False Then
+		        Cost.mIngredients.Add(Ref)
+		      End If
+		    Next
+		  ElseIf Dict.HasKey("Resources") Then
+		    Var Resources() As Dictionary = Dict.Value("Resources").DictionaryArrayValue
 		    For Each Resource As Dictionary In Resources
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
-		      Cost.mQuantities.AddRow(Quantity)
-		      Cost.mRequireExacts.AddRow(RequireExact)
-		      Cost.mResources.AddRow(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""))
+		      
+		      Cost.mIngredients.Add(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "", "Class", Nil), Quantity, RequireExact))
 		    Next
 		  End If
 		  
@@ -91,36 +122,26 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary) As Beacon.CraftingCost
+		Shared Function ImportFromConfig(Dict As Dictionary, Mods As Beacon.StringList) As Beacon.CraftingCost
 		  Try
 		    Var ClassString As String = Dict.Lookup("ItemClassString", "")
 		    If ClassString = "" Then
 		      Return Nil
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateFromClass(ClassString)
-		    End If
-		    
+		    Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "", "", "ItemClassString", Mods)
 		    Var Cost As New Beacon.CraftingCost(Engram)
 		    If Dict.HasKey("BaseCraftingResourceRequirements") Then
 		      Var Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
 		      For Each Resource As Dictionary In Resources
-		        Var ResourceClass As String = Resource.Lookup("ResourceItemTypeString", "")
-		        If ResourceClass = "" Then
-		          Continue
-		        End If
-		        Var ResourceEngram As Beacon.Engram = Beacon.Data.GetEngramByClass(ResourceClass)
-		        If ResourceEngram = Nil Then
-		          ResourceEngram = Beacon.Engram.CreateFromClass(ResourceClass)
-		        End If
+		        Var ResourceEngram As Beacon.Engram = Beacon.ResolveEngram(Resource, "", "", "ResourceItemTypeString", Mods)
 		        Var Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
 		        Var RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
 		        Cost.Append(ResourceEngram, Quantity, RequireExact)
 		      Next
 		    End If
 		    
+		    Cost.Modified = False
 		    Return Cost
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -130,9 +151,9 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Resource As Beacon.Engram) As Integer
-		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    If Self.mResources(I) = Resource Then
-		      Return I
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		    If Self.mIngredients(Idx).Engram = Resource Then
+		      Return Idx
 		    End If
 		  Next
 		  Return -1
@@ -140,7 +161,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Resource As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
+		Sub Insert(Idx As Integer, Resource As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
 		  If Resource = Nil Then
 		    Return
 		  End If
@@ -149,26 +170,24 @@ Implements Beacon.NamedItem
 		    Return
 		  End If
 		  
-		  Self.mResources.AddRowAt(Index, Resource)
-		  Self.mQuantities.AddRowAt(Index, Quantity)
-		  Self.mRequireExacts.AddRowAt(Index,RequireExact)
+		  Self.mIngredients.AddAt(Idx, New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mEngram = Nil Then
+		  If Self.mEngram Is Nil Then
 		    Return ""
 		  End If
 		  
-		  Return Self.mEngram.Label
+		  Return Self.Engram.Label
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mResources.LastRowIndex
+		  Return Self.mIngredients.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -206,37 +225,32 @@ Implements Beacon.NamedItem
 		    Return 0
 		  End If
 		  
-		  // Try to sort by name first, otherwise sort by object id for lack of a better option
-		  Var SelfName As String = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
-		  Var OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
-		  Var Result As Integer = SelfName.Compare(OtherName, ComparisonOptions.CaseSensitive)
-		  If Result = 0 Then
-		    Result = Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
-		  End If
-		  Return Result
+		  // Uh... sort on the id I guess? How else would this be sorted?
+		  Return Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Quantity(Index As Integer) As Integer
-		  If Index < Self.mQuantities.FirstRowIndex Or Index > Self.mQuantities.LastRowIndex Then
+		Function Quantity(Idx As Integer) As Integer
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return 0
 		  End If
 		  
-		  Return Self.mQuantities(Index)
+		  Return Self.mIngredients(Idx).Quantity
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Quantity(Index As Integer, Assigns Value As Integer)
-		  If Index < Self.mQuantities.FirstRowIndex Or Index > Self.mQuantities.LastRowIndex Then
+		Sub Quantity(Idx As Integer, Assigns Value As Integer)
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return
 		  End If
 		  
 		  Value = Min(Max(Value, 1), 65535)
 		  
-		  If Self.mQuantities(Index) <> Value Then
-		    Self.mQuantities(Index) = Value
+		  Var Ingredient As Beacon.RecipeIngredient = Self.mIngredients(Idx)
+		  If Ingredient.Quantity <> Value Then
+		    Self.mIngredients(Idx) = New Beacon.RecipeIngredient(Ingredient.Engram, Value, Ingredient.RequireExact)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -252,61 +266,57 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Index As Integer)
-		  If Index >= Self.mQuantities.FirstRowIndex And Index <= Self.mQuantities.LastRowIndex Then
-		    Self.mQuantities.RemoveRowAt(Index)
-		  End If
-		  If Index >= Self.mRequireExacts.FirstRowIndex And Index <= Self.mRequireExacts.LastRowIndex Then
-		    Self.mRequireExacts.RemoveRowAt(Index)
-		  End If
-		  If Index >= Self.mResources.FirstRowIndex And Index <= Self.mResources.LastRowIndex Then
-		    Self.mResources.RemoveRowAt(Index)
-		  End If
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RequireExactResource(Index As Integer) As Boolean
-		  If Index < Self.mRequireExacts.FirstRowIndex Or Index > Self.mRequireExacts.LastRowIndex Then
-		    Return False
-		  End If
-		  
-		  Return Self.mRequireExacts(Index)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RequireExactResource(Index As Integer, Assigns Value As Boolean)
-		  If Index < Self.mRequireExacts.FirstRowIndex Or Index > Self.mRequireExacts.LastRowIndex Then
-		    Return
-		  End If
-		  
-		  If Self.mRequireExacts(Index) <> Value Then
-		    Self.mRequireExacts(Index) = Value
+		Sub Remove(Idx As Integer)
+		  If Idx >= Self.mIngredients.FirstRowIndex And Idx <= Self.mIngredients.LastIndex Then
+		    Self.mIngredients.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Resource(Index As Integer) As Beacon.Engram
-		  If Index < Self.mResources.FirstRowIndex Or Index > Self.mResources.LastRowIndex Then
-		    Return Nil
+		Function RequireExactResource(Idx As Integer) As Boolean
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
+		    Return False
 		  End If
 		  
-		  Return Self.mResources(Index)
+		  Return Self.mIngredients(Idx).RequireExact
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Resource(Index As Integer, Assigns Value As Beacon.Engram)
-		  If Index < Self.mResources.FirstRowIndex Or Index > Self.mResources.LastRowIndex Then
+		Sub RequireExactResource(Idx As Integer, Assigns Value As Boolean)
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
 		    Return
 		  End If
 		  
-		  If Self.mResources(Index) <> Value Then
-		    Self.mResources(Index) = Value
+		  Var Ingredient As Beacon.RecipeIngredient = Self.mIngredients(Idx)
+		  If Ingredient.RequireExact <> Value Then
+		    Self.mIngredients(Idx) = New Beacon.RecipeIngredient(Ingredient.Engram, Ingredient.Quantity, Value)
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Resource(Idx As Integer) As Beacon.Engram
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mIngredients(Idx).Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Resource(Idx As Integer, Assigns Value As Beacon.Engram)
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastIndex Then
+		    Return
+		  End If
+		  
+		  Var Ingredient As Beacon.RecipeIngredient = Self.mIngredients(Idx)
+		  If Ingredient.Engram <> Value Then
+		    Self.mIngredients(Idx) = New Beacon.RecipeIngredient(Value, Ingredient.Quantity, Ingredient.RequireExact)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -315,16 +325,16 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function StringValue() As String
 		  Var Components() As String
-		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    Var ClassString As String = Self.mResources(I).ClassString
-		    Var QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
-		    Var RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
-		    Components.AddRow("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		    Var ClassString As String = Self.mIngredients(Idx).ClassString
+		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
+		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "True", "False")
+		    Components.Add("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
 		  Var Pieces() As String
-		  Pieces.AddRow("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
-		  Pieces.AddRow("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
+		  Pieces.Add("ItemClassString=""" + If((Self.mEngram Is Nil) = False, Self.mEngram.ClassString, "") + """")
+		  Pieces.Add("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
 		  Return "(" + Pieces.Join(",") + ")"
 		End Function
 	#tag EndMethod
@@ -333,16 +343,16 @@ Implements Beacon.NamedItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mEngram
+			  Return Beacon.Engram(Self.mEngram.Resolve)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mEngram = Value Then
+			  If Value Is Nil Or Value = Self.mEngram Then
 			    Return
 			  End If
 			  
-			  Self.mEngram = Value
+			  Self.mEngram = New Beacon.BlueprintReference(Value.ImmutableVersion)
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
@@ -350,7 +360,11 @@ Implements Beacon.NamedItem
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mEngram As Beacon.Engram
+		Private mEngram As Beacon.BlueprintReference
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIngredients() As Beacon.RecipeIngredient
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -363,18 +377,6 @@ Implements Beacon.NamedItem
 
 	#tag Property, Flags = &h21
 		Private mObjectID As v4UUID
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mQuantities() As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRequireExacts() As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mResources() As Beacon.Engram
 	#tag EndProperty
 
 

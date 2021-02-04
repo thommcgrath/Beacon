@@ -50,7 +50,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -85,7 +85,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -127,7 +127,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   102
@@ -170,7 +170,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   136
@@ -213,7 +213,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   170
@@ -249,7 +249,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   136
@@ -284,7 +284,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   170
@@ -319,7 +319,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   102
@@ -349,7 +349,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -381,7 +381,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -427,7 +427,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   212
@@ -485,7 +485,7 @@ Begin DiscoveryView ConnectorDiscoveryView
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   -111
@@ -502,9 +502,9 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.DesiredHeight = 252
-		  Self.AddressField.Value = ""
-		  Self.PortField.Value = "48962"
-		  Self.KeyField.Value = ""
+		  Self.AddressField.Text = ""
+		  Self.PortField.Text = "48962"
+		  Self.KeyField.Text = ""
 		  Self.CheckEnabled()
 		  Self.StatusLabel.Top = Self.HelpLabel.Top
 		  Self.Spinner.Top = Self.StatusLabel.Top + 2
@@ -523,10 +523,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
 		  Var Port As Integer
-		  If IsNumeric(Self.PortField.Value) Then
-		    Port = CDbl(Self.PortField.Value)
+		  If IsNumeric(Self.PortField.Text) Then
+		    Port = CDbl(Self.PortField.Text)
 		  End If
-		  Self.ActionButton.Enabled = Self.HelpLabel.Visible And (Port >= 0 And Port <= 65535) And Self.AddressField.Value.Trim <> "" And Self.KeyField.Value.Trim <> ""
+		  Self.ActionButton.Enabled = Self.HelpLabel.Visible And (Port >= 0 And Port <= 65535) And Self.AddressField.Text.Trim <> "" And Self.KeyField.Text.Trim <> ""
 		End Sub
 	#tag EndMethod
 
@@ -568,15 +568,15 @@ End
 	#tag Event
 		Sub Action()
 		  Var Profile As New Beacon.ConnectorServerProfile
-		  Profile.Address = Self.AddressField.Value
-		  Profile.Port = CDbl(Self.PortField.Value)
-		  Profile.PreSharedKey = Self.KeyField.Value
+		  Profile.Address = Self.AddressField.Text
+		  Profile.Port = CDbl(Self.PortField.Text)
+		  Profile.PreSharedKey = Self.KeyField.Text
 		  Self.Profile = Profile
 		  
 		  Self.HelpLabel.Visible = False
 		  Self.Spinner.Visible = True
 		  Self.StatusLabel.Visible = True
-		  Self.StatusLabel.Value = "Connecting…"
+		  Self.StatusLabel.Text = "Connecting…"
 		  
 		  Self.TestSocket.Address = Profile.Address
 		  Self.TestSocket.Port = Profile.Port
@@ -601,10 +601,6 @@ End
 	#tag Event
 		Sub Connected()
 		  Me.Close
-		  
-		  #if DocumentImportView.ConnectorEnabled
-		    #Pragma Error "Connector discover UI not connected to integration engine."
-		  #endif
 		  
 		  Var Data() As Beacon.DiscoveredData
 		  Self.ShouldFinish(Data)

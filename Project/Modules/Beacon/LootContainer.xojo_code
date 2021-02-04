@@ -78,17 +78,9 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Self.mRequiredItemSets = Source.RequiredItemSetCount
 		  
 		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
-		  Self.mMandatoryItemSets.ResizeTo(MandatorySets.LastRowIndex)
-		  For I As Integer = 0 To MandatorySets.LastRowIndex
+		  Self.mMandatoryItemSets.ResizeTo(MandatorySets.LastIndex)
+		  For I As Integer = 0 To MandatorySets.LastIndex
 		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(MandatorySets(I))
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    Set.ConsumeMissingEngrams(Engrams)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -108,7 +100,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Difficulty As BeaconConfigs.Difficulty) As Beacon.LootSource
+		Shared Function ImportFromConfig(Dict As Dictionary, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Beacon.LootSource
 		  Var ClassString As String
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")
@@ -122,7 +114,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
 		    Var MutableSource As New Beacon.CustomLootContainer(ClassString)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    MutableSource.Availability = Beacon.Maps.All.Mask
+		    MutableSource.Availability = Beacon.Maps.UniversalMask
 		    MutableSource.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 999).IntegerValue
 		    MutableSource.Label = Dict.Lookup("Label", ClassString).StringValue
@@ -132,13 +124,13 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		    LootSource = MutableSource
 		  End If
 		  
-		  Var Children() As Variant
+		  Var Children() As Dictionary
 		  If Dict.HasKey("ItemSets") Then
-		    Children = Dict.Value("ItemSets")
+		    Children = Dict.Value("ItemSets").DictionaryArrayValue
 		  End If
 		  Var AddedHashes As New Dictionary
 		  For Each Child As Dictionary In Children
-		    Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, Difficulty)
+		    Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, Difficulty, Mods)
 		    Var Hash As String = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
 		      Call LootSource.ItemSets.Append(Set)
@@ -167,17 +159,6 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag Method, Flags = &h0
 		Function IsOfficial() As Boolean
 		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    If Not Set.IsValid(Document) Then
-		      Return False
-		    End If
-		  Next
-		  Return Self.mItemSets.Count > 0
 		End Function
 	#tag EndMethod
 
@@ -217,8 +198,8 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag Method, Flags = &h0
 		Function MandatoryItemSets() As Beacon.ItemSet()
 		  Var Arr() As Beacon.ItemSet
-		  Arr.ResizeTo(Self.mMandatoryItemSets.LastRowIndex)
-		  For I As Integer = 0 To Self.mMandatoryItemSets.LastRowIndex
+		  Arr.ResizeTo(Self.mMandatoryItemSets.LastIndex)
+		  For I As Integer = 0 To Self.mMandatoryItemSets.LastIndex
 		    Arr(I) = New Beacon.ItemSet(Self.mMandatoryItemSets(I))
 		  Next
 		  Return Arr
@@ -231,7 +212,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Var AllowedMaps() As Beacon.Map
 		  For Each Map As Beacon.Map In AllMaps
 		    If Self.ValidForMap(Map) Then
-		      AllowedMaps.AddRow(Map)
+		      AllowedMaps.Add(Map)
 		    End If
 		  Next
 		  Return AllowedMaps

@@ -7,15 +7,15 @@ Protected Module Preferences
 		  End If
 		  
 		  Var Recents() As Beacon.DocumentURL = RecentDocuments
-		  For I As Integer = Recents.LastRowIndex DownTo 0
+		  For I As Integer = Recents.LastIndex DownTo 0
 		    If Recents(I) = URL Then
-		      Recents.RemoveRowAt(I)
+		      Recents.RemoveAt(I)
 		    End If
 		  Next
-		  Recents.AddRowAt(0, URL)
+		  Recents.AddAt(0, URL)
 		  
-		  While Recents.LastRowIndex > 19
-		    Recents.RemoveRowAt(20)
+		  While Recents.LastIndex > 19
+		    Recents.RemoveAt(20)
 		  Wend
 		  
 		  RecentDocuments = Recents
@@ -35,8 +35,6 @@ Protected Module Preferences
 		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  If Dict.HasKey(DocumentID) Then
 		    Return Dict.Value(DocumentID)
-		  Else
-		    Return BeaconConfigs.LootDrops.ConfigName
 		  End If
 		End Function
 	#tag EndMethod
@@ -49,7 +47,35 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub ListSortColumn(Key As String, Assigns Idx As Integer)
+		  Init
+		  mManager.IntegerValue(Key + " Sort Column") = Idx
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ListSortColumn(Key As String, Default As Integer) As Integer
+		  Init
+		  Return mManager.IntegerValue(Key + " Sort Column", Default)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub ListSortDirection(Key As String, Assigns Direction As Listbox.SortDirections)
+		  Init
+		  mManager.IntegerValue(Key + " Sort Direction") = CType(Direction, Integer)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ListSortDirection(Key As String, Default As Listbox.SortDirections) As Listbox.SortDirections
+		  Init
+		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), Listbox.SortDirections)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub LoadWindowPosition(Extends Win As Window)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
@@ -107,7 +133,7 @@ Protected Module Preferences
 		        Var Objects() As Variant = Temp
 		        For Each Element As Variant In Objects
 		          Try
-		            StoredData.AddRow(Element.StringValue)
+		            StoredData.Add(Element.StringValue)
 		          Catch Err As RuntimeException
 		            Continue
 		          End Try
@@ -115,7 +141,7 @@ Protected Module Preferences
 		      End Select
 		    Else
 		      Try
-		        StoredData.AddRow(Temp.StringValue)
+		        StoredData.Add(Temp.StringValue)
 		      Catch Err As RuntimeException
 		      End Try
 		    End If
@@ -124,7 +150,7 @@ Protected Module Preferences
 		  Var Values() As Beacon.DocumentURL
 		  For Each Value As String In StoredData
 		    Try
-		      Values.AddRow(New Beacon.DocumentURL(Value))
+		      Values.Add(New Beacon.DocumentURL(Value))
 		    Catch Err As RuntimeException
 		      
 		    End Try
@@ -136,9 +162,9 @@ Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
 		  Var URLs() As String
-		  URLs.ResizeTo(Values.LastRowIndex)
-		  For I As Integer = 0 To Values.LastRowIndex
-		    URLs(I) = Values(I).URL
+		  URLs.ResizeTo(Values.LastIndex)
+		  For I As Integer = 0 To Values.LastIndex
+		    URLs(I) = Values(I).URL(Beacon.DocumentURL.URLTypes.Storage)
 		  Next
 		  
 		  Init
@@ -147,7 +173,7 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub SaveWindowPosition(Extends Win As Window)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  
@@ -219,11 +245,11 @@ Protected Module Preferences
 		Protected BreedingTunerCreatures As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Crafting Costs Splitter Position", 250)
+			  Return mManager.IntegerValue("Crafting Costs Splitter Position", CraftingCostsConfigEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -283,7 +309,7 @@ Protected Module Preferences
 		Protected DeployRunAdvisor As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -315,27 +341,11 @@ Protected Module Preferences
 		Protected HasShownExperimentalWarning As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.BooleanValue("Has Shown Subscribe Dialog", False)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.BooleanValue("Has Shown Subscribe Dialog") = Value
-			End Set
-		#tag EndSetter
-		Protected HasShownSubscribeDialog As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Item Sets Splitter Position", 250)
+			  Return mManager.IntegerValue("Item Sets Splitter Position", LootSourceEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -351,13 +361,13 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Last Preset Map Filter", Beacon.Maps.All.Mask)
+			  Return mManager.VariantValue("Last Preset Map Filter", Beacon.Maps.UniversalMask)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Init
-			  mManager.IntegerValue("Last Preset Map Filter") = Value
+			  mManager.VariantValue("Last Preset Map Filter") = Value
 			End Set
 		#tag EndSetter
 		Protected LastPresetMapFilter As UInt64
@@ -379,7 +389,7 @@ Protected Module Preferences
 		Protected LastStopMessage As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -395,7 +405,7 @@ Protected Module Preferences
 		Protected LastUsedScreenSize As Size
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -414,6 +424,26 @@ Protected Module Preferences
 	#tag Property, Flags = &h21
 		Private mManager As PreferencesManager
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Var HasLaunchedBefore As Boolean = mManager.BooleanValue("Has Shown Subscribe Dialog", False)
+			  Return mManager.IntegerValue("Newest Used Build", If(HasLaunchedBefore, 10408304, 0))
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  // Don't need Init here because NewestUsedBuild will do that
+			  Var OldValue As Integer = NewestUsedBuild
+			  If Value > OldValue Then
+			    mManager.IntegerValue("Newest Used Build") = Value
+			  End If
+			End Set
+		#tag EndSetter
+		Protected NewestUsedBuild As Integer
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
@@ -474,7 +504,7 @@ Protected Module Preferences
 		Protected ShowExperimentalLootSources As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -490,7 +520,7 @@ Protected Module Preferences
 		Protected SimulatorSize As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
@@ -506,11 +536,11 @@ Protected Module Preferences
 		Protected SimulatorVisible As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Sources Splitter Position", 250)
+			  Return mManager.IntegerValue("Sources Splitter Position", LootConfigEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -522,11 +552,11 @@ Protected Module Preferences
 		Protected SourcesSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", 250)
+			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", SpawnPointEditor.LimitsListDefaultHeight)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -538,11 +568,11 @@ Protected Module Preferences
 		Protected SpawnPointEditorLimitsSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", 250)
+			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", SpawnPointEditor.SetsListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -554,11 +584,11 @@ Protected Module Preferences
 		Protected SpawnPointEditorSetsSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Points Splitter Position", 250)
+			  Return mManager.IntegerValue("Spawn Points Splitter Position", SpawnPointsConfigEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter

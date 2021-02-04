@@ -53,7 +53,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -88,7 +88,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Mature Speed Multiplier:"
@@ -131,7 +131,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   16
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -166,7 +166,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Incubation Speed Multiplier:"
@@ -209,7 +209,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -244,7 +244,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Egg Lay Period Multiplier:"
@@ -287,7 +287,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   18
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -322,7 +322,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Baby Food Consumption Multiplier:"
@@ -365,7 +365,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   33
+      TabIndex        =   37
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -400,7 +400,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   21
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Period Multiplier:"
@@ -443,7 +443,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   35
+      TabIndex        =   39
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -478,7 +478,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   25
+      TabIndex        =   27
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Stat Scale Multiplier:"
@@ -521,7 +521,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   36
+      TabIndex        =   40
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -556,7 +556,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   27
+      TabIndex        =   29
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Grace Period Multiplier:"
@@ -599,7 +599,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   37
+      TabIndex        =   41
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -634,7 +634,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   29
+      TabIndex        =   31
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Imprint Loss Speed Multiplier:"
@@ -650,6 +650,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Width           =   231
    End
    Begin BeaconListbox CreaturesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -660,6 +661,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -667,7 +671,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   143
+      Height          =   69
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -680,6 +684,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -687,13 +692,13 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   14
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   False
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   445
+      Top             =   519
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -704,7 +709,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
+   Begin IntervalField ImprintPeriodPreviewField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -731,11 +736,11 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockTop         =   True
       Mask            =   ""
       Password        =   False
-      ReadOnly        =   True
+      ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   34
+      TabIndex        =   38
       TabPanelIndex   =   0
-      TabStop         =   False
+      TabStop         =   True
       Text            =   "1.0"
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -768,10 +773,10 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   23
+      TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   False
-      Text            =   "Imprint Frequency:"
+      Text            =   "Imprint Period:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -803,7 +808,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 matures faster"
@@ -838,7 +843,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 incubates faster"
@@ -873,7 +878,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 produces more eggs"
@@ -908,7 +913,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 eats more often"
@@ -943,7 +948,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   22
+      TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 imprints more frequently"
@@ -978,7 +983,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   26
+      TabIndex        =   28
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 increases imprinting stat bonuses"
@@ -1013,7 +1018,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   28
+      TabIndex        =   30
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 increases time before decay"
@@ -1048,7 +1053,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   30
+      TabIndex        =   32
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 reduces imprint decay"
@@ -1062,41 +1067,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       Visible         =   True
       Width           =   346
-   End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Breeding Multipliers"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   800
    End
    Begin UITweaks.ResizedTextField MatingSpeedField
       AcceptTabs      =   False
@@ -1126,7 +1096,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   19
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -1161,7 +1131,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Mating Speed Multiplier:"
@@ -1204,7 +1174,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   20
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -1239,7 +1209,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Mating Interval Multiplier:"
@@ -1274,7 +1244,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Greater than 1.0 mates faster"
@@ -1309,7 +1279,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   False
       Text            =   "Less than 1.0 mates more often"
@@ -1346,10 +1316,10 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   31
+      TabIndex        =   33
       TabPanelIndex   =   0
       TabStop         =   False
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   381
@@ -1388,10 +1358,10 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   38
+      TabIndex        =   42
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   381
@@ -1424,10 +1394,10 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   32
+      TabIndex        =   34
       TabPanelIndex   =   0
       TabStop         =   False
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   407
@@ -1459,18 +1429,254 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   24
+      TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   False
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   151
       Transparent     =   False
       Underline       =   False
-      Value           =   "(Read Only) The amount of real time between imprint events"
+      Value           =   "The amount of real time between imprint events"
       Visible         =   True
       Width           =   346
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   800
+   End
+   Begin SwitchControl AllowAnyoneBabyImprintCuddleSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   263
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   437
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin SwitchControl DisableImprintDinoBuffSwitch
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   621
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   43
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   437
+      Transparent     =   True
+      Visible         =   True
+      Width           =   40
+   End
+   Begin Label DisableImprintDinoBuffHelp
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   18
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   36
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Text            =   "Turn on to disable stat bonuses on imprinted creatures"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   461
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin UITweaks.ResizedLabel DisableImprintDinoBuffLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   35
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Text            =   "Disable Imprint Buff:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   437
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   231
+   End
+   Begin Label AllowAnyoneBabyImprintCuddleHelp
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   18
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Text            =   "Turn on to allow any player to perform imprint events"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   461
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin UITweaks.ResizedLabel AllowAnyoneBabyImprintCuddleLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   False
+      Text            =   "Anyone Can Imprint:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   437
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   231
    End
 End
 #tag EndWindow
@@ -1478,18 +1684,20 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.mFieldGroups.AddRow(New ControlGroup(MatureSpeedLabel, MatureSpeedField, MatureSpeedHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(IncubationSpeedLabel, IncubationSpeedField, IncubationSpeedHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(EggLayPeriodLabel, EggLayPeriodField, EggLayPeriodHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(FoodConsumptionLabel, FoodConsumptionField, FoodConsumptionHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(MatingSpeedLabel, MatingSpeedField, MatingSpeedHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(MatingIntervalLabel, MatingIntervalField, MatingIntervalHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintPeriodLabel, ImprintPeriodField, ImprintPeriodHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintPeriodPreviewLabel, ImprintPeriodPreviewField, ImprintPeriodPreviewHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintStatScaleLabel, ImprintStatScaleField, ImprintStatScaleHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintGracePeriodLabel, ImprintGracePeriodField, ImprintGracePeriodHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintLossSpeedLabel, ImprintLossSpeedField, ImprintLossSpeedHelp))
-		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintAmountLabel, ImprintAmountField, ImprintAmountHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(MatureSpeedLabel, MatureSpeedField, MatureSpeedHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(IncubationSpeedLabel, IncubationSpeedField, IncubationSpeedHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(EggLayPeriodLabel, EggLayPeriodField, EggLayPeriodHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(FoodConsumptionLabel, FoodConsumptionField, FoodConsumptionHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(MatingSpeedLabel, MatingSpeedField, MatingSpeedHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(MatingIntervalLabel, MatingIntervalField, MatingIntervalHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(ImprintPeriodLabel, ImprintPeriodField, ImprintPeriodHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(ImprintPeriodPreviewLabel, ImprintPeriodPreviewField, ImprintPeriodPreviewHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(ImprintStatScaleLabel, ImprintStatScaleField, ImprintStatScaleHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(ImprintGracePeriodLabel, ImprintGracePeriodField, ImprintGracePeriodHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(ImprintLossSpeedLabel, ImprintLossSpeedField, ImprintLossSpeedHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(ImprintAmountLabel, ImprintAmountField, ImprintAmountHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(AllowAnyoneBabyImprintCuddleLabel, AllowAnyoneBabyImprintCuddleSwitch, AllowAnyoneBabyImprintCuddleHelp))
+		  Self.mFieldGroups.Add(New ControlGroup(DisableImprintDinoBuffLabel, DisableImprintDinoBuffSwitch, DisableImprintDinoBuffHelp))
 		  
 		  Self.PlaceControlGroups()
 		End Sub
@@ -1505,40 +1713,45 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.BreedingMultipliers.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameBreedingMultipliers)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		  Self.EggLayPeriodField.Value = Format(Config.LayEggIntervalMultiplier, "0.0#####")
-		  Self.FoodConsumptionField.Value = Format(Config.BabyFoodConsumptionSpeedMultiplier, "0.0#####")
-		  Self.ImprintGracePeriodField.Value = Format(Config.BabyCuddleGracePeriodMultiplier, "0.0#####")
-		  Self.ImprintLossSpeedField.Value = Format(Config.BabyCuddleLoseImprintQualitySpeedMultiplier, "0.0#####")
-		  Self.ImprintPeriodField.Value = Format(Config.BabyCuddleIntervalMultiplier, "0.0#####")
-		  Self.ImprintStatScaleField.Value = Format(Config.BabyImprintingStatScaleMultiplier, "0.0#####")
-		  Self.ImprintAmountField.Value = Format(Config.BabyImprintAmountMultiplier, "0.0#####")
-		  Self.IncubationSpeedField.Value = Format(Config.EggHatchSpeedMultiplier, "0.0#####")
-		  Self.MatureSpeedField.Value = Format(Config.BabyMatureSpeedMultiplier, "0.0#####")
-		  Self.MatingSpeedField.Value = Format(Config.MatingSpeedMultiplier, "0.0#####")
-		  Self.MatingIntervalField.Value = Format(Config.MatingIntervalMultiplier, "0.0#####")
-		  Self.UpdateStats()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
+		  Self.EggLayPeriodField.Text = Config.LayEggIntervalMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.FoodConsumptionField.Text = Config.BabyFoodConsumptionSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintGracePeriodField.Text = Config.BabyCuddleGracePeriodMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintLossSpeedField.Text = Config.BabyCuddleLoseImprintQualitySpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintPeriodField.Text = Config.BabyCuddleIntervalMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintStatScaleField.Text = Config.BabyImprintingStatScaleMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.ImprintAmountField.Text = Config.BabyImprintAmountMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.IncubationSpeedField.Text = Config.EggHatchSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.MatureSpeedField.Text = Config.BabyMatureSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.MatingSpeedField.Text = Config.MatingSpeedMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.MatingIntervalField.Text = Config.MatingIntervalMultiplier.ToString(Locale.Current, "0.0#####")
 		  
-		  Self.SetupUI
+		  If (Config.AllowAnyoneBabyImprintCuddle Is Nil) = False Then
+		    Self.AllowAnyoneBabyImprintCuddleSwitch.Value(False) = Config.AllowAnyoneBabyImprintCuddle
+		  Else
+		    Self.AllowAnyoneBabyImprintCuddleSwitch.VisualState(False) = Checkbox.VisualStates.Indeterminate
+		  End If
+		  
+		  If (Config.DisableImprintDinoBuff Is Nil) = False Then
+		    Self.DisableImprintDinoBuffSwitch.Value(False) = Config.DisableImprintDinoBuff
+		  Else
+		    Self.DisableImprintDinoBuffSwitch.VisualState(False) = Checkbox.VisualStates.Indeterminate
+		  End If
+		  
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
-		  Static ConfigName As String = BeaconConfigs.BreedingMultipliers.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameBreedingMultipliers
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.BreedingMultipliers
@@ -1563,18 +1776,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.BreedingMultipliers.ConfigName)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ParseDouble(Input As String, ByRef Value As Double) As Boolean
-		  If IsNumeric(Input) Then
-		    Value = CDbl(Input)
-		    Return True
-		  Else
-		    Return False
-		  End If
+		  Return Language.LabelForConfig(BeaconConfigs.NameBreedingMultipliers)
 		End Function
 	#tag EndMethod
 
@@ -1600,12 +1802,12 @@ End
 		  Var Bottom As Integer
 		  For ColumnIdx As Integer = 1 To NumColumns
 		    Var ColumnWidth As Integer = StandardColumnWidth
-		    Var RowTop As Integer = Self.Header.Top + Self.Header.Height + 20
+		    Var RowTop As Integer = Self.ConfigToolbar.Top + Self.ConfigToolbar.Height + 20
 		    If ColumnIdx <= WidthRemainder Then
 		      ColumnWidth = ColumnWidth + 1
 		    End If
 		    For RowIdx As Integer = 1 To RowsPerColumn + If(ColumnIdx <= CompleteColumns, 1, 0)
-		      If GroupIdx > Self.mFieldGroups.LastRowIndex Then
+		      If GroupIdx > Self.mFieldGroups.LastIndex Then
 		        Exit For ColumnIdx
 		      End If
 		      Self.mFieldGroups(GroupIdx).Top = RowTop
@@ -1613,11 +1815,15 @@ End
 		      Bottom = Max(Bottom, Self.mFieldGroups(GroupIdx).Bottom)
 		      
 		      Var GroupLabel As Label = Label(Self.mFieldGroups(GroupIdx).Member(0))
-		      Var GroupField As TextField = TextField(Self.mFieldGroups(GroupIdx).Member(1))
+		      Var GroupField As RectControl = Self.mFieldGroups(GroupIdx).Member(1)
 		      Var GroupHelp As Label = Label(Self.mFieldGroups(GroupIdx).Member(2))
 		      GroupLabel.Width = ColumnWidth - 112
 		      GroupField.Left = GroupLabel.Left + GroupLabel.Width + 12
-		      GroupField.Width = 100
+		      If GroupField IsA TextField Then
+		        GroupField.Width = 100
+		      ElseIf GroupField IsA SwitchControl Then
+		        GroupField.Width = 40
+		      End If
 		      GroupHelp.Width = ColumnWidth
 		      
 		      RowTop = RowTop + Self.mFieldGroups(GroupIdx).Height + 12
@@ -1666,12 +1872,12 @@ End
 		        PerCuddle = Min((1 / MaxCuddles) * ImprintAmountMultiplier, 1.0)
 		        
 		        // Thanks to BabyImprintAmountMultiplier, the number of cuddles may be reduced, so we need to recompute
-		        MaxCuddles = Ceil(1.0 / PerCuddle)
+		        MaxCuddles = Ceiling(1.0 / PerCuddle)
 		      End If
 		    End If
 		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", PerCuddle.ToString(Locale.Current, ",##0%")), If(PerCuddle = 0, "", MaxImprint.ToString(Locale.Current, ",##0%")))
 		    Var Idx As Integer = CreaturesList.LastAddedRowIndex
 		    CreaturesList.CellTagAt(Idx, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(Idx, Self.ColumnMatureTime) = MatureSeconds
@@ -1687,7 +1893,9 @@ End
 		  CreaturesList.ScrollPosition = Position
 		  CreaturesList.Sort
 		  
-		  Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(CuddlePeriod)
+		  If Self.Focus <> Self.ImprintPeriodPreviewField Then
+		    Self.ImprintPeriodPreviewField.Text = Beacon.SecondsToString(CuddlePeriod)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1733,7 +1941,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1753,7 +1961,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1773,7 +1981,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1792,7 +2000,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1811,7 +2019,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1831,7 +2039,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1850,7 +2058,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1869,7 +2077,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1911,32 +2119,28 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
+#tag Events ImprintPeriodPreviewField
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AutoTuneButton"
-		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
-		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
-		    If Interval > 0 Then
-		      Self.ImprintPeriodField.Value = Interval.PrettyText
-		      Self.UpdateStats
-		    End If
-		  Case "ShareLinkButton"
-		    Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		    Var Format As String = "0.0#######"
-		    Var MatureSpeedMultiplier As String = Config.BabyMatureSpeedMultiplier.ToString(Format)
-		    Var IncubationSpeedMultiplier As String = Config.EggHatchSpeedMultiplier.ToString(Format)
-		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
-		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
-		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("ShareLinkButton", IconToolbarLink, "Generates a link so you can share this breeding chart."))
+		Sub TextChange()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Var Interval As DateInterval = Beacon.ParseInterval(Me.Text)
+		  If Interval Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Multiplier As Double = Interval.TotalSeconds / LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).BabyCuddleIntervalMultiplier = Multiplier
+		  If Self.Focus <> Self.ImprintPeriodField Then
+		    Self.ImprintPeriodField.Text = Multiplier.ToString(Locale.Current, "0.0#####")
+		  End If
+		  Self.Changed = True
+		  Self.SettingUp = False
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1948,7 +2152,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1967,7 +2171,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1987,7 +2191,7 @@ End
 		  End If
 		  
 		  Var Value As Double
-		  If Not Self.ParseDouble(Me.Value, Value) Then
+		  If Not Self.ParseDouble(Me.Text, Value) Then
 		    Return
 		  End If
 		  
@@ -1999,13 +2203,98 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AutoTuneButton", "Auto Imprint", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
+		  Me.Append(OmniBarItem.CreateButton("ShareLinkButton", "Share", IconToolbarLink, "Generates a link so you can share this breeding chart."))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AutoTuneButton"
+		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
+		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
+		    If Interval > 0 Then
+		      Self.ImprintPeriodField.Text = Interval.PrettyText
+		      Self.UpdateStats
+		    End If
+		  Case "ShareLinkButton"
+		    Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
+		    Var Format As String = "0.0#######"
+		    Var MatureSpeedMultiplier As String = Config.BabyMatureSpeedMultiplier.ToString(Format)
+		    Var IncubationSpeedMultiplier As String = Config.EggHatchSpeedMultiplier.ToString(Format)
+		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
+		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
+		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AllowAnyoneBabyImprintCuddleSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).AllowAnyoneBabyImprintCuddle = Me.Value
+		  Self.Changed = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DisableImprintDinoBuffSwitch
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).DisableImprintDinoBuff = Me.Value
+		  Self.Changed = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -2073,14 +2362,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -2095,14 +2376,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

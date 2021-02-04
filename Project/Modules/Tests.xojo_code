@@ -37,10 +37,9 @@ Protected Module Tests
 		    TestNamingThings()
 		    TestConfigKeys()
 		    TestNumberFormatting()
-		    #if Beacon.MOTDEditingEnabled
-		      TestArkML()
-		    #endif
+		    TestArkML()
 		    TestFilenames()
+		    TestIntervalParsing()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -49,8 +48,8 @@ Protected Module Tests
 		Private Sub TestArkML()
 		  Var InputString As String = "This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like 'discord.gg/invite' that\nneed to be encoded."
 		  
-		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
-		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
+		  Var ArkML As Beacon.ArkML = Beacon.ArkML.FromArkML(InputString)
+		  Var ArkMLString As String = ArkML.ArkMLValue()
 		  
 		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated. Input: `" + InputString + "` Output: `" + ArkMLString + "`")
 		End Sub
@@ -58,9 +57,11 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestBlueprintSerialization()
-		  TestBlueprintSerialization(Beacon.Data.GetEngramByClass("PrimalItemArmor_RockDrakeSaddle_C"))
-		  TestBlueprintSerialization(Beacon.Data.GetCreatureByClass("Spindles_Character_BP_C"))
-		  TestBlueprintSerialization(Beacon.Data.GetSpawnPointByClass("DinoSpawnEntries_DarkWater_Mosa_Caves_C"))
+		  // Use object ids here just in case
+		  
+		  TestBlueprintSerialization(Beacon.Data.GetEngramByID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
+		  TestBlueprintSerialization(Beacon.Data.GetCreatureByID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
+		  TestBlueprintSerialization(Beacon.Data.GetSpawnPointByID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
 		End Sub
 	#tag EndMethod
 
@@ -70,17 +71,32 @@ Protected Module Tests
 		    Return
 		  End If
 		  
-		  Var Serialized As Dictionary = SourceBlueprint.ToDictionary
+		  Var Serialized As Dictionary = Beacon.PackBlueprint(SourceBlueprint)
 		  If Not Assert(Serialized <> Nil, "Unable to produce serialized blueprint") Then
 		    Return
 		  End If
 		  
-		  Var Unserialized As Beacon.Blueprint = Beacon.BlueprintFromDictionary(Serialized)
+		  Var Unserialized As Beacon.Blueprint = Beacon.UnpackBlueprint(Serialized)
 		  If Not Assert(Unserialized <> Nil, "Unable to unserialize blueprint") Then
 		    Return
 		  End If
 		  
-		  Call Assert(SourceBlueprint.Hash = Unserialized.Hash, "Source blueprint and unserialized blueprint hashes do not match")
+		  Var SourceHash As String = SourceBlueprint.Hash
+		  Var UnserializedHash As String = Unserialized.Hash
+		  
+		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
+		    Break
+		  End If
+		  
+		  // Also test unserializing from json
+		  Var JSON As String = Beacon.GenerateJSON(Serialized, False)
+		  Serialized = Beacon.ParseJSON(JSON)
+		  Unserialized = Beacon.UnpackBlueprint(Serialized)
+		  UnserializedHash = Unserialized.Hash
+		  
+		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
+		    Break
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -91,10 +107,10 @@ Protected Module Tests
 		  Var AllConfigKeys() As Beacon.ConfigKey = LocalData.SearchForConfigKey("", "", "")
 		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
 		  
-		  Var SpecificConfigKey As Beacon.ConfigKey = LocalData.GetConfigKey("GameUserSettings.ini", "ServerSettings", "DayTimeSpeedScale")
+		  Var SpecificConfigKey As Beacon.ConfigKey = LocalData.GetConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "DayTimeSpeedScale")
 		  Call Assert((SpecificConfigKey Is Nil) = False, "Could not find DayTimeSpeedScale key.")
 		  
-		  Var SpeedScales() As Beacon.ConfigKey = LocalData.SearchForConfigKey("GameUserSettings.ini", "ServerSettings", "*SpeedScale")
+		  Var SpeedScales() As Beacon.ConfigKey = LocalData.SearchForConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "*SpeedScale")
 		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
 		End Sub
 	#tag EndMethod
@@ -192,9 +208,43 @@ Protected Module Tests
 		  Var SanitizedAndShort As String = Beacon.SanitizeFilename(Filename, 20)
 		  Var SanitizedAndVeryShort As String = Beacon.SanitizeFilename(Filename, 11)
 		  
-		  Call Assert(Sanitized = "Frog Blast- The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
+		  Call Assert(Sanitized = "Frog Blast The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
 		  Call Assert(SanitizedAndShort = "Frog…Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 20 characters correctly. Expected `Frog…Core.extension`, got `" + SanitizedAndShort + "`.")
 		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestIntervalParsing()
+		  Var Interval As DateInterval
+		  
+		  Interval = Beacon.ParseInterval("2d3h4m5s")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `2d3h4m5s`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 183845, "Failed to parse interval `2d3h4m5s` into 183845, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("4m")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4m`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4m` into 240, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("4 minutes")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4 minutes`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4 minutes` into 240, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("4 minutes 6 seconds")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4 minutes 6 seconds`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 246, "Failed to parse interval `4 minutes 6 seconds` into 246, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("6.5 seconds")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `6.5 seconds`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 6.5, "Failed to parse interval `6.5 seconds` into 6.5, got " + Interval.TotalSeconds.ToString(Locale.Raw, "0.0") + ".")
+		  End If
+		  
+		  Var TimeString As String = Beacon.SecondsToString(6.45)
+		  Call Assert(TimeString = "6.45s", "Failed to generate fractional time string: expected `6.45s`, got `" + TimeString + "`.")
 		End Sub
 	#tag EndMethod
 
@@ -263,21 +313,21 @@ Protected Module Tests
 	#tag Method, Flags = &h21
 		Private Sub TestNamingThings()
 		  Var Siblings() As String
-		  Siblings.AddRow("New Item Set")
+		  Siblings.Add("New Item Set")
 		  
 		  // This is a test for proper incrementing
 		  Var Label As String = Beacon.FindUniqueLabel("New Item Set", Siblings)
 		  If Not Assert(Label = "New Item Set 2", "Name not unique, expected ""New Item Set 2"" but got """ + Label + """") Then
 		    Return
 		  End If
-		  Siblings.AddRow(Label)
+		  Siblings.Add(Label)
 		  
 		  // This test confirms the incrementing is sequential and will not return 2 again
 		  Label = Beacon.FindUniqueLabel("New Item Set", Siblings)
 		  If Not Assert(Label = "New Item Set 3", "Name not unique, expected ""New Item Set 3"" but got """ + Label + """") Then
 		    Return
 		  End If
-		  Siblings.AddRow(Label)
+		  Siblings.Add(Label)
 		  
 		  // This test confirms the sequence continues even if the desired label already has a trailing number
 		  Label = Beacon.FindUniqueLabel("New Item Set 3", Siblings)
@@ -339,27 +389,27 @@ Protected Module Tests
 		  ObjectData.Value("Path") = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
 		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
 		  
-		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path")
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "")
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "", "Class", "")
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Engram = Beacon.ResolveEngram(ObjectData, "", "", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "", "", "Path")
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Engram = Beacon.ResolveEngram(ObjectData, "", "Path", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  // Now use faulty data and see how it resolves
 		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
 		  ObjectData.Value("ObjectID") = BadEngramID
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path")
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "")
-		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID.StringValue)
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
+		  Call Assert(Engram <> Nil And Engram.ObjectID = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID)
 		End Sub
 	#tag EndMethod
 
@@ -392,13 +442,13 @@ Protected Module Tests
 		    Var ExtremeQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMin, Source.Multipliers.Min, ExtremeDifficulty)
 		    Var ExtremeQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMax, Source.Multipliers.Max, ExtremeDifficulty)
 		    
-		    Const Formatter = "-0.0000"
-		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + Str(StandardQualityMin.BaseValue, Formatter) + ") for difficulty 5")
-		    Call Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMax) + "(" + Str(StandardQualityMax.BaseValue, Formatter) + ") for difficulty 5")
-		    Call Assert(HighQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMin) + "(" + Str(HighQualityMax.BaseValue, Formatter) + ") for difficulty 15")
-		    Call Assert(HighQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMax) + "(" + Str(HighQualityMax.BaseValue, Formatter) + ") for difficulty 15")
-		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
-		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
+		    Const Formatter = "0.0000"
+		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + StandardQualityMin.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
+		    Call Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMax) + "(" + StandardQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
+		    Call Assert(HighQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMin) + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
+		    Call Assert(HighQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMax) + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
+		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
+		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		  #endif
 		End Sub
 	#tag EndMethod

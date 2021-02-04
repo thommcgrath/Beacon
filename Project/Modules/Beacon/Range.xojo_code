@@ -32,7 +32,11 @@ Protected Class Range
 
 	#tag Method, Flags = &h0
 		Function Fit(Value As Double) As Double
-		  Return REALbasic.Max(REALbasic.Min(Value, Self.mMax), Self.mMin)
+		  #if XojoVersion >= 2020.02
+		    Return Xojo.Max(Xojo.Min(Value, Self.mMax), Self.mMin)
+		  #else
+		    Return REALbasic.Max(REALbasic.Min(Value, Self.mMax), Self.mMin)
+		  #endif
 		End Function
 	#tag EndMethod
 

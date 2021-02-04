@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Frame As AnimationKit.Frame)
 		  Self.VerifyFrame(Frame)
-		  Self.Frames.AddRow(Frame)
+		  Self.Frames.Add(Frame)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -12,7 +12,7 @@ Implements Iterable
 	#tag Method, Flags = &h21
 		Private Sub CheckCurrentFrames()
 		  Var FirstFrame As AnimationKit.Frame
-		  For I As Integer = 0 To Self.Frames.LastRowIndex
+		  For I As Integer = 0 To Self.Frames.LastIndex
 		    If Self.Frames(I) <> Nil Then
 		      FirstFrame = Self.Frames(I)
 		      Exit For I
@@ -37,7 +37,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.Frames.LastRowIndex + 1
+		  Return Self.Frames.LastIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -50,8 +50,8 @@ Implements Iterable
 		  End If
 		  
 		  Var Set As New AnimationKit.FrameSet()
-		  Set.ResizeTo(StandardCells.LastRowIndex)
-		  For I As Integer = 0 To StandardCells.LastRowIndex
+		  Set.ResizeTo(StandardCells.LastIndex)
+		  For I As Integer = 0 To StandardCells.LastIndex
 		    If RetinaSprites <> Nil Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
 		    Else
@@ -71,8 +71,8 @@ Implements Iterable
 		  End If
 		  
 		  Var Set As New AnimationKit.FrameSet()
-		  Set.ResizeTo(StandardCells.LastRowIndex)
-		  For I As Integer = 0 To StandardCells.LastRowIndex
+		  Set.ResizeTo(StandardCells.LastIndex)
+		  For I As Integer = 0 To StandardCells.LastIndex
 		    If RetinaSprites <> Nil Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
 		    Else
@@ -107,7 +107,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Frame As AnimationKit.Frame) As Integer
-		  For I As Integer = 0 To Self.Frames.LastRowIndex
+		  For I As Integer = 0 To Self.Frames.LastIndex
 		    If Self.Frames(I) = Frame Then
 		      Return I
 		    End If
@@ -119,7 +119,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Frame As AnimationKit.Frame)
 		  Self.VerifyFrame(Frame)
-		  Self.Frames.AddRowAt(Index, Frame)
+		  Self.Frames.AddAt(Index, Frame)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -135,14 +135,14 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function LastFrame() As AnimationKit.Frame
 		  If Self.Count > 0 Then
-		    Return Self.Frames(Self.Frames.LastRowIndex)
+		    Return Self.Frames(Self.Frames.LastIndex)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.Frames.LastRowIndex
+		  Return Self.Frames.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -167,7 +167,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.Frames.RemoveRowAt(Index)
+		  Self.Frames.RemoveAt(Index)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -182,8 +182,8 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function Reverse() As AnimationKit.FrameSet
 		  Var Set As New AnimationKit.FrameSet
-		  For I As Integer = Self.Frames.LastRowIndex DownTo 0
-		    Set.Frames.AddRow(Self.Frames(I))
+		  For I As Integer = Self.Frames.LastIndex DownTo 0
+		    Set.Frames.Add(Self.Frames(I))
 		  Next
 		  Set.CheckCurrentFrames()
 		  Return Set
@@ -203,7 +203,7 @@ Implements Iterable
 		    For Column As Integer = 0 To Columns - 1
 		      Var Sprite As New iOSBitmap(Width, Height, Sprites.Scale)
 		      Sprite.Graphics.DrawImage(Sprites, (Row * Column) * -1, (Column * Height) * -1)
-		      Cells.AddRow(Sprite.Image)
+		      Cells.Add(Sprite.Image)
 		    Next
 		  Next
 		  Return Cells
@@ -223,7 +223,7 @@ Implements Iterable
 		    For Column As Integer = 0 To Columns - 1
 		      Var Sprite As New Picture(Width, Height)
 		      Sprite.Graphics.DrawPicture(Sprites, (Row * Column) * -1, (Column * Height) * -1)
-		      Cells.AddRow(Sprite)
+		      Cells.Add(Sprite)
 		    Next
 		  Next
 		  Return Cells

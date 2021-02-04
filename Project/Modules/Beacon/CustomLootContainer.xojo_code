@@ -64,7 +64,7 @@ Implements Beacon.MutableLootSource
 		  End If
 		  
 		  Try
-		    Self.Availability = SaveData.Lookup("Availability", Beacon.Maps.All.Mask).UInt64Value
+		    Self.Availability = SaveData.Lookup("Availability", Beacon.Maps.UniversalMask).UInt64Value
 		  Catch Err As RuntimeException
 		  End Try
 		  
@@ -110,8 +110,8 @@ Implements Beacon.MutableLootSource
 
 	#tag Method, Flags = &h0
 		Sub MandatoryItemSets(Assigns Sets() As Beacon.ItemSet)
-		  Self.mMandatoryItemSets.ResizeTo(Sets.LastRowIndex)
-		  For I As Integer = 0 To Sets.LastRowIndex
+		  Self.mMandatoryItemSets.ResizeTo(Sets.LastIndex)
+		  For I As Integer = 0 To Sets.LastIndex
 		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(Sets(I))
 		  Next
 		End Sub
@@ -170,14 +170,6 @@ Implements Beacon.MutableLootSource
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="AppendMode"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -194,43 +186,11 @@ Implements Beacon.MutableLootSource
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MaxItemSets"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinItemSets"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="NumItemSetsPower"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SetsRandomWithoutReplacement"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

@@ -25,7 +25,7 @@ Begin ContainerControl MapSelectionGrid
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
-   Begin BeaconUI.MapCheckBox Boxes
+   Begin MapCheckBox Boxes
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Untitled"
@@ -70,11 +70,11 @@ End
 		  Var OfficialMasks(), OtherMasks() As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    If Map.Official Then
-		      OfficialMaps.AddRow(Map)
-		      OfficialMasks.AddRow(Map.Mask)
+		      OfficialMaps.Add(Map)
+		      OfficialMasks.Add(Map.Mask)
 		    Else
-		      OtherMaps.AddRow(Map)
-		      OtherMasks.AddRow(Map.Mask)
+		      OtherMaps.Add(Map)
+		      OtherMasks.Add(Map.Mask)
 		    End If
 		  Next
 		  
@@ -95,7 +95,7 @@ End
 		    Box.Top = OfficialNextTop
 		    Box.Left = OfficialLeft
 		    OfficialNextTop = OfficialNextTop + Box.Height + 12
-		    Self.mBoxes.AddRow(Box)
+		    Self.mBoxes.Add(Box)
 		  Next
 		  For Each Map As Beacon.Map In OtherMaps
 		    Var Box As New Boxes
@@ -104,11 +104,14 @@ End
 		    Box.Top = OtherNextTop
 		    Box.Left = OtherLeft
 		    OtherNextTop = OtherNextTop + Box.Height + 12
-		    Self.mBoxes.AddRow(Box)
+		    Self.mBoxes.Add(Box)
 		  Next
 		  
-		  Self.Height = (OfficialMaps.LastRowIndex + 1) * 32
-		  Self.Width = 304
+		  Self.mDesiredHeight = (OfficialMaps.LastIndex + 1) * 32
+		  Self.mDesiredWidth = 304
+		  
+		  Self.Height = Self.mDesiredHeight
+		  Self.Width = Self.mDesiredWidth
 		  
 		  RaiseEvent Open
 		  Self.mSettingUp = False
@@ -119,7 +122,7 @@ End
 	#tag Method, Flags = &h0
 		Function CheckedMask() As UInt64
 		  Var Combined As UInt64
-		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		  For Each Box As MapCheckBox In Self.mBoxes
 		    If Box.VisualState = CheckBox.VisualStates.Checked Then
 		      Combined = Combined Or Box.Mask
 		    End If
@@ -132,15 +135,15 @@ End
 		Sub SetWithMasks(Masks() As UInt64)
 		  Var Dict As New Dictionary
 		  For Each Mask As UInt64 In Masks
-		    For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		    For Each Box As MapCheckBox In Self.mBoxes
 		      If (Mask And Box.Mask) = Box.Mask Then
 		        Dict.Value(Box.Mask) = Dict.Lookup(Box.Mask, 0) + 1
 		      End If
 		    Next
 		  Next
 		  
-		  Var MaskCount As Integer = Masks.LastRowIndex + 1
-		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		  Var MaskCount As Integer = Masks.LastIndex + 1
+		  For Each Box As MapCheckBox In Self.mBoxes
 		    Var Count As Integer = Dict.Lookup(Box.Mask, 0)
 		    If Count = 0 Then
 		      Box.VisualState = Checkbox.VisualStates.Unchecked
@@ -156,7 +159,7 @@ End
 	#tag Method, Flags = &h0
 		Function UncheckedMask() As UInt64
 		  Var Combined As UInt64
-		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		  For Each Box As MapCheckBox In Self.mBoxes
 		    If Box.VisualState = CheckBox.VisualStates.Unchecked Then
 		      Combined = Combined Or Box.Mask
 		    End If
@@ -178,8 +181,26 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mDesiredHeight
+			End Get
+		#tag EndGetter
+		DesiredHeight As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDesiredWidth
+			End Get
+		#tag EndGetter
+		DesiredWidth As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Var Combined As UInt64
-			  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+			  For Each Box As MapCheckBox In Self.mBoxes
 			    If Box.Value Then
 			      Combined = Combined Or Box.Mask
 			    End If
@@ -194,7 +215,7 @@ End
 			  End If
 			  
 			  Self.mSettingUp = True
-			  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+			  For Each Box As MapCheckBox In Self.mBoxes
 			    Box.Value = (Value And Box.Mask) = Box.Mask
 			  Next
 			  Self.mSettingUp = False
@@ -205,7 +226,15 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBoxes() As BeaconUI.MapCheckBox
+		Private mBoxes() As MapCheckBox
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredWidth As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -220,6 +249,18 @@ End
 		Sub Action(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
+		  End If
+		  
+		  If (TargetMacOS And Keyboard.CommandKey) Or (TargetWindows And Keyboard.ControlKey) Then
+		    Self.mSettingUp = True
+		    For Each Box As MapCheckBox In Self.mBoxes
+		      If Box = Me Then
+		        Continue
+		      End If
+		      
+		      Box.Value = Me.Value
+		    Next
+		    Self.mSettingUp = False
 		  End If
 		  
 		  RaiseEvent Changed
@@ -449,6 +490,22 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="UInt64"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DesiredWidth"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DesiredHeight"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

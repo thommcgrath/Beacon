@@ -32,6 +32,7 @@ Begin Window ExceptionWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   64
@@ -45,6 +46,8 @@ Begin Window ExceptionWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -162,6 +165,7 @@ Begin Window ExceptionWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -175,6 +179,8 @@ Begin Window ExceptionWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -190,6 +196,7 @@ Begin Window ExceptionWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   236
@@ -203,6 +210,8 @@ Begin Window ExceptionWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -218,6 +227,7 @@ Begin Window ExceptionWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -231,6 +241,8 @@ Begin Window ExceptionWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -246,6 +258,7 @@ Begin Window ExceptionWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   236
@@ -259,6 +272,8 @@ Begin Window ExceptionWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -282,7 +297,7 @@ Begin Window ExceptionWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   5
       Panels          =   ""
       Scope           =   2
       TabIndex        =   8
@@ -589,6 +604,126 @@ Begin Window ExceptionWindow
          Visible         =   True
          Width           =   121
       End
+      Begin Label CommentsAnonLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   125
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "These comments are anonymous."
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   299
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   434
+      End
+      Begin TextArea CommentsArea
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   True
+         AllowStyledText =   True
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         Height          =   132
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   125
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Multiline       =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   155
+         Transparent     =   False
+         Underline       =   False
+         UnicodeMode     =   1
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   434
+      End
+      Begin Label CommentsMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   125
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Please include anything that would help find the problem."
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   123
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   434
+      End
    End
    Begin Label ErrorIDLabel
       AutoDeactivate  =   True
@@ -632,20 +767,27 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BeginChecking()
 		  Self.Pages.SelectedPanelIndex = Self.PageStart
-		  Self.Report(Self.mExceptionFields, AddressOf Reporter_Callback)
+		  
+		  Var Body As New Dictionary
+		  Body.Value("lookup") = "True"
+		  Body.Value("trace") = Self.mExceptionFields.Value("trace")
+		  Body.Value("type") = Self.mExceptionFields.Value("type")
+		  Body.Value("hash") = Self.mExceptionFields.Value("hash")
+		  
+		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem"), Body, AddressOf Reporter_Callback, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildPostFields(Err As RuntimeException) As Dictionary
+		Private Shared Function BuildPostFields(Err As RuntimeException, Comments As String) As Dictionary
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Stack() As StackFrame = Err.StackFrames
-		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		    Stack.RemoveRowAt(0)
+		  While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		    Stack.RemoveAt(0)
 		  Wend
 		  
 		  Var Location As String = "Unknown"
-		  If Stack.LastRowIndex >= 0 Then
+		  If Stack.LastIndex >= 0 Then
 		    Location = Stack(0).Name
 		  End If
 		  Var Reason As String = Err.Reason
@@ -657,18 +799,20 @@ End
 		  
 		  Var Lines() As String
 		  For Each Frame As StackFrame In Stack
-		    Lines.AddRow(Frame.Name)
+		    Lines.Add(Frame.Name)
 		  Next
 		  
 		  Var Fields As New Dictionary
 		  Fields.Value("build") = App.BuildNumber.ToString
-		  Fields.Value("trace") = Lines.Join(Encodings.UTF8.Chr(10))
+		  Fields.Value("trace") = Lines.Join(EndOfLine.UNIX)
 		  Fields.Value("hash") = EncodeHex(Crypto.SHA1(Fields.Value("trace").StringValue)).Lowercase
 		  Fields.Value("type") = Info.FullName
 		  Fields.Value("reason") = Reason
 		  Fields.Value("location") = Location
+		  Fields.Value("comments") = Comments.Trim.ReplaceLineEndings(EndOfLine.UNIX)
+		  Fields.Value("time") = DateTime.Now.SQLDateTimeWithOffset
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
-		    Fields.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    Fields.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		  End If
 		  
 		  Return Fields
@@ -677,8 +821,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Err As RuntimeException)
-		  Self.mExceptionFields = Self.BuildPostFields(Err)
+		  Self.mExceptionFields = Self.BuildPostFields(Err, "")
 		  Self.mExceptionHash = Self.mExceptionFields.Value("hash")
+		  
+		  Var WriteFile As Boolean = True
+		  Try
+		    Var ErrorsFolder As FolderItem = App.ExceptionsFolder(False)
+		    If (ErrorsFolder Is Nil) = False And ErrorsFolder.Exists Then
+		      Var Filename As String = Self.mExceptionFields.Value("hash").StringValue + ".beaconerror"
+		      Var ErrorFile As FolderItem = ErrorsFolder.Child(Filename)
+		      Var Fields As Dictionary = Beacon.ParseJSON(ErrorFile.Read)
+		      Var Comments As String = Fields.Value("comments").StringValue
+		      Self.mPreviousComments = Comments.ReplaceLineEndings(EndOfLine)
+		      WriteFile = False
+		    End If
+		  Catch ReadErr As RuntimeException
+		  End Try
+		  
+		  If WriteFile Then
+		    Call Self.SaveReport(Self.mExceptionFields)
+		  End If
 		  
 		  Super.Constructor
 		End Sub
@@ -691,20 +853,10 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Sub Report(Fields As Dictionary, Handler As SimpleHTTP.ResponseCallback)
-		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem"), Fields, Handler, Nil)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Shared Sub Report(Err As RuntimeException)
-		  If Preferences.OnlineEnabled = False Then
-		    Return
-		  End If
-		  
-		  Var Fields As Dictionary = BuildPostFields(Err)
-		  Report(Fields, Nil)
+		Shared Sub Report(Err As RuntimeException, Comments As String = "")
+		  Var Fields As Dictionary = BuildPostFields(Err, Comments)
+		  Call SaveReport(Fields)
 		End Sub
 	#tag EndMethod
 
@@ -734,6 +886,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function SaveReport(Fields As Dictionary) As Boolean
+		  Try
+		    Var ErrorsFolder As FolderItem = App.ExceptionsFolder(True)
+		    If ErrorsFolder Is Nil Or ErrorsFolder.Exists = False Then
+		      Return False
+		    End If
+		    
+		    Var Filename As String = Fields.Value("hash").StringValue + ".beaconerror"
+		    Var ErrorFile As FolderItem = ErrorsFolder.Child(Filename)
+		    Return ErrorFile.Write(Beacon.GenerateJSON(Fields, True))
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowModal()
 		  If Not Preferences.OnlineEnabled Then
 		    Self.Pages.SelectedPanelIndex = Self.PagePermission
@@ -741,9 +910,65 @@ End
 		    Self.BeginChecking()
 		  End If
 		  
-		  Self.ErrorIDLabel.Value = Self.ErrorIDLabel.Value.Replace("<hash>", Self.mExceptionHash)
+		  Self.ErrorIDLabel.Text = Self.ErrorIDLabel.Text.Replace("<hash>", Self.mExceptionHash)
 		  
 		  Super.ShowModal()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub SubmitPendingReports()
+		  If Preferences.OnlineEnabled = False Then
+		    Return
+		  End If
+		  
+		  Var SubmitThread As New Thread
+		  SubmitThread.Priority = Thread.LowestPriority
+		  AddHandler SubmitThread.Run, AddressOf SubmitPendingReports_Run
+		  SubmitThread.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Sub SubmitPendingReports_Run(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  If SubmitLock Is Nil Then
+		    SubmitLock = New CriticalSection
+		  End If
+		  
+		  SubmitLock.Enter
+		  
+		  Var ErrorsFolder As FolderItem = App.ExceptionsFolder(False)
+		  If ErrorsFolder Is Nil Or ErrorsFolder.Exists = False Then
+		    // Nothing to do
+		    SubmitLock.Leave
+		    Return
+		  End If
+		  
+		  Var Bound As Integer = ErrorsFolder.Count - 1
+		  For Idx As Integer = Bound DownTo 0
+		    Var File As FolderItem = ErrorsFolder.ChildAt(Idx)
+		    If File.Name.EndsWith(".beaconerror") = False Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Fields As Dictionary = Beacon.ParseJSON(File.Read)
+		      
+		      Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		      Socket.SetFormData(Fields)
+		      Socket.Send("POST", Beacon.WebURL("/reportaproblem"))
+		      
+		      If Socket.LastHTTPStatus = 200 Then
+		        // The server accepted it
+		        File.Remove
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  SubmitLock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -757,11 +982,22 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPreviousComments As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSolutionURL As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private Shared SubmitLock As CriticalSection
+	#tag EndProperty
 
-	#tag Constant, Name = PageNoSolution, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+
+	#tag Constant, Name = PageComments, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageNoSolution, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PagePermission, Type = Double, Dynamic = False, Default = \"1", Scope = Private
@@ -778,16 +1014,24 @@ End
 
 #tag Events LogoCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
-		  G.DrawPicture(LogoColor, 0, 0, G.Width, G.Height, 0, 0, LogoColor.Width, LogoColor.Height)
+		  G.DrawPicture(IconApp, 0, 0, G.Width, G.Height, 0, 0, IconApp.Width, IconApp.Height)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events QuitButton
 	#tag Event
 		Sub Action()
+		  Var Comments As String = Self.CommentsArea.Text.Trim
+		  If Comments.IsEmpty = False Then
+		    Self.mExceptionFields.Value("comments") = Comments.ReplaceLineEndings(EndOfLine.UNIX)
+		    Call Self.SaveReport(Self.mExceptionFields)
+		  End If
+		  
 		  App.Terminate(0)
 		End Sub
 	#tag EndEvent
@@ -827,7 +1071,14 @@ End
 #tag Events ReportButton
 	#tag Event
 		Sub Action()
-		  App.ShowBugReporter(Self.mExceptionHash)
+		  Self.Pages.SelectedPanelIndex = Self.PageComments
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CommentsArea
+	#tag Event
+		Sub Open()
+		  Me.Text = Self.mPreviousComments
 		End Sub
 	#tag EndEvent
 #tag EndEvents

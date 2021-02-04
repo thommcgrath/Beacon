@@ -7,16 +7,18 @@ Inherits MenuItem
 		    Return True
 		  End If
 		  
-		  Var View As BeaconSubview = App.MainWindow.CurrentView
-		  If View = Nil Then
+		  Var View As BeaconSubview = App.MainWindow.CurrentComponent
+		  If View Is Nil Or (View IsA DocumentsComponent) = False Then
 		    Return False
 		  End If
 		  
-		  If Not (View IsA DocumentEditorView) Then
+		  Var Component As DocumentsComponent = DocumentsComponent(View)
+		  If (Component.CurrentPage IsA DocumentEditorView) = False Then
 		    Return False
 		  End If
 		  
-		  DocumentEditorView(View).CurrentConfigName = Self.Tag.StringValue
+		  Var DocumentEditor As DocumentEditorView = DocumentEditorView(Component.CurrentPage)
+		  DocumentEditor.CurrentConfigName = Self.Tag.StringValue
 		  Return True
 		End Function
 	#tag EndEvent
@@ -34,12 +36,18 @@ Inherits MenuItem
 		    Return
 		  End If
 		  
-		  Var View As BeaconSubview = Win.CurrentView
-		  If View = Nil Or (View IsA DocumentEditorView) = False Then
+		  Var View As BeaconSubview = Win.CurrentComponent
+		  If View Is Nil Or (View IsA DocumentsComponent) = False Then
 		    Return
 		  End If
 		  
-		  If DocumentEditorView(View).CurrentConfigName = Self.Tag.StringValue Then
+		  Var Component As DocumentsComponent = DocumentsComponent(View)
+		  If (Component.CurrentPage IsA DocumentEditorView) = False Then
+		    Return
+		  End If
+		  
+		  Var DocumentEditor As DocumentEditorView = DocumentEditorView(Component.CurrentPage)
+		  If DocumentEditor.CurrentConfigName = Self.Tag.StringValue Then
 		    Self.HasCheckMark = True
 		  End If
 		  
@@ -67,6 +75,22 @@ Inherits MenuItem
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Text"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastRowIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
 			Visible=false
@@ -157,14 +181,6 @@ Inherits MenuItem
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Shortcut"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

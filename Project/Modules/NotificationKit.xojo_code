@@ -12,13 +12,13 @@ Protected Module NotificationKit
 		      Refs = mReceivers.Value(Key)
 		    End If
 		    
-		    For I As Integer = Refs.LastRowIndex DownTo 0
+		    For I As Integer = Refs.LastIndex DownTo 0
 		      If Refs(I).Value = Nil Or Refs(I).Value = Receiver Then
-		        Refs.RemoveRowAt(I)
+		        Refs.RemoveAt(I)
 		      End If
 		    Next
 		    
-		    If Refs.LastRowIndex > -1 Then
+		    If Refs.LastIndex > -1 Then
 		      mReceivers.Value(Key) = Refs
 		    ElseIf mReceivers.HasKey(Key) Then
 		      mReceivers.Remove(Key)
@@ -29,13 +29,13 @@ Protected Module NotificationKit
 
 	#tag Method, Flags = &h21
 		Private Sub mQueueTimer_Action(Sender As Timer)
-		  If mPendingNotifications.LastRowIndex = -1 Then
+		  If mPendingNotifications.LastIndex = -1 Then
 		    Sender.RunMode = Timer.RunModes.Off
 		    Return
 		  End If
 		  
 		  Var Notification As NotificationKit.Invocation = mPendingNotifications(0)
-		  mPendingNotifications.RemoveRowAt(0)
+		  mPendingNotifications.RemoveAt(0)
 		  
 		  Notification.Invoke
 		End Sub
@@ -48,27 +48,31 @@ Protected Module NotificationKit
 		  End If
 		  
 		  Var Refs() As WeakRef = mReceivers.Value(Notification.Name)
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		    End If
 		  Next
 		  
-		  If Refs.LastRowIndex = -1 Then
+		  If Refs.LastIndex = -1 Then
 		    mReceivers.Remove(Notification.Name)
 		    Return
 		  End If
 		  
 		  For Each Ref As WeakRef In Refs
 		    Var Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Ref.Value)
-		    mPendingNotifications.AddRow(New NotificationKit.Invocation(Notification, Receiver))
+		    mPendingNotifications.Add(New NotificationKit.Invocation(Notification, Receiver))
 		  Next
 		  
 		  If mQueueTimer = Nil Then
 		    mQueueTimer = New Timer
 		    mQueueTimer.RunMode = Timer.RunModes.Multiple
 		    mQueueTimer.Period = 1
-		    AddHandler mQueueTimer.Action, AddressOf mQueueTimer_Action
+		    #if TargetDesktop
+		      AddHandler mQueueTimer.Action, AddressOf mQueueTimer_Action
+		    #else
+		      AddHandler mQueueTimer.Run, AddressOf mQueueTimer_Action
+		    #endif
 		  End If
 		  
 		  If mQueueTimer.RunMode = Timer.RunModes.Off Then
@@ -95,13 +99,13 @@ Protected Module NotificationKit
 		      Refs = mReceivers.Value(Key)
 		    End If
 		    
-		    For I As Integer = Refs.LastRowIndex DownTo 0
+		    For I As Integer = Refs.LastIndex DownTo 0
 		      If Refs(I).Value = Nil Then
-		        Refs.RemoveRowAt(I)
+		        Refs.RemoveAt(I)
 		      End If
 		    Next
 		    
-		    Refs.AddRow(New WeakRef(Receiver))
+		    Refs.Add(New WeakRef(Receiver))
 		    
 		    mReceivers.Value(Key) = Refs
 		  Next

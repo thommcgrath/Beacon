@@ -38,7 +38,7 @@ Begin ContainerControl DocumentImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   7
+      PanelCount      =   8
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
@@ -120,7 +120,37 @@ Begin ContainerControl DocumentImportView
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
-         Index           =   1
+         Index           =   4
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   180
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin RadioButton SourceRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Single Player, Local Files, or Copy + Paste"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   3
          InitialParent   =   "Views"
          Italic          =   False
          Left            =   20
@@ -137,36 +167,6 @@ Begin ContainerControl DocumentImportView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   148
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin RadioButton SourceRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Single Player, Local Files, or Copy + Paste"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   2
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   116
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -193,13 +193,13 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   212
+         Top             =   244
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -225,13 +225,13 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   212
+         Top             =   244
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -426,11 +426,11 @@ Begin ContainerControl DocumentImportView
       Begin RadioButton SourceRadio
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Other Beacon document"
+         Caption         =   "Other Beacon project"
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
-         Index           =   3
+         Index           =   5
          InitialParent   =   "Views"
          Italic          =   False
          Left            =   20
@@ -440,13 +440,13 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   180
+         Top             =   212
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -590,7 +590,7 @@ Begin ContainerControl DocumentImportView
          FontSize        =   0.0
          FontUnit        =   0
          Height          =   20
-         Index           =   4
+         Index           =   2
          InitialParent   =   "Views"
          Italic          =   False
          Left            =   20
@@ -600,18 +600,19 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   84
+         Top             =   116
          Transparent     =   False
          Underline       =   False
          Value           =   False
-         Visible         =   True
+         Visible         =   False
          Width           =   560
       End
       Begin BeaconListbox StatusList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -622,6 +623,9 @@ Begin ContainerControl DocumentImportView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   40
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -642,6 +646,7 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -667,6 +672,7 @@ Begin ContainerControl DocumentImportView
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox OtherDocsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -677,6 +683,9 @@ Begin ContainerControl DocumentImportView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -697,6 +706,7 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -721,6 +731,65 @@ Begin ContainerControl DocumentImportView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin GSADiscoveryView GSADiscoveryView1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   456
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   8
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+      Begin RadioButton SourceRadio
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "GameServerApp.com"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   1
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   84
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   False
+         Width           =   560
+      End
    End
    Begin Timer DiscoveryWatcher
       Index           =   -2147483648
@@ -738,15 +807,22 @@ End
 		Sub Open()
 		  RaiseEvent Open
 		  
-		  #if Not Self.ConnectorEnabled
-		    Self.SourceRadio(4).Top = -100
-		    Self.SourceRadio(4).Visible = False
-		    For I As Integer = 1 To 3
-		      Self.SourceRadio(I).Top = Self.SourceRadio(I).Top - 32
-		    Next
-		    Self.SourceCancelButton.Top = Self.SourceRadio(3).Bottom + 12
-		    Self.SourceActionButton.Top = Self.SourceCancelButton.Top
-		  #endif
+		  Const FirstRadioIndex = 0
+		  Const LastRadioIndex = 5
+		  
+		  Var Pos As Integer = Self.ImportSourceMessage.Top + Self.ImportSourceMessage.Height + 20
+		  For Idx As Integer = FirstRadioIndex To LastRadioIndex
+		    If Self.SourceRadio(Idx).Visible = False Then
+		      Continue
+		    End If
+		    
+		    Self.SourceRadio(Idx).Top = Pos
+		    Pos = Pos + Self.SourceRadio(Idx).Height + 12
+		  Next
+		  
+		  Self.SourceCancelButton.Top = Pos + 8
+		  Self.SourceActionButton.Top = Self.SourceCancelButton.Top
+		  Self.mSourcesPageHeight = Self.SourceCancelButton.Top + Self.SourceCancelButton.Height + 20
 		  
 		  Self.SwapButtons
 		  Self.Reset
@@ -757,9 +833,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Finish()
 		  Var Documents() As Beacon.Document
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
 		    If Self.mImporters(I).Document <> Nil Then
-		      Documents.AddRow(Self.mImporters(I).Document)
+		      Documents.Add(Self.mImporters(I).Document)
 		    End If
 		  Next
 		  Self.Finish(Documents)
@@ -768,8 +844,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish(Documents() As Beacon.Document)
-		  If Documents.LastRowIndex > -1 Then
-		    For Idx As Integer = 0 To Documents.LastRowIndex
+		  If Documents.LastIndex > -1 Then
+		    For Idx As Integer = 0 To Documents.LastIndex
 		      Documents(Idx).Accounts.Import(Self.mAccounts)
 		    Next
 		    RaiseEvent DocumentsImported(Documents)
@@ -788,10 +864,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
-		  Self.mImporters.ResizeTo(Data.LastRowIndex)
+		  Self.mImporters.ResizeTo(Data.LastIndex)
 		  Self.StatusList.RowCount = Data.Count
 		  
-		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastIndex
 		    Var Importer As New Beacon.ImportThread(Data(I), Self.mDestinationDocument)
 		    Importer.Start
 		    Self.mImporters(I) = Importer
@@ -817,7 +893,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Reset()
-		  For I As Integer = 0 To Self.mImporters.LastRowIndex
+		  For I As Integer = 0 To Self.mImporters.LastIndex
 		    If Self.mImporters(I) <> Nil And Not Self.mImporters(I).Finished Then
 		      Self.mImporters(I).Cancel
 		    End If
@@ -828,7 +904,7 @@ End
 		  If Self.Views.SelectedPanelIndex <> 0 Then
 		    Self.Views.SelectedPanelIndex = 0
 		  Else
-		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -836,8 +912,15 @@ End
 	#tag Method, Flags = &h0
 		Sub SetOtherDocuments(Documents() As Beacon.Document)
 		  Self.mOtherDocuments = Documents
-		  Self.SourceRadio(3).Caption = "Other Beacon Document" + If(Self.SourceRadio(3).Enabled, "", " (No Other Documents Open)")
+		  Self.SourceRadio(Self.RadioProject).Enabled = Documents.Count > 0
+		  Self.SourceRadio(Self.RadioProject).Caption = "Other Beacon Project" + If(Self.SourceRadio(Self.RadioProject).Enabled, "", " (No Other Projects Open)")
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SourcesPageHeight() As Integer
+		  Return Self.mSourcesPageHeight
+		End Function
 	#tag EndMethod
 
 
@@ -874,18 +957,22 @@ End
 		Private mOtherDocuments() As Beacon.Document
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSourcesPageHeight As Integer
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		QuickCancel As Boolean
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageGSA, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -903,6 +990,24 @@ End
 	#tag Constant, Name = PageStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = RadioConnector, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioFTP, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioGSA, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioNitrado, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadioProject, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = SourcesPageHeight, Type = Double, Dynamic = False, Default = \"252", Scope = Private
 	#tag EndConstant
 
@@ -917,7 +1022,7 @@ End
 		Sub Change()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
-		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
 		  Case Self.PageNitrado
 		    NitradoDiscoveryView1.Begin
 		  Case Self.PageFTP
@@ -935,7 +1040,7 @@ End
 #tag Events SourceRadio
 	#tag Event
 		Sub Action(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1) Or SourceRadio(4).Value
+		  SourceActionButton.Enabled = SourceRadio(Self.RadioNitrado).Value Or SourceRadio(Self.RadioFTP).Value Or SourceRadio(Self.RadioLocal).Value Or (SourceRadio(Self.RadioProject).Value And SourceRadio(Self.RadioProject).Enabled And Self.mOtherDocuments.LastIndex > -1) Or SourceRadio(Self.RadioConnector).Value Or SourceRadio(Self.RadioGSA).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent
@@ -951,15 +1056,15 @@ End
 	#tag Event
 		Sub Action()
 		  Select Case True
-		  Case SourceRadio(0).Value
+		  Case SourceRadio(Self.RadioNitrado).Value
 		    Views.SelectedPanelIndex = Self.PageNitrado
-		  Case SourceRadio(1).Value
+		  Case SourceRadio(Self.RadioFTP).Value
 		    Views.SelectedPanelIndex = Self.PageFTP
-		  Case SourceRadio(2).Value
+		  Case SourceRadio(Self.RadioLocal).Value
 		    Views.SelectedPanelIndex = Self.PageLocal
-		  Case SourceRadio(4).Value
+		  Case SourceRadio(Self.RadioConnector).Value
 		    Views.SelectedPanelIndex = Self.PageConnector
-		  Case SourceRadio(3).Value
+		  Case SourceRadio(Self.RadioProject).Value
 		    OtherDocsList.RemoveAllRows
 		    OtherDocsList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		    For Each Doc As Beacon.Document In Self.mOtherDocuments
@@ -969,6 +1074,8 @@ End
 		    OtherDocsList.Sort()
 		    OtherDocsActionButton.Enabled = False
 		    Views.SelectedPanelIndex = Self.PageOtherDocuments
+		  Case SourceRadio(Self.RadioGSA).Value
+		    Views.SelectedPanelIndex = Self.PageGSA
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1068,8 +1175,10 @@ End
 		      Continue
 		    End If
 		    
-		    Var Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
-		    Documents.AddRow(Doc)
+		    Var Doc As Beacon.Document = Beacon.Document(OtherDocsList.RowTagAt(I)).Clone(App.IdentityManager.CurrentIdentity)
+		    If (Doc Is Nil) = False Then
+		      Documents.Add(Doc)
+		    End If
 		  Next
 		  Self.Finish(Documents)
 		End Sub
@@ -1125,6 +1234,31 @@ End
 		  Next
 		  
 		  OtherDocsActionButton.Enabled = Enabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GSADiscoveryView1
+	#tag Event
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    RaiseEvent ShouldDismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  RaiseEvent ShouldResize(NewHeight)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

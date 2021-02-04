@@ -15,17 +15,18 @@ Inherits TCPSocket
 		  Self.Buffer.Append(Self.ReadAll)
 		  
 		  While Self.Buffer <> Nil And Self.Buffer.Size > 0
-		    Var PayloadLen As UInt64 = BeaconEncryption.GetLength(Self.Buffer)
+		    Var PayloadLen As Integer = BeaconEncryption.GetLength(Self.Buffer)
 		    If PayloadLen = 0 Then
 		      Return
 		    End If
 		    
 		    Var Payload As MemoryBlock
-		    If Self.Buffer.Size < PayloadLen Then
+		    Var BufferSize As Integer = Self.Buffer.Size
+		    If BufferSize < PayloadLen Then
 		      Return
-		    ElseIf Self.Buffer.Size > PayloadLen Then
+		    ElseIf BufferSize > PayloadLen Then
 		      Payload = Self.Buffer.Left(PayloadLen)
-		      Self.Buffer = Self.Buffer.Middle(PayloadLen, Self.Buffer.Size - PayloadLen)
+		      Self.Buffer = Self.Buffer.Middle(PayloadLen, BufferSize - PayloadLen)
 		    Else
 		      Payload = Self.Buffer
 		      Self.Buffer = New MemoryBlock(0)
@@ -175,8 +176,7 @@ Inherits TCPSocket
 		    Var Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
 		    
 		    If Compressed Then
-		      Var Compressor As New _GZipString
-		      Contents = Compressor.Compress(Contents, _GZipString.BestCompression)
+		      Contents = Beacon.Compress(Contents)
 		    End If
 		    
 		    Contents = EncodeBase64(Contents)
@@ -238,8 +238,7 @@ Inherits TCPSocket
 		  Var Compressed As Boolean = Dict.Lookup("Compressed", False).BooleanValue
 		  Content = DecodeBase64(Content)
 		  If Compressed Then
-		    Var Compressor As New _GZipString
-		    Content = Compressor.Decompress(Content)
+		    Content = Beacon.Decompress(Content)
 		  End If
 		  Var ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
 		  
@@ -255,10 +254,10 @@ Inherits TCPSocket
 		  Message.Value("Nonce") = Self.NextOutboundNonce
 		  Self.NextOutboundNonce = Self.NextOutboundNonce + 1
 		  
-		  Var Decrypted As String = Xojo.GenerateJSON(Message, False)
+		  Var Decrypted As String = Beacon.GenerateJSON(Message, False)
 		  Var Payload As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Self.ConnectionKey, Decrypted)
 		  #if DebugBuild
-		    Var PredictedLength As UInt64 = BeaconEncryption.GetLength(Payload)
+		    Var PredictedLength As Integer = BeaconEncryption.GetLength(Payload)
 		    If Payload.Size <> PredictedLength Then
 		      Break
 		    End If

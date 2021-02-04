@@ -16,7 +16,7 @@ Inherits AnimationKit.DeltaTask
 		  Var RectWidth As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Width, Self.EndBounds.Width)
 		  Var RectHeight As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Height, Self.EndBounds.Height)
 		  
-		  Self.ApplyRect(New Rect(Floor(RectLeft), Floor(RectTop), Ceil(RectWidth), Ceil(RectHeight)))
+		  Self.ApplyRect(New Rect(Floor(RectLeft), Floor(RectTop), Ceiling(RectWidth), Ceiling(RectHeight)))
 		End Sub
 	#tag EndEvent
 
@@ -244,7 +244,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyHeight) = Self.KeyHeight
+			  Return (Self.AnimationKeys And CType(Self.KeyHeight, UInt64)) = CType(Self.KeyHeight, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -262,7 +262,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyLeft) = Self.KeyLeft
+			  Return (Self.AnimationKeys And CType(Self.KeyLeft, UInt64)) = CType(Self.KeyLeft, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -280,7 +280,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyTop) = Self.KeyTop
+			  Return (Self.AnimationKeys And CType(Self.KeyTop, UInt64)) = CType(Self.KeyTop, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -298,7 +298,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyWidth) = Self.KeyWidth
+			  Return (Self.AnimationKeys And CType(Self.KeyWidth, UInt64)) = CType(Self.KeyWidth, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter

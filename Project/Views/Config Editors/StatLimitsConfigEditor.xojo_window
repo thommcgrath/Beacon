@@ -50,12 +50,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -83,12 +83,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -116,12 +116,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -149,12 +149,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -182,12 +182,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -215,12 +215,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -248,12 +248,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin CheckBox StatCheckboxes
@@ -281,12 +281,12 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   142
    End
    Begin UITweaks.ResizedTextField StatFields
@@ -321,10 +321,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -364,10 +364,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -407,10 +407,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -450,10 +450,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -493,10 +493,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -536,10 +536,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -579,10 +579,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   122
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -622,10 +622,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -638,6 +638,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   True
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -647,19 +648,22 @@ Begin ConfigEditor StatLimitsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   True
       HasHeader       =   True
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   296
+      Height          =   255
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Item	Armor	Durability	Damage	Ammo	Hypo	Hyper	Generic	Weight"
@@ -670,15 +674,16 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "0"
+      RowSelectionType=   0
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   200
+      Top             =   241
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -713,15 +718,49 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   168
+      Top             =   209
       Transparent     =   False
       Underline       =   False
       Value           =   "The items shown here are examples. Stat limits will permanently affect all items in the game."
       Visible         =   True
       Width           =   959
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   999
    End
 End
 #tag EndWindow
@@ -735,7 +774,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatLimits.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStatLimits)
 		End Sub
 	#tag EndEvent
 
@@ -746,11 +785,11 @@ End
 		    Var Value As NullableDouble = Config.Value(Stat)
 		    If Value = Nil Then
 		      Self.StatCheckboxes(Stat).Value = False
-		      Self.StatFields(Stat).Value = ""
+		      Self.StatFields(Stat).Text = ""
 		    Else
 		      Self.StatCheckboxes(Stat).Value = True
 		      Var DoubleValue As Double = Value
-		      Self.StatFields(Stat).Value = DoubleValue.PrettyText
+		      Self.StatFields(Stat).Text = DoubleValue.PrettyText
 		    End If
 		  Next
 		  
@@ -805,7 +844,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatLimits
-		  Static ConfigName As String = BeaconConfigs.StatLimits.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameStatLimits
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.StatLimits
@@ -830,7 +869,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.StatLimits.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameStatLimits)
 		End Function
 	#tag EndMethod
 
@@ -859,7 +898,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub UpdateList()
-		  If Self.mPreviewItemStats.LastRowIndex = -1 Then
+		  If Self.mPreviewItemStats.LastIndex = -1 Then
 		    Var Dict As Dictionary
 		    
 		    Dict = New Dictionary
@@ -867,83 +906,83 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("afb5a381-1da6-48d8-8eb7-a185b381c87f") // Crossbow
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(100.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d5647622-9a5e-4790-871d-33b1b7261458") // Compound Bow
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("f7cc1e6c-2b40-4204-8272-10ff56fe55f3") // Assault Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(40.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("10e10423-a2fd-462e-9ca1-45dbcbfdd511") // Longneck Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("215228dc-968b-4093-bb25-d56ff57f6ad6") // Fabricated Sniper Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("9728096c-9057-43ea-9732-92817eaf3a92") // Simple Pistol
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(60.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("52187247-2dff-4567-91f6-0080fa24f988") // Fabricated Pistol
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(210.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("3a9479b3-6b76-4cf7-95a5-b1a5f1beb1a9") // Shotgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("72e9e30e-f3ea-4880-875d-b41aa9f38703") // Pump Shotgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("1f5b289a-2665-4d68-879d-7309274f94c4") // Tek Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("75f7a97a-f4d9-4c4d-8807-01b5a35502d0") // Cloth Shirt
@@ -951,7 +990,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(25.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("684b5ba4-b656-4bcf-9f58-e8c506bc108c") // Desert Cloth Shirt
@@ -959,7 +998,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("591c1e36-fb17-473b-8299-a3bee995662f") // Hide Shirt
@@ -967,7 +1006,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(20.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("f8608f38-b6ca-49b0-af9c-11d43a846fe1") // Chitin Chestpiece
@@ -975,7 +1014,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("8bd65538-3798-44be-ae77-cde30ebcad78") // Fur Chestpiece
@@ -983,7 +1022,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(65.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-30.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("590a1041-b086-493e-8592-5b306ecc10c0") // SCUBA Tank
@@ -991,7 +1030,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(40.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-5.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("293c9a0e-498c-4ed2-a66a-619672e441f7") // Hazard Shirt
@@ -999,7 +1038,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(85.5, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(60.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("b0cc8932-0469-4a6b-9c0c-81eb06f9bb3a") // Flak Chestpiece
@@ -1007,7 +1046,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-7.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("ac1a9096-df5e-4148-9d84-a30f17564f3c") // Riot Chestpiece
@@ -1015,7 +1054,7 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-10.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("58989713-f1d2-4daa-b641-72f786e174f2") // Tek Chestpiece
@@ -1023,74 +1062,74 @@ End
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.00055, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHyperthermal) = Self.BuildStatDict(-7.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("bf214282-9872-408a-a074-2baca78d535a") // Raptor Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("13b4abbc-321e-45a1-ba64-e7691c3725a0") // Pteranodon Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("6de040fc-6a9f-48bf-8b14-6a3714439299") // Rex Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("427992ed-de43-4809-a98b-0d8e13f44707") // Tek Rex Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d45d0691-a430-4443-98e3-bcc501067317") // Rock Drake Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("c52794f4-4329-4d15-8952-68631fd61060") // Tek Rock Drake Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("86bc8625-7e65-4539-8f4f-32d85f68e815") // Doesdicurus Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("52ece996-649e-4fb7-abca-7cfbe72dae24") // Rock Golem Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("783df1df-f5fe-4208-92a3-77e062875968") // Tropeognathus Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.0, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.00136, 0.1)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("419e00c5-5201-43a6-bcfe-639f1073eb86") // Metal Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(1250.0, 0.001, 0.25)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("f40512df-c37f-4fcc-af62-bc805cac2736") // Riot Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		    
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("b30c8597-6c47-40df-b180-268f43e18764") // Tek Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
-		    Self.mPreviewItemStats.AddRow(Dict)
+		    Self.mPreviewItemStats.Add(Dict)
 		  End If
 		  
 		  Var Config As BeaconConfigs.StatLimits = Self.Config(False)
-		  Self.PreviewList.RowCount = Self.mPreviewItemStats.LastRowIndex + 1
-		  For I As Integer = 0 To Self.mPreviewItemStats.LastRowIndex
+		  Self.PreviewList.RowCount = Self.mPreviewItemStats.LastIndex + 1
+		  For I As Integer = 0 To Self.mPreviewItemStats.LastIndex
 		    Var Dict As Dictionary = Self.mPreviewItemStats(I)
 		    Var Engram As Beacon.Engram = Dict.Value("Engram")
 		    If Engram = Nil Then
@@ -1180,15 +1219,15 @@ End
 		  Self.SettingUp = True
 		  If Not Me.Value Then
 		    Self.Config(True).Value(Index) = Nil
-		    Self.StatFields(Index).Value = ""
+		    Self.StatFields(Index).Text = ""
 		  Else
 		    Var Value As NullableDouble = Self.Config(False).Value(Index)
 		    If Value = Nil Then
-		      Self.StatFields(Index).Value = "0"
+		      Self.StatFields(Index).Text = "0"
 		      Self.Config(True).Value(Index) = 0
 		    Else
 		      Var DoubleValue As Double = Value
-		      Self.StatFields(Index).Value = DoubleValue.PrettyText
+		      Self.StatFields(Index).Text = DoubleValue.PrettyText
 		    End If
 		  End If
 		  Self.SettingUp = False
@@ -1204,7 +1243,7 @@ End
 		    Return
 		  End If
 		  
-		  Var StringValue As String = Me.Value
+		  Var StringValue As String = Me.Text
 		  If Not IsNumeric(StringValue) Then
 		    Return
 		  End If
@@ -1251,7 +1290,7 @@ End
 		  Var Limit As Double = CDbl(CellValue)
 		  Var Value As Double = BeaconConfigs.StatLimits.SolveForDesiredLimit(Limit, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
 		  Self.Config(True).Value(Stat) = Value
-		  Self.StatFields(Stat).Value = Value.PrettyText
+		  Self.StatFields(Stat).Text = Value.PrettyText
 		  
 		  Self.SettingUp = False
 		  Self.Changed = True
@@ -1259,9 +1298,32 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
@@ -1272,7 +1334,7 @@ End
 		Name="Progress"
 		Visible=false
 		Group="Behavior"
-		InitialValue="ProgressNone"
+		InitialValue=""
 		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
@@ -1291,14 +1353,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

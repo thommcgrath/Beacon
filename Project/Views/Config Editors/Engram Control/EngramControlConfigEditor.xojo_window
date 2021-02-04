@@ -25,41 +25,6 @@ Begin ConfigEditor EngramControlConfigEditor
    Transparent     =   True
    Visible         =   True
    Width           =   982
-   Begin BeaconToolbar EngramListHeader
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Engrams"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   681
-   End
    Begin StatusBar EngramListStatus
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -68,6 +33,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -80,6 +46,8 @@ Begin ConfigEditor EngramControlConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -90,47 +58,13 @@ Begin ConfigEditor EngramControlConfigEditor
       Visible         =   True
       Width           =   681
    End
-   Begin BeaconToolbar PointsListHeader
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Unlock Points"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   682
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   300
-   End
    Begin FadedSeparator PointsListSeparator
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   672
@@ -143,6 +77,8 @@ Begin ConfigEditor EngramControlConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -161,6 +97,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -173,6 +110,8 @@ Begin ConfigEditor EngramControlConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -188,6 +127,7 @@ Begin ConfigEditor EngramControlConfigEditor
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -197,13 +137,16 @@ Begin ConfigEditor EngramControlConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -220,8 +163,9 @@ Begin ConfigEditor EngramControlConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   7
@@ -243,6 +187,7 @@ Begin ConfigEditor EngramControlConfigEditor
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -252,13 +197,16 @@ Begin ConfigEditor EngramControlConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -275,8 +223,9 @@ Begin ConfigEditor EngramControlConfigEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   8
@@ -292,6 +241,74 @@ Begin ConfigEditor EngramControlConfigEditor
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin OmniBar EngramToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   681
+   End
+   Begin OmniBar PointsToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   682
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndWindow
@@ -315,14 +332,14 @@ End
 		  Var PointsLeft As Integer = EngramsWidth + 1
 		  
 		  Self.EngramList.Width = EngramsWidth
-		  Self.EngramListHeader.Width = EngramsWidth
+		  Self.EngramToolbar.Width = EngramsWidth
 		  Self.EngramListStatus.Width = EngramsWidth
 		  
 		  Self.PointsListSeparator.Left = EngramsWidth
 		  Self.PointsList.Left = PointsLeft
 		  Self.PointsList.Width = PointsWidth
-		  Self.PointsListHeader.Left = PointsLeft
-		  Self.PointsListHeader.Width = PointsWidth
+		  Self.PointsToolbar.Left = PointsLeft
+		  Self.PointsToolbar.Width = PointsWidth
 		  Self.PointsListStatus.Left = PointsLeft
 		  Self.PointsListStatus.Width = PointsWidth
 		End Sub
@@ -330,7 +347,7 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.EngramControl.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameEngramControl)
 		End Sub
 	#tag EndEvent
 
@@ -341,18 +358,10 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.SetupUI()
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.EngramControl
-		  Static ConfigName As String = BeaconConfigs.EngramControl.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameEngramControl
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.EngramControl
@@ -377,14 +386,29 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.EngramControl.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameEngramControl)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SettingsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Config As BeaconConfigs.EngramControl = Self.Config(True)
+		    Config.OnlyAllowSpecifiedEngrams = EngramControlSettingsView(Sender.Container).OnlyAllowSpecifiedEngrams
+		    Config.AutoUnlockAllEngrams = EngramControlSettingsView(Sender.Container).AutoUnlockEngrams
+		    Self.SetupEngramsList
+		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  Self.EngramToolbar.Item("SettingsButton").Toggled = False
+		  Self.mSettingsPopoverController = Nil
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub SetupEngramsList(SelectEngrams() As Beacon.Engram = Nil)
 		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
-		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.Document.Mods, ""))
+		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.Engrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.Document.Mods, ""))
 		  Var LabelCounts As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1
@@ -395,22 +419,22 @@ End
 		    Var Bound As Integer = Self.EngramList.LastRowIndex
 		    For Idx As Integer = 0 To Bound
 		      If Self.EngramList.Selected(Idx) Then
-		        Selected.AddRow(Beacon.Engram(Self.EngramList.RowTagAt(Idx)).Path)
+		        Selected.Add(Beacon.Engram(Self.EngramList.RowTagAt(Idx)).ObjectID)
 		      End If
 		    Next
 		  Else
 		    For Each Engram As Beacon.Engram In SelectEngrams
-		      Selected.AddRow(Engram.Path)
+		      Selected.Add(Engram.ObjectID)
 		    Next
 		  End If
 		  
 		  Self.EngramList.RowCount = Engrams.Count
-		  Var Bound As Integer = Engrams.LastRowIndex
+		  Var Bound As Integer = Engrams.LastIndex
 		  For Idx As Integer = 0 To Bound
 		    Var Engram As Beacon.Engram = Engrams(Idx)
 		    Self.EngramList.RowTagAt(Idx) = Engram
 		    If LabelCounts.Lookup(Engram.Label, 0) > 1 Then
-		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label + " (" + Engram.ModName + ")"
+		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label.Disambiguate(Engram.ModName)
 		    Else
 		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label
 		    End If
@@ -421,9 +445,9 @@ End
 		    If Not IsEnabled Then
 		      Var Hidden As NullableBoolean = Config.Hidden(Engram)
 		      If IsNull(Hidden) Then
-		        Behaviors.AddRow("Disabled by default")
+		        Behaviors.Add("Disabled by default")
 		      Else
-		        Behaviors.AddRow("Disabled")
+		        Behaviors.Add("Disabled")
 		      End If
 		      
 		      Self.EngramList.CellTagAt(Idx, 1) = 2147483647
@@ -445,21 +469,21 @@ End
 		      
 		      If Config.AutoUnlockAllEngrams Or (IsNull(AutoUnlock) = False And AutoUnlock.BooleanValue = True) Then
 		        If IsNull(RequiredLevel) = False And RequiredLevel.IntegerValue > 0 Then
-		          Behaviors.AddRow("Auto unlocks at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
+		          Behaviors.Add("Auto unlocks at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
 		        Else
-		          Behaviors.AddRow("Auto unlocks at spawn")
+		          Behaviors.Add("Auto unlocks at spawn")
 		        End If
 		      Else
 		        If ((Engram.RequiredPlayerLevel Is Nil) = False Or Beacon.Data.EngramIsCustom(Engram)) And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
-		          Behaviors.AddRow("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
+		          Behaviors.Add("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
-		          Behaviors.AddRow("Auto unlocks by special event")
+		          Behaviors.Add("Auto unlocks by special event")
 		        End If
 		      End If
 		      
 		      Var RemovePreq As NullableBoolean = Config.RemovePrerequisites(Engram)
 		      If IsNull(RemovePreq) = False And RemovePreq.BooleanValue Then
-		        Behaviors.AddRow("Prerequisites removed")
+		        Behaviors.Add("Prerequisites removed")
 		      End If
 		      
 		      If IsNull(RequiredLevel) = False Then
@@ -470,7 +494,7 @@ End
 		    End If
 		    
 		    Self.EngramList.CellValueAt(Idx, 1) = Behaviors.Join("; ")
-		    Self.EngramList.Selected(Idx) = Selected.IndexOf(Engram.Path) > -1
+		    Self.EngramList.Selected(Idx) = Selected.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.EngramList.Sort()
@@ -485,7 +509,7 @@ End
 		  Var Selected() As Integer
 		  For I As Integer = 0 To Self.PointsList.LastRowIndex
 		    If Self.PointsList.Selected(I) Then
-		      Selected.AddRow(Self.PointsList.RowTagAt(I).IntegerValue)
+		      Selected.Add(Self.PointsList.RowTagAt(I).IntegerValue)
 		    End If
 		  Next
 		  
@@ -519,7 +543,7 @@ End
 		  If Self.EngramList.SelectedRowCount = 0 Then
 		    Self.EngramListStatus.Caption = Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides")
 		  Else
-		    Self.EngramListStatus.Caption = Format(Self.EngramList.SelectedRowCount, "-0,") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
+		    Self.EngramListStatus.Caption = Self.EngramList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Language.NounWithQuantity(Self.EngramList.RowCount, "Engram Override", "Engram Overrides") + " Selected"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -529,7 +553,7 @@ End
 		  If Self.PointsList.SelectedRowCount = 0 Then
 		    Self.PointsListStatus.Caption = Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels")
 		  Else
-		    Self.PointsListStatus.Caption = Format(Self.PointsList.SelectedRowCount, "-0,") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
+		    Self.PointsListStatus.Caption = Self.PointsList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Language.NounWithQuantity(Self.PointsList.RowCount, "Level", "Levels") + " Selected"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -537,6 +561,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSettingsPopoverController As PopoverController
 	#tag EndProperty
 
 
@@ -549,114 +577,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events EngramListHeader
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Define a new engram entry."
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var EditButton As New BeaconToolbarItem("EditButton", IconToolbarEdit)
-		  EditButton.HelpTag = "Edit one or more engram overrides."
-		  EditButton.Enabled = False
-		  Me.LeftItems.Append(EditButton)
-		  
-		  Var WizardButton As New BeaconToolbarItem("WizardButton", IconToolbarWizard)
-		  WizardButton.HelpTag = "Quickly set engram behaviors."
-		  Me.LeftItems.Append(WizardButton)
-		  
-		  Var SettingsButton As New BeaconToolbarItem("SettingsButton", IconToolbarSettings)
-		  SettingsButton.HelpTag = "Change advanced options."
-		  SettingsButton.HasMenu = True
-		  Me.LeftItems.Append(SettingsButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Engrams() As Beacon.Engram
-		    Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
-		    If Engrams <> Nil And Engrams.LastRowIndex > -1 Then
-		      Self.SetupEngramsList(Engrams)
-		      Self.EngramList.EnsureSelectionIsVisible()
-		    End If
-		  Case "EditButton"
-		    Self.EngramList.DoEdit()
-		  Case "WizardButton"
-		    If EngramControlWizard.Present(Self, Self.Document) Then
-		      Self.SetupUI()
-		      Self.Changed = Self.Config(False).Modified
-		    End If
-		  Case "SettingsButton"
-		    Me.ShowMenu(Item)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
-		  Select Case Item.Name
-		  Case "SettingsButton"
-		    Var Config As BeaconConfigs.EngramControl = Self.Config(False)
-		    
-		    Var UnlockAll As New MenuItem("Unlock All Obtainable Engrams While Leveling (Laggy)", "unlockall")
-		    UnlockAll.HasCheckMark = Config.AutoUnlockAllEngrams
-		    Menu.AddMenu(UnlockAll)
-		    
-		    Var WhitelistMode As New MenuItem("Engrams Should be Disabled Unless Explicitly Enabled", "whitelist")
-		    WhitelistMode.HasCheckMark = Config.OnlyAllowSpecifiedEngrams
-		    Menu.AddMenu(WhitelistMode)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
-		  Select Case Item.Name
-		  Case "SettingsButton"
-		    Var Config As BeaconConfigs.EngramControl = Self.Config(True)
-		    
-		    Select Case ChosenItem.Tag
-		    Case "unlockall"
-		      Config.AutoUnlockAllEngrams = Not Config.AutoUnlockAllEngrams
-		    Case "whitelist"
-		      Config.OnlyAllowSpecifiedEngrams = Not Config.OnlyAllowSpecifiedEngrams
-		    Else
-		      Return
-		    End Select
-		    
-		    Self.SetupUI()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PointsListHeader
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
-		  AddButton.HelpTag = "Define a new engram points override."
-		  Me.LeftItems.Append(AddButton)
-		  
-		  Var EditButton As New BeaconToolbarItem("EditButton", IconToolbarEdit)
-		  EditButton.HelpTag = "Edit one or more engram point overrides."
-		  EditButton.Enabled = False
-		  Me.LeftItems.Append(EditButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Levels() As Integer
-		    If EngramControlPointOverrideWindow.Present(Self, Self.Document, Levels) Then
-		      Self.SetupPointsList()
-		      Self.Changed = True
-		    End If
-		  Case "EditButton"
-		    Self.PointsList.DoEdit
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
@@ -680,7 +600,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.EngramListHeader.EditButton.Enabled = Me.CanEdit
+		  Var EditButton As OmniBarItem = Self.EngramToolbar.Item("EditButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.CanEdit
+		  End If
 		  Self.UpdateEngramsListStatus()
 		End Sub
 	#tag EndEvent
@@ -694,7 +617,7 @@ End
 		  Var Members() As Beacon.Engram
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Members.AddRow(Me.RowTagAt(I))
+		      Members.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -718,67 +641,51 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Var Dict As New Dictionary
-		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
-		  
+		  Var Engrams() As Beacon.Engram
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) = False Then
 		      Continue
 		    End If
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(Idx)
-		    Dict.Value(Engram.Path) = Config.BehaviorDict(Engram)
+		    Engrams.Add(Engram)
 		  Next
 		  
-		  Board.Text = Beacon.GenerateJSON(Dict, True)
-		  Board.AddRawData(Board.Text, Self.kEngramsClipboardType)
+		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		  Var Overrides() As Dictionary = Config.Export(Engrams)
+		  
+		  Board.Text = Beacon.GenerateJSON(Overrides, True)
+		  Board.RawData(Self.kEngramsClipboardType) = Board.Text
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kEngramsClipboardType) Or (Board.TextAvailable And Board.Text.Trim.BeginsWith("{") And Board.Text.Trim.EndsWith("}"))
+		  If Board.RawDataAvailable(Self.kEngramsClipboardType) Then
+		    Return True
+		  End If
+		  
+		  If Not Board.TextAvailable Then
+		    Return False
+		  End If
+		  
+		  Var Content As String = Board.Text.Trim
+		  Return (Content.BeginsWith("{") And Content.EndsWith("}")) Or (Content.BeginsWith("[") And Content.EndsWith("]"))
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  Var JSONString As String
+		  Var InputString As String
 		  If Board.RawDataAvailable(Self.kPointsClipboardType) Then
-		    JSONString = Board.RawData(Self.kPointsClipboardType)
+		    InputString = Board.RawData(Self.kPointsClipboardType)
 		  Else
-		    JSONString = Board.Text
+		    InputString = Board.Text
 		  End If
 		  
-		  Var Dict As Dictionary
-		  Try
-		    Dict = Beacon.ParseJSON(JSONString)
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Var Config As BeaconConfigs.EngramControl
-		  Var Changed As Boolean
-		  
-		  For Each Entry As DictionaryEntry In Dict
-		    Try
-		      Var Path As String = Entry.Key
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateFromPath(Path)
-		      End If
-		      
-		      If Config = Nil Then
-		        Config = Self.Config(True)
-		      End If
-		      
-		      Config.BehaviorDict(Engram) = Entry.Value
-		      Changed = True
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
-		  
+		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		  Var Changed As Boolean = Config.Import(InputString)
 		  If Changed Then
+		    Call Self.Config(True) // Will cause the previous retreival to become permanent since we still have a reference
 		    Self.SetupUI
-		  End If
-		  If Config <> Nil Then
 		    Self.Changed = Config.Modified
 		  End If
 		End Sub
@@ -791,11 +698,11 @@ End
 		      Continue
 		    End If
 		    
-		    Engrams.AddRow(Me.RowTagAt(I))
+		    Engrams.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
-		  If Engrams <> Nil And Engrams.LastRowIndex > -1 Then
+		  If Engrams <> Nil And Engrams.LastIndex > -1 Then
 		    Self.SetupEngramsList(Engrams)
 		  End If
 		End Sub
@@ -809,7 +716,10 @@ End
 #tag Events PointsList
 	#tag Event
 		Sub Change()
-		  Self.PointsListHeader.EditButton.Enabled = Me.SelectedRowCount > 0
+		  Var EditButton As OmniBarItem = Self.PointsToolbar.Item("EditButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.SelectedRowCount > 0
+		  End If
 		  Self.UpdatePointsListStatus()
 		End Sub
 	#tag EndEvent
@@ -844,7 +754,7 @@ End
 		  Var Names() As String
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) Then
-		      Names.AddRow(Me.RowTagAt(Idx).IntegerValue.ToString)
+		      Names.Add(Me.RowTagAt(Idx).IntegerValue.ToString)
 		    End If
 		  Next
 		  
@@ -891,11 +801,11 @@ End
 		      Dict.Value("Points") = Points.IntegerValue
 		    End If
 		    
-		    Dicts.AddRow(Dict)
+		    Dicts.Add(Dict)
 		  Next
 		  
 		  Board.Text = Beacon.GenerateJSON(Dicts, True)
-		  Board.AddRawData(Board.Text, Self.kPointsClipboardType)
+		  Board.RawData(Self.kPointsClipboardType) = Board.Text
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -966,11 +876,11 @@ End
 		  Var Levels() As Integer
 		  For I As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(I) Then
-		      Levels.AddRow(Me.RowTagAt(I))
+		      Levels.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
-		  If Levels.LastRowIndex = -1 Then
+		  If Levels.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -981,9 +891,102 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events EngramToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Engram", IconToolbarAdd, "Inform Beacon of an unlockable engram that it does not already know about."))
+		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit the selected engram overrides.", False))
+		  Me.Append(OmniBarItem.CreateButton("WizardButton", "Auto Control", IconToolbarWizard, "Quickly set engram behaviors."))
+		  Me.Append(OmniBarItem.CreateButton("SettingsButton", "Advanced", IconToolbarSettings, "Changed uncommon engram settings."))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Engrams() As Beacon.Engram
+		    Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
+		    If Engrams <> Nil And Engrams.LastIndex > -1 Then
+		      Self.SetupEngramsList(Engrams)
+		      Self.EngramList.EnsureSelectionIsVisible()
+		    End If
+		  Case "EditButton"
+		    Self.EngramList.DoEdit()
+		  Case "WizardButton"
+		    If EngramControlWizard.Present(Self, Self.Document) Then
+		      Self.SetupUI()
+		      Self.Changed = Self.Config(False).Modified
+		    End If
+		  Case "SettingsButton"
+		    If (Self.mSettingsPopoverController Is Nil) = False And Self.mSettingsPopoverController.Visible Then
+		      Self.mSettingsPopoverController.Dismiss(False)
+		      Self.mSettingsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		    Var SettingsView As New EngramControlSettingsView
+		    Var Controller As New PopoverController(SettingsView)
+		    SettingsView.AutoUnlockEngrams = Config.AutoUnlockAllEngrams
+		    SettingsView.OnlyAllowSpecifiedEngrams = Config.OnlyAllowSpecifiedEngrams
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf SettingsPopoverController_Finished
+		    Self.mSettingsPopoverController = Controller
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PointsToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Levels() As Integer
+		    If EngramControlPointOverrideWindow.Present(Self, Self.Document, Levels) Then
+		      Self.SetupPointsList()
+		      Self.Changed = True
+		    End If
+		  Case "EditButton"
+		    Self.PointsList.DoEdit
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", "Unlock Points"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Level", IconToolbarAdd, "Define a new level to override engram points."))
+		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit one or more levels.", False))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
@@ -994,7 +997,7 @@ End
 		Name="Progress"
 		Visible=false
 		Group="Behavior"
-		InitialValue="ProgressNone"
+		InitialValue=""
 		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
@@ -1013,14 +1016,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

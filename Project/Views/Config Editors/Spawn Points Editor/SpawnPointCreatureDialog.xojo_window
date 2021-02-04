@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
    MinimumWidth    =   524
    Resizeable      =   False
    Title           =   "Creature Entry"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   524
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -116,7 +116,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -151,7 +151,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -194,7 +194,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -238,7 +238,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -282,7 +282,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -318,7 +318,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -361,7 +361,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   118
@@ -397,7 +397,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   118
@@ -427,7 +427,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -459,7 +459,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
@@ -496,7 +496,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   446
@@ -524,7 +524,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
@@ -554,12 +554,12 @@ Begin BeaconDialog SpawnPointCreatureDialog
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   254
@@ -594,7 +594,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
@@ -629,7 +629,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
@@ -664,7 +664,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   386
@@ -699,7 +699,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
@@ -734,7 +734,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
@@ -769,7 +769,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
@@ -813,7 +813,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
@@ -858,7 +858,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   320
@@ -903,7 +903,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
@@ -948,7 +948,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   286
@@ -993,7 +993,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
@@ -1038,7 +1038,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   220
@@ -1074,7 +1074,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   188
@@ -1109,7 +1109,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   188
@@ -1139,12 +1139,12 @@ Begin BeaconDialog SpawnPointCreatureDialog
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   354
@@ -1164,22 +1164,22 @@ End
 		  Self.SwapButtons()
 		  
 		  If Self.mTargetCreature <> Nil Then
-		    Self.CreatureNameLabel.Value = Self.mTargetCreature.Label
+		    Self.CreatureNameLabel.Text = Self.mTargetCreature.Label
 		    Self.CreatureNameLabel.Italic = False
 		  ElseIf Self.mMultiEditMode Then
 		    Var Names() As String
 		    For Each Entry As Beacon.MutableSpawnPointSetEntry In Self.mEntries
-		      Names.AddRow(Entry.Label)
+		      Names.Add(Entry.Label)
 		    Next
 		    Names.Sort
-		    Self.CreatureNameLabel.Value = Language.EnglishOxfordList(Names)
+		    Self.CreatureNameLabel.Text = Language.EnglishOxfordList(Names)
 		  End If
 		  
 		  Var CommonOffset As Beacon.Point3D
 		  Var CommonSpawnChance, CommonMinLevelMultiplier, CommonMaxLevelMultiplier, CommonMinLevelOffset, CommonMaxLevelOffset As NullableDouble
 		  Var CommonLevelRange As Beacon.Range
 		  
-		  If Self.mEntries.LastRowIndex > -1 Then
+		  If Self.mEntries.LastIndex > -1 Then
 		    CommonOffset = Self.mEntries(0).Offset
 		    CommonSpawnChance = Self.mEntries(0).SpawnChance
 		    CommonMinLevelMultiplier = Self.mEntries(0).MinLevelMultiplier
@@ -1191,8 +1191,8 @@ End
 		    End If
 		  End If
 		  
-		  If Self.mEntries.LastRowIndex > 0 Then
-		    For I As Integer = 1 To Self.mEntries.LastRowIndex
+		  If Self.mEntries.LastIndex > 0 Then
+		    For I As Integer = 1 To Self.mEntries.LastIndex
 		      If CommonOffset <> Nil And Self.mEntries(I).Offset <> CommonOffset Then
 		        CommonOffset = Nil
 		      End If
@@ -1256,22 +1256,22 @@ End
 		  Self.mDifficulty = Document.DifficultyValue
 		  Self.mMods = Document.Mods
 		  Self.mEntries = Entries
-		  Self.mMultiEditMode = Entries.LastRowIndex > 0
+		  Self.mMultiEditMode = Entries.LastIndex > 0
 		  Self.mOffsetBeforeMultiplier = OffsetBeforeMultiplier
 		  
-		  If Entries.LastRowIndex > 0 Then
+		  If Entries.LastIndex > 0 Then
 		    Self.mMultiEditMode = True
 		    
 		    Var CommonCreature As Beacon.Creature = Entries(0).Creature
-		    For I As Integer = 1 To Entries.LastRowIndex
-		      If Entries(I).Creature.Path <> CommonCreature.Path Then
+		    For I As Integer = 1 To Entries.LastIndex
+		      If Entries(I).Creature <> CommonCreature Then
 		        CommonCreature = Nil
 		        Exit For I
 		      End If
 		    Next
 		    
 		    Self.mTargetCreature = CommonCreature
-		  ElseIf Entries.LastRowIndex = 0 Then
+		  ElseIf Entries.LastIndex = 0 Then
 		    Self.mTargetCreature = Entries(0).Creature
 		  End If
 		  
@@ -1281,21 +1281,22 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CreateEntry() As Beacon.MutableSpawnPointSetEntry
-		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature)
+		  // For the purposes of this method, we don't need a creature, but the class does. So give it one that will always exist. A dodo.
+		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Beacon.Data.GetCreatureByID("08d6f1c5-6b8a-48b0-9232-e2705864c87c"))
 		  
-		  If Self.LevelOverrideMinField.Value <> "" And Self.LevelOverrideMaxField.Value <> "" Then
+		  If Self.LevelOverrideMinField.Text <> "" And Self.LevelOverrideMaxField.Text <> "" Then
 		    Entry.Append(Beacon.SpawnPointLevel.FromUserLevel(Self.LevelOverrideMinField.DoubleValue, Self.LevelOverrideMaxField.DoubleValue, Self.mDifficulty))
 		  End If
-		  If Self.LevelMultiplierMinField.Value <> "" Then
+		  If Self.LevelMultiplierMinField.Text <> "" Then
 		    Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
 		  End If
-		  If Self.LevelMultiplierMaxField.Value <> "" Then
+		  If Self.LevelMultiplierMaxField.Text <> "" Then
 		    Entry.MaxLevelMultiplier = Self.LevelMultiplierMaxField.DoubleValue
 		  End If
-		  If Self.LevelOffsetMinField.Value <> "" Then
+		  If Self.LevelOffsetMinField.Text <> "" Then
 		    Entry.MinLevelOffset = Self.LevelOffsetMinField.DoubleValue
 		  End If
-		  If Self.LevelOffsetMaxField.Value <> "" Then
+		  If Self.LevelOffsetMaxField.Text <> "" Then
 		    Entry.MaxLevelOffset = Self.LevelOffsetMaxField.DoubleValue
 		  End If
 		  
@@ -1307,11 +1308,11 @@ End
 		Shared Function Present(Parent As Window, Document As Beacon.Document, Set As Beacon.SpawnPointSet, Entry As Beacon.MutableSpawnPointSetEntry = Nil) As Beacon.MutableSpawnPointSetEntry
 		  Var Entries() As Beacon.MutableSpawnPointSetEntry
 		  If Entry <> Nil Then
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  End If
 		  
 		  Var Results() As Beacon.MutableSpawnPointSetEntry = Present(Parent, Document, Set, Entries)
-		  If Results = Nil Or Results.LastRowIndex = -1 Then
+		  If Results = Nil Or Results.LastIndex = -1 Then
 		    Return Nil
 		  End If
 		  
@@ -1343,16 +1344,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEffectiveLevel()
-		  Var Entry As Beacon.MutableSpawnPointSetEntry = Self.CreateEntry
-		  
-		  If IsNumeric(Self.LevelOverrideMinField.Value) And IsNumeric(Self.LevelOverrideMaxField.Value) Then
+		  If IsNumeric(Self.LevelOverrideMinField.Text) And IsNumeric(Self.LevelOverrideMaxField.Text) Then
 		    Self.LevelOverrideMinField.Enabled = True
 		    Self.LevelOverrideMaxField.Enabled = True
 		    Self.LevelOffsetMinField.Enabled = False
 		    Self.LevelOffsetMaxField.Enabled = False
 		    Self.LevelMultiplierMinField.Enabled = False
 		    Self.LevelMultiplierMaxField.Enabled = False
-		  ElseIf (IsNumeric(Self.LevelOffsetMinField.Value) And IsNumeric(Self.LevelOffsetMaxField.Value)) Or (IsNumeric(Self.LevelMultiplierMinField.Value) And IsNumeric(Self.LevelMultiplierMaxField.Value)) Then
+		  ElseIf (IsNumeric(Self.LevelOffsetMinField.Text) And IsNumeric(Self.LevelOffsetMaxField.Text)) Or (IsNumeric(Self.LevelMultiplierMinField.Text) And IsNumeric(Self.LevelMultiplierMaxField.Text)) Then
 		    Self.LevelOverrideMinField.Enabled = False
 		    Self.LevelOverrideMaxField.Enabled = False
 		    Self.LevelOffsetMinField.Enabled = True
@@ -1368,9 +1367,12 @@ End
 		    Self.LevelMultiplierMaxField.Enabled = True
 		  End If
 		  
-		  Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
-		  Self.EffectiveMinLevelField.Value = Range.Min.PrettyText
-		  Self.EffectiveMaxLevelField.Value = Range.Max.PrettyText
+		  Var Entry As Beacon.MutableSpawnPointSetEntry = Self.CreateEntry
+		  If (Entry Is Nil) = False Then
+		    Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
+		    Self.EffectiveMinLevelField.Text = Range.Min.PrettyText
+		    Self.EffectiveMaxLevelField.Text = Range.Max.PrettyText
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1419,12 +1421,12 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures = Nil Or Creatures.LastRowIndex <> 0 Then
+		  If Creatures = Nil Or Creatures.LastIndex <> 0 Then
 		    Return
 		  End If
 		  
 		  Self.mTargetCreature = Creatures(0)
-		  Self.CreatureNameLabel.Value = Self.mTargetCreature.Label
+		  Self.CreatureNameLabel.Text = Self.mTargetCreature.Label
 		  Self.CreatureNameLabel.Italic = False
 		End Sub
 	#tag EndEvent
@@ -1437,7 +1439,7 @@ End
 		  End If
 		  
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1488,7 +1490,7 @@ End
 		  End If
 		  
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1505,8 +1507,8 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mEntries.LastRowIndex = -1 Then
-		    Self.mEntries.AddRow(New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature))
+		  If Self.mEntries.LastIndex = -1 Then
+		    Self.mEntries.Add(New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature))
 		  End If
 		  
 		  For Each Entry As Beacon.MutableSpawnPointSetEntry In Self.mEntries
@@ -1524,21 +1526,21 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.OffsetFields(0)) > -1 Then
-		      If Self.OffsetFields(0).Value <> "" Then
+		      If Self.OffsetFields(0).Text <> "" Then
 		        OffsetX = Self.OffsetFields(0).DoubleValue
 		      Else
 		        OffsetX = 0
 		      End If
 		    End If
 		    If Self.mEditedFields.IndexOf(Self.OffsetFields(1)) > -1 Then
-		      If Self.OffsetFields(1).Value <> "" Then
+		      If Self.OffsetFields(1).Text <> "" Then
 		        OffsetY = Self.OffsetFields(1).DoubleValue
 		      Else
 		        OffsetY = 0
 		      End If
 		    End If
 		    If Self.mEditedFields.IndexOf(Self.OffsetFields(2)) > -1 Then
-		      If Self.OffsetFields(2).Value <> "" Then
+		      If Self.OffsetFields(2).Text <> "" Then
 		        OffsetZ = Self.OffsetFields(2).DoubleValue
 		      Else
 		        OffsetZ = 0
@@ -1552,7 +1554,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.SpawnChanceField) > -1 Then
-		      If Self.SpawnChanceField.Value <> "" Then
+		      If Self.SpawnChanceField.Text <> "" Then
 		        Entry.SpawnChance = Self.SpawnChanceField.DoubleValue
 		      Else
 		        Entry.SpawnChance = Nil
@@ -1563,10 +1565,10 @@ End
 		      Var MinLevel As Integer = Round(Self.mDifficulty)
 		      Var MaxLevel As Integer = Round(Self.mDifficulty) * 30
 		      
-		      If Self.LevelOverrideMinField.Value <> "" Then
+		      If Self.LevelOverrideMinField.Text <> "" Then
 		        MinLevel = Round(Self.LevelOverrideMinField.DoubleValue)
 		      End If
-		      If Self.LevelOverrideMaxField.Value <> "" Then
+		      If Self.LevelOverrideMaxField.Text <> "" Then
 		        MaxLevel = Round(Self.LevelOverrideMaxField.DoubleValue)
 		      End If
 		      
@@ -1580,14 +1582,14 @@ End
 		    ElseIf Self.mEditedFields.IndexOf(Self.LevelOffsetMinField) > -1 Or Self.mEditedFields.IndexOf(Self.LevelOffsetMaxField) > -1 Or Self.mEditedFields.IndexOf(Self.LevelMultiplierMinField) > -1 Or Self.mEditedFields.IndexOf(Self.LevelMultiplierMaxField) > -1 Then
 		      Entry.LevelCount = 0
 		      Entry.LevelOverride = Nil
-		      If IsNumeric(Self.LevelOffsetMinField.Value) And IsNumeric(Self.LevelOffsetMaxField.Value) Then
+		      If IsNumeric(Self.LevelOffsetMinField.Text) And IsNumeric(Self.LevelOffsetMaxField.Text) Then
 		        Entry.MinLevelOffset = Self.LevelOffsetMinField.DoubleValue
 		        Entry.MaxLevelOffset = Self.LevelOffsetMaxField.DoubleValue
 		      Else
 		        Entry.MinLevelOffset = Nil
 		        Entry.MaxLevelOffset = Nil
 		      End If
-		      If IsNumeric(Self.LevelMultiplierMinField.Value) And IsNumeric(Self.LevelMultiplierMaxField.Value) Then
+		      If IsNumeric(Self.LevelMultiplierMinField.Text) And IsNumeric(Self.LevelMultiplierMaxField.Text) Then
 		        Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
 		        Entry.MaxLevelMultiplier = Self.LevelMultiplierMaxField.DoubleValue
 		      Else
@@ -1597,7 +1599,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelMultiplierMinField) > -1 Then
-		      If Self.LevelMultiplierMinField.Value <> "" Then
+		      If Self.LevelMultiplierMinField.Text <> "" Then
 		        Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
 		      Else
 		        Entry.MinLevelMultiplier = Nil
@@ -1605,7 +1607,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelMultiplierMaxField) > -1 Then
-		      If Self.LevelMultiplierMaxField.Value <> "" Then
+		      If Self.LevelMultiplierMaxField.Text <> "" Then
 		        Entry.MaxLevelMultiplier = Self.LevelMultiplierMaxField.DoubleValue
 		      Else
 		        Entry.MaxLevelMultiplier = Nil
@@ -1613,7 +1615,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelOffsetMinField) > -1 Then
-		      If Self.LevelOffsetMinField.Value <> "" Then
+		      If Self.LevelOffsetMinField.Text <> "" Then
 		        Entry.MinLevelOffset = Self.LevelOffsetMinField.DoubleValue
 		      Else
 		        Entry.MinLevelOffset = Nil
@@ -1621,7 +1623,7 @@ End
 		    End If
 		    
 		    If Self.mEditedFields.IndexOf(Self.LevelOffsetMaxField) > -1 Then
-		      If Self.LevelOffsetMaxField.Value <> "" Then
+		      If Self.LevelOffsetMaxField.Text <> "" Then
 		        Entry.MaxLevelOffset = Self.LevelOffsetMaxField.DoubleValue
 		      Else
 		        Entry.MaxLevelOffset = Nil
@@ -1670,7 +1672,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1703,7 +1705,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1736,7 +1738,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1769,7 +1771,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1802,7 +1804,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1835,7 +1837,7 @@ End
 		  
 		  Self.UpdateEffectiveLevel()
 		  If Self.mEditedFields.IndexOf(Me) = -1 Then
-		    Self.mEditedFields.AddRow(Me)
+		    Self.mEditedFields.Add(Me)
 		  End If
 		End Sub
 	#tag EndEvent

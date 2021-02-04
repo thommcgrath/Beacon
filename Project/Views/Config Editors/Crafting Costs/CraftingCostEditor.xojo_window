@@ -25,70 +25,8 @@ Begin BeaconContainer CraftingCostEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   350
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Resources Required"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   350
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   350
-   End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -99,6 +37,9 @@ Begin BeaconContainer CraftingCostEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -119,6 +60,7 @@ Begin BeaconContainer CraftingCostEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -150,6 +92,7 @@ Begin BeaconContainer CraftingCostEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -163,6 +106,8 @@ Begin BeaconContainer CraftingCostEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -170,6 +115,40 @@ Begin BeaconContainer CraftingCostEditor
       Top             =   279
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   350
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
       Width           =   350
    End
@@ -181,11 +160,11 @@ End
 		Private Sub ShowAddResources()
 		  Var Engrams() As Beacon.Engram
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Engrams.AddRow(Self.mTarget.Resource(I))
+		    Engrams.Add(Self.mTarget.Resource(I))
 		  Next
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -203,19 +182,19 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  Var Paths() As String
+		  Var Selected() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Var Resource As Beacon.Engram = Self.List.RowTagAt(I)
-		      Paths.AddRow(Resource.Path)
+		      Selected.Add(Resource.ObjectID)
 		    End If
 		  Next
 		  
 		  Self.List.RemoveAllRows
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Str(Self.mTarget.Quantity(I), "-0"))
+		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Self.mTarget.Quantity(I).ToString(Locale.Raw, "0"))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = Paths.IndexOf(Self.mTarget.Resource(I).Path) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Self.mTarget.Resource(I).ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Self.mTarget.Resource(I)
 		  Next
 		  Self.List.Sort
@@ -232,9 +211,9 @@ End
 		  Var Noun As String = If(TotalItems = 1, "Resource", "Resources")
 		  
 		  If SelectedItems > 0 Then
-		    Self.Status.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
+		    Self.Status.Caption = SelectedItems.ToString(Locale.Current, ",##0") + " of " + TotalItems.ToString(Locale.Current, ",##0") + " " + Noun + " Selected"
 		  Else
-		    Self.Status.Caption = Str(TotalItems, "-0") + " " + Noun
+		    Self.Status.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If
 		End Sub
 	#tag EndMethod
@@ -289,29 +268,12 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingresource", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"350", Scope = Public
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"495", Scope = Public
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddResource"
-		    Self.ShowAddResources()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddResource", IconToolbarAdd)
-		  AddButton.HelpTag = "Add resources to this crafting cost."
-		  Me.LeftItems.Append(AddButton)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -344,7 +306,7 @@ End
 		      Continue
 		    End If
 		    
-		    EngramsToDelete.AddRow(Me.RowTagAt(I))
+		    EngramsToDelete.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(EngramsToDelete, "ingredient", "ingredients") = False Then
@@ -370,13 +332,14 @@ End
 		    Var Idx As Integer = Self.mTarget.IndexOf(Engram)
 		    
 		    Var Dict As New Dictionary
+		    Dict.Value("UUID") = Engram.ObjectID
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
-		    Dicts.AddRow(Dict)
+		    Dicts.Add(Dict)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -391,12 +354,7 @@ End
 		    Dicts = Beacon.ParseJSON(Contents)
 		    
 		    For Each Dict As Dictionary In Dicts
-		      Var ClassString As String = Dict.Value("Class")
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateFromClass(ClassString)
-		      End If
-		      
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "UUID", "Class", "", Nil)
 		      Var Quantity As Integer = Dict.Value("Quantity")
 		      Var Exact As Boolean = Dict.Value("Exact")
 		      Self.mTarget.Append(Engram, Quantity, Exact)
@@ -426,6 +384,25 @@ End
 		    Self.mTarget.RequireExactResource(Idx) = Me.CellCheckBoxValueAt(Row, Column)
 		    Self.Changed = True
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddResourceButton"
+		    Self.ShowAddResources()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("IngredientsTitle", "Ingredients"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddResourceButton", "Add Ingredient", IconToolbarAdd, "Add ingredients to this engram."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

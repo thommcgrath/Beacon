@@ -61,7 +61,7 @@ Protected Class DocumentURL
 		    Next
 		  End If
 		  
-		  Var HashData As String = Self.mScheme + "://" + Self.mPath
+		  Var HashData As String = Self.URL(Beacon.DocumentURL.URLTypes.Comparison)
 		  Self.mHash = EncodeHex(Crypto.MD5(HashData))
 		End Sub
 	#tag EndMethod
@@ -107,7 +107,7 @@ Protected Class DocumentURL
 		  If Name = "" Then
 		    // Get the last path component
 		    Var Components() As String = Self.Path.Split("/")
-		    Name = Components(Components.LastRowIndex)
+		    Name = Components(Components.LastIndex)
 		    
 		    If Name.EndsWith(".beacon") Then
 		      Name = Name.Left(Name.Length - 7)
@@ -152,7 +152,7 @@ Protected Class DocumentURL
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As String
-		  Return Self.URL
+		  Return Self.URL(Beacon.DocumentURL.URLTypes.Unmodified)
 		End Function
 	#tag EndMethod
 
@@ -187,8 +187,43 @@ Protected Class DocumentURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function URL() As String
-		  Return Self.mOriginalURL
+		Function URL(Purpose As Beacon.DocumentURL.URLTypes) As String
+		  If Purpose = Beacon.DocumentURL.URLTypes.Unmodified Or Self.mScheme = Self.TypeLocal Or Self.mScheme = Self.TypeTransient Then
+		    Return Self.mOriginalURL
+		  End If
+		  
+		  Var Pattern As New Regex
+		  Pattern.SearchPattern = "((beaconapp\.cc)|(usebeacon\.app))/v\d/document/([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})(/versions/([^\?/]+))?"
+		  
+		  Var Matches As RegexMatch = Pattern.Search(Self.mOriginalURL)
+		  If Matches Is Nil Then
+		    Return Self.mOriginalURL
+		  End If
+		  
+		  Var DocumentID As String = Matches.SubExpressionString(4)
+		  Var Path As String = "/document/" + DocumentID.Lowercase
+		  
+		  Select Case Purpose
+		  Case Beacon.DocumentURL.URLTypes.Reading
+		    // Return simplified url with version
+		    If Matches.SubExpressionCount >= 6 Then
+		      Path = Path + "/versions/" + Matches.SubExpressionString(6)
+		    End If
+		    Return BeaconAPI.URL(Path)
+		  Case Beacon.DocumentURL.URLTypes.Writing
+		    // Return simplified url
+		    Return BeaconAPI.URL(Path)
+		  Case Beacon.DocumentURL.URLTypes.Comparison
+		    // Simplify the url, but keep the scheme
+		    Var FullURL As String = BeaconAPI.URL(Path)
+		    Var OriginalScheme As String = Self.mOriginalURL.Left(Self.mOriginalURL.IndexOf("://"))
+		    Return OriginalScheme + FullURL.Middle(FullURL.IndexOf("://"))
+		  Case Beacon.DocumentURL.URLTypes.Storage
+		    // Same as comparison, but we append the name
+		    Var FullURL As String = BeaconAPI.URL(Path)
+		    Var OriginalScheme As String = Self.mOriginalURL.Left(Self.mOriginalURL.IndexOf("://"))
+		    Return OriginalScheme + FullURL.Middle(FullURL.IndexOf("://")) + "?name=" + EncodeURLComponent(Self.Name)
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -206,12 +241,6 @@ Protected Class DocumentURL
 		    End If
 		  #endif
 		  Return New Beacon.DocumentURL(Path)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function WithScheme(NewScheme As String) As Beacon.DocumentURL
-		  Return NewScheme + Self.mOriginalURL.Middle(Self.mScheme.Length)
 		End Function
 	#tag EndMethod
 
@@ -252,6 +281,15 @@ Protected Class DocumentURL
 
 	#tag Constant, Name = TypeWeb, Type = String, Dynamic = False, Default = \"https", Scope = Public
 	#tag EndConstant
+
+
+	#tag Enum, Name = URLTypes, Type = Integer, Flags = &h0
+		Comparison
+		  Writing
+		  Reading
+		  Unmodified
+		Storage
+	#tag EndEnum
 
 
 	#tag ViewBehavior

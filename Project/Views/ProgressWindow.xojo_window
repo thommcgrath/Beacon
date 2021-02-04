@@ -3,7 +3,7 @@ Begin BeaconDialog ProgressWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog ProgressWindow
    MinimumWidth    =   500
    Resizeable      =   False
    Title           =   "Progress"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   500
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog ProgressWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -108,7 +108,7 @@ Begin BeaconDialog ProgressWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   84
@@ -138,7 +138,7 @@ Begin BeaconDialog ProgressWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -154,7 +154,7 @@ Begin BeaconDialog ProgressWindow
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   10
-      RunMode         =   "0"
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -171,7 +171,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Close()
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Super.Close()
 		  Else
 		    Self.mShouldClose = True
@@ -195,16 +195,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  If Self.MessageLabel.Value.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.MessageLabel.Value = Self.mMessage
+		  If Self.MessageLabel.Text.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.MessageLabel.Text = Self.mMessage
 		  End If
 		  
 		  If Self.Title.Compare(Self.mMessage, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
 		    Self.Title = Self.mMessage
 		  End If
 		  
-		  If Self.DetailLabel.Value.Compare(Self.mDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.DetailLabel.Value = Self.mDetail
+		  If Self.DetailLabel.Text.Compare(Self.mDetail, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.DetailLabel.Text = Self.mDetail
 		  End If
 		  
 		  Var ProgressValue, ProgressMaximum As Integer

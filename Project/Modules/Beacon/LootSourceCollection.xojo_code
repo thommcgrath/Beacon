@@ -5,7 +5,7 @@ Inherits Beacon.Collection
 		Function Operator_Convert() As Beacon.LootSource()
 		  Var Sources() As Beacon.LootSource
 		  For Each Item As Beacon.LootSource In Self.mItems
-		    Sources.AddRow(Item)
+		    Sources.Add(Item)
 		  Next
 		  Return Sources
 		End Function

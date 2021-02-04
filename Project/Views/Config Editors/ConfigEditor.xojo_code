@@ -17,14 +17,14 @@ Inherits BeaconSubview
 		  RaiseEvent GetEditorMenuItems(Items)
 		  If Items.Count > PreCount Then
 		    // Something was added, so we need another separator
-		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    Items.Add(New MenuItem(MenuItem.TextSeparator))
 		  End If
 		  
 		  Var RestoreItem As New MenuItem("Restore """ + Self.ConfigLabel + """ to Default", "restore")
 		  RestoreItem.Name = "DocumentRestoreConfigToDefault"
 		  RestoreItem.AutoEnabled = False
 		  RestoreItem.Enabled = Self.SupportsRestore()
-		  Items.AddRow(RestoreItem)
+		  Items.Add(RestoreItem)
 		End Sub
 	#tag EndEvent
 
@@ -36,9 +36,23 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  If IsEventImplemented("Shown") Then
+		    RaiseEvent Shown(UserData)
+		  Else
+		    Self.SetupUI()
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			If Not Self.SupportsRestore Then
 			Return True
 			End If
@@ -126,6 +140,17 @@ Inherits BeaconSubview
 		  
 		  Parser.Start
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseDouble(Input As String, ByRef Value As Double) As Boolean
+		  If IsNumeric(Input) Then
+		    Value = CDbl(Input)
+		    Return True
+		  Else
+		    Return False
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -259,6 +284,10 @@ Inherits BeaconSubview
 		Event ShowIssue(Issue As Beacon.Issue)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Variant = Nil)
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mController As Beacon.DocumentController
@@ -275,11 +304,35 @@ Inherits BeaconSubview
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="ToolbarIcon"
+			Name="IsFrontmost"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ViewTitle"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ViewIcon"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
 			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Progress"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -344,14 +397,6 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Progress"
-			Visible=false
-			Group="Behavior"
-			InitialValue="ProgressNone"
-			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -489,14 +534,6 @@ Inherits BeaconSubview
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

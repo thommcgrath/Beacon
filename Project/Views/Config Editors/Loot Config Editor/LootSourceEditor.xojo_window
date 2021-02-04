@@ -26,6 +26,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Visible         =   True
    Width           =   598
    Begin BeaconListbox SetList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -36,6 +37,9 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -56,6 +60,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -79,41 +84,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Item Sets"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   "1"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
    End
    Begin PagePanel Panel
       AutoDeactivate  =   True
@@ -173,6 +143,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   443
@@ -186,6 +157,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -203,6 +176,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
@@ -216,6 +190,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -232,6 +208,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   464
@@ -245,6 +222,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -284,34 +263,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
-   Begin FadedSeparator FadedSeparator3
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin LootSourceSettingsContainer SettingsContainer
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -348,6 +299,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -361,6 +313,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -401,24 +355,44 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub EmbeddingFinished()
-		  Self.Simulator.Height = Preferences.SimulatorSize
-		  If Self.SimulatorVisible Then
-		    Self.SimulatorPosition = Self.Height - Self.Simulator.Height
-		  Else
-		    Self.SimulatorPosition = Self.Height
-		  End If
-		  
-		  Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
-		  Self.mSavePositions = True
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Sub Open()
 		  Self.UpdateStatus()
@@ -429,11 +403,17 @@ End
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
-		  If Self.mSavePositions Then
-		    Self.SetListWidth(Self.Header.Width)
+		  If Self.SimulatorVisible Then
+		    Self.SimulatorHeight = Preferences.SimulatorSize
+		  Else
+		    Self.SimulatorPosition = Self.Height
 		  End If
+		  Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
 		  
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Var Resizer As OmniBarItem = Self.ConfigToolbar.Item("Resizer")
+		  If (Resizer Is Nil) = False Then
+		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -500,11 +480,11 @@ End
 		    If Groups.HasKey(Preset.Grouping) Then
 		      Arr = Groups.Value(Preset.Grouping)
 		    End If
-		    Arr.AddRow(Preset)
+		    Arr.Add(Preset)
 		    Groups.Value(Preset.Grouping) = Arr
 		    
 		    If GroupNames.IndexOf(Preset.Grouping) = -1 Then
-		      GroupNames.AddRow(Preset.Grouping)
+		      GroupNames.Add(Preset.Grouping)
 		    End If
 		  Next
 		  GroupNames.Sort
@@ -517,7 +497,7 @@ End
 		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
-		  Var HasTarget As Boolean = Self.mSources.LastRowIndex > -1
+		  Var HasTarget As Boolean = Self.mSources.LastIndex > -1
 		  
 		  For Each Group As String In GroupNames
 		    Var Arr() As Beacon.Preset = Groups.Value(Group)
@@ -525,11 +505,11 @@ End
 		    Var Items() As Beacon.Preset
 		    For Each Preset As Beacon.Preset In Arr
 		      If Preset.ValidForMask(Self.Document.MapCompatibility) Then
-		        Names.AddRow(Preset.Label)
-		        Items.AddRow(Preset)
+		        Names.Add(Preset.Label)
+		        Items.Add(Preset)
 		      End If
 		    Next
-		    If Names.LastRowIndex = -1 Then
+		    If Names.LastIndex = -1 Then
 		      Continue For Group
 		    End If
 		    
@@ -611,7 +591,7 @@ End
 		      Set = New Beacon.ItemSet()
 		    End If
 		    
-		    NewItemSets.AddRow(Source.ItemSets.Append(Set))
+		    NewItemSets.Add(Source.ItemSets.Append(Set))
 		  Next
 		  
 		  Self.UpdateUI(NewItemSets)
@@ -642,6 +622,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function MaxSimulatorHeight() As Integer
+		  Return Self.Height - (Self.ConfigToolbar.Height + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mImporter_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
 		  #Pragma Unused Sender
 		  
@@ -650,15 +636,15 @@ End
 		    Self.mImportProgress = Nil
 		  End If
 		  
-		  If Not Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
+		  If Not Document.HasConfigGroup(BeaconConfigs.NameLootDrops) Then
 		    Return
 		  End If
 		  
-		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.NameLootDrops))
 		  Var NewItemSets() As Beacon.ItemSet
 		  For Each SourceDrop As Beacon.LootSource In Drops
 		    For Each ItemSet As Beacon.ItemSet In SourceDrop.ItemSets
-		      NewItemSets.AddRow(ItemSet)
+		      NewItemSets.Add(ItemSet)
 		    Next
 		  Next
 		  Self.AddSets(NewItemSets)
@@ -669,7 +655,7 @@ End
 		    Try
 		      Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		    Catch Err As TypeMismatchException
-		      Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		      Dicts.Add(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
@@ -679,14 +665,14 @@ End
 		    For Each ConfigDict As Dictionary In Dicts
 		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		      If Source <> Nil Then
-		        SourceLootSources.AddRow(Source)
+		        SourceLootSources.Add(Source)
 		      End If
 		    Next
 		    
 		    Var NewItemSets() As Beacon.ItemSet
 		    For Each Source As Beacon.LootSource In SourceLootSources
 		      For Each Set As Beacon.ItemSet In Source
-		        NewItemSets.AddRow(Set)
+		        NewItemSets.Add(Set)
 		      Next
 		    Next
 		    Self.AddSets(NewItemSets)
@@ -702,37 +688,46 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function MinSimulatorPosition() As Integer
-		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200
+	#tag Method, Flags = &h0
+		Shared Function MinEditorWidth() As Integer
+		  Return ListMinWidth + ItemSetEditor.MinEditorWidth + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub SetListWidth(NewSize As Integer)
-		  If Self.Width < Self.MinimumWidth Then
-		    // Don't compute anything
-		    Return
+		  Var ListWidth, EditorWidth As Integer
+		  If Self.Width <= Self.MinEditorWidth Then
+		    ListWidth = Self.ListMinWidth
+		    EditorWidth = ItemSetEditor.MinEditorWidth
+		  Else
+		    Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		    ListWidth = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - ItemSetEditor.MinEditorWidth)
+		    EditorWidth = AvailableSpace - ListWidth
 		  End If
 		  
-		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
-		  Var EditorWidth As Integer = AvailableSpace - ListWidth
-		  
-		  Self.Header.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.HintsContainer.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.SetList.Width = ListWidth
 		  Self.Simulator.Width = ListWidth
 		  Self.SettingsContainer.Width = ListWidth
-		  Self.FadedSeparator3.Width = ListWidth
 		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
-		  
-		  If Self.mSavePositions Then
-		    Preferences.ItemSetsSplitterPosition = ListWidth
-		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SimulatorHeight() As Integer
+		  Return Self.Simulator.Height
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SimulatorHeight(Assigns Value As Integer)
+		  Self.Simulator.Height = Max(Min(Value, Self.MaxSimulatorHeight), Self.MinSimulatorHeight)
+		  Self.SimulatorPosition = Self.Height - Self.Simulator.Height
 		End Sub
 	#tag EndMethod
 
@@ -743,14 +738,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SimulatorPosition(Assigns Pos As Integer)
-		  // This does not save the position in preferences, it is only for coordinating
-		  // the size and position of controls
-		  
-		  Pos = Max(Pos, Self.MinSimulatorPosition)
-		  
-		  Self.Simulator.Top = Pos
-		  Self.StatusBar1.Top = Pos - Self.StatusBar1.Height
+		Private Sub SimulatorPosition(Assigns Value As Integer)
+		  Self.Simulator.Top = Value
+		  Self.StatusBar1.Top = Value - Self.StatusBar1.Height
 		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
 		End Sub
 	#tag EndMethod
@@ -769,14 +759,18 @@ End
 		  
 		  Preferences.SimulatorVisible = Value
 		  
+		  Var SimulatorButton As OmniBarItem = Self.ConfigToolbar.Item("SimulatorButton")
+		  If (SimulatorButton Is Nil) = False Then
+		    SimulatorButton.Toggled = Value
+		  End If
+		  
 		  Var NewPosition As Integer
 		  If Value Then
-		    NewPosition = Self.Height - Preferences.SimulatorSize
-		    Self.Simulator.Height = Preferences.SimulatorSize
+		    Self.Simulator.Height = Min(Preferences.SimulatorSize, Self.MaxSimulatorHeight)
+		    NewPosition = Self.Height - Self.Simulator.Height
 		  Else
 		    NewPosition = Self.Height
 		  End If
-		  NewPosition = Max(NewPosition, Self.MinSimulatorPosition)
 		  
 		  If Not Animated Then
 		    Self.SimulatorPosition = NewPosition
@@ -803,7 +797,7 @@ End
 		  // Clone the array, but not the items
 		  Var Results() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Results.AddRow(Source)
+		    Results.Add(Source)
 		  Next
 		  Return Results
 		End Function
@@ -814,16 +808,16 @@ End
 		  If Values = Nil Then
 		    Self.mSources.ResizeTo(-1)
 		  Else
-		    Self.mSources.ResizeTo(Values.LastRowIndex)
-		    For I As Integer = 0 To Values.LastRowIndex
+		    Self.mSources.ResizeTo(Values.LastIndex)
+		    For I As Integer = 0 To Values.LastIndex
 		      Self.mSources(I) = Values(I)
 		    Next
 		  End If
 		  
 		  Var CommonNotes As String
-		  If Self.mSources.LastRowIndex > -1 Then
+		  If Self.mSources.LastIndex > -1 Then
 		    CommonNotes = Self.mSources(0).Notes
-		    For I As Integer = 1 To Self.mSources.LastRowIndex
+		    For I As Integer = 1 To Self.mSources.LastIndex
 		      If Self.mSources(I).Notes <> CommonNotes Then
 		        CommonNotes = ""
 		        Exit For I
@@ -856,9 +850,9 @@ End
 		  
 		  Var Caption As String
 		  If Self.SetList.SelectedRowCount > 0 Then
-		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
+		    Caption = Self.SetList.SelectedRowCount.ToString(Locale.Current, ",##0") + " of " + Self.SetList.RowCount.ToString(Locale.Current, ",##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
 		  Else
-		    Caption = Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
+		    Caption = Self.SetList.RowCount.ToString(Locale.Current, ",##0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
 		  End If
 		  
 		  Self.StatusBar1.Caption = Caption
@@ -895,16 +889,16 @@ End
 		    If SelectSets = Nil Then
 		      For I As Integer = 0 To Self.SetList.RowCount - 1
 		        If Self.SetList.Selected(I) Then
-		          SelectedSets.AddRow(ItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.ID)
+		          SelectedSets.Add(ItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.ID)
 		        End If
 		      Next
 		    Else
 		      For Each Set As Beacon.ItemSet In SelectSets
-		        SelectedSets.AddRow(Set.Hash)
+		        SelectedSets.Add(Set.Hash)
 		      Next
 		    End If
 		    
-		    Var ExtendedLabels As Boolean = Self.mSources.LastRowIndex > 0
+		    Var ExtendedLabels As Boolean = Self.mSources.LastIndex > 0
 		    
 		    Self.SetList.RowCount = CombinedSets.KeyCount
 		    Self.SetList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
@@ -926,11 +920,16 @@ End
 		  Self.SetList.Sort
 		  Self.SetList.SelectionChangeBlocked = False
 		  
-		  If Self.mSources.LastRowIndex = 0 Then
-		    Self.Header.Simulate.Enabled = True
+		  Var SimulatorButton As OmniBarItem = Self.ConfigToolbar.Item("SimulatorButton")
+		  If Self.mSources.LastIndex = 0 Then
+		    If (SimulatorButton Is Nil) = False Then
+		      SimulatorButton.Enabled = True
+		    End If
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  Else
-		    Self.Header.Simulate.Enabled = False
+		    If (SimulatorButton Is Nil) = False Then
+		      SimulatorButton.Enabled = False
+		    End If
 		    Self.Simulator.Clear()
 		  End If
 		End Sub
@@ -959,10 +958,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSavePositions As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mSimulatorTask As AnimationKit.ValueTask
 	#tag EndProperty
 
@@ -987,16 +982,16 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = EditorMinWidth, Type = Double, Dynamic = False, Default = \"498", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.itemset", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"749", Scope = Public
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MinSimulatorHeight, Type = Double, Dynamic = False, Default = \"100", Scope = Private
 	#tag EndConstant
 
 
@@ -1041,7 +1036,7 @@ End
 		      Continue
 		    End If
 		    
-		    Organizers.AddRow(Me.RowTagAt(I))
+		    Organizers.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Organizers, "item set", "item sets") = False Then
@@ -1069,28 +1064,28 @@ End
 		    End If
 		    
 		    Var Organizer As ItemSetOrganizer = Me.RowTagAt(I)
-		    Var Dict As Dictionary = Organizer.Template.Export
+		    Var Dict As Dictionary = Organizer.Template.SaveData
 		    If Dict <> Nil Then
-		      Dicts.AddRow(Dict)
+		      Dicts.Add(Dict)
 		    End If
 		  Next
-		  If Dicts.LastRowIndex = -1 Then
+		  If Dicts.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Contents As String
-		  If Dicts.LastRowIndex = 0 Then
+		  If Dicts.LastIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
 		    Contents = Beacon.GenerateJSON(Dicts, False)
 		  End If
 		  
-		  Board.AddRawData(Contents, Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Contents
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Self.mSources.LastRowIndex = -1 Then
+		  If Self.mSources.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1107,11 +1102,11 @@ End
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		    Var Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
-		      Dicts.AddRow(Parsed)
+		      Dicts.Add(Parsed)
 		    ElseIf Info.FullName = "Object()" Then
 		      Var Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
-		        Dicts.AddRow(Dict)
+		        Dicts.Add(Dict)
 		      Next
 		    Else
 		      System.Beep
@@ -1120,12 +1115,12 @@ End
 		    
 		    Var NewItemSets() As Beacon.ItemSet
 		    For Each Dict As Dictionary In Dicts
-		      Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dict)
 		      If Set = Nil Then
 		        Continue
 		      End If
 		      
-		      NewItemSets.AddRow(Set)
+		      NewItemSets.Add(Set)
 		    Next
 		    Self.AddSets(NewItemSets)
 		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
@@ -1140,7 +1135,7 @@ End
 		    
 		    Var Lines() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      Lines.AddRow("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
+		      Lines.Add("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
 		    Next
 		    Self.Import(Lines.Join(EndOfLine), "Clipboard")
 		  End
@@ -1159,16 +1154,16 @@ End
 		    If Idx = -1 Then
 		      Return False
 		    End If
-		    Targets.AddRow(Me.RowTagAt(Idx))
+		    Targets.Add(Me.RowTagAt(Idx))
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Targets.AddRow(Me.RowTagAt(I))
+		        Targets.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		  End If
 		  
-		  If Targets.LastRowIndex = -1 Then
+		  If Targets.LastIndex = -1 Then
 		    Return False
 		  End If
 		  
@@ -1183,9 +1178,9 @@ End
 		  
 		  Var CreateItem As New MenuItem("Create Preset…", Targets)
 		  CreateItem.Name = "createpreset"
-		  CreateItem.Enabled = Targets.LastRowIndex = 0
+		  CreateItem.Enabled = Targets.LastIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
-		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
+		    CreateItem.Text = "Update """ + Preset.Label + """ Preset…"
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
@@ -1193,10 +1188,10 @@ End
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
-		    If Targets.LastRowIndex = 0 Then
-		      ReconfigureItem.Value = "Rebuild From """ + Preset.Label + """ Preset"
+		    If Targets.LastIndex = 0 Then
+		      ReconfigureItem.Text = "Rebuild From """ + Preset.Label + """ Preset"
 		    Else
-		      ReconfigureItem.Value = "Rebuild From Presets"
+		      ReconfigureItem.Text = "Rebuild From Presets"
 		    End If
 		  End If
 		  Base.AddMenu(ReconfigureItem)
@@ -1228,7 +1223,7 @@ End
 		  
 		  Select Case HitItem.Name
 		  Case "createpreset"
-		    If Targets.LastRowIndex = 0 Then
+		    If Targets.LastIndex = 0 Then
 		      Var Organizer As ItemSetOrganizer = Targets(0)
 		      
 		      Var NewPreset As Beacon.Preset = App.MainWindow.Presets.CreatePreset(Organizer.Template)
@@ -1245,11 +1240,11 @@ End
 		        End If
 		        
 		        If Set.ReconfigureWithPreset(NewPreset, Source, Self.Document) Then
-		          AffectedItemSets.AddRow(Set)
+		          AffectedItemSets.Add(Set)
 		        End If
 		      Next
 		      
-		      If AffectedItemSets.LastRowIndex > -1 Then
+		      If AffectedItemSets.LastIndex > -1 Then
 		        Self.UpdateUI(AffectedItemSets)
 		        RaiseEvent Updated
 		      End If
@@ -1277,13 +1272,13 @@ End
 		        Var Preset As Beacon.Preset = Presets.Value(Set.SourcePresetID)
 		        
 		        If Set.ReconfigureWithPreset(Preset, Source, Self.Document) Then
-		          AffectedItemSets.AddRow(Set)
+		          AffectedItemSets.Add(Set)
 		        End If
 		      Next
 		    Next
 		    
-		    If AffectedItemSets.LastRowIndex = -1 Then
-		      If Targets.LastRowIndex = 0 Then
+		    If AffectedItemSets.LastIndex = -1 Then
+		      If Targets.LastIndex = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the preset.")
 		      Else
 		        Self.ShowAlert("No changes made", "All item sets already match their preset.")
@@ -1294,19 +1289,19 @@ End
 		    Self.UpdateUI(AffectedItemSets)
 		    RaiseEvent Updated
 		    
-		    If Targets.LastRowIndex > 0 Then
+		    If Targets.LastIndex > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
 		    End If
 		  Case "copyjson"
-		    If Targets.LastRowIndex = 0 Then
-		      Var Dict As Dictionary = Targets(0).Template.Export()
+		    If Targets.LastIndex = 0 Then
+		      Var Dict As Dictionary = Targets(0).Template.SaveData()
 		      Var Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Dict, True)
 		    Else
 		      Var Arr() As Dictionary
 		      For Each Organizer As ItemSetOrganizer In Targets
-		        Arr.AddRow(Organizer.Template.Export())
+		        Arr.Add(Organizer.Template.SaveData())
 		      Next
 		      Var Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Arr, True)
@@ -1315,7 +1310,7 @@ End
 		    Var Multipliers As Beacon.Range
 		    Var UseBlueprints As Boolean = False
 		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		    If Self.mSources.LastRowIndex = 0 Then
+		    If Self.mSources.LastIndex = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
 		    Else
 		      Multipliers = New Beacon.Range(1, 1)
@@ -1323,11 +1318,11 @@ End
 		    
 		    Var Parts() As String
 		    For Each Organizer As ItemSetOrganizer In Targets
-		      Parts.AddRow(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty))
+		      Parts.Add(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
 		    Var Board As New Clipboard
-		    If Parts.LastRowIndex = 0 Then
+		    If Parts.LastIndex = 0 Then
 		      Board.Text = Parts(0)
 		    Else
 		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
@@ -1336,55 +1331,6 @@ End
 		  
 		  Return True
 		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
-		  AddButton.HasMenu = True
-		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
-		  
-		  Var SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
-		  SimulateButton.Enabled = False
-		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.RightItems.Append(SimulateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddSet"
-		    Self.AddSet(New Beacon.ItemSet)
-		  Case "Simulate"
-		    Self.SimulatorVisible = True
-		    Self.Simulator.Simulate(Self.mSources(0))
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSet"
-		    Self.BuildPresetMenu(Menu)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSet"
-		    Call Self.HandlePresetMenu(ChosenItem)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Self.Header.Width
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
@@ -1406,7 +1352,7 @@ End
 		  
 		  RaiseEvent Updated
 		  
-		  If Self.SimulatorVisible And Self.mSources.LastRowIndex = 0 Then
+		  If Self.SimulatorVisible And Self.mSources.LastIndex = 0 Then
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  End If
 		End Sub
@@ -1420,21 +1366,12 @@ End
 #tag Events Simulator
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  NewSize = Min(NewSize, Self.Height - Self.MinSimulatorPosition)
-		  
-		  Me.Height = NewSize
-		  Me.Top = Self.Height - NewSize
-		  Self.StatusBar1.Top = Self.Height - (NewSize + Self.StatusBar1.Height)
-		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
+		  Self.SimulatorHeight = NewSize
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ResizeFinished()
-		  If Me.Height < 100 Then
-		    Self.SimulatorVisible = False
-		  ElseIf Self.mSavePositions Then
-		    Preferences.SimulatorSize = Me.Height
-		  End If
+		  Preferences.SimulatorSize = Me.Height
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1485,6 +1422,74 @@ End
 		  If Self.SimulatorVisible Then
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Sets"))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddSetButton", "New Item Set", IconToolbarAddMenu, "Add a new empty item set. Hold to add a preset from a menu."))
+		  Me.Append(OmniBarItem.CreateButton("SimulatorButton", "Simulator", IconToolbarSimulate, "Simulate loot selection for this loot source.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
+		  
+		  If Self.SimulatorVisible Then
+		    Me.Item("SimulatorButton").Toggled = True
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddSetButton"
+		    Self.AddSet(New Beacon.ItemSet)
+		  Case "SimulatorButton"
+		    If Self.SimulatorVisible Then
+		      Self.SimulatorVisible = False
+		    Else
+		      Self.Simulator.Simulate(Self.mSources(0))
+		      Self.SimulatorVisible = True
+		    End If
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Var NewWidth As Integer = Me.Width + DeltaX
+		  Self.SetListWidth(NewWidth)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+		  Select Case Item.Name
+		  Case "AddSetButton"
+		    Var Base As New MenuItem
+		    Self.BuildPresetMenu(Base)
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Call Self.HandlePresetMenu(Choice)
+		    End If
+		    Return True
+		  End Select
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.ItemSetsSplitterPosition = Self.SetList.Width
 		End Sub
 	#tag EndEvent
 #tag EndEvents

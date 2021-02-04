@@ -145,7 +145,8 @@ Protected Class OAuth2Client
 		  
 		  If HTTPStatus <= 0 Then
 		    RaiseEvent DismissWaitingWindow()
-		    RaiseEvent AuthenticationError()
+		    App.Log("Socket error " + HTTPStatus.ToString("0") + ": " + Content)
+		    RaiseEvent AuthenticationError("Socket error " + HTTPStatus.ToString("0"))
 		    Return
 		  ElseIf HTTPStatus <> 200 Then
 		    Self.mCheckStatusKey = CallLater.Schedule(5000, AddressOf CheckStatus)
@@ -197,7 +198,8 @@ Protected Class OAuth2Client
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
-		    RaiseEvent AuthenticationError()
+		    App.LogAPIException(Err, CurrentMethodName, HTTPStatus, Content)
+		    RaiseEvent AuthenticationError(Err.Message)
 		  End Try
 		  Self.EndTask()
 		End Sub
@@ -209,7 +211,8 @@ Protected Class OAuth2Client
 		  #Pragma Unused Err
 		  
 		  RaiseEvent DismissWaitingWindow()
-		  RaiseEvent AuthenticationError()
+		  App.Log(Err, CurrentMethodName)
+		  RaiseEvent AuthenticationError(Err.Message)
 		  Self.EndTask()
 		End Sub
 	#tag EndMethod
@@ -247,7 +250,12 @@ Protected Class OAuth2Client
 		  #Pragma Unused Tag
 		  
 		  If Status <= 0 Then
-		    RaiseEvent AuthenticationError()
+		    If Content Is Nil Then
+		      App.Log("Socket error " + Status.ToString("0") + ": Nil content")
+		    Else
+		      App.Log("Socket error " + Status.ToString("0") + ": " + Content.StringValue(0, Content.Size))
+		    End If
+		    RaiseEvent AuthenticationError("Socket error " + Status.ToString("0"))
 		  ElseIf Status <> 200 Then
 		    Self.NewAuthorization()
 		  Else
@@ -262,7 +270,8 @@ Protected Class OAuth2Client
 		      
 		      RaiseEvent Authenticated
 		    Catch Err As RuntimeException
-		      RaiseEvent AuthenticationError
+		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		      RaiseEvent AuthenticationError(Err.Message)
 		    End Try
 		  End If
 		  
@@ -320,7 +329,7 @@ Protected Class OAuth2Client
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event AuthenticationError()
+		Event AuthenticationError(Reason As String)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

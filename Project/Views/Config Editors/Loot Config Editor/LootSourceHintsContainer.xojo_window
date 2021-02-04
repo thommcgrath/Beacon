@@ -69,6 +69,7 @@ Begin ContainerControl LootSourceHintsContainer
       Top             =   0
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   250
@@ -78,6 +79,7 @@ Begin ContainerControl LootSourceHintsContainer
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -91,6 +93,8 @@ Begin ContainerControl LootSourceHintsContainer
       LockRight       =   True
       LockTop         =   False
       Scope           =   0
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -108,12 +112,12 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.NotesArea.Value
+			  Return Self.NotesArea.Text
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.NotesArea.Value = Value
+			  Self.NotesArea.Text = Value
 			End Set
 		#tag EndSetter
 		Notes As String

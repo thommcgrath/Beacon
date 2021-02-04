@@ -31,32 +31,39 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
+		  Const InsetAmount = 10
+		  Const CornerRadius = 8
+		  
 		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
 		  Var RowHeight As Integer = Self.DefaultRowHeight
 		  
-		  Var RowInvalid, RowSelected As Boolean
+		  Var RowInvalid, RowSelected, NextRowSelected, PreviousRowSelected As Boolean
 		  If Row < Self.RowCount Then
 		    RowInvalid = RowIsInvalid(Row)
 		    RowSelected = Self.Selected(Row)
+		    If RowSelected Then
+		      PreviousRowSelected = Row > 0 And Row <= Self.LastRowIndex And Self.Selected(Row - 1)
+		      NextRowSelected = Row >= 0 And Row < Self.LastRowIndex And Self.Selected(Row + 1)
+		    End If
 		  End If
 		  
-		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
-		  Var Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
+		  // Make the listbox transparent
+		  If Self.Transparent Then
+		    G.ClearRectangle(0, 0, G.Width, G.Height)
+		  End If
 		  
-		  // Need to fill with color first so translucent system colors can apply correctly
-		  #if TargetMacOS
-		    Var OSMajor, OSMinor, OSBug As Integer
-		    UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
-		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
-		      Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
-		    Else
-		      Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
+		  Var InsetLeft, InsetRight As Integer 
+		  #if UseRoundedRows
+		    If Column = 0 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
+		      InsetLeft = InsetAmount
 		    End If
-		  #else
-		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
+		    If Column = Self.ColumnCount - 1 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
+		      InsetRight = InsetAmount
+		    End If
 		  #endif
+		  
+		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
+		  Var Clip As Graphics = G.Clip(InsetLeft, 0, ColumnWidth - (InsetLeft + InsetRight), RowHeight)
 		  
 		  Var BackgroundColor, TextColor, SecondaryTextColor As Color
 		  Var IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
@@ -76,7 +83,26 @@ Inherits Listbox
 		  End If
 		  
 		  Clip.DrawingColor = BackgroundColor
-		  Clip.FillRectangle(0, 0, G.Width, G.Height)
+		  
+		  If InsetLeft > 0 Or InsetRight > 0 Then
+		    Var LeftPad, RightPad As Integer = CornerRadius
+		    Var TopPad, BottomPad As Integer = 0
+		    If Column = 0 Then
+		      LeftPad = 0
+		    End If
+		    If Column = Self.ColumnCount - 1 Then
+		      RightPad = 0
+		    End If
+		    If RowSelected And PreviousRowSelected Then
+		      TopPad = CornerRadius * -1
+		    End If
+		    If RowSelected And NextRowSelected Then
+		      BottomPad = CornerRadius * -1
+		    End If
+		    Clip.FillRoundRectangle(0 - LeftPad, TopPad, Clip.Width + LeftPad + RightPad, Clip.Height - (TopPad + BottomPad), CornerRadius, CornerRadius)
+		  Else
+		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
+		  End If
 		  
 		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		  
@@ -93,7 +119,7 @@ Inherits Listbox
 		  Var Lines() As String = Contents.Split(EndOfLine)
 		  Var MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
 		  
-		  If Lines.LastRowIndex = -1 Then
+		  If Lines.LastIndex = -1 Then
 		    Return True
 		  End If
 		  
@@ -110,13 +136,13 @@ Inherits Listbox
 		  Var TotalTextHeight As Double = Clip.CapHeight
 		  Clip.FontName = "SmallSystem"
 		  Clip.Bold = False
-		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.LastRowIndex)
+		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.LastIndex)
 		  Clip.FontName = "System"
 		  Clip.Bold = RowInvalid
 		  
 		  Var DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
-		  For I As Integer = 0 To Lines.LastRowIndex
-		    Var LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
+		  For I As Integer = 0 To Lines.LastIndex
+		    Var LineWidth As Integer = Min(Ceiling(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Var DrawLeft As Integer
 		    Var Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
@@ -183,7 +209,7 @@ Inherits Listbox
 		  Var CanDelete As Boolean = RaiseEvent CanDelete()
 		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
-		  Var EditItem As New MenuItem("Edit", "edit")
+		  Var EditItem As New MenuItem(Self.mEditCaption, "edit")
 		  EditItem.Enabled = CanEdit
 		  Base.AddMenu(EditItem)
 		  
@@ -280,6 +306,21 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
+		Function HeaderPressed(column as Integer) As Boolean
+		  If RaiseEvent HeaderPressed(Column) Then
+		    Return True
+		  End If
+		  
+		  If Self.mOpened = False Or Self.PreferencesKey.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Preferences.ListSortColumn(Self.PreferencesKey) = Column
+		  Preferences.ListSortDirection(Self.PreferencesKey) = Self.ColumnSortDirectionAt(Column)
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Function KeyDown(Key As String) As Boolean
 		  Self.mForwardKeyUp = False
 		  
@@ -289,6 +330,32 @@ Inherits Listbox
 		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
 		    Self.DoEdit()
 		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(30) Then // Up Arrow
+		    Var MinIndex As Integer = Self.MinSelectedRow()
+		    If MinIndex > 0 Then
+		      If Self.RowSelectionType = Listbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
+		        Self.Selected(MinIndex - 1) = True
+		      Else
+		        Self.SelectedRowIndex = MinIndex - 1
+		      End
+		    Else
+		      System.Beep
+		    End If
+		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(31) Then // Down Arrow
+		    Var MaxIndex As Integer = Self.MaxSelectedRow()
+		    If MaxIndex < Self.LastRowIndex Then
+		      If Self.RowSelectionType = Listbox.RowSelectionTypes.Multiple And Keyboard.ShiftKey Then
+		        Self.Selected(MaxIndex + 1) = True
+		      Else
+		        Self.SelectedRowIndex = MaxIndex + 1
+		      End
+		    Else
+		      System.Beep
+		    End If
+		    Return True
+		  ElseIf Key = Encodings.UTF8.Chr(9) Then // Tab
+		    Return False
 		  ElseIf RaiseEvent KeyDown(Key) Then
 		    Self.mForwardKeyUp = True
 		  Else
@@ -327,9 +394,20 @@ Inherits Listbox
 		  Self.FontName = "SmallSystem"
 		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
 		  
+		  If Not Self.PreferencesKey.IsEmpty Then
+		    Var Column As Integer = Preferences.ListSortColumn(Self.PreferencesKey, Self.DefaultSortColumn)
+		    Var Direction As Listbox.SortDirections = Preferences.ListSortDirection(Self.PreferencesKey, CType(Self.DefaultSortDirection, Listbox.SortDirections))
+		    Self.SortingColumn = Column
+		    Self.HeadingIndex = Column
+		    Self.ColumnSortDirectionAt(Column) = Direction
+		  End If
+		  
 		  RaiseEvent Open
 		  
+		  Self.Transparent = False
+		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
+		  Self.mOpened = True
 		End Sub
 	#tag EndEvent
 
@@ -400,6 +478,10 @@ Inherits Listbox
 		  
 		  Super.Constructor
 		  
+		  Self.mScrollWatchTimer = New Timer
+		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
+		  Self.mScrollWatchTimer.Period = 100
+		  AddHandler mScrollWatchTimer.Action, WeakAddressOf mScrollWatchTimer_Action
 		End Sub
 	#tag EndMethod
 
@@ -526,6 +608,81 @@ Inherits Listbox
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub InvalidateScrollPosition()
+		  Self.mLastScrollPosition = -1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxSelectedRow() As Integer
+		  If Self.SelectedRowCount = 0 Then
+		    Return -1
+		  End If
+		  
+		  If Self.RowSelectionType = Listbox.RowSelectionTypes.Single Then
+		    Return Self.SelectedRowIndex
+		  End If
+		  
+		  For Idx As Integer = Self.LastRowIndex DownTo 0
+		    If Self.Selected(Idx) Then
+		      Return Idx
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinSelectedRow() As Integer
+		  If Self.SelectedRowCount = 0 Then
+		    Return -1
+		  End If
+		  
+		  If Self.RowSelectionType = Listbox.RowSelectionTypes.Single Then
+		    Return Self.SelectedRowIndex
+		  End If
+		  
+		  For Idx As Integer = 0 To Self.LastRowIndex
+		    If Self.Selected(Idx) Then
+		      Return Idx
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mScrollWatchTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  Var RangeLength As Integer = Self.VisibleRowCount
+		  
+		  If Self.ScrollPosition = Self.mLastScrollPosition And RangeLength = Self.mLastViewportHeight Then
+		    Return
+		  End If
+		  
+		  Const LoadAheadFactor = 2 // Number of pages ahead of the viewport to load
+		  Const MinPreloadFactor = 1 // Minimum number of pages ahead of the viewport that should be loaded
+		  
+		  // Once there is less than a full page of results below the scroll position, request more
+		  Var RangeStart As Integer = Self.ScrollPosition
+		  Var RangeEnd As Integer = RangeStart + RangeLength
+		  
+		  Self.mLastScrollPosition = RangeStart
+		  Self.mLastViewportHeight = RangeLength
+		  
+		  Var MinLoadedRows As Integer = RangeEnd + (RangeLength * MinPreloadFactor)
+		  
+		  If Self.mUpperRequestedBound < MinLoadedRows Then
+		    Var NewUpperBound As Integer = RangeEnd + (RangeLength * LoadAheadFactor)
+		    If NewUpperBound > Self.mUpperRequestedBound Then
+		      Var LoadRowCount As Integer = NewUpperBound - Self.mUpperRequestedBound
+		      RaiseEvent LoadMoreRows(Self.mUpperRequestedBound, LoadRowCount)
+		      Self.mUpperRequestedBound = NewUpperBound
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mTypeaheadTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
@@ -538,6 +695,22 @@ Inherits Listbox
 		Private Sub PostOpenInvalidate()
 		  Self.ScrollPosition = Self.ScrollPosition
 		  Self.Invalidate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveAllRows()
+		  Self.mLastScrollPosition = -1
+		  Self.mUpperRequestedBound = 0
+		  Super.RemoveAllRows()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveRowAt(index As Integer)
+		  Self.mLastScrollPosition = -1
+		  Self.mUpperRequestedBound = Xojo.Max(Self.mUpperRequestedBound - 1, 0)
+		  Super.RemoveRowAt(index)
 		End Sub
 	#tag EndMethod
 
@@ -637,11 +810,19 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event HeaderPressed(column as Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event KeyUp(Key As String)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event LoadMoreRows(Offset As Integer, RowCount As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -673,12 +854,63 @@ Inherits Listbox
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.AllowInfiniteScroll Then
+			    Return
+			  End If
+			  
+			  If Value Then
+			    Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+			    Self.mLastScrollPosition = Self.ScrollPosition
+			  Else
+			    Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
+			  End If
+			End Set
+		#tag EndSetter
+		AllowInfiniteScroll As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		DefaultSortColumn As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		DefaultSortDirection As Integer
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mEditCaption
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mEditCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mEditCaption = Value
+			  End If
+			End Set
+		#tag EndSetter
+		EditCaption As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChangeCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCellActionCascading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEditCaption As String = "Edit"
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -690,6 +922,18 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLastScrollPosition As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastViewportHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOpened As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPostOpenInvalidateCallbackKey As String
 	#tag EndProperty
 
@@ -698,11 +942,23 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mScrollWatchTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTypeaheadBuffer As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mTypeaheadTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpperRequestedBound As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		PreferencesKey As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -789,6 +1045,9 @@ Inherits Listbox
 	#tag EndConstant
 
 	#tag Constant, Name = TextColor, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = UseRoundedRows, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
 
@@ -1066,61 +1325,6 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FontName"
-			Visible=true
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontUnit"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Bold"
-			Visible=true
-			Group="Font"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Italic"
-			Visible=true
-			Group="Font"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Underline"
-			Visible=true
-			Group="Font"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DataField"
 			Visible=true
 			Group="Database Binding"
@@ -1210,6 +1414,106 @@ Inherits Listbox
 			Group="Behavior"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EditCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Edit"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PreferencesKey"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DefaultSortDirection"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - A to Z"
+				"-1 - Z to A"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DefaultSortColumn"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowInfiniteScroll"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontName"
+			Visible=true
+			Group="Font"
+			InitialValue="System"
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontSize"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="Single"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontUnit"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="FontUnits"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Underline"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

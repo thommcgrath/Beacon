@@ -116,7 +116,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyMaximum) = Self.KeyMaximum
+			  Return (Self.AnimationKeys And CType(Self.KeyMaximum, UInt64)) = CType(Self.KeyMaximum, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -134,7 +134,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyMinimum) = Self.KeyMinimum
+			  Return (Self.AnimationKeys And CType(Self.KeyMinimum, UInt64)) = CType(Self.KeyMinimum, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -152,7 +152,7 @@ Inherits AnimationKit.DeltaTask
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.AnimationKeys And Self.KeyPosition) = Self.KeyPosition
+			  Return (Self.AnimationKeys And CType(Self.KeyPosition, UInt64)) = CType(Self.KeyPosition, UInt64)
 			End Get
 		#tag EndGetter
 		#tag Setter

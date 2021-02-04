@@ -31,7 +31,7 @@ Inherits FolderItem
 		    Declare Function StartAccessingSecurityScopedResource Lib "Cocoa" Selector "startAccessingSecurityScopedResource" (Target As Ptr) As Boolean
 		    
 		    Var Mem As MemoryBlock = DecodeBase64(SaveInfo)
-		    Var DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, Mem.Size)
+		    Var DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, CType(Mem.Size, UInteger))
 		    Autorelease(DataRef)
 		    
 		    Var ErrorRef As Ptr
@@ -47,7 +47,7 @@ Inherits FolderItem
 		    Else
 		      Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
 		      Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
-		      App.Log("Unable to resolve saveinfo for: " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
+		      App.Log("Unable to resolve saveinfo: " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		    End If
 		  #else
 		    Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(SaveInfo))
@@ -73,13 +73,14 @@ Inherits FolderItem
 		    If FileURL <> Nil Then
 		      Var DataRef As Ptr = BookmarkDataWithOptions(FileURL, 2048, Nil, Nil, ErrorRef)
 		      If DataRef <> Nil Then
-		        Var Mem As New MemoryBlock(DataLength(DataRef))
-		        DataBytes(DataRef, Mem, Mem.Size)
+		        Var DataLen As UInteger = DataLength(DataRef)
+		        Var Mem As New MemoryBlock(CType(DataLen, Integer))
+		        DataBytes(DataRef, Mem, DataLen)
 		        Return EncodeBase64(Mem, 0)
 		      Else
 		        Declare Function ErrorCode Lib "Cocoa" Selector "code" (Target As Ptr) As Integer
 		        Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
-		        App.Log("Unable to get saveinfo for " + Self.NativePath + ": " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
+		        App.Log("Unable to get saveinfo for " + Self.NativePath + ": " + ErrorCode(ErrorRef).ToString(Locale.Raw, "0") + " " + ErrorDescription(ErrorRef))
 		      End If
 		    End If
 		  #else

@@ -19,7 +19,7 @@ Protected Class IdentityManager
 		      Var Encrypted As MemoryBlock = Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
 		      Var Decrypted As MemoryBlock = Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
 		      
-		      If Self.mPendingIdentity.Identifier = UserID And TestValue = Decrypted Then
+		      If Self.mPendingIdentity.UserID = UserID And TestValue = Decrypted Then
 		        Success = True
 		      End If
 		    End If
@@ -156,7 +156,7 @@ Protected Class IdentityManager
 		  Self.mPendingIdentity = New Beacon.Identity()
 		  
 		  Var Params As New Dictionary
-		  Params.Value("user_id") = Self.mPendingIdentity.Identifier
+		  Params.Value("user_id") = Self.mPendingIdentity.UserID
 		  Params.Value("public_key") = Self.mPendingIdentity.PublicKey
 		  
 		  Var Body As String = Beacon.GenerateJSON(Params, False)
@@ -183,8 +183,8 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  Var OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
-		  Var NewUserID As String = If(Value <> Nil, Value.Identifier, "")
+		  Var OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.UserID, "")
+		  Var NewUserID As String = If(Value <> Nil, Value.UserID, "")
 		  Var ReplaceToken As Boolean = CheckSessionToken And OldUserID <> NewUserID
 		  
 		  Self.MergeIdentities(Value, Self.mCurrentIdentity)
@@ -211,7 +211,7 @@ Protected Class IdentityManager
 		    Return Nil
 		  End If
 		  
-		  Var File As FolderItem = Folder.Child(UserID.StringValue + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var File As FolderItem = Folder.Child(UserID.StringValue + Beacon.FileExtensionIdentity)
 		  If File.Exists = False Then
 		    Return Nil
 		  End If
@@ -264,7 +264,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  If Destination.Identifier = Source.Identifier Or Destination.IsAnonymous = True Or Source.IsAnonymous = False Then
+		  If Destination.UserID = Source.UserID Or Destination.IsAnonymous = True Or Source.IsAnonymous = False Then
 		    // Not eligible for merging
 		    Return
 		  End If
@@ -276,7 +276,7 @@ Protected Class IdentityManager
 		  
 		  Var MergeKeys As New Dictionary
 		  MergeKeys.Value("action") = "merge"
-		  MergeKeys.Value("user_id") = Source.Identifier
+		  MergeKeys.Value("user_id") = Source.UserID
 		  MergeKeys.Value("private_key") = Source.PrivateKey
 		  
 		  Var Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
@@ -288,7 +288,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  Var File As FolderItem = Folder.Child(Source.Identifier + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var File As FolderItem = Folder.Child(Source.UserID + Beacon.FileExtensionIdentity)
 		  If File <> Nil And File.Write(Beacon.GenerateJSON(Source.Export, True)) Then
 		    App.Log("Merged identity has been saved to " + File.NativePath)
 		  End If

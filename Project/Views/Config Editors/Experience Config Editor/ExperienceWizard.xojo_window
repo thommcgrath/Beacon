@@ -398,6 +398,7 @@ Begin BeaconDialog ExperienceWizard
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   272
@@ -411,6 +412,8 @@ Begin BeaconDialog ExperienceWizard
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -422,6 +425,7 @@ Begin BeaconDialog ExperienceWizard
       Width           =   272
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -432,6 +436,9 @@ Begin BeaconDialog ExperienceWizard
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -452,6 +459,7 @@ Begin BeaconDialog ExperienceWizard
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -778,7 +786,7 @@ End
 		  Var Levels() As UInt64
 		  If Not Win.mCancelled Then
 		    For I As Integer = 0 To Win.List.RowCount - 1
-		      Levels.AddRow(Win.List.RowTagAt(I))
+		      Levels.Add(Win.List.RowTagAt(I))
 		    Next
 		  End If
 		  Win.Close
@@ -790,14 +798,14 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Var Curve As Beacon.Curve = Self.Designer.Curve
-		  Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Value), 1)
-		  Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Value), 0)
+		  Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Text), 1)
+		  Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Text), 0)
 		  Var StartingLevel As Integer = Self.mStartingLevel
 		  Var StartingXP As UInt64 = Self.mStartingXP
 		  Var EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
 		  Var EndingXP As UInt64 = StartingXP + AdditionalXP
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  Var Allowed As Boolean = EndingXP <= BeaconConfigs.ExperienceCurves.MaxSupportedXP
+		  Var Allowed As Boolean = EndingXP <= CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64)
 		  
 		  Self.List.RemoveAllRows()
 		  Var LastXP As UInt64 = StartingXP
@@ -807,13 +815,14 @@ End
 		    Var LevelXP As UInt64 = TotalXP - LastXP
 		    LastXP = TotalXP
 		    
-		    Self.List.AddRow(Format((Level - 1) + StartingLevel, "0,"), Format(LevelXP, "0,"), Format(TotalXP, "0,"))
+		    Var DisplayLevel As Integer = (Level - 1) + StartingLevel
+		    Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		  
-		  Self.FinalLevelField.Value = Format(EndingLevel, "0,")
-		  Self.NextLevelField.Value = Format(StartingLevel, "0,")
+		  Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
+		  Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, ",##0")
 		  Self.ActionButton.Enabled = Allowed
 		  Self.WarningLabel.Visible = Not Allowed
 		End Sub
@@ -869,10 +878,10 @@ End
 		  
 		  Var Curve As Beacon.Curve = Me.Curve
 		  
-		  Self.PointFields(0).Value = Format(Curve.Point(1).X, "0.000")
-		  Self.PointFields(1).Value = Format(Curve.Point(1).Y, "0.000")
-		  Self.PointFields(2).Value = Format(Curve.Point(2).X, "0.000")
-		  Self.PointFields(3).Value = Format(Curve.Point(2).Y, "0.000")
+		  Self.PointFields(0).Text = Curve.Point(1).X.ToString(Locale.Current, "0.000")
+		  Self.PointFields(1).Text = Curve.Point(1).Y.ToString(Locale.Current, "0.000")
+		  Self.PointFields(2).Text = Curve.Point(2).X.ToString(Locale.Current, "0.000")
+		  Self.PointFields(3).Text = Curve.Point(2).Y.ToString(Locale.Current, "0.000")
 		  
 		  Self.UpdateList()
 		  
@@ -912,7 +921,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Value), CDbl(Self.PointFields(1).Value), CDbl(Self.PointFields(2).Value), CDbl(Self.PointFields(3).Value))
+		  Var Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Text), CDbl(Self.PointFields(1).Text), CDbl(Self.PointFields(2).Text), CDbl(Self.PointFields(3).Text))
 		  Self.Designer.Curve = Curve
 		End Sub
 	#tag EndEvent

@@ -103,7 +103,7 @@ Protected Module UserCloud
 		      
 		      Var Actions() As Dictionary
 		      For Each Dict As Dictionary In SyncActions
-		        Actions.AddRow(Dict)
+		        Actions.Add(Dict)
 		      Next
 		      NotificationKit.Post(Notification_SyncFinished, Actions)
 		      SyncActions.ResizeTo(-1)
@@ -133,6 +133,12 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function HasPendingSync() As Boolean
+		  Return SyncKey.IsEmpty = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function IsBusy() As Boolean
 		  If PendingRequests = Nil Then
 		    PendingRequests = New Dictionary
@@ -150,7 +156,7 @@ Protected Module UserCloud
 		      While Not Files.AfterLastRow
 		        Var RemotePath As String = Files.Column("remote_path").StringValue
 		        If RemotePath.BeginsWith(Prefix) Then
-		          Results.AddRow(Files.Column("remote_path").StringValue)
+		          Results.Add(Files.Column("remote_path").StringValue)
 		        End If
 		        Files.MoveToNextRow
 		      Wend
@@ -186,7 +192,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  Var Components() As String = RemotePath.Split("/")
-		  If Components.LastRowIndex = -1 Then
+		  If Components.LastIndex = -1 Then
 		    Return LocalFolder
 		  End If
 		  
@@ -199,14 +205,14 @@ Protected Module UserCloud
 		    End If
 		  End If
 		  
-		  For I As Integer = 0 To Components.LastRowIndex - 1
+		  For I As Integer = 0 To Components.LastIndex - 1
 		    LocalFolder = LocalFolder.Child(DecodeURLComponent(Components(I), Encoding))
 		    If Not LocalFolder.CheckIsFolder(Create) Then
 		      Return Nil
 		    End If
 		  Next
 		  
-		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastRowIndex), Encoding))
+		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastIndex), Encoding))
 		End Function
 	#tag EndMethod
 
@@ -232,7 +238,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "DELETE"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.AddRow(ActionDict)
+		  SyncActions.Add(ActionDict)
 		  
 		  If SetupIndexDatabase Then
 		    Try
@@ -280,7 +286,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.AddRow(ActionDict)
+		  SyncActions.Add(ActionDict)
 		End Sub
 	#tag EndMethod
 
@@ -468,7 +474,17 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub SyncActual()
-		  SyncKey = ""
+		  If SyncKey.IsEmpty = False Then
+		    CallLater.Cancel(SyncKey)
+		    SyncKey = ""
+		  End If
+		  
+		  If LocalData.SharedInstance.Importing Then
+		    // Wait
+		    SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
+		    Return
+		  End If
+		  
 		  SyncActions.ResizeTo(-1)
 		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
 		End Sub
@@ -480,12 +496,8 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  Var Stream As BinaryStream = BinaryStream.Open(LocalFile, False)
-		  Var Contents As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
-		  
-		  Var Compressor As New _GZipString
-		  Contents = Compressor.Compress(Contents, _GZipString.DefaultCompression)
+		  Var Contents As MemoryBlock = LocalFile.Read()
+		  Contents = Beacon.Compress(Contents)
 		  
 		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  
@@ -514,7 +526,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.AddRow(ActionDict)
+		  SyncActions.Add(ActionDict)
 		End Sub
 	#tag EndMethod
 
@@ -522,7 +534,7 @@ Protected Module UserCloud
 		Private Function UserID() As String
 		  Try
 		    If (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		      Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		      Return App.IdentityManager.CurrentIdentity.UserID
 		    End If
 		  Catch Err As RuntimeException
 		  End Try

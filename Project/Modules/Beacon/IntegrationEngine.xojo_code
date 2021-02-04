@@ -2,13 +2,13 @@
 Protected Class IntegrationEngine
 	#tag Method, Flags = &h0
 		Function AnalyzeEnabled() As Boolean
-		  Return (Self.mOptions And (Self.OptionAnalyze Or Self.OptionReview)) = (Self.OptionAnalyze Or Self.OptionReview)
+		  Return (Self.mOptions And (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))) = (CType(Self.OptionAnalyze, UInt64) Or CType(Self.OptionReview, UInt64))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BackupEnabled() As Boolean
-		  Return (Self.mOptions And Self.OptionBackup) = Self.OptionBackup
+		  Return (Self.mOptions And CType(Self.OptionBackup, UInt64)) = CType(Self.OptionBackup, UInt64)
 		End Function
 	#tag EndMethod
 
@@ -53,6 +53,15 @@ Protected Class IntegrationEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CleanupCallbacks()
+		  While Self.mPendingCalls.Count > 0
+		    CallLater.Cancel(Self.mPendingCalls(0))
+		    Self.mPendingCalls.RemoveAt(0)
+		  Wend
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Profile As Beacon.ServerProfile)
 		  Self.mProfile = Profile
@@ -63,10 +72,7 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  While Self.mPendingCalls.Count > 0
-		    CallLater.Cancel(Self.mPendingCalls(0))
-		    Self.mPendingCalls.RemoveRowAt(0)
-		  Wend
+		  Self.CleanupCallbacks()
 		End Sub
 	#tag EndMethod
 
@@ -123,13 +129,56 @@ Protected Class IntegrationEngine
 		    Return
 		  End If
 		  
-		  If IsEventImplemented("Wait") Then
-		    RaiseEvent Wait(Controller)
-		  Else
+		  If RaiseEvent Wait(Controller) = False Then
 		    Controller.Cancelled = False
 		    Controller.ShouldResume = True
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile, Silent As Boolean, ByRef Success As Boolean) As String
+		  Var Counter As Integer = 0
+		  Var Message As String
+		  Var Basename As String
+		  While Counter < 3
+		    If Self.Finished Then
+		      Success = False
+		      Return ""
+		    End If
+		    
+		    Var Transfer As New Beacon.IntegrationTransfer(Filename)
+		    Basename = Transfer.Filename
+		    If Not Silent Then
+		      Self.Log("Downloading " + Transfer.Filename + "…")
+		    End If
+		    RaiseEvent DownloadFile(Transfer, FailureMode, Profile)
+		    
+		    If Transfer.Success Then
+		      Success = True
+		      If Not Silent Then
+		        Self.Log("Downloaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(Transfer.Size))
+		      End If
+		      Return Transfer.Content
+		    End If
+		    
+		    Message = Transfer.ErrorMessage
+		    Counter = Counter + 1
+		  Wend
+		  
+		  If Not Silent Then
+		    Self.Log("Unable to download " + Basename + ": " + Message)
+		  End If
+		  
+		  Success = False
+		  Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GetFile(Filename As String, FailureMode As DownloadFailureMode, Silent As Boolean, ByRef Success As Boolean) As String
+		  Return Self.GetFile(Filename, FailureMode, Self.mProfile, Silent, Success)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -154,15 +203,15 @@ Protected Class IntegrationEngine
 		Protected Sub Log(Message As String, ReplaceLast As Boolean = False)
 		  App.Log(Self.mID + Encodings.ASCII.Chr(9) + Message)
 		  
-		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message Then
+		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastIndex) = Message Then
 		    // Don't duplicate the logs
 		    Return
 		  End If
 		  
 		  If ReplaceLast And Self.mLogMessages.Count > 0 Then
-		    Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message
+		    Self.mLogMessages(Self.mLogMessages.LastIndex) = Message
 		  Else
-		    Self.mLogMessages.AddRow(Message)
+		    Self.mLogMessages.Add(Message)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -174,7 +223,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  If MostRecent Then
-		    Return Self.mLogMessages(Self.mLogMessages.LastRowIndex)
+		    Return Self.mLogMessages(Self.mLogMessages.LastIndex)
 		  Else
 		    Return Self.mLogMessages.Join(EndOfLine)
 		  End If
@@ -199,40 +248,47 @@ Protected Class IntegrationEngine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function PutFile(Contents As String, Filename As String) As Boolean
-		  Var Counter As Integer = 0
-		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents)).Lowercase
-		  Self.Log("Uploading " + Filename + "…")
-		  While Counter < 3
-		    If Self.Finished Then
-		      Return False
-		    End If
-		    
-		    If RaiseEvent UploadFile(Contents, Filename) Then
-		      If Self.Finished Then
-		        Return False
-		      End If
-		      
-		      Var CheckedContents As String = RaiseEvent DownloadFile(Filename)
-		      If Self.Finished Then
-		        Return False
-		      End If
-		      
-		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents)).Lowercase
+	#tag Method, Flags = &h1
+		Protected Function PutFile(Contents As String, Filename As String, TriesRemaining As Integer = 2) As Boolean
+		  Var Transfer As New Beacon.IntegrationTransfer(Filename, Contents)
+		  Var DesiredHash As String = Transfer.SHA256
+		  Var OriginalSize As Integer = Transfer.Size // Beacuse the transfer size will change after the event
+		  Self.Log("Uploading " + Transfer.Filename + "…")
+		  RaiseEvent UploadFile(Transfer)
+		  
+		  If Transfer.Success Then
+		    Var DownloadSuccess As Boolean
+		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, True, DownloadSuccess)
+		    If DownloadSuccess Then
+		      Var CheckedHash As String = EncodeHex(Crypto.SHA256(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
+		        Self.Log("Uploaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(OriginalSize))
 		        Return True
 		      Else
-		        Self.Log("Checksum of " + Filename + " is " + CheckedHash + ", expected " + DesiredHash + ".")
-		        Self.Log(Filename + " checksum does not match, retrying…")
+		        Self.Log(Transfer.Filename + " checksum does not match.")
+		        #if DebugBuild
+		          Self.Log("Expected hash " + DesiredHash + ", got " + CheckedHash)
+		        #endif
 		      End If
-		    Else
-		      Self.Log(Filename + " upload failed, retrying…")
 		    End If
-		    Counter = Counter + 1
-		  Wend
+		  End If
 		  
-		  Self.SetError("Could not verify " + Filename + " is correct on the server.")
+		  If Self.Finished Then
+		    Return False
+		  End If
+		  
+		  If TriesRemaining > 0 Then
+		    Self.Log(Filename + " upload failed, retrying…")
+		    Return Self.PutFile(Contents, Filename, TriesRemaining - 1)
+		  End If
+		  
+		  Self.Log("Could not upload " + Transfer.Filename + " and verify its content is correct on the server.")
+		  
+		  If Transfer.ErrorMessage.IsEmpty = False Then
+		    Self.Log("Reason: " + Transfer.ErrorMessage)
+		  End If
+		  
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -242,8 +298,8 @@ Protected Class IntegrationEngine
 		  
 		  Const WaitTime = 3.0
 		  If SecondsSinceLastRefresh < WaitTime Then
-		    If App.CurrentThread <> Nil Then
-		      App.CurrentThread.Sleep((WaitTime - SecondsSinceLastRefresh) * 1000, False)
+		    If Thread.Current <> Nil Then
+		      Thread.Current.Sleep((WaitTime - SecondsSinceLastRefresh) * 1000, False)
 		    Else
 		      Var Err As New UnsupportedOperationException
 		      Err.Message = "Cannot sleep the main thread"
@@ -259,14 +315,14 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub RemoveLastLog()
 		  If Self.mLogMessages.Count > 0 Then
-		    Self.mLogMessages.RemoveRowAt(Self.mLogMessages.LastRowIndex)
+		    Self.mLogMessages.RemoveAt(Self.mLogMessages.LastIndex)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ReviewEnabled() As Boolean
-		  Return (Self.mOptions And Self.OptionReview) = Self.OptionReview
+		  Return (Self.mOptions And CType(Self.OptionReview, UInt64)) = CType(Self.OptionReview, UInt64)
 		End Function
 	#tag EndMethod
 
@@ -289,34 +345,26 @@ Protected Class IntegrationEngine
 		  End If
 		  Var InitialServerState As Integer = Self.State
 		  
-		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
-		    Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
-		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
-		    Var CustomContent As BeaconConfigs.CustomContent
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group IsA BeaconConfigs.CustomContent Then
-		        CustomContent = BeaconConfigs.CustomContent(Group)
-		        Continue
-		      End If
-		      
-		      GameIniValues.AddArray(Group.GameIniValues(Self.Document, Self.Identity, Self.Profile))
-		      GameUserSettingsIniValues.AddArray(Group.GameUserSettingsIniValues(Self.Document, Self.Identity, Self.Profile))
-		      CommandLineValues.AddArray(Group.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
-		    Next
-		    
-		    If (CustomContent Is Nil) = False Then
-		      Var GameIniDict As New Dictionary
-		      Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
-		      GameIniValues.AddArray(CustomContent.GameIniValues(Self.Document, GameIniDict, Self.Profile))
-		      
-		      Var GameUserSettingsIniDict As New Dictionary
-		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
-		      GameUserSettingsIniValues.AddArray(CustomContent.GameUserSettingsIniValues(Self.Document, GameUserSettingsIniDict, Self.Profile))
-		      
-		      CommandLineValues.AddArray(CustomContent.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
+		  Var Organizer As New Beacon.ConfigOrganizer
+		  Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
+		  Var CustomContent As BeaconConfigs.CustomContent
+		  For Each Group As Beacon.ConfigGroup In Groups
+		    If Group IsA BeaconConfigs.CustomContent Then
+		      CustomContent = BeaconConfigs.CustomContent(Group)
+		      Continue
 		    End If
 		    
-		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(GameIniValues, GameUserSettingsIniValues, CommandLineValues)
+		    Var Generated() As Beacon.ConfigValue = Group.GenerateConfigValues(Self.Document, Self.Identity, Self.Profile)
+		    Organizer.Add(Generated, False)
+		  Next
+		  
+		  If (CustomContent Is Nil) = False Then
+		    Var Generated() As Beacon.ConfigValue = CustomContent.GenerateConfigValues(Self.Document, Self.Identity, Self.Profile)
+		    Organizer.Add(Generated, True)
+		  End If
+		  
+		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
+		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -340,14 +388,15 @@ Protected Class IntegrationEngine
 		  
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
 		  // Download the ini files
-		  Self.Log("Downloading Game.ini…")
-		  GameIniOriginal = RaiseEvent DownloadFile("Game.ini")
-		  If Self.Finished Then
+		  Var DownloadSuccess As Boolean
+		  GameIniOriginal = Self.GetFile(Beacon.ConfigFileGame, DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
+		  If Self.Finished Or DownloadSuccess = False Then
+		    Self.Finished = True
 		    Return
 		  End If
-		  Self.Log("Downloading GameUserSettings.ini")
-		  GameUserSettingsIniOriginal = RaiseEvent DownloadFile("GameUserSettings.ini")
-		  If Self.Finished Then
+		  GameUserSettingsIniOriginal = Self.GetFile(Beacon.ConfigFileGameUserSettings, DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
+		  If Self.Finished Or DownloadSuccess = False Then
+		    Self.Finished = True
 		    Return
 		  End If
 		  
@@ -361,41 +410,26 @@ Protected Class IntegrationEngine
 		    Format = Beacon.Rewriter.EncodingFormat.ASCII
 		  End If
 		  
-		  Var RewriteErrored As Boolean
+		  Var RewriteError As RuntimeException
 		  
-		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.ShooterGameHeader, Beacon.RewriteModeGameIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
-		  If RewriteErrored Then
-		    Self.SetError("Failed to produce Game.ini")
+		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Organizer, Self.Document.TrustKey, Format, RewriteError)
+		  If (RewriteError Is Nil) = False Then
+		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.RewriteModeGameUserSettingsIni, Self.Document, Self.Identity, Self.Document.TrustKey, Self.mProfile, Format, RewriteErrored)
-		  If RewriteErrored Then
-		    Self.SetError("Failed to produce GameUserSettings.ini")
+		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Organizer, Self.Document.TrustKey, Format, RewriteError)
+		  If (RewriteError Is Nil) = False Then
+		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
 		  // Verify content looks acceptable
-		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, "GameUserSettings.ini") Then
+		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, Beacon.ConfigFileGameUserSettings) Then
 		    Return
 		  End If
-		  If Not Self.ValidateContent(GameIniRewritten, "Game.ini") Then
+		  If Not Self.ValidateContent(GameIniRewritten, Beacon.ConfigFileGame) Then
 		    Return
-		  End If
-		  
-		  Var CommandLine() As Beacon.ConfigValue
-		  If Self.SupportsWideSettings Then
-		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		        Continue
-		      End If
-		      
-		      Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.Document, Self.Identity, Self.mProfile)
-		      For Each Option As Beacon.ConfigValue In Options
-		        CommandLine.AddRow(Option)
-		      Next
-		    Next
 		  End If
 		  
 		  // Allow the user to review the new files if requested
@@ -405,8 +439,8 @@ Protected Class IntegrationEngine
 		    End If
 		    
 		    Var Dict As New Dictionary
-		    Dict.Value("Game.ini") = GameIniRewritten
-		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniRewritten
+		    Dict.Value(Beacon.ConfigFileGame) = GameIniRewritten
+		    Dict.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
 		    Dict.Value("Advice") = Nil // The results would go here
 		    
 		    Var Controller As New Beacon.TaskWaitController("Review Files", Dict)
@@ -421,8 +455,8 @@ Protected Class IntegrationEngine
 		  // Run the backup if requested
 		  If Self.BackupEnabled Then
 		    Var Dict As New Dictionary
-		    Dict.Value("Game.ini") = GameIniOriginal
-		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
+		    Dict.Value(Beacon.ConfigFileGame) = GameIniOriginal
+		    Dict.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniOriginal
 		    Dict.Value("New Game.ini") = GameIniRewritten
 		    Dict.Value("New GameUserSettings.ini") = GameUserSettingsIniRewritten
 		    
@@ -452,18 +486,19 @@ Protected Class IntegrationEngine
 		  RaiseEvent ReadyToUpload()
 		  
 		  // Put the new files on the server
-		  If Self.PutFile(GameIniRewritten, "Game.ini") = False Or Self.Finished Then
+		  If Self.PutFile(GameIniRewritten, Beacon.ConfigFileGame) = False Or Self.Finished Then
+		    Self.Finished = True
 		    Return
 		  End If 
-		  If Self.PutFile(GameUserSettingsIniRewritten, "GameUserSettings.ini") = False Or Self.Finished Then
+		  If Self.PutFile(GameUserSettingsIniRewritten, Beacon.ConfigFileGameUserSettings) = False Or Self.Finished Then
+		    Self.Finished = True
 		    Return
 		  End If
 		  
 		  // Make command line changes
-		  If Self.SupportsWideSettings And CommandLine.Count > 0 Then
+		  If Self.SupportsWideSettings Then
 		    Self.Log("Updating other settings…")
-		    Var Placeholder() As Beacon.ConfigValue
-		    Call RaiseEvent ApplySettings(Placeholder, Placeholder, CommandLine)
+		    Call RaiseEvent ApplySettings(Organizer)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -505,7 +540,7 @@ Protected Class IntegrationEngine
 		  Self.Finished = True
 		  
 		  // Need this to fire on the main thread
-		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData))
+		  Self.mPendingCalls.Add(CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData))
 		  
 		  RaiseEvent Finished
 		End Sub
@@ -633,19 +668,19 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Function SupportsCheckpoints() As Boolean
-		  Return IsEventImplemented("CreateCheckpoint")
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsRestarting() As Boolean
-		  Return IsEventImplemented("StartServer") And IsEventImplemented("StopServer")
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SupportsStatus() As Boolean
-		  Return IsEventImplemented("RefreshServerStatus")
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -657,15 +692,21 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h0
 		Function SupportsWideSettings() As Boolean
-		  Return IsEventImplemented("ApplySettings")
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Terminate()
+		  If Not Self.mFinished Then
+		    Self.SetError("Terminated")
+		  End If
+		  
 		  If Self.mRunThread <> Nil And Self.mRunThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.mRunThread.Stop
 		  End If
+		  
+		  Self.CleanupCallbacks()
 		End Sub
 	#tag EndMethod
 
@@ -684,19 +725,35 @@ Protected Class IntegrationEngine
 		Private Function ValidateContent(Content As String, Filename As String) As Boolean
 		  Var MissingHeaders() As String = Beacon.ValidateIniContent(Content, Filename)
 		  
-		  If MissingHeaders.Count > 1 Then
-		    Self.SetError(Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + ".")
-		  ElseIf MissingHeaders.Count = 1 Then
-		    Self.SetError(Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group.")
+		  If MissingHeaders.Count = 0 Then
+		    Return True
 		  End If
 		  
-		  Return MissingHeaders.Count = 0
+		  Var Dict As New Dictionary
+		  Dict.Value("File") = Filename
+		  Dict.Value("Groups") = MissingHeaders
+		  If MissingHeaders.Count > 1 Then
+		    Dict.Value("Message") = Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + "."
+		  Else
+		    Dict.Value("Message") = Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group."
+		  End If
+		  
+		  Var Controller As New Beacon.TaskWaitController("ValidationFailed", Dict)
+		  
+		  Self.Log("Content validation failed!")
+		  Self.Wait(Controller)
+		  If Controller.Cancelled Then
+		    Self.SetError(Dict.Value("Message").StringValue)
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Controller As Beacon.TaskWaitController)
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wait cannot be called on the main thread."
 		    Raise Err
@@ -704,10 +761,10 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Self.mActiveWaitController = Controller
-		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
+		  Self.mPendingCalls.Add(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
 		  
 		  While Not Controller.ShouldResume
-		    App.CurrentThread.Sleep(100, False)
+		    Thread.Current.Sleep(100, False)
 		  Wend
 		  Self.mActiveWaitController = Nil
 		  
@@ -719,20 +776,20 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Milliseconds As Double)
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Wait cannot be called on the main thread."
 		    Raise Err
 		    Return
 		  End If
 		  
-		  App.CurrentThread.Sleep(Milliseconds, False)
+		  Thread.Current.Sleep(Milliseconds, False)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue) As Boolean
+		Event ApplySettings(Organizer As Beacon.ConfigOrganizer) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -752,7 +809,7 @@ Protected Class IntegrationEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event DownloadFile(Filename As String) As String
+		Event DownloadFile(Transfer As Beacon.IntegrationTransfer, FailureMode As DownloadFailureMode, Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -776,11 +833,11 @@ Protected Class IntegrationEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event UploadFile(Contents As String, Filename As String) As Boolean
+		Event UploadFile(Transfer As Beacon.IntegrationTransfer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Wait(Controller As Beacon.TaskWaitController)
+		Event Wait(Controller As Beacon.TaskWaitController) As Boolean
 	#tag EndHook
 
 
@@ -908,6 +965,13 @@ Protected Class IntegrationEngine
 
 	#tag Constant, Name = StateUnsupported, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant
+
+
+	#tag Enum, Name = DownloadFailureMode, Flags = &h1
+		Required
+		  MissingAllowed
+		ErrorsAllowed
+	#tag EndEnum
 
 
 	#tag ViewBehavior

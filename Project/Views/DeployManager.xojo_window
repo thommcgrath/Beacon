@@ -3,7 +3,7 @@ Begin BeaconAutopositionWindow DeployManager
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "2"
+   DefaultLocation =   2
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   True
@@ -21,7 +21,7 @@ Begin BeaconAutopositionWindow DeployManager
    MinimumWidth    =   800
    Resizeable      =   True
    Title           =   "Deploy"
-   Type            =   "0"
+   Type            =   0
    Visible         =   True
    Width           =   800
    Begin BeaconListbox ServerList
@@ -29,6 +29,7 @@ Begin BeaconAutopositionWindow DeployManager
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -38,13 +39,16 @@ Begin BeaconAutopositionWindow DeployManager
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -61,8 +65,9 @@ Begin BeaconAutopositionWindow DeployManager
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "0"
+      RowSelectionType=   0
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   0
@@ -85,6 +90,7 @@ Begin BeaconAutopositionWindow DeployManager
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   550
@@ -97,6 +103,8 @@ Begin BeaconAutopositionWindow DeployManager
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -155,7 +163,7 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   201
@@ -195,7 +203,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   459
       End
       Begin CheckBox ReviewChangesCheckbox
@@ -228,7 +236,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   459
       End
       Begin UITweaks.ResizedPushButton OptionsActionButton
@@ -251,7 +259,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   1
@@ -293,7 +301,7 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   False
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   459
       End
       Begin Label LogsMessageLabel
@@ -321,7 +329,7 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   20
@@ -369,47 +377,17 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
+         UnicodeMode     =   0
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
          Width           =   459
-      End
-      Begin Shelf ReviewSwitcher
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         DrawCaptions    =   True
-         Enabled         =   True
-         Height          =   72
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         IsVertical      =   False
-         Left            =   301
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   False
-         Visible         =   True
-         Width           =   499
       End
       Begin UITweaks.ResizedPushButton ReviewActionButton
          AllowAutoDeactivate=   True
@@ -431,7 +409,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -463,7 +441,7 @@ Begin BeaconAutopositionWindow DeployManager
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -505,64 +483,8 @@ Begin BeaconAutopositionWindow DeployManager
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   255
-      End
-      Begin FadedSeparator ReviewBottomSeparator
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   5
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   489
-         Transparent     =   True
-         Visible         =   True
-         Width           =   499
-      End
-      Begin FadedSeparator ReviewTopSeparator
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   6
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   72
-         Transparent     =   True
-         Visible         =   True
-         Width           =   499
       End
       Begin CodeArea ReviewArea
          AllowAutoDeactivate=   True
@@ -602,14 +524,111 @@ Begin BeaconAutopositionWindow DeployManager
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   73
          Transparent     =   False
          Underline       =   False
+         UnicodeMode     =   0
          ValidationMask  =   ""
          Value           =   ""
+         Visible         =   True
+         Width           =   499
+      End
+      Begin Shelf ReviewSwitcher
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         DrawCaptions    =   True
+         Enabled         =   True
+         Height          =   72
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         IsVertical      =   False
+         Left            =   301
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   False
+         Visible         =   True
+         Width           =   499
+      End
+      Begin FadedSeparator ReviewBottomSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   301
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   5
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   489
+         Transparent     =   True
+         Visible         =   True
+         Width           =   499
+      End
+      Begin FadedSeparator ReviewTopSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   301
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   6
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   72
+         Transparent     =   True
          Visible         =   True
          Width           =   499
       End
@@ -620,6 +639,7 @@ Begin BeaconAutopositionWindow DeployManager
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   550
@@ -632,6 +652,8 @@ Begin BeaconAutopositionWindow DeployManager
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -647,7 +669,7 @@ Begin BeaconAutopositionWindow DeployManager
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
-      RunMode         =   "0"
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -673,14 +695,17 @@ End
 
 	#tag Event
 		Sub Close()
-		  If (Engines Is Nil) Then
+		  If (Self.Engines Is Nil) Then
 		    Return
 		  End If
 		  
-		  For Each Entry As DictionaryEntry In Engines
+		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
 		    Engine.Terminate
 		  Next
+		  
+		  Self.Engines.RemoveAll
+		  Self.Engines = Nil
 		End Sub
 	#tag EndEvent
 
@@ -776,7 +801,7 @@ End
 		Private Sub Begin()
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Var Now As DateTime = DateTime.Now
-		  Self.DeployLabel = Str(NowGMT.Year, "0000") + "-" + Str(NowGMT.Month, "00") + "-" + Str(NowGMT.Day, "00") + " " + Str(NowGMT.Hour, "00") + ":" + Str(NowGMT.Minute, "00") + ":" + Str(NowGMT.Second, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
+		  Self.DeployLabel = NowGMT.Year.ToString(Locale.Raw, "0000") + "-" + NowGMT.Month.ToString(Locale.Raw, "00") + "-" + NowGMT.Day.ToString(Locale.Raw, "00") + " " + NowGMT.Hour.ToString(Locale.Raw, "00") + ":" + NowGMT.Minute.ToString(Locale.Raw, "00") + ":" + NowGMT.Second.ToString(Locale.Raw, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
 		  
 		  Var ProfileProblems As New Dictionary
 		  
@@ -789,7 +814,7 @@ End
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    If Profile Is Nil Then
-		      ProfileProblems.Value("profile at row " + Str(I, "0")) = "Nil profile"
+		      ProfileProblems.Value("profile at row " + I.ToString(Locale.Raw, "0")) = "Nil profile"
 		      Continue
 		    End If
 		    
@@ -803,6 +828,8 @@ End
 		      //DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
 		    Case IsA Beacon.LocalServerProfile
 		      Engine = New Beacon.LocalIntegrationEngine(Profile)
+		    Case IsA Beacon.GSAServerProfile
+		      Engine = New Beacon.GSAIntegrationEngine(Profile)
 		    End Select
 		    If Engine Is Nil Then
 		      Var ProfileInfo As Introspection.TypeInfo = Introspection.GetType(Profile)
@@ -819,7 +846,7 @@ End
 		  If ProfileProblems.KeyCount > 0 Then
 		    Var Problems() As String
 		    For Each Entry As DictionaryEntry In ProfileProblems
-		      Problems.AddRow("Problem with " + Entry.Key.StringValue + " is """ + Entry.Value.StringValue + """")
+		      Problems.Add("Problem with " + Entry.Key.StringValue + " is """ + Entry.Value.StringValue + """")
 		    Next
 		    
 		    Var Explanation As String = "The following problems were reported. Please report this issue." + EndOfLine + EndOfLine + Problems.Join(EndOfLine) + EndOfLine + EndOfLine + "Importing again may solve the problem, but the issue should still be reported."
@@ -827,6 +854,22 @@ End
 		    Self.Close
 		    Return
 		  End If
+		  
+		  // Prompt for the stop message
+		  Var StopMessage As String
+		  For Each Entry As DictionaryEntry In Self.Engines
+		    Var Engine As Beacon.IntegrationEngine = Entry.Key
+		    If Not Engine.SupportsStopMessage Then
+		      Continue
+		    End If
+		    
+		    StopMessage = StopMessageDialog.Present(Self)
+		    If StopMessage.IsEmpty Then
+		      Return
+		    Else
+		      Exit
+		    End If
+		  Next
 		  
 		  // Hide the checkbox column
 		  Self.ServerList.ColumnWidths = "0,*"
@@ -847,22 +890,16 @@ End
 		  // Start the engines!
 		  Var Options As UInt64
 		  If Self.CreateBackupCheckbox.Value Then
-		    Options = Options Or Beacon.IntegrationEngine.OptionBackup
+		    Options = Options Or CType(Beacon.IntegrationEngine.OptionBackup, UInt64)
 		  End If
 		  If Self.ReviewChangesCheckbox.Value Then
-		    Options = Options Or Beacon.IntegrationEngine.OptionReview
+		    Options = Options Or CType(Beacon.IntegrationEngine.OptionReview, UInt64)
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
-		    Options = Options Or Beacon.IntegrationEngine.OptionAnalyze
+		    Options = Options Or CType(Beacon.IntegrationEngine.OptionAnalyze, UInt64)
 		  End If
-		  Var StopMessage As String
-		  Var HasPromptedForStopMessage As Boolean
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    If Engine.SupportsStopMessage And HasPromptedForStopMessage = False Then
-		      StopMessage = StopMessageDialog.Present(Self)
-		      HasPromptedForStopMessage = True
-		    End If
 		    Engine.BeginDeploy(Self.DeployLabel, Self.Document, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
 		End Sub
@@ -892,7 +929,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController)
+		Private Function Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Backup"
 		    Var UserData As Dictionary = Controller.UserData
@@ -914,12 +951,12 @@ End
 		      
 		      Var OutStream As TextOutputStream
 		      
-		      OutStream = TextOutputStream.Create(MomentFolder.Child("Game.ini"))
-		      OutStream.Write(UserData.Value("Game.ini").StringValue)
+		      OutStream = TextOutputStream.Create(MomentFolder.Child(Beacon.ConfigFileGame))
+		      OutStream.Write(UserData.Value(Beacon.ConfigFileGame).StringValue)
 		      OutStream.Close
 		      
-		      OutStream = TextOutputStream.Create(MomentFolder.Child("GameUserSettings.ini"))
-		      OutStream.Write(UserData.Value("GameUserSettings.ini").StringValue)
+		      OutStream = TextOutputStream.Create(MomentFolder.Child(Beacon.ConfigFileGameUserSettings))
+		      OutStream.Write(UserData.Value(Beacon.ConfigFileGameUserSettings).StringValue)
 		      OutStream.Close
 		      
 		      Var CurrentFolder As FolderItem = EngineFolder.Child("Current")
@@ -927,16 +964,17 @@ End
 		        CurrentFolder.CreateFolder
 		      End If
 		      
-		      OutStream = TextOutputStream.Create(CurrentFolder.Child("Game.ini"))
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child(Beacon.ConfigFileGame))
 		      OutStream.Write(UserData.Value("New Game.ini").StringValue)
 		      OutStream.Close
 		      
-		      OutStream = TextOutputStream.Create(CurrentFolder.Child("GameUserSettings.ini"))
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child(Beacon.ConfigFileGameUserSettings))
 		      OutStream.Write(UserData.Value("New GameUserSettings.ini").StringValue)
 		      OutStream.Close
 		    Catch Err As RuntimeException
 		      Controller.Cancelled = True
 		      
+		      App.Log(Err, CurrentMethodName)
 		      Self.ShowAlert("Beacon was unable to save ini files for " + Sender.Name + ".", "Check that there is space available on the disk. Use ""Open Data Folder"" from the ""Help"" menu to find the backup destination.")
 		    End Try
 		    
@@ -962,7 +1000,7 @@ End
 		      Else
 		        Controller.Cancelled = True
 		        Controller.ShouldResume = True
-		        Return
+		        Return True
 		      End If
 		    End If
 		    
@@ -976,7 +1014,7 @@ End
 		      End If
 		    Next
 		    If FoundInQueue = False Then
-		      Self.AuthQueue.AddRow(Account)
+		      Self.AuthQueue.Add(Account)
 		      If Self.Authorizer.Busy = False And Self.AuthQueue.Count = 1 Then
 		        Self.RunNextAuth()
 		      End If
@@ -997,9 +1035,9 @@ End
 		        Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      Else
 		        If OffendingKey.IsEmpty = False Then
-		          Explanation = "The config key '" + OffendingKey + "' needs " + Format(ContentLength, "0,") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		          Explanation = "The config key '" + OffendingKey + "' needs " + ContentLength.ToString(Locale.Current, ",##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
 		        Else
-		          Explanation = "There is a config key that needs " + Format(ContentLength, "0,") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		          Explanation = "There is a config key that needs " + ContentLength.ToString(Locale.Current, ",##0") + " characters of content, but Nitrado limits fields to 65,535 characters."
 		        End If
 		        Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      End If
@@ -1017,8 +1055,19 @@ End
 		    End Select
 		    
 		    Controller.ShouldResume = True
+		  Case "ValidationFailed"
+		    Var UserData As Dictionary = Controller.UserData
+		    Var Message As String = "Beacon was not able to verify the new files will not harm your server."
+		    Var Explanation As String = UserData.Value("Message").StringValue + " Check the " + UserData.Value("File").StringValue + " on your server."
+		    Var ShouldStop As Boolean = Self.ShowConfirm(Message, Explanation, "Cancel Deploy", "Continue Anyway")
+		    Controller.Cancelled = ShouldStop
+		    Controller.ShouldResume = True
+		  Else
+		    Return False
 		  End Select
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1034,7 +1083,7 @@ End
 		    
 		    Var UserData As Dictionary = Controller.UserData
 		    If UserData.Lookup("Account UUID", "").StringValue = AccountUUID Then
-		      Engines.AddRow(Engine)
+		      Engines.Add(Engine)
 		    End If
 		  Next
 		  Return Engines
@@ -1055,7 +1104,7 @@ End
 		  End If
 		  
 		  Self.Authorizer.Authenticate(App.IdentityManager.CurrentIdentity)
-		  Self.AuthQueue.RemoveRowAt(0)
+		  Self.AuthQueue.RemoveAt(0)
 		End Sub
 	#tag EndMethod
 
@@ -1078,13 +1127,13 @@ End
 		  
 		  Var Idx As Integer = Self.ServerList.SelectedRowIndex
 		  If Idx = -1 Then
-		    Self.LogsArea.Value = ""
+		    Self.LogsArea.Text = ""
 		    Return
 		  End If
 		  
 		  Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(Self.ServerList.SelectedRowIndex, 1)
 		  Var ShouldScroll As Boolean = True// = Self.LogsArea.VerticalScrollPosition = Self.LogsArea.
-		  Self.LogsArea.Value = Engine.Logs
+		  Self.LogsArea.Text = Engine.Logs
 		  If ShouldScroll Then
 		    Self.LogsArea.VerticalScrollPosition = 99999999
 		  End If
@@ -1135,7 +1184,7 @@ End
 		  Var State As New TextAreaState
 		  State.ApplyTo(Self.ReviewArea)
 		  Self.ReviewSwitcher.SelectedIndex = 1
-		  Self.ReviewArea.Value = UserData.Lookup("GameUserSettings.ini", "").StringValue
+		  Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGameUserSettings, "").StringValue
 		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndMethod
@@ -1246,43 +1295,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ReviewSwitcher
-	#tag Event
-		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  If Self.UpdatingReviewContent Then
-		    Return
-		  End If
-		  
-		  Var State As New TextAreaState
-		  State.ApplyTo(Self.ReviewArea)
-		  
-		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
-		  If Controller = Nil Or (Controller.UserData IsA Dictionary) = False Then
-		    Self.ReviewArea.Value = ""
-		    Return
-		  End If
-		  
-		  Self.UpdatingReviewContent = True
-		  Var UserData As Dictionary = Controller.UserData
-		  Select Case Me.SelectedIndex
-		  Case 1
-		    Self.ReviewArea.Value = UserData.Lookup("GameUserSettings.ini", "").StringValue
-		  Case 2
-		    Self.ReviewArea.Value = UserData.Lookup("Game.ini", "").StringValue
-		  End Select
-		  Self.UpdatingReviewContent = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ReviewActionButton
 	#tag Event
 		Sub Action()
@@ -1311,6 +1323,43 @@ End
 	#tag Event
 		Sub Action()
 		  Self.ReviewActionButton.Enabled = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReviewSwitcher
+	#tag Event
+		Sub Open()
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.SelectedIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  If Self.UpdatingReviewContent Then
+		    Return
+		  End If
+		  
+		  Var State As New TextAreaState
+		  State.ApplyTo(Self.ReviewArea)
+		  
+		  Var Controller As Beacon.TaskWaitController = Self.ActiveWaitController
+		  If Controller = Nil Or (Controller.UserData IsA Dictionary) = False Then
+		    Self.ReviewArea.Text = ""
+		    Return
+		  End If
+		  
+		  Self.UpdatingReviewContent = True
+		  Var UserData As Dictionary = Controller.UserData
+		  Select Case Me.SelectedIndex
+		  Case 1
+		    Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGameUserSettings, "").StringValue
+		  Case 2
+		    Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGame, "").StringValue
+		  End Select
+		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1407,7 +1456,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub AuthenticationError()
+		Sub AuthenticationError(Reason As String)
+		  #Pragma Unused Reason
+		  
 		  Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Me.Account)
 		  For Each Engine As Beacon.IntegrationEngine In Engines
 		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController

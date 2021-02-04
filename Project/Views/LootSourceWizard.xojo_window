@@ -70,7 +70,7 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -102,7 +102,7 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -147,7 +147,7 @@ Begin BeaconDialog LootSourceWizard
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   510
+         Width           =   249
       End
       Begin UITweaks.ResizedPushButton SelectionCustomButton
          AutoDeactivate  =   True
@@ -169,7 +169,7 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   False
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -399,7 +399,7 @@ Begin BeaconDialog LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   9
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Max Multiplier:"
@@ -434,7 +434,7 @@ Begin BeaconDialog LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Min Multiplier:"
@@ -548,7 +548,7 @@ Begin BeaconDialog LootSourceWizard
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -592,7 +592,7 @@ Begin BeaconDialog LootSourceWizard
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -974,7 +974,7 @@ Begin BeaconDialog LootSourceWizard
          LockTop         =   False
          Scope           =   2
          State           =   0
-         TabIndex        =   5
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -1007,7 +1007,7 @@ Begin BeaconDialog LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   13
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          TextAlign       =   2
@@ -1028,6 +1028,8 @@ Begin BeaconDialog LootSourceWizard
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DesiredHeight   =   0
+         DesiredWidth    =   0
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
@@ -1043,7 +1045,7 @@ Begin BeaconDialog LootSourceWizard
          LockTop         =   True
          Mask            =   ""
          Scope           =   2
-         TabIndex        =   14
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   184
@@ -1052,17 +1054,50 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   400
       End
+      Begin DelayedSearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         ClearMenuItemValue=   "Clear"
+         Enabled         =   True
+         Height          =   22
+         Hint            =   "Search Loot Sources"
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   281
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Visible         =   True
+         Width           =   249
+      End
       Begin BeaconListbox SourceList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
          ColumnCount     =   2
          ColumnsResizable=   False
-         ColumnWidths    =   "30,*"
+         ColumnWidths    =   "50,*"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   34
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -1083,6 +1118,7 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -1090,7 +1126,7 @@ Begin BeaconDialog LootSourceWizard
          SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "SmallSystem"
@@ -1108,6 +1144,7 @@ Begin BeaconDialog LootSourceWizard
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox CustomizePresetsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -1118,6 +1155,9 @@ Begin BeaconDialog LootSourceWizard
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -1138,6 +1178,7 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -1212,17 +1253,17 @@ End
 		  Var Labels As Dictionary = Data.LootSourceLabels(Self.mMask)
 		  
 		  Var CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
-		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources("", Self.mMods, Preferences.ShowExperimentalLootSources)
-		  For X As Integer = AllowedLootSources.LastRowIndex DownTo 0
+		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources(Self.FilterField.Text, Self.mMods, Preferences.ShowExperimentalLootSources)
+		  For X As Integer = AllowedLootSources.LastIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
-		      AllowedLootSources.RemoveRowAt(X)
+		      AllowedLootSources.RemoveAt(X)
 		    End If
 		  Next
 		  
-		  For X As Integer = 0 To CurrentSources.LastRowIndex
-		    For Y As Integer = AllowedLootSources.LastRowIndex DownTo 0
+		  For X As Integer = 0 To CurrentSources.LastIndex
+		    For Y As Integer = AllowedLootSources.LastIndex DownTo 0
 		      If AllowedLootSources(Y).ClassString = CurrentSources(X).ClassString Then
-		        AllowedLootSources.RemoveRowAt(Y)
+		        AllowedLootSources.RemoveAt(Y)
 		        Exit For Y
 		      End If
 		    Next
@@ -1236,7 +1277,7 @@ End
 		    End If
 		    
 		    Var Source As Beacon.LootSource = Self.SourceList.RowTagAt(I)
-		    Selections.AddRow(Source.ClassString)
+		    Selections.Add(Source.ClassString)
 		  Next
 		  
 		  Var ScrollPosition As Integer = Self.SourceList.ScrollPosition
@@ -1286,7 +1327,7 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.AddRow(Source.Clone)
+		    Self.mDestinations.Add(Source.Clone)
 		  Next
 		  
 		  Self.ShowCustomize()
@@ -1313,8 +1354,8 @@ End
 		  Parent = Parent.TrueWindow
 		  
 		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
-		  If Maps.LastRowIndex = -1 Then
-		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName) + """ to select ""Maps"" and choose tha maps for this file.")
+		  If Maps.LastIndex = -1 Then
+		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.NameLootDrops) + """ to select ""Maps"" and choose tha maps for this file.")
 		    Return False
 		  End If
 		  
@@ -1337,8 +1378,8 @@ End
 		    BasedOn = New Beacon.CustomLootContainer("Template")
 		  End If
 		  
-		  Self.CustomizeMinSetsField.Value = Format(BasedOn.MinItemSets, "-0")
-		  Self.CustomizeMaxSetsField.Value = Format(BasedOn.MaxItemSets, "-0")
+		  Self.CustomizeMinSetsField.Text = BasedOn.MinItemSets.ToString(Locale.Current, "0")
+		  Self.CustomizeMaxSetsField.Text = BasedOn.MaxItemSets.ToString(Locale.Current, "0")
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
 		  
 		  Var Presets() As Beacon.Preset = Beacon.Data.Presets()
@@ -1385,10 +1426,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowDefine(FieldSource As Beacon.LootSource)
 		  If FieldSource <> Nil Then
-		    Self.DefineClassField.Value = FieldSource.ClassString
-		    Self.DefineNameField.Value = FieldSource.Label
-		    Self.DefineMinMultiplierField.Value = Format(FieldSource.Multipliers.Min, "0.0000")
-		    Self.DefineMaxMultiplierField.Value = Format(FieldSource.Multipliers.Max, "0.0000")
+		    Self.DefineClassField.Text = FieldSource.ClassString
+		    Self.DefineNameField.Text = FieldSource.Label
+		    Self.DefineMinMultiplierField.Text = FieldSource.Multipliers.Min.ToString(Locale.Current, "0.0000")
+		    Self.DefineMaxMultiplierField.Text = FieldSource.Multipliers.Max.ToString(Locale.Current, "0.0000")
 		  End If
 		  
 		  Self.Panel.SelectedPanelIndex = Self.PaneDefine
@@ -1476,7 +1517,7 @@ End
 #tag Events DefineActionButton
 	#tag Event
 		Sub Action()
-		  Var ClassString As String = Self.DefineClassField.Value.Trim
+		  Var ClassString As String = Self.DefineClassField.Text.Trim
 		  Var ClassTester As New RegEx
 		  ClassTester.Options.TreatTargetAsOneLine = True
 		  ClassTester.SearchPattern = "^[A-Za-z0-9_]+_C$"
@@ -1490,21 +1531,21 @@ End
 		  If Source <> Nil Then
 		    Destination = Source.Clone
 		  Else
-		    Var Label As String = Self.DefineNameField.Value.Trim
+		    Var Label As String = Self.DefineNameField.Text.Trim
 		    If Label = "" Then
 		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
 		      Return
 		    End If
 		    
-		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Value)
-		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Value)
+		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Text)
+		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Text)
 		    If MinMultiplier <= 0 Or MaxMultiplier <= 0 Then
 		      Self.ShowAlert("Invalid multipliers", "The loot source multipliers must be greater than 0. If you do not know these values - which is common - set them to 1.0 to be safe.")
 		      Return
 		    End If
 		    
 		    Var Mask As UInt64 = Self.DefineMapsSelector.Mask
-		    If Mask = 0 Then
+		    If Mask = CType(0, UInt64) Then
 		      Self.ShowAlert("Please select a map", "Your loot source should be available to at least one map.")
 		      Return
 		    End If
@@ -1538,8 +1579,8 @@ End
 #tag Events CustomizeActionButton
 	#tag Event
 		Sub Action()
-		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
-		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
+		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Text))
+		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Text))
 		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
 		  Var AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
 		  Var ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
@@ -1551,20 +1592,20 @@ End
 		    End If
 		    
 		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
-		    AllowedPresets.AddRow(Preset.PresetID)
-		    AdditionalPresets.AddRow(Preset.PresetID)
+		    AllowedPresets.Add(Preset.PresetID)
+		    AdditionalPresets.Add(Preset.PresetID)
 		  Next
 		  
 		  Var SourceSets() As Beacon.ItemSet
 		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource.ItemSets
 		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
-		        SourceSets.AddRow(Set)
+		        SourceSets.Add(Set)
 		      End If
 		      
 		      Var Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
 		      If Idx > -1 Then
-		        AdditionalPresets.RemoveRowAt(Idx)
+		        AdditionalPresets.RemoveAt(Idx)
 		      End If
 		    Next
 		  End If
@@ -1621,7 +1662,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mDestinations.LastRowIndex > -1 And Self.mDestinations(0).IsOfficial = False Then
+		  If Self.mDestinations.LastIndex > -1 And Self.mDestinations(0).IsOfficial = False Then
 		    Self.ShowDefine(Self.mDestinations(0))
 		  Else
 		    Self.ShowSelect()
@@ -1643,7 +1684,7 @@ End
 		Sub TextChange()
 		  If Not Self.mDefineLabelWasEditedByUser Then
 		    Self.mDefineLabelEditingAutomatically = True
-		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value.Trim)
+		    Self.DefineNameField.Text = Beacon.LabelFromClassString(Me.Text.Trim)
 		    Self.mDefineLabelEditingAutomatically = False
 		  End If
 		End Sub
@@ -1658,6 +1699,13 @@ End
 		  
 		  Preferences.ShowExperimentalLootSources = Me.Value
 		  Self.BuildSourceList()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.BuildSourceList
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1677,15 +1725,10 @@ End
 		    Return
 		  End If
 		  
-		  Var PrecisionX As Double = 1 / G.ScaleX
-		  Var PrecisionY As Double = 1 / G.ScaleY
-		  
 		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
 		  Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		  Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
-		  Var SpaceHeight As Integer = Me.DefaultRowHeight
 		  
-		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
+		  G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))
 		End Sub
 	#tag EndEvent
 	#tag Event

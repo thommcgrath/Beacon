@@ -57,10 +57,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -100,10 +100,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -136,10 +136,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Value           =   "Day Time:"
@@ -171,10 +171,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "Night Time:"
@@ -206,10 +206,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Value           =   "Full Cycle:"
@@ -241,10 +241,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Value           =   "="
@@ -276,10 +276,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "="
@@ -318,10 +318,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -361,10 +361,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -397,10 +397,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   93
       Transparent     =   False
       Underline       =   False
       Value           =   "minutes"
@@ -432,10 +432,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Value           =   "60"
@@ -467,10 +467,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Multiplier"
@@ -502,10 +502,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Result"
@@ -535,7 +535,7 @@ Begin ConfigEditor DayCycleConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   154
+      Top             =   195
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -565,10 +565,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "Days Ending In 0, 1, 2, or 3:"
@@ -600,10 +600,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "Days Ending In 4, 5, or 6:"
@@ -635,10 +635,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "Days Ending In 7, 8, or 9:"
@@ -678,10 +678,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -722,10 +722,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -766,10 +766,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -802,10 +802,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "minutes"
@@ -837,10 +837,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "minutes"
@@ -872,10 +872,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "minutes"
@@ -915,10 +915,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -959,10 +959,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1003,10 +1003,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1039,10 +1039,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   190
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Value           =   "Day"
@@ -1074,10 +1074,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   190
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Value           =   "Night"
@@ -1109,10 +1109,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   14
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   190
+         Top             =   231
          Transparent     =   False
          Underline       =   False
          Value           =   "Cycle"
@@ -1144,10 +1144,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   222
+         Top             =   263
          Transparent     =   False
          Underline       =   False
          Value           =   "60"
@@ -1179,10 +1179,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   256
+         Top             =   297
          Transparent     =   False
          Underline       =   False
          Value           =   "60"
@@ -1214,10 +1214,10 @@ Begin ConfigEditor DayCycleConfigEditor
          TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "2"
+         TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   290
+         Top             =   331
          Transparent     =   False
          Underline       =   False
          Value           =   "60"
@@ -1250,10 +1250,10 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   120
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Value           =   "minutes"
@@ -1285,15 +1285,49 @@ Begin ConfigEditor DayCycleConfigEditor
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Value           =   "minutes"
       Visible         =   True
       Width           =   83
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   714
    End
 End
 #tag EndWindow
@@ -1301,7 +1335,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.DayCycle.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameDayCycle)
 		End Sub
 	#tag EndEvent
 
@@ -1335,7 +1369,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DayCycle
-		  Static ConfigName As String = BeaconConfigs.DayCycle.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameDayCycle
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.DayCycle
@@ -1360,7 +1394,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.DayCycle.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameDayCycle)
 		End Function
 	#tag EndMethod
 
@@ -1397,40 +1431,40 @@ End
 		  End If
 		  
 		  If Focus <> Self.DayMultiplierField Then
-		    Self.DayMultiplierField.Value = Config.DaySpeedMultiplier.PrettyText
+		    Self.DayMultiplierField.Text = Config.DaySpeedMultiplier.PrettyText
 		  End If
 		  If Focus <> Self.NightMultiplierField Then
-		    Self.NightMultiplierField.Value = Config.NightSpeedMultiplier.PrettyText
+		    Self.NightMultiplierField.Text = Config.NightSpeedMultiplier.PrettyText
 		  End If
 		  If Focus <> Self.DayLengthField Then
-		    Self.DayLengthField.Value = If(DayLengthMinutes > 0, DayLengthMinutes.PrettyText(2), "∞")
+		    Self.DayLengthField.Text = If(DayLengthMinutes > 0, DayLengthMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.NightLengthField Then
-		    Self.NightLengthField.Value = If(NightLengthMinutes > 0, NightLengthMinutes.PrettyText(2), "∞")
+		    Self.NightLengthField.Text = If(NightLengthMinutes > 0, NightLengthMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.BalancedDayMinutesField Then
-		    Self.BalancedDayMinutesField.Value = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
+		    Self.BalancedDayMinutesField.Text = If(BalancedDayMinutes > 0, BalancedDayMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.BalancedNightMinutesField Then
-		    Self.BalancedNightMinutesField.Value = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
+		    Self.BalancedNightMinutesField.Text = If(BalancedNightMinutes > 0, BalancedNightMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.WarmDayMinutesField Then
-		    Self.WarmDayMinutesField.Value = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
+		    Self.WarmDayMinutesField.Text = If(WarmDayMinutes > 0, WarmDayMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.WarmNightMinutesField Then
-		    Self.WarmNightMinutesField.Value = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
+		    Self.WarmNightMinutesField.Text = If(WarmNightMinutes > 0, WarmNightMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.ColdDayMinutesField Then
-		    Self.ColdDayMinutesField.Value = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
+		    Self.ColdDayMinutesField.Text = If(ColdDayMinutes > 0, ColdDayMinutes.PrettyText(2), "∞")
 		  End If
 		  If Focus <> Self.ColdNightMinutesField Then
-		    Self.ColdNightMinutesField.Value = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
+		    Self.ColdNightMinutesField.Text = If(ColdNightMinutes > 0, ColdNightMinutes.PrettyText(2), "∞")
 		  End If
 		  
-		  Self.FullLengthField.Value = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
-		  Self.BalancedCycleField.Value = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
-		  Self.WarmCycleField.Value = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
-		  Self.ColdCycleField.Value = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
+		  Self.FullLengthField.Text = If(FullLengthMinutes > 0, FullLengthMinutes.PrettyText(2), "∞")
+		  Self.BalancedCycleField.Text = If(BalancedCycleMinutes > 0, BalancedCycleMinutes.PrettyText(2), "∞")
+		  Self.WarmCycleField.Text = If(WarmCycleMinutes > 0, WarmCycleMinutes.PrettyText(2), "∞")
+		  Self.ColdCycleField.Text = If(ColdCycleMinutes > 0, ColdCycleMinutes.PrettyText(2), "∞")
 		End Sub
 	#tag EndMethod
 
@@ -1477,12 +1511,12 @@ End
 #tag Events DayMultiplierField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Value)
+		  Self.Config(True).DaySpeedMultiplier = CDbl(Me.Text)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1492,12 +1526,12 @@ End
 #tag Events NightMultiplierField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Value)
+		  Self.Config(True).NightSpeedMultiplier = CDbl(Me.Text)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1507,12 +1541,12 @@ End
 #tag Events DayLengthField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mOfficialDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1522,12 +1556,12 @@ End
 #tag Events NightLengthField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mOfficialNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mOfficialNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1537,12 +1571,12 @@ End
 #tag Events BalancedDayMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mBalancedDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1552,12 +1586,12 @@ End
 #tag Events WarmDayMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mWarmDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1567,12 +1601,12 @@ End
 #tag Events ColdDayMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mColdDaySeconds)
+		  Self.Config(True).DaySpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdDaySeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1582,12 +1616,12 @@ End
 #tag Events BalancedNightMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mBalancedNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mBalancedNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1597,12 +1631,12 @@ End
 #tag Events WarmNightMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mWarmNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mWarmNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
@@ -1612,21 +1646,44 @@ End
 #tag Events ColdNightMinutesField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
+		  If Self.SettingUp Or IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Value), Self.mColdNightSeconds)
+		  Self.Config(True).NightSpeedMultiplier = Self.ComputeMultiplier(CDbl(Me.Text), Self.mColdNightSeconds)
 		  Self.Changed = True
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
@@ -1637,7 +1694,7 @@ End
 		Name="Progress"
 		Visible=false
 		Group="Behavior"
-		InitialValue="ProgressNone"
+		InitialValue=""
 		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
@@ -1656,14 +1713,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

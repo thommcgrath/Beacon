@@ -179,7 +179,7 @@ End
 		  End If
 		  
 		  Var Win As New LinkSharingDialog
-		  Win.LinkField.Value = Link
+		  Win.LinkField.Text = Link
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
 	#tag EndMethod
@@ -191,7 +191,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Board As New Clipboard
-		  Board.Text = Self.LinkField.Value
+		  Board.Text = Self.LinkField.Text
 		  
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False

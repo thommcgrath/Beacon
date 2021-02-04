@@ -5,7 +5,7 @@ Inherits Beacon.SpawnPointSet
 		Sub Append(Entry As Beacon.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
 		  If Idx = -1 Then
-		    Self.mEntries.AddRow(Entry.ImmutableVersion)
+		    Self.mEntries.Add(Entry.ImmutableVersion)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -27,33 +27,35 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreature As Beacon.Creature, ToCreature As Beacon.Creature, Assigns Weight As NullableDouble)
+		  If FromCreature Is Nil Or ToCreature Is Nil Then
+		    Return
+		  End If
+		  
 		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		  If CurrentWeight = Weight Then
 		    Return
 		  End If
 		  
-		  Var Options As Dictionary
-		  If Self.mReplacements.HasKey(FromCreature.Path) Then
-		    Options = Self.mReplacements.Value(FromCreature.Path)
+		  Var Options As Beacon.BlueprintAttributeManager
+		  If Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Options = Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute)
 		  Else
 		    If Weight = Nil Then
 		      Return
 		    End If
-		    Options = New Dictionary
+		    Options = New Beacon.BlueprintAttributeManager
 		  End If
 		  
 		  If Weight = Nil Then
-		    If Options.HasKey(ToCreature.Path) Then
-		      Options.Remove(ToCreature.Path)
-		    End If
+		    Options.Remove(ToCreature)
 		  Else
-		    Options.Value(ToCreature.Path) = Weight.DoubleValue
+		    Options.Value(ToCreature, "Weight") = Weight.DoubleValue
 		  End If
 		  
-		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreature.Path) Then
-		    Self.mReplacements.Remove(FromCreature.Path)
+		  If Options.Count = 0 And Self.mReplacements.HasBlueprint(FromCreature) Then
+		    Self.mReplacements.Remove(FromCreature)
 		  Else
-		    Self.mReplacements.Value(FromCreature.Path) = Options
+		    Self.mReplacements.Value(FromCreature, Self.ReplacementsAttribute) = Options
 		  End If
 		  
 		  Self.Modified = True
@@ -61,9 +63,17 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String, Assigns Weight As NullableDouble)
+		  Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(FromCreatureID)
+		  Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByID(ToCreatureID)
+		  Self.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Entries(Assigns NewEntries() As Beacon.SpawnPointSetEntry)
-		  Self.mEntries.ResizeTo(NewEntries.LastRowIndex)
-		  For I As Integer = 0 To NewEntries.LastRowIndex
+		  Self.mEntries.ResizeTo(NewEntries.LastIndex)
+		  For I As Integer = 0 To NewEntries.LastIndex
 		    Self.mEntries(I) = NewEntries(I).ImmutableVersion
 		  Next
 		  Self.Modified = True
@@ -161,7 +171,7 @@ Inherits Beacon.SpawnPointSet
 		Sub Remove(Entry As Beacon.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
 		  If Idx > -1 Then
-		    Self.mEntries.RemoveRowAt(Idx)
+		    Self.mEntries.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -169,7 +179,7 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub Remove(AtIndex As Integer)
-		  Self.mEntries.RemoveRowAt(AtIndex)
+		  Self.mEntries.RemoveAt(AtIndex)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

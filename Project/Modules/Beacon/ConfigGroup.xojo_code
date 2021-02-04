@@ -1,29 +1,20 @@
 #tag Class
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
-		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Var Values() As Beacon.ConfigValue
-		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent CommandLineOptions(SourceDocument, Values, Profile)
+		Function Clone(Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
+		  Var Dict As Dictionary = Self.ToDictionary(Document)
+		  If Dict Is Nil Then
+		    Return Nil
 		  End If
 		  
-		  Return Values
+		  Return BeaconConfigs.CreateInstance(Self.ConfigName, Dict, Identity, Document)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConfigName() As String
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
-		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
-		  For Each Signature As Introspection.MethodInfo In Methods
-		    If Signature.IsShared And Signature.Name = "ConfigName" And Signature.GetParameters.LastRowIndex = -1 And Signature.ReturnType.Name = "String" Then
-		      Return Signature.Invoke(Self)
-		    End If
-		  Next
-		  
 		  Var Err As New UnsupportedOperationException
-		  Err.Message = "Class " + Info.FullName + " is missing its ConfigName() As String shared method."
+		  Err.Message = "ConfigGroup.ConfigName was not overridden"
 		  Raise Err
 		End Function
 	#tag EndMethod
@@ -53,23 +44,16 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var Values() As Beacon.ConfigValue
 		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent GameIniValues(SourceDocument, Values, Profile)
-		  End If
-		  
-		  Return Values
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Var Values() As Beacon.ConfigValue
-		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values, Profile)
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
+		    Var Generated() As Beacon.ConfigValue = RaiseEvent GenerateConfigValues(SourceDocument, Profile)
+		    If (Generated Is Nil) = False Then
+		      Values = Generated
+		    Else
+		      App.Log("Warning: " + Self.ConfigName + " did not generate any configs.")
+		    End If
 		  End If
 		  
 		  Return Values
@@ -83,6 +67,20 @@ Protected Class ConfigGroup
 		    RaiseEvent DetectIssues(Document, Arr)
 		  End If
 		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ManagedKeys() As Beacon.ConfigKey()
+		  // Returns all the keys that this group could provide
+		  
+		  If Self.mManagedKeys.Count = 0 Then
+		    Var Keys() As Beacon.ConfigKey = RaiseEvent GetManagedKeys()
+		    If (Keys Is Nil) = False Then
+		      Self.mManagedKeys = Keys
+		    End If
+		  End If
+		  Return Self.mManagedKeys
 		End Function
 	#tag EndMethod
 
@@ -125,28 +123,25 @@ Protected Class ConfigGroup
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function NonGeneratedKeys(Identity As Beacon.Identity) As Beacon.ConfigKey()
-		  // If a config group parses keys that it does not generate, they should be returned here
-		  // to prevent custom config content from grabbing them
-		  
-		  Var Keys() As Beacon.ConfigKey
-		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent NonGeneratedKeys(Keys)
-		  End If
-		  
-		  Return Keys
-		End Function
-	#tag EndMethod
-
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ResolveIssuesCallback()
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
+		Function RunWhenBanned() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsConfigSets() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
-		  Return IsEventImplemented("MergeFrom")
+		  Return False
 		End Function
 	#tag EndMethod
 
@@ -160,16 +155,6 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
-		  #Pragma Unused InputContent
-		  
-		  If Callback <> Nil Then
-		    Callback.Invoke
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function WasPerfectImport() As Boolean
 		  Return True
 		End Function
@@ -177,27 +162,19 @@ Protected Class ConfigGroup
 
 
 	#tag Hook, Flags = &h0
-		Event CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Event GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Event GetManagedKeys() As Beacon.ConfigKey()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event MergeFrom(Other As Beacon.ConfigGroup)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event NonGeneratedKeys(Keys() As Beacon.ConfigKey)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -228,6 +205,10 @@ Protected Class ConfigGroup
 
 	#tag Property, Flags = &h21
 		Private mIsImplicit As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mManagedKeys() As Beacon.ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

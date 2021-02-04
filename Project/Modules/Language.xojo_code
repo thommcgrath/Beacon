@@ -8,17 +8,17 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As String) As String
-		  If Items.LastRowIndex = -1 Then
+		  If Items.LastIndex = -1 Then
 		    Return ""
-		  ElseIf Items.LastRowIndex = 0 Then
+		  ElseIf Items.LastIndex = 0 Then
 		    Return Items(0)
-		  ElseIf Items.LastRowIndex = 1 Then
+		  ElseIf Items.LastIndex = 1 Then
 		    Return Items(0) + " and " + Items(1)
 		  Else
-		    Var LastItem As String = Items(Items.LastRowIndex)
-		    Items.RemoveRowAt(Items.LastRowIndex)
+		    Var LastItem As String = Items(Items.LastIndex)
+		    Items.RemoveAt(Items.LastIndex)
 		    Var List As String = Items.Join(", ") + ", and " + LastItem
-		    Items.AddRow(LastItem) // Gotta put it back
+		    Items.Add(LastItem) // Gotta put it back
 		    Return List
 		  End If
 		End Function
@@ -54,42 +54,44 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
-		  Case BeaconConfigs.Difficulty.ConfigName
+		  Case BeaconConfigs.NameDifficulty
 		    Return "Difficulty"
-		  Case BeaconConfigs.LootDrops.ConfigName
-		    Return "Loot Drop Contents"
-		  Case BeaconConfigs.LootScale.ConfigName
+		  Case BeaconConfigs.NameLootDrops
+		    Return "Loot Drops"
+		  Case BeaconConfigs.NameLootScale
 		    Return "Loot Quality Scaling"
-		  Case BeaconConfigs.Metadata.ConfigName
-		    Return "Document Properties"
-		  Case BeaconConfigs.ExperienceCurves.ConfigName
-		    Return "Player and Tame Levels"
-		  Case BeaconConfigs.CustomContent.ConfigName
-		    Return "Custom Config Content"
-		  Case BeaconConfigs.CraftingCosts.ConfigName
+		  Case BeaconConfigs.NameMetadata
+		    Return "Project Settings"
+		  Case BeaconConfigs.NameExperienceCurves
+		    Return "Levels and XP"
+		  Case BeaconConfigs.NameCustomContent
+		    Return "Custom Config"
+		  Case BeaconConfigs.NameCraftingCosts
 		    Return "Crafting Costs"
-		  Case BeaconConfigs.StackSizes.ConfigName
+		  Case BeaconConfigs.NameStackSizes
 		    Return "Stack Sizes"
-		  Case BeaconConfigs.BreedingMultipliers.ConfigName
+		  Case BeaconConfigs.NameBreedingMultipliers
 		    Return "Breeding Multipliers"
-		  Case BeaconConfigs.HarvestRates.ConfigName
+		  Case BeaconConfigs.NameHarvestRates
 		    Return "Harvest Rates"
-		  Case BeaconConfigs.DinoAdjustments.ConfigName
+		  Case BeaconConfigs.NameDinoAdjustments
 		    Return "Creature Adjustments"
-		  Case BeaconConfigs.StatMultipliers.ConfigName
-		    Return "Player and Creature Stat Multipliers"
-		  Case BeaconConfigs.DayCycle.ConfigName
+		  Case BeaconConfigs.NameStatMultipliers
+		    Return "Stat Multipliers"
+		  Case BeaconConfigs.NameDayCycle
 		    Return "Day and Night Cycle"
-		  Case BeaconConfigs.SpawnPoints.ConfigName
-		    Return "Creature Spawn Points"
-		  Case BeaconConfigs.StatLimits.ConfigName
+		  Case BeaconConfigs.NameSpawnPoints
+		    Return "Creature Spawns"
+		  Case BeaconConfigs.NameStatLimits
 		    Return "Item Stat Limits"
-		  Case BeaconConfigs.EngramControl.ConfigName
+		  Case BeaconConfigs.NameEngramControl
 		    Return "Engram Control"
+		  Case BeaconConfigs.NameSpoilTimers
+		    Return "Decay and Spoil"
 		  Case "deployments"
 		    Return "Servers"
-		  Case "maps"
-		    Return "Maps"
+		  Case "accounts"
+		    Return "Accounts"
 		  End Select
 		End Function
 	#tag EndMethod
@@ -124,16 +126,53 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function LabelForStat(Stat As Beacon.Stat) As String
+		  If Stat Is Nil Then
+		    Return "Unknown Stat"
+		  End If
+		  
+		  Select Case Stat
+		  Case Beacon.Stats.CraftingSpeed
+		    Return "Crafting"
+		  Case Beacon.Stats.Food
+		    Return "Food"
+		  Case Beacon.Stats.Fortitude
+		    Return "Fortitude"
+		  Case Beacon.Stats.Health
+		    Return "Health"
+		  Case Beacon.Stats.Melee
+		    Return "Melee"
+		  Case Beacon.Stats.Oxygen
+		    Return "Oxygen"
+		  Case Beacon.Stats.Speed
+		    Return "Speed"
+		  Case Beacon.Stats.Stamina
+		    Return "Stamina"
+		  Case Beacon.Stats.Temperature
+		    Return "Temperature"
+		  Case Beacon.Stats.Torpor
+		    Return "Torpor"
+		  Case Beacon.Stats.Water
+		    Return "Water"
+		  Case Beacon.Stats.Weight
+		    Return "Weight"
+		  Else
+		    Return "Stat " + Stat.Index.ToString(Locale.Raw, "0")
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
-		  Return Format(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
+		  Return Quantity.ToString(Locale.Current, ",##0") + " " + If(Quantity = 1, Singular, Plural)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ReplacePlaceholders(Source As String, ParamArray Values() As String) As String
-		  For I As Integer = 0 To Values.LastRowIndex
-		    Var Placeholder As String = "?" + Str(I + 1, "0")
-		    Source = Source.ReplaceAll(Placeholder, Values(I))
+		  For I As Integer = 0 To Values.LastIndex
+		    Var Placeholder As Integer = I + 1
+		    Source = Source.ReplaceAll("?" + Placeholder.ToString(Locale.Raw, "0"), Values(I))
 		  Next
 		  Return Source
 		End Function

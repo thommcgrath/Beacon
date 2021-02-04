@@ -7,6 +7,12 @@ Protected Class Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Completed() As Boolean
+		  Return Self.Completed(System.Microseconds)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Completed(Time As Double) As Boolean
 		  #Pragma Unused Time
 		  

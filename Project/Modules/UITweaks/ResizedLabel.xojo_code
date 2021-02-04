@@ -3,7 +3,12 @@ Protected Class ResizedLabel
 Inherits Label
 	#tag Event
 		Sub Open()
-		  Self.ResizeForPlatform(Self.IdealHeight)
+		  If Self.TopDelta <> 0 Then
+		    Self.Top = Self.Top + Self.TopDelta
+		  End If
+		  If Self.HeightDelta <> 0 Then
+		    Self.Height = Self.Height + Self.HeightDelta
+		  End If
 		  
 		  RaiseEvent Open
 		End Sub
@@ -15,11 +20,23 @@ Inherits Label
 	#tag EndHook
 
 
-	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"1"
+	#tag EndConstant
+
+	#tag Constant, Name = TopDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Text"
+			Visible=true
+			Group="Appearance"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
@@ -48,14 +65,6 @@ Inherits Label
 				"2 - Center"
 				"3 - Right"
 			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
-			Visible=true
-			Group="Appearance"
-			InitialValue="Untitled"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FontName"

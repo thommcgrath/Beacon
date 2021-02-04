@@ -1,21 +1,6 @@
 #tag Class
 Private Class TriggerTimer
 Inherits Timer
-	#tag Event
-		Sub Action()
-		  If Self.Callback <> Nil Then
-		    Self.Callback.Invoke()
-		  ElseIf Self.CallbackWithArg <> Nil Then
-		    Self.CallbackWithArg.Invoke(Self.Argument)
-		  End If
-		  
-		  If Timers <> Nil And Timers.HasKey(Self.Key) Then
-		    Timers.Remove(Self.Key)
-		  End If
-		End Sub
-	#tag EndEvent
-
-
 	#tag Property, Flags = &h0
 		Argument As Variant
 	#tag EndProperty
@@ -34,6 +19,30 @@ Inherits Timer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RunMode"
 			Visible=true

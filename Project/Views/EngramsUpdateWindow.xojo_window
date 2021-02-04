@@ -74,7 +74,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Updating Engram Definitions…"
+      Text            =   "Updating Blueprint Definitions…"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -132,13 +132,13 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed)
+		  NotificationKit.Ignore(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, LocalData.Notification_EngramUpdateFinished)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  NotificationKit.Watch(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed)
+		  NotificationKit.Watch(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, LocalData.Notification_EngramUpdateFinished)
 		End Sub
 	#tag EndEvent
 
@@ -156,7 +156,12 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed
+		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, LocalData.Notification_EngramUpdateFinished
+		    If LocalData.SharedInstance.Importing Or LocalData.SharedInstance.CheckingForEngramUpdates Then
+		      // Not done yet
+		      Return
+		    End If
+		    
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
 		    
 		    Var ImportDate As DateTime
@@ -169,12 +174,13 @@ End
 		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    If IsNull(ImportDate) Then
-		      Dialog.Message = "Engram definitions have not been updated"
-		      Dialog.Explanation = "No engram definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
+		      Dialog.Message = "Blueprint definitions have not been updated"
+		      Dialog.Explanation = "No blueprint definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
 		    Else
-		      Dialog.Message = "Engram definitions have been updated"
-		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
+		      Dialog.Message = "Blueprint definitions have been updated"
+		      Dialog.Explanation = "Blueprints are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
 		    End If
+		    Self.Hide
 		    Call Dialog.ShowModal
 		    
 		    Self.Close

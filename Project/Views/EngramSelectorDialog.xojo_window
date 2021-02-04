@@ -62,50 +62,8 @@ Begin BeaconDialog EngramSelectorDialog
       Visible         =   True
       Width           =   560
    End
-   Begin UITweaks.ResizedTextField FilterField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   "Search Objects"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -116,6 +74,9 @@ Begin BeaconDialog EngramSelectorDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -136,6 +97,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -143,7 +105,7 @@ Begin BeaconDialog EngramSelectorDialog
       SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -180,7 +142,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -212,7 +174,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -225,6 +187,7 @@ Begin BeaconDialog EngramSelectorDialog
       Width           =   80
    End
    Begin BeaconListbox SelectedList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -235,6 +198,9 @@ Begin BeaconDialog EngramSelectorDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -255,6 +221,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -262,7 +229,7 @@ Begin BeaconDialog EngramSelectorDialog
       SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -299,7 +266,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -331,7 +298,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -349,6 +316,7 @@ Begin BeaconDialog EngramSelectorDialog
       AutoDeactivate  =   True
       Backdrop        =   0
       Border          =   15
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   67
@@ -362,9 +330,11 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       Spec            =   ""
-      TabIndex        =   8
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   86
@@ -394,7 +364,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -403,8 +373,37 @@ Begin BeaconDialog EngramSelectorDialog
       Underline       =   False
       Value           =   False
       Visible         =   False
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   376
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Search Objects"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Visible         =   True
+      Width           =   560
    End
 End
 #tag EndWindow
@@ -440,7 +439,7 @@ End
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
 		    If Blueprint <> Nil Then
-		      Self.mExcluded.AddRow(Blueprint.Path)
+		      Self.mExcluded.Add(Blueprint.ObjectID)
 		    End If
 		  Next
 		  Self.mMods = Mods
@@ -465,7 +464,7 @@ End
 		    Self.AddToSelectionsButton.Left = Self.List.Left + Self.List.Width + 12
 		    Self.RemoveFromSelectionsButton.Left = Self.AddToSelectionsButton.Left
 		    Self.SelectedList.Left = Self.AddToSelectionsButton.Left + Self.AddToSelectionsButton.Width + 12
-		    Self.MessageLabel.Value = "Select Objects"
+		    Self.MessageLabel.Text = "Select Objects"
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -485,7 +484,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
-		        Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		        Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(I)).ObjectID)
 		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
@@ -493,7 +492,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
-		      Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
+		      Self.mExcluded.Add(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).ObjectID)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
@@ -513,14 +512,14 @@ End
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Creature()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
-		    ExcludeBlueprints.AddRow(Creature)
+		    ExcludeBlueprints.Add(Creature)
 		  Next
 		  
 		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, SelectMode, WithDefaults)
 		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.AddRow(Beacon.Creature(Blueprint))
+		      Creatures.Add(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -538,14 +537,14 @@ End
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Engram()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
-		    ExcludeBlueprints.AddRow(Engram)
+		    ExcludeBlueprints.Add(Engram)
 		  Next
 		  
 		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, SelectMode, WithDefaults)
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.AddRow(Beacon.Engram(Blueprint))
+		      Engrams.Add(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -578,7 +577,7 @@ End
 		  End If
 		  
 		  For I As Integer = 0 To Win.SelectedList.RowCount - 1
-		    Blueprints.AddRow(Win.SelectedList.RowTagAt(I))
+		    Blueprints.Add(Win.SelectedList.RowTagAt(I))
 		  Next
 		  
 		  WithDefaults = Win.WithDefaultsCheck.Value
@@ -599,18 +598,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UnmakeSelection()
-		  Var SelectPaths() As String
+		  Var Selections() As String
 		  For I As Integer = Self.SelectedList.RowCount - 1 DownTo 0
 		    If Not Self.SelectedList.Selected(I) Then
 		      Continue
 		    End If
 		    
 		    Var Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
-		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
+		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.ObjectID)
 		    If Idx > -1 Then
-		      Self.mExcluded.RemoveRowAt(Idx)
+		      Self.mExcluded.RemoveAt(Idx)
 		    End If
-		    SelectPaths.AddRow(Blueprint.Path)
+		    Selections.Add(Blueprint.ObjectID)
 		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
@@ -619,7 +618,7 @@ End
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Var Blueprint As Beacon.Blueprint = Self.List.RowTagAt(I)
-		    Self.List.Selected(I) = SelectPaths.IndexOf(Blueprint.Path) > -1
+		    Self.List.Selected(I) = Selections.IndexOf(Blueprint.ObjectID) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
@@ -628,14 +627,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Value
+		  Var SearchText As String = Self.FilterField.Text
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Self.mExcluded.IndexOf(Blueprint.Path) > -1 Then
+		    If Self.mExcluded.IndexOf(Blueprint.ObjectID) > -1 Then
 		      Continue
 		    End If
 		    
@@ -685,13 +684,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events FilterField
-	#tag Event
-		Sub TextChange()
-		  Self.UpdateFilter()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Change()
@@ -794,6 +786,13 @@ End
 		  Var ToggleButtonsHeight As Integer = AddToSelectionsButton.Height + RemoveFromSelectionsButton.Height + 12
 		  Self.AddToSelectionsButton.Top = Self.SelectedList.Top + ((Self.SelectedList.Height - ToggleButtonsHeight) / 2)
 		  Self.RemoveFromSelectionsButton.Top = Self.AddToSelectionsButton.Top + Self.AddToSelectionsButton.Height + 12
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

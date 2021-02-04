@@ -25,41 +25,6 @@ Begin DiscoveryView LocalDiscoveryView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
-   Begin Label SetupMessageLabel
-      AutoDeactivate  =   True
-      Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Simple Config Import"
-      TextAlign       =   1
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   6
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-   End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
@@ -72,7 +37,7 @@ Begin DiscoveryView LocalDiscoveryView
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   193
+      Height          =   221
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -102,9 +67,10 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   151
+      Top             =   123
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   560
@@ -210,6 +176,7 @@ Begin DiscoveryView LocalDiscoveryView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
@@ -226,11 +193,13 @@ Begin DiscoveryView LocalDiscoveryView
       LockTop         =   True
       RequiresSelection=   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   28
+      Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -241,6 +210,7 @@ Begin DiscoveryView LocalDiscoveryView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -254,11 +224,13 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   88
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -293,7 +265,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   73
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -339,6 +311,14 @@ Begin DiscoveryView LocalDiscoveryView
       Visible         =   True
       Width           =   214
    End
+   Begin Timer TextChangeDelayTrigger
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -346,7 +326,7 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.DesiredHeight = 400
-		  Self.ConfigArea.Value = ""
+		  Self.ConfigArea.Text = ""
 		End Sub
 	#tag EndEvent
 
@@ -448,13 +428,13 @@ End
 		  Case ConfigFileType.GameIni
 		    Self.mGameIniFile = File
 		    Self.mGameIniContent = Content
-		    OtherFilename = "GameUserSettings.ini"
+		    OtherFilename = Beacon.ConfigFileGameUserSettings
 		    OtherContent = Self.mGameUserSettingsIniContent
 		    OtherType = ConfigFileType.GameUserSettingsIni
 		  Case ConfigFileType.GameUserSettingsIni
 		    Self.mGameUserSettingsIniFile = File
 		    Self.mGameUserSettingsIniContent = Content
-		    OtherFilename = "Game.ini"
+		    OtherFilename = Beacon.ConfigFileGame
 		    OtherContent = Self.mGameIniContent
 		    OtherType = ConfigFileType.GameIni
 		  End Select
@@ -484,9 +464,9 @@ End
 		    Return ConfigFileType.GameUserSettingsIni
 		  ElseIf File <> Nil Then
 		    Select Case File.Name
-		    Case "Game.ini"
+		    Case Beacon.ConfigFileGame
 		      Return ConfigFileType.GameIni
-		    Case "GameUserSettings.ini"
+		    Case Beacon.ConfigFileGameUserSettings
 		      Return ConfigFileType.GameUserSettingsIni
 		    End Select
 		  End If
@@ -549,16 +529,16 @@ End
 		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty = False Then
 		      Self.Switcher.SelectedIndex = Self.GameUserSettingsIniIndex
 		    Else
-		      Self.ConfigArea.Value = Self.mGameIniContent
+		      Self.ConfigArea.Text = Self.mGameIniContent
 		    End If
 		  Case Self.GameUserSettingsIniIndex
 		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty = False And Self.mGameUserSettingsIniContent.IsEmpty Then
 		      Self.Switcher.SelectedIndex = Self.GameIniIndex
 		    Else
-		      Self.ConfigArea.Value = Self.mGameUserSettingsIniContent
+		      Self.ConfigArea.Text = Self.mGameUserSettingsIniContent
 		    End If
 		  Else
-		    Self.ConfigArea.Value = ""
+		    Self.ConfigArea.Text = ""
 		  End Select
 		  Self.mSettingUp = SettingUp
 		End Sub
@@ -623,13 +603,17 @@ End
 		  If Not Self.mSettingUp Then
 		    Select Case Self.Switcher.SelectedIndex
 		    Case Self.GameIniIndex
-		      Self.mGameIniContent = Me.Value.Trim
+		      Self.mGameIniContent = Me.Text.Trim
 		    Case Self.GameUserSettingsIniIndex
-		      Self.mGameUserSettingsIniContent = Me.Value.Trim
+		      Self.mGameUserSettingsIniContent = Me.Text.Trim
 		    End Select
 		  End If
 		  
-		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
+		  If Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single Then
+		    Self.TextChangeDelayTrigger.Reset
+		  Else
+		    Self.TextChangeDelayTrigger.RunMode = Timer.RunModes.Single
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -645,8 +629,8 @@ End
 		  Var Profile As New Beacon.LocalServerProfile
 		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
 		  If Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil Then
-		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile.NativePath, FolderItem.PathModes.Native)
-		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile.NativePath, FolderItem.PathModes.Native)
+		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile)
+		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile)
 		  End If
 		  
 		  Var Data As New Beacon.DiscoveredData
@@ -673,7 +657,7 @@ End
 		  End If
 		  
 		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, "GameUserSettings.ini", "Game.ini")
+		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGame)
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
@@ -687,8 +671,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
-		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = Self.GameUserSettingsIniIndex
 		End Sub
@@ -715,6 +699,13 @@ End
 		    Me.AddRow(Map.Name, Map.Mask)
 		  Next
 		  Me.SelectedRowIndex = 0
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TextChangeDelayTrigger
+	#tag Event
+		Sub Action()
+		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty) = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

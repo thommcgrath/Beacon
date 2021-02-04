@@ -25,46 +25,12 @@ Begin ConfigEditor LootConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   702
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Sources"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   "1"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   436
@@ -78,6 +44,8 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -89,16 +57,20 @@ Begin ConfigEditor LootConfigEditor
       Width           =   1
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
       ColumnCount     =   2
       ColumnsResizable=   False
-      ColumnWidths    =   "30,*"
+      ColumnWidths    =   "50,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   34
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -119,6 +91,7 @@ Begin ConfigEditor LootConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -201,6 +174,7 @@ Begin ConfigEditor LootConfigEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   415
@@ -214,6 +188,8 @@ Begin ConfigEditor LootConfigEditor
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -231,6 +207,7 @@ Begin ConfigEditor LootConfigEditor
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
@@ -244,6 +221,8 @@ Begin ConfigEditor LootConfigEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -255,34 +234,6 @@ Begin ConfigEditor LootConfigEditor
          Width           =   451
       End
    End
-   Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -290,6 +241,7 @@ Begin ConfigEditor LootConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -303,6 +255,8 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -310,6 +264,40 @@ Begin ConfigEditor LootConfigEditor
       Top             =   415
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
       Width           =   250
    End
@@ -329,54 +317,47 @@ End
 		    Var AddLootSourceItem As New MenuItem("Add Loot Source…")
 		    AddLootSourceItem.Name = "DocumentAddBeacon"
 		    AddLootSourceItem.AutoEnabled = False
-		    Items.AddRow(AddLootSourceItem)
+		    Items.Add(AddLootSourceItem)
 		    
 		    Var DuplicateLootSourceItem As New MenuItem("Duplicate Loot Source")
 		    DuplicateLootSourceItem.Name = "DocumentDuplicateBeacon"
 		    DuplicateLootSourceItem.AutoEnabled = False
-		    Items.AddRow(DuplicateLootSourceItem)
+		    Items.Add(DuplicateLootSourceItem)
 		    
 		    Var RemoveLootSourceItem As New MenuItem("Remove Loot Source")
 		    RemoveLootSourceItem.Name = "DocumentRemoveBeacon"
 		    RemoveLootSourceItem.AutoEnabled = False
-		    Items.AddRow(RemoveLootSourceItem)
+		    Items.Add(RemoveLootSourceItem)
 		    
-		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    Items.Add(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Var AddItemSetItem As New MenuItem("Add Item Set")
 		    AddItemSetItem.Name = "DocumentAddItemSet"
 		    AddItemSetItem.AutoEnabled = False
-		    Items.AddRow(AddItemSetItem)
+		    Items.Add(AddItemSetItem)
 		    
 		    Var RemoveItemSetItem As New MenuItem("Remove Item Set")
 		    RemoveItemSetItem.Name = "DocumentRemoveItemSet"
 		    RemoveItemSetItem.AutoEnabled = False
-		    Items.AddRow(RemoveItemSetItem)
+		    Items.Add(RemoveItemSetItem)
 		    
-		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    Items.Add(New MenuItem(MenuItem.TextSeparator))
 		  #endif
 		  
 		  Var RebuildItem As New MenuItem("Rebuild Item Sets from Presets")
 		  RebuildItem.Name = "DocumentRebuildPresets"
 		  RebuildItem.AutoEnabled = False
-		  Items.AddRow(RebuildItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
-		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
-		  Self.MinimumHeight = 547
+		  Items.Add(RebuildItem)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameLootDrops) = False Then
 		    Return False
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.NameLootDrops))
 		  If OtherConfig Is Nil Then
 		    Return False
 		  End If
@@ -397,7 +378,7 @@ End
 		  
 		  Var Replace As Boolean = True
 		  If DuplicateSourceCount > 0 Then
-		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateSourceCount, "loot source", "loot sources") + "?", DuplicateSourceCount.ToString + " of " + Language.NounWithQuantity(TotalNewSources, " loot source has already been defined in this document. Would you like to replace it?", " loot sources are already defined in this document. Would you like to replace them?"), "Replace", "Cancel")
+		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateSourceCount, "loot source", "loot sources") + "?", DuplicateSourceCount.ToString + " of " + Language.NounWithQuantity(TotalNewSources, " loot source has already been defined in this project. Would you like to replace it?", " loot sources are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
 		  End If
 		  
 		  Var AddedSources() As Beacon.LootSource
@@ -410,11 +391,11 @@ End
 		      End If
 		    End If
 		    
-		    AddedSources.AddRow(Source)
+		    AddedSources.Add(Source)
 		    Config.Append(Source)
 		  Next
 		  
-		  If AddedSources.LastRowIndex > -1 Then
+		  If AddedSources.LastIndex > -1 Then
 		    Self.Changed = True
 		    Self.UpdateSourceList(AddedSources)
 		  End If
@@ -426,18 +407,21 @@ End
 	#tag Event
 		Sub Resize(Initial As Boolean)
 		  If Initial Then
-		    Self.SetListWidth(Preferences.SourcesSplitterPosition)
+		    Self.SetListWidth(Preferences.SourcesSplitterPosition, False)
 		  Else
-		    Self.SetListWidth(Self.Header.Width)
+		    Self.SetListWidth(Self.ConfigToolbar.Width)
 		  End If
 		  
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Var Resizer As OmniBarItem = Self.ConfigToolbar.Item("Resizer")
+		  If (Resizer Is Nil) = False Then
+		    Resizer.Enabled = Self.Width > Self.MinEditorWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootDrops.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootDrops)
 		End Sub
 	#tag EndEvent
 
@@ -487,17 +471,13 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.UpdateSourceList()
-		End Sub
-	#tag EndEvent
-
 
 	#tag MenuHandler
 		Function DocumentAddBeacon() As Boolean Handles DocumentAddBeacon.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.ShowAddLootSource()
 			Return True
 		End Function
@@ -505,6 +485,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentDuplicateBeacon() As Boolean Handles DocumentDuplicateBeacon.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.ShowAddLootSource(True)
 			Return True
 			
@@ -513,6 +497,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentRebuildPresets() As Boolean Handles DocumentRebuildPresets.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.RebuildAllItemSets()
 			Return True
 		End Function
@@ -520,6 +508,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			If Self.List.CanDelete Then
 			Self.List.DoClear
 			End If
@@ -539,7 +531,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddLootSources(Sources() As Beacon.LootSource)
-		  If Sources.LastRowIndex = -1 Then
+		  If Sources.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -569,9 +561,55 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub BuildQuickDropMenu(Menu As MenuItem)
+		  Var Data As LocalData = LocalData.SharedInstance
+		  Var Labels As Dictionary = Data.LootSourceLabels(Self.Document.MapCompatibility)
+		  Var LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
+		  Var HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(False)
+		  Var Mask As UInt64 = Self.Document.MapCompatibility
+		  If Config <> Nil Then
+		    For I As Integer = LootSources.LastIndex DownTo 0
+		      Var Source As Beacon.LootSource = LootSources(I)
+		      If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
+		        LootSources.RemoveAt(I)
+		        Continue For I
+		      End If
+		    Next
+		  End If
+		  
+		  If LootSources.LastIndex = -1 Then
+		    Var Warning As MenuItem
+		    If Mask = CType(0, UInt64) Then
+		      Warning = New MenuItem("List is empty because no maps have been selected.")
+		    Else
+		      Warning = New MenuItem("List is empty because all drops have been implemented.")
+		    End If
+		    Warning.Enabled = False
+		    Menu.AddMenu(Warning)
+		    Return
+		  End If
+		  
+		  Beacon.Sort(LootSources)
+		  
+		  For Each LootSource As Beacon.LootSource In LootSources
+		    Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.Path, LootSource.Label), LootSource))
+		  Next
+		  
+		  If HasExperimentalSources Then
+		    Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Var ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
+		    ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
+		    Menu.AddMenu(ExpItem)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootDrops
-		  Static ConfigName As String = BeaconConfigs.LootDrops.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameLootDrops
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.LootDrops
@@ -596,7 +634,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameLootDrops)
 		End Function
 	#tag EndMethod
 
@@ -619,8 +657,35 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub HandleQuickDropMenu(ChosenItem As MenuItem)
+		  Var Tag As Variant = ChosenItem.Tag
+		  If Tag.IsNull Then
+		    Return
+		  End If
+		  
+		  If Tag.Type = Variant.TypeString Then
+		    Select Case Tag.StringValue
+		    Case "toggle_experimental"
+		      Preferences.ShowExperimentalLootSources = Not Preferences.ShowExperimentalLootSources
+		      Self.UpdateSourceList()
+		    End Select
+		  ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Beacon.LootSource Then
+		    Var Source As Beacon.LootSource = ChosenItem.Tag
+		    Self.AddLootSource(Source)
+		    Self.Focus = Self.List
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function MinEditorWidth() As Integer
+		  Return ListMinWidth + LootSourceEditor.MinEditorWidth + 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
-		  Var NumChanges As UInteger = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
+		  Var NumChanges As Integer = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
 		  If NumChanges = 0 Then
 		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
 		    Return
@@ -632,31 +697,33 @@ End
 		  If NumChanges = 1 Then
 		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its preset.")
 		  Else
-		    Self.ShowAlert(Str(NumChanges, "-0") + " item sets changed", "Rebuilding changed " + Str(NumChanges, "-0") + " item sets to match their presets.")
+		    Self.ShowAlert(NumChanges.ToString(Locale.Current, ",##0") + " item sets changed", "Rebuilding changed " + NumChanges.ToString(Locale.Current, ",##0") + " item sets to match their presets.")
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetListWidth(NewSize As Integer)
-		  If Self.Width < Self.MinimumWidth Then
-		    // Don't compute anything
-		    Return
+		Private Sub SetListWidth(NewSize As Integer, Remember As Boolean = True)
+		  Var ListWidth, EditorWidth As Integer
+		  If Self.Width <= Self.MinEditorWidth Then
+		    ListWidth = Self.ListMinWidth
+		    EditorWidth = LootSourceEditor.MinEditorWidth
+		  Else
+		    Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		    ListWidth = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinEditorWidth)
+		    EditorWidth = AvailableSpace - ListWidth
 		  End If
 		  
-		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinimumWidth)
-		  Var EditorWidth As Integer = AvailableSpace - ListWidth
-		  
-		  Self.Header.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.List.Width = ListWidth
-		  Self.FadedSeparator2.Width = ListWidth
 		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		  
-		  Preferences.SourcesSplitterPosition = ListWidth
+		  If Remember Then
+		    Preferences.SourcesSplitterPosition = ListWidth
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -684,10 +751,11 @@ End
 		    Var NewSources() As Beacon.LootSource
 		    For Each Source As Beacon.LootSource In CurrentSources
 		      If Not Map.HasKey(Source.ClassString) Then
-		        NewSources.AddRow(Source)
+		        NewSources.Add(Source)
 		      End If
 		    Next
 		    Self.UpdateSourceList(NewSources)
+		    Self.Changed = Self.Document.Modified
 		    Self.Focus = Self.List
 		  End If
 		End Sub
@@ -703,28 +771,28 @@ End
 		  Var SelectedClasses() As String
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
-		      SelectedClasses.AddRow(Source.ClassString)
+		      SelectedClasses.Add(Source.ClassString)
 		    Next
 		  Else
 		    Var Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
 		      If Self.List.Selected(I) Then
-		        SelectedClasses.AddRow(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
+		        SelectedClasses.Add(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
 		      End If
 		    Next
 		  End If
 		  
-		  Self.List.RowCount = VisibleSources.LastRowIndex + 1
+		  Self.List.RowCount = VisibleSources.LastIndex + 1
 		  
 		  Self.mBlockSelectionChanged = True
 		  Var Selection() As Beacon.LootSource
-		  For I As Integer = 0 To VisibleSources.LastRowIndex
+		  For I As Integer = 0 To VisibleSources.LastIndex
 		    Self.List.RowTagAt(I) = VisibleSources(I)
 		    Self.List.CellValueAt(I, 0) = "" // Causes a redraw of the cell
 		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleSources(I).Path, VisibleSources(I).Label)
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      Self.List.Selected(I) = True
-		      Selection.AddRow(VisibleSources(I))
+		      Selection.Add(VisibleSources(I))
 		    Else
 		      Self.List.Selected(I) = False
 		    End If
@@ -732,25 +800,28 @@ End
 		  Self.mBlockSelectionChanged = False
 		  
 		  Editor.Sources = Selection
-		  If Selection.LastRowIndex = -1 Then
+		  If Selection.LastIndex = -1 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1
 		  End If
 		  
-		  Self.Header.Rebuild.Enabled = VisibleSources.LastRowIndex > -1
+		  Var RebuildButton As OmniBarItem = Self.ConfigToolbar.Item("RebuildButton")
+		  If (RebuildButton Is Nil) = False Then
+		    RebuildButton.Enabled = VisibleSources.LastIndex > -1
+		  End If
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As UInteger = Self.List.RowCount
-		  Var SelectedCount As UInteger = Self.List.SelectedRowCount
+		  Var TotalCount As Integer = Self.List.RowCount
+		  Var SelectedCount As Integer = Self.List.SelectedRowCount
 		  
-		  Var Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
 		  If SelectedCount > 0 Then
-		    Caption = Format(SelectedCount, "0,") + " of " + Caption + " Selected"
+		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
 		  End If
 		  Self.StatusBar1.Caption = Caption
 		End Sub
@@ -772,124 +843,15 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"345", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddSource", IconToolbarAdd)
-		  AddButton.HasMenu = True
-		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
-		  
-		  Var RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).LastRowIndex > -1)
-		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		  Me.RightItems.Append(RebuildButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Me.Width
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddSource"
-		    Self.ShowAddLootSource()
-		  Case "Duplicate"
-		    Self.ShowAddLootSource(True)
-		  Case "Rebuild"
-		    Self.RebuildAllItemSets()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSource"
-		    Var Data As LocalData = LocalData.SharedInstance
-		    Var Labels As Dictionary = Data.LootSourceLabels(Self.Document.MapCompatibility)
-		    Var LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
-		    Var HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
-		    Var Config As BeaconConfigs.LootDrops = Self.Config(False)
-		    Var Mask As UInt64 = Self.Document.MapCompatibility
-		    If Config <> Nil Then
-		      For I As Integer = LootSources.LastRowIndex DownTo 0
-		        Var Source As Beacon.LootSource = LootSources(I)
-		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
-		          LootSources.RemoveRowAt(I)
-		          Continue For I
-		        End If
-		      Next
-		    End If
-		    
-		    If LootSources.LastRowIndex = -1 Then
-		      Var Warning As MenuItem
-		      If Mask = 0 Then
-		        Warning = New MenuItem("List is empty because no maps have been selected.")
-		      Else
-		        Warning = New MenuItem("List is empty because all drops have been implemented.")
-		      End If
-		      Warning.Enabled = False
-		      Menu.AddMenu(Warning)
-		      Return
-		    End If
-		    
-		    Beacon.Sort(LootSources)
-		    
-		    For Each LootSource As Beacon.LootSource In LootSources
-		      Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.Path, LootSource.Label), LootSource))
-		    Next
-		    
-		    If HasExperimentalSources Then
-		      Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		      
-		      Var ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
-		      ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
-		      Menu.AddMenu(ExpItem)
-		    End If
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
-		  Select Case Item.Name
-		  Case "AddSource"
-		    If ChosenItem = Nil Then
-		      Return
-		    End If
-		    
-		    Var Tag As Variant = ChosenItem.Tag
-		    If Tag = Nil Then
-		      Return
-		    End If
-		    
-		    If Tag.Type = Variant.TypeString Then
-		      Select Case Tag.StringValue
-		      Case "toggle_experimental"
-		        Preferences.ShowExperimentalLootSources = Not Preferences.ShowExperimentalLootSources
-		        Self.UpdateSourceList()
-		      End Select
-		    ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Beacon.LootSource Then
-		      Var Source As Beacon.LootSource = ChosenItem.Tag
-		      Self.AddLootSource(Source)
-		      Self.Focus = Self.List
-		    End If
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
@@ -901,16 +863,11 @@ End
 		    Return
 		  End If
 		  
-		  Var PrecisionX As Double = 1 / G.ScaleX
-		  Var PrecisionY As Double = 1 / G.ScaleY
-		  
 		  If Column = 0 Then
 		    Var Source As Beacon.LootSource = Me.RowTagAt(Row)
 		    Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		    Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
-		    Var SpaceHeight As Integer = Me.DefaultRowHeight
 		    
-		    G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
+		    G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -941,7 +898,7 @@ End
 		      Continue
 		    End If
 		    
-		    Sources.AddRow(Self.List.RowTagAt(I))
+		    Sources.Add(Self.List.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Sources, "loot source", "loot sources") = False Then
@@ -968,26 +925,24 @@ End
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Var Source As Beacon.LootSource = Me.RowTagAt(I)
-		      Dicts.AddRow(Source.SaveData)
-		      If Source.IsValid(Self.Document) Then
-		        BeaconConfigs.LootDrops.BuildOverrides(Source, Configs, Self.Document.Difficulty)
-		      End If
+		      Dicts.Add(Source.SaveData)
+		      BeaconConfigs.LootDrops.BuildOverrides(Source, Configs, Self.Document.Difficulty)
 		    End If
 		  Next
 		  
 		  Var Lines() As String
 		  For Each Config As Beacon.ConfigValue In Configs
-		    Lines.AddRow(Config.Key + "=" + Config.Value)
+		    Lines.Add(Config.Command)
 		  Next
 		  
 		  Var RawData As String
-		  If Dicts.LastRowIndex = 0 Then
+		  If Dicts.LastIndex = 0 Then
 		    RawData = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
 		    RawData = Beacon.GenerateJSON(Dicts, False)
 		  End If
 		  
-		  Board.AddRawData(RawData, Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = RawData
 		  Board.Text = Lines.Join(Encodings.UTF8.Chr(10))
 		End Sub
 	#tag EndEvent
@@ -1006,11 +961,11 @@ End
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		    Var Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
-		      Dicts.AddRow(Parsed)
+		      Dicts.Add(Parsed)
 		    ElseIf Info.FullName = "Object()" Then
 		      Var Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
-		        Dicts.AddRow(Dict)
+		        Dicts.Add(Dict)
 		      Next
 		    Else
 		      System.Beep
@@ -1021,7 +976,7 @@ End
 		    For Each Dict As Dictionary In Dicts
 		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(Dict)
 		      If (Source Is Nil) = False Then
-		        Sources.AddRow(Source)
+		        Sources.Add(Source)
 		      End If
 		    Next
 		    Self.AddLootSources(Sources)
@@ -1032,7 +987,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		  
 		  If Self.mBlockSelectionChanged Then
 		    Return
@@ -1041,12 +999,12 @@ End
 		  Var Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Sources.AddRow(Me.RowTagAt(I))
+		      Sources.Add(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
 		  Editor.Sources = Sources
-		  If Sources.LastRowIndex = -1 Then
+		  If Sources.LastIndex = -1 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1
@@ -1106,13 +1064,92 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddSourceButton", "New Drop", IconToolbarAddMenu, "Define an additional loot drop override. Hold to quickly add a source from a menu."))
+		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected loot drop.", False))
+		  Me.Append(OmniBarItem.CreateButton("RebuildButton", "Rebuild", IconToolbarRebuild, "Rebuild all item sets using their presets.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddSourceButton"
+		    Self.ShowAddLootSource()
+		  Case "DuplicateButton"
+		    Self.ShowAddLootSource(True)
+		  Case "RebuildButton"
+		    Self.RebuildAllItemSets()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Var NewWidth As Integer = Me.Width + DeltaX
+		  Self.SetListWidth(NewWidth)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+		  Select Case Item.Name
+		  Case "AddSourceButton"
+		    Var Base As New MenuItem
+		    Self.BuildQuickDropMenu(Base)
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If (Choice Is Nil) = False Then
+		      Call Self.HandleQuickDropMenu(Choice)
+		    End If
+		    Return True
+		  End Select
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1177,14 +1214,6 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1322,14 +1351,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

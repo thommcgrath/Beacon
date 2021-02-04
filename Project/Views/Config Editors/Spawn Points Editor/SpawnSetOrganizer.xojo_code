@@ -31,7 +31,7 @@ Implements Beacon.NamedItem
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var Point As Beacon.SpawnPoint = Entry.Key
 		    For Each Set As Beacon.SpawnPointSet In Point
-		      Siblings.AddRow(Set.Label)
+		      Siblings.Add(Set.Label)
 		    Next
 		  Next
 		  
@@ -57,7 +57,7 @@ Implements Beacon.NamedItem
 		    Var PointNames() As String
 		    Var Points() As Beacon.MutableSpawnPoint = Self.Points
 		    For Each Point As Beacon.MutableSpawnPoint In Points
-		      PointNames.AddRow(Point.Label)
+		      PointNames.Add(Point.Label)
 		    Next
 		    PointNames.Sort
 		    Self.mSubLabel = Language.EnglishOxfordList(PointNames)
@@ -85,12 +85,12 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Matches(Values() As String) As Boolean
 		  Var PossibleValues() As String
-		  PossibleValues.AddRow(Self.mTemplate.ID)
-		  PossibleValues.AddRow(Self.mTemplate.Hash)
+		  PossibleValues.Add(Self.mTemplate.ID)
+		  PossibleValues.Add(Self.mTemplate.Hash)
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var Set As Beacon.SpawnPointSet = Entry.Value
-		    PossibleValues.AddRow(Set.ID)
-		    PossibleValues.AddRow(Set.Hash)
+		    PossibleValues.Add(Set.ID)
+		    PossibleValues.Add(Set.Hash)
 		  Next
 		  
 		  For Each Value As String In Values
@@ -111,7 +111,7 @@ Implements Beacon.NamedItem
 		Function Points() As Beacon.MutableSpawnPoint()
 		  Var Arr() As Beacon.MutableSpawnPoint
 		  For Each Entry As DictionaryEntry In Self.mSets
-		    Arr.AddRow(Entry.Key)
+		    Arr.Add(Entry.Key)
 		  Next
 		  Return Arr
 		End Function

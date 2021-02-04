@@ -37,7 +37,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		Function GetBlueprintByID(ObjectID As v4UUID) As Beacon.Blueprint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Blueprint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Blueprint()
 		  
 		End Function
 	#tag EndMethod
@@ -49,37 +61,25 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByClass(ClassString As String) As Beacon.Creature
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByPath(Path As String) As Beacon.Creature
+		Function GetCreaturesByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByPath(Path As String, Mods As Beacon.StringList) As Beacon.Creature()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramByClass(ClassString As String) As Beacon.Engram
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
@@ -97,7 +97,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByPath(Path As String) As Beacon.Engram
+		Function GetEngramsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByEntryString(EntryString As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
@@ -115,6 +127,36 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetMap(Named As String) As Beacon.Map
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps() As Beacon.Map()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps(Mask As UInt64) As Beacon.Map()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetModWithWorkshopID(WorkshopID As Integer) As Beacon.ModDetails
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetPreset(PresetID As String) As Beacon.Preset
 		  
 		End Function
@@ -127,19 +169,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
+		Function GetSpawnPointsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByPath(Path As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
 		  
 		End Function
 	#tag EndMethod
@@ -169,15 +211,15 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadPresets()
+		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
 		  
-		End Sub
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
+		Sub LoadPresets()
 		  
-		End Function
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -199,9 +241,9 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveNotification(Notification As Beacon.UserNotification)
+		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
 		  
-		End Sub
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

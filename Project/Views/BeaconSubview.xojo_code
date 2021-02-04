@@ -13,6 +13,10 @@ Implements ObservationKit.Observable
 		Sub ContentsChanged()
 		  RaiseEvent ContentsChanged
 		  RaiseEvent OwnerModifiedHook
+		  
+		  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+		    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -32,6 +36,10 @@ Implements ObservationKit.Observable
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			If Self.Changed Then
 			Return RaiseEvent ShouldSave
 			End If
@@ -52,9 +60,9 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -64,7 +72,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.AddRow(New WeakRef(Observer))
+		  Refs.Add(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		End Sub
 	#tag EndMethod
@@ -72,6 +80,12 @@ Implements ObservationKit.Observable
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub BringToFrontDelegate(Sender As BeaconSubview)
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Function Busy() As Boolean
+		  Return Self.mProgress > Self.ProgressNone
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CanBeClosed() As Boolean
@@ -91,13 +105,13 @@ Implements ObservationKit.Observable
 		    Return True
 		  End If
 		  
-		  If Callback <> Nil Then
+		  If Beacon.SafeToInvoke(Callback) Then
 		    Callback.Invoke(Self)
 		  End If
 		  
 		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
-		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.ToolbarCaption + """?"
+		  Dialog.Message = "Do you want to save the changes made to the " + Self.ViewType(False, True) + " """ + Self.ViewTitle + """?"
 		  Dialog.Explanation = "Your changes will be lost if you don't save them."
 		  Dialog.ActionButton.Caption = "Save…"
 		  Dialog.CancelButton.Visible = True
@@ -126,6 +140,10 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
+		  If Self.IsFrontmost = False Then
+		    Return
+		  End If
+		  
 		  If Self.Changed Then
 		    FileSave.Enable
 		  End If
@@ -141,7 +159,13 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Function HasModifications() As Boolean
+		  Return Self.Changed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -153,14 +177,14 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -178,9 +202,9 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		  Next
@@ -190,14 +214,22 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub RequestFrontmost()
+		  RaiseEvent WantsFrontmost()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
+		  Self.mIsFrontmost = False
 		  RaiseEvent Hidden
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SwitchedTo(UserData As Variant = Nil)
+		  Self.mIsFrontmost = True
 		  RaiseEvent Shown(UserData)
 		  NotificationKit.Post(Self.Notification_ViewShown, Nil)
 		End Sub
@@ -205,8 +237,30 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ViewID() As String
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
-		  Return Info.Name
+		  If Self.mViewID.IsEmpty Then
+		    Self.mViewID = New v4UUID
+		  End If
+		  Return Self.mViewID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ViewID(Assigns Value As String)
+		  If Self.mViewID <> Value Then
+		    Var OldViewID As String = Self.mViewID
+		    Self.mViewID = Value
+		    Self.NotifyObservers("ViewID", OldViewID, Value)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "items", "Items")
+		  Else
+		    Return If(Lowercase, "item", "Item")
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -251,6 +305,41 @@ Implements ObservationKit.Observable
 		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event WantsFrontmost()
+	#tag EndHook
+
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mIsFrontmost
+			End Get
+		#tag EndGetter
+		IsFrontmost As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mLinkedOmniBarItem
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mLinkedOmniBarItem = Value
+			  
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    // Update the new OmniBarItem to match
+			    Self.Progress = Self.Progress
+			    Self.ViewTitle = Self.ViewTitle
+			    Self.ViewIcon = Self.ViewIcon
+			    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+			  End If
+			End Set
+		#tag EndSetter
+		LinkedOmniBarItem As OmniBarItem
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mClosed As Boolean
@@ -266,8 +355,9 @@ Implements ObservationKit.Observable
 			Set
 			  Value = Max(Value, 32)
 			  If Self.mMinimumHeight <> Value Then
+			    Var OldValue As Integer = Self.mMinimumHeight
 			    Self.mMinimumHeight = Value
-			    Self.NotifyObservers("MinimumHeight", Value)
+			    Self.NotifyObservers("MinimumHeight", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -284,13 +374,22 @@ Implements ObservationKit.Observable
 			Set
 			  Value = Max(Value, 32)
 			  If Self.mMinimumWidth <> Value Then
+			    Var OldValue As Integer = Self.mMinimumWidth
 			    Self.mMinimumWidth = Value
-			    Self.NotifyObservers("MinimumWidth", Value)
+			    Self.NotifyObservers("MinimumWidth", OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
 		MinimumWidth As Integer
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mIsFrontmost As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLinkedOmniBarItem As OmniBarItem
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMinimumHeight As Integer = 300
@@ -309,11 +408,15 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mToolbarCaption As String
+		Private mViewIcon As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mToolbarIcon As Picture
+		Private mViewID As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mViewTitle As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -331,8 +434,21 @@ Implements ObservationKit.Observable
 			  End If
 			  
 			  If Self.mProgress <> Value Then
+			    Var OldValue As Double = Self.mProgress
 			    Self.mProgress = Value
-			    Self.NotifyObservers("BeaconSubview.Progress", Value)
+			    Self.NotifyObservers("BeaconSubview.Progress", OldValue, Value)
+			  End If
+			  
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    If Value = Self.ProgressNone Then
+			      Self.mLinkedOmniBarItem.HasProgressIndicator = False
+			    ElseIf Value = Self.ProgressIndeterminate Then
+			      Self.mLinkedOmniBarItem.HasProgressIndicator = True
+			      Self.mLinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
+			    Else
+			      Self.mLinkedOmniBarItem.HasProgressIndicator = True
+			      Self.mLinkedOmniBarItem.Progress = Value
+			    End If
 			  End If
 			End Set
 		#tag EndSetter
@@ -342,8 +458,30 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.mToolbarCaption <> "" Then
-			    Return Self.mToolbarCaption
+			  Return Self.mViewIcon
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mViewIcon <> Value Then
+			    Var OldValue As Picture = Self.mViewIcon
+			    Self.mViewIcon = Value
+			    Self.NotifyObservers("ViewIcon", OldValue, Value)
+			  End If
+			  
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    Self.mLinkedOmniBarItem.Icon = Value
+			  End If
+			End Set
+		#tag EndSetter
+		ViewIcon As Picture
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mViewTitle <> "" Then
+			    Return Self.mViewTitle
 			  ElseIf Self.Title <> "" Then
 			    Return Self.Title
 			  Else
@@ -353,32 +491,18 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mToolbarCaption, Value, 0) <> 0 Then
-			    Self.mToolbarCaption = Value
-			    Self.NotifyObservers("ToolbarCaption", Value)
-			  End If
-			End Set
-		#tag EndSetter
-		ToolbarCaption As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mToolbarIcon
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mToolbarIcon = Value Then
-			    Return
+			  If Self.mViewTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mViewTitle
+			    Self.mViewTitle = Value
+			    Self.NotifyObservers("ViewTitle", OldValue, Value)
 			  End If
 			  
-			  Self.mToolbarIcon = Value
-			  Self.NotifyObservers("ToolbarIcon", Value)
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    Self.mLinkedOmniBarItem.Caption = Value
+			  End If
 			End Set
 		#tag EndSetter
-		ToolbarIcon As Picture
+		ViewTitle As String
 	#tag EndComputedProperty
 
 
@@ -393,70 +517,6 @@ Implements ObservationKit.Observable
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackgroundColor"
-			Visible=true
-			Group="Background"
-			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType="Color"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HasBackgroundColor"
-			Visible=true
-			Group="Background"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -487,14 +547,6 @@ Implements ObservationKit.Observable
 			Group="Size"
 			InitialValue="300"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -546,14 +598,6 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabStop"
 			Visible=true
 			Group="Position"
@@ -567,6 +611,30 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -586,6 +654,22 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="BackgroundColor"
+			Visible=true
+			Group="Background"
+			InitialValue="&hFFFFFF"
+			Type="Color"
+			EditorType="Color"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBackgroundColor"
+			Visible=true
+			Group="Background"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Backdrop"
 			Visible=true
 			Group="Background"
@@ -594,12 +678,20 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
+			Name="AllowFocus"
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
@@ -611,17 +703,17 @@ Implements ObservationKit.Observable
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
-			Visible=true
+			Visible=false
 			Group="Behavior"
-			InitialValue="400"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumHeight"
-			Visible=true
+			Visible=false
 			Group="Behavior"
-			InitialValue="300"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -629,8 +721,24 @@ Implements ObservationKit.Observable
 			Name="Progress"
 			Visible=false
 			Group="Behavior"
-			InitialValue="ProgressNone"
+			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ViewTitle"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ViewIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -642,11 +750,35 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarIcon"
+			Name="EraseBackground"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsFrontmost"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Picture"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -44,6 +44,7 @@ Begin ServerViewContainer ConnectorServerView
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Untitled"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -55,9 +56,11 @@ Begin ServerViewContainer ConnectorServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
+      Resizer         =   0
       ResizerEnabled  =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -74,6 +77,7 @@ Begin ServerViewContainer ConnectorServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -86,6 +90,8 @@ Begin ServerViewContainer ConnectorServerView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -102,6 +108,7 @@ Begin ServerViewContainer ConnectorServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -114,6 +121,8 @@ Begin ServerViewContainer ConnectorServerView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -156,7 +165,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   124
@@ -192,7 +201,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   124
@@ -227,7 +236,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
@@ -262,7 +271,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
@@ -304,7 +313,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -347,7 +356,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -390,7 +399,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
@@ -426,7 +435,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   158
@@ -461,7 +470,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   192
@@ -496,7 +505,7 @@ Begin ServerViewContainer ConnectorServerView
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
@@ -510,7 +519,7 @@ Begin ServerViewContainer ConnectorServerView
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   30000
-      RunMode         =   "0"
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -527,10 +536,10 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ControlToolbar.Caption = Self.mProfile.Name
-		  Self.ServerNameField.Value = Self.mProfile.Name
-		  Self.AddressField.Value = Self.mProfile.Address
-		  Self.PortField.Value = Self.mProfile.Port.ToString
-		  Self.KeyField.Value = Self.mProfile.PreSharedKey
+		  Self.ServerNameField.Text = Self.mProfile.Name
+		  Self.AddressField.Text = Self.mProfile.Address
+		  Self.PortField.Text = Self.mProfile.Port.ToString
+		  Self.KeyField.Text = Self.mProfile.PreSharedKey
 		End Sub
 	#tag EndEvent
 
@@ -545,15 +554,15 @@ End
 		Private Sub RefreshServerStatus()
 		  Self.RefreshTimer.RunMode = Timer.RunModes.Off
 		  
-		  If IsNumeric(Self.PortField.Value) = False Or Self.AddressField.Value.Trim = "" Or Self.KeyField.Value.Trim = "" Then
+		  If IsNumeric(Self.PortField.Text) = False Or Self.AddressField.Text.Trim = "" Or Self.KeyField.Text.Trim = "" Then
 		    Self.Status = ServerStatus.UnableToCheck
 		    Self.ClientSocket.Close
 		    Return
 		  End If
 		  
-		  Var Port As Integer = CDbl(Self.PortField.Value)
-		  Var Address As String = Self.AddressField.Value.Trim
-		  Var Key As String = Self.KeyField.Value.Trim
+		  Var Port As Integer = CDbl(Self.PortField.Text)
+		  Var Address As String = Self.AddressField.Text.Trim
+		  Var Key As String = Self.KeyField.Text.Trim
 		  
 		  Self.Status = ServerStatus.Checking
 		  
@@ -612,23 +621,23 @@ End
 			  Self.mStatus = Value
 			  Select Case Value
 			  Case ServerStatus.Checking
-			    Self.ServerStatusField.Value = "Checking…"
+			    Self.ServerStatusField.Text = "Checking…"
 			    Self.ControlToolbar.PowerButton.Enabled = False
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  Case ServerStatus.Error
-			    Self.ServerStatusField.Value = "Error, check server details"
+			    Self.ServerStatusField.Text = "Error, check server details"
 			    Self.ControlToolbar.PowerButton.Enabled = False
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  Case ServerStatus.Started
-			    Self.ServerStatusField.Value = "Started"
+			    Self.ServerStatusField.Text = "Started"
 			    Self.ControlToolbar.PowerButton.Enabled = True
 			    Self.ControlToolbar.PowerButton.Toggled = True
 			  Case ServerStatus.Stopped
-			    Self.ServerStatusField.Value = "Stopped"
+			    Self.ServerStatusField.Text = "Stopped"
 			    Self.ControlToolbar.PowerButton.Enabled = True
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  Case ServerStatus.UnableToCheck
-			    Self.ServerStatusField.Value = "Cannot check until server details are complete"
+			    Self.ServerStatusField.Text = "Cannot check until server details are complete"
 			    Self.ControlToolbar.PowerButton.Enabled = False
 			    Self.ControlToolbar.PowerButton.Toggled = False
 			  End Select
@@ -714,8 +723,8 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Value
-		  Self.ControlToolbar.Caption = Me.Value
+		  Self.mProfile.Name = Me.Text
+		  Self.ControlToolbar.Caption = Me.Text
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -723,7 +732,7 @@ End
 #tag Events AddressField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Address = Me.Value.Trim
+		  Self.mProfile.Address = Me.Text.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
@@ -732,8 +741,8 @@ End
 #tag Events PortField
 	#tag Event
 		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
-		    Self.mProfile.Port = CDbl(Me.Value)
+		  If IsNumeric(Me.Text) Then
+		    Self.mProfile.Port = CDbl(Me.Text)
 		    Self.Changed = Self.mProfile.Modified
 		  End If
 		  Self.RefreshServerStatus()
@@ -743,7 +752,7 @@ End
 #tag Events KeyField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.PreSharedKey = Me.Value.Trim
+		  Self.mProfile.PreSharedKey = Me.Text.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
@@ -758,7 +767,23 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
@@ -769,17 +794,9 @@ End
 		Name="Progress"
 		Visible=false
 		Group="Behavior"
-		InitialValue="ProgressNone"
+		InitialValue=""
 		Type="Double"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"

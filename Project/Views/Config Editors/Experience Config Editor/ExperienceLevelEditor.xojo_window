@@ -420,10 +420,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.LevelField.Value = Format(Self.mEditingLevel, "0,")
-		  Self.MinXPField.Value = Format(Self.mMinXP, "0,")
-		  Self.MaxXPField.Value = Format(Self.mMaxXP, "0,")
-		  Self.XPField.Value = Format(Self.mInitialXP, "0,")
+		  Self.LevelField.Text = Self.mEditingLevel.ToString(Locale.Current, ",##0")
+		  Self.MinXPField.Text = Self.mMinXP.ToString(Locale.Current, ",##0")
+		  Self.MaxXPField.Text = Self.mMaxXP.ToString(Locale.Current, ",##0")
+		  Self.XPField.Text = Self.mInitialXP.ToString(Locale.Current, ",##0")
 		  Self.XPField.SelectAll()
 		  
 		  Self.SwapButtons()
@@ -433,7 +433,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
-		  Var XP As UInt64 = CDbl(Self.XPField.Value)
+		  Var XP As UInt64 = CDbl(Self.XPField.Text)
 		  Self.ActionButton.Enabled = XP >= Self.mMinXP And XP <= Self.mMaxXP
 		End Sub
 	#tag EndMethod
@@ -455,7 +455,7 @@ End
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
 		  If Not Cancelled Then
-		    LevelXP = CDbl(Win.XPField.Value)
+		    LevelXP = CDbl(Win.XPField.Text)
 		  End If
 		  Win.Close
 		  Return Not Cancelled

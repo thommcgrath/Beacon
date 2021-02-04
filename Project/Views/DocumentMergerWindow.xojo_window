@@ -24,7 +24,7 @@ Begin BeaconDialog DocumentMergerWindow
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
-   Title           =   "Import From Document"
+   Title           =   "Import From Project"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -63,6 +63,7 @@ Begin BeaconDialog DocumentMergerWindow
       Width           =   560
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -73,6 +74,9 @@ Begin BeaconDialog DocumentMergerWindow
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -93,6 +97,7 @@ Begin BeaconDialog DocumentMergerWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -254,7 +259,7 @@ End
 		  Next
 		  
 		  Var Enabled As Boolean
-		  Var UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
+		  Var UsePrefixes As Boolean = SourceDocuments.LastIndex > 0
 		  If UsePrefixes Then
 		    Win.List.DefaultRowHeight = 40
 		  End If
@@ -310,7 +315,7 @@ End
 		      End If
 		      UniqueMods.Value(ModID) = True
 		      
-		      Var ModInfo As Beacon.ModDetails = LocalData.SharedInstance.ModWithID(ModID)
+		      Var ModInfo As Beacon.ModDetails = LocalData.SharedInstance.GetModWithID(ModID)
 		      If (ModInfo Is Nil) = False And DestinationDocument.ModEnabled(ModID) = False Then
 		        Win.List.AddRow("", "Enable Mod: " + ModInfo.Name)
 		        Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
@@ -342,7 +347,7 @@ End
 		  For Each Map As Beacon.Map In NewMaps
 		    Win.List.AddRow("", "Add Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
-		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map+" + Str(Map.Mask)
+		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map+" + Map.Mask.ToString(Locale.Raw, "0")
 		    If UseMergeUI Then
 		      Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
 		    End If
@@ -351,7 +356,7 @@ End
 		  For Each Map As Beacon.Map In OldMaps
 		    Win.List.AddRow("", "Remove Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
-		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map-" + Str(Map.Mask)
+		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map-" + Map.Mask.ToString(Locale.Raw, "0")
 		    If UseMergeUI Then
 		      Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
 		    End If
@@ -369,7 +374,7 @@ End
 		    Return True
 		  End If
 		  
-		  If Self.mDestination.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		  If Self.mDestination.HasConfigGroup(BeaconConfigs.NameCustomContent) Then
 		    // Since the destination already has custom content, don't warn them again.
 		    Self.mHasWarnedAboutCustomConfig = True
 		    Return True
@@ -390,7 +395,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerCallback()
-		  Self.mCallback.Invoke()
+		  If Beacon.SafeToInvoke(Self.mCallback) Then
+		    Self.mCallback.Invoke()
+		  End If
 		  Self.Close
 		End Sub
 	#tag EndMethod
@@ -558,7 +565,7 @@ End
 		  If Choice.Tag.IntegerValue > -1 Then
 		    Me.CellTagAt(Row, Column) = Choice.Tag
 		  End If
-		  Me.CellValueAt(Row, Column) = Choice.Value
+		  Me.CellValueAt(Row, Column) = Choice.Text
 		  Me.CellCheckBoxValueAt(Row, 0) = Choice.Tag <> -1
 		  
 		  Self.CheckEnabled()
@@ -577,7 +584,7 @@ End
 		  Const IndicatorWidth = 8
 		  Const IndicatorHeight = 4
 		  
-		  Var LineEnd As Integer = Ceil(HorizontalPosition + G.TextWidth(Line))
+		  Var LineEnd As Integer = Ceiling(HorizontalPosition + G.TextWidth(Line))
 		  Var IndicatorLeft As Integer = LineEnd + 4
 		  Var IndicatorTop As Integer = Round((Me.DefaultRowHeight - IndicatorHeight) / 2)
 		  
@@ -597,8 +604,6 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
-		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Or Self.List.RowTagAt(I) = Nil Then
 		      Continue
@@ -626,7 +631,7 @@ End
 		        End If
 		      Case IsA Beacon.ServerProfile
 		        Var Profile As Beacon.ServerProfile = Tag
-		        Self.mDestination.Add(Profile)
+		        Self.mDestination.AddServerProfile(Profile)
 		        
 		        If Profile.ExternalAccountUUID <> Nil Then
 		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(Profile.ExternalAccountUUID)
@@ -650,12 +655,6 @@ End
 		      End If
 		    End Select
 		  Next
-		  
-		  If Self.mDestination.Mods <> PreviousMods Then
-		    Var Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
-		    Notification.SecondaryMessage = "You can change the enabled mods in the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
-		    LocalData.SharedInstance.SaveNotification(Notification)
-		  End If
 		  
 		  If Self.mCallback <> Nil Then
 		    Self.mCallbackKey = CallLater.Schedule(100, WeakAddressOf TriggerCallback)

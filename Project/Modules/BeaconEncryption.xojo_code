@@ -6,32 +6,7 @@ Protected Module BeaconEncryption
 		    Return 0
 		  End If
 		  
-		  Try
-		    Var crcg, c, t, x,b As UInt32
-		    Var ch As UInt8
-		    crcg = &hffffffff
-		    c = Data.Size - 1
-		    
-		    For x=0 To c
-		      ch = Data.UInt8Value(x)
-		      
-		      t = (crcg And &hFF) Xor ch
-		      
-		      For b=0 To 7
-		        If( (t And &h1) = &h1) Then
-		          t = BeaconEncryption.ShiftRight(t, 1) Xor &hEDB88320
-		        Else
-		          t = BeaconEncryption.ShiftRight(t, 1)
-		        End If
-		      Next
-		      crcg = BeaconEncryption.ShiftRight(crcg, 8) Xor t
-		    Next
-		    
-		    crcg = crcg Xor &hFFFFFFFF
-		    Return crcg
-		  Catch Err As RuntimeException
-		    Return 0
-		  End Try
+		  Return CRC_32OfStrMBS(Data)
 		End Function
 	#tag EndMethod
 
@@ -57,7 +32,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetLength(Data As MemoryBlock) As UInt64
+		Protected Function GetLength(Data As MemoryBlock) As Int32
 		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header <> Nil Then
 		    Return Header.Size + Header.EncryptedLength
@@ -79,14 +54,14 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
 		  
 		  Var Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
-		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END RSA PRIVATE KEY") = -1) Then
+		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.LastIndex).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.LastIndex).IndexOf("END RSA PRIVATE KEY") = -1) Then
 		    Var Err As New CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded private key"
 		    Raise Err
 		  End If
 		  
-		  Lines.RemoveRowAt(0)
-		  Lines.RemoveRowAt(Lines.LastRowIndex)
+		  Lines.RemoveAt(0)
+		  Lines.RemoveAt(Lines.LastIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
@@ -108,14 +83,14 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
 		  
 		  Var Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
-		  If Lines(0).IndexOf("BEGIN PUBLIC KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END PUBLIC KEY") = -1 Then
+		  If Lines(0).IndexOf("BEGIN PUBLIC KEY") = -1 Or Lines(Lines.LastIndex).IndexOf("END PUBLIC KEY") = -1 Then
 		    Var Err As New CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded public key"
 		    Raise Err
 		  End If
 		  
-		  Lines.RemoveRowAt(0)
-		  Lines.RemoveRowAt(Lines.LastRowIndex)
+		  Lines.RemoveAt(0)
+		  Lines.RemoveAt(Lines.LastIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
@@ -135,13 +110,13 @@ Protected Module BeaconEncryption
 		  Var Base64 As String = EncodeBase64(Crypto.DEREncodePrivateKey(Key), 0)
 		  Var Lines() As String = Array("-----BEGIN PRIVATE KEY-----")
 		  While Base64.Length > 64
-		    Lines.AddRow(Base64.Left(64))
+		    Lines.Add(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
 		  Wend
 		  If Base64.Length > 0 Then
-		    Lines.AddRow(Base64)
+		    Lines.Add(Base64)
 		  End If
-		  Lines.AddRow("-----END PRIVATE KEY-----")
+		  Lines.Add("-----END PRIVATE KEY-----")
 		  Return Lines.Join(Encodings.UTF8.Chr(10))
 		End Function
 	#tag EndMethod
@@ -151,13 +126,13 @@ Protected Module BeaconEncryption
 		  Var Base64 As String = EncodeBase64(DecodeHex(Key), 0)
 		  Var Lines() As String = Array("-----BEGIN PUBLIC KEY-----")
 		  While Base64.Length > 64
-		    Lines.AddRow(Base64.Left(64))
+		    Lines.Add(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
 		  Wend
 		  If Base64.Length > 0 Then
-		    Lines.AddRow(Base64)
+		    Lines.Add(Base64)
 		  End If
-		  Lines.AddRow("-----END PUBLIC KEY-----")
+		  Lines.Add("-----END PUBLIC KEY-----")
 		  Return Lines.Join(Encodings.UTF8.Chr(10))
 		End Function
 	#tag EndMethod

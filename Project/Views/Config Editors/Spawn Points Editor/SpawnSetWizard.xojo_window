@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnSetWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnSetWizard
    MinimumWidth    =   500
    Resizeable      =   False
    Title           =   "Spawn Set Creation Wizard"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   500
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog SpawnSetWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -111,7 +111,7 @@ Begin BeaconDialog SpawnSetWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -148,7 +148,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -178,7 +178,7 @@ Begin BeaconDialog SpawnSetWizard
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -215,7 +215,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -258,7 +258,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   92
@@ -294,7 +294,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   92
@@ -325,7 +325,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TickMarkStyle   =   "0"
+      TickMarkStyle   =   0
       Tooltip         =   ""
       Top             =   92
       Transparent     =   False
@@ -390,7 +390,7 @@ Begin BeaconDialog SpawnSetWizard
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   126
@@ -483,7 +483,7 @@ End
 		  
 		  If Radius = 0 Then
 		    // We only need one entry and no parameters
-		    Entries.AddRow(New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature))
+		    Entries.Add(New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature))
 		  Else
 		    // We'll create five entries to create a proper spread
 		    Const SpreadMultiplierHigh = 1.046153846
@@ -493,27 +493,27 @@ End
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.7
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 1.0
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierHigh), 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.2
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierLow), 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.25
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierLow) * -1, 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		    
 		    Entry = New Beacon.MutableSpawnPointSetEntry(Self.mSelectedCreature)
 		    Entry.SpawnChance = 0.6
 		    Entry.Offset = New Beacon.Point3D(0.0, Round(Radius * SpreadMultiplierHigh) * -1, 0.0)
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  End If
 		  
 		  Select Case TemplateIdx
@@ -526,7 +526,7 @@ End
 		    Weight = 0.08
 		  Case Self.TemplateHighLevel
 		    Weight = 1000
-		    Limit = 0.0001
+		    Limit = 0.00000001
 		    OverrideLimit = True
 		    
 		    For Each Entry As Beacon.MutableSpawnPointSetEntry In Entries
@@ -562,12 +562,12 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures = Nil Or Creatures.LastRowIndex <> 0 Then
+		  If Creatures = Nil Or Creatures.LastIndex <> 0 Then
 		    Return
 		  End If
 		  
 		  Self.mSelectedCreature = Creatures(0)
-		  Self.CreatureNameField.Value = Self.mSelectedCreature.Label
+		  Self.CreatureNameField.Text = Self.mSelectedCreature.Label
 		  Self.CreatureNameField.Italic = False
 		End Sub
 	#tag EndEvent

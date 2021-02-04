@@ -26,6 +26,7 @@ Begin BeaconContainer SimulatorView
    Visible         =   True
    Width           =   250
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -36,6 +37,9 @@ Begin BeaconContainer SimulatorView
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -56,6 +60,7 @@ Begin BeaconContainer SimulatorView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -80,46 +85,12 @@ Begin BeaconContainer SimulatorView
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Simulator"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "2"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   1
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -133,39 +104,13 @@ Begin BeaconContainer SimulatorView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
-   Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   41
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -178,6 +123,7 @@ Begin BeaconContainer SimulatorView
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -191,6 +137,8 @@ Begin BeaconContainer SimulatorView
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -198,6 +146,40 @@ Begin BeaconContainer SimulatorView
       Top             =   179
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBar SimulatorToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   1
+      Transparent     =   True
       Visible         =   True
       Width           =   250
    End
@@ -242,10 +224,11 @@ End
 		  For Each Item As DictionaryEntry In GroupedItems
 		    Var Description As String = Item.Key
 		    Var Quantity As Integer = Item.Value
-		    List.AddRow(Str(Quantity, "0") + "x " + Description)
+		    List.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		  
-		  Self.StatusBar1.Caption = Format(List.RowCount, "0,") + " item" + If(List.RowCount = 1, "", "s")
+		  Self.StatusBar1.Caption = List.RowCount.ToString(Locale.Current, ",##0") + " item" + If(List.RowCount = 1, "", "s")
+		  Self.UpdateNow()
 		End Sub
 	#tag EndMethod
 
@@ -288,39 +271,50 @@ End
 
 #tag EndWindowCode
 
-#tag Events Header
+#tag Events SimulatorToolbar
 	#tag Event
-		Sub ResizerDragged(DeltaX As Integer, DeltaY As Integer)
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", "Simulator"))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("RefreshButton", "Reroll", IconToolbarRoll, "Re-run the simulator"))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateVerticalResizer("Resizer"))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "RefreshButton"
+		    Self.Simulate()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
 		  #Pragma Unused DeltaX
+		  #Pragma Unused DraggedResizer
 		  
 		  Var NewSize As Integer = Self.Height - DeltaY
 		  RaiseEvent ShouldResize(NewSize)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ResizeFinished()
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
 		  RaiseEvent ResizeFinished()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ResizeStarted()
+		Sub ResizeStarted(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
 		  RaiseEvent ResizeStarted()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "Refresh"
-		    Self.Simulate()
-		  Case "Close"
-		    RaiseEvent ShouldClose
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("Refresh", IconToolbarRefresh, "Re-run the simulator"))
-		  Me.RightItems.Append(New BeaconToolbarItem("Close", IconToolbarClose, "Close the simulator"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

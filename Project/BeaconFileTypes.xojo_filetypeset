@@ -6,9 +6,9 @@
 		Flags=&h5
 		MacCreator=????
 		MacType=
-		Name=Beacon Document
+		Name=Beacon Project
 		UTI=com.thezaz.beacon.document
-		UTIConformsTo=public.text, public.data
+		UTIConformsTo=public.content, public.data
 		Description=
 		MimeType=
 		Imported=False
@@ -128,6 +128,23 @@
 		MimeType=
 		Imported=False
 		HandlerRank=&h9
+		UTIPhysicalType=public.data
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=BeaconData
+		DocIcon=Beacon.xojo_resources;&h2A960B0
+		Extension=.beacondata
+		Flags=&h9
+		MacCreator=
+		MacType=
+		Name=Beacon Data Update
+		UTI=com.thezaz.beacon.updatedelta
+		UTIConformsTo=public.content, public.data
+		Description=
+		MimeType=
+		Imported=False
+		HandlerRank=&h11
 		UTIPhysicalType=public.data
 	#tag EndFileType
 

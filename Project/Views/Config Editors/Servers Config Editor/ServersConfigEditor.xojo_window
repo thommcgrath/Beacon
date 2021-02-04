@@ -26,6 +26,7 @@ Begin ConfigEditor ServersConfigEditor
    Visible         =   True
    Width           =   856
    Begin BeaconListbox ServerList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -36,13 +37,16 @@ Begin ConfigEditor ServersConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   40
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   False
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   465
       HelpTag         =   ""
       Hierarchical    =   False
@@ -56,12 +60,13 @@ Begin ConfigEditor ServersConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   0
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -85,6 +90,7 @@ Begin ConfigEditor ServersConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   506
@@ -98,6 +104,8 @@ Begin ConfigEditor ServersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -108,66 +116,37 @@ Begin ConfigEditor ServersConfigEditor
       Visible         =   True
       Width           =   1
    End
-   Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   299
-   End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Servers"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
+      Transparent     =   True
       Visible         =   True
       Width           =   299
    End
@@ -177,16 +156,9 @@ End
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  #if Beacon.MOTDEditingEnabled
-		    If Self.ServerList.SelectedRowCount > 0 Then
-		      Self.EnableEditorMenuItem("CopyMOTDToAllServers")
-		    End If
-		  #else
-		    Var CopyItem As MenuItem = EditorMenu.Child("CopyMOTDToAllServers")
-		    If (CopyItem Is Nil) = False Then
-		      CopyItem.Visible = False
-		    End If
-		  #endif
+		  If Self.ServerList.SelectedRowCount > 0 Then
+		    Self.EnableEditorMenuItem("CopyMOTDToAllServers")
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -195,18 +167,13 @@ End
 		  Var ReplicateItem As New MenuItem("Copy Message of the Day to All Servers")
 		  ReplicateItem.Name = "CopyMOTDToAllServers"
 		  ReplicateItem.Enabled = (Self.ServerList.SelectedRowCount = 1)
-		  Items.AddRow(ReplicateItem)
+		  Items.Add(ReplicateItem)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
-		    
-		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
-		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		  Next
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 
@@ -223,7 +190,7 @@ End
 		  Var SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
 		    If Self.ServerList.Selected(I) Then
-		      SelectedProfiles.AddRow(Self.ServerList.RowTagAt(I))
+		      SelectedProfiles.Add(Self.ServerList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -234,10 +201,10 @@ End
 		    
 		    // Don't use IndexOf as it doesn't utilize Operator_Compare
 		    Var Selected As Boolean
-		    For X As Integer = 0 To SelectedProfiles.LastRowIndex
+		    For X As Integer = 0 To SelectedProfiles.LastIndex
 		      If SelectedProfiles(X) = Profile Then
 		        Selected = True
-		        SelectedProfiles.RemoveRowAt(X)
+		        SelectedProfiles.RemoveAt(X)
 		        Exit For X
 		      End If
 		    Next
@@ -272,12 +239,12 @@ End
 			Return True
 			End If
 			
-			Var Message As String = SourceProfile.MessageOfTheDay
+			Var Message As Beacon.ArkML = SourceProfile.MessageOfTheDay
 			Var Duration As Integer = SourceProfile.MessageDuration
 			
 			For Idx As Integer = 0 To Bound
 			If Self.Document.ServerProfile(Idx).ProfileID <> CurrentProfileID Then
-			Self.Document.ServerProfile(Idx).MessageOfTheDay = Message
+			Self.Document.ServerProfile(Idx).MessageOfTheDay = Message.Clone
 			Self.Document.ServerProfile(Idx).MessageDuration = Duration
 			Self.Changed = Self.Changed Or Self.Document.Modified
 			End If
@@ -299,6 +266,57 @@ End
 		Sub Constructor(Controller As Beacon.DocumentController)
 		  Self.mViews = New Dictionary
 		  Super.Constructor(Controller)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList()
+		  // Updates the list, maintaining the current selection
+		  
+		  Var Profiles() As Beacon.ServerProfile
+		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
+		    If Self.ServerList.Selected(Idx) = False Then
+		      Continue
+		    End If
+		    
+		    Profiles.Add(Self.ServerList.RowTagAt(Idx))
+		  Next
+		  Self.UpdateList(Profiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile)
+		  Self.ServerList.SelectionChangeBlocked = True
+		  Self.ServerList.RemoveAllRows
+		  
+		  Var SelectIDs() As String
+		  For Each Profile As Beacon.ServerProfile In SelectProfiles
+		    If Profile Is Nil Then
+		      Continue
+		    End If
+		    SelectIDs.Add(Profile.ProfileID)
+		  Next
+		  
+		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
+		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
+		    
+		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
+		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
+		    Self.ServerList.Selected(Self.ServerList.LastAddedRowIndex) = SelectIDs.IndexOf(Profile.ProfileID) > -1
+		  Next
+		  Self.ServerList.Sort
+		  Self.ServerList.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateList(SelectProfile As Beacon.ServerProfile)
+		  // Updates the list, selecting the requested profile
+		  
+		  Var Profiles(0) As Beacon.ServerProfile
+		  Profiles(0) = SelectProfile
+		  Self.UpdateList(Profiles)
 		End Sub
 	#tag EndMethod
 
@@ -332,6 +350,7 @@ End
 			  If Self.mCurrentProfileID <> "" Then
 			    Var View As ServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
+			    View.SwitchedFrom()
 			    Self.mCurrentProfileID = ""
 			  End If
 			  
@@ -340,6 +359,7 @@ End
 			  End If
 			  
 			  Var View As ServerViewContainer = Self.mViews.Value(Value)
+			  View.SwitchedTo()
 			  View.Visible = True
 			  Self.mCurrentProfileID = Value
 			End Set
@@ -372,35 +392,59 @@ End
 #tag Events ServerList
 	#tag Event
 		Sub Change()
-		  If Me.SelectedRowIndex = -1 Then
+		  Select Case Me.SelectedRowCount
+		  Case 0
 		    Self.CurrentProfileID = ""
 		    Return
-		  End If
-		  
-		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
-		  Var ProfileID As String = Profile.ProfileID
-		  If Not Self.mViews.HasKey(ProfileID) Then
-		    // Create the view
-		    Var View As ServerViewContainer
-		    Select Case Profile
-		    Case IsA Beacon.NitradoServerProfile
-		      View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
-		    Case IsA Beacon.FTPServerProfile
-		      View = New FTPServerView(Beacon.FTPServerProfile(Profile))
-		    Case IsA Beacon.ConnectorServerProfile
-		      View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
-		    Case IsA Beacon.LocalServerProfile
-		      View = New LocalServerView(Beacon.LocalServerProfile(Profile))
-		    Else
-		      Self.CurrentProfileID = ""
-		      Return
-		    End Select
+		  Case 1
+		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
+		    Var ProfileID As String = Profile.ProfileID
+		    If Not Self.mViews.HasKey(ProfileID) Then
+		      // Create the view
+		      Var View As ServerViewContainer
+		      Select Case Profile
+		      Case IsA Beacon.NitradoServerProfile
+		        View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
+		      Case IsA Beacon.FTPServerProfile
+		        View = New FTPServerView(Self.Document, Beacon.FTPServerProfile(Profile))
+		      Case IsA Beacon.ConnectorServerProfile
+		        View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
+		      Case IsA Beacon.LocalServerProfile
+		        View = New LocalServerView(Self.Document, Beacon.LocalServerProfile(Profile))
+		      Case IsA Beacon.GSAServerProfile
+		        View = New GSAServerView(Self.Document, Beacon.GSAServerProfile(Profile))
+		      Else
+		        Self.CurrentProfileID = ""
+		        Return
+		      End Select
+		      
+		      View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
+		      AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
+		      Self.mViews.Value(ProfileID) = View
+		    End If
+		    Self.CurrentProfileID = ProfileID
+		  Else
+		    Var Profiles() As Beacon.ServerProfile
+		    Var Parts() As String
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Not Me.Selected(Idx) Then
+		        Continue
+		      End If
+		      
+		      Profiles.Add(Me.RowTagAt(Idx))
+		      Parts.Add(Profiles(Profiles.LastIndex).ProfileID)
+		    Next
 		    
-		    View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
-		    AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
-		    Self.mViews.Value(ProfileID) = View
-		  End If
-		  Self.CurrentProfileID = ProfileID
+		    Var ProfileID As String = Parts.Join(",")
+		    If Not Self.mViews.HasKey(ProfileID) Then
+		      Var View As New MultiServerView(Self.Document, Profiles)
+		      View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
+		      AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
+		      Self.mViews.Value(ProfileID) = View
+		    End If
+		    
+		    Self.CurrentProfileID = ProfileID
+		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -423,7 +467,7 @@ End
 		    End If
 		  End If
 		  
-		  For I As Integer = 0 To Me.RowCount - 1
+		  For I As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(I) Then
 		      Var Profile As Beacon.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
@@ -474,7 +518,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
-		  Select Case HitItem.Value
+		  Select Case HitItem.Text
 		  Case "Show Config Backups"
 		    Var Folder As FolderItem = HitItem.Tag
 		    If Folder = Nil Then
@@ -493,14 +537,76 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  #Pragma Unused Column
+		  
+		  Var Profile1 As Beacon.ServerProfile = Me.RowTagAt(Row1)
+		  Var Profile2 As Beacon.ServerProfile = Me.RowTagAt(Row2)
+		  
+		  Result = Profile1.Operator_Compare(Profile2)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddServerButton", "New Server", IconToolbarAdd, "Add a new simple server."))
+		  
+		  Me.Item("ConfigTitle").Priority = 5
+		  Me.Item("ConfigTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddServerButton"
+		    Var Profile As New Beacon.LocalServerProfile
+		    Profile.Name = "An Ark Server"
+		    
+		    Self.Document.AddServerProfile(Profile)
+		    Self.UpdateList(Profile)
+		  End Select
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -568,14 +674,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -590,14 +688,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

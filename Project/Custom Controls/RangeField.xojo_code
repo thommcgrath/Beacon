@@ -7,7 +7,7 @@ Inherits UITweaks.ResizedTextField
 		    Return True
 		  End If
 		  
-		  Var Code As Integer = Asc(Key)
+		  Var Code As Integer = Key.Asc
 		  Select Case Code
 		  Case 10, 13, 3
 		    Self.CheckValue()
@@ -38,7 +38,7 @@ Inherits UITweaks.ResizedTextField
 
 	#tag Method, Flags = &h0
 		Sub Clear()
-		  Self.Value = ""
+		  Self.Text = ""
 		  Self.mLastNotifiedValue = ""
 		End Sub
 	#tag EndMethod
@@ -47,18 +47,18 @@ Inherits UITweaks.ResizedTextField
 		Private Shared Function Format(Value As Double) As String
 		  If Floor(Value) = Value Then
 		    // Integer
-		    Return Format(Value, "-0,")
+		    Return Value.ToString(Locale.Current, ",##0")
 		  Else
 		    // Double
-		    Return Format(Value, "-0,.0####")
+		    Return Value.ToString(Locale.Current, ",##0.0####")
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub SetValue(Value As String)
-		  If Self.Value <> Value Then
-		    Self.Value = Value
+		  If Self.Text <> Value Then
+		    Self.Text = Value
 		  End If
 		  If Self.mLastNotifiedValue <> Value Then
 		    Self.mLastNotifiedValue = Value
@@ -69,12 +69,12 @@ Inherits UITweaks.ResizedTextField
 
 	#tag Method, Flags = &h0
 		Function Validate() As Boolean
-		  If RaiseEvent AllowContents(Me.Value) Then
-		    Self.SetValue(Self.Value) // Fires TextChanged only if necessary
+		  If RaiseEvent AllowContents(Me.Text) Then
+		    Self.SetValue(Self.Text) // Fires TextChanged only if necessary
 		    Return True
 		  End If
 		  
-		  If Not IsNumeric(Self.Value) Then
+		  If Not IsNumeric(Self.Text) Then
 		    System.Beep
 		    Self.SetValue(Self.mLastNotifiedValue)
 		    Return False
@@ -83,7 +83,7 @@ Inherits UITweaks.ResizedTextField
 		  Var MinValue, MaxValue As Double
 		  RaiseEvent GetRange(MinValue, MaxValue)
 		  
-		  Var Value As Double = CDbl(Self.Value)
+		  Var Value As Double = CDbl(Self.Text)
 		  Var Formatted As String
 		  Var Valid As Boolean
 		  If Value < MinValue Then
@@ -131,12 +131,12 @@ Inherits UITweaks.ResizedTextField
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return CDbl(Me.Value.Trim)
+			  Return CDbl(Me.Text.Trim)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If CDbl(Self.Value.Trim) <> Value Then
+			  If CDbl(Self.Text.Trim) <> Value Then
 			    Var MinValue, MaxValue As Double
 			    RaiseEvent GetRange(MinValue, MaxValue)
 			    
@@ -173,6 +173,14 @@ Inherits UITweaks.ResizedTextField
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Text"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Bold"
 			Visible=true
 			Group="Font"
@@ -184,14 +192,6 @@ Inherits UITweaks.ResizedTextField
 			Name="Tooltip"
 			Visible=true
 			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
-			Visible=true
-			Group="Initial State"
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"

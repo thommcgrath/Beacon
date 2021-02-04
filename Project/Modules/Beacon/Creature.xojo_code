@@ -2,6 +2,25 @@
 Protected Class Creature
 Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
+		Function AllStatValues() As Beacon.CreatureStatValue()
+		  Var Values() As Beacon.CreatureStatValue
+		  If Self.mStats Is Nil Then
+		    Return Values
+		  End If
+		  
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  For Each Stat As Beacon.Stat In Stats
+		    Var Value As Beacon.CreatureStatValue = Self.StatValue(Stat)
+		    If (Value Is Nil) = False Then
+		      Values.Add(Value)
+		    End If
+		  Next
+		  
+		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  Return Self.mAlternateLabel
 		End Function
@@ -26,14 +45,14 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Blueprint
+		Function Clone() As Beacon.Creature
 		  Return New Beacon.Creature(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		  Self.mStats = New Dictionary
 		End Sub
 	#tag EndMethod
@@ -45,6 +64,7 @@ Implements Beacon.Blueprint
 		  Self.mObjectID = Source.mObjectID
 		  Self.mAvailability = Source.mAvailability
 		  Self.mPath = Source.mPath
+		  Self.mClassString = Source.mClassString
 		  Self.mLabel = Source.mLabel
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
@@ -57,63 +77,49 @@ Implements Beacon.Blueprint
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromClass(ClassString As String) As Beacon.Creature
-		  Return Creature.CreateFromPath(Beacon.UnknownBlueprintPath("Creatures", ClassString))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromPath(Path As String) As Beacon.Creature
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.Creature
 		  Var Creature As New Beacon.Creature
-		  Creature.mClassString = Beacon.ClassStringFromPath(Path)
+		  Creature.mModID = Beacon.UserModID
+		  Creature.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "BeaconNoData_Character_BP_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = ObjectID + "_Character_BP_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("Creatures", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  Creature.mClassString = ClassString
 		  Creature.mPath = Path
-		  Creature.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mPath.Lowercase)
-		  Creature.mLabel = Beacon.LabelFromClassString(Creature.mClassString)
-		  Creature.mModID = LocalData.UserModID
-		  Creature.mModName = LocalData.UserModName
+		  Creature.mObjectID = ObjectID
+		  Creature.mLabel = Beacon.LabelFromClassString(ClassString)
 		  Return Creature
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Creature
-		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryCreatures Then
-		    Return Nil
-		  End If
-		  
-		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName", "IncubationTime", "MatureTime", "Stats") Then
-		    Return Nil
-		  End If
-		  
-		  Var Creature As New Beacon.MutableCreature(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
-		  Creature.Label = Dict.Value("Label").StringValue
-		  Creature.Availability = Dict.Value("Availability").UInt64Value
-		  Creature.Tags = Dict.Value("Tags")
-		  Creature.ModID = Dict.Value("ModID").StringValue
-		  Creature.ModName = Dict.Value("ModName").StringValue
-		  Creature.IncubationTime = Dict.Value("IncubationTime").UInt64Value
-		  Creature.MatureTime = Dict.Value("MatureTime").UInt64Value
-		  
-		  Var Immutable As New Beacon.Creature(Creature)
-		  Var StatData As Dictionary = Dict.Value("Stats")
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  For Each Stat As Beacon.Stat In Stats
-		    If StatData.HasKey(Stat.Key) Then
-		      Immutable.mStats.Value(Stat.Index) = StatData.Value(Stat.Key)
-		    End If
-		  Next
-		  Return Immutable
+		Function ImmutableVersion() As Beacon.Creature
+		  Return Self
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IncubationTime() As UInt64
+		Function IncubationTime() As Double
 		  Return Self.mIncubationTime
 		End Function
 	#tag EndMethod
@@ -126,30 +132,34 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Label() As String
+		  If Self.mLabel.IsEmpty Then
+		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
+		  End If
+		  
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatureTime() As UInt64
+		Function MatureTime() As Double
 		  Return Self.mMatureTime
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MaxMatingInterval() As UInt64
+		Function MaxMatingInterval() As Double
 		  Return Self.mMaxMatingInterval
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MinMatingInterval() As UInt64
+		Function MinMatingInterval() As Double
 		  Return Self.mMinMatingInterval
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
@@ -161,27 +171,91 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableClone() As Beacon.MutableBlueprint
+		Function MutableClone() As Beacon.MutableCreature
 		  Return New Beacon.MutableCreature(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function MutableVersion() As Beacon.MutableCreature
+		  Return New Beacon.MutableCreature(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Creature) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Var SelfPath As String = Self.Path
-		  Var OtherPath As String = Other.Path
-		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
+		  If Self.ObjectID = Other.ObjectID Then
+		    Return 0
+		  End If
+		  
+		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseInsensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  If Self.mIncubationTime > 0 Then
+		    Dict.Value("incubation_time") = Self.mIncubationTime
+		  Else
+		    Dict.Value("incubation_time") = Nil
+		  End If
+		  
+		  If Self.mMatureTime > 0 Then
+		    Dict.Value("mature_time") = Self.mMatureTime
+		  Else
+		    Dict.Value("mature_time")= Nil
+		  End If
+		  
+		  If (Self.mStats Is Nil) = False And Self.mStats.KeyCount > 0 Then
+		    Var Stats() As Dictionary
+		    Var Indexes() As Integer
+		    
+		    For Each Entry As DictionaryEntry In Self.mStats
+		      Var StatIndex As Integer = Entry.Key
+		      Var StatInfo As Dictionary = Entry.Value
+		      
+		      Var PackedStats As New Dictionary
+		      PackedStats.Value("stat_index") = StatIndex
+		      PackedStats.Value("base_value") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue)
+		      PackedStats.Value("per_level_wild_multiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue)
+		      PackedStats.Value("per_level_tamed_multiplier") = StatInfo.Lookup(Self.KeyTamed, Self.MissingStatValue)
+		      PackedStats.Value("add_multiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue)
+		      PackedStats.Value("affinity_multiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue)
+		      
+		      Stats.Add(PackedStats)
+		      Indexes.Add(StatIndex)
+		    Next
+		    
+		    Indexes.SortWith(Stats)
+		    Dict.Value("stats") = Stats
+		  Else
+		    Dict.Value("stats") = Nil
+		  End If
+		  
+		  If Self.mStatsMask > 0 Then
+		    Dict.Value("used_stats") = Self.mStatsMask
+		  Else
+		    Dict.Value("used_stats") = Nil
+		  End If
+		  
+		  If Self.mMinMatingInterval > 0 And Self.mMaxMatingInterval > 0 Then
+		    Dict.Value("mating_interval_min") = Self.mMinMatingInterval
+		    Dict.Value("mating_interval_max") = Self.mMaxMatingInterval
+		  Else
+		    Dict.Value("mating_interval_min") = Nil
+		    Dict.Value("mating_interval_max") = Nil
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -221,6 +295,26 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function StatValue(Stat As Beacon.Stat) As Beacon.CreatureStatValue
+		  If Stat Is Nil Or Self.mStats Is Nil Or Self.mStats.HasKey(Stat.Index) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var Dict As Dictionary = Self.mStats.Value(Stat.Index)
+		  Var BaseValue As Double = Dict.Lookup(Self.KeyBase, Self.MissingStatValue).DoubleValue
+		  Var WildMultiplier As Double = Dict.Lookup(Self.KeyWild, Self.MissingStatValue).DoubleValue
+		  Var TamedMultiplier As Double = Dict.Lookup(Self.KeyTamed, Self.MissingStatValue).DoubleValue
+		  Var AddMultiplier As Double = Dict.Lookup(Self.KeyAdd, Self.MissingStatValue).DoubleValue
+		  Var AffinityMultiplier As Double = Dict.Lookup(Self.KeyAffinity, Self.MissingStatValue).DoubleValue
+		  If BaseValue = Self.MissingStatValue And BaseValue = WildMultiplier And WildMultiplier = TamedMultiplier And TamedMultiplier = AddMultiplier And AddMultiplier = AffinityMultiplier Then
+		    Return Nil
+		  End If
+		  
+		  Return New Beacon.CreatureStatValue(Stat, BaseValue, WildMultiplier, TamedMultiplier, AddMultiplier, AffinityMultiplier)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function StatValue(Stat As Beacon.Stat, Key As String) As Double
 		  If Self.mStats = Nil Or Self.mStats.HasKey(Stat.Index) = False Then
 		    Return Self.MissingStatValue
@@ -240,37 +334,11 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
-		  Var StatData As New Dictionary
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  For Each Stat As Beacon.Stat In Stats
-		    If Self.mStats.HasKey(Stat.Index) Then
-		      StatData.Value(Stat.Key) = Self.mStats.Value(Stat.Index)
-		    End If
-		  Next
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Category") = Self.Category
-		  Dict.Value("UUID") = Self.ObjectID.StringValue
-		  Dict.Value("Label") = Self.Label
-		  Dict.Value("Path") = Self.Path
-		  Dict.Value("Availability") = Self.Availability
-		  Dict.Value("Tags") = Self.Tags
-		  Dict.Value("ModID") = Self.ModID.StringValue
-		  Dict.Value("ModName") = Self.ModName
-		  Dict.Value("IncubationTime") = Self.IncubationTime
-		  Dict.Value("MatureTime") = Self.MatureTime
-		  Dict.Value("Stats") = StatData
-		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -294,7 +362,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIncubationTime As UInt64
+		Protected mIncubationTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -302,15 +370,15 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMatureTime As UInt64
+		Protected mMatureTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMaxMatingInterval As UInt64
+		Protected mMaxMatingInterval As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMinMatingInterval As UInt64
+		Protected mMinMatingInterval As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

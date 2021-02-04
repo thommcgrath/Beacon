@@ -61,7 +61,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   53
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -97,52 +97,18 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   53
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   227
-   End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Harvest Rate Overrides"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
    End
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -156,17 +122,20 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   189
+      Top             =   205
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   764
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -177,6 +146,9 @@ Begin ConfigEditor HarvestRatesConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -184,7 +156,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   278
+      Height          =   262
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -197,6 +169,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -210,7 +183,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   190
+      Top             =   206
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -220,34 +193,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Width           =   764
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
    End
    Begin CheckBox UseOptimizedRatesCheck
       AutoDeactivate  =   True
@@ -275,7 +220,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   62
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -318,7 +263,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   87
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -354,7 +299,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   87
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -396,7 +341,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   121
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -432,7 +377,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   121
+      Top             =   129
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -474,7 +419,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   155
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -510,7 +455,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   155
+      Top             =   163
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -542,12 +487,46 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   96
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   393
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   764
    End
 End
 #tag EndWindow
@@ -566,7 +545,7 @@ End
 		  Var ConvertGlobalItem As New MenuItem("Convert Global Harvest Rate to Individual Rates")
 		  ConvertGlobalItem.AutoEnabled = False
 		  ConvertGlobalItem.Name = "ConvertGlobalHarvestRate"
-		  Items.AddRow(ConvertGlobalItem)
+		  Items.Add(ConvertGlobalItem)
 		End Sub
 	#tag EndEvent
 
@@ -574,12 +553,12 @@ End
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the properties, it would likely be confusing for users
 		  
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.HarvestRates.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameHarvestRates) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName))
-		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
+		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.NameHarvestRates))
+		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
 		  
@@ -596,17 +575,17 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.HarvestRates.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameHarvestRates)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Self.HarvestAmountMultiplierField.Value = Format(Config.HarvestAmountMultiplier, "0.0#####")
-		  Self.HarvestHealthMultiplierField.Value = Format(Config.HarvestHealthMultiplier, "0.0#####")
-		  Self.PlayerHarvestDamageMultiplierField.Value = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
-		  Self.DinoHarvestDamageMultiplierField.Value = Format(Config.DinoHarvestingDamageMultiplier, "0.0#####")
+		  Self.HarvestAmountMultiplierField.Text = Config.HarvestAmountMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.HarvestHealthMultiplierField.Text = Config.HarvestHealthMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.PlayerHarvestDamageMultiplierField.Text = Config.PlayerHarvestingDamageMultiplier.ToString(Locale.Current, "0.0#####")
+		  Self.DinoHarvestDamageMultiplierField.Text = Config.DinoHarvestingDamageMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.ClampHarvestDamageCheck.Value = Config.ClampResourceHarvestDamage
 		  Self.UseOptimizedRatesCheck.Value = Config.UseOptimizedRates
 		  Self.UpdateList()
@@ -624,7 +603,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.HarvestRates
-		  Static ConfigName As String = BeaconConfigs.HarvestRates.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameHarvestRates
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.HarvestRates
@@ -649,7 +628,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.HarvestRates.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameHarvestRates)
 		End Function
 	#tag EndMethod
 
@@ -661,16 +640,16 @@ End
 		  
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Var GlobalRate As Double = Config.HarvestAmountMultiplier
-		  Var SkipPaths As New Dictionary
+		  Var SkippedEngrams As New Dictionary
 		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  For Each Engram As Beacon.Engram In Engrams
-		    SkipPaths.Value(Engram.Path) = True
+		    SkippedEngrams.Value(Engram.ObjectID) = True
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
 		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "harvestable")
 		  For Each Engram As Beacon.Engram In Engrams
-		    If SkipPaths.HasKey(Engram.Path) Then
+		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
 		      Continue
 		    End If
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
@@ -686,7 +665,7 @@ End
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -711,7 +690,7 @@ End
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -731,30 +710,30 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Paths() As String
+		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Paths.AddRow(Beacon.Engram(Self.List.RowTagAt(I)).Path)
+		    Selections.Add(Beacon.Engram(Self.List.RowTagAt(I)).ObjectID)
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Var Paths() As String
+		  Var Selections() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Paths.AddRow(Engram.Path)
+		    Selections.Add(Engram.ObjectID)
 		  Next
-		  Self.UpdateList(Paths) 
+		  Self.UpdateList(Selections) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectPaths() As String)
+		Private Sub UpdateList(Selections() As String)
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  
@@ -767,7 +746,7 @@ End
 		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(Engram.Label, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -806,34 +785,10 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.HarvestAmountMultiplier = CDbl(Me.Value)
+		  Config.HarvestAmountMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
-		  AddButton.HelpTag = "Override the harvest rate of an engram."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected harvest rate override."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEngram"
-		    Self.ShowAddOverride()
-		  Case "Duplicate"
-		    Self.ShowDuplicateOverride()
-		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -847,7 +802,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -890,7 +848,7 @@ End
 		    If Me.SelectedRowCount = 1 Then
 		      Message = "Are you sure you want to delete the """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ harvest rate override?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " harvest rate overrides?"
+		      Message = "Are you sure you want to delete these " + Me.SelectedRowCount.ToString(Locale.Raw, "0") + " harvest rate overrides?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
@@ -922,10 +880,10 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Rate As Double = Config.Override(Engram)
-		    Items.Value(Engram.Path) = Rate
+		    Items.Value(Engram.ObjectID) = Rate
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Items, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -946,22 +904,14 @@ End
 		    Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		    Var SelectEngrams() As Beacon.Engram
 		    For Each Entry As DictionaryEntry In Items
-		      Var Path As String = Entry.Key
-		      Var Engram As Beacon.Engram
-		      If Path.BeginsWith("/Game/") Then
-		        Engram = Beacon.Data.GetEngramByPath(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromPath(Path)
-		        End If
-		      Else
-		        Engram = Beacon.Data.GetEngramByClass(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(Path)
-		        End If
+		      Var UUID As String = Entry.Key
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
+		      If Engram Is Nil Then
+		        Continue
 		      End If
 		      
 		      Var Rate As Double = Entry.Value
-		      SelectEngrams.AddRow(Engram)
+		      SelectEngrams.Add(Engram)
 		      Config.Override(Engram) = Rate
 		    Next
 		    Self.Changed = True
@@ -975,6 +925,11 @@ End
 		    Return
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events UseOptimizedRatesCheck
@@ -1001,7 +956,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.HarvestHealthMultiplier = CDbl(Me.Value)
+		  Config.HarvestHealthMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
@@ -1017,7 +972,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Value)
+		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
@@ -1033,7 +988,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Value)
+		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Text)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
@@ -1055,13 +1010,59 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEngram", "New Rate", IconToolbarAdd, "Override the harvest rate of an engram."))
+		  Me.Append(OmniBarItem.CreateButton("Duplicate", "Duplicate", IconToolbarClone, "Duplicate the selected harvest rate override.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEngram"
+		    Self.ShowAddOverride()
+		  Case "Duplicate"
+		    Self.ShowDuplicateOverride()
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1129,14 +1130,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -1151,14 +1144,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

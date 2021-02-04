@@ -243,7 +243,7 @@ End
 		  Var Win As New DeveloperImportURLDialog
 		  Var C As New Clipboard
 		  If C.TextAvailable And C.Text.Left(4) = "http" Then
-		    Win.URLField.Value = C.Text
+		    Win.URLField.Text = C.Text
 		  End If
 		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
@@ -264,20 +264,20 @@ End
 #tag Events URLField
 	#tag Event
 		Sub TextChange()
-		  Self.ActionButton.Enabled = Me.Value.Trim.Left(4) = "http"
+		  Self.ActionButton.Enabled = Me.Text.Trim.Left(4) = "http"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var URL As String = URLField.Value.Trim
+		  Var URL As String = URLField.Text.Trim
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
 		    Return
 		  End If
 		  
-		  Self.Socket.Send("GET", URLField.Value.Trim)
+		  Self.Socket.Send("GET", URLField.Text.Trim)
 		  Spinner.Visible = True
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
@@ -304,7 +304,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  URLField.Value = URL
+		  URLField.Text = URL
 		  
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True

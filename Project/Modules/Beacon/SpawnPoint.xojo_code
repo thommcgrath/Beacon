@@ -32,7 +32,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Blueprint
+		Function Clone() As Beacon.SpawnPoint
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return New Beacon.SpawnPoint(Self)
@@ -41,8 +41,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
-		  Self.mLimits = New Dictionary
+		  Self.mAvailability = Beacon.Maps.UniversalMask
+		  Self.mLimits = New Beacon.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
 
@@ -61,14 +61,14 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Self.mLimits = Source.mLimits.Clone
 		  Self.mMode = Source.mMode
 		  
-		  Self.mSets.ResizeTo(Source.mSets.LastRowIndex)
-		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastRowIndex
+		  Self.mSets.ResizeTo(Source.mSets.LastIndex)
+		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastIndex
 		    Self.mSets(I) = Source.mSets(I).ImmutableVersion
 		  Next
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -90,58 +90,32 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromClass(ClassString As String) As Beacon.SpawnPoint
-		  Return CreateFromPath(Beacon.UnknownBlueprintPath("SpawnPoints", ClassString))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromPath(Path As String) As Beacon.SpawnPoint
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.SpawnPoint
 		  Var SpawnPoint As New Beacon.SpawnPoint
-		  SpawnPoint.mClassString = Beacon.ClassStringFromPath(Path)
+		  SpawnPoint.mModID = Beacon.UserModID
+		  SpawnPoint.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "BeaconSpawn_NoData_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = "BeaconSpawn_" + ObjectID + "_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("SpawnPoints", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SpawnPoint.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  SpawnPoint.mClassString = ClassString
 		  SpawnPoint.mPath = Path
-		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SpawnPoint.mPath.Lowercase)
-		  SpawnPoint.mLabel = Beacon.LabelFromClassString(SpawnPoint.mClassString)
-		  SpawnPoint.mModID = LocalData.UserModID
-		  SpawnPoint.mModName = LocalData.UserModName
+		  SpawnPoint.mObjectID = ObjectID
+		  SpawnPoint.mLabel = Beacon.LabelFromClassString(ClassString)
 		  Return SpawnPoint
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.SpawnPoint
-		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategorySpawnPoints Then
-		    Return Nil
-		  End If
-		  
-		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName") Then
-		    Return Nil
-		  End If
-		  
-		  Var Sets() As Beacon.SpawnPointSet
-		  If Dict.HasKey("Sets") Then
-		    Var SetSaveData() As Variant = Dict.Value("Sets")
-		    For Each SaveData As Dictionary In SetSaveData
-		      Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(SaveData)
-		      If Set <> Nil Then
-		        Sets.AddRow(Set)
-		      End If
-		    Next
-		  End If
-		  
-		  Var Point As New Beacon.MutableSpawnPoint(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
-		  Point.Label = Dict.Value("Label").StringValue
-		  Point.Availability = Dict.Value("Availability").UInt64Value
-		  Point.Tags = Dict.Value("Tags")
-		  Point.ModID = Dict.Value("ModID").StringValue
-		  Point.ModName = Dict.Value("ModName").StringValue
-		  
-		  Var Immutable As New Beacon.SpawnPoint(Point)
-		  If Dict.HasKey("Limits") Then
-		    Immutable.mLimits = Dict.Value("Limits")
-		  End If
-		  Immutable.mSets = Sets
-		  Return Immutable
 		End Function
 	#tag EndMethod
 
@@ -149,35 +123,37 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPoint
 		  Try
 		    Var SpawnPoint As Beacon.SpawnPoint
-		    If Dict.HasKey("Path") Then
-		      SpawnPoint = Beacon.Data.GetSpawnPointByPath(Dict.Value("Path"))
-		      If SpawnPoint = Nil Then
-		        SpawnPoint = Beacon.SpawnPoint.CreateFromPath(Dict.Value("Path"))
+		    If Dict.HasKey("Reference") Then
+		      Var Reference As Beacon.BlueprintReference = Beacon.BlueprintReference.FromSaveData(Dict.Value("Reference"))
+		      If Reference Is Nil Then
+		        Return Nil
 		      End If
+		      SpawnPoint = Beacon.SpawnPoint(Reference.Resolve)
+		    Else
+		      SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class", Nil)
 		    End If
-		    If SpawnPoint = Nil And Dict.HasKey("Class") Then
-		      SpawnPoint = Beacon.Data.GetSpawnPointByClass(Dict.Value("Class"))
-		      If SpawnPoint = Nil Then
-		        SpawnPoint = Beacon.SpawnPoint.CreateFromClass(Dict.Value("Class"))
-		      End If
-		    End If
-		    If SpawnPoint = Nil Then
-		      Return Nil
-		    End If
-		    
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    If Dict.HasKey("Limits") Then
-		      SpawnPoint.mLimits = Dictionary(Dict.Value("Limits").ObjectValue).Clone
-		    Else
-		      SpawnPoint.mLimits = New Dictionary
+		      Var Manager As Beacon.BlueprintAttributeManager = Beacon.BlueprintAttributeManager.FromSaveData(Dict.Value("Limits"))
+		      If (Manager Is Nil) = False Then
+		        SpawnPoint.mLimits = Manager
+		      Else
+		        Var Limits As Dictionary = Dict.Value("Limits")
+		        For Each Limit As DictionaryEntry In Limits
+		          Var Creature As Beacon.Creature = Beacon.ResolveCreature("", Limit.Key.StringValue, "", Nil)
+		          If (Creature Is Nil) = False Then
+		            SpawnPoint.mLimits.Value(Creature, LimitAttribute) = Limit.Value.DoubleValue
+		          End If
+		        Next
+		      End If
 		    End If
 		    If Dict.HasKey("Sets") Then
 		      Var SetSaveData() As Variant = Dict.Value("Sets")
 		      For Each Data As Dictionary In SetSaveData
 		        Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(Data)
 		        If Set <> Nil Then
-		          SpawnPoint.mSets.AddRow(Set)
+		          SpawnPoint.mSets.Add(Set)
 		        End If
 		      Next
 		    End If
@@ -200,7 +176,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Set As Beacon.SpawnPointSet) As Integer
-		  For I As Integer = 0 To Self.mSets.LastRowIndex
+		  For I As Integer = 0 To Self.mSets.LastIndex
 		    If Self.mSets(I) = Set Then
 		      Return I
 		    End If
@@ -231,8 +207,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  // Part of the Iterable interface.
 		  
 		  Var Sets() As Variant
-		  Sets.ResizeTo(Self.mSets.LastRowIndex)
-		  For I As Integer = 0 To Self.mSets.LastRowIndex
+		  Sets.ResizeTo(Self.mSets.LastIndex)
+		  For I As Integer = 0 To Self.mSets.LastIndex
 		    Sets(I) = Self.mSets(I)
 		  Next
 		  Return New Beacon.GenericIterator(Sets)
@@ -249,8 +225,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Limit(Creature As Beacon.Creature) As Double
-		  If Self.mLimits.HasKey(Creature.Path) Then
-		    Return Self.mLimits.Value(Creature.Path)
+		  If Self.mLimits.HasBlueprint(Creature) Then
+		    Return Self.mLimits.Value(Creature, Self.LimitAttribute)
 		  Else
 		    Return 1.0
 		  End If
@@ -260,11 +236,14 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Limits() As Dictionary
 		  Var Limits As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mLimits
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Entry.Key)
-		    If Creature <> Nil Then
-		      Limits.Value(Creature) = Entry.Value
+		  Var References() As Beacon.BlueprintReference = Self.mLimits.References
+		  For Each Reference As Beacon.BlueprintReference In References
+		    If Reference.IsCreature = False Then
+		      Continue
 		    End If
+		    
+		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
+		    Limits.Value(Beacon.Creature(Reference.Resolve)) = Limit
 		  Next
 		  Return Limits
 		End Function
@@ -273,7 +252,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function LimitsString(Pretty As Boolean = False) As String
 		  Try
-		    Return Beacon.GenerateJSON(Self.mLimits, Pretty)
+		    Return Beacon.GenerateJSON(Self.mLimits.SaveData, Pretty)
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
@@ -287,7 +266,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mModID
@@ -343,11 +322,34 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function ObjectID() As String
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mObjectID
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  Var Sets() As Dictionary
+		  For Each Set As Beacon.SpawnPointSet In Self.mSets
+		    Sets.Add(Set.Pack)
+		  Next
+		  
+		  Var Limits As New Dictionary
+		  Var References() As Beacon.BlueprintReference = Self.mLimits.References
+		  For Each Reference As Beacon.BlueprintReference In References
+		    If Reference.IsCreature = False Then
+		      Continue
+		    End If
+		    
+		    Var Limit As Double = Self.mLimits.Value(Reference, Self.LimitAttribute)
+		    Limits.Value(Reference.ObjectID) = Limit
+		  Next
+		  
+		  Dict.Value("sets") = Sets
+		  Dict.Value("limits") = Limits
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -362,18 +364,17 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Function SaveData() As Dictionary
 		  Var Children() As Variant
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
-		    Children.AddRow(Set.SaveData)
+		    Children.Add(Set.SaveData)
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("Path") = Self.Path
-		  Keys.Value("Class") = Self.ClassString
+		  Keys.Value("Reference") = Beacon.BlueprintReference.CreateSaveData(Self)
 		  Keys.Value("Mode") = Self.Mode
-		  If Children.LastRowIndex > -1 Then
+		  If Children.LastIndex > -1 Then
 		    Keys.Value("Sets") = Children
 		  End If
-		  If Self.mLimits.KeyCount > 0 Then
-		    Keys.Value("Limits") = Self.mLimits
+		  If Self.mLimits.Count > 0 Then
+		    Keys.Value("Limits") = Self.mLimits.SaveData
 		  End If
 		  Return Keys
 		End Function
@@ -390,7 +391,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Var Objects() As Variant
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
 		    If Set <> Nil Then
-		      Objects.AddRow(Set.SaveData)
+		      Objects.Add(Set.SaveData)
 		    End If
 		  Next
 		  Try
@@ -406,8 +407,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
@@ -415,36 +416,15 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
-		  Var Sets() As Variant
-		  For Each Set As Beacon.SpawnPointSet In Self.mSets
-		    Sets.AddRow(Set.SaveData)
-		  Next
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Category") = Self.Category
-		  Dict.Value("UUID") = Self.ObjectID.StringValue
-		  Dict.Value("Label") = Self.Label
-		  Dict.Value("Path") = Self.Path
-		  Dict.Value("Availability") = Self.Availability
-		  Dict.Value("Tags") = Self.Tags
-		  Dict.Value("ModID") = Self.ModID.StringValue
-		  Dict.Value("ModName") = Self.ModName
-		  If Self.mLimits.KeyCount > 0 Then
-		    Dict.Value("Limits") = Self.mLimits
-		  End If
-		  Dict.Value("Mode") = Self.Mode
-		  If Sets.LastRowIndex > -1 Then
-		    Dict.Value("Sets") = Sets
-		  End If
-		  Return Dict
+		Function UniqueKey() As String
+		  Return Self.UniqueKey(Self.ObjectID, Self.Mode)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UniqueKey() As String
-		  Var Key As String = Self.Path
-		  Select Case Self.Mode
+		Shared Function UniqueKey(ObjectID As String, Mode As Integer) As String
+		  Var Key As String = ObjectID
+		  Select Case Mode
 		  Case Beacon.SpawnPoint.ModeOverride
 		    Key = Key + ":Override"
 		  Case Beacon.SpawnPoint.ModeAppend
@@ -474,7 +454,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLimits As Dictionary
+		Protected mLimits As Beacon.BlueprintAttributeManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -509,6 +489,9 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Protected mTags() As String
 	#tag EndProperty
 
+
+	#tag Constant, Name = LimitAttribute, Type = String, Dynamic = False, Default = \"Limit", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = ModeAppend, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant

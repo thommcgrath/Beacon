@@ -11,6 +11,6 @@
 	<key>diskimage-bundle-type</key>
 	<string>com.apple.diskimage.sparsebundle</string>
 	<key>size</key>
-	<integer>125866496</integer>
+	<integer>524325376</integer>
 </dict>
 </plist>

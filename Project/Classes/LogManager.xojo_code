@@ -107,7 +107,7 @@ Protected Class LogManager
 		      Var Stream As TextOutputStream = TextOutputStream.Open(Self.mFolder.Child(Filename))
 		      While Messages.Count > 0
 		        Stream.WriteLine(Messages(0))
-		        Messages.RemoveRowAt(0)
+		        Messages.RemoveAt(0)
 		      Wend
 		      Stream.Close
 		    Next
@@ -126,17 +126,21 @@ Protected Class LogManager
 		    Return
 		  End If
 		  
-		  Var Stack() As StackFrame = Err.StackFrames
-		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		    Stack.RemoveRowAt(0)
-		  Wend
-		  
-		  Var Origin As String = "Unknown"
-		  If Stack.LastRowIndex >= 0 Then
-		    Origin = Stack(0).Name
-		  End If
-		  
-		  Self.Log("Unhandled " + Info.FullName + " in " + Origin + ", caught in " + Location + If(MoreDetail.IsEmpty = False, " (" + MoreDetail + ")", "") + ": " + Err.Message)
+		  #if TargetDesktop
+		    Var Stack() As StackFrame = Err.StackFrames
+		    While Stack.LastIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		      Stack.RemoveAt(0)
+		    Wend
+		    
+		    Var Origin As String = "Unknown"
+		    If Stack.LastIndex >= 0 Then
+		      Origin = Stack(0).Name
+		    End If
+		    
+		    Self.Log("Unhandled " + Info.FullName + " in " + Origin + ", caught in " + Location + If(MoreDetail.IsEmpty = False, " (" + MoreDetail + ")", "") + ": " + Err.Message)
+		  #else
+		    Self.Log("Unhandled " + Info.FullName + " in " + Location + If(MoreDetail.IsEmpty = False, " (" + MoreDetail + ")", "") + ": " + Err.Message)
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -145,7 +149,8 @@ Protected Class LogManager
 		  #if SimpleDebugMode = False Or DebugBuild = False
 		    // Use local time for the actual log message
 		    Var Now As DateTime = DateTime.Now
-		    Var DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
+		    Var Fraction As Double = Now.Nanosecond / 1000000000
+		    Var DetailedMessage As String = Now.ToString(Locale.Raw) + Fraction.ToString(Locale.Raw, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
 		    
 		    // But use GMT for the filename
 		    Now = New DateTime(Now.SecondsFrom1970, New TimeZone(0))
@@ -157,7 +162,7 @@ Protected Class LogManager
 		      If Self.mPendingMessages.HasKey(Filename) Then
 		        Messages = Self.mPendingMessages.Value(Filename)
 		      End If
-		      Messages.AddRow(DetailedMessage)
+		      Messages.Add(DetailedMessage)
 		      Self.mPendingMessages.Value(Filename) = Messages
 		      
 		      Self.Flush()

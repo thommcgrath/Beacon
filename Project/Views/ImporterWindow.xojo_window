@@ -181,7 +181,7 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.MessageLabel.Value = "Importing from " + Value
+			  Self.MessageLabel.Text = "Importing from " + Value
 			End Set
 		#tag EndSetter
 		Source As String
@@ -193,7 +193,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  If Self.mCancelAction <> Nil Then
+		  If Beacon.SafeToInvoke(Self.mCancelAction) Then
 		    Self.mCancelAction.Invoke()
 		  End If
 		End Sub

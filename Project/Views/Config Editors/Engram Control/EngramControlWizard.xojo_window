@@ -3,7 +3,7 @@ Begin BeaconDialog EngramControlWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog EngramControlWizard
    MinimumWidth    =   64
    Resizeable      =   False
    Title           =   "Engram Control Wizard"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   508
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramControlWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -116,7 +116,7 @@ Begin BeaconDialog EngramControlWizard
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -146,7 +146,7 @@ Begin BeaconDialog EngramControlWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -178,7 +178,7 @@ Begin BeaconDialog EngramControlWizard
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -223,7 +223,7 @@ Begin BeaconDialog EngramControlWizard
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   59
@@ -255,13 +255,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Cancel()
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Self.mCancelled = True
 		    Self.Hide
 		  Else
 		    Var Dict As New Dictionary
 		    Dict.Value("Action") = "Cancel"
-		    App.CurrentThread.AddUserInterfaceUpdate(Dict)
+		    Thread.Current.AddUserInterfaceUpdate(Dict)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -280,17 +280,17 @@ End
 		  If Self.mProgressShown = False And System.Microseconds - Self.mStartTime >= 500000 Then
 		    Self.mProgressShown = True
 		    
-		    If App.CurrentThread = Nil Then
+		    If Thread.Current = Nil Then
 		      Self.mProgress.ShowWithin(Self)
 		    Else
 		      Var Dict As New Dictionary
 		      Dict.Value("Action") = "ShowProgress"
-		      App.CurrentThread.AddUserInterfaceUpdate(Dict)
+		      Thread.Current.AddUserInterfaceUpdate(Dict)
 		    End If
 		  End If
 		  
 		  Self.mProgress.Progress = Self.mEngramsProcessed / Self.mEngramCount
-		  Self.mProgress.Detail = "Updated " + Format(Self.mEngramsProcessed, "0,") + " of " + Format(Self.mEngramCount, "0,") + " engrams"
+		  Self.mProgress.Detail = "Updated " + Self.mEngramsProcessed.ToString(Locale.Current, ",##0") + " of " + Self.mEngramCount.ToString(Locale.Current, ",##0") + " engrams"
 		End Sub
 	#tag EndMethod
 
@@ -426,14 +426,14 @@ End
 		Sub Run()
 		  Var Config As BeaconConfigs.EngramControl
 		  Var AddWhenFinished As Boolean
-		  If Self.mDocument.HasConfigGroup(BeaconConfigs.EngramControl.ConfigName) Then
-		    Config = BeaconConfigs.EngramControl(Self.mDocument.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False))
+		  If Self.mDocument.HasConfigGroup(BeaconConfigs.NameEngramControl) Then
+		    Config = BeaconConfigs.EngramControl(Self.mDocument.ConfigGroup(BeaconConfigs.NameEngramControl, False))
 		  Else
 		    Config = New BeaconConfigs.EngramControl
 		    AddWhenFinished = True
 		  End If
 		  
-		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
+		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.Engrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
 		  Self.mEngramCount = Engrams.Count
 		  
 		  // Do the work
@@ -516,8 +516,8 @@ End
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexGrantExactPoints
 		    Var PlayerLevelCap As Integer = LocalData.SharedInstance.OfficialPlayerLevelData.MaxLevel
-		    If Self.mDocument.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
-		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName, False))
+		    If Self.mDocument.HasConfigGroup(BeaconConfigs.NameExperienceCurves) Then
+		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.NameExperienceCurves, False))
 		      If ExperienceConfig <> Nil Then
 		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
 		      End If

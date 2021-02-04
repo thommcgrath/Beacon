@@ -1,11 +1,12 @@
 #tag Class
 Protected Class ModDetails
 	#tag Method, Flags = &h0
-		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean)
+		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean, WorkshopID As Integer)
 		  Self.mModID = ModID
 		  Self.mName = Name
 		  Self.mConsoleSafe = ConsoleSafe
 		  Self.mDefaultEnabled = DefaultEnabled
+		  Self.mWorkshopID = WorkshopID
 		End Sub
 	#tag EndMethod
 
@@ -53,6 +54,10 @@ Protected Class ModDetails
 		ModID As String
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h21
+		Private mWorkshopID As Integer
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -60,6 +65,15 @@ Protected Class ModDetails
 			End Get
 		#tag EndGetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mWorkshopID
+			End Get
+		#tag EndGetter
+		WorkshopID As Integer
 	#tag EndComputedProperty
 
 
@@ -119,6 +133,14 @@ Protected Class ModDetails
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DefaultEnabled"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

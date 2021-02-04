@@ -2,9 +2,11 @@
 Protected Class StatMultipliers
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
+		  
+		  Var Values() As Beacon.ConfigValue
 		  
 		  For Each Entry As DictionaryEntry In Self.PlayerStats
 		    Var Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
@@ -15,11 +17,11 @@ Inherits Beacon.ConfigGroup
 		    
 		    If Dict.HasKey("Base") And Stat.PlayerBaseCapped = False Then
 		      Var Multiplier As Double = Dict.Value("Base")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PlayerBaseStatMultipliers[" + Stat.Index.ToString(Locale.Raw, "0") + "]=" + Multiplier.PrettyText, Stat.Index))
 		    End If
 		    If Dict.HasKey("PerLevel") And Stat.PlayerPerLevelEditable = True Then
 		      Var Multiplier As Double = Dict.Value("PerLevel")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_Player[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_Player[" + Stat.Index.ToString(Locale.Raw, "0") + "]=" + Multiplier.PrettyText, Stat.Index))
 		    End If
 		  Next
 		  
@@ -32,15 +34,15 @@ Inherits Beacon.ConfigGroup
 		    
 		    If Dict.HasKey("PerLevel") Then
 		      Var Multiplier As Double = Dict.Value("PerLevel")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed[" + Stat.Index.ToString(Locale.Raw, "0") + "]=" + Multiplier.PrettyText, Stat.Index))
 		    End If
 		    If Dict.HasKey("Add") Then
 		      Var Multiplier As Double = Dict.Value("Add")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Add[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Add[" + Stat.Index.ToString(Locale.Raw, "0") + "]=" + Multiplier.PrettyText, Stat.Index))
 		    End If
 		    If Dict.HasKey("Affinity") Then
 		      Var Multiplier As Double = Dict.Value("Affinity")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Stat.Index.ToString(Locale.Raw, "0") + "]=" + Multiplier.PrettyText, Stat.Index))
 		    End If
 		  Next
 		  
@@ -53,10 +55,26 @@ Inherits Beacon.ConfigGroup
 		    
 		    If Dict.HasKey("PerLevel") Then
 		      Var Multiplier As Double = Dict.Value("PerLevel")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoWild[" + Stat.Index.ToString(Locale.Raw, "0") + "]=" + Multiplier.PrettyText, Stat.Index))
 		    End If
 		  Next
-		End Sub
+		  
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PlayerBaseStatMultipliers"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_Player"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Add"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Affinity"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoWild"))
+		  Return Keys
+		  
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -94,8 +112,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "StatMultipliers"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameStatMultipliers
 		End Function
 	#tag EndMethod
 
@@ -109,22 +127,23 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.StatMultipliers
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.StatMultipliers
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  Var Config As New BeaconConfigs.StatMultipliers()
 		  Var Stats() As Beacon.Stat = Beacon.Stats.All
 		  Var FoundConfig As Boolean
 		  
 		  For Each Stat As Beacon.Stat In Stats
-		    Var PlayerBaseKey As String = "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]"
-		    Var PlayerPerLevelKey As String = "PerLevelStatsMultiplier_Player[" + Str(Stat.Index, "0") + "]"
-		    Var TamedPerLevelKey As String = "PerLevelStatsMultiplier_DinoTamed[" + Str(Stat.Index, "0") + "]"
-		    Var TamedAddKey As String = "PerLevelStatsMultiplier_DinoTamed_Add[" + Str(Stat.Index, "0") + "]"
-		    Var TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]"
-		    Var WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]"
+		    Var PlayerBaseKey As String = "PlayerBaseStatMultipliers[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var PlayerPerLevelKey As String = "PerLevelStatsMultiplier_Player[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var TamedPerLevelKey As String = "PerLevelStatsMultiplier_DinoTamed[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var TamedAddKey As String = "PerLevelStatsMultiplier_DinoTamed_Add[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    
 		    If ParsedData.HasAnyKey(PlayerBaseKey, PlayerPerLevelKey, TamedPerLevelKey, TamedAddKey, TamedAffinityKey, WildPerLevelKey) = False Then
 		      Continue

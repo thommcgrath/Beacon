@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer,NotificationKit.Receiver
+Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -8,7 +8,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
-   Height          =   680
+   Height          =   820
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
@@ -26,61 +26,64 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    SystemUIVisible =   "True"
    Title           =   "Beacon"
    Visible         =   True
-   Width           =   1200
-   Begin TabBar TabBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Width           =   1420
+   Begin OmniBar NavBar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
-      Count           =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   25
-      HelpTag         =   ""
+      Height          =   38
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   41
+      Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
-      SelectedIndex   =   0
-      TabIndex        =   1
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
-      Width           =   1159
-      WithTopBorder   =   False
+      Width           =   1420
    End
-   Begin PagePanel Views
-      AutoDeactivate  =   True
+   Begin PagePanel Pages
+      AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   655
-      HelpTag         =   ""
+      Height          =   782
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   41
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   5
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
-      Top             =   25
+      Tooltip         =   ""
+      Top             =   38
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   1159
+      Width           =   1420
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -91,10 +94,11 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   655
+         Height          =   782
          HelpTag         =   ""
-         InitialParent   =   "Views"
-         Left            =   41
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -107,99 +111,220 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
-         Top             =   25
+         Top             =   38
          Transparent     =   True
          UseFocusRing    =   False
+         ViewIcon        =   0
+         ViewTitle       =   "Home"
          Visible         =   True
-         Width           =   1159
+         Width           =   1119
       End
-   End
-   Begin ControlCanvas UpdateBar
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   25
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   41
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -169
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1159
-   End
-   Begin ControlCanvas OverlayCanvas
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   380
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   69
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   445
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   False
-      Width           =   500
-   End
-   Begin LibraryPane LibraryPane1
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
-      Height          =   680
-      HelpTag         =   ""
-      InitialParent   =   ""
-      Left            =   -259
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   300
+      Begin BlueprintsComponent BlueprintsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Blueprints"
+         Visible         =   True
+         Width           =   1420
+      End
+      Begin DocumentsComponent DocumentsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Projects"
+         Visible         =   True
+         Width           =   1420
+      End
+      Begin NewsPane NotificationsPane1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   1120
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
+         Visible         =   True
+         Width           =   300
+      End
+      Begin FadedSeparator NotificationsSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   782
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   1119
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin HelpComponent HelpComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Help"
+         Visible         =   True
+         Width           =   1420
+      End
+      Begin PresetsComponent PresetsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   782
+         InitialParent   =   "Pages"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Presets"
+         Visible         =   True
+         Width           =   1420
+      End
    End
 End
 #tag EndWindow
@@ -207,63 +332,50 @@ End
 #tag WindowCode
 	#tag Event
 		Function CancelClose(appQuitting as Boolean) As Boolean
-		  #Pragma Unused AppQuitting
+		  Const AllowClose = False
+		  Const BlockClose = True
 		  
-		  Var ModifiedViews() As BeaconSubview
+		  If Self.DocumentsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
 		  
-		  For Each View As BeaconSubview In Self.mSubviews
-		    If View.Changed Then
-		      ModifiedViews.AddRow(View)
+		  If Self.BlueprintsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
+		  
+		  If Self.PresetsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
+		  
+		  If Self.Busy Then
+		    Self.mQuitWhenNotBusy = Self.mQuitWhenNotBusy Or AppQuitting
+		    If Self.mBusyWatcher Is Nil Then
+		      Self.mBusyWatcher = New Timer
+		      Self.mBusyWatcher.Period = 500
+		      AddHandler mBusyWatcher.Action, WeakAddressOf mBusyWatcher_Action
 		    End If
-		  Next
+		    Self.mBusyWatcher.RunMode = Timer.RunModes.Multiple
+		    Return BlockClose
+		  End If
 		  
-		  Select Case ModifiedViews.LastRowIndex
-		  Case -1
-		    Return False
-		  Case 0
-		    Return Not Self.DiscardView(ModifiedViews(0))
-		  Else
-		    Var NumChanges As Integer = ModifiedViews.LastRowIndex + 1
-		    
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "You have " + NumChanges.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
-		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
-		    Dialog.ActionButton.Caption = "Review Changes…"
-		    Dialog.CancelButton.Visible = True
-		    Dialog.AlternateActionButton.Caption = "Discard Changes"
-		    Dialog.AlternateActionButton.Visible = True
-		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		    If Choice = Dialog.ActionButton Then
-		      For Each View As BeaconSubview In ModifiedViews
-		        If Not Self.DiscardView(View) Then
-		          Return True
-		        End If
-		      Next
-		      Return False
-		    ElseIf Choice = Dialog.CancelButton Then
-		      Return True
-		    ElseIf Choice = Dialog.AlternateActionButton Then
-		      For Each View As BeaconSubview In ModifiedViews
-		        View.DiscardChanges()
-		      Next
-		      Return False
-		    End If
-		  End Select
+		  Return AllowClose
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Sub Close()
 		  NotificationKit.Ignore(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
+		  #if TargetMacOS
+		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
+		  #endif
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub EnableMenuItems()
-		  If Self.mCurrentView <> Nil Then
-		    Self.mCurrentView.EnableMenuItems()
+		  Var Component As BeaconSubview = Self.CurrentComponent
+		  If (Component Is Nil) = False Then
+		    Component.EnableMenuItems()
 		  End If
 		End Sub
 	#tag EndEvent
@@ -320,6 +432,26 @@ End
 		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
 		  
+		  #if TargetMacOS
+		    Var Win As NSWindowMBS = Self.NSWindowMBS
+		    Win.StyleMask = Win.StyleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
+		    Win.TitlebarAppearsTransparent = True
+		    Win.TitleVisibility = NSWindowMBS.NSWindowTitleHidden
+		    
+		    Var Toolbar As New NSToolbarMBS("com.thezaz.beacon.mainwindow.toolbar")
+		    Toolbar.sizeMode = NSToolbarMBS.NSToolbarDisplayModeIconOnly
+		    Toolbar.showsBaselineSeparator = False
+		    Self.mToolbar = Toolbar
+		    
+		    Win.toolbar = Toolbar
+		    
+		    Var CloseButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowCloseButton)
+		    Var ZoomButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
+		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
+		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		    End If
+		  #endif
+		  
 		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  
@@ -336,27 +468,6 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Resizing()
-		  #if TargetWin32
-		    Self.LibraryPane1.Dismiss()
-		  #endif
-		End Sub
-	#tag EndEvent
-
-
-	#tag MenuHandler
-		Function FileClose() As Boolean Handles FileClose.Action
-			If Self.mCurrentView = Nil Then
-			Self.Close
-			Return True
-			End If
-			
-			Call Self.DiscardView(Self.mCurrentView)
-			
-			Return True
-		End Function
-	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
@@ -367,119 +478,177 @@ End
 
 	#tag MenuHandler
 		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+			Self.ShowDocuments()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
+			Self.ShowBlueprints()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewPresets() As Boolean Handles ViewPresets.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PanePresets)
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function ViewSearch() As Boolean Handles ViewSearch.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneSearch)
-			Return True
-			
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function ViewTools() As Boolean Handles ViewTools.Action
-			Self.LibraryPane1.ShowPage(LibraryPane.PaneTools)
+			Self.ShowPresets()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As String, Value As Double)
-		  // Part of the AnimationKit.ValueAnimator interface.
+		Function Busy() As Boolean
+		  If (Self.DocumentsComponent1 Is Nil) = False And Self.DocumentsComponent1.Busy Then
+		    Return True
+		  End If
 		  
-		  Select Case Identifier
-		  Case "overlay_opacity"
-		    Self.mOverlayFillOpacity = Value
-		    Self.OverlayCanvas.Invalidate
-		  End Select
+		  If (Self.DashboardPane1 Is Nil) = False And Self.DashboardPane1.Busy Then
+		    Return True
+		  End If
+		  
+		  If (Self.BlueprintsComponent1 Is Nil) = False And Self.BlueprintsComponent1.Busy Then
+		    Return True
+		  End If
+		  
+		  If (Self.PresetsComponent1 Is Nil) = False And Self.PresetsComponent1.Busy Then
+		    Return True
+		  End If
+		  
+		  If (Self.HelpComponent1 Is Nil) = False And Self.HelpComponent1.Busy Then
+		    Return True
+		  End If
+		  
+		  If UserCloud.IsBusy Or UserCloud.HasPendingSync Then
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  #if TargetMacOS
+		    Self.mObserver = New NSNotificationObserverMBS
+		    AddHandler mObserver.GotNotification, WeakAddressOf mObserver_GotNotification
+		    
+		    NSNotificationCenterMBS.DefaultCenter.AddObserver(Self.mObserver, NSWindowMBS.NSWindowWillEnterFullScreenNotification)
+		    NSNotificationCenterMBS.DefaultCenter.addObserver(Self.mObserver, NSWindowMBS.NSWindowDidExitFullScreenNotification)
+		  #endif
+		  
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CurrentView() As BeaconSubview
-		  Return Self.mCurrentView
+		Function CurrentComponent() As BeaconSubview
+		  Var CurrentIndex As Integer = -1
+		  If (Self.Pages Is Nil) = False Then
+		    CurrentIndex = Self.Pages.SelectedPanelIndex
+		  End If
+		  
+		  Select Case CurrentIndex
+		  Case Self.PageHome
+		    Return Self.DashboardPane1
+		  Case Self.PageDocuments
+		    Return Self.DocumentsComponent1
+		  Case Self.PageBlueprints
+		    Return Self.BlueprintsComponent1
+		  Case Self.PagePresets
+		    Return Self.PresetsComponent1
+		  Case Self.PageHelp
+		    Return Self.HelpComponent1
+		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DiscardView(View As BeaconSubview) As Boolean
-		  If View = DashboardPane1 Then
-		    Return False
-		  End If
-		  
-		  If Not View.ConfirmClose(AddressOf ShowView) Then
-		    Return False
-		  End If
-		  
-		  If View = Self.mCurrentView Then
-		    Self.ShowView(Nil)
-		  End If
-		  
-		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
-		  If ViewIndex = -1 Then
-		    Return True
-		  End If
-		  
-		  View.AddObserver(Self, "ToolbarCaption")
-		  View.AddObserver(Self, "ToolbarIcon")
-		  
-		  Self.mSubviews.RemoveRowAt(ViewIndex)
-		  View.Close
-		  Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
-		  Self.LibraryPane1.CleanupClosedViews()
-		  
-		  Return True
+		Function DocumentEditors() As DocumentEditorView()
+		  Return Self.DocumentsComponent1.DocumentEditors
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Documents() As LibraryPaneDocuments
-		  Return Self.LibraryPane1.DocumentsPane
+		Function Documents(SwitchTo As Boolean = True) As DocumentsComponent
+		  If SwitchTo Then
+		    Self.SwitchView(Self.PageDocuments)
+		  End If
+		  
+		  Return Self.DocumentsComponent1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function FrontmostDocumentView() As DocumentEditorView
-		  If (Self.mCurrentView Is Nil) = False And Self.mCurrentView IsA DocumentEditorView Then
-		    Return DocumentEditorView(Self.mCurrentView)
+		  Var DocumentView As BeaconSubview = Self.DocumentsComponent1.CurrentPage
+		  If (DocumentView Is Nil) = False And DocumentView IsA DocumentEditorView Then
+		    Return DocumentEditorView(DocumentView)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasModifications() As Boolean
+		  If Self.DocumentsComponent1.HasModifications Then
+		    Return True
 		  End If
 		  
-		  For Each View As BeaconSubview In Self.mSubviews
-		    If (View Is Nil) = False And View IsA DocumentEditorView Then
-		      Return DocumentEditorView(View)
-		    End If
-		  Next
+		  If Self.DashboardPane1.HasModifications Then
+		    Return True
+		  End If
+		  
+		  If Self.BlueprintsComponent1.HasModifications Then
+		    Return True
+		  End If
+		  
+		  If Self.PresetsComponent1.HasModifications Then
+		    Return True
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mOverlayFillAnimation_Completed(Sender As AnimationKit.ValueTask)
+		Private Sub mBusyWatcher_Action(Sender As Timer)
+		  If Self.Busy Then
+		    Return
+		  End If
+		  
+		  If Self.HasModifications Then
+		    // The work has finished but there are still changes left, so cancel this action entirely.
+		    Sender.RunMode = Timer.RunModes.Off
+		    Self.mQuitWhenNotBusy = False
+		    Return
+		  End If
+		  
+		  If Self.mQuitWhenNotBusy Then
+		    Quit
+		  Else
+		    Self.Close
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mObserver_GotNotification(Sender As NSNotificationObserverMBS, Notification As NSNotificationMBS)
 		  #Pragma Unused Sender
 		  
-		  Self.OverlayCanvas.Visible = False
-		  #if TargetWin32
-		    Self.Views.Visible = True
-		    Self.TabBar1.Visible = True
-		  #endif
+		  If Notification Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Notification.Name
+		  Case NSWindowMBS.NSWindowWillEnterFullScreenNotification
+		    Self.NSWindowMBS.Toolbar = Nil
+		    Self.NavBar.LeftPadding = -1
+		  Case NSWindowMBS.NSWindowDidExitFullScreenNotification
+		    Self.NSWindowMBS.Toolbar = Self.mToolbar
+		    
+		    Var CloseButton As NSButtonMBS = Self.NSWindowMBS.StandardWindowButton(NSWindowMBS.NSWindowCloseButton)
+		    Var ZoomButton As NSButtonMBS = Self.NSWindowMBS.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
+		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
+		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		    End If
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -497,22 +666,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  Select Case Key
-		  Case "ToolbarCaption", "ToolbarIcon"
-		    Self.TabBar1.Invalidate
+		  Case "ViewTitle", "ViewIcon"
+		    Self.NavBar.Invalidate
 		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Presets() As LibraryPanePresets
-		  Return Self.LibraryPane1.PresetsPane
+		Function Presets(SwitchTo As Boolean = True) As PresetsComponent
+		  If SwitchTo Then
+		    Self.SwitchView(Self.PagePresets)
+		  End If
+		  
+		  Return Self.PresetsComponent1
 		End Function
 	#tag EndMethod
 
@@ -521,92 +695,154 @@ End
 		  If App.UpdateAvailable Then
 		    Var Data As Dictionary = App.UpdateDetails
 		    Var Preview As String = Data.Value("Preview")
-		    If Preview <> "" Then
-		      Self.mUpdateText = Preview + " Click here to update."
+		    If Preview.IsEmpty = False Then
+		      Preview = Preview + " Click here to update."
 		    Else
-		      Self.mUpdateText = "Beacon " + Data.Value("Version") + " is now available! Click here to update."
+		      Preview = "Beacon " + Data.Value("Version") + " is now available! Click here to update."
 		    End If
-		    Self.UpdateBarVisible = True
+		    
+		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
+		    If UpdateItem Is Nil Then
+		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarUpdate, Preview)
+		      UpdateItem.AlwaysUseActiveColor = True
+		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
+		      
+		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
+		      If Idx > -1 Then
+		        Self.NavBar.Insert(Idx, UpdateItem)
+		      Else
+		        Self.NavBar.Append(UpdateItem)
+		      End If
+		    Else
+		      UpdateItem.HelpTag = Preview
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowLibraryPane(PageIndex As Integer)
-		  Self.LibraryPane1.ShowPage(PageIndex)
+		Sub ShowBlueprints()
+		  Self.SwitchView(Self.PageBlueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDocuments()
+		  Self.SwitchView(Self.PageDocuments)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowHelp()
+		  Self.SwitchView(Self.PageHelp)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowHome()
+		  Self.SwitchView(Self.PageHome)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowPresets()
+		  Self.SwitchView(Self.PagePresets)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowUserMenu(X As Integer, Y As Integer)
+		  Var Base As New MenuItem
+		  
+		  If Not Preferences.OnlineEnabled Then
+		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
+		  Else
+		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.Username = "" Then
+		      Base.AddMenu(New MenuItem("Sign In", "beacon://action/signin"))
+		    Else
+		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")
+		      IdentityItem.Enabled = False
+		      Base.AddMenu(IdentityItem)
+		      Base.AddMenu(New MenuItem("Manage Account", "beacon://action/showaccount"))
+		      Base.AddMenu(New MenuItem("Sign Out", "beacon://action/signout"))
+		    End If
+		  End If
+		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(New MenuItem("User Info…", "beacon://action/showidentity"))
+		  
+		  Var Choice As MenuItem = Base.PopUp(X, Y)
+		  If Choice Is Nil Or IsNull(Choice.Tag) Or Choice.Tag.Type <> Variant.TypeString Then
+		    Return
+		  End If
+		  
+		  If Choice.Tag.StringValue.IsEmpty = False Then
+		    Call App.HandleURL(Choice.Tag.StringValue)
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
-		  If Self.mCurrentView = View Then
-		    Return
-		  End If
-		  
-		  If Self.mCurrentView <> Nil Then
-		    Self.mCurrentView.Visible = False
-		    Self.mCurrentView.SwitchedFrom()
-		  End If
-		  
-		  If View = Nil Or View = DashboardPane1 Then
-		    Self.Changed = False
-		    Self.mCurrentView = Nil
-		    Self.Views.SelectedPanelIndex = 0
-		    Self.TabBar1.SelectedIndex = 0
-		    Self.DashboardPane1.SwitchedTo()
-		    Self.Title = "Beacon"
-		    Self.UpdateEditorMenu()
-		    Return
-		  End If
-		  
-		  View.Visible = True
-		  Self.mCurrentView = View
-		  
-		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
-		  If ViewIndex = -1 Then
-		    Self.mSubviews.AddRow(View)
-		    ViewIndex = Self.mSubviews.LastRowIndex
-		    Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
-		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
-		    
-		    View.AddObserver(Self, "ToolbarCaption")
-		    View.AddObserver(Self, "ToolbarIcon")
-		    
-		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
-		  End If
-		  Self.TabBar1.SelectedIndex = ViewIndex + 1
-		  
-		  Self.Changed = View.Changed
-		  
-		  If Self.mCurrentView.ToolbarCaption.Length > 0 Then
-		    Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
+		  Var NewIndex As Integer
+		  Select Case View
+		  Case Self.BlueprintsComponent1
+		    NewIndex = Self.PageBlueprints
+		  Case Self.DocumentsComponent1
+		    NewIndex = Self.PageDocuments
+		  Case Self.DashboardPane1
+		    NewIndex = Self.PageHome
 		  Else
-		    Self.Title = "Beacon"
-		  End If
+		    Return
+		  End Select
 		  
-		  Self.mCurrentView.SwitchedTo()
-		  Self.Views.SelectedPanelIndex = 1
+		  Self.SwitchView(NewIndex)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
-		  If Self.mCurrentView = Sender Then
-		    Self.Changed = Sender.Changed
-		    If Self.mCurrentView.ToolbarCaption.Length > 0 Then
-		      Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
-		    Else
-		      Self.Title = "Beacon"
-		    End If
+		Private Sub SwitchView(Index As Integer)
+		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
+		  If CurrentIndex = Index Then
+		    Return
 		  End If
-		  Self.TabBar1.Invalidate
+		  
+		  If Index = Self.PageHelp And BeaconUI.WebContentSupported = False Then
+		    ShowURL(HelpComponent.HelpURL)
+		    Return
+		  End If
+		  
+		  Select Case CurrentIndex
+		  Case Self.PageHome
+		    Self.DashboardPane1.SwitchedFrom()
+		  Case Self.PageDocuments
+		    Self.DocumentsComponent1.SwitchedFrom()
+		  Case Self.PageBlueprints
+		    Self.BlueprintsComponent1.SwitchedFrom()
+		  Case Self.PagePresets
+		    Self.PresetsComponent1.SwitchedFrom()
+		  Case Self.PageHelp
+		    Self.HelpComponent1.SwitchedFrom()
+		  End Select
+		  
+		  Self.Pages.SelectedPanelIndex = Index
+		  
+		  Select Case Index
+		  Case Self.PageHome
+		    Self.DashboardPane1.SwitchedTo(Nil)
+		  Case Self.PageDocuments
+		    Self.DocumentsComponent1.SwitchedTo(Nil)
+		  Case Self.PageBlueprints
+		    Self.BlueprintsComponent1.SwitchedTo(Nil)
+		  Case Self.PagePresets
+		    Self.PresetsComponent1.SwitchedTo(Nil)
+		  Case Self.PageHelp
+		    Self.HelpComponent1.SwitchedTo(Nil)
+		  End Select
+		  
+		  For Idx As Integer = 0 To Self.NavBar.LastIndex
+		    Self.NavBar.Item(Idx).Toggled = (Idx = Index)
+		  Next
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Tools() As LibraryPaneTools
-		  Return Self.LibraryPane1.ToolsPane
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -621,11 +857,12 @@ End
 		  Next
 		  
 		  Var Items() As MenuItem
-		  If Self.CurrentView <> Nil Then
-		    Self.CurrentView.GetEditorMenuItems(Items)
+		  Var Component As BeaconSubview = Self.CurrentComponent
+		  If (Component Is Nil) = False Then
+		    Component.GetEditorMenuItems(Items)
 		  End If
 		  
-		  If Items.LastRowIndex = -1 Then
+		  If Items.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -637,25 +874,13 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ViewAtIndex(Idx As Integer) As BeaconSubview
-		  Return Self.mSubviews(Idx)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ViewCount() As UInteger
-		  Return Self.mSubviews.LastRowIndex + 1
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
-		Private mCurrentView As BeaconSubview
+		Private mBusyWatcher As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLibraryPaneAnimation As AnimationKit.MoveTask
+		Private mObserver As NSNotificationObserverMBS
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -663,254 +888,136 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOverlayFillAnimation As AnimationKit.ValueTask
+		Private mQuitWhenNotBusy As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOverlayFillOpacity As Double = 0
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOverlayPic As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSubviews(-1) As BeaconSubview
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTabBarAnimation As AnimationKit.MoveTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUpdateBarPressed As Boolean
+		Private mToolbar As NSToolbarMBS
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mUpdateText As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mViewsAnimation As AnimationKit.MoveTask
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h21
-		#tag Getter
-			Get
-			  Return Self.UpdateBar.Top + Self.UpdateBar.Height > 0
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.UpdateBarVisible = Value Then
-			    Return
-			  End If
-			  
-			  Var UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
-			  
-			  Self.Views.Height = Self.Height - (Self.TabBar1.Height + UpdateBarHeight)
-			  Self.Views.Top = Self.Height - Self.Views.Height
-			  Self.TabBar1.Top = UpdateBarHeight
-			  Self.UpdateBar.Top = (Self.UpdateBar.Height * -1) + UpdateBarHeight
-			  Self.UpdateBar.Invalidate
-			End Set
-		#tag EndSetter
-		Private UpdateBarVisible As Boolean
-	#tag EndComputedProperty
-
 
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageBlueprints, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageDocuments, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageHelp, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageHome, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PagePresets, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events TabBar1
+#tag Events NavBar
 	#tag Event
 		Sub Open()
-		  Me.Count = 1
+		  Var Home As OmniBarItem = OmniBarItem.CreateTab("NavHome", "Home")
+		  Home.Toggled = True
+		  Self.DashboardPane1.LinkedOmniBarItem = Home
+		  
+		  Var Documents As OmniBarItem = OmniBarItem.CreateTab("NavDocuments", "Projects")
+		  Self.DocumentsComponent1.LinkedOmniBarItem = Documents
+		  
+		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Blueprints")
+		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
+		  
+		  Var Presets As OmniBarItem = OmniBarItem.CreateTab("NavPresets", "Presets")
+		  Self.PresetsComponent1.LinkedOmniBarItem = Presets
+		  
+		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Support")
+		  Self.HelpComponent1.LinkedOmniBarItem = Help
+		  
+		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
+		  
+		  Me.Append(Home, Documents, Blueprints, Presets, Help, OmniBarItem.CreateFlexibleSpace, User)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ViewAtIndex(TabIndex As Integer) As BeaconSubview
-		  If TabIndex = 0 Then
-		    Return DashboardPane1
-		  Else
-		    TabIndex = TabIndex - 1
-		    If TabIndex >= 0 And TabIndex <= Self.mSubviews.LastRowIndex Then
-		      Return Self.mSubviews(TabIndex)
-		    End If
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub ShouldDismissView(ViewIndex As Integer)
-		  If ViewIndex = 0 Then
-		    Return
-		  End If
-		  
-		  ViewIndex = ViewIndex - 1
-		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
-		    Call Self.DiscardView(Self.mSubviews(ViewIndex))
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SwitchToView(ViewIndex As Integer)
-		  If ViewIndex = 0 Then
-		    Self.ShowView(DashboardPane1)
-		    Return
-		  End If
-		  
-		  ViewIndex = ViewIndex - 1
-		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
-		    Self.ShowView(Self.mSubviews(ViewIndex))
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UpdateBar
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
-		  
-		  G.DrawingColor = SystemColors.SelectedContentBackgroundColor
-		  G.FillRectangle(0, 0, G.Width, G.Height)
-		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
-		  
-		  Var Caption As String = Self.mUpdateText
-		  Var MaxCaptionWidth As Integer = G.Width - 40
-		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
-		  Var CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
-		  Var CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
-		  
-		  G.DrawingColor = SystemColors.AlternateSelectedControlTextColor
-		  G.DrawText(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
-		  
-		  If Self.mUpdateBarPressed Then
-		    G.DrawingColor = &c00000080
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Self.mUpdateBarPressed = True
-		  Self.UpdateBar.Invalidate
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
-		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
-		  If Inside <> Self.mUpdateBarPressed Then
-		    Self.mUpdateBarPressed = Inside
-		    Self.UpdateBar.Invalidate
-		  End If
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
-		  If Inside Then
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Var NewIndex As Integer
+		  Select Case Item.Name
+		  Case "NavDocuments"
+		    NewIndex = Self.PageDocuments
+		  Case "NavBlueprints"
+		    NewIndex = Self.PageBlueprints
+		  Case "NavPresets"
+		    NewIndex = Self.PagePresets
+		  Case "NavHelp"
+		    NewIndex = Self.PageHelp
+		  Case "NavHome"
+		    NewIndex = Self.PageHome
+		  Case "NavUpdate"
 		    Call App.HandleURL("beacon://action/checkforupdate")
-		  End If
-		  Self.mUpdateBarPressed = False
-		  Self.UpdateBar.Invalidate
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events OverlayCanvas
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
-		  
-		  If Self.mOverlayPic <> Nil Then
-		    G.DrawPicture(Self.mOverlayPic, 0, 0, G.Width, G.Height, 0, 0, Self.mOverlayPic.Width, Self.mOverlayPic.Height)
-		  End If
-		  
-		  G.DrawingColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
-		  G.FillRectangle(0, 0, G.Width, G.Height)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  If X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height Then
-		    Self.LibraryPane1.Dismiss
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.Visible = False
-		  Me.Left = 0
-		  Me.Top = 0
-		  Me.Width = Self.Width
-		  Me.Height = Self.Height
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events LibraryPane1
-	#tag Event
-		Sub ShouldShowView(View As BeaconSubview)
-		  Self.ShowView(View)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function ShouldDiscardView(View As BeaconSubview) As Boolean
-		  Return Self.DiscardView(View)
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub ChangePosition(Difference As Integer)
-		  If Self.mLibraryPaneAnimation <> Nil Then
-		    Self.mLibraryPaneAnimation.Cancel
-		    Self.mLibraryPaneAnimation = Nil
-		  End If
-		  
-		  Self.mLibraryPaneAnimation = New AnimationKit.MoveTask(Me)
-		  Self.mLibraryPaneAnimation.Left = Me.Left + Difference
-		  Self.mLibraryPaneAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mLibraryPaneAnimation.DurationInSeconds = 0.12
-		  Self.mLibraryPaneAnimation.Run
-		  
-		  If Self.mOverlayFillAnimation <> Nil Then
-		    Self.mOverlayFillAnimation.Cancel
-		    Self.mOverlayFillAnimation = Nil
-		  End If
-		  
-		  If Self.mOverlayFillOpacity = 0 Then
-		    Self.mOverlayPic = Self.Capture
-		  End If
-		  
-		  If Difference > 0 Then
-		    Self.OverlayCanvas.Visible = True
-		    #if TargetWin32
-		      Self.Views.Visible = False
-		      Self.TabBar1.Visible = False
-		    #endif
-		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.35)
+		    Return
+		  Case "NavUser"
+		    Self.ShowUserMenu(Self.Left + Me.Left + ItemRect.Left, Self.Top + Me.Top + ItemRect.Bottom)
+		    Return
 		  Else
-		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
-		    AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
-		  End If
+		    Return
+		  End Select
 		  
-		  Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
-		  Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
-		  Self.mOverlayFillAnimation.Run
+		  Self.SwitchView(NewIndex)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DashboardPane1
+	#tag Event
+		Sub NewDocument()
+		  Self.SwitchView(Self.PageDocuments)
+		  Self.DocumentsComponent1.NewDocument()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageHome)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BlueprintsComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageBlueprints)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DocumentsComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageDocuments)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NotificationsPane1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageHome)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HelpComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PageHelp)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PresetsComponent1
+	#tag Event
+		Sub WantsFrontmost()
+		  Self.SwitchView(Self.PagePresets)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

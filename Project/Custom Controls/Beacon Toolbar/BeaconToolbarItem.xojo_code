@@ -14,9 +14,9 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
@@ -26,7 +26,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.AddRow(New WeakRef(Observer))
+		  Refs.Add(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
@@ -66,7 +66,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
@@ -78,14 +78,14 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		    
 		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
-		    Observer.ObservedValueChanged(Self, Key, Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -103,9 +103,9 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = Refs.LastRowIndex DownTo 0
+		  For I As Integer = Refs.LastIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
-		      Refs.RemoveRowAt(I)
+		      Refs.RemoveAt(I)
 		      Continue
 		    End If
 		  Next
@@ -124,9 +124,10 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mCaption
 			    Self.mCaption = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -143,7 +144,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mEnabled <> Value Then
 			    Self.mEnabled = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -160,7 +161,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mHasMenu <> Value Then
 			    Self.mHasMenu = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -190,8 +191,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mIcon <> Value Then
+			    Var OldValue As Picture = Self.mIcon
 			    Self.mIcon = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -207,8 +209,9 @@ Implements ObservationKit.Observable
 		#tag Setter
 			Set
 			  If Self.mIconColor <> Value Then
+			    Var OldValue As BeaconToolbarItem.IconColors = Self.mIconColor
 			    Self.mIconColor = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -276,9 +279,10 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mSubcaption, Value, 0) <> 0 Then
+			  If Self.mSubcaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Var OldValue As String = Self.mSubcaption
 			    Self.mSubcaption = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, OldValue, Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -295,7 +299,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mToggled <> Value Then
 			    Self.mToggled = Value
-			    Self.NotifyObservers(Self.KeyChanged, Value)
+			    Self.NotifyObservers(Self.KeyChanged, Not Value, Value)
 			  End If
 			End Set
 		#tag EndSetter

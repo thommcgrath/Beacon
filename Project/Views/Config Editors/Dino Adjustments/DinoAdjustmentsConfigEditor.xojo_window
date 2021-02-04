@@ -25,70 +25,8 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   730
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Creature Adjustments"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   730
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   730
-   End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -99,6 +37,9 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   34
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -106,7 +47,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   485
+      Height          =   484
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -119,6 +60,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -132,7 +74,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   40
+      Top             =   41
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -142,6 +84,40 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Width           =   730
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   730
    End
 End
 #tag EndWindow
@@ -159,37 +135,37 @@ End
 		  ConvertReplacements.Enabled = True
 		  ConvertReplacements.AutoEnabled = False
 		  ConvertReplacements.Name = "ConvertCreatureReplacementsToSpawnPointAdditions"
-		  Items.AddRow(ConvertReplacements)
+		  Items.Add(ConvertReplacements)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameDinoAdjustments) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
+		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.NameDinoAdjustments))
 		  If OtherConfig = Nil Then
 		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  Var Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
-		  Var Paths() As String
+		  Var Selections() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Config.Add(Behavior)
-		    Paths.AddRow(Behavior.TargetCreature.Path)
+		    Selections.Add(Behavior.TargetCreature.ObjectID)
 		  Next
 		  Self.Changed = True
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		  Return True
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameDinoAdjustments)
 		End Sub
 	#tag EndEvent
 
@@ -218,7 +194,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DinoAdjustments
-		  Static ConfigName As String = BeaconConfigs.DinoAdjustments.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameDinoAdjustments
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.DinoAdjustments
@@ -243,7 +219,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.DinoAdjustments.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameDinoAdjustments)
 		End Function
 	#tag EndMethod
 
@@ -295,50 +271,50 @@ End
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Var Creature As Beacon.Creature = Behavior.TargetCreature
 		    If Creature <> Nil Then
-		      CurrentCreatures.AddRow(Creature)
+		      CurrentCreatures.Add(Creature)
 		    End If
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If Creatures.LastRowIndex = -1 Then
+		  If Creatures.LastIndex = -1 Then
 		    Return
 		  End If
 		  Config = Self.Config(True)
-		  Var SelectPaths() As String
+		  Var Selections() As String
 		  For Each Creature As Beacon.Creature In Creatures
 		    Var Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature)
 		    Config.Add(Behavior)
-		    SelectPaths.AddRow(Behavior.TargetCreature.Path)
+		    Selections.Add(Behavior.TargetCreature.ObjectID)
 		  Next
-		  Self.UpdateList(SelectPaths)
+		  Self.UpdateList(Selections)
 		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Paths() As String
+		  Var Selections() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Paths.AddRow(Beacon.Creature(Self.List.RowTagAt(I)).Path)
+		      Selections.Add(Beacon.Creature(Self.List.RowTagAt(I)).ObjectID)
 		    End If
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectCreatures() As Beacon.Creature)
-		  Var Paths() As String
+		  Var Selections() As String
 		  For Each Creature As Beacon.Creature In SelectCreatures
-		    Paths.AddRow(Creature.Path)
+		    Selections.Add(Creature.ObjectID)
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Selections)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectPaths() As String)
+		Private Sub UpdateList(Selections() As String)
 		  Self.List.RemoveAllRows
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
@@ -356,13 +332,10 @@ End
 		      If Behavior.PreventTaming Then
 		        Label = Label + EndOfLine + "Cannot be tamed"
 		      End If
-		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
+		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If
 		    
-		    If SelectPaths.IndexOf(Behavior.TargetCreature.Path) > -1 Then
-		      Self.List.Selected(Self.List.LastAddedRowIndex) = True
-		    End If
-		    
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Behavior.TargetCreature.ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  
@@ -398,32 +371,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Me.Caption = Self.ConfigLabel
-		  
-		  Var AddButton As New BeaconToolbarItem("AddCreature", IconToolbarAdd)
-		  AddButton.HelpTag = "Define new creature adjustments"
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected creature adjustments."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddCreature"
-		    Self.ShowAdd()
-		  Case "Duplicate"
-		    Self.ShowDuplicate()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Open()
@@ -458,7 +405,7 @@ End
 		    End If
 		    
 		    Var Creature As Beacon.Creature = Me.RowTagAt(I)
-		    Creatures.AddRow(Creature)
+		    Creatures.Add(Creature)
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Creatures, "creature adjustment", "creature adjustments") = False Then
@@ -491,10 +438,10 @@ End
 		      Continue
 		    End If
 		    
-		    Dicts.AddRow(Behavior.ToDictionary)
+		    Dicts.Add(Behavior.ToDictionary)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -507,23 +454,23 @@ End
 		    Catch Err As RuntimeException
 		    End Try
 		    
-		    If Items.LastRowIndex = -1 Then
+		    If Items.LastIndex = -1 Then
 		      Return
 		    End If
 		    
 		    Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		    Var SelectPaths() As String
+		    Var Selections() As String
 		    For Each Entry As Dictionary In Items
 		      Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
 		      If Behavior = Nil Then
 		        Continue
 		      End If
 		      
-		      SelectPaths.AddRow(Behavior.TargetCreature.Path)
+		      Selections.Add(Behavior.TargetCreature.ObjectID)
 		      Config.Add(Behavior)
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectPaths)
+		    Self.UpdateList(Selections)
 		    Return
 		  End If
 		  
@@ -536,7 +483,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -550,13 +500,59 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddCreature", "New Adjustment", IconToolbarAdd, "Define new creature adjustments."))
+		  Me.Append(OmniBarItem.CreateButton("Duplicate", "Duplicate", IconToolbarClone, "Duplicate the selected creature adjustment.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddCreature"
+		    Self.ShowAdd()
+		  Case "Duplicate"
+		    Self.ShowDuplicate()
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -624,14 +620,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -646,14 +634,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

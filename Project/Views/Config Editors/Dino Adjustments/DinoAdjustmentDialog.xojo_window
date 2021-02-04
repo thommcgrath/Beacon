@@ -868,7 +868,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   454
       End
    End
@@ -1011,10 +1011,13 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  Self.WildDamageField.Value = Format(1.0, "0.0#####")
-		  Self.WildResistanceField.Value = Format(1.0, "0.0#####")
-		  Self.TameDamageField.Value = Format(1.0, "0.0#####")
-		  Self.TameResistanceField.Value = Format(1.0, "0.0#####")
+		  Var One As Double = 1.0
+		  Var OneFormatted As String = One.ToString(Locale.Current, "0.0#####")
+		  
+		  Self.WildDamageField.Text = OneFormatted
+		  Self.WildResistanceField.Text = OneFormatted
+		  Self.TameDamageField.Text = OneFormatted
+		  Self.TameResistanceField.Text = OneFormatted
 		End Sub
 	#tag EndEvent
 
@@ -1042,9 +1045,9 @@ End
 		    If Behavior.TargetCreature = EditCreature Then
 		      Continue
 		    End If
-		    ConfiguredCreatures.AddRow(Behavior.TargetCreature)
+		    ConfiguredCreatures.Add(Behavior.TargetCreature)
 		    If Behavior.ProhibitSpawning Then
-		      DisabledCreatures.AddRow(Behavior.TargetCreature)
+		      DisabledCreatures.Add(Behavior.TargetCreature)
 		    End If
 		  Next
 		  
@@ -1060,10 +1063,10 @@ End
 		        Win.SelectedReplacement = Behavior.ReplacementCreature
 		        Win.ModeReplaceRadio.Value = True
 		      Else
-		        Win.WildDamageField.Value = Format(Behavior.DamageMultiplier, "0.0#####")
-		        Win.WildResistanceField.Value = Format(Behavior.ResistanceMultiplier, "0.0#####")
-		        Win.TameDamageField.Value = Format(Behavior.TamedDamageMultiplier, "0.0#####")
-		        Win.TameResistanceField.Value = Format(Behavior.TamedResistanceMultiplier, "0.0#####")
+		        Win.WildDamageField.Text = Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.WildResistanceField.Text = Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.TameDamageField.Text = Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####")
+		        Win.TameResistanceField.Text = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
 		        Win.PreventTamingCheck.Value = Behavior.PreventTaming
 		      End If
@@ -1082,10 +1085,10 @@ End
 		  ElseIf Win.ModeReplaceRadio.Value Then
 		    Behavior.ReplacementCreature = Win.SelectedReplacement
 		  Else
-		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Value)
-		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Value)
-		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Value)
-		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Value)
+		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Text)
+		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Text)
+		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Text)
+		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Text)
 		    Behavior.PreventTaming = Win.PreventTamingCheck.Value
 		  End If
 		  
@@ -1138,10 +1141,10 @@ End
 			  Self.mSelectedCreature = Value
 			  If IsNull(Self.mSelectedCreature) Then
 			    Self.TargetDinoNameLabel.Italic = True
-			    Self.TargetDinoNameLabel.Value = "No Selection"
+			    Self.TargetDinoNameLabel.Text = "No Selection"
 			  Else
 			    Self.TargetDinoNameLabel.Italic = False
-			    Self.TargetDinoNameLabel.Value = Self.mSelectedCreature.Label
+			    Self.TargetDinoNameLabel.Text = Self.mSelectedCreature.Label
 			  End If
 			  
 			  If Self.mSelectedReplacement = Self.mSelectedCreature Then
@@ -1167,10 +1170,10 @@ End
 			  Self.mSelectedReplacement = Value
 			  If IsNull(Self.mSelectedReplacement) Then
 			    Self.ReplacementDinoNameLabel.Italic = True
-			    Self.ReplacementDinoNameLabel.Value = "No Selection"
+			    Self.ReplacementDinoNameLabel.Text = "No Selection"
 			  Else
 			    Self.ReplacementDinoNameLabel.Italic = False
-			    Self.ReplacementDinoNameLabel.Value = Self.mSelectedReplacement.Label
+			    Self.ReplacementDinoNameLabel.Text = Self.mSelectedReplacement.Label
 			  End If
 			End Set
 		#tag EndSetter
@@ -1248,14 +1251,14 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  If Not IsNull(Self.SelectedCreature) Then
-		    Exclude.AddRow(Self.SelectedCreature)
+		    Exclude.Add(Self.SelectedCreature)
 		  End If
 		  For Each Creature As Beacon.Creature In Self.DisabledCreatures
-		    Exclude.AddRow(Creature)
+		    Exclude.Add(Creature)
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
+		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.SelectedReplacement = Creatures(0)
 		  End If
 		End Sub
@@ -1275,10 +1278,10 @@ End
 		      Return
 		    End If
 		  ElseIf Self.ModeMultipliersRadio.Value Then
-		    Var DamageMultiplier As Double = CDbl(Self.WildDamageField.Value)
-		    Var ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Value)
-		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Value)
-		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Value)
+		    Var DamageMultiplier As Double = CDbl(Self.WildDamageField.Text)
+		    Var ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Text)
+		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
+		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
 		    Var PreventTaming As Boolean = Self.PreventTamingCheck.Value
 		    
 		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
@@ -1309,11 +1312,11 @@ End
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
 		  For Each Creature As Beacon.Creature In Self.ConfiguredCreatures
-		    Exclude.AddRow(Creature)
+		    Exclude.Add(Creature)
 		  Next
 		  
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
+		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.SelectedCreature = Creatures(0)
 		  End If
 		End Sub

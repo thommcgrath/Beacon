@@ -21,7 +21,7 @@ Protected Class Identity
 		  
 		  Var LeftString As String = EncodeHex(Left)
 		  Var RightString As String = EncodeHex(Right)
-		  Return StrComp(LeftString, RightString, REALbasic.StrCompLexical)
+		  Return LeftString.Compare(RightString, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -42,7 +42,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Identifier As String, PublicKey As String, PrivateKey As String)
-		  Self.mIdentifier = Identifier
+		  Self.mIdentifier = Identifier.Lowercase
 		  Self.mPublicKey = PublicKey
 		  Self.mPrivateKey = PrivateKey
 		End Sub
@@ -56,9 +56,9 @@ Protected Class Identity
 		  End If
 		  
 		  Try
-		    Self.mLoginKey = Dict.Lookup("login_key", "")
+		    Self.mUsername = Dict.Lookup("username", "")
 		  Catch Err As RuntimeException
-		    Self.mLoginKey = ""
+		    Self.mUsername = ""
 		  End Try
 		  
 		  Try
@@ -99,6 +99,14 @@ Protected Class Identity
 		    
 		  End Try
 		  
+		  Try
+		    If Dict.HasKey("parent_account_id") And Dict.Value("parent_account_id") <> Nil Then
+		      Self.mParentAccountID = Dict.Value("parent_account_id").StringValue
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -128,7 +136,7 @@ Protected Class Identity
 		  Dict.Value("Private") = Self.mPrivateKey
 		  Dict.Value("Version") = 2
 		  Dict.Value("Omni Version") = Self.mPurchasedOmniVersion
-		  Dict.Value("LoginKey") = Self.mLoginKey
+		  Dict.Value("Username") = Self.mUsername
 		  Dict.Value("Banned") = Self.mBanned
 		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
 		    Dict.Value("Signature") = EncodeHex(Self.mSignature)
@@ -138,6 +146,9 @@ Protected Class Identity
 		  End If
 		  If Self.mUsercloudKey <> Nil Then
 		    Dict.Value("Cloud Key") = EncodeHex(Self.mUsercloudKey)
+		  End If
+		  If Self.IsChildAccount Then
+		    Dict.Value("Parent Account ID") = Self.mParentAccountID.StringValue
 		  End If
 		  Return Dict
 		End Function
@@ -182,12 +193,6 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Identifier() As String
-		  Return Self.mIdentifier
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function Import(Source As Dictionary) As Beacon.Identity
 		  If Source.HasKey("Identifier") = False Or Source.HasKey("Public") = False Or Source.HasKey("Private") = False Then
 		    Return Nil
@@ -221,8 +226,10 @@ Protected Class Identity
 		    Identity.mSignature = DecodeHex(Source.Value("Signature"))
 		  End If
 		  
-		  If Source.HasKey("LoginKey") Then
-		    Identity.mLoginKey = Source.Value("LoginKey")
+		  If Source.HasKey("Username") Then
+		    Identity.mUsername = Source.Value("Username")
+		  ElseIf Source.HasKey("LoginKey") Then
+		    Identity.mUsername = Source.Value("LoginKey")
 		  End If
 		  
 		  If Source.HasKey("Expiration") Then
@@ -237,6 +244,10 @@ Protected Class Identity
 		    Identity.mBanned = Source.Value("Banned")
 		  End If
 		  
+		  If Source.HasKey("Parent Account ID") Then
+		    Identity.mParentAccountID = Source.Value("Parent Account ID").StringValue
+		  End If
+		  
 		  Identity.Validate()
 		  
 		  Return Identity
@@ -245,7 +256,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function IsAnonymous() As Boolean
-		  Return Self.mLoginKey.Length = 0
+		  Return Self.mUsername.Length = 0
 		End Function
 	#tag EndMethod
 
@@ -256,18 +267,18 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsChildAccount() As Boolean
+		  Return (Self.mParentAccountID Is Nil) = False And Self.mParentAccountID.IsNull = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function IsUserDictionary(Dict As Dictionary) As Boolean
 		  If Dict = Nil Then
 		    Return False
 		  End If
 		  
 		  Return Dict.HasAllKeys("private_key_salt", "private_key_iterations", "private_key", "public_key", "user_id")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LoginKey() As String
-		  Return Self.mLoginKey
 		End Function
 	#tag EndMethod
 
@@ -284,14 +295,14 @@ Protected Class Identity
 		  End If
 		  
 		  // Case changes do matter
-		  Var Result As Integer = StrComp(Self.mLoginKey, Other.mLoginKey, REALbasic.StrCompLexical)
+		  Var Result As Integer = Self.mUsername.Compare(Other.mUsername, ComparisonOptions.CaseInsensitive)
 		  If Result <> 0 Then
 		    Return Result
 		  End If
 		  
 		  // Case changes do not matter
 		  If Self.mIdentifier <> Other.mIdentifier Then
-		    Return StrComp(Self.mIdentifier, Other.mIdentifier, REALbasic.StrCompLexical)
+		    Return Self.mIdentifier.Compare(Other.mIdentifier, ComparisonOptions.CaseInsensitive)
 		  End If
 		  
 		  // Newer sorts after older
@@ -344,8 +355,21 @@ Protected Class Identity
 		    Return Result
 		  End If
 		  
+		  Var SelfParent As String = If(Self.mParentAccountID Is Nil, "", Self.mParentAccountID.StringValue)
+		  Var OtherParent As String = If(Other.mParentAccountID Is Nil, "", Other.mParentAccountID.StringValue)
+		  Result = SelfParent.Compare(OtherParent, ComparisonOptions.CaseInsensitive)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
 		  // They are fully equal
 		  Return 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ParentAccountID() As v4UUID
+		  Return Self.mParentAccountID
 		End Function
 	#tag EndMethod
 
@@ -376,6 +400,36 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function UserID() As String
+		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UserIDForEncryption() As String
+		  // For use when decrypting a document. Returns the parent id for child accounts,
+		  // or the user's actual id for regular accounts. Return as string since this is
+		  // most useful as a dictionary key.
+		  
+		  If Self.IsChildAccount Then
+		    Return Self.mParentAccountID
+		  Else
+		    Return Self.mIdentifier
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Username(WithSuffix As Boolean = False) As String
+		  If WithSuffix Then
+		    Return Self.mUsername + "#" + Self.mIdentifier.Left(8)
+		  Else
+		    Return Self.mUsername
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Validate()
 		  If Self.mSignature <> Nil Then
 		    Var Fields(3) As String
@@ -389,7 +443,7 @@ Protected Class Identity
 		      Var Now As DateTime = DateTime.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired
-		        Fields.AddRow(Self.mExpirationString)
+		        Fields.Add(Self.mExpirationString)
 		      End If
 		    End If
 		    
@@ -401,7 +455,7 @@ Protected Class Identity
 		    End If
 		  End If
 		  
-		  Self.mLoginKey = ""
+		  Self.mUsername = ""
 		  Self.mPurchasedOmniVersion = 0
 		End Sub
 	#tag EndMethod
@@ -442,7 +496,7 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLoginKey As String
+		Private mParentAccountID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -463,6 +517,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mUsercloudKey As MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsername As String
 	#tag EndProperty
 
 

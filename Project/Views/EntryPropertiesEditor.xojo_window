@@ -807,8 +807,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Entries() As Beacon.SetEntry)
-		  Var MinQuantity As Integer = Val(MinQuantityField.Value)
-		  Var MaxQuantity As Integer = Val(MaxQuantityField.Value)
+		  Var MinQuantity As Integer = Val(MinQuantityField.Text)
+		  Var MaxQuantity As Integer = Val(MaxQuantityField.Text)
 		  If MinQuantity > MaxQuantity Then
 		    Var Temp As Integer = MaxQuantity
 		    MaxQuantity = MinQuantity
@@ -897,7 +897,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Entries() As Beacon.SetEntry)
-		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
+		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Self.Setup()
 		    Return
 		  End If
@@ -907,12 +907,12 @@ End
 		  Var TotalWeight, TotalChance As Double
 		  Var CanBeBlueprint As Boolean
 		  For Each Entry As Beacon.SetEntry In Entries
-		    MinQuantities.AddRow(Entry.MinQuantity)
-		    MaxQuantities.AddRow(Entry.MaxQuantity)
+		    MinQuantities.Add(Entry.MinQuantity)
+		    MaxQuantities.Add(Entry.MaxQuantity)
 		    TotalWeight = TotalWeight + Entry.RawWeight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
-		    MinQualities.AddRow(Entry.MinQuality.BaseValue)
-		    MaxQualities.AddRow(Entry.MaxQuality.BaseValue)
+		    MinQualities.Add(Entry.MinQuality.BaseValue)
+		    MaxQualities.Add(Entry.MaxQuality.BaseValue)
 		    CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
 		  Next
 		  
@@ -922,10 +922,10 @@ End
 		  MaxQualities.Sort
 		  
 		  Self.mIgnoreChanges = True
-		  MinQuantityField.Value = Str(MinQuantities(0))
-		  MaxQuantityField.Value = Str(MaxQuantities(MaxQuantities.LastRowIndex))
+		  MinQuantityField.Text = MinQuantities(0).ToString(Locale.Current, "0")
+		  MaxQuantityField.Text = MaxQuantities(MaxQuantities.LastIndex).ToString(Locale.Current, "0")
 		  If CanBeBlueprint Then
-		    ChanceSlider.Value = 100 * (TotalChance / (Entries.LastRowIndex + 1))
+		    ChanceSlider.Value = 100 * (TotalChance / (Entries.LastIndex + 1))
 		    ChanceSlider.Enabled = True
 		    ChanceLabel.Enabled = True
 		    ChanceField.Enabled = True
@@ -938,12 +938,12 @@ End
 		    EditChanceCheck.Enabled = False
 		  End If
 		  MinQualityMenu.SelectByTag(MinQualities(0))
-		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastRowIndex))
-		  WeightSlider.Value = TotalWeight / (Entries.LastRowIndex + 1)
-		  WeightField.DoubleValue = TotalWeight / (Entries.LastRowIndex + 1)
+		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastIndex))
+		  WeightSlider.Value = TotalWeight / (Entries.LastIndex + 1)
+		  WeightField.DoubleValue = TotalWeight / (Entries.LastIndex + 1)
 		  Self.mIgnoreChanges = False
 		  
-		  If Entries.LastRowIndex > 0 Then
+		  If Entries.LastIndex > 0 Then
 		    EditChanceCheck.Visible = True
 		    EditMaxQualityCheck.Visible = True
 		    EditMaxQuantityCheck.Visible = True
@@ -959,9 +959,9 @@ End
 	#tag Method, Flags = &h0
 		Sub Setup(Entry As Beacon.SetEntry)
 		  Var Arr(0) As Beacon.SetEntry
-		  If Entry = Nil Then
+		  If Entry Is Nil Then
 		    Var Default As New Beacon.SetEntry()
-		    Default.Append(New Beacon.SetEntryOption(Beacon.Engram.CreateFromPath("/Game/Mods/Default.Default"), 1.0))
+		    Default.Append(New Beacon.SetEntryOption(Beacon.Engram.CreateCustom("", "/Game/Mods/Default.Default", ""), 1.0))
 		    Arr(0) = Default
 		  Else
 		    Arr(0) = Entry
@@ -986,7 +986,7 @@ End
 #tag Events ChanceField
 	#tag Event
 		Sub LostFocus()
-		  Me.Value = Str(ChanceSlider.Value, "-0")
+		  Me.Text = ChanceSlider.Value.ToString(Locale.Raw, "0")
 		  ChanceSlider.Enabled = True
 		End Sub
 	#tag EndEvent
@@ -998,7 +998,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
-		    ChanceSlider.Value = Max(Min(Val(Me.Value), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
+		    ChanceSlider.Value = Max(Min(Val(Me.Text), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1007,7 +1007,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  If Self.Focus <> ChanceField Then
-		    ChanceField.Value = Str(Me.Value, "-0")
+		    ChanceField.Text = Me.Value.ToString(Locale.Raw, "0")
 		  End If
 		  
 		  If Not Self.mIgnoreChanges Then

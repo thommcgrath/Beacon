@@ -22,7 +22,7 @@ Protected Class ExternalAccountManager
 		Function All() As Beacon.ExternalAccount()
 		  Var Accounts() As Beacon.ExternalAccount
 		  For Each Entry As DictionaryEntry In Self.mAccounts
-		    Accounts.AddRow(Entry.Value)
+		    Accounts.Add(Entry.Value)
 		  Next
 		  Return Accounts
 		End Function
@@ -36,7 +36,7 @@ Protected Class ExternalAccountManager
 		  
 		  Var Accounts() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mAccounts
-		    Accounts.AddRow(Beacon.ExternalAccount(Entry.Value).AsDictionary)
+		    Accounts.Add(Beacon.ExternalAccount(Entry.Value).AsDictionary)
 		  Next
 		  
 		  Var Dict As New Dictionary
@@ -62,7 +62,7 @@ Protected Class ExternalAccountManager
 		  Var Accounts() As Beacon.ExternalAccount
 		  For Each Entry As DictionaryEntry In Self.mAccounts
 		    If Beacon.ExternalAccount(Entry.Value).Provider = Provider Then
-		      Accounts.AddRow(Entry.Value)
+		      Accounts.Add(Entry.Value)
 		    End If
 		  Next
 		  Return Accounts

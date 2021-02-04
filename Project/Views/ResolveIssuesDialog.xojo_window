@@ -24,7 +24,7 @@ Begin BeaconDialog ResolveIssuesDialog
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
-   Title           =   "Document Issues"
+   Title           =   "Project Issues"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -50,7 +50,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This document has problems that must be resolved"
+      Text            =   "This project has problems that must be resolved"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -95,6 +95,7 @@ Begin BeaconDialog ResolveIssuesDialog
       Width           =   80
    End
    Begin BeaconListbox IssuesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -105,6 +106,9 @@ Begin BeaconDialog ResolveIssuesDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -125,6 +129,7 @@ Begin BeaconDialog ResolveIssuesDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -207,10 +212,10 @@ End
 		  Var DocumentIssues() As Beacon.Issue
 		  
 		  Var UniqueIssues As New Dictionary
-		  If Document.MapCompatibility = 0 Then
+		  If Document.MapCompatibility = CType(0, UInt64) Then
 		    Var Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
 		    UniqueIssues.Value(Issue.Description) = Issue
-		    DocumentIssues.AddRow(Issue)
+		    DocumentIssues.Add(Issue)
 		  End If
 		  
 		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
@@ -218,7 +223,7 @@ End
 		    Var Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
 		    For Each Issue As Beacon.Issue In Issues
 		      If Not UniqueIssues.HasKey(Issue.Description) Then
-		        DocumentIssues.AddRow(Issue)
+		        DocumentIssues.Add(Issue)
 		        UniqueIssues.Value(Issue.Description) = Issue
 		      End If
 		    Next
@@ -235,7 +240,7 @@ End
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document, Handler As ResolveIssuesDialog.GoToIssueCallback = Nil)
 		  Var Issues() As Beacon.Issue = DescribeIssues(Document)
-		  If Issues.LastRowIndex = -1 Then
+		  If Issues.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -297,7 +302,9 @@ End
 		  
 		  Var Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
 		  Self.Hide()
-		  Self.GoToIssueHandler.Invoke(Issue)
+		  If Beacon.SafeToInvoke(Self.GoToIssueHandler) Then
+		    Self.GoToIssueHandler.Invoke(Issue)
+		  End If
 		  Self.Close()
 		End Sub
 	#tag EndEvent

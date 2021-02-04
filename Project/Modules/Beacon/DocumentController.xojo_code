@@ -45,7 +45,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mActiveThread = New Thread
-		  Self.mActiveThread.Priority = 10
+		  Self.mActiveThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
 		  Self.mActiveThread.Start
 		End Sub
@@ -104,6 +104,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mActiveThread = New Thread
+		  Self.mActiveThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Load
 		  Self.mActiveThread.Start
 		  
@@ -119,7 +120,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  If Self.mDocument <> Nil Then
+		  If Self.mDocument <> Nil And Self.mDocument.Title.IsEmpty = False Then
 		    Return Self.mDocument.Title
 		  Else
 		    Return Self.mDocumentURL.Name
@@ -181,7 +182,7 @@ Protected Class DocumentController
 		  Case Beacon.DocumentURL.TypeCloud
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
-		    Socket.Send("DELETE", Self.mDocumentURL.WithScheme("https").URL)
+		    Socket.Send("DELETE", Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Writing))
 		    If Socket.LastHTTPStatus = 200 Then
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Else
@@ -218,7 +219,7 @@ Protected Class DocumentController
 		    Socket.RequestHeader("Accept-Encoding") = "gzip"
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
-		    Socket.Send("GET", Self.mDocumentURL.WithScheme("https").URL)
+		    Socket.Send("GET", Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Reading))
 		    If Socket.LastHTTPStatus >= 200 And Socket.LastHTTPStatus < 300 Then
 		      FileContent = Socket.LastContent
 		    Else
@@ -230,7 +231,7 @@ Protected Class DocumentController
 		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Accept-Encoding") = "gzip"
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
-		    Socket.Send("GET", Self.mDocumentURL.URL)
+		    Socket.Send("GET", Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Reading))
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
 		    Else
@@ -269,19 +270,13 @@ Protected Class DocumentController
 		  End If
 		  
 		  If FileContent.Size > 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
-		    #if Not TargetiOS
-		      Var Compressor As New _GZipString
-		      Var Decompressed As String = Compressor.Decompress(FileContent)
-		      If Decompressed <> "" Then
-		        FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
-		      Else
-		        Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
-		        Return
-		      End If
-		    #else
-		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Compressed files are not supported in this version")
+		    Var Decompressed As String = Beacon.Decompress(FileContent)
+		    If Decompressed <> "" Then
+		      FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
 		      Return
-		    #endif
+		    End If
 		  End If
 		  
 		  Var FailureReason As String
@@ -309,10 +304,7 @@ Protected Class DocumentController
 		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Session " + Preferences.OnlineToken
 		  
-		  Var Compressor As New _GZipString
-		  Compressor.UseHeaders = True
-		  
-		  Var Body As MemoryBlock = Compressor.Compress(JSON, _GZipString.DefaultCompression)
+		  Var Body As MemoryBlock = Beacon.Compress(JSON)
 		  Headers.Value("Content-Encoding") = "gzip"
 		  
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
@@ -320,7 +312,7 @@ Protected Class DocumentController
 		    Socket.RequestHeader(Entry.Key) = Entry.Value
 		  Next
 		  Socket.SetRequestContent(Body, "application/json")
-		  Socket.Send("POST", Self.mDocumentURL.WithScheme("https").URL)
+		  Socket.Send("POST", Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Writing))
 		  If Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201 Then
 		    If Self.mClearModifiedOnWrite Then
 		      Self.mDocument.Modified = False
@@ -436,7 +428,7 @@ Protected Class DocumentController
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    Self.mActiveThread = New Thread
-		    Self.mActiveThread.Priority = 1
+		    Self.mActiveThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.DocumentURL.TypeLocal

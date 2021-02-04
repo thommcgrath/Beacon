@@ -3,7 +3,7 @@ Protected Class TagPicker
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  For I As Integer = 0 To Self.mCells.LastRowIndex
+		  For I As Integer = 0 To Self.mCells.LastIndex
 		    If Self.mCells(I) <> Nil And Self.mCells(I).Contains(X, Y) Then
 		      Self.mMouseDownCellIndex = I
 		      Self.mMousePressedIndex = I
@@ -44,12 +44,12 @@ Inherits ControlCanvas
 		    Var ExcludeIndex As Integer = Self.mExcludeTags.IndexOf(Tag)
 		    
 		    If RequireIndex > -1 Then
-		      Self.mRequireTags.RemoveRowAt(RequireIndex)
-		      Self.mExcludeTags.AddRow(Tag)
+		      Self.mRequireTags.RemoveAt(RequireIndex)
+		      Self.mExcludeTags.Add(Tag)
 		    ElseIf ExcludeIndex > -1 Then
-		      Self.mExcludeTags.RemoveRowAt(ExcludeIndex)
+		      Self.mExcludeTags.RemoveAt(ExcludeIndex)
 		    Else
-		      Self.mRequireTags.AddRow(Tag)
+		      Self.mRequireTags.Add(Tag)
 		    End If
 		    
 		    RaiseEvent TagsChanged
@@ -62,7 +62,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Double, PixelsY As Double, WheelData As BeaconUI.ScrollEvent) As Boolean
 		  #Pragma Unused WheelData
 		  #Pragma Unused PixelsX
 		  #Pragma Unused MouseY
@@ -84,8 +84,10 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  Var HeightDelta As Integer
 		  Self.Paint(G, HeightDelta)
@@ -97,7 +99,7 @@ Inherits ControlCanvas
 		Private Shared Function ArrayToString(Source() As String) As String
 		  Var Clone() As String
 		  For Each Value As String In Source
-		    Clone.AddRow(Value)
+		    Clone.Add(Value)
 		  Next
 		  Clone.Sort
 		  Return Clone.Join(",")
@@ -168,7 +170,7 @@ Inherits ControlCanvas
 		Function ExcludedTags() As String()
 		  Var Tags() As String
 		  For Each Tag As String In Self.mExcludeTags
-		    Tags.AddRow(Tag)
+		    Tags.Add(Tag)
 		  Next
 		  Return Tags
 		End Function
@@ -201,29 +203,23 @@ Inherits ControlCanvas
 		  Var XPos As Integer = HorizontalSpacing + ContentArea.Left
 		  Var YPos As Integer = VerticalSpacing + ContentArea.Top
 		  Var MaxCellWidth As Integer = ContentArea.Width - ((HorizontalSpacing * 2) + 10)
-		  Var CapHeight As Integer = Ceil(G.CapHeight)
+		  Var CapHeight As Integer = Ceiling(G.CapHeight)
 		  Var CellHeight As Integer = CapHeight + (VerticalPadding * 2)
 		  Var Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
-		  Var RequiredBackgroundColor As Color = SystemColors.SelectedContentBackgroundColor
-		  Var RequiredTextColor As Color = SystemColors.AlternateSelectedControlTextColor
-		  Var NeutralBackgroundColor As Color = SystemColors.UnemphasizedSelectedTextBackgroundColor
-		  Var NeutralTextColor As Color = SystemColors.UnemphasizedSelectedTextColor
-		  Var ExcludedBackgroundColor As Color = SystemColors.SystemRedColor
-		  Var ExcludedTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  Var CellTextColor As Color = &cFFFFFF
+		  Var RequiredBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemBlueColor)
+		  Var NeutralBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemGrayColor)
+		  Var ExcludedBackgroundColor As Color = BeaconUI.FindContrastingColor(CellTextColor, SystemColors.SystemRedColor)
 		  
-		  If Self.ColorsAreSimilar(RequiredBackgroundColor, ExcludedBackgroundColor, 100) Then
-		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
-		  End If
-		  
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Var Tag As String = Self.mTags(I)
 		    Var Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
 		    Var Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
 		    Var Pressed As Boolean = Self.mMousePressedIndex = I
 		    Tag = Tag.ReplaceAll("_", " ").Titlecase
 		    
-		    Var CaptionWidth As Integer = Ceil(Clip.TextWidth(Tag))
+		    Var CaptionWidth As Integer = Ceiling(Clip.TextWidth(Tag))
 		    Var CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
 		    If XPos + CellWidth > ContentArea.Right - HorizontalSpacing Then
 		      XPos = ContentArea.Left + HorizontalSpacing
@@ -236,16 +232,13 @@ Inherits ControlCanvas
 		    Var CaptionLeft As Integer = CellRect.Left + HorizontalPadding
 		    Var CaptionBottom As Integer = CellRect.Top + VerticalPadding + CapHeight
 		    
-		    Var CellColor, CellTextColor As Color
+		    Var CellColor As Color
 		    If Required Then
 		      CellColor = RequiredBackgroundColor
-		      CellTextColor = RequiredTextColor
 		    ElseIf Excluded Then
 		      CellColor = ExcludedBackgroundColor
-		      CellTextColor = ExcludedTextColor
 		    Else
 		      CellColor = NeutralBackgroundColor
-		      CellTextColor = NeutralTextColor
 		    End If
 		    Clip.DrawingColor = CellColor
 		    Clip.FillRoundRectangle(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
@@ -282,7 +275,7 @@ Inherits ControlCanvas
 		Function RequiredTags() As String()
 		  Var Tags() As String
 		  For Each Tag As String In Self.mRequireTags
-		    Tags.AddRow(Tag)
+		    Tags.Add(Tag)
 		  Next
 		  Return Tags
 		End Function
@@ -313,14 +306,14 @@ Inherits ControlCanvas
 		    ExcludedTags = Temp
 		  End If
 		  
-		  For I As Integer = RequiredTags.LastRowIndex DownTo RequiredTags.FirstRowIndex
+		  For I As Integer = RequiredTags.LastIndex DownTo RequiredTags.FirstRowIndex
 		    If RequiredTags(I) <> "object" And Self.mTags.IndexOf(RequiredTags(I)) = -1 Then
-		      RequiredTags.RemoveRowAt(I)
+		      RequiredTags.RemoveAt(I)
 		    End If
 		  Next
-		  For I As Integer = ExcludedTags.LastRowIndex DownTo ExcludedTags.FirstRowIndex
+		  For I As Integer = ExcludedTags.LastIndex DownTo ExcludedTags.FirstRowIndex
 		    If Self.mTags.IndexOf(ExcludedTags(I)) = -1 Then
-		      ExcludedTags.RemoveRowAt(I)
+		      ExcludedTags.RemoveAt(I)
 		    End If
 		  Next
 		  
@@ -341,7 +334,7 @@ Inherits ControlCanvas
 		  Self.mRequireTags = RequiredTags.Clone
 		  Self.mExcludeTags = ExcludedTags.Clone
 		  
-		  If App.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    RaiseEvent TagsChanged
 		    Self.Invalidate
 		  Else
@@ -353,8 +346,8 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		End Function
@@ -367,12 +360,12 @@ Inherits ControlCanvas
 		  End If
 		  
 		  Var Changed As Boolean
-		  If Self.mTags.LastRowIndex <> Values.LastRowIndex Then
-		    Self.mTags.ResizeTo(Values.LastRowIndex)
+		  If Self.mTags.LastIndex <> Values.LastIndex Then
+		    Self.mTags.ResizeTo(Values.LastIndex)
 		    Changed = True
 		  End If
-		  For I As Integer = 0 To Values.LastRowIndex
-		    If StrComp(Self.mTags(I), Values(I), 0) <> 0 Then
+		  For I As Integer = 0 To Values.LastIndex
+		    If Self.mTags(I).Compare(Values(I), ComparisonOptions.CaseSensitive) <> 0 Then
 		      Self.mTags(I) = Values(I)
 		      Changed = True
 		    End If
@@ -380,22 +373,22 @@ Inherits ControlCanvas
 		  
 		  If Changed Then
 		    Self.mCells.ResizeTo(-1)
-		    Self.mCells.ResizeTo(Self.mTags.LastRowIndex)
+		    Self.mCells.ResizeTo(Self.mTags.LastIndex)
 		    
 		    Var FireChangeEvent As Boolean
-		    For I As Integer = Self.mRequireTags.LastRowIndex DownTo 0
+		    For I As Integer = Self.mRequireTags.LastIndex DownTo 0
 		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
-		        Self.mRequireTags.RemoveRowAt(I)
+		        Self.mRequireTags.RemoveAt(I)
 		        FireChangeEvent = True
 		      End
 		      If Self.mTags.IndexOf(Self.mExcludeTags(I)) = -1 Then
-		        Self.mExcludeTags.RemoveRowAt(I)
+		        Self.mExcludeTags.RemoveAt(I)
 		        FireChangeEvent = True
 		      End If
 		    Next
 		    
 		    If FireChangeEvent Then
-		      If App.CurrentThread = Nil Then
+		      If Thread.Current = Nil Then
 		        RaiseEvent TagsChanged
 		      Else
 		        Call CallLater.Schedule(0, AddressOf TriggerChange)
@@ -497,10 +490,10 @@ Inherits ControlCanvas
 		#tag Getter
 			Get
 			  Var Value As String
-			  If Self.mRequireTags.LastRowIndex > -1 Then
+			  If Self.mRequireTags.LastIndex > -1 Then
 			    Value = "(""" + Self.mRequireTags.Join(""" AND """) + """)"
 			  End If
-			  If Self.mExcludeTags.LastRowIndex > -1 Then
+			  If Self.mExcludeTags.LastIndex > -1 Then
 			    If Value = "" Then
 			      Value = "object"
 			    End If
@@ -553,6 +546,30 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

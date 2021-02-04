@@ -2,14 +2,26 @@
 Protected Class DayCycle
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "1.0"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayTimeSpeedScale", Self.DaySpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "NightTimeSpeedScale", Self.NightSpeedMultiplier.PrettyText))
-		End Sub
+		  Var Values() As Beacon.ConfigValue
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale=1.0"))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayTimeSpeedScale=" + Self.DaySpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "NightTimeSpeedScale=" + Self.NightSpeedMultiplier.PrettyText))
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayTimeSpeedScale"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "NightTimeSpeedScale"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -37,8 +49,8 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "DayCycle"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameDayCycle
 		End Function
 	#tag EndMethod
 
@@ -51,10 +63,11 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.DayCycle
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.DayCycle
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  If ParsedData.HasAnyKey("DayCycleSpeedScale", "DayTimeSpeedScale", "NightTimeSpeedScale") = False Then
 		    Return Nil

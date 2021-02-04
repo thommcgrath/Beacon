@@ -29,9 +29,9 @@ Implements Beacon.Blueprint
 		Function ClassString() As String
 		  If Self.IsValid Then
 		    Var Components() As String = Self.mPath.Split("/")
-		    Var Tail As String = Components(Components.LastRowIndex)
+		    Var Tail As String = Components(Components.LastIndex)
 		    Components = Tail.Split(".")
-		    Return Components(Components.LastRowIndex) + "_C"
+		    Return Components(Components.LastIndex) + "_C"
 		  Else
 		    If Self.mPath.Length > 2 And Self.mPath.Right(2) = "_C" Then
 		      Return Self.mPath
@@ -43,14 +43,14 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Blueprint
+		Function Clone() As Beacon.Engram
 		  Return New Beacon.Engram(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		End Sub
 	#tag EndMethod
 
@@ -73,14 +73,52 @@ Implements Beacon.Blueprint
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
+		  Next
+		  
+		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
+		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromClass(ClassString As String) As Beacon.Engram
-		  Return CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", ClassString))
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.Engram
+		  Var Engram As New Beacon.Engram
+		  Engram.mModID = Beacon.UserModID
+		  Engram.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "PrimalItemMystery_NoData_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = "PrimalItemMystery_" + ObjectID + "_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("Engrams", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Engram.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
+		    If Path.Right(2) = "_C" Then
+		      // Appears to be a BlueprintGeneratedClass Path
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    Engram.mIsValid = True
+		  End If
+		  
+		  Engram.mPath = Path
+		  Engram.mObjectID = ObjectID
+		  Engram.mTags.Add("blueprintable")
+		  
+		  Return Engram
 		End Function
 	#tag EndMethod
 
@@ -91,37 +129,9 @@ Implements Beacon.Blueprint
 		    Base = Base.Middle(12)
 		  End If
 		  
-		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base + "_C"))
+		  // Base probably already includes _C, so don't add it again. UnknownBlueprintPath will handle it if missing.
+		  Var Engram As Beacon.Engram = CreateCustom("", "", "PrimalItemMystery_" + Base)
 		  Engram.mEngramEntryString = EntryString
-		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.Engram
-		  Var ObjectIDString As String = ObjectID.StringValue
-		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + ObjectIDString + "_C"))
-		  Engram.mLabel = ObjectIDString
-		  Engram.mObjectID = ObjectID
-		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateFromPath(Path As String) As Beacon.Engram
-		  Var Engram As New Beacon.Engram
-		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
-		    If Path.Right(2) = "_C" Then
-		      // Appears to be a BlueprintGeneratedClass Path
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		    Engram.mIsValid = True
-		  End If
-		  Engram.mModID = LocalData.UserModID
-		  Engram.mModName = LocalData.UserModName
-		  Engram.mPath = Path
-		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path.Lowercase)
-		  Engram.mTags.AddRow("blueprintable")
 		  Return Engram
 		End Function
 	#tag EndMethod
@@ -133,26 +143,6 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Engram
-		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryEngrams Then
-		    Return Nil
-		  End If
-		  
-		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName") Then
-		    Return Nil
-		  End If
-		  
-		  Var Engram As New Beacon.MutableEngram(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
-		  Engram.Label = Dict.Value("Label").StringValue
-		  Engram.Availability = Dict.Value("Availability").UInt64Value
-		  Engram.Tags = Dict.Value("Tags")
-		  Engram.ModID = Dict.Value("ModID").StringValue
-		  Engram.ModName = Dict.Value("ModName").StringValue
-		  Return New Beacon.Engram(Engram)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As String
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
 		End Function
@@ -160,7 +150,13 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function HasUnlockDetails() As Boolean
-		  Return Self.mEngramEntryString.Length > 0
+		  Return Not Self.mEngramEntryString.IsEmpty
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Engram
+		  Return Self
 		End Function
 	#tag EndMethod
 
@@ -184,7 +180,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If Self.mLabel = "" Then
+		  If Self.mLabel.IsEmpty Then
 		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		  End If
 		  
@@ -193,14 +189,18 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
+		  If Self.mModID Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ModName() As String
-		  If IsNull(Self.mModID) = False And Self.mModID <> LocalData.UserModID Then
+		  If IsNull(Self.mModID) = False And Self.mModID <> Beacon.UserModID Then
 		    Return Self.mModName
 		  End If
 		  
@@ -232,27 +232,80 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableClone() As Beacon.MutableBlueprint
+		Function MutableClone() As Beacon.MutableEngram
 		  Return New Beacon.MutableEngram(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function MutableVersion() As Beacon.MutableEngram
+		  Return New Beacon.MutableEngram(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Engram) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Var SelfPath As String = If(Self.IsValid, Self.Path, Self.ClassString)
-		  Var OtherPath As String = If(Other.IsValid, Other.Path, Other.ClassString)
-		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
+		  Var SelfID As String = Self.ObjectID
+		  Var OtherID As String = Other.ObjectID
+		  If SelfID = OtherID Then
+		    Return 0
+		  End If
+		  
+		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseSensitive)
+		  
+		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  If Self.HasUnlockDetails Then
+		    Dict.Value("entry_string") = Self.mEngramEntryString
+		    If Self.mRequiredPlayerLevel Is Nil Then
+		      Dict.Value("required_level") = Nil
+		    Else
+		      Dict.Value("required_level") = Self.mRequiredPlayerLevel.IntegerValue
+		    End If
+		    If Self.mRequiredUnlockPoints Is Nil Then
+		      Dict.Value("required_points") = Nil
+		    Else
+		      Dict.Value("required_points") = Self.mRequiredUnlockPoints.IntegerValue
+		    End If
+		  Else
+		    Dict.Value("entry_string") = Nil
+		    Dict.Value("item_id") = Nil
+		    Dict.Value("required_points") = Nil
+		    Dict.Value("required_level") = Nil
+		  End If
+		  
+		  If Self.mStackSize Is Nil Then
+		    Dict.Value("stack_size") = Nil
+		  Else
+		    Dict.Value("stack_size") = Self.mStackSize.IntegerValue
+		  End If
+		  
+		  Call Self.Recipe // Forces the recipe to load
+		  
+		  If Self.mIngredients.Count = 0 Then
+		    Dict.Value("recipe") = Nil
+		  Else
+		    Var Ingredients() As Dictionary
+		    For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
+		      Ingredients.Add(Ingredient.Pack)
+		    Next
+		    Dict.Value("recipe") = Ingredients
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -262,6 +315,22 @@ Implements Beacon.Blueprint
 		  Else
 		    Return ""
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Recipe() As Beacon.RecipeIngredient()
+		  // To prevent recursion, engrams only load ingredients on demand
+		  If Self.mHasLoadedIngredients = False Then
+		    Self.mIngredients = Beacon.Data.LoadIngredientsForEngram(Self)
+		    Self.mHasLoadedIngredients = True
+		  End If
+		  
+		  Var Ingredients() As Beacon.RecipeIngredient
+		  For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
+		    Ingredients.Add(Ingredient)
+		  Next
+		  Return Ingredients
 		End Function
 	#tag EndMethod
 
@@ -286,26 +355,11 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
-		  Clone.ResizeTo(Self.mTags.LastRowIndex)
-		  For I As Integer = 0 To Self.mTags.LastRowIndex
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("Category") = Self.Category
-		  Dict.Value("UUID") = Self.ObjectID.StringValue
-		  Dict.Value("Label") = Self.Label
-		  Dict.Value("Path") = Self.Path
-		  Dict.Value("Availability") = Self.Availability
-		  Dict.Value("Tags") = Self.Tags
-		  Dict.Value("ModID") = Self.ModID.StringValue
-		  Dict.Value("ModName") = Self.ModName
-		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -320,6 +374,14 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mEngramEntryString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHasLoadedIngredients As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mIngredients() As Beacon.RecipeIngredient
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

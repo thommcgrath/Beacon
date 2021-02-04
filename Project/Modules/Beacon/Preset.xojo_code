@@ -5,7 +5,7 @@ Implements Beacon.Countable
 		Function ActiveModifierIDs() As String()
 		  Var IDs() As String
 		  For Each Entry As DictionaryEntry In Self.mModifierValues
-		    IDs.AddRow(Entry.Key)
+		    IDs.Add(Entry.Key)
 		  Next
 		  Return IDs
 		End Function
@@ -55,8 +55,8 @@ Implements Beacon.Countable
 		    Self.mModifierValues.Value(Entry.Key) = Dict.Clone
 		  Next
 		  
-		  Self.mContents.ResizeTo(Source.mContents.LastRowIndex)
-		  For I As Integer = 0 To Self.mContents.LastRowIndex
+		  Self.mContents.ResizeTo(Source.mContents.LastIndex)
+		  For I As Integer = 0 To Self.mContents.LastIndex
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
 		End Sub
@@ -64,7 +64,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mContents.LastRowIndex + 1
+		  Return Self.mContents.LastIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -92,9 +92,9 @@ Implements Beacon.Countable
 		  If Dict.HasKey("Entries") Then
 		    Var Contents() As Variant = Dict.Value("Entries")
 		    For Each EntryDict As Dictionary In Contents
-		      Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
+		      Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.FromSaveData(EntryDict)
 		      If Entry <> Nil Then
-		        Preset.mContents.AddRow(Entry)
+		        Preset.mContents.Add(Entry)
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Contents") Then
@@ -105,12 +105,12 @@ Implements Beacon.Countable
 		        Var ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
 		        Var Items() As Variant = Set.Value
 		        For Each Item As Dictionary In Items
-		          Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Item)
+		          Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Item)
 		          If Entry <> Nil Then
 		            Var Child As New Beacon.PresetEntry(Entry)
 		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
 		            Child.ValidForMap(Beacon.Maps.ScorchedEarth) = ValidForScorched
-		            Preset.mContents.AddRow(Child)
+		            Preset.mContents.Add(Child)
 		          End If
 		        Next
 		      Next
@@ -151,8 +151,8 @@ Implements Beacon.Countable
 		      End If
 		      
 		      Var IDs() As String = SourceKindToModifierID(ModifierID)
-		      If IDs.LastRowIndex = -1 Then
-		        IDs.AddRow(ModifierID)
+		      If IDs.LastIndex = -1 Then
+		        IDs.Add(ModifierID)
 		      End If
 		      
 		      For Each ID As String In IDs
@@ -202,7 +202,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Entry As Beacon.PresetEntry) As Integer
-		  For I As Integer = 0 To Self.mContents.LastRowIndex
+		  For I As Integer = 0 To Self.mContents.LastIndex
 		    If Self.mContents(I) = Entry Then
 		      Return I
 		    End If
@@ -220,8 +220,8 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Iterator() As Iterator
 		  Var Contents() As Variant
-		  Contents.ResizeTo(Self.mContents.LastRowIndex)
-		  For I As Integer = 0 To Self.mContents.LastRowIndex
+		  Contents.ResizeTo(Self.mContents.LastIndex)
+		  For I As Integer = 0 To Self.mContents.LastIndex
 		    Contents(I) = Self.mContents(I)
 		  Next
 		  Return New Beacon.GenericIterator(Contents)
@@ -325,18 +325,18 @@ Implements Beacon.Countable
 		  Var IDs() As String
 		  Select Case Kind
 		  Case "Bonus"
-		    IDs.AddRow(Beacon.PresetModifier.BonusCratesID)
-		    IDs.AddRow(Beacon.PresetModifier.AberrationSurfaceBonusCratesID)
+		    IDs.Add(Beacon.PresetModifier.BonusCratesID)
+		    IDs.Add(Beacon.PresetModifier.AberrationSurfaceBonusCratesID)
 		  Case "Cave"
-		    IDs.AddRow(Beacon.PresetModifier.CaveCratesID)
+		    IDs.Add(Beacon.PresetModifier.CaveCratesID)
 		  Case "Sea"
-		    IDs.AddRow(Beacon.PresetModifier.DeepSeaCratesID)
-		    IDs.AddRow(Beacon.PresetModifier.OpenDesertCratesID)
+		    IDs.Add(Beacon.PresetModifier.DeepSeaCratesID)
+		    IDs.Add(Beacon.PresetModifier.OpenDesertCratesID)
 		  Case "Standard"
-		    IDs.AddRow(Beacon.PresetModifier.BasicCratesID)
-		    IDs.AddRow(Beacon.PresetModifier.AberrationSurfaceCratesID)
-		    IDs.AddRow(Beacon.PresetModifier.BossesID)
-		    IDs.AddRow(Beacon.PresetModifier.ArtifactCratesID)
+		    IDs.Add(Beacon.PresetModifier.BasicCratesID)
+		    IDs.Add(Beacon.PresetModifier.AberrationSurfaceCratesID)
+		    IDs.Add(Beacon.PresetModifier.BossesID)
+		    IDs.Add(Beacon.PresetModifier.ArtifactCratesID)
 		  End Select
 		  Return IDs
 		End Function
@@ -347,8 +347,8 @@ Implements Beacon.Countable
 		  Var Hashes() As String
 		  Var Contents() As Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    Hashes.AddRow(Entry.Hash)
-		    Contents.AddRow(Entry.Export)
+		    Hashes.Add(Entry.Hash)
+		    Contents.Add(Entry.SaveData)
 		  Next
 		  Hashes.SortWith(Contents)
 		  
@@ -359,7 +359,7 @@ Implements Beacon.Countable
 		    Var ModifierID As String = Entry.Key
 		    Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil Then
-		      Definitions.AddRow(Modifier.ToDictionary)
+		      Definitions.Add(Modifier.ToDictionary)
 		    End If
 		  Next
 		  
@@ -391,7 +391,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Mask As UInt64) As Boolean
-		  If Mask = 0 Then
+		  If Mask = CType(0, UInt64) Then
 		    Return True
 		  End If
 		  

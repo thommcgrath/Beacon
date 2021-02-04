@@ -31,13 +31,19 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Engram
+		  Return New Beacon.Engram(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
 		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
-		    Self.mTags.RemoveRowAt(Idx)
+		    Self.mTags.RemoveAt(Idx)
 		  ElseIf Idx = -1 And Value = True Then
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		    Self.mTags.Sort()
 		  End If
 		End Sub
@@ -56,7 +62,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As v4UUID)
+		Sub ModID(Assigns Value As String)
 		  Self.mModID = Value
 		End Sub
 	#tag EndMethod
@@ -68,9 +74,31 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableEngram
+		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Recipe(Assigns Ingredients() As Beacon.RecipeIngredient)
+		  If Ingredients Is Nil Then
+		    Self.mIngredients.ResizeTo(-1)
+		    Self.mHasLoadedIngredients = True
+		    Return
+		  End If
+		  
+		  Self.mIngredients.ResizeTo(Ingredients.LastIndex)
+		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
+		    Self.mIngredients(Idx) = Ingredients(Idx)
+		  Next
+		  Self.mHasLoadedIngredients = True
 		End Sub
 	#tag EndMethod
 
@@ -98,9 +126,50 @@ Implements Beacon.MutableBlueprint
 		  
 		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)
-		    Self.mTags.AddRow(Tag)
+		    Self.mTags.Add(Tag)
 		  Next
 		  Self.mTags.Sort
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Unpack(Dict As Dictionary)
+		  If Dict.HasAllKeys("entry_string", "required_points", "required_level") Then
+		    If IsNull(Dict.Value("entry_string")) Or Dict.Value("entry_string").StringValue.IsEmpty Then
+		      Self.mEngramEntryString = ""
+		      Self.mRequiredUnlockPoints = Nil
+		      Self.mRequiredPlayerLevel = Nil
+		      Self.mItemID = Nil
+		    Else
+		      Self.mEngramEntryString = Dict.Value("entry_string").StringValue
+		      
+		      If IsNull(Dict.Value("required_level")) = False Then
+		        Self.mRequiredPlayerLevel = Dict.Value("required_level").IntegerValue
+		      Else
+		        Self.mRequiredPlayerLevel = Nil
+		      End If
+		      
+		      If IsNull(Dict.Value("required_points")) = False Then
+		        Self.mRequiredUnlockPoints = Dict.Value("required_points").IntegerValue
+		      Else
+		        Self.mRequiredUnlockPoints = Nil
+		      End If
+		    End If
+		  End If
+		  
+		  If Dict.HasKey("stack_size") And IsNull(Dict.Value("stack_size")) = False Then
+		    Self.mStackSize = Dict.Value("stack_size").IntegerValue
+		  Else
+		    Self.mStackSize = Nil
+		  End If
+		  
+		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
+		    Self.mIngredients = Beacon.RecipeIngredient.FromVariant(Dict.Value("recipe"), Nil)
+		    Self.mHasLoadedIngredients = True
+		  Else
+		    Self.mIngredients.ResizeTo(-1)
+		    Self.mHasLoadedIngredients = False
+		  End If
 		End Sub
 	#tag EndMethod
 

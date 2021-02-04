@@ -8,7 +8,7 @@ Implements Beacon.Countable
 		  If Idx > -1 Then
 		    If Replace Then
 		      // Remove the set so it is not counted when finding a unique label
-		      Self.mItemSets.RemoveRowAt(Idx)
+		      Self.mItemSets.RemoveAt(Idx)
 		    Else
 		      // Create a new item set. Use CopyFrom so the identifier is not copied
 		      Var Clone As New Beacon.ItemSet
@@ -18,14 +18,14 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Var Labels() As String
-		  Labels.ResizeTo(Self.mItemSets.LastRowIndex)
-		  For I As Integer = 0 To Labels.LastRowIndex
+		  Labels.ResizeTo(Self.mItemSets.LastIndex)
+		  For I As Integer = 0 To Labels.LastIndex
 		    Labels(I) = Self.mItemSets(I).Label
 		  Next
 		  
 		  Set.Label = Beacon.FindUniqueLabel(Set.Label, Labels)
 		  
-		  Self.mItemSets.AddRow(Set)
+		  Self.mItemSets.Add(Set)
 		  Self.mModified = True
 		  
 		  Return Set
@@ -47,7 +47,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Clear()
-		  If Self.mItemSets.LastRowIndex = -1 Then
+		  If Self.mItemSets.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -77,8 +77,8 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Self.mModified = Source.mModified
-		  Self.mItemSets.ResizeTo(Source.mItemSets.LastRowIndex)
-		  For Idx As Integer = 0 To Source.mItemSets.LastRowIndex
+		  Self.mItemSets.ResizeTo(Source.mItemSets.LastIndex)
+		  For Idx As Integer = 0 To Source.mItemSets.LastIndex
 		    Self.mItemSets(Idx) = New Beacon.ItemSet(Source.mItemSets(Idx))
 		  Next
 		End Sub
@@ -100,25 +100,25 @@ Implements Beacon.Countable
 		    Return Sets
 		  End If
 		  
-		  Var Dicts() As Variant
+		  Var Dicts() As Dictionary
 		  Try
-		    Dicts = SaveData
+		    Dicts = SaveData.DictionaryArrayValue
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Casting SaveData to array")
 		    Return Sets
 		  End Try
 		  
-		  For Idx As Integer = 0 To Dicts.LastRowIndex
+		  For Idx As Integer = 0 To Dicts.LastIndex
 		    Try
 		      Var Dict As Variant = Dicts(Idx)
 		      If IsNull(Dict) Or Dict.IsArray = True Or Dict.Type <> Variant.TypeObject Or (Dict.ObjectValue IsA Dictionary) = False Then
 		        Continue
 		      End If
 		      
-		      Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dictionary(Dict))
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dictionary(Dict))
 		      Call Sets.Append(Set)
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading item set dictionary #" + Str(Idx, "-0"))
+		      App.Log(Err, CurrentMethodName, "Reading item set dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
 		  Next
 		  
@@ -129,7 +129,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Set As Beacon.ItemSet) As Integer
-		  For Idx As Integer = 0 To Self.mItemSets.LastRowIndex
+		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
 		    If Self.mItemSets(Idx) = Set Then
 		      Return Idx
 		    End If
@@ -144,7 +144,7 @@ Implements Beacon.Countable
 		  
 		  Var Sets() As Variant
 		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    Sets.AddRow(Set)
+		    Sets.Add(Set)
 		  Next
 		  Return New Beacon.GenericIterator(Sets)
 		End Function
@@ -187,7 +187,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  Self.mItemSets.RemoveRowAt(Idx)
+		  Self.mItemSets.RemoveAt(Idx)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -196,11 +196,11 @@ Implements Beacon.Countable
 		Function SaveData() As Dictionary()
 		  Var Sets() As Dictionary
 		  For Each Set As Beacon.ItemSet In Self.mItemSets
-		    Var Dict As Dictionary = Set.Export
+		    Var Dict As Dictionary = Set.SaveData
 		    If Dict Is Nil Then
 		      Continue
 		    End If
-		    Sets.AddRow(Dict)
+		    Sets.Add(Dict)
 		  Next
 		  Return Sets
 		End Function

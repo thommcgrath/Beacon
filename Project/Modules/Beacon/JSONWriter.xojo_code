@@ -80,16 +80,11 @@ Inherits Thread
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Shared Function WriteSynchronous(Source As Dictionary, File As FolderItem, Compress As Boolean) As Boolean
+		  Var Content As String = Beacon.GenerateJSON(Source, Not Compress)
 		  If Compress Then
-		    Var Content As String = Beacon.GenerateJSON(Source, False)
-		    
-		    Var Compressor As New _GZipString
-		    Compressor.UseHeaders = True
-		    
-		    Var Bytes As MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
+		    Var Bytes As MemoryBlock = Beacon.Compress(Content)
 		    Return File.Write(Bytes)
 		  Else
-		    Var Content As String = Beacon.GenerateJSON(Source, True)
 		    Return File.Write(Content)
 		  End If
 		End Function

@@ -25,69 +25,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   650
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Engrams"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   "1"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin StatusBar ListStatusBar
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -95,6 +32,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -108,6 +46,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -119,6 +59,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Width           =   250
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -129,6 +70,9 @@ Begin ConfigEditor CraftingCostsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -149,6 +93,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -178,6 +123,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   396
@@ -191,6 +137,8 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -224,35 +172,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Value           =   0
       Visible         =   True
       Width           =   399
-      Begin LogoFillCanvas FillCanvas
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "No Selection"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   396
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   399
-      End
       Begin CraftingCostEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -282,12 +201,13 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Visible         =   True
          Width           =   399
       End
-      Begin LogoFillCanvas LogoFillCanvas1
+      Begin LogoFillCanvas FillCanvas
          AcceptFocus     =   False
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         Caption         =   "Multiple Selection"
+         Caption         =   "No Selection"
+         ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   396
@@ -301,6 +221,40 @@ Begin ConfigEditor CraftingCostsConfigEditor
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   399
+      End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "Multiple Selection"
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   396
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   3
@@ -328,6 +282,40 @@ Begin ConfigEditor CraftingCostsConfigEditor
       StackSize       =   0
       TabPanelIndex   =   0
    End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RightPadding    =   10
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
@@ -336,6 +324,7 @@ End
 		Sub EnableMenuItems()
 		  Self.EnableEditorMenuItem("CreateFibercraftServer")
 		  Self.EnableEditorMenuItem("AdjustCosts")
+		  Self.EnableEditorMenuItem("SetupElementTransfer")
 		End Sub
 	#tag EndEvent
 
@@ -344,28 +333,34 @@ End
 		  Var CreateFibercraftItem As New MenuItem("Setup Fibercraft Server")
 		  CreateFibercraftItem.Name = "CreateFibercraftServer"
 		  CreateFibercraftItem.AutoEnabled = False
-		  Items.AddRow(CreateFibercraftItem)
+		  Items.Add(CreateFibercraftItem)
 		  
 		  Var AdjustCostsItem As New MenuItem("Adjust All Crafting Costs")
 		  AdjustCostsItem.Name = "AdjustCosts"
 		  AdjustCostsItem.AutoEnabled = False
-		  Items.AddRow(AdjustCostsItem)
+		  Items.Add(AdjustCostsItem)
+		  
+		  Var SetupElementTransferItem As New MenuItem("Setup Transferrable Element")
+		  SetupElementTransferItem.Name = "SetupElementTransfer"
+		  SetupElementTransferItem.AutoEnabled = False
+		  Items.Add(SetupElementTransferItem)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
+		  Self.SetListWidth(Self.ListMinWidth)
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.CraftingCosts.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameCraftingCosts) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.CraftingCosts.ConfigName))
+		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.NameCraftingCosts))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return True
 		  End If
@@ -375,7 +370,7 @@ End
 		  Var NewEngrams() As Beacon.Engram = OtherConfig.Engrams
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Config.Cost(Engram) = OtherConfig.Cost(Engram)
-		    NewCosts.AddRow(Config.Cost(Engram))
+		    NewCosts.Add(Config.Cost(Engram))
 		  Next
 		  
 		  Self.Changed = True
@@ -387,19 +382,15 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  If Initial Then
-		    Self.SetListWidth(Preferences.CraftingSplitterPosition)
-		  Else
-		    Self.SetListWidth(Self.Header.Width)
-		  End If
+		  #Pragma Unused Initial
 		  
-		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
+		  Self.SetListWidth(Preferences.CraftingSplitterPosition)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.CraftingCosts.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCraftingCosts)
 		End Sub
 	#tag EndEvent
 
@@ -442,6 +433,20 @@ End
 		End Function
 	#tag EndMenuHandler
 
+	#tag MenuHandler
+		Function SetupElementTransfer() As Boolean Handles SetupElementTransfer.Action
+			Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+			If SetupTransferrableElementDialog.Present(Self, Config, Self.Document.Mods) Then
+			Call Self.Config(True) // Forces adding the config to the file
+			Self.UpdateList()
+			Self.Changed = Config.Modified
+			End If
+			
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
 
 	#tag Method, Flags = &h21
 		Private Sub AdjustCosts()
@@ -464,7 +469,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
-		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameCraftingCosts
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.CraftingCosts
@@ -489,7 +494,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.CraftingCosts.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameCraftingCosts)
 		End Function
 	#tag EndMethod
 
@@ -516,15 +521,12 @@ End
 		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - CraftingCostEditor.MinimumWidth)
 		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
-		  Self.Header.Width = ListWidth
-		  Self.HeaderSeparator.Width = ListWidth
+		  Self.ConfigToolbar.Width = ListWidth
 		  Self.List.Width = ListWidth
 		  Self.ListSeparator.Left = ListWidth
 		  Self.ListStatusBar.Width = ListWidth
 		  Self.Panel.Left = Self.ListSeparator.Left + Self.ListSeparator.Width
 		  Self.Panel.Width = EditorWidth
-		  
-		  Preferences.CraftingSplitterPosition = ListWidth
 		End Sub
 	#tag EndMethod
 
@@ -535,7 +537,7 @@ End
 		  
 		  Var WithDefaults As Boolean = True
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple, WithDefaults)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -543,15 +545,9 @@ End
 		  
 		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Var Cost As Beacon.CraftingCost
-		    If WithDefaults Then
-		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
-		    End If
-		    If Cost Is Nil Then
-		      Cost = New Beacon.CraftingCost(Engram)
-		    End If
+		    Var Cost As New Beacon.CraftingCost(Engram, WithDefaults)
 		    Config.Add(Cost)
-		    NewCosts.AddRow(Cost)
+		    NewCosts.Add(Cost)
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
@@ -569,7 +565,7 @@ End
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -581,7 +577,7 @@ End
 		    Var Cost As New Beacon.CraftingCost(SourceCost)
 		    Cost.Engram = Engram
 		    Config.Add(Cost)
-		    NewCosts.AddRow(Cost)
+		    NewCosts.Add(Cost)
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
@@ -597,7 +593,7 @@ End
 		      Continue
 		    End If
 		    
-		    Arr.AddRow(Self.List.RowTagAt(I))
+		    Arr.Add(Self.List.RowTagAt(I))
 		  Next
 		  Self.UpdateList(Arr)
 		End Sub
@@ -610,13 +606,13 @@ End
 		  
 		  Var ObjectIDs() As String
 		  For Each Item As Beacon.CraftingCost In SelectItems
-		    ObjectIDs.AddRow(Item.ObjectID)
+		    ObjectIDs.Add(Item.ObjectID)
 		  Next
 		  
 		  Self.List.RemoveAllRows
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
-		  For I As Integer = 0 To Engrams.LastRowIndex
+		  For I As Integer = 0 To Engrams.LastIndex
 		    Var Cost As Beacon.CraftingCost = Config.Cost(Engrams(I))
 		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
@@ -634,7 +630,7 @@ End
 		Private Sub UpdateList(SelectItem As Beacon.CraftingCost)
 		  Var Arr() As Beacon.CraftingCost
 		  If SelectItem <> Nil Then
-		    Arr.AddRow(SelectItem)
+		    Arr.Add(SelectItem)
 		  End If
 		  Self.UpdateList(Arr)
 		  Self.List.EnsureSelectionIsVisible()
@@ -649,9 +645,9 @@ End
 		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
 		  
 		  If SelectedItems > 0 Then
-		    Self.ListStatusBar.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
+		    Self.ListStatusBar.Caption = SelectedItems.ToString(Locale.Current, ",##0") + " of " + TotalItems.ToString(Locale.Current, ",##0") + " " + Noun + " Selected"
 		  Else
-		    Self.ListStatusBar.Caption = Str(TotalItems, "-0") + " " + Noun
+		    Self.ListStatusBar.Caption = TotalItems.ToString(Locale.Raw, "0") + " " + Noun
 		  End If
 		End Sub
 	#tag EndMethod
@@ -673,7 +669,10 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingcost", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageMultipleSelection, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -688,36 +687,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.SetListWidth(NewSize)
-		  NewSize = Me.Width
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
-		  AddButton.HelpTag = "Change the crafting cost for a new item."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected crafting override."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEngram"
-		    Self.ShowAddEngram()
-		  Case "Duplicate"
-		    Self.ShowDuplicateSelection()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Change()
@@ -735,7 +704,10 @@ End
 		    Self.Panel.SelectedPanelIndex = Self.PageMultipleSelection
 		  End If
 		  
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("DuplicateButton")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		  
 		  Self.UpdateStatus()
 		End Sub
@@ -754,7 +726,7 @@ End
 		      Continue
 		    End If
 		    
-		    Costs.AddRow(Me.RowTagAt(I))
+		    Costs.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Costs, "crafting cost override", "crafting cost overrides") = False Then
@@ -797,13 +769,13 @@ End
 		    End If
 		    
 		    Var Cost As Beacon.CraftingCost = Me.RowTagAt(I)
-		    SelectedCosts.AddRow(Cost)
-		    Dicts.AddRow(Cost.Export)
+		    SelectedCosts.Add(Cost)
+		    Dicts.Add(Cost.Export)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
 		  
-		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.CraftingCosts.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.NameCraftingCosts, App.IdentityManager.CurrentIdentity.OmniVersion) Then
 		    Return
 		  End If
 		  
@@ -815,7 +787,7 @@ End
 		    
 		    Var Config As Beacon.ConfigValue = BeaconConfigs.CraftingCosts.ConfigValueForCraftingCost(Cost)
 		    If (Config Is Nil) = False Then
-		      Lines.AddRow(Config.Key + "=" + Config.Value)
+		      Lines.Add(Config.Command)
 		    End If
 		  Next
 		  
@@ -846,7 +818,7 @@ End
 		        Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
 		          Config.Add(Cost)
-		          Costs.AddRow(Cost)
+		          Costs.Add(Cost)
 		        End If
 		      Next
 		      
@@ -881,7 +853,7 @@ End
 #tag Events FibercraftBuilderThread
 	#tag Event
 		Sub Run()
-		  Var Fiber As Beacon.Engram = Beacon.Data.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers")
+		  Var Fiber As Beacon.Engram = Beacon.Data.GetEngramByID("244bc843-2540-486e-af4a-8824500c0e56")
 		  
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
@@ -893,7 +865,7 @@ End
 		      Return
 		    End If
 		    
-		    EngramDict.Value(Engram.Path) = Engram
+		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
 		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
@@ -904,7 +876,7 @@ End
 		      Return
 		    End If
 		    
-		    EngramDict.Value(Engram.Path) = Engram
+		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
 		  Config = New BeaconConfigs.CraftingCosts
@@ -964,18 +936,18 @@ End
 		  Var Engrams() As Beacon.Engram = OriginalConfig.Engrams
 		  Var Filter As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
-		    Filter.Value(Engram.Path) = True
+		    Filter.Value(Engram.ObjectID) = True
 		  Next
 		  
-		  Var Paths() As String = LocalData.SharedInstance.GetPathsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)
-		  For Each Path As String In Paths
-		    If Filter.HasKey(Path) Then
+		  Var ObjectIDs() As String = LocalData.SharedInstance.GetObjectIDsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)
+		  For Each ObjectID As String In ObjectIDs
+		    If Filter.HasKey(ObjectID) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByPath(Path)
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByID(ObjectID)
 		    If (Engram Is Nil) = False Then
-		      Engrams.AddRow(Engram)
+		      Engrams.Add(Engram)
 		    End If
 		  Next
 		  
@@ -991,21 +963,21 @@ End
 		    NumProcessed = NumProcessed + 1
 		    Var Cost As Beacon.CraftingCost = OriginalConfig.Cost(Engram)
 		    If Cost Is Nil Then
-		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
+		      Cost = New Beacon.CraftingCost(Engram, True)
 		    End If
 		    
-		    If Cost Is Nil Then
+		    If Cost Is Nil Or Cost.Count = 0 Then
 		      Continue
 		    End If
 		    
 		    For IngredientIdx As Integer = 0 To Cost.LastRowIndex
-		      Cost.Quantity(IngredientIdx) = Ceil(Cost.Quantity(IngredientIdx) * Self.mCostMultiplier)
+		      Cost.Quantity(IngredientIdx) = Ceiling(Cost.Quantity(IngredientIdx) * Self.mCostMultiplier)
 		    Next
 		    
 		    ReplacementConfig.Add(Cost)
 		    
 		    Self.mProgressWindow.Progress = NumProcessed / Engrams.Count
-		    Self.mProgressWindow.Detail = "Updated " + Format(NumProcessed, "0,") + " of " + Format(Engrams.Count, "0,")
+		    Self.mProgressWindow.Detail = "Updated " + NumProcessed.ToString(Locale.Current, ",##0") + " of " + Engrams.Count.ToString(Locale.Current, ",##0")
 		  Next
 		  
 		  Self.Document.AddConfigGroup(ReplacementConfig)
@@ -1020,13 +992,79 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEngramButton"
+		    Self.ShowAddEngram()
+		  Case "DuplicateButton"
+		    Self.ShowDuplicateSelection()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("EngramsTitle", "Engrams"))
+		  Me.Append(OmniBarItem.CreateSeparator("EngramsTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddEngramButton", "New Recipe", IconToolbarAdd, "Change the recipe for a new item."))
+		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected recipe.", False))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
+		  
+		  Me.Item("EngramsTitle").Priority = 5
+		  Me.Item("EngramsTitleSeparator").Priority = 5
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(DraggedResizer As OmniBarItem, DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DraggedResizer
+		  #Pragma Unused DeltaY
+		  
+		  Self.SetListWidth(Me.Width + DeltaX)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished(DraggedResizer As OmniBarItem)
+		  #Pragma Unused DraggedResizer
+		  
+		  Preferences.CraftingSplitterPosition = Me.Width
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1094,14 +1132,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -1116,14 +1146,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

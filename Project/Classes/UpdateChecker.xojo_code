@@ -123,16 +123,8 @@ Protected Class UpdateChecker
 		  End Try
 		  
 		  If Dict.HasKey("notices") Then
-		    Var Notices() As Variant = Dict.Value("notices")
+		    // Not needed anymore
 		    Dict.Remove("notices")
-		    
-		    For Each Notice As Dictionary In Notices
-		      Var Notification As New Beacon.UserNotification(Notice.Value("message"))
-		      Notification.SecondaryMessage = Notice.Value("secondary_message")
-		      Notification.ActionURL = Notice.Value("action_url")
-		      Notification.DoNotResurrect = True
-		      LocalData.SharedInstance.SaveNotification(Notification)
-		    Next
 		  End If
 		  
 		  If Dict.KeyCount = 0 Then
@@ -214,7 +206,7 @@ Protected Class UpdateChecker
 		Private Shared Function OSVersion() As String
 		  Var MajorVersion, MinorVersion, BugVersion As Integer
 		  OSVersion(MajorVersion, MinorVersion, BugVersion)
-		  Return Str(MajorVersion, "-0") + "." + Str(MinorVersion, "-0") + "." + Str(BugVersion, "-0")
+		  Return MajorVersion.ToString(Locale.Raw, "0") + "." + MinorVersion.ToString(Locale.Raw, "0") + "." + BugVersion.ToString(Locale.Raw, "0")
 		End Function
 	#tag EndMethod
 
@@ -255,10 +247,7 @@ Protected Class UpdateChecker
 		  End If
 		  
 		  Try
-		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Var Contents As MemoryBlock = Stream.Read(Stream.Length)
-		    Stream.Close
-		    
+		    Var Contents As MemoryBlock = File.Read
 		    Return Crypto.RSAVerifySignature(Contents, DecodeHex(Signature), PublicKey)
 		  Catch Err As RuntimeException
 		    Return False

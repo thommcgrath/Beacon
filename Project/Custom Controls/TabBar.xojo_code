@@ -5,7 +5,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Var Point As New Xojo.Point(X, Y)
-		  For I As Integer = 0 To Self.mTabRects.LastRowIndex
+		  For I As Integer = 0 To Self.mTabRects.LastIndex
 		    If Self.mTabRects(I) = Nil Then
 		      Continue
 		    End If
@@ -75,8 +75,10 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  Var Count As Integer = Self.Count
 		  Var MaxTotalTabWidth As Integer = (Count * Self.MaxTabWidth) + (Count - 1)
@@ -196,12 +198,12 @@ Implements ObservationKit.Observer
 		  
 		  Var MaxCaptionWidth As Integer = G.Width - ((ButtonSize * 2) + (CellPadding * 4))
 		  
-		  Var Icon As Picture = View.ToolbarIcon
+		  Var Icon As Picture = View.ViewIcon
 		  If (Icon Is Nil) = False Then
 		    MaxCaptionWidth = MaxCaptionWidth - (CellPadding + ButtonSize)
 		  End If
 		  
-		  Var Caption As String = View.ToolbarCaption
+		  Var Caption As String = View.ViewTitle
 		  Var CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth).NearestMultiple(PrecisionX)
 		  Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, PrecisionX)
 		  Var CaptionBottom As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), PrecisionY)
@@ -248,7 +250,7 @@ Implements ObservationKit.Observer
 		Private Sub MouseMove(X As Integer, Y As Integer)
 		  Var HoverRect As Xojo.Rect
 		  Var Point As New Xojo.Point(X, Y)
-		  For I As Integer = 0 To Self.mCloseBoxes.LastRowIndex
+		  For I As Integer = 0 To Self.mCloseBoxes.LastIndex
 		    If Self.mCloseBoxes(I) = Nil Then
 		      Continue
 		    End If
@@ -267,11 +269,12 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  Select Case Key
 		  Case "BeaconSubview.Progress"
@@ -311,7 +314,7 @@ Implements ObservationKit.Observer
 			  If Self.mCount <> Value Then
 			    Self.mCount = Value
 			    
-			    Var OldBound As Integer = Self.mTabRects.LastRowIndex
+			    Var OldBound As Integer = Self.mTabRects.LastIndex
 			    Var NewBound As Integer = Value - 1
 			    For I As Integer = OldBound + 1 To NewBound
 			      Var View As BeaconSubview = RaiseEvent ViewAtIndex(I)
@@ -420,6 +423,30 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

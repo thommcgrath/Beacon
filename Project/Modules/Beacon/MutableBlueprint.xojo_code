@@ -26,7 +26,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As v4UUID)
+		Sub ModID(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
@@ -45,6 +45,12 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Unpack(Dict As Dictionary)
 		  
 		End Sub
 	#tag EndMethod

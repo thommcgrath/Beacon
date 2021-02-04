@@ -55,50 +55,6 @@ Begin BeaconDialog EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin DelayedTextField FilterField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   "Search"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         Italic          =   False
-         Left            =   40
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   340
-      End
       Begin CheckBox SingleEntryCheck
          AutoDeactivate  =   True
          Bold            =   False
@@ -119,7 +75,7 @@ Begin BeaconDialog EntryEditor
          LockTop         =   False
          Scope           =   2
          State           =   0
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -132,16 +88,14 @@ Begin BeaconDialog EntryEditor
          Visible         =   True
          Width           =   340
       End
-      Begin TagPicker Picker
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Border          =   15
-         DoubleBuffer    =   False
+      Begin DelayedSearchField FilterField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowRecentItems=   False
+         ClearMenuItemValue=   "Clear"
          Enabled         =   True
-         Height          =   67
-         HelpTag         =   ""
+         Height          =   22
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          Left            =   40
@@ -150,19 +104,21 @@ Begin BeaconDialog EntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MaximumRecentItems=   -1
+         RecentItemsValue=   "Recent Searches"
          Scope           =   2
-         ScrollSpeed     =   20
-         Spec            =   ""
-         TabIndex        =   4
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         Top             =   90
-         Transparent     =   True
-         UseFocusRing    =   True
+         Text            =   ""
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
          Visible         =   True
          Width           =   340
       End
       Begin BeaconListbox EngramList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -173,6 +129,9 @@ Begin BeaconDialog EntryEditor
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   24
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -193,6 +152,7 @@ Begin BeaconDialog EntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -200,7 +160,7 @@ Begin BeaconDialog EntryEditor
          SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -216,6 +176,39 @@ Begin BeaconDialog EntryEditor
          Width           =   340
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin TagPicker Picker
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Border          =   15
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   67
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         Spec            =   ""
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Top             =   90
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -337,6 +330,7 @@ Begin BeaconDialog EntryEditor
          Width           =   80
       End
       Begin BeaconListbox SimulatedResultsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -347,6 +341,9 @@ Begin BeaconDialog EntryEditor
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -367,6 +364,7 @@ Begin BeaconDialog EntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -532,14 +530,14 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
-		  If Sources <> Nil And Sources.LastRowIndex > 0 Then
+		  If Sources <> Nil And Sources.LastIndex > 0 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
 		  Var Win As New EntryEditor(Mods)
 		  
-		  If Sources <> Nil And Sources.LastRowIndex = 0 Then
+		  If Sources <> Nil And Sources.LastIndex = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
 		  End If
 		  
@@ -549,7 +547,7 @@ End
 		  
 		  Var Entries() As Beacon.SetEntry = Win.mCreatedEntries
 		  Win.Close
-		  If Entries.LastRowIndex = -1 Then
+		  If Entries.LastIndex = -1 Then
 		    Return Nil
 		  Else
 		    Return Entries
@@ -561,11 +559,11 @@ End
 		Private Sub SetupUI(Prefilter As String = "")
 		  If Self.mOriginalEntry <> Nil Then
 		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
-		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
+		      Self.mSelectedEngrams.Value(Option.Engram.ObjectID) = Option
 		    Next
 		  End If
 		  
-		  Self.FilterField.Value = Prefilter
+		  Self.FilterField.Text = Prefilter
 		  Self.UpdateFilter()
 		  SingleEntryCheck.Value = Self.mSelectedEngrams.KeyCount > 1
 		  
@@ -583,7 +581,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Value
+		  Var SearchText As String = Self.FilterField.Text
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
@@ -592,15 +590,15 @@ End
 		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Var Weight As String = ""
-		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
+		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
+		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.ObjectID)).Weight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
-		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    Self.mEngramRowIndexes.Value(Engram.ObjectID) = EngramList.LastAddedRowIndex
+		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.ObjectID)
 		  Next
 		  
 		  Self.ListUnknownEngrams()
@@ -656,7 +654,7 @@ End
 		  For Each Item As DictionaryEntry In GroupedItems
 		    Var Description As String = Item.Key
 		    Var Quantity As Integer = Item.Value
-		    SimulatedResultsList.AddRow(Str(Quantity, "0") + "x " + Description)
+		    SimulatedResultsList.AddRow(Quantity.ToString(Locale.Raw, "0") + "x " + Description)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -702,13 +700,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events FilterField
-	#tag Event
-		Sub TextChange()
-		  Self.UpdateFilter()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SingleEntryCheck
 	#tag Event
 		Sub Action()
@@ -716,26 +707,10 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Picker
+#tag Events FilterField
 	#tag Event
-		Sub TagsChanged()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
-		  Self.UpdateFilter
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldAdjustHeight(Delta As Integer)
-		  If Me = Nil Then
-		    Return
-		  End If
-		  
-		  Me.Height = Me.Height + Delta
-		  Self.EngramList.Height = Self.EngramList.Height - Delta
-		  Self.EngramList.Top = Self.EngramList.Top + Delta
+		Sub TextChanged()
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -748,7 +723,7 @@ End
 		  Case Self.ColumnIncluded
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    If Checked Then
-		      If Self.mSelectedEngrams.HasKey(Engram.Path) = False Then
+		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = False Then
 		        Var WeightString As String = Me.CellValueAt(Row, Self.ColumnWeight)
 		        If WeightString = "" Then
 		          WeightString = "50"
@@ -757,21 +732,21 @@ End
 		        
 		        Var Weight As Double = Abs(CDbl(WeightString)) / 100
 		        Var Option As New Beacon.SetEntryOption(Engram, Weight)
-		        Self.mSelectedEngrams.Value(Engram.Path) = Option
+		        Self.mSelectedEngrams.Value(Engram.ObjectID) = Option
 		      Else
 		        Return
 		      End If
 		    Else
-		      If Self.mSelectedEngrams.HasKey(Engram.Path) = True Then
-		        Self.mSelectedEngrams.Remove(Engram.Path)
+		      If Self.mSelectedEngrams.HasKey(Engram.ObjectID) = True Then
+		        Self.mSelectedEngrams.Remove(Engram.ObjectID)
 		      Else
 		        Return
 		      End If
 		    End If
 		  Case Self.ColumnWeight
-		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
+		    If Self.mSelectedEngrams.HasKey(Engram.ObjectID) Then
 		      Var Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
-		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
+		      Self.mSelectedEngrams.Value(Engram.ObjectID) = New Beacon.SetEntryOption(Engram, Weight)
 		    End If
 		  Else
 		    Return
@@ -798,7 +773,7 @@ End
 		      Var Engram1 As Beacon.Engram = Me.RowTagAt(Row1)
 		      Var Engram2 As Beacon.Engram = Me.RowTagAt(Row2)
 		      
-		      Result = StrComp(Engram1.Label, Engram2.Label, 0)
+		      Result = Engram1.Label.Compare(Engram2.Label, ComparisonOptions.CaseSensitive)
 		    End If
 		  Case Self.ColumnWeight
 		    Var Weight1 As Double = Val(Me.CellValueAt(Row1, Column))
@@ -826,6 +801,29 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events Picker
+	#tag Event
+		Sub TagsChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
+		  Self.UpdateFilter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
+		  Me.Height = Me.Height + Delta
+		  Self.EngramList.Height = Self.EngramList.Height - Delta
+		  Self.EngramList.Top = Self.EngramList.Top + Delta
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EntryPropertiesEditor1
 	#tag Event
 		Sub Changed()
@@ -849,7 +847,7 @@ End
 		  
 		  Var Options() As Beacon.SetEntryOption
 		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
-		    Options.AddRow(Entry.Value)
+		    Options.Add(Entry.Value)
 		  Next
 		  
 		  Var Entries() As Beacon.SetEntry
@@ -859,27 +857,27 @@ End
 		    For Each Option As Beacon.SetEntryOption In Options
 		      Entry.Append(Option)
 		    Next
-		    Entries.AddRow(Entry)
-		  ElseIf Options.LastRowIndex > 0 Then
+		    Entries.Add(Entry)
+		  ElseIf Options.LastIndex > 0 Then
 		    If SingleEntryCheck.Value Then
 		      // Merge all into one
 		      Var Entry As New Beacon.SetEntry
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Entry.Append(Option)
 		      Next
-		      Entries.AddRow(Entry)
+		      Entries.Add(Entry)
 		    Else
 		      // Multiple entries
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Var Entry As New Beacon.SetEntry
 		        Entry.Append(Option)    
-		        Entries.AddRow(Entry)
+		        Entries.Add(Entry)
 		      Next
 		    End If
-		  ElseIf Options.LastRowIndex = 0 Then
+		  ElseIf Options.LastIndex = 0 Then
 		    Var Entry As New Beacon.SetEntry
 		    Entry.Append(Options(0))
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  Else
 		    System.Beep
 		    Return

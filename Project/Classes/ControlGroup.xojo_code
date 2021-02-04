@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Ctl As RectControl)
 		  If Self.IndexOf(Ctl) = -1 Then
-		    Self.mMembers.AddRow(New WeakRef(Ctl))
+		    Self.mMembers.Add(New WeakRef(Ctl))
 		    Self.UpdateBounds()
 		  End If
 		End Sub
@@ -13,7 +13,8 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Constructor(ParamArray Controls() As RectControl)
 		  For Each Ctl As RectControl In Controls
-		    Self.mMembers.AddRow(New WeakRef(Ctl))
+		    Self.mVisible = Self.mVisible Or Ctl.Visible
+		    Self.mMembers.Add(New WeakRef(Ctl))
 		  Next
 		  Self.UpdateBounds()
 		End Sub
@@ -27,7 +28,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Ctl As RectControl) As Integer
-		  For I As Integer = 0 To Self.mMembers.LastRowIndex
+		  For I As Integer = 0 To Self.mMembers.LastIndex
 		    If Self.mMembers(I).Value = Ctl Then
 		      Return I
 		    End If
@@ -40,7 +41,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Ctl As RectControl)
 		  If Self.IndexOf(Ctl) = -1 Then
-		    Self.mMembers.AddRowAt(Index, New WeakRef(Ctl))
+		    Self.mMembers.AddAt(Index, New WeakRef(Ctl))
 		    Self.UpdateBounds()
 		  End If
 		End Sub
@@ -56,7 +57,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mMembers.LastRowIndex
+		  Return Self.mMembers.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -102,7 +103,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mMembers.RemoveRowAt(Index)
+		  Self.mMembers.RemoveAt(Index)
 		End Sub
 	#tag EndMethod
 
@@ -116,7 +117,7 @@ Implements Iterable
 		Private Sub UpdateBounds()
 		  Var Top, Left, Bottom, Right As Integer
 		  Var First As Boolean = True
-		  For I As Integer = 0 To Self.mMembers.LastRowIndex
+		  For I As Integer = 0 To Self.mMembers.LastIndex
 		    Var Ctl As RectControl = RectControl(Self.mMembers(I).Value)
 		    If Ctl = Nil Then
 		      Continue
@@ -188,6 +189,10 @@ Implements Iterable
 		Private mMembers() As WeakRef
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mVisible As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -216,6 +221,27 @@ Implements Iterable
 			End Set
 		#tag EndSetter
 		Top As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mVisible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  For Each Ref As WeakRef In Self.mMembers
+			    If Ref.Value = Nil Then
+			      Continue
+			    End If
+			    
+			    Var Ctl As RectControl = RectControl(Ref.Value)
+			    Ctl.Visible = Value
+			  Next
+			End Set
+		#tag EndSetter
+		Visible As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -299,6 +325,14 @@ Implements Iterable
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Visible"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

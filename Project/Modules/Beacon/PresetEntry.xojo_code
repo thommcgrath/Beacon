@@ -2,13 +2,13 @@
 Protected Class PresetEntry
 Inherits Beacon.SetEntry
 	#tag Method, Flags = &h0
-		Function Availability() As Integer
+		Function Availability() As UInt64
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Availability(Assigns Value As Integer)
+		Sub Availability(Assigns Value As UInt64)
 		  Self.mAvailability = Value
 		End Sub
 	#tag EndMethod
@@ -16,7 +16,7 @@ Inherits Beacon.SetEntry
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		  Self.mRespectQualityModifier = True
 		  Self.mRespectQuantityMultiplier = True
 		  Self.mRespectBlueprintMultiplier = True
@@ -55,19 +55,8 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Dictionary
-		  Var Dict As Dictionary = Super.Export
-		  Dict.Value("Availability") = Self.mAvailability
-		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
-		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
-		  Dict.Value("RespectBlueprintMultiplier") = Self.mRespectBlueprintMultiplier
-		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.PresetEntry
-		  Var SetEntry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.PresetEntry
+		  Var SetEntry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Dict)
 		  If SetEntry = Nil Then
 		    Return Nil
 		  End If
@@ -118,6 +107,18 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  // Calling the overridden superclass method.
+		  Var Dict As Dictionary = Super.SaveData
+		  Dict.Value("Availability") = Self.mAvailability
+		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
+		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
+		  Dict.Value("RespectBlueprintMultiplier") = Self.mRespectBlueprintMultiplier
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
 		  Return Self.ValidForMask(Map.Mask)
 		End Function
@@ -131,7 +132,7 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Mask As UInt64) As Boolean
-		  Return (Self.mAvailability And Mask) > 0
+		  Return (Self.mAvailability And Mask) > CType(0, UInt64)
 		End Function
 	#tag EndMethod
 
@@ -147,7 +148,7 @@ Inherits Beacon.SetEntry
 
 
 	#tag Property, Flags = &h21
-		Private mAvailability As Integer
+		Private mAvailability As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

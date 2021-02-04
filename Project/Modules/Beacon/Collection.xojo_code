@@ -3,7 +3,7 @@ Protected Class Collection
 Implements Countable,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As Variant)
-		  Self.mItems.AddRow(Item)
+		  Self.mItems.Add(Item)
 		End Sub
 	#tag EndMethod
 
@@ -17,15 +17,15 @@ Implements Countable,Beacon.Countable,Iterable
 		Sub Constructor(Source As Iterable)
 		  Self.Constructor(-1)
 		  For Each Item As Variant In Source
-		    Self.mItems.AddRow(Item)
+		    Self.mItems.Add(Item)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Items() As Variant)
-		  Self.Constructor(Items.LastRowIndex)
-		  For I As Integer = 0 To Items.LastRowIndex
+		  Self.Constructor(Items.LastIndex)
+		  For I As Integer = 0 To Items.LastIndex
 		    Self.mItems(I) = Items(I)
 		  Next
 		End Sub
@@ -33,13 +33,13 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mItems.LastRowIndex + 1
+		  Return Self.mItems.LastIndex + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Variant) As Integer
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(I) = Item Then
 		      Return I
 		    End If
@@ -50,7 +50,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Variant)
-		  Self.mItems.AddRowAt(Index, Item)
+		  Self.mItems.AddAt(Index, Item)
 		End Sub
 	#tag EndMethod
 
@@ -64,7 +64,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -82,7 +82,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		End Sub
 	#tag EndMethod
 

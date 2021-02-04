@@ -4,7 +4,7 @@ Protected Class Engram
 		Function AsDictionary() As Dictionary
 		  Var Tags() As String
 		  If Self.CanBeBlueprint Then
-		    Tags.AddRow("blueprintable")
+		    Tags.Add("blueprintable")
 		  End If
 		  
 		  Var Dict As New Dictionary
@@ -22,16 +22,16 @@ Protected Class Engram
 		Function ClassString() As String
 		  If Self.mPath.IndexOf("/") > -1 And Self.mPath.IndexOf(".") > -1 Then
 		    Var Components() As String = Self.mPath.Split("/")
-		    Var Tail As String = Components(Components.LastRowIndex)
+		    Var Tail As String = Components(Components.LastIndex)
 		    Components = Tail.Split(".")
-		    Return Components(Components.LastRowIndex) + "_C"
+		    Return Components(Components.LastIndex) + "_C"
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mAvailability = Beacon.Maps.UniversalMask
 		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
@@ -119,7 +119,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function Hash() As String
-		  Var Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToString + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Var Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToString + ":" + if(Self.CanBeBlueprint, "True", "False")
 		  Return EncodeHex(Crypto.MD5(Value))
 		End Function
 	#tag EndMethod

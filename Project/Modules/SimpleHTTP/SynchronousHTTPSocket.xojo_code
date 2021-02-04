@@ -19,7 +19,7 @@ Inherits URLConnection
 		  Self.mLastContent = Nil
 		  Self.mLastHTTPStatus = 0
 		  Self.mLastException = e
-		  RaiseEvent Error(e)
+		  RaiseEvent Error(Self.mLastURL, e)
 		  If Self.mOriginThread <> Nil Then
 		    Self.mOriginThread.Resume
 		  End If
@@ -57,9 +57,16 @@ Inherits URLConnection
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastURL() As String
+		  Return Self.mLastURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Send(Method As String, URL As String)
-		  Self.mOriginThread = App.CurrentThread
+		  Self.mOriginThread = Thread.Current
 		  Self.RequestHeader("User-Agent") = App.UserAgent
+		  Self.mLastURL = URL
 		  Super.Send(Method, URL)
 		  If Self.mOriginThread <> Nil Then
 		    Self.mOriginThread.Pause
@@ -88,7 +95,7 @@ Inherits URLConnection
 
 
 	#tag Hook, Flags = &h0
-		Event Error(err as RuntimeException)
+		Event Error(URL as String, Err as RuntimeException)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -106,6 +113,10 @@ Inherits URLConnection
 
 	#tag Property, Flags = &h21
 		Private mLastHTTPStatus As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastURL As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

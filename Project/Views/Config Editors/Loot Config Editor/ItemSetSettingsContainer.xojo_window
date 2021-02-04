@@ -55,6 +55,7 @@ Begin ContainerControl ItemSetSettingsContainer
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -68,6 +69,8 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   14
       TabPanelIndex   =   0
@@ -609,17 +612,17 @@ End
 			  Self.mSettingUp = True
 			  If Value <> Nil Then
 			    Self.mItemSetRef = New WeakRef(Value)
-			    Self.NameField.Value = Value.Label
+			    Self.NameField.Text = Value.Label
 			    Self.MinEntriesField.DoubleValue = Value.MinNumItems
 			    Self.MaxEntriesField.DoubleValue = Value.MaxNumItems
 			    Self.WeightField.DoubleValue = Value.RawWeight
 			    Self.PreventDuplicatesCheck.Value = Value.ItemsRandomWithoutReplacement
 			  Else
 			    Self.mItemSetRef = Nil
-			    Self.NameField.Value = ""
+			    Self.NameField.Text = ""
 			    Self.MinEntriesField.Clear
 			    Self.MaxEntriesField.Clear
-			    Self.WeightField.Value = ""
+			    Self.WeightField.Text = ""
 			    Self.PreventDuplicatesCheck.Value = False
 			  End If
 			  Self.SetupUI()
@@ -664,11 +667,11 @@ End
 		    Return
 		  End If
 		  
-		  If StrComp(Self.ItemSet.Label, Me.Value, 0) = 0 Then
+		  If Self.ItemSet.Label.Compare(Me.Text, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return
 		  End If
 		  
-		  Self.ItemSet.Label = Me.Value
+		  Self.ItemSet.Label = Me.Text
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
@@ -698,7 +701,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -729,7 +732,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If

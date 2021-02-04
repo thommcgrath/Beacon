@@ -3,8 +3,8 @@ Protected Class StringArrayIterator
 Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(List() As String)
-		  Self.mItems.ResizeTo(List.LastRowIndex)
-		  For I As Integer = 0 To List.LastRowIndex
+		  Self.mItems.ResizeTo(List.LastIndex)
+		  For I As Integer = 0 To List.LastIndex
 		    Self.mItems(I) = List(I)
 		  Next
 		  Self.mIndex = -1
@@ -16,7 +16,7 @@ Implements Iterator
 		  // Part of the Iterator interface.
 		  
 		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= Self.mItems.LastRowIndex
+		  Return Self.mIndex <= Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 

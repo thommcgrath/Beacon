@@ -258,7 +258,7 @@ Begin DiscoveryView NitradoDiscoveryView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   2
@@ -295,7 +295,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   218
@@ -306,6 +306,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Width           =   560
       End
       Begin BeaconListbox List
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -316,6 +317,9 @@ Begin DiscoveryView NitradoDiscoveryView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -336,6 +340,7 @@ Begin DiscoveryView NitradoDiscoveryView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -371,7 +376,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
-      RunMode         =   "2"
+      RunMode         =   2
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -517,7 +522,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Engine_Wait(Sender As Beacon.NitradoIntegrationEngine, Controller As Beacon.TaskWaitController)
+		Private Function Engine_Wait(Sender As Beacon.NitradoIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Auth External"
 		    Var Profile As Beacon.ServerProfile = Sender.Profile
@@ -533,8 +538,10 @@ End
 		      Controller.Cancelled = True
 		      Controller.ShouldResume = True
 		    End If
+		    
+		    Return True
 		  End Select
-		End Sub
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -646,7 +653,7 @@ End
 		      Continue
 		    End If
 		    
-		    Data.AddRow(Self.List.RowTagAt(I))
+		    Data.Add(Self.List.RowTagAt(I))
 		  Next
 		  Self.ShouldFinish(Data, Self.mAccounts)
 		End Sub
@@ -694,10 +701,16 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub AuthenticationError()
-		  If Self.ShowConfirm("Beacon is unable to communicate with its server", "If your internet connection is working, make sure Beacon can contact its server at beaconapp.cc. Press the ""More Info"" button for some troubleshooting tips.", "More Info", "Cancel") Then
+		Sub AuthenticationError(Reason As String)
+		  #Pragma Unused Reason
+		  
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Beacon is unable to communicate with its server", "Check Beacon's ""System Status"" page to make sure this isn't a problem with Beacon. It Beacon is working normally, check your internet connection.", "System Status", "Cancel", "Help")
+		  Select Case Choice
+		  Case BeaconUI.ConfirmResponses.Action
+		    ShowURL("https://status.usebeacon.app/")
+		  Case BeaconUI.ConfirmResponses.Alternate
 		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
-		  End If
+		  End Select
 		  
 		  If (Self.mAuthController Is Nil) = False Then
 		    Self.mAuthController.Cancelled = True
@@ -784,8 +797,8 @@ End
 		    Label = "Discovering servers on multiple accounts…"
 		  End If
 		  
-		  If Self.FindingStatus.Value.Compare(Label, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
-		    Self.FindingStatus.Value = Label
+		  If Self.FindingStatus.Text.Compare(Label, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.FindingStatus.Text = Label
 		  End If
 		End Sub
 	#tag EndEvent

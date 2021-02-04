@@ -13,6 +13,21 @@ Class NullableBoolean
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromVariant(Value As Variant) As NullableBoolean
+		  If IsNull(Value) Then
+		    Return Nil
+		  End If
+		  
+		  Select Case Value.Type
+		  Case Variant.TypeBoolean
+		    Return NullableBoolean.FromBoolean(Value.BooleanValue)
+		  Else
+		    Return Nil
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Boolean) As Integer
 		  If Self.mValue <> Other Then
 		    Return -1
@@ -44,6 +59,16 @@ Class NullableBoolean
 		Sub Operator_Convert(Value As Boolean)
 		  Self.mValue = Value
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ToVariant(Value As NullableBoolean) As Variant
+		  If Value Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Value.BooleanValue
+		End Function
 	#tag EndMethod
 
 

@@ -162,6 +162,7 @@ Begin BeaconDialog BreedingTunerDialog
       Width           =   80
    End
    Begin BeaconListbox CreaturesList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -172,6 +173,9 @@ Begin BeaconDialog BreedingTunerDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -192,6 +196,7 @@ Begin BeaconDialog BreedingTunerDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -343,7 +348,7 @@ End
 		    Next
 		  Else
 		    Var Creatures() As String = List.Split(",")
-		    For I As Integer = 0 To Creatures.LastRowIndex
+		    For I As Integer = 0 To Creatures.LastIndex
 		      Creatures(I) = Creatures(I).Trim
 		    Next
 		    
@@ -444,21 +449,21 @@ End
 		  Var Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
 		    If Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) Then
-		      Creatures.AddRow(Self.CreaturesList.RowTagAt(I))
+		      Creatures.Add(Self.CreaturesList.RowTagAt(I))
 		    End If
 		  Next
 		  
 		  // Get fastest maturing creature
-		  Var FastestMature As UInt64
+		  Var FastestMature As Double
 		  For Each Creature As Beacon.Creature In Creatures
-		    Var MatureSeconds As UInt64 = Creature.MatureTime / Self.mMatureSpeedMultiplier
+		    Var MatureSeconds As Double = Creature.MatureTime / Self.mMatureSpeedMultiplier
 		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If
 		  Next
 		  
 		  // Reduce the target by a set amount and compute the imprint multiplier
-		  Var TargetCuddleSeconds As UInt64 = FastestMature * Threshold
+		  Var TargetCuddleSeconds As Double = FastestMature * Threshold
 		  Var OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
 		  Var ImprintMultiplier As Double = (TargetCuddleSeconds / Self.mImprintAmountMultiplier) / OfficialCuddlePeriod
 		  
@@ -480,7 +485,7 @@ End
 		  Var Classes() As String
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
 		    If Self.CreaturesList.CellCheckBoxValueAt(I, Column) Then
-		      Classes.AddRow(Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString)
+		      Classes.Add(Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString)
 		    End If
 		  Next
 		  Self.mLastCheckedList = Classes.Join(",")

@@ -103,46 +103,12 @@ Begin ConfigEditor StackSizesConfigEditor
       Visible         =   True
       Width           =   177
    End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Stack Size Overrides"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
-   End
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -156,6 +122,8 @@ Begin ConfigEditor StackSizesConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -167,6 +135,7 @@ Begin ConfigEditor StackSizesConfigEditor
       Width           =   764
    End
    Begin BeaconListbox List
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -177,6 +146,9 @@ Begin ConfigEditor StackSizesConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -197,6 +169,7 @@ Begin ConfigEditor StackSizesConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -221,31 +194,37 @@ Begin ConfigEditor StackSizesConfigEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
+      Tooltip         =   ""
+      Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   764
    End
@@ -257,12 +236,12 @@ End
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the global multiplier, it would likely be confusing for users
 		  
-		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.StackSizes.ConfigName) = False Then
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameStackSizes) = False Then
 		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.StackSizes.ConfigName))
-		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
+		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.NameStackSizes))
+		  If OtherConfig = Nil Or OtherConfig.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
 		  
@@ -279,13 +258,13 @@ End
 
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.StackSizes.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStackSizes)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
-		  Self.GlobalMultiplierField.Value = Format(Self.Config(False).GlobalMultiplier, "0.0#####")
+		  Self.GlobalMultiplierField.Text = Self.Config(False).GlobalMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -293,7 +272,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
-		  Static ConfigName As String = BeaconConfigs.StackSizes.ConfigName
+		  Static ConfigName As String = BeaconConfigs.NameStackSizes
 		  
 		  Var Document As Beacon.Document = Self.Document
 		  Var Config As BeaconConfigs.StackSizes
@@ -318,7 +297,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.StackSizes.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameStackSizes)
 		End Function
 	#tag EndMethod
 
@@ -328,7 +307,7 @@ End
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -351,19 +330,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateOverride()
-		  If Self.List.SelectedRowCount <> 1 Then
+		  If (Self.List Is Nil) Or Self.List.SelectedRowCount <> 1 Then
 		    Return
 		  End If
+		  
+		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
-		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  Var Size As UInt64 = Config.Override(SourceEngram)
 		  
 		  Config = Self.Config(True)
@@ -379,30 +359,30 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Paths() As String
+		  Var Engrams() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Paths.AddRow(Beacon.Engram(Self.List.RowTagAt(I)).Path)
+		    Engrams.Add(Beacon.Engram(Self.List.RowTagAt(I)).ObjectID)
 		  Next
-		  Self.UpdateList(Paths)
+		  Self.UpdateList(Engrams)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Var Paths() As String
+		  Var Engrams() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Paths.AddRow(Engram.Path)
+		    Engrams.Add(Engram.ObjectID)
 		  Next
-		  Self.UpdateList(Paths) 
+		  Self.UpdateList(Engrams) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectPaths() As String)
+		Private Sub UpdateList(SelectEngrams() As String)
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  
@@ -412,9 +392,9 @@ End
 		  Self.List.RemoveAllRows()
 		  For Each Engram As Beacon.Engram In Engrams
 		    Var Size As UInt64 = Config.Override(Engram)
-		    Self.List.AddRow(Engram.Label, Format(Size, Self.NumberFormat))
+		    Self.List.AddRow(Engram.Label, Size.ToString(Locale.Current, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectEngrams.IndexOf(Engram.ObjectID) > -1
 		  Next
 		  
 		  Self.List.SortingColumn = 0
@@ -439,7 +419,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.stacksize", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"0\x2C", Scope = Private
+	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"\x2C##0", Scope = Private
 	#tag EndConstant
 
 
@@ -454,33 +434,9 @@ End
 		  
 		  Self.SettingUp = True
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Config.GlobalMultiplier = CDbl(Me.Value)
+		  Config.GlobalMultiplier = CDbl(Me.Text)
 		  Self.Changed = True
 		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
-		  AddButton.HelpTag = "Override the stack size of an engram."
-		  
-		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  DuplicateButton.HelpTag = "Duplicate the selected stack size override."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(DuplicateButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEngram"
-		    Self.ShowAddOverride()
-		  Case "Duplicate"
-		    Self.ShowDuplicateOverride()
-		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -493,7 +449,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
+		  Var DuplicateButton As OmniBarItem = Self.ConfigToolbar.Item("Duplicate")
+		  If (DuplicateButton Is Nil) = False Then
+		    DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -503,12 +462,12 @@ End
 		  End If
 		  
 		  Var Size As UInt64 = CDbl(Me.CellValueAt(Row, Column))
-		  If Size > BeaconConfigs.StackSizes.MaximumQuantity Then
+		  If Size > CType(BeaconConfigs.StackSizes.MaximumQuantity, UInt64) Then
 		    Size = BeaconConfigs.StackSizes.MaximumQuantity
 		    System.Beep
-		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + Format(BeaconConfigs.StackSizes.MaximumQuantity, Self.NumberFormat) + ".")
+		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + BeaconConfigs.StackSizes.MaximumQuantity.ToString(Locale.Current, Self.NumberFormat) + ".")
 		  End If
-		  Me.CellValueAt(Row, Column) = Format(Size, Self.NumberFormat)
+		  Me.CellValueAt(Row, Column) = Size.ToString(Locale.Current, Self.NumberFormat)
 		  
 		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  
@@ -542,7 +501,7 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    If IsNull(Engram) = False Then
-		      Engrams.AddRow(Engram)
+		      Engrams.Add(Engram)
 		    End If
 		  Next
 		  
@@ -569,10 +528,10 @@ End
 		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Size As UInt64 = Config.Override(Engram)
-		    Items.Value(Engram.Path) = Size
+		    Items.Value(Engram.ObjectID) = Size
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Items, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -591,28 +550,17 @@ End
 		    End If
 		    
 		    Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		    Var SelectPaths() As String
+		    Var SelectEngrams() As String
 		    For Each Entry As DictionaryEntry In Items
-		      Var Path As String = Entry.Key
-		      Var Engram As Beacon.Engram
-		      If Path.BeginsWith("/Game/") Then
-		        Engram = Beacon.Data.GetEngramByPath(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromPath(Path)
-		        End If
-		      Else
-		        Engram = Beacon.Data.GetEngramByClass(Path)
-		        If IsNull(Engram) Then
-		          Engram = Beacon.Engram.CreateFromClass(Path)
-		        End If
-		      End If
+		      Var UUID As String = Entry.Key
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(UUID)
 		      
 		      Var Size As UInt64 = Entry.Value
-		      SelectPaths.AddRow(Engram.Path)
+		      SelectEngrams.Add(UUID)
 		      Config.Override(Engram) = Size
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectPaths)
+		    Self.UpdateList(SelectEngrams)
 		    Return
 		  End If
 		  
@@ -623,14 +571,65 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEngram", "New Override", IconToolbarAdd, "Override the stack size of an engram."))
+		  Me.Append(OmniBarItem.CreateButton("Duplicate", "Duplicate", IconToolbarClone, "Duplicate the selected stack size override.", False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEngram"
+		    Self.ShowAddOverride()
+		  Case "Duplicate"
+		    Self.ShowDuplicateOverride()
+		  End Select
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -698,14 +697,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -720,14 +711,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

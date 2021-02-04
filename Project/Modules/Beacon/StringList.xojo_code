@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
-		    Self.mItems.AddRow(Item)
+		    Self.mItems.Add(Item)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -12,8 +12,8 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.StringList)
-		  Self.mItems.ResizeTo(Source.mItems.LastRowIndex)
-		  For I As Integer = 0 To Source.mItems.LastRowIndex
+		  Self.mItems.ResizeTo(Source.mItems.LastIndex)
+		  For I As Integer = 0 To Source.mItems.LastIndex
 		    Self.mItems(I) = Source.mItems(I)
 		  Next
 		  Self.Modified = Source.Modified
@@ -21,14 +21,20 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Bound As Integer = -1)
+		Sub Constructor(Bound As Integer)
 		  Self.mItems.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(ParamArray Values() As String)
+		  Self.Constructor(Values)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mItems.LastRowIndex + 1
+		  Return CType(Self.mItems.LastIndex + 1, UInteger)
 		End Function
 	#tag EndMethod
 
@@ -54,6 +60,15 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As String
+		  If Self.mCachedHash.IsEmpty Then
+		    Self.mCachedHash = EncodeHex(Crypto.SHA256(Self.Join(","))).Lowercase
+		  End If
+		  Return Self.mCachedHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Item As String) As Integer
 		  Return Self.mItems.IndexOf(Item)
 		End Function
@@ -62,7 +77,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
-		    Self.mItems.AddRowAt(Index, Item)
+		    Self.mItems.AddAt(Index, Item)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -99,7 +114,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mItems.LastRowIndex
+		  Return Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 
@@ -124,8 +139,8 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As String()
 		  Var Items() As String
-		  Items.ResizeTo(Self.mItems.LastRowIndex)
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  Items.ResizeTo(Self.mItems.LastIndex)
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    Items(I) = Self.mItems(I)
 		  Next
 		  Return Items
@@ -134,8 +149,8 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Source() As String)
-		  Self.mItems.ResizeTo(Source.LastRowIndex)
-		  For I As Integer = 0 To Source.LastRowIndex
+		  Self.mItems.ResizeTo(Source.LastIndex)
+		  For I As Integer = 0 To Source.LastIndex
 		    Self.mItems(I) = Source(I)
 		  Next
 		End Sub
@@ -155,7 +170,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -164,7 +179,7 @@ Implements Iterable
 		Sub Remove(Item As String)
 		  Var Idx As Integer = Self.mItems.IndexOf(Item)
 		  If Idx > -1 Then
-		    Self.mItems.RemoveRowAt(Idx)
+		    Self.mItems.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -184,14 +199,47 @@ Implements Iterable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SQLValue() As String
+		  Var Items() As String
+		  For Each Item As String In Self.mItems
+		    Items.Add("'" + Item.ReplaceAll("'", "''") + "'")
+		  Next
+		  Return String.FromArray(Items, ",")
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mCachedHash As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mItems() As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Modified As Boolean
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mModified
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mModified = Value Then
+			    Return
+			  End If
+			  
+			  Self.mModified = value
+			  Self.mCachedHash = ""
+			End Set
+		#tag EndSetter
+		Modified As Boolean
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -236,7 +284,7 @@ Implements Iterable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Modified"
+			Name="mModified"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

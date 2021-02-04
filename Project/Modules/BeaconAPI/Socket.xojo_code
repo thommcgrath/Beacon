@@ -2,13 +2,13 @@
 Protected Class Socket
 	#tag Method, Flags = &h1
 		Protected Sub AdvanceQueue()
-		  If Self.Queue.LastRowIndex = -1 Then
+		  If Self.Queue.LastIndex = -1 Then
 		    Self.Working = False
 		    Return
 		  End If
 		  
 		  Var Request As BeaconAPI.Request = Self.Queue(0)
-		  Self.Queue.RemoveRowAt(0)
+		  Self.Queue.RemoveAt(0)
 		  
 		  Self.ActiveRequest = Request
 		  
@@ -53,7 +53,7 @@ Protected Class Socket
 		    
 		    Preferences.OnlineToken = SessionToken
 		    
-		    For Idx As Integer = 0 To Self.Queue.LastRowIndex
+		    For Idx As Integer = 0 To Self.Queue.LastIndex
 		      If Self.Queue(Idx).AuthType = BeaconAPI.Request.AuthTypes.Token Then
 		        Self.Queue(Idx).Authenticate(SessionToken)
 		      End If
@@ -93,8 +93,8 @@ Protected Class Socket
 		    Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest
 		    FollowingRequest.HasBeenRetried = True
 		    
-		    Self.Queue.AddRowAt(0, NextRequest)
-		    Self.Queue.AddRowAt(1, FollowingRequest)
+		    Self.Queue.AddAt(0, NextRequest)
+		    Self.Queue.AddAt(1, FollowingRequest)
 		    
 		    Self.ActiveRequest = Nil
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
@@ -135,8 +135,8 @@ Protected Class Socket
 
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
-		  Self.Queue.AddRow(Request)
-		  If Self.Queue.LastRowIndex = 0 And Self.Working = False Then
+		  Self.Queue.Add(Request)
+		  If Self.Queue.LastIndex = 0 And Self.Working = False Then
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		    Self.Working = True
 		  End If

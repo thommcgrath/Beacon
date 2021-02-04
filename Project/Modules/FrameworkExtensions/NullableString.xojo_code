@@ -1,12 +1,6 @@
 #tag Class
 Class NullableString
 	#tag Method, Flags = &h0
-		Function Asc() As Integer
-		  Return Self.mValue.Asc
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function AscByte() As Integer
 		  Return Self.mValue.AscByte
 		End Function
@@ -63,6 +57,23 @@ Class NullableString
 	#tag Method, Flags = &h0
 		Shared Function FromString(Value As String) As NullableString
 		  Return Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromVariant(Value As Variant) As NullableString
+		  If IsNull(Value) Then
+		    Return Nil
+		  End If
+		  
+		  Select Case Value.Type
+		  Case Variant.TypeString
+		    Return NullableString.FromString(Value.StringValue)
+		  Case Variant.TypeText
+		    Return NullableString.FromString(Value.TextValue)
+		  Else
+		    Return Nil
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -263,6 +274,16 @@ Class NullableString
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function ToVariant(Value As NullableString) As Variant
+		  If Value Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Value.StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Trim() As String
 		  Return Self.mValue.Trim
 		End Function
@@ -336,14 +357,6 @@ Class NullableString
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mValue"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -27,7 +27,7 @@ Inherits Beacon.Thread
 		  Var MessageOfTheDayMode As Boolean = False
 		  Var ParsedData As New Dictionary
 		  Var Lines() As String = Content.Split(LineEnding)
-		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastRowIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
+		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
 		  For Each Line As String In Lines
 		    If Self.mCancelled Then
 		      Return
@@ -93,9 +93,9 @@ Inherits Beacon.Thread
 		        If ExistingValue.IsArray Then
 		          ValueArray = ExistingValue
 		        Else
-		          ValueArray.AddRow(ExistingValue)
+		          ValueArray.Add(ExistingValue)
 		        End If
-		        ValueArray.AddRow(Value)
+		        ValueArray.Add(Value)
 		        ParsedData.Value(Key) = ValueArray
 		      Else
 		        ParsedData.Value(Key) = Value
@@ -113,7 +113,7 @@ Inherits Beacon.Thread
 		  
 		  Self.mCharactersProcessed = Self.mCharactersTotal
 		  
-		  Self.Status = "Building Beacon document…"
+		  Self.Status = "Building Beacon project…"
 		  Try
 		    Var CommandLineOptions As Dictionary
 		    If (Self.mData Is Nil) = False Then
@@ -149,7 +149,7 @@ Inherits Beacon.Thread
 		  If (Profile Is Nil) = False Then
 		    Document.MapCompatibility = Profile.Mask
 		  End If
-		  If Document.MapCompatibility = 0 Then
+		  If Document.MapCompatibility = CType(0, UInt64) Then
 		    Document.MapCompatibility = Beacon.Maps.TheIsland.Mask
 		  End If
 		  
@@ -159,6 +159,17 @@ Inherits Beacon.Thread
 		  
 		  If (Self.mData Is Nil) = False And Self.mData.IsPrimitivePlus Then
 		    Document.ModEnabled("68d1be8b-a66e-41a2-b0b4-cb2a724fc80b") = True
+		  End If
+		  
+		  If ParsedData.HasKey("ActiveMods") And IsNull(ParsedData.Value("ActiveMods")) = False Then
+		    Var ActiveMods As String = ParsedData.StringValue("ActiveMods", "")
+		    Var ModIDs() As String = ActiveMods.Split(",")
+		    For Each ModID As String In ModIDs
+		      Var ModInfo As Beacon.ModDetails = Beacon.Data.GetModWithWorkshopID(ModID.ToInteger)
+		      If (ModInfo Is Nil) = False Then
+		        Document.ModEnabled(ModInfo.ModID) = True
+		      End If
+		    Next
 		  End If
 		  
 		  Try
@@ -199,26 +210,44 @@ Inherits Beacon.Thread
 		      Next
 		    End If
 		    
-		    #if Beacon.MOTDEditingEnabled
-		      If ParsedData.HasKey("Message") Then
-		        Var Duration As Integer = 30
-		        If ParsedData.HasKey("Duration") Then
-		          Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
-		        End If
-		        
-		        Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True).Trim())
-		        Profile.MessageOfTheDay = Message
-		        Profile.MessageDuration = Duration
-		      End If
-		    #endif
+		    Var ServerPassword, AdminPassword, SpectatorPassword As String
+		    If ParsedData.HasKey("ServerPassword") Then
+		      ServerPassword = ParsedData.StringValue("ServerPassword", "")
+		    ElseIf CommandLineOptions.HasKey("ServerPassword") Then
+		      ServerPassword = CommandLineOptions.StringValue("ServerPassword", "")
+		    End If
+		    If CommandLineOptions.HasKey("SpectatorPassword") Then
+		      SpectatorPassword = CommandLineOptions.StringValue("SpectatorPassword", "")
+		    ElseIf ParsedData.HasKey("SpectatorPassword") Then
+		      SpectatorPassword = ParsedData.StringValue("SpectatorPassword", "")
+		    End If
+		    If CommandLineOptions.HasKey("ServerAdminPassword") Then
+		      AdminPassword = CommandLineOptions.StringValue("ServerAdminPassword", "")
+		    ElseIf ParsedData.HasKey("ServerAdminPassword") Then
+		      AdminPassword = ParsedData.StringValue("ServerAdminPassword", "")
+		    End If
+		    Profile.ServerPassword = ServerPassword
+		    Profile.SpectatorPassword = SpectatorPassword
+		    Profile.AdminPassword = AdminPassword
 		    
-		    Document.Add(Profile)
+		    If ParsedData.HasKey("Message") Then
+		      Var Duration As Integer = 30
+		      If ParsedData.HasKey("Duration") Then
+		        Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
+		      End If
+		      
+		      Profile.MessageOfTheDay = Beacon.ArkML.FromArkML(ParsedData.StringValue("Message", "", True).Trim())
+		      Profile.MessageDuration = Duration
+		    End If
+		    
+		    Document.AddServerProfile(Profile)
 		  End If
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
 		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
+		  Var Configs() As Beacon.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
-		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		    If ConfigName = BeaconConfigs.NameDifficulty Or ConfigName = BeaconConfigs.NameCustomContent Then
 		      // Difficulty and custom content area special
 		      Continue For ConfigName
 		    End If
@@ -228,49 +257,41 @@ Inherits Beacon.Thread
 		      Continue For ConfigName
 		    End If
 		    
-		    Self.Status = "Building Beacon document… (" + Language.LabelForConfig(ConfigName) + ")"
+		    Self.Status = "Building Beacon project… (" + Language.LabelForConfig(ConfigName) + ")"
 		    Var Group As Beacon.ConfigGroup
 		    Try
-		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
+		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document)
 		    Catch Err As RuntimeException
 		    End Try
 		    If Group <> Nil Then
 		      Document.AddConfigGroup(Group)
+		      Configs.Add(Group)
 		    End If
 		  Next
 		  
-		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
-		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Self.Status = "Building Beacon document… (" + Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName) + ")"
-		  Var GameIniValues As New Dictionary
-		  Var GameUserSettingsIniValues As New Dictionary
-		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
-		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  // Now split the content into values and remove the ones controlled by the imported groups
+		  Self.Status = "Building Beacon project… (" + Language.LabelForConfig(BeaconConfigs.NameCustomContent) + ")"
+		  Var CustomConfigOrganizer As New Beacon.ConfigOrganizer(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, Self.mData.GameIniContent)
+		  CustomConfigOrganizer.Add(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, Self.mData.GameUserSettingsIniContent)
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys(Identity)
-		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
-		      Select Case Key.File
-		      Case "Game.ini"
-		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      End Select
-		    Next
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
+		    Var ManagedKeys() As Beacon.ConfigKey = Config.ManagedKeys()
+		    CustomConfigOrganizer.Remove(ManagedKeys)
 		  Next
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Script/Engine.GameSession")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "/Script/ShooterGame.ShooterGameUserSettings")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "ScalabilityGroups")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "ScalabilityGroups.sg")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGameUserSettings, "Beacon")
+		  CustomConfigOrganizer.Remove(Beacon.ConfigFileGame, "Beacon")
 		  
 		  Var CustomContent As New BeaconConfigs.CustomContent
 		  Try
-		    CustomContent.GameIniContent(GameIniValues) = Self.mData.GameIniContent
+		    CustomContent.GameIniContent() = CustomConfigOrganizer
 		  Catch Err As RuntimeException
 		  End Try
 		  Try
-		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Self.mData.GameUserSettingsIniContent
+		    CustomContent.GameUserSettingsIniContent() = CustomConfigOrganizer
 		  Catch Err As RuntimeException
 		  End Try
 		  If CustomContent.Modified Then
@@ -298,7 +319,11 @@ Inherits Beacon.Thread
 		  Self.mUpdateTimer = New Timer
 		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
 		  Self.mUpdateTimer.Period = 0
-		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
+		  #if TargetDesktop
+		    AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
+		  #else
+		    AddHandler Self.mUpdateTimer.Run, WeakAddressOf Self.mUpdateTimer_Action
+		  #endif
 		  
 		  Self.mData = Data
 		  Self.mDestinationDocument = DestinationDocument
@@ -421,7 +446,7 @@ Inherits Beacon.Thread
 		    Else
 		      Var Items() As Variant
 		      For Each Item As Variant In ArrayValue
-		        Items.AddRow(ToXojoType(Item))
+		        Items.Add(ToXojoType(Item))
 		      Next
 		      Return Items
 		    End If
@@ -466,7 +491,7 @@ Inherits Beacon.Thread
 		      End If
 		      If IsNumeric Then
 		        // Number
-		        Return Val(StringValue)
+		        Return Double.FromString(StringValue, Locale.Raw)
 		      Else
 		        // Probably String
 		        Return StringValue

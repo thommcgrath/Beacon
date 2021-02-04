@@ -55,6 +55,7 @@ Begin BeaconContainer ColumnBrowser
       Width           =   300
    End
    Begin BeaconListbox Lists
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -65,6 +66,9 @@ Begin BeaconContainer ColumnBrowser
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -85,6 +89,7 @@ Begin BeaconContainer ColumnBrowser
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -114,6 +119,7 @@ Begin BeaconContainer ColumnBrowser
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   285
@@ -127,6 +133,8 @@ Begin BeaconContainer ColumnBrowser
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -228,7 +236,7 @@ End
 		  Self.mUpdating = True
 		  
 		  List.RemoveAllRows
-		  For I As Integer = 0 To Children.LastRowIndex  
+		  For I As Integer = 0 To Children.LastIndex  
 		    Var Child As String = Children(I)
 		    If Child.EndsWith("/") Then
 		      Child = Child.Left(Child.Length - 1)

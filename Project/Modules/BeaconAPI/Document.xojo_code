@@ -1,6 +1,12 @@
 #tag Class
 Protected Class Document
 	#tag Method, Flags = &h0
+		Function ConsoleSafe() As Boolean
+		  Return Self.mConsoleSafe
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
 		  Self.mDescription = Source.Value("description")
 		  Self.mDocumentID = Source.Value("document_id")
@@ -10,6 +16,9 @@ Protected Class Document
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mRevision = Source.Value("revision")
 		  Self.mUserID = Source.Value("user_id")
+		  Self.mMapMask = Source.Value("map_mask")
+		  Self.mConsoleSafe = Source.Value("console_safe")
+		  Self.mIsGuest = Source.Value("user_id") <> Source.Value("owner_id")
 		End Sub
 	#tag EndMethod
 
@@ -32,8 +41,20 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsGuest() As Boolean
+		  Return Self.mIsGuest
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LastUpdated() As DateTime
 		  Return Self.mLastUpdated
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MapMask() As UInt64
+		  Return Self.mMapMask
 		End Function
 	#tag EndMethod
 
@@ -79,6 +100,10 @@ Protected Class Document
 
 
 	#tag Property, Flags = &h21
+		Private mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDescription As String
 	#tag EndProperty
 
@@ -91,7 +116,15 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIsGuest As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastUpdated As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMapMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

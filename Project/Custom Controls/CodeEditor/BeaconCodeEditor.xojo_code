@@ -35,7 +35,7 @@ Inherits ScrollCanvas
 		  End If
 		  
 		  //Var Char As String = Self.mContent.Middle(Floor(Index), 1)
-		  //System.DebugLog(Str(Index, "-0.00") + ": " + Char)
+		  //System.DebugLog(Index.ToString(Locale.Current, "0.00") + ": " + Char)
 		End Sub
 	#tag EndEvent
 
@@ -50,7 +50,7 @@ Inherits ScrollCanvas
 		    CurrentTheme = New BeaconCodeTheme(&cFFFFFF00, &c00000000, &c9A239200, &c3F4F6100, &c3900A000, &c3900A000, &c1C00CE00, &c1C00CE00, &c52657900, &c63381F00)
 		  End If
 		  If Self.mLastTheme = Nil Or G.ScaleX <> Self.mLastScaleX Or G.ScaleY <> Self.mLastScaleY Or Self.mLastTheme.Matches(CurrentTheme) = False Then
-		    For I As Integer = 0 To Self.mContentLines.LastRowIndex
+		    For I As Integer = 0 To Self.mContentLines.LastIndex
 		      Self.mContentLines(I).Invalidate()
 		    Next
 		  End If
@@ -71,8 +71,8 @@ Inherits ScrollCanvas
 		  G.FontUnit = FontUnits.Point
 		  
 		  Self.mCharacterWidth = G.TextWidth("m")
-		  Self.mLineHeight = Ceil(G.TextHeight * 1.2)
-		  Self.mBaselineHeight = Ceil((((G.TextHeight * 1.2) - G.CapHeight) / 2) + G.CapHeight)
+		  Self.mLineHeight = Ceiling(G.TextHeight * 1.2)
+		  Self.mBaselineHeight = Ceiling((((G.TextHeight * 1.2) - G.CapHeight) / 2) + G.CapHeight)
 		  
 		  Var LineTop As Integer = Self.ScrollY * -1
 		  Var Area As Graphics = G.Clip(Self.GutterWidth + 1, 0, G.Width - 41, G.Height)
@@ -82,7 +82,7 @@ Inherits ScrollCanvas
 		  Gutter.DrawingColor = Area.DrawingColor.AtOpacity(0.5)
 		  Gutter.FontSize = 10
 		  Var ContentWidth As Integer
-		  For I As Integer = 0 To Self.mContentLines.LastRowIndex
+		  For I As Integer = 0 To Self.mContentLines.LastIndex
 		    Var Line As BeaconCodeLine = Self.mContentLines(I)
 		    ContentWidth = Max(ContentWidth, Area.TextWidth(Line.Content))
 		    
@@ -96,8 +96,9 @@ Inherits ScrollCanvas
 		    Line.Render(Area, New Xojo.Rect(0, LineTop, Area.Width, Self.mLineHeight), CurrentTheme, Self.LeftPadding + (Self.ScrollX * -1), LineTop + Self.mBaselineHeight)
 		    Line.Visible = True
 		    
-		    Var LineNum As String = Str(I + 1, "0")
-		    Gutter.DrawText(LineNum, Gutter.Width - (Gutter.TextWidth(LineNum) + 3), LineTop + Self.mBaselineHeight)
+		    Var LineNum As Integer = I + 1
+		    Var LineNumString As String = LineNum.ToString(Locale.Raw, "0")
+		    Gutter.DrawText(LineNumString, Gutter.Width - (Gutter.TextWidth(LineNumString) + 3), LineTop + Self.mBaselineHeight)
 		    
 		    LineTop = LineTop + Self.mLineHeight
 		  Next
@@ -182,7 +183,7 @@ Inherits ScrollCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub InsertText(NewText As String, StartPosition As UInteger, Length As UInteger)
+		Private Sub InsertText(NewText As String, StartPosition As Integer, Length As Integer)
 		  Var LeftChunk As String = Self.mContent.Left(StartPosition)
 		  Var RightChunk As String = Self.mContent.Middle(StartPosition + Length)
 		  Self.mContent = LeftChunk + NewText + RightChunk
@@ -229,11 +230,11 @@ Inherits ScrollCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelLength As UInteger
+		Private mSelLength As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelStart As UInteger
+		Private mSelStart As Integer
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -261,7 +262,7 @@ Inherits ScrollCanvas
 			  Return Self.mSelStart + Self.mSelLength
 			End Get
 		#tag EndGetter
-		SelEnd As UInteger
+		SelEnd As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -278,7 +279,7 @@ Inherits ScrollCanvas
 			  End If
 			End Set
 		#tag EndSetter
-		SelLength As UInteger
+		SelLength As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -295,7 +296,7 @@ Inherits ScrollCanvas
 			  End If
 			End Set
 		#tag EndSetter
-		SelStart As UInteger
+		SelStart As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -309,22 +310,22 @@ Inherits ScrollCanvas
 			  Var EOL As String = Encodings.ASCII.Chr(10)
 			  Value = Value.ReplaceLineEndings(EOL)
 			  
-			  If StrComp(Self.mContent, Value, 0) <> 0 Then
+			  If Self.mContent.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mContent = Value
 			    
 			    Var NewLines() As String = Value.Split(EOL)
 			    Var Dict As New Dictionary
-			    For I As Integer = 0 To Self.mContentLines.LastRowIndex
+			    For I As Integer = 0 To Self.mContentLines.LastIndex
 			      Dict.Value(Self.mContentLines(I).Content) = I
 			    Next
 			    
 			    Var NewContentLines() As BeaconCodeLine
-			    For I As Integer = 0 To NewLines.LastRowIndex
+			    For I As Integer = 0 To NewLines.LastIndex
 			      Var OldIdx As Integer = Dict.Lookup(NewLines(I), -1)
 			      If OldIdx = -1 Then
-			        NewContentLines.AddRow(New BeaconCodeLine(NewLines(I)))
+			        NewContentLines.Add(New BeaconCodeLine(NewLines(I)))
 			      Else
-			        NewContentLines.AddRow(Self.mContentLines(OldIdx))
+			        NewContentLines.Add(Self.mContentLines(OldIdx))
 			      End If
 			    Next
 			    Self.mContentLines = NewContentLines
@@ -345,6 +346,14 @@ Inherits ScrollCanvas
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
 			Visible=true
@@ -432,14 +441,6 @@ Inherits ScrollCanvas
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"
@@ -598,7 +599,7 @@ Inherits ScrollCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="UInteger"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -606,7 +607,7 @@ Inherits ScrollCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="UInteger"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -622,7 +623,7 @@ Inherits ScrollCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="UInteger"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

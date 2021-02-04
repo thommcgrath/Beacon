@@ -5,7 +5,7 @@ Protected Class EngramSet
 		  Var Engrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
 		    Var Engram As BeaconAPI.Engram = Entry.Value
-		    Engrams.AddRow(New BeaconAPI.Engram(Engram))
+		    Engrams.Add(New BeaconAPI.Engram(Engram))
 		  Next
 		  Return Engrams
 		End Function
@@ -65,14 +65,14 @@ Protected Class EngramSet
 		Function EngramsToDelete() As BeaconAPI.Engram()
 		  Var NewClasses() As String
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
-		    NewClasses.AddRow(BeaconAPI.Engram(Entry.Value).Path)
+		    NewClasses.Add(BeaconAPI.Engram(Entry.Value).Path)
 		  Next
 		  
 		  Var DeleteEngrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mOriginalEngrams
 		    Var Engram As BeaconAPI.Engram = Entry.Value
 		    If NewClasses.IndexOf(Engram.Path) = -1 Then
-		      DeleteEngrams.AddRow(New BeaconAPI.Engram(Engram))
+		      DeleteEngrams.Add(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
 		  
@@ -94,11 +94,11 @@ Protected Class EngramSet
 		      // Might be changed
 		      Var OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.Path)
 		      If Engram.Hash <> OriginalEngram.Hash Then
-		        NewEngrams.AddRow(New BeaconAPI.Engram(Engram))
+		        NewEngrams.Add(New BeaconAPI.Engram(Engram))
 		      End If
 		    Else
 		      // Definitely new
-		      NewEngrams.AddRow(New BeaconAPI.Engram(Engram))
+		      NewEngrams.Add(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
 		  

@@ -35,7 +35,7 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Double, PixelsY As Double, WheelData As BeaconUI.ScrollEvent) As Boolean
 		  #Pragma Unused MouseX
 		  #Pragma Unused MouseY
 		  #Pragma Unused PixelsX
@@ -49,8 +49,10 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  Const ButtonHeight = 30
 		  
@@ -144,7 +146,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mBody, Value, 0) <> 0 Then
+			  If Self.mBody.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mBody = Value
 			    Self.Invalidate
 			  End If
@@ -180,7 +182,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mDetailURL, Value, 0) <> 0 Then
+			  If Self.mDetailURL.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mDetailURL = Value
 			    Self.Invalidate
 			  End If
@@ -229,7 +231,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mTitle, Value, 0) <> 0 Then
+			  If Self.mTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mTitle = Value
 			    Self.Invalidate
 			  End If
@@ -256,6 +258,30 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

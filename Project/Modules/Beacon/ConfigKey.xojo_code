@@ -11,8 +11,9 @@ Protected Class ConfigKey
 		  Self.mMaxAllowed = Source.mMaxAllowed
 		  Self.mDescription = Source.mDescription
 		  Self.mDefaultValue = Source.mDefaultValue
-		  Self.mNitradoPath = Source.mNitradoPath
+		  Self.mNitradoPaths = Source.NitradoPaths // Use this version to make a clone of the array
 		  Self.mNitradoFormat = Source.mNitradoFormat
+		  Self.mNitradoDeployStyle = Source.mNitradoDeployStyle
 		End Sub
 	#tag EndMethod
 
@@ -25,18 +26,21 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles)
+		  Self.Constructor(File, Header, Key)
+		  
 		  Self.mUUID = ObjectID
 		  Self.mLabel = Label
-		  Self.mFile = File
-		  Self.mHeader = Header
-		  Self.mKey = Key
 		  Self.mValueType = ValueType
 		  Self.mMaxAllowed = MaxAllowed
 		  Self.mDescription = Description
 		  Self.mDefaultValue = DefaultValue
-		  Self.mNitradoPath = NitradoPath
-		  Self.mNitradoFormat = NitradoFormat
+		  
+		  If (NitradoPath Is Nil) = False Then
+		    Self.mNitradoPaths = NitradoPath.Split(";")
+		    Self.mNitradoFormat = NitradoFormat
+		    Self.mNitradoDeployStyle = NitradoDeployStyle
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -60,7 +64,7 @@ Protected Class ConfigKey
 
 	#tag Method, Flags = &h0
 		Function HasNitradoEquivalent() As Boolean
-		  Return IsNull(Self.mNitradoPath) = False And Self.mNitradoFormat <> Beacon.ConfigKey.NitradoFormats.Unsupported
+		  Return Self.mNitradoPaths.Count > 0 And Self.mNitradoFormat <> Beacon.ConfigKey.NitradoFormats.Unsupported
 		End Function
 	#tag EndMethod
 
@@ -89,14 +93,25 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NitradoDeployStyle() As Beacon.ConfigKey.NitradoDeployStyles
+		  Return Self.mNitradoDeployStyle
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function NitradoFormat() As Beacon.ConfigKey.NitradoFormats
 		  Return Self.mNitradoFormat
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NitradoPath() As NullableString
-		  Return Self.mNitradoPath
+		Function NitradoPaths() As String()
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mNitradoPaths.LastIndex)
+		  For Idx As Integer = 0 To Clone.LastIndex
+		    Clone(Idx) = Self.mNitradoPaths(Idx)
+		  Next
+		  Return Clone
 		End Function
 	#tag EndMethod
 
@@ -120,18 +135,41 @@ Protected Class ConfigKey
 		Function SimplifiedKey() As String
 		  // Returns the key without its attribute
 		  
-		  Var Idx As Integer = Self.mKey.IndexOf("[")
-		  If Idx = -1 Then
-		    Return Self.mKey
-		  Else
-		    Return Self.mKey.Left(Idx)
-		  End If
+		  Return Beacon.ConfigValue.SimplifyKey(Self.mKey)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function UUID() As v4UUID
 		  Return Self.mUUID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValuesEqual(FirstValue As String, SecondValue As String) As Boolean
+		  Select Case Self.mValueType
+		  Case ValueTypes.TypeNumeric
+		    #Pragma BreakOnExceptions False
+		    Var FirstNumber, SecondNumber As Double
+		    Try
+		      FirstNumber = Double.FromString(FirstValue, Locale.Raw)
+		    Catch Err As RuntimeException
+		    End Try
+		    Try
+		      SecondNumber = Double.FromString(SecondValue, Locale.Raw)
+		    Catch Err As RuntimeException
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    Return FirstNumber = SecondNumber
+		  Case ValueTypes.TypeText, ValueTypes.TypeArray, ValueTypes.TypeStructure
+		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
+		  Case ValueTypes.TypeBoolean
+		    Var FirstValueIsTrue As Boolean = (FirstValue = "True") Or (FirstValue = "1")
+		    Var SecondValueIsTrue As Boolean = (SecondValue = "True") Or (SecondValue = "1")
+		    Return FirstValueIsTrue = SecondValueIsTrue
+		  Else
+		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseInsensitive, Locale.Raw) = 0
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -171,11 +209,15 @@ Protected Class ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mNitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mNitradoFormat As Beacon.ConfigKey.NitradoFormats
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNitradoPath As NullableString
+		Private mNitradoPaths() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -186,6 +228,13 @@ Protected Class ConfigKey
 		Private mValueType As Beacon.ConfigKey.ValueTypes
 	#tag EndProperty
 
+
+	#tag Enum, Name = NitradoDeployStyles, Type = Integer, Flags = &h0
+		Unsupported
+		  Guided
+		  Expert
+		Both
+	#tag EndEnum
 
 	#tag Enum, Name = NitradoFormats, Type = Integer, Flags = &h0
 		Unsupported

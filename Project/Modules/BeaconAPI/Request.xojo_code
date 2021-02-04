@@ -82,7 +82,9 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Sub InvokeCallback(Response As BeaconAPI.Response)
-		  Self.mCallback.Invoke(Self, Response)
+		  If Beacon.SafeToInvoke(Self.mCallback) Then
+		    Self.mCallback.Invoke(Self, Response)
+		  End If
 		  Self.mCallback = Nil
 		End Sub
 	#tag EndMethod
@@ -142,7 +144,7 @@ Protected Class Request
 		  Var Headers() As String
 		  If Self.mRequestHeaders <> Nil Then
 		    For Each Entry As DictionaryEntry In Self.mRequestHeaders
-		      Headers.AddRow(Entry.Key.StringValue)
+		      Headers.Add(Entry.Key.StringValue)
 		    Next
 		  End If
 		  Return Headers
@@ -171,7 +173,7 @@ Protected Class Request
 		    Payload = Payload + Self.mPayload
 		  End If
 		  
-		  Self.Authenticate(Identity.Identifier, Identity.Sign(Payload))
+		  Self.Authenticate(Identity.UserID, Identity.Sign(Payload))
 		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
 		End Sub
 	#tag EndMethod
@@ -267,6 +269,14 @@ Protected Class Request
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBeenRetried"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

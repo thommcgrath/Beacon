@@ -19,6 +19,27 @@ Class NullableDouble
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromVariant(Value As Variant) As NullableDouble
+		  If IsNull(Value) Then
+		    Return Nil
+		  End If
+		  
+		  Select Case Value.Type
+		  Case Variant.TypeDouble
+		    Return NullableDouble.FromDouble(Value.DoubleValue)
+		  Case Variant.TypeInt32
+		    Return NullableDouble.FromInteger(Value.Int32Value)
+		  Case Variant.TypeInt64
+		    Return NullableDouble.FromInteger(Value.Int64Value)
+		  Case Variant.TypeSingle
+		    Return NullableDouble.FromDouble(Value.SingleValue)
+		  Else
+		    Return Nil
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IntegerValue() As Integer
 		  Return Round(Self.mValue)
 		End Function
@@ -105,6 +126,16 @@ Class NullableDouble
 	#tag Method, Flags = &h0
 		Function Operator_Subtract(RHS As Double) As Double
 		  Return Self.mValue - RHS
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ToVariant(Value As NullableDouble) As Variant
+		  If Value Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Value.DoubleValue
 		End Function
 	#tag EndMethod
 

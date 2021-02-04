@@ -3,7 +3,7 @@ Begin BeaconDialog AddSpawnPointDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   True
@@ -21,7 +21,7 @@ Begin BeaconDialog AddSpawnPointDialog
    MinimumWidth    =   600
    Resizeable      =   True
    Title           =   "Add Spawn Point Override"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
@@ -44,7 +44,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -76,7 +76,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -113,7 +113,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   314
@@ -128,6 +128,7 @@ Begin BeaconDialog AddSpawnPointDialog
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   True
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -137,13 +138,16 @@ Begin BeaconDialog AddSpawnPointDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   True
       HasHeader       =   False
       HasHorizontalScrollbar=   False
@@ -160,8 +164,9 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   4
@@ -203,7 +208,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -221,62 +226,21 @@ Begin BeaconDialog AddSpawnPointDialog
       Left            =   380
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       Segments        =   "Spawn Points\n\nTrue\rCreatures\n\nFalse"
-      SelectionStyle  =   "0"
+      SelectionStyle  =   0
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Visible         =   True
       Width           =   200
-   End
-   Begin DelayedTextField FilterField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      Height          =   22
-      Hint            =   "Search for spawn points"
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   84
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   53
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   284
    End
    Begin UITweaks.ResizedLabel FilterLabel
       AllowAutoDeactivate=   True
@@ -303,7 +267,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   53
@@ -343,13 +307,13 @@ Begin BeaconDialog AddSpawnPointDialog
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   270
    End
    Begin RadioButton OverrideRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Override Spawn Point"
+      Caption         =   "Replace Default Spawns"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -436,6 +400,35 @@ Begin BeaconDialog AddSpawnPointDialog
       Visible         =   True
       Width           =   214
    End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Search for spawn points"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   84
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Visible         =   True
+      Width           =   284
+   End
 End
 #tag EndWindow
 
@@ -476,8 +469,8 @@ End
 		  Self.mDefinedSpawns = New Dictionary
 		  Self.mUIMode = UIMode
 		  
-		  If Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName) Then
-		    Var Config As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, False))
+		  If Document.HasConfigGroup(BeaconConfigs.NameSpawnPoints) Then
+		    Var Config As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.NameSpawnPoints, False))
 		    If Config <> Nil Then
 		      Var SpawnPoints() As Beacon.SpawnPoint = Config.All
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
@@ -503,7 +496,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Value.Trim
+		  Var SearchText As String = Self.FilterField.Text.Trim
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  
 		  If SearchText = "" Then
@@ -518,12 +511,12 @@ End
 		      For Each Creature As Beacon.Creature In Creatures
 		        Var CreatureSpawnPoints() As Beacon.SpawnPoint = LocalData.SharedInstance.GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		        For Each SpawnPoint As Beacon.SpawnPoint In CreatureSpawnPoints
-		          UniqueSpawnPoints.Value(SpawnPoint.Path) = SpawnPoint
+		          UniqueSpawnPoints.Value(SpawnPoint.ObjectID) = SpawnPoint
 		        Next
 		      Next
 		      
 		      For Each Entry As DictionaryEntry In UniqueSpawnPoints
-		        SpawnPoints.AddRow(Beacon.SpawnPoint(Entry.Value))
+		        SpawnPoints.Add(Beacon.SpawnPoint(Entry.Value))
 		      Next
 		    End Select
 		  End If
@@ -536,11 +529,11 @@ End
 		      Continue
 		    End If
 		    
-		    If Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Remove")) Then
+		    If Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.ObjectID + ":Remove")) Then
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(Labels.Lookup(SpawnPoint.Path, SpawnPoint.Label).StringValue)
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.ObjectID, SpawnPoint.Label).StringValue)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
@@ -648,7 +641,7 @@ End
 		    End If
 		    
 		    MutableSpawnPoint.Mode = Mode
-		    Self.mSelectedPoints.AddRow(MutableSpawnPoint)
+		    Self.mSelectedPoints.Add(MutableSpawnPoint)
 		  Next
 		  
 		  Self.Hide
@@ -673,14 +666,14 @@ End
 		    
 		    Var DefinedModes As Integer
 		    Var Point As Beacon.SpawnPoint = Me.RowTagAt(I)
-		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Override") Then
+		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Override") Then
 		      // Include Append and Remove here so they cannot be selected if Override is already defined
 		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend Or Beacon.SpawnPoint.ModeRemove
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Append") Then
+		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Append") Then
 		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend
 		    End If
-		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Remove") Then
+		    If Self.mDefinedSpawns.HasKey(Point.ObjectID + ":Remove") Then
 		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeRemove
 		    End If
 		    
@@ -718,13 +711,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events FilterField
-	#tag Event
-		Sub TextChange()
-		  Self.UpdateFilter()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events OverrideRadio
 	#tag Event
 		Sub Action()
@@ -743,6 +729,13 @@ End
 	#tag Event
 		Sub Action()
 		  Self.CheckActionEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

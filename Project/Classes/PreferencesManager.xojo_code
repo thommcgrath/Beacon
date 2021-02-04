@@ -123,7 +123,7 @@ Protected Class PreferencesManager
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Method, Flags = &h0
 		Sub Constructor(File As FolderItem)
 		  Self.mFile = File
 		  
@@ -202,22 +202,22 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IntegerValue(Key As String, Default As Int32 = 0) As Int32
+		Function IntegerValue(Key As String, Default As Integer = 0) As Integer
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
 		  Var Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or Value.Type <> Variant.TypeInt32 Then
+		  If IsNull(Value) Or (Value.Type <> Variant.TypeInt32 And Value.Type <> Variant.TypeInt64) Then
 		    Return Default
 		  End If
 		  
-		  Return Value.Int32Value
+		  Return Value.IntegerValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IntegerValue(Key As String, Assigns Value As Int32)
+		Sub IntegerValue(Key As String, Assigns Value As Integer)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Value
 		  Self.Commit()
@@ -372,7 +372,7 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Property, Flags = &h21
 		Private mFile As FolderItem
 	#tag EndProperty
 

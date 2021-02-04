@@ -20,7 +20,7 @@ Implements ObservationKit.Observer
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Var Point As New BeaconUI.Point(X,Y)
 		  
-		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
+		  For I As Integer = 0 To Self.mHitRects.LastIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
@@ -66,7 +66,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
 		  Var Point As New BeaconUI.Point(X,Y)
-		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
+		  For I As Integer = 0 To Self.mHitRects.LastIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
@@ -107,10 +107,12 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  Const CellCornerRadius = 6
 		  
 		  #Pragma Unused areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  G.FontSize = 10
 		  G.FontUnit = FontUnits.Point
@@ -127,7 +129,7 @@ Implements ObservationKit.Observer
 		  CellPadding = CellSpacing
 		  
 		  Var FlexibleSpaceCount, StaticSpaceCount As Integer
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    Select Case Self.mItems(I).Type
 		    Case ShelfItem.TypeNormal, ShelfItem.TypeSpacer
 		      StaticSpaceCount = StaticSpaceCount + 1
@@ -150,7 +152,7 @@ Implements ObservationKit.Observer
 		  Var CellHeight As Double = CellWidth
 		  
 		  Var MaxCaptionWidth As Double
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(I).Type <> ShelfItem.TypeNormal Then
 		      Continue
 		    End If
@@ -173,8 +175,8 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Var NextPos As Double = CellSpacing
-		  Self.mHitRects.ResizeTo(Self.mItems.LastRowIndex)
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  Self.mHitRects.ResizeTo(Self.mItems.LastIndex)
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(I).Type = ShelfItem.TypeSpacer Then
 		      Self.mHitRects(I) = Nil
 		      NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + CellSpacing
@@ -271,7 +273,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Add(Item As ShelfItem)
-		  Self.mItems.AddRow(Item)
+		  Self.mItems.Add(Item)
 		  Item.AddObserver(Self, "PulseAmount")
 		  Item.AddObserver(Self, "Loading")
 		  Self.Invalidate
@@ -280,7 +282,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mItems.LastRowIndex + 1
+		  Return CType(Self.mItems.LastIndex + 1, UInteger)
 		End Function
 	#tag EndMethod
 
@@ -305,11 +307,12 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  Select Case Key
 		  Case "PulseAmount"
@@ -344,7 +347,7 @@ Implements ObservationKit.Observer
 		Sub Remove(Index As Integer)
 		  Self.mItems(Index).RemoveObserver(Self, "PulseAmount")
 		  Self.mItems(Index).RemoveObserver(Self, "Loading")
-		  Self.mItems.RemoveRowAt(Index)
+		  Self.mItems.RemoveAt(Index)
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
@@ -357,7 +360,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub SelectedIndex(Assigns Value As Integer)
-		  Value = Max(Min(Self.mItems.LastRowIndex, Value), If(Self.RequiresSelection, 0, -1))
+		  Value = Max(Min(Self.mItems.LastIndex, Value), If(Self.RequiresSelection, 0, -1))
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
 		    RaiseEvent Action
@@ -383,7 +386,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    If Self.mItems(I).Tag = Value.Tag Then
 		      Self.SelectedIndex = I
 		      Return
@@ -395,7 +398,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h21
 		Private Sub ShowHoverToolTip()
 		  Var Point As New BeaconUI.Point(Self.MouseX, Self.MouseY)
-		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
+		  For I As Integer = 0 To Self.mHitRects.LastIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
@@ -499,6 +502,30 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

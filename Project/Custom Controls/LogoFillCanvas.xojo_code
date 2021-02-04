@@ -2,8 +2,10 @@
 Protected Class LogoFillCanvas
 Inherits ControlCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  G.FontSize = 24
 		  
@@ -18,7 +20,7 @@ Inherits ControlCanvas
 		  
 		  Var CaptionTop As Integer = LogoTop + LogoMask.Height + 8
 		  Var CaptionBase As Integer = CaptionTop + G.CapHeight
-		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Self.mCaption)), G.Width - 40)
+		  Var CaptionWidth As Integer = Min(Ceiling(G.TextWidth(Self.mCaption)), G.Width - 40)
 		  Var CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  
 		  G.DrawingColor = ForeColor
@@ -35,7 +37,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
 			    Self.Invalidate
 			  End If
@@ -50,6 +52,30 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

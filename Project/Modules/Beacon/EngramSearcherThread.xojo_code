@@ -1,7 +1,6 @@
 #tag Class
 Protected Class EngramSearcherThread
 Inherits Beacon.Thread
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Var StartTime As Double = System.Microseconds
@@ -25,7 +24,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		          Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
 		        If InQuotes Then
@@ -33,41 +32,41 @@ Inherits Beacon.Thread
 		          If Character = """" Then
 		            InQuotes = False
 		          Else
-		            ColumnBuffer.AddRow(Character)
+		            ColumnBuffer.Add(Character)
 		          End If
 		        Else
 		          If Character = """" Then
 		            InQuotes = True
 		            If Started Then
-		              ColumnBuffer.AddRow(Character)
+		              ColumnBuffer.Add(Character)
 		            End If
 		          ElseIf Character = "," Then
-		            Columns.AddRow(ColumnBuffer.Join(""))
+		            Columns.Add(ColumnBuffer.Join(""))
 		            ColumnBuffer.ResizeTo(-1)
 		            Started = False
 		          ElseIf Character = CarriageReturn Then
 		            // Next line
-		            Columns.AddRow(ColumnBuffer.Join(""))
-		            Lines.AddRow(Columns)
+		            Columns.Add(ColumnBuffer.Join(""))
+		            Lines.Add(Columns)
 		            ColumnBuffer.ResizeTo(-1)
 		            Columns = Array("") // To create a new array
 		            Columns.ResizeTo(-1)
 		            Started = False
 		          Else
-		            ColumnBuffer.AddRow(Character)
+		            ColumnBuffer.Add(Character)
 		          End If
 		        End If
 		      Next
-		      Columns.AddRow(ColumnBuffer.Join(""))
-		      Lines.AddRow(Columns)
+		      Columns.Add(ColumnBuffer.Join(""))
+		      Lines.Add(Columns)
 		      
 		      Var LastPushTime As Double = System.Microseconds
 		      Var FoundSinceLastPush As Boolean
 		      
 		      Var HeaderColumns() As String
-		      If Lines.LastRowIndex >= 0 Then
+		      If Lines.LastIndex >= 0 Then
 		        HeaderColumns = Lines(0)
-		        Lines.RemoveRowAt(0)
+		        Lines.RemoveAt(0)
 		      End If
 		      Var PathColumnIdx, LabelColumnIdx, MaskColumnIdx, BlueprintColumnIdx, TagsColumnIndx, GroupColumnIdx As Integer
 		      PathColumnIdx = HeaderColumns.IndexOf("Path")
@@ -77,7 +76,7 @@ Inherits Beacon.Thread
 		      GroupColumnIdx = HeaderColumns.IndexOf("Group")
 		      BlueprintColumnIdx = HeaderColumns.IndexOf("Can Blueprint")
 		      
-		      Var AllAvailabilityMask As UInt64 = Beacon.Maps.All.Mask
+		      Var AllAvailabilityMask As UInt64 = Beacon.Maps.UniversalMask
 		      
 		      If PathColumnIdx = -1 Or LabelColumnIdx = -1 Then
 		        Var Err As New UnsupportedFormatException
@@ -91,7 +90,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		          Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
 		        Var Path As String = Columns(PathColumnIdx)
@@ -108,7 +107,7 @@ Inherits Beacon.Thread
 		        ElseIf BlueprintColumnIdx > -1 Then
 		          Var CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
 		          If CanBlueprint Then
-		            Tags.AddRow("blueprintable")
+		            Tags.Add("blueprintable")
 		          End If
 		        End If
 		        
@@ -135,21 +134,21 @@ Inherits Beacon.Thread
 		        If Self.ShouldStop Then
 		          Return
 		        End If
-		        Self.mBlueprints.AddRow(Blueprint.Clone)
+		        Self.mBlueprints.Add(Blueprint.Clone)
 		        Self.mBlueprintsLock.Leave
 		        FoundSinceLastPush = True
 		        
 		        If System.Microseconds - LastPushTime > 1000000 Then
-		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		          Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		          LastPushTime = System.Microseconds
 		          FoundSinceLastPush = False
 		        End If
 		      Next
 		      
-		      If Self.mBlueprints.LastRowIndex > -1 Then
-		        Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		      If Self.mBlueprints.LastIndex > -1 Then
+		        Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      End If
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		      Return
 		    Catch Err As RuntimeException
 		      // Probably not a CSV
@@ -175,7 +174,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
 		    Var Command As String = Match.SubExpressionString(1)
@@ -202,7 +201,7 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If Paths.KeyCount = 0 Then
-		    Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
+		    Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		    Return
 		  End If
 		  
@@ -216,7 +215,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
 		    Var Command As String = Paths.Value(Key)
@@ -224,15 +223,9 @@ Inherits Beacon.Thread
 		    Var Blueprint As Beacon.Blueprint
 		    Select Case Command
 		    Case "giveitem"
-		      Blueprint = Beacon.Data.GetEngramByPath(Path)
-		      If Blueprint = Nil Then
-		        Blueprint = Beacon.Engram.CreateFromPath(Path)
-		      End If
+		      Blueprint = Beacon.ResolveEngram("", Path, "", New Beacon.StringList(Beacon.UserModID))
 		    Case "spawndino"
-		      Blueprint = Beacon.Data.GetCreatureByPath(Path)
-		      If Blueprint = Nil Then
-		        Blueprint = Beacon.Creature.CreateFromPath(Path)
-		      End If
+		      Blueprint = Beacon.ResolveCreature("", Path, "", New Beacon.StringList(Beacon.UserModID))
 		    End Select
 		    
 		    If Blueprint = Nil Then
@@ -243,12 +236,12 @@ Inherits Beacon.Thread
 		    If Self.ShouldStop Then
 		      Return
 		    End If
-		    Self.mBlueprints.AddRow(Blueprint)
+		    Self.mBlueprints.Add(Blueprint)
 		    Self.mBlueprintsLock.Leave
 		    FoundSinceLastPush = True
 		    
 		    If System.Microseconds - LastPushTime > 1000000 Then
-		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		      Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      LastPushTime = System.Microseconds
 		      FoundSinceLastPush = False
 		    End If
@@ -259,10 +252,10 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If FoundSinceLastPush Then
-		    Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
+		    Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		  End If
 		  
-		  Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
+		  Self.mPendingTriggers.Add(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 
@@ -270,11 +263,11 @@ Inherits Beacon.Thread
 	#tag Method, Flags = &h0
 		Function Blueprints(ClearList As Boolean) As Beacon.Blueprint()
 		  Var Arr() As Beacon.Blueprint
-		  Arr.ResizeTo(Self.mBlueprints.LastRowIndex)
+		  Arr.ResizeTo(Self.mBlueprints.LastIndex)
 		  
 		  Self.mBlueprintsLock.Enter
 		  
-		  For I As Integer = 0 To Self.mBlueprints.LastRowIndex
+		  For I As Integer = 0 To Self.mBlueprints.LastIndex
 		    Arr(I) = Self.mBlueprints(I).Clone
 		  Next
 		  
@@ -290,14 +283,14 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  For I As Integer = Self.mPendingTriggers.LastRowIndex DownTo 0
+		  For I As Integer = Self.mPendingTriggers.LastIndex DownTo 0
 		    CallLater.Cancel(Self.mPendingTriggers(I))
-		    Self.mPendingTriggers.RemoveRowAt(I)
+		    Self.mPendingTriggers.RemoveAt(I)
 		  Next
 		  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.Stop
 		    Do Until Self.ThreadState = Thread.ThreadStates.NotRunning
-		      App.YieldToNextThread()
+		      Thread.YieldToNext()
 		    Loop
 		  End If
 		End Sub

@@ -25,104 +25,10 @@ Begin BeaconSubview PresetEditorView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   740
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Resizer         =   ""
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   10
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   200
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   60
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   740
-   End
-   Begin Shelf ViewSelector
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      DrawCaptions    =   True
-      Enabled         =   True
-      Height          =   60
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsVertical      =   False
-      Left            =   200
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   340
-   End
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   495
+      Height          =   515
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -137,7 +43,7 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      Top             =   61
+      Top             =   41
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -153,13 +59,15 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rGenesis\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse\rCrystal Isles\n\nFalse"
-         SelectionStyle  =   "1"
+         SelectionStyle  =   1
          TabIndex        =   0
          TabPanelIndex   =   2
-         Top             =   81
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   61
          Transparent     =   False
          Visible         =   True
          Width           =   660
@@ -217,7 +125,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   183
+         Top             =   163
          Transparent     =   False
          Visible         =   True
          Width           =   13
@@ -240,7 +148,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   149
+         Top             =   129
          Transparent     =   False
          Visible         =   True
          Width           =   13
@@ -282,7 +190,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   183
+         Top             =   163
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -318,7 +226,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   183
+         Top             =   163
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -361,7 +269,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   149
+         Top             =   129
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -397,7 +305,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   149
+         Top             =   129
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -432,7 +340,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   115
+         Top             =   95
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -467,7 +375,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -510,7 +418,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   115
+         Top             =   95
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -554,7 +462,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -587,7 +495,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -619,7 +527,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -651,13 +559,14 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   81
+         Top             =   61
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
       Begin BeaconListbox ContentsList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -668,6 +577,9 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -675,7 +587,7 @@ Begin BeaconSubview PresetEditorView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   "#ColumnDescription"
-         Height          =   379
+         Height          =   399
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -688,6 +600,7 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -701,7 +614,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   125
+         Top             =   105
          Transparent     =   True
          TypeaheadColumn =   1
          Underline       =   False
@@ -713,6 +626,7 @@ Begin BeaconSubview PresetEditorView
          _ScrollWidth    =   -1
       End
       Begin BeaconListbox ModifiersList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -723,6 +637,9 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -730,7 +647,7 @@ Begin BeaconSubview PresetEditorView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
-         Height          =   415
+         Height          =   435
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -743,6 +660,7 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -756,7 +674,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   121
+         Top             =   101
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -767,6 +685,40 @@ Begin BeaconSubview PresetEditorView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+   End
+   Begin OmniBar PresetToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   740
    End
 End
 #tag EndWindow
@@ -788,6 +740,15 @@ End
 
 	#tag Event
 		Sub Open()
+		  Self.MapSelector.RemoveAllSegments
+		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In AllMaps
+		    Var MapSegment As New Segment
+		    MapSegment.Title = Map.Name
+		    MapSegment.Enabled = True
+		    Self.MapSelector.AddSegment(MapSegment)
+		  Next
+		  
 		  Self.MapSelector.Width = Self.MapSelector.SegmentCount * 110 // Because the design-time size is not being respected
 		  Self.MapSelector.ResizeCells
 		  Self.MinimumWidth = Self.MapSelector.Width + 40
@@ -813,9 +774,13 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
@@ -828,6 +793,10 @@ End
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.Save()
 			Return True
 		End Function
@@ -835,9 +804,13 @@ End
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
@@ -864,6 +837,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(Preset As Beacon.Preset, SourceFile As FolderItem = Nil)
 		  Self.mPreset = New Beacon.MutablePreset(Preset)
+		  Self.ViewID = Preset.PresetID
 		  Self.mSaveFile = SourceFile
 		End Sub
 	#tag EndMethod
@@ -874,7 +848,7 @@ End
 		    Return
 		  End If
 		  
-		  If Warn And Not Self.ShowConfirm(if(Self.ContentsList.SelectedRowCount = 1, "Are you sure you want to delete this entry?", "Are you sure you want to delete these " + Str(Self.ContentsList.SelectedRowCount, "-0") + " entries?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Not Self.ShowConfirm(if(Self.ContentsList.SelectedRowCount = 1, "Are you sure you want to delete this entry?", "Are you sure you want to delete these " + Self.ContentsList.SelectedRowCount.ToString(Locale.Raw, "0") + " entries?"), "This action cannot be undone.", "Delete", "Cancel") Then
 		    Return
 		  End If
 		  
@@ -904,10 +878,10 @@ End
 		    
 		    Var Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
 		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
-		    Entries.AddRow(Entry)
+		    Entries.Add(Entry)
 		  Next
 		  
-		  If Entries.LastRowIndex = -1 Then
+		  If Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -955,31 +929,14 @@ End
 	#tag Method, Flags = &h21
 		Private Function FilteredMaps() As Beacon.Map()
 		  Var Maps() As Beacon.Map
-		  For I As Integer = 0 To Self.MapSelector.SegmentCount - 1
-		    Var Cell As Segment = Self.MapSelector.SegmentAt(I)
+		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  For Idx As Integer = 0 To Self.MapSelector.SegmentCount - 1
+		    Var Cell As Segment = Self.MapSelector.SegmentAt(Idx)
 		    If Not Cell.Selected Then
 		      Continue
 		    End If
-		    Select Case I
-		    Case 0
-		      Maps.AddRow(Beacon.Maps.TheIsland)
-		    Case 1
-		      Maps.AddRow(Beacon.Maps.ScorchedEarth)
-		    Case 2
-		      Maps.AddRow(Beacon.Maps.Aberration)
-		    Case 3
-		      Maps.AddRow(Beacon.Maps.Extinction)
-		    Case 4
-		      Maps.AddRow(Beacon.Maps.Genesis)
-		    Case 5
-		      Maps.AddRow(Beacon.Maps.TheCenter)
-		    Case 6
-		      Maps.AddRow(Beacon.Maps.Ragnarok)
-		    Case 7
-		      Maps.AddRow(Beacon.Maps.Valguero)
-		    Case 8
-		      Maps.AddRow(Beacon.Maps.CrystalIsles)
-		    End Select
+		    
+		    Maps.Add(AllMaps(Idx))
 		  Next
 		  Return Maps
 		End Function
@@ -1023,9 +980,9 @@ End
 		  
 		  Self.ContentsList.RowTagAt(Index) = Entry
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnDescription) = Entry.Label
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
+		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Str(Entry.ChanceToBeBlueprint, "0%"), "N/A")
+		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityModifier
 		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintMultiplier
@@ -1040,9 +997,15 @@ End
 		Private Sub Save()
 		  If Self.mSaveFile = Nil Then
 		    Beacon.Data.SavePreset(Self.mPreset)
+		    Self.ViewID = Self.mPreset.PresetID
 		  Else
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
+		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Start
+		  End If
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.Caption = Self.mPreset.Label
 		  End If
 		  Self.Changed = False
 		  NotificationKit.Post("Preset Saved", Self.mPreset)
@@ -1054,7 +1017,7 @@ End
 		  Var Entries() As Beacon.PresetEntry
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
 		    If Self.ContentsList.Selected(I) Then
-		      Entries.AddRow(Self.ContentsList.RowTagAt(I))
+		      Entries.Add(Self.ContentsList.RowTagAt(I))
 		    End If
 		  Next
 		  Return Entries
@@ -1064,7 +1027,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
 		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
-		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
+		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  Self.ContentsList.SelectedRowIndex = -1
@@ -1076,6 +1039,7 @@ End
 		    Self.Changed = True
 		  Next
 		  Self.ContentsList.Sort
+		  Self.Pages.SelectedPanelIndex = Self.PageContents
 		  Self.ContentsList.EnsureSelectionIsVisible
 		  Self.UpdateMinAndMaxFields
 		End Sub
@@ -1099,10 +1063,10 @@ End
 		  Var Focus As RectControl = Self.Window.Focus
 		  
 		  If Focus <> Self.MinItemsField Then
-		    Self.MinItemsField.Value = Str(Self.mPreset.MinItems)
+		    Self.MinItemsField.Text = Self.mPreset.MinItems.ToString(Locale.Current, "0")
 		  End If
 		  If Focus <> Self.MaxItemsField Then
-		    Self.MaxItemsField.Value = Str(Self.mPreset.MaxItems)
+		    Self.MaxItemsField.Text = Self.mPreset.MaxItems.ToString(Locale.Current, "0")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1114,27 +1078,22 @@ End
 		  Else
 		    Self.Title = Self.mPreset.Label
 		  End If
-		  Self.ToolbarCaption = Self.Title
+		  Self.ViewTitle = Self.Title
 		  Self.mUpdating = True
 		  Self.Changed = False
 		  
 		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
-		  Self.MapSelector.SegmentAt(0).Selected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
-		  Self.MapSelector.SegmentAt(1).Selected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
-		  Self.MapSelector.SegmentAt(2).Selected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
-		  Self.MapSelector.SegmentAt(3).Selected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
-		  Self.MapSelector.SegmentAt(4).Selected = (Mask And Beacon.Maps.Genesis.Mask) = Beacon.Maps.Genesis.Mask
-		  Self.MapSelector.SegmentAt(5).Selected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
-		  Self.MapSelector.SegmentAt(6).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
-		  Self.MapSelector.SegmentAt(7).Selected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
-		  Self.MapSelector.SegmentAt(8).Selected = (Mask And Beacon.Maps.CrystalIsles.Mask) = Beacon.Maps.CrystalIsles.Mask
+		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  For Idx As Integer = 0 To AllMaps.LastIndex
+		    Self.MapSelector.SegmentAt(Idx).Selected = (Mask And AllMaps(Idx).Mask) = AllMaps(Idx).Mask
+		  Next
 		  
 		  Var Maps() As Beacon.Map = Self.FilteredMaps()
 		  Var SelectedEntries() As String
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.Selected(I) Then
 		      Var Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
-		      SelectedEntries.AddRow(Entry.UniqueID)
+		      SelectedEntries.Add(Entry.UniqueID)
 		    End If
 		  Next
 		  Self.ContentsList.RemoveAllRows()
@@ -1143,8 +1102,8 @@ End
 		  Next
 		  Self.ContentsList.Sort
 		  
-		  Self.NameField.Value = Self.mPreset.Label
-		  Self.GroupingField.Value = Self.mPreset.Grouping
+		  Self.NameField.Text = Self.mPreset.Label
+		  Self.GroupingField.Text = Self.mPreset.Grouping
 		  Self.UpdateMinAndMaxFields
 		  
 		  Var AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
@@ -1160,8 +1119,8 @@ End
 		    Var MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
 		    Var BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
 		    
-		    Var QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current)
-		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current)
+		    Var QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current, "0")
+		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current, "0")
 		    Var MinQualityLabel, MaxQualityLabel As String
 		    If MinQualityModifier = 0 Then
 		      MinQualityLabel = "No Change"
@@ -1183,13 +1142,22 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As String
-		  If Self.mSaveFile <> Nil Then
-		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath))
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "presets", "Presets")
 		  Else
-		    Return Self.mPreset.PresetID
+		    Return If(Lowercase, "preset", "Preset")
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
+		  #Pragma Unused Sender
+		  
+		  Self.Progress = BeaconSubview.ProgressNone
+		  Self.ViewID = EncodeHex(Crypto.MD5(Destination.NativePath))
+		End Sub
 	#tag EndMethod
 
 
@@ -1224,50 +1192,35 @@ End
 	#tag Constant, Name = ModifierClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.presetmodifier", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageSettings, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageModifiers, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageSettings, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Header
+#tag Events Pages
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEntries"
-		    Self.ShowAddDialog()
-		  Case "EditEntries"
-		    Self.EditSelectedEntries()
-		  Case "DeleteEntries"
-		    Self.DeleteSelectedEntries(True)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", IconToolbarAdd))
-		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", IconToolbarEdit, False))
-		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", IconRemove, False))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ViewSelector
-	#tag Event
-		Sub Open()
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconPresetSettings, "General", "settings")
-		  Me.Add(IconPresetContents, "Contents", "contents")
-		  Me.Add(IconPresetModifiers, "Modifiers", "modifiers")
-		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.SelectedIndex = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Self.Pages.SelectedPanelIndex = Me.SelectedIndex - 1
+		Sub Change()
+		  Var GeneralTab As OmniBarItem = Self.PresetToolbar.Item("GeneralTab")
+		  If (GeneralTab Is Nil) = False Then
+		    GeneralTab.Toggled = Me.SelectedPanelIndex = Self.PageSettings
+		  End If
+		  
+		  Var ContentsTab As OmniBarItem = Self.PresetToolbar.Item("ContentsTab")
+		  If (ContentsTab Is Nil) = False Then
+		    ContentsTab.Toggled = Me.SelectedPanelIndex = Self.PageContents
+		  End If
+		  
+		  Var ModifiersTab As OmniBarItem = Self.PresetToolbar.Item("ModifiersTab")
+		  If (ModifiersTab Is Nil) = False Then
+		    ModifiersTab.Toggled = Me.SelectedPanelIndex = Self.PageModifiers
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1297,24 +1250,28 @@ End
 #tag Events MaxItemsStepper
 	#tag Event
 		Sub Down()
-		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) - 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MaxItemsField.Text) - 1
+		  Self.MaxItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Up()
-		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) + 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MaxItemsField.Text) + 1
+		  Self.MaxItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsStepper
 	#tag Event
 		Sub Down()
-		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) - 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MinItemsField.Text) - 1
+		  Self.MinItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Up()
-		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) + 1, "-0")
+		  Var NewValue As Integer = CDbl(Self.MinItemsField.Text) + 1
+		  Self.MinItemsField.Text = NewValue.ToString(Locale.Current, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1325,20 +1282,20 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Max(CDbl(Me.Value), 1)
+		  Var Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mPreset.MaxItems <> Value Then
 		    Self.mPreset.MaxItems = Value
 		    Self.Changed = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Value = Str(Self.mPreset.MaxItems, "-0")
+		    Me.Text = Self.mPreset.MaxItems.ToString(Locale.Raw, "0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Value = Str(Self.mPreset.MaxItems, "-0")
+		  Me.Text = Self.mPreset.MaxItems.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1349,20 +1306,20 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Max(CDbl(Me.Value), 1)
+		  Var Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mPreset.MinItems <> Value Then
 		    Self.mPreset.MinItems = Value
 		    Self.Changed = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Value = Str(Self.mPreset.MinItems, "-0")
+		    Me.Text = Self.mPreset.MinItems.ToString(Locale.Raw, "0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Value = Str(Self.mPreset.MinItems, "-0")
+		  Me.Text = Self.mPreset.MinItems.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1373,8 +1330,8 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As String = Me.Value.Trim
-		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
+		  Var Value As String = Me.Text.Trim
+		  If Value <> "" And Self.mPreset.Grouping.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mPreset.Grouping = Value
 		    Self.Changed = True
 		  End If
@@ -1388,8 +1345,8 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As String = Me.Value.Trim
-		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
+		  Var Value As String = Me.Text.Trim
+		  If Value <> "" And Self.mPreset.Label.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mPreset.Label = Value
 		    Self.Changed = True
 		  End If
@@ -1481,13 +1438,13 @@ End
 		  Var Item As MenuItem
 		  
 		  Item = New MenuItem
-		  Item.Value = "Create Blueprint Entry"
+		  Item.Text = "Create Blueprint Entry"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "createblueprintentry"
 		  Base.AddMenu(Item)
 		  
 		  Item = New MenuItem
-		  Item.Value = "Match Official Availability"
+		  Item.Text = "Match Official Availability"
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "matchavailability"
 		  Base.AddMenu(Item)
@@ -1510,7 +1467,7 @@ End
 		        
 		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.ValidForMap(Map) Then
-		          Entries.AddRow(Entry)
+		          Entries.Add(Entry)
 		        End If
 		      Next
 		      
@@ -1598,8 +1555,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Header.EditEntries.Enabled = Me.SelectedRowCount > 0
-		  Header.DeleteEntries.Enabled = Me.SelectedRowCount > 0
+		  Var EditEntriesButton As OmniBarItem = Self.PresetToolbar.Item("EditEntriesButton")
+		  If (EditEntriesButton Is Nil) = False Then
+		    EditEntriesButton.Enabled = Me.SelectedRowCount > 0
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1632,7 +1591,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelectedRowCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Str(Self.ModifiersList.SelectedRowCount, "-0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelectedRowCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Self.ModifiersList.SelectedRowCount.ToString(Locale.Raw, "0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
 		    Return
 		  End If
 		  
@@ -1665,7 +1624,7 @@ End
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Modifiers, False), Self.ModifierClipboardType)
+		  Board.RawData(Self.ModifierClipboardType) = Beacon.GenerateJSON(Modifiers, False)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1710,13 +1669,69 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events PresetToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTab("GeneralTab", "General"))
+		  Me.Append(OmniBarItem.CreateTab("ContentsTab", "Contents"))
+		  Me.Append(OmniBarItem.CreateTab("ModifiersTab", "Modifiers"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddEntriesButton", "New Entry", IconToolbarAdd, "Add engrams to this preset."))
+		  Me.Append(OmniBarItem.CreateButton("EditEntriesButton", "Edit", IconToolbarEdit, "Edit the selected entries.", False))
+		  
+		  Me.Item("GeneralTab").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEntriesButton"
+		    Self.ShowAddDialog()
+		  Case "EditEntriesButton"
+		    Self.EditSelectedEntries()
+		  Case "GeneralTab"
+		    Self.Pages.SelectedPanelIndex = Self.PageSettings
+		  Case "ContentsTab"
+		    Self.Pages.SelectedPanelIndex = Self.PageContents
+		  Case "ModifiersTab"
+		    Self.Pages.SelectedPanelIndex = Self.PageModifiers
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1781,14 +1796,6 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1926,14 +1933,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

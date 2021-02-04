@@ -32,7 +32,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      Left            =   231
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -47,36 +47,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   858
-      Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "There was an error loading the editor"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   487
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   41
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   858
-      End
+      Width           =   627
       Begin Canvas OmniNoticeBanner
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -88,7 +59,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         Left            =   0
+         Left            =   231
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -102,71 +73,40 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   False
-         Width           =   858
+         Width           =   627
       End
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   858
-   End
-   Begin BeaconToolbar BeaconToolbar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   ""
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   233
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   625
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "There was an error loading the editor"
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   487
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   231
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   627
+      End
    End
    Begin HelpDrawer HelpDrawer
       AcceptFocus     =   False
@@ -175,6 +115,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Backdrop        =   0
       Body            =   ""
       Borders         =   8
+      ContentHeight   =   0
       DetailURL       =   ""
       DoubleBuffer    =   False
       Enabled         =   True
@@ -189,6 +130,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -208,37 +151,162 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin UITweaks.ResizedPopupMenu ConfigMenu
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+   Begin FadedSeparator SourceSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
+      Height          =   487
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   9
-      ListIndex       =   0
+      Left            =   230
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin OmniBar OmniBar1
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   858
+   End
+   Begin SourceList ConfigList
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   446
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   82
+      Transparent     =   True
+      Visible         =   True
+      Width           =   230
+   End
+   Begin ControlCanvas ConfigSetPicker
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   40
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
+      Visible         =   True
+      Width           =   230
+   End
+   Begin FadedSeparator FadedSeparator2
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   10
-      Transparent     =   False
-      Underline       =   False
+      Tooltip         =   ""
+      Top             =   81
+      Transparent     =   True
       Visible         =   True
-      Width           =   215
+      Width           =   230
    End
 End
 #tag EndWindow
@@ -301,7 +369,16 @@ End
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
 		    Var DocumentID As String = Self.mController.Document.DocumentID
-		    Self.CurrentConfigName = Preferences.LastUsedConfigName(DocumentID)
+		    Var LastConfig As String = Preferences.LastUsedConfigName(DocumentID)
+		    If LastConfig.IsEmpty Then
+		      If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeWeb Then
+		        LastConfig = BeaconConfigs.NameMetadata
+		      Else
+		        LastConfig = BeaconConfigs.NameLootDrops
+		      End If
+		    End If
+		    Self.CurrentConfigName = LastConfig
+		    
 		    Self.mController.Document.AddObserver(Self, "Title")
 		  End If
 		  
@@ -330,6 +407,10 @@ End
 
 	#tag MenuHandler
 		Function FileDeploy() As Boolean Handles FileDeploy.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.BeginDeploy()
 			Return True
 			
@@ -338,6 +419,10 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.BeginExport()
 			Return True
 			
@@ -346,6 +431,10 @@ End
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.Document.NewIdentifier()
 			Call Self.SaveAs()
 			Return True
@@ -385,7 +474,7 @@ End
 		      If Folder = Nil Then
 		        Return Nil
 		      End If
-		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension))
+		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + Beacon.FileExtensionProject))
 		    End If
 		  End If
 		  
@@ -403,7 +492,7 @@ End
 		    Self.Autosave()
 		    
 		    If Not Self.ReadyToDeploy Then
-		      If Self.ShowConfirm("This document is not ready for deploy.", "You must import at least one server with this document to use the deploy feature.", "Import a Server", "Cancel") Then 
+		      If Self.ShowConfirm("This project is not ready for deploy.", "You must import at least one server with this project to use the deploy feature.", "Import a Server", "Cancel") Then 
 		        Self.BeginImport(True)
 		      End If
 		      Return
@@ -460,7 +549,7 @@ End
 		      Var Key As Variant = Self.mEditorRefs.Key(I)
 		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
 		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
-		        OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
+		        OtherDocuments.Add(DocumentEditorView(Ref.Value).Document)
 		      End If
 		    Next
 		    
@@ -502,11 +591,11 @@ End
 	#tag Method, Flags = &h0
 		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
 		  If Self.Progress <> BeaconSubview.ProgressNone Then
-		    If Callback <> Nil Then
+		    If Beacon.SafeToInvoke(Callback) Then
 		      Callback.Invoke(Self)
 		    End If
 		    
-		    Self.ShowAlert(Self.ToolbarCaption + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
+		    Self.ShowAlert(Self.ViewTitle + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
 		    Return False
 		  End If
 		  
@@ -524,8 +613,10 @@ End
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  Self.ToolbarCaption = Controller.Name
-		  Self.UpdateToolbarIcon
+		  Self.ViewTitle = Controller.Name
+		  Self.UpdateViewIcon
+		  
+		  Self.ViewID = Controller.URL.Hash
 		  
 		  Self.Panels = New Dictionary
 		End Sub
@@ -534,18 +625,18 @@ End
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
 		  Var ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
-		  If ExcludedConfigs.LastRowIndex = -1 Then
+		  If ExcludedConfigs.LastIndex = -1 Then
 		    Return True
 		  End If
 		  
 		  Var HumanNames() As String
 		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
-		    HumanNames.AddRow("""" + Language.LabelForConfig(Config) + """")
+		    HumanNames.Add("""" + Language.LabelForConfig(Config) + """")
 		  Next
 		  HumanNames.Sort
 		  
 		  Var Message, Explanation As String
-		  If HumanNames.LastRowIndex = 0 Then
+		  If HumanNames.LastIndex = 0 Then
 		    Message = "You are using an editor that will not be included in your config files."
 		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
 		  Else
@@ -582,6 +673,18 @@ End
 		  If Self.mEditorRefs <> Nil And Self.mEditorRefs.HasKey(Self.mController.Document.DocumentID) Then
 		    Self.mEditorRefs.Remove(Self.mController.Document.DocumentID)
 		  End If
+		  
+		  If (Self.mMapsPopoverController Is Nil) = False Then
+		    RemoveHandler mMapsPopoverController.Finished, WeakAddressOf MapsPopoverController_Finished
+		    Self.mModsPopoverController.Dismiss(True)
+		    Self.mMapsPopoverController = Nil
+		  End If
+		  
+		  If (Self.mModsPopoverController Is Nil) = False Then
+		    RemoveHandler mModsPopoverController.Finished, WeakAddressOf ModsPopoverController_Finished
+		    Self.mModsPopoverController.Dismiss(True)
+		    Self.mModsPopoverController = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -607,12 +710,47 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub HandleConfigPickerClick()
+		  Var SetNames() As String = Self.Document.ConfigSetNames
+		  SetNames.Sort
+		  
+		  Var Menu As New MenuItem
+		  For Each SetName As String In SetNames
+		    Var Item As New MenuItem(SetName, SetName)
+		    Item.HasCheckMark = SetName = Self.ActiveConfigSet 
+		    Menu.AddMenu(Item)
+		  Next
+		  
+		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Menu.AddMenu(New MenuItem("Manage Config Sets…", "beacon:manage"))
+		  Menu.AddMenu(New MenuItem("Learn more about Config Sets…", "beacon:help"))
+		  
+		  Var Origin As Point = Self.ConfigSetPicker.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
+		  Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
+		  If (Choice Is Nil) = False Then
+		    If Choice.Tag.StringValue.BeginsWith("beacon:") Then
+		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
+		      Select Case Tag
+		      Case "manage"
+		        If ConfigSetManagerWindow.Present(Self, Self.Document) Then
+		          Self.ActiveConfigSet = Self.ActiveConfigSet
+		        End If
+		      Case "help"
+		        Break
+		      End Select
+		    Else
+		      Self.ActiveConfigSet = Choice.Tag.StringValue
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub HideHelpDrawer()
 		  If Not Self.mHelpDrawerOpen Then
 		    Return
 		  End If
 		  Self.mHelpDrawerOpen = False
-		  Self.BeaconToolbar1.HelpButton.Toggled = False
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
 		    Self.mHelpDrawerAnimation.Cancel
@@ -651,6 +789,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Self.Document.MapCompatibility = MapSelectionGrid(Sender.Container).Mask
+		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  Self.OmniBar1.Item("MapsButton").Toggled = False
+		  Self.mMapsPopoverController = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As String)
 		  If Not Self.Closed Then
 		    Self.Progress = BeaconSubview.ProgressNone
@@ -660,13 +810,8 @@ End
 		    Reason = Reason.GuessEncoding
 		  End If
 		  
-		  Var Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
-		  Notification.SecondaryMessage = Reason
-		  Notification.UserData = New Dictionary
-		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
-		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
-		  Notification.UserData.Value("Reason") = Reason
-		  LocalData.SharedInstance.SaveNotification(Notification)
+		  // This has been made thread safe
+		  Self.ShowAlert("Uh oh, the project " + Sender.Name + " did not save!", Reason)
 		End Sub
 	#tag EndMethod
 
@@ -674,12 +819,17 @@ End
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
 		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
-		    Self.ToolbarCaption = Sender.Name
+		    Self.ViewTitle = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
-		    Self.UpdateToolbarIcon()
+		    If (Self.LinkedOmniBarItem Is Nil) = False And (Self.LinkedOmniBarItem.Name <> Self.mController.URL.Hash) Then
+		      Self.LinkedOmniBarItem.Name = Self.mController.URL.Hash
+		    End If
+		    Self.UpdateViewIcon()
 		  End If
 		  
 		  Preferences.AddToRecentDocuments(Sender.URL)
+		  
+		  Self.ViewID = Sender.URL.Hash
 		  
 		  If Self.Document = Nil Or Sender.Document.Modified = False Then
 		    // Safe to cleanup the autosave
@@ -706,6 +856,7 @@ End
 		  Next
 		  
 		  Self.Autosave()
+		  Self.UpdateConfigList()
 		  Self.Panel_ContentsChanged(Nil)
 		End Sub
 	#tag EndMethod
@@ -716,9 +867,25 @@ End
 		  
 		  If Self.Closed = False And Self.mHelpDrawerOpen = False Then
 		    Self.HelpDrawer.Visible = False
-		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.HelpDrawer.Body <> "")
 		    Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
+		    Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		    For Each Details As Beacon.ModDetails In Mods
+		      Self.Document.ModEnabled(Details.ModID) = Editor.ModEnabled(Details.ModID)
+		    Next
+		    
+		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  Self.OmniBar1.Item("ModsButton").Toggled = False
+		  Self.mModsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -742,17 +909,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  Select Case Key
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
 		  Case "Title"
-		    Self.ToolbarCaption = Self.mController.Document.Title
+		    Self.ViewTitle = Self.mController.Name
 		    Self.Changed = True
 		  End Select
 		End Sub
@@ -800,11 +968,11 @@ End
 		Private Sub SaveAs()
 		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
 		  Case DocumentSaveToCloudWindow.StateSaved
-		    Self.ToolbarCaption = Self.mController.Name
+		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
 		    Var Dialog As New SaveFileDialog
-		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
+		    Dialog.SuggestedFileName = Self.mController.Name + Beacon.FileExtensionProject
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
 		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
@@ -812,9 +980,9 @@ End
 		      Return
 		    End If
 		    
-		    If Self.Document.Title.BeginsWith("Untitled Document") Then
+		    If Self.Document.Title.BeginsWith("Untitled Project") Then
 		      Var Filename As String = File.Name
-		      Var Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
+		      Var Extension As String = Beacon.FileExtensionProject
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If
@@ -822,7 +990,7 @@ End
 		    End If
 		    
 		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
-		    Self.ToolbarCaption = Self.mController.Name
+		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  End Select
 		End Sub
@@ -834,7 +1002,6 @@ End
 		    Return
 		  End If
 		  Self.mHelpDrawerOpen = True
-		  Self.BeaconToolbar1.HelpButton.Toggled = True
 		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + Self.HelpDrawer.Width
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
@@ -880,43 +1047,80 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateConfigList()
+		  Var Labels(), Tags() As String
+		  
+		  Var ActiveConfigSet As String = Self.ActiveConfigSet
+		  Var IsBase As Boolean = ActiveConfigSet = Beacon.Document.BaseConfigSetName
+		  If IsBase Then
+		    // Show everything
+		    #if DeployEnabled
+		      Labels.Add("Servers")
+		      Tags.Add("deployments")
+		    #endif
+		    Labels.Add("Accounts")
+		    Tags.Add("accounts")
+		  End If
+		  
+		  Var Names() As String = BeaconConfigs.AllConfigNames
+		  For Each Name As String In Names
+		    Labels.Add(Language.LabelForConfig(Name))
+		    Tags.Add(Name)
+		  Next
+		  
+		  Labels.SortWith(Tags)
+		  
+		  Var SourceItems() As SourceListItem
+		  For I As Integer = 0 To Labels.LastIndex
+		    Var Item As New SourceListItem(Labels(I), Tags(I))
+		    If Not IsBase Then
+		      Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(Tags(I))
+		      If Group.SupportsConfigSets = False Then
+		        Continue
+		      End If
+		      
+		      Item.Unemphasized = Self.Document.HasConfigGroup(Tags(I)) = False Or Self.Document.ConfigGroup(Tags(I)).IsImplicit = True
+		    End If
+		    SourceItems.Add(Item)
+		  Next
+		  
+		  Self.ConfigList.ReplaceContents(SourceItems)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateHelpForConfig(ConfigName As String)
 		  Var Title, Body, DetailURL As String
 		  Call LocalData.SharedInstance.GetConfigHelp(ConfigName, Title, Body, DetailURL)
 		  Self.HelpDrawer.Title = Title
 		  Self.HelpDrawer.Body = Body
 		  Self.HelpDrawer.DetailURL = DetailURL
-		  Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.HelpDrawer.Body <> "")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateMinimumDimensions()
-		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + If(Self.mHelpDrawerOpen, Self.HelpDrawer.Width, 0)
+		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + If(Self.mHelpDrawerOpen, Self.HelpDrawer.Width, 0) + Self.PagePanel1.Left
 		  Self.MinimumHeight = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumHeight, Self.LocalMinHeight), Self.LocalMinHeight) + Self.PagePanel1.Top
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateToolbarIcon()
-		  Select Case Self.mController.URL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
-		    Self.ToolbarIcon = IconCloudTab
-		  Case Beacon.DocumentURL.TypeWeb
-		    Self.ToolbarIcon = IconCommunityTab
-		  Else
-		    Self.ToolbarIcon = Nil
-		  End Select
+		Private Sub UpdateUI()
+		  Self.ViewTitle = Self.mController.Name
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateUI()
-		  Self.ToolbarCaption = Self.mController.Name
-		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
-		  #if DeployEnabled
-		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToExport
-		  #endif
+		Private Sub UpdateViewIcon()
+		  Select Case Self.mController.URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Self.ViewIcon = IconCloudDocument
+		  Case Beacon.DocumentURL.TypeWeb
+		    Self.ViewIcon = IconCommunityDocument
+		  Else
+		    Self.ViewIcon = Nil
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -927,11 +1131,36 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As String
-		  Return Self.mController.URL.Hash
+		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
+		  If Plural Then
+		    Return If(Lowercase, "projects", "Projects")
+		  Else
+		    Return If(Lowercase, "project", "Project")
+		  End If
 		End Function
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.Document.ActiveConfigSet
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var ConfigName As String = Self.CurrentConfigName
+			  Self.CurrentConfigName = "" // To unload the current version
+			  
+			  Self.Document.ActiveConfigSet = Value
+			  Self.ConfigSetPicker.Invalidate
+			  Self.UpdateConfigList
+			  
+			  Self.CurrentConfigName = ConfigName
+			End Set
+		#tag EndSetter
+		ActiveConfigSet As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -948,22 +1177,24 @@ End
 			  
 			  Var NewPanel As ConfigEditor
 			  Var Embed As Boolean
-			  If Value.Length > 0 Then
+			  If Value.IsEmpty = False Then
+			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
+			    
 			    Self.UpdateHelpForConfig(Value)
 			    
 			    If Self.mController.Document <> Nil Then
 			      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Value
 			    End If
 			    
-			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Value)
+			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
 			    If HistoryIndex > 0 Then
-			      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
+			      Self.mPanelHistory.RemoveAt(HistoryIndex)
 			    End If
-			    Self.mPanelHistory.AddRowAt(0, Value)
+			    Self.mPanelHistory.AddAt(0, CacheKey)
 			    
 			    // Close older panels
-			    If Self.mPanelHistory.LastRowIndex > 2 Then
-			      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
+			    If Self.mPanelHistory.LastIndex > 2 Then
+			      For I As Integer = Self.mPanelHistory.LastIndex DownTo 3
 			        Var PanelTag As String = Self.mPanelHistory(I)
 			        If Self.Panels.HasKey(PanelTag) Then
 			          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)
@@ -974,51 +1205,51 @@ End
 			      Next
 			    End If
 			    
-			    If Self.Panels.HasKey(Value) Then
-			      NewPanel = Self.Panels.Value(Value)
+			    If Self.Panels.HasKey(CacheKey) Then
+			      NewPanel = Self.Panels.Value(CacheKey)
 			    Else
 			      Select Case Value
-			      Case "maps"
-			        NewPanel = New MapsConfigEditor(Self.mController)
 			      Case "deployments"
 			        NewPanel = New ServersConfigEditor(Self.mController)
 			      Case "accounts"
 			        NewPanel = New AccountsConfigEditor(Self.mController)
-			      Case BeaconConfigs.LootDrops.ConfigName
+			      Case BeaconConfigs.NameLootDrops
 			        NewPanel = New LootConfigEditor(Self.mController)
-			      Case BeaconConfigs.Difficulty.ConfigName
+			      Case BeaconConfigs.NameDifficulty
 			        NewPanel = New DifficultyConfigEditor(Self.mController)
-			      Case BeaconConfigs.LootScale.ConfigName
+			      Case BeaconConfigs.NameLootScale
 			        NewPanel = New LootScaleConfigEditor(Self.mController)
-			      Case BeaconConfigs.Metadata.ConfigName
+			      Case BeaconConfigs.NameMetadata
 			        NewPanel = New MetaDataConfigEditor(Self.mController)
-			      Case BeaconConfigs.ExperienceCurves.ConfigName
+			      Case BeaconConfigs.NameExperienceCurves
 			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
-			      Case BeaconConfigs.CustomContent.ConfigName
+			      Case BeaconConfigs.NameCustomContent
 			        NewPanel = New CustomContentConfigEditor(Self.mController)
-			      Case BeaconConfigs.CraftingCosts.ConfigName
+			      Case BeaconConfigs.NameCraftingCosts
 			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
-			      Case BeaconConfigs.StackSizes.ConfigName
+			      Case BeaconConfigs.NameStackSizes
 			        NewPanel = New StackSizesConfigEditor(Self.mController)
-			      Case BeaconConfigs.BreedingMultipliers.ConfigName
+			      Case BeaconConfigs.NameBreedingMultipliers
 			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
-			      Case BeaconConfigs.HarvestRates.ConfigName
+			      Case BeaconConfigs.NameHarvestRates
 			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
-			      Case BeaconConfigs.DinoAdjustments.ConfigName
+			      Case BeaconConfigs.NameDinoAdjustments
 			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
-			      Case BeaconConfigs.StatMultipliers.ConfigName
+			      Case BeaconConfigs.NameStatMultipliers
 			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
-			      Case BeaconConfigs.DayCycle.ConfigName
+			      Case BeaconConfigs.NameDayCycle
 			        NewPanel = New DayCycleConfigEditor(Self.mController)
-			      Case BeaconConfigs.SpawnPoints.ConfigName
+			      Case BeaconConfigs.NameSpawnPoints
 			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
-			      Case BeaconConfigs.StatLimits.ConfigName
+			      Case BeaconConfigs.NameStatLimits
 			        NewPanel = New StatLimitsConfigEditor(Self.mController)
-			      Case BeaconConfigs.EngramControl.ConfigName
+			      Case BeaconConfigs.NameEngramControl
 			        NewPanel = New EngramControlConfigEditor(Self.mController)
+			      Case BeaconConfigs.NameSpoilTimers
+			        NewPanel = New SpoilTimersConfigEditor(Self.mController)
 			      End Select
 			      If NewPanel <> Nil Then
-			        Self.Panels.Value(Value) = NewPanel
+			        Self.Panels.Value(CacheKey) = NewPanel
 			        Embed = True
 			      End If
 			    End If
@@ -1031,8 +1262,6 @@ End
 			  End If
 			  
 			  If Self.CurrentPanel <> Nil Then
-			    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
-			    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
 			    Self.CurrentPanel.SwitchedFrom()
 			    Self.CurrentPanel.Visible = False
 			    Self.CurrentPanel = Nil
@@ -1059,14 +1288,12 @@ End
 			    Self.OmniNoticeBanner.Visible = RequiresPurchase
 			    Self.CurrentPanel.Visible = True
 			    Self.CurrentPanel.SwitchedTo()
-			    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
-			    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
 			    Self.PagePanel1.SelectedPanelIndex = 1
 			  Else
 			    Self.PagePanel1.SelectedPanelIndex = 0
 			  End If
 			  
-			  Self.ConfigMenu.SelectByTag(Value)
+			  Self.ConfigList.SelectedTag = Value
 			  
 			  Self.UpdateMinimumDimensions()
 			End Set
@@ -1080,6 +1307,18 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAutosaveFile As BookmarkedFolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigPickerMenuOrigin As Point
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigPickerMouseDown As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigPickerMouseHover As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1112,6 +1351,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mImportWindowRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMapsPopoverController As PopoverController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModsPopoverController As PopoverController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1205,30 +1452,34 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events BeaconToolbar1
+#tag Events AutosaveTimer
+	#tag Event
+		Sub Action()
+		  Self.Autosave()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OmniBar1
 	#tag Event
 		Sub Open()
-		  Var ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
-		  Var ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
+		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files"))
+		  Me.Append(OmniBarItem.CreateSpace())
+		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file"))
+		  
 		  #if DeployEnabled
-		    Var DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
+		    Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Make config changes live"))
 		  #endif
-		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
 		  
-		  Var HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
+		  Me.Append(OmniBarItem.CreateSpace())
+		  Me.Append(OmniBarItem.CreateButton("ShareButton", "Share", IconToolbarShare, "Share this project with other users"))
 		  
-		  Me.LeftItems.Append(ImportButton)
-		  Me.LeftItems.Append(ExportButton)
-		  #if DeployEnabled
-		    Me.LeftItems.Append(DeployButton)
-		  #endif
-		  Me.LeftItems.Append(ShareButton)
-		  
-		  Me.RightItems.Append(HelpButton)
+		  Me.Append(OmniBarItem.CreateSeparator())
+		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this project"))
+		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods"))
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Select Case Item.Name
 		  Case "ImportButton"
 		    Self.BeginImport(False)
@@ -1244,29 +1495,55 @@ End
 		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
 		      SharingDialog.Present(Self, Self.Document)
 		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.ShowAlert("Document sharing is only available to cloud documents", "Use ""Save As…"" under the file menu to save a new copy of this document to the cloud if you would like to use Beacon's sharing features.")
+		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
-		      Self.ShowAlert("Document sharing is only available to cloud documents", "If you would like to use Beacon's sharing features, first save your document using ""Save"" under the file menu.")
+		      Self.ShowAlert("Project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
+		  Case "MapsButton"
+		    If (Self.mMapsPopoverController Is Nil) = False And Self.mMapsPopoverController.Visible Then
+		      Self.mMapsPopoverController.Dismiss(False)
+		      Self.mMapsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var Editor As New MapSelectionGrid
+		    Var Controller As New PopoverController(Editor)
+		    Editor.Mask = Self.Document.MapCompatibility
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf MapsPopoverController_Finished
+		    Self.mMapsPopoverController = Controller
+		  Case "ModsButton"
+		    If (Self.mModsPopoverController Is Nil) = False And Self.mModsPopoverController.Visible Then
+		      Self.mModsPopoverController.Dismiss(False)
+		      Self.mModsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var Editor As New ModSelectionGrid(Self.Document.Mods)
+		    Var Controller As New PopoverController(Editor)
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
+		    Self.mModsPopoverController = Controller
 		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AutosaveTimer
-	#tag Event
-		Sub Action()
-		  Self.Autosave()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ConfigMenu
+#tag Events ConfigList
 	#tag Event
 		Sub Change()
 		  Var TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
-		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
+		    TagVar = Me.Item(Me.SelectedRowIndex).Tag
 		  End If
 		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
 		    Self.CurrentConfigName = TagVar.StringValue
@@ -1277,37 +1554,157 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Var Labels(), Tags() As String
-		  Labels.AddRow("Maps")
-		  Tags.AddRow("maps")
-		  #if DeployEnabled
-		    Labels.AddRow("Servers")
-		    Tags.AddRow("deployments")
-		  #endif
-		  Labels.AddRow("Accounts")
-		  Tags.AddRow("accounts")
+		  Self.UpdateConfigList()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ShouldChange(DesiredIndex As Integer) As Boolean
+		  #Pragma Unused DesiredIndex
 		  
-		  Var Names() As String = BeaconConfigs.AllConfigNames
-		  For Each Name As String In Names
-		    Labels.AddRow(Language.LabelForConfig(Name))
-		    Tags.AddRow(Name)
-		  Next
+		  Var CurrentItem As SourceListItem = Me.SelectedItem
+		  If (CurrentItem Is Nil) = False Then
+		    Try
+		      Var GroupName As String = CurrentItem.Tag
+		      CurrentItem.Unemphasized = Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName And (Self.Document.HasConfigGroup(GroupName) = False Or Self.Document.ConfigGroup(GroupName).IsImplicit = True)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
 		  
-		  Labels.SortWith(Tags)
+		  Return True
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigSetPicker
+	#tag Event
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
+		  #Pragma Unused Areas
+		  #Pragma Unused SafeArea
 		  
-		  For I As Integer = 0 To Labels.LastRowIndex
-		    Me.AddRow(Labels(I), Tags(I))
-		  Next
+		  Var Caption As String = "Config Set: " + Self.ActiveConfigSet
+		  Var CaptionBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  Var CaptionLeft As Double = G.Height - CaptionBaseline
+		  
+		  Var DropdownLeft As Double = G.Width - (CaptionLeft + 8)
+		  Var DropdownTop As Double = (G.Height - 4) / 2
+		  
+		  Var Path As New GraphicsPath
+		  Path.MoveToPoint(NearestMultiple(DropdownLeft, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 2, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 2, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 6, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 8, G.ScaleX), NearestMultiple(DropdownTop, G.ScaleY))
+		  Path.AddLineToPoint(NearestMultiple(DropdownLeft + 4, G.ScaleX), NearestMultiple(DropdownTop + 4, G.ScaleY))
+		  
+		  If Self.mConfigPickerMouseHover And Highlighted Then
+		    G.DrawingColor = SystemColors.ControlAccentColor
+		  Else
+		    G.DrawingColor = SystemColors.LabelColor
+		  End If
+		  
+		  G.DrawText(Caption, NearestMultiple(CaptionLeft, G.ScaleX), NearestMultiple(CaptionBaseline, G.ScaleY), NearestMultiple(G.Width - ((CaptionLeft * 3) + 8), G.ScaleX), True)
+		  G.FillPath(Path)
+		  
+		  If Self.mConfigPickerMouseDown Then
+		    G.DrawingColor = &c000000A5
+		    G.FillRectangle(0, 0, G.Width, G.Height)
+		  End If
+		  
+		  Self.mConfigPickerMenuOrigin = New Point(CaptionLeft, CaptionBaseline)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  If Self.mConfigPickerMouseDown = False Then
+		    Self.mConfigPickerMouseDown = True
+		    Me.Invalidate
+		  End If
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
+		  If Self.mConfigPickerMouseDown <> Pressed Then
+		    Self.mConfigPickerMouseDown = Pressed
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseEnter()
+		  If Self.mConfigPickerMouseHover = False Then
+		    Self.mConfigPickerMouseHover = True
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseExit()
+		  If Self.mConfigPickerMouseHover = True Then
+		    Self.mConfigPickerMouseHover = False
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseMove(X As Integer, Y As Integer)
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  If Self.mConfigPickerMouseHover = False Then
+		    Self.mConfigPickerMouseHover = True
+		    Me.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  Var Pressed As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height)
+		  If Pressed Then
+		    Call CallLater.Schedule(10, WeakAddressOf HandleConfigPickerClick)
+		  End If
+		  If Self.mConfigPickerMouseDown = True Or Self.mConfigPickerMouseHover <> Pressed Then
+		    Self.mConfigPickerMouseDown = False
+		    Self.mConfigPickerMouseHover = Pressed
+		    Me.Invalidate
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1375,14 +1772,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -1397,14 +1786,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1560,6 +1941,14 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentConfigName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ActiveConfigSet"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""

@@ -3,7 +3,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
    MinimumWidth    =   400
    Resizeable      =   False
    Title           =   "Set Points for Level"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   400
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -79,7 +79,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -111,7 +111,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -155,7 +155,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -198,7 +198,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   94
@@ -234,7 +234,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   60
@@ -269,7 +269,7 @@ Begin BeaconDialog EngramControlPointOverrideWindow
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   94
@@ -287,25 +287,25 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  If Self.mLevels.LastRowIndex = -1 Then
+		  If Self.mLevels.LastIndex = -1 Then
 		    Var Level As Integer = Max(Self.mConfig.LevelsDefined, Beacon.Data.OfficialPlayerLevelData.MaxLevel) + 1
-		    Self.LevelField.Value = Level.ToString
+		    Self.LevelField.Text = Level.ToString
 		    Self.PointsField.SetFocus()
-		  ElseIf Self.mLevels.LastRowIndex = 0 Then
+		  ElseIf Self.mLevels.LastIndex = 0 Then
 		    Var Level As Integer = Self.mLevels(0)
-		    Self.LevelField.Value = Level.ToString
+		    Self.LevelField.Text = Level.ToString
 		    Self.LevelField.Enabled = False
 		    Self.LevelLabel.Enabled = False
 		    
 		    Var Points As NullableDouble = Self.mConfig.PointsForLevel(Level)
 		    If IsNull(Points) = False Then
-		      Self.PointsField.Value = Points.IntegerValue.ToString
+		      Self.PointsField.Text = Points.IntegerValue.ToString
 		    Else
-		      Self.PointsField.Value = Beacon.Data.OfficialPlayerLevelData.PointsForLevel(Level).ToString
+		      Self.PointsField.Text = Beacon.Data.OfficialPlayerLevelData.PointsForLevel(Level).ToString
 		    End If
 		    Self.PointsField.SetFocus()
 		  Else
-		    Self.LevelField.Value = "Multiple"
+		    Self.LevelField.Text = "Multiple"
 		    Self.LevelField.Enabled = False
 		    Self.LevelLabel.Enabled = False
 		    Self.PointsField.SetFocus()
@@ -317,7 +317,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Var Enabled As Boolean = ((Self.mLevels.LastRowIndex = -1 And IsNumeric(Self.LevelField.Value)) Or Self.mLevels.LastRowIndex > -1) And IsNumeric(Self.PointsField.Value)
+		  Var Enabled As Boolean = ((Self.mLevels.LastIndex = -1 And IsNumeric(Self.LevelField.Text)) Or Self.mLevels.LastIndex > -1) And IsNumeric(Self.PointsField.Text)
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If
@@ -329,7 +329,7 @@ End
 		  Self.mDocument = Document
 		  Self.mLevels = Levels
 		  
-		  Var Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False)
+		  Var Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.NameEngramControl, False)
 		  If Config = Nil Then
 		    Self.mConfig = New BeaconConfigs.EngramControl
 		    Self.mAddConfigGroup = True
@@ -393,19 +393,19 @@ End
 	#tag Event
 		Sub Action()
 		  Var Levels() As Integer
-		  If Self.mLevels.LastRowIndex = -1 Then
-		    Var Level As Integer = Round(CDbl(Self.LevelField.Value))
+		  If Self.mLevels.LastIndex = -1 Then
+		    Var Level As Integer = Round(CDbl(Self.LevelField.Text))
 		    If Level < 1 Or Level > 65535 Then
 		      Self.ShowAlert("Level is out of range", "The level must be a numeric value between 1 and 65,535.")
 		      Return
 		    End If
 		    
-		    Levels.AddRow(Level)
+		    Levels.Add(Level)
 		  Else
 		    Levels = Self.mLevels
 		  End If
 		  
-		  Var Points As Integer = Round(CDbl(Self.PointsField.Value))
+		  Var Points As Integer = Round(CDbl(Self.PointsField.Text))
 		  If Points < 0 Or Points > 65535 Then
 		    Self.ShowAlert("Points are out of range", "The points awarded must be a numeric value between 0 and 65,535.")
 		    Return

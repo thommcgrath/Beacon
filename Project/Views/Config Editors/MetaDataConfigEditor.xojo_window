@@ -61,7 +61,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -97,7 +97,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -115,7 +115,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   182
+      Height          =   343
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -144,9 +144,10 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   95
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   0
       UseFocusRing    =   True
       Visible         =   True
       Width           =   476
@@ -180,132 +181,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
-   Begin BeaconListbox ModsList
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   True
-      ColumnCount     =   3
-      ColumnsResizable=   False
-      ColumnWidths    =   "26,100,*"
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   26
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
-      HeadingIndex    =   2
-      Height          =   190
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   " 	Console Safe	Mod"
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      RequiresSelection=   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   248
-      Transparent     =   False
-      TypeaheadColumn =   2
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      VisibleRowCount =   0
-      Width           =   476
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin UITweaks.ResizedLabel ModsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Enabled Mods:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   248
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
-   Begin Label ModsNoteLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   156
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Does not change anything on the server, only limits which engrams are shown in lists."
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   282
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -314,12 +190,12 @@ Begin ConfigEditor MetaDataConfigEditor
    Begin CheckBox UncompressedCheckbox
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Disable document compression"
+      Caption         =   "Disable project compression"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       Height          =   20
-      HelpTag         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
+      HelpTag         =   "Project compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -401,14 +277,48 @@ Begin ConfigEditor MetaDataConfigEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
+      Tooltip         =   "When enabled, mods that are not safe for consoles will be forced off."
       Top             =   450
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
+      VisualState     =   0
       Width           =   476
+   End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   628
    End
 End
 #tag EndWindow
@@ -416,47 +326,25 @@ End
 #tag WindowCode
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameMetadata)
 		  Self.Document.Mods.ResizeTo(-1)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub SetupUI()
-		  Self.TitleField.Value = Self.Document.Title
-		  Self.DescriptionArea.Value = Self.Document.Description
+		  Self.TitleField.Text = Self.Document.Title
+		  Self.DescriptionArea.Text = Self.Document.Description
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
 		  Self.ConsoleModeCheck.Value = Self.Document.ConsoleMode
-		  
-		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
-		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Var ListIndex As Integer = Self.ModsList.SelectedRowIndex
-		  Self.ModsList.RemoveAllRows()
-		  For Each Details As Beacon.ModDetails In Mods
-		    Self.ModsList.AddRow("", If(Details.ConsoleSafe, "Yes", "No"), Details.Name)
-		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
-		    Self.ModsList.RowTagAt(Idx) = Details
-		    Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = Self.Document.ModEnabled(Details.ModID)
-		  Next
-		  Self.ModsList.Sort
-		  Self.ModsList.ScrollPosition = ScrollPosition
-		  Self.ModsList.SelectedRowIndex = ListIndex
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.SetupUI()
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
-		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
+		  Return Language.LabelForConfig(BeaconConfigs.NameMetadata)
 		End Function
 	#tag EndMethod
 
@@ -481,7 +369,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Title = Me.Value.Trim
+		  Self.Document.Title = Me.Text.Trim
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -496,34 +384,10 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Self.SanitizeText(Me.Value.Trim, False)
+		  Self.Document.Description = Self.SanitizeText(Me.Text.Trim, False)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ModsList
-	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(Self.ModColumnEnabled) = Listbox.CellTypes.CheckBox
-		  Me.ColumnAlignmentAt(Self.ModColumnConsoleSafe) = Listbox.Alignments.Center
-		  Me.TypeaheadColumn = Self.ModColumnName
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused row
-		  
-		  If Self.SettingUp Or Column <> Self.ModColumnEnabled Then
-		    Return
-		  End If
-		  
-		  For I As Integer = 0 To Me.RowCount - 1
-		    Var ModID As String = Beacon.ModDetails(Me.RowTagAt(I)).ModID
-		    Self.Document.ModEnabled(ModID) = Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled)
-		  Next
-		  Self.Changed = Self.Changed Or Self.Document.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -569,10 +433,9 @@ End
 		  Self.Document.Metadata.IsImplicit = False
 		  
 		  If Me.Value Then
-		    For Idx As Integer = 0 To Self.ModsList.LastRowIndex
-		      Var ModInfo As Beacon.ModDetails = Self.ModsList.RowTagAt(Idx)
+		    Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		    For Each ModInfo As Beacon.ModDetails In Mods
 		      If ModInfo.ConsoleSafe = False Then
-		        Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = False
 		        Self.Document.ModEnabled(ModInfo.ModID) = False
 		      End If
 		    Next
@@ -583,13 +446,44 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -657,14 +551,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -679,14 +565,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

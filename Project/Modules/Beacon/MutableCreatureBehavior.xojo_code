@@ -37,7 +37,7 @@ Inherits Beacon.CreatureBehavior
 	#tag Method, Flags = &h0
 		Sub ReplacementCreature(Assigns Value As Beacon.Creature)
 		  If Self.mReplacementCreature <> Value Then
-		    Self.mReplacementCreature = Value
+		    Self.mReplacementCreature = New Beacon.BlueprintReference(Value)
 		    Self.mModified = True
 		  End If
 		End Sub

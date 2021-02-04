@@ -25,437 +25,251 @@ Begin ServerViewContainer NitradoServerView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
+   Begin PagePanel Pages
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   559
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   2
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   600
+      Begin FadedSeparator FadedSeparator1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   10
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   103
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   580
+      End
+      Begin UITweaks.ResizedLabel ServerStatusField
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   142
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Checking…"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   438
+      End
+      Begin UITweaks.ResizedLabel ServerStatusLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Server Status:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   110
+      End
+      Begin BeaconTextArea AdminNotesField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   True
+         AllowStyledText =   True
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         Height          =   519
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Multiline       =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   61
+         Transparent     =   False
+         Underline       =   False
+         UnicodeMode     =   1
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   560
+      End
+      Begin CommonServerSettingsView SettingsView
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   496
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         SettingUp       =   False
+         ShowsMapMenu    =   False
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   104
+         Transparent     =   True
+         Visible         =   True
+         Width           =   600
+      End
+   End
    Begin Beacon.OAuth2Client Auth
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin BeaconToolbar Controls
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+   Begin OmniBar ControlToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Untitled"
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
+      RightPadding    =   -1
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
+      Transparent     =   True
       Visible         =   True
       Width           =   600
-   End
-   Begin FadedSeparator ControlsSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   600
-   End
-   Begin UITweaks.ResizedLabel ServerStatusLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Server Status:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   110
-   End
-   Begin Timer RefreshTimer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Mode            =   0
-      Period          =   5000
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin UITweaks.ResizedLabel ServerStatusField
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   142
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Checking…"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   438
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   10
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   103
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   580
-   End
-   Begin UITweaks.ResizedTextField ServerNameField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   168
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   124
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   412
-   End
-   Begin UITweaks.ResizedLabel ServerNameLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Server Name:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   124
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   136
-   End
-   Begin ArkMLEditor MessageOfTheDayArea
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackgroundColor=   False
-      Height          =   145
-      InitialParent   =   ""
-      Left            =   168
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RTFData         =   ""
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   158
-      Transparent     =   True
-      Visible         =   True
-      Width           =   412
-   End
-   Begin UITweaks.ResizedLabel MessageOfTheDayLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "3"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   158
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Message of the Day:"
-      Visible         =   True
-      Width           =   136
-   End
-   Begin UITweaks.ResizedLabel MessageDurationLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "3"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   315
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Message Duration:"
-      Visible         =   True
-      Width           =   136
-   End
-   Begin RangeField MessageDurationField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      DoubleValue     =   0.0
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   168
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "2"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   315
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   260
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   315
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Seconds"
-      Visible         =   True
-      Width           =   320
    End
 End
 #tag EndWindow
@@ -479,21 +293,16 @@ End
 		  Else
 		    Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Beacon.ExternalAccount.ProviderNitrado + ". This means there is probably an update available.")
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
 		  
-		  Self.Controls.Caption = Self.mProfile.Name
-		  
-		  Self.ServerNameField.Value = Self.mProfile.Name
-		  
-		  #if Beacon.MOTDEditingEnabled
-		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
-		    Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
-		  #endif
-		  
-		  Self.MessageOfTheDayArea.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageOfTheDayLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
-		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
+		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
+		  Self.SettingsView.RefreshUI()
+		  Self.UpdateStatusDisplay()
 		End Sub
 	#tag EndEvent
 
@@ -516,58 +325,15 @@ End
 		    Var Data As Dictionary = Response.Value("data")
 		    Var GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    Var ServerStatus As String = GameServer.Value("status")
-		    Var Started, Enabled As Boolean
-		    Select Case ServerStatus
-		    Case "started"
-		      Self.ServerStatusField.Value = "Running"
-		      Started = True
-		      Enabled = True
-		    Case "stopped"
-		      Self.ServerStatusField.Value = "Stopped"
-		      Started = False
-		      Enabled = True
-		    Case "stopping"
-		      Self.ServerStatusField.Value = "Stopping"
-		      Started = True
-		      Enabled = False
-		    Case "restarting"
-		      Self.ServerStatusField.Value = "Restarting"
-		      Started = False
-		      Enabled = False
-		    Case "suspended"
-		      Self.ServerStatusField.Value = "Suspended"
-		      Started = False
-		      Enabled = False
-		    Case "guardian_locked"
-		      Self.ServerStatusField.Value = "Locked by Guardian"
-		      Started = False
-		      Enabled = False
-		    Case "gs_installation"
-		      Self.ServerStatusField.Value = "Switching games"
-		      Started = False
-		      Enabled = False
-		    Case "backup_restore"
-		      Self.ServerStatusField.Value = "Restoring from backup"
-		      Started = False
-		      Enabled = False
-		    Case "backup_creation"
-		      Self.ServerStatusField.Value = "Creating backup"
-		      Started = False
-		      Enabled = False
-		    End Select
-		    
-		    Self.Controls.PowerButton.Enabled = Enabled
-		    Self.Controls.PowerButton.Toggled = Started
-		    Self.Controls.PowerButton.HelpTag = If(Started, "Stop the server.", "Start the server.")
+		    Self.mServerState = GameServer.Value("status")
 		  Catch Err As RuntimeException
-		    Self.Controls.PowerButton.Enabled = False
-		    Self.Controls.PowerButton.Toggled = False
-		    Self.Controls.PowerButton.HelpTag = "Server state unknown. Cannot start or stop."
-		    Self.ServerStatusField.Value = "Unknown"
+		    App.Log(Err, CurrentMethodName, "Trying to refresh server status")
+		    Self.mServerState = "beacon_exception"
 		  End Try
 		  
-		  Self.RefreshTimer.RunMode = Timer.RunModes.Single
+		  Self.UpdateStatusDisplay()
+		  
+		  Self.mRefreshKey = CallLater.Schedule(5000, WeakAddressOf RefreshServerStatus)
 		End Sub
 	#tag EndMethod
 
@@ -581,13 +347,11 @@ End
 		    Return
 		  End If
 		  
+		  Self.mRefreshKey = CallLater.Schedule(5000, WeakAddressOf RefreshServerStatus)
+		  
 		  If Self.CheckError(Status) Then
 		    Return
 		  End If
-		  
-		  // Doesn't really matter, just refresh
-		  Self.RefreshTimer.Reset
-		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndMethod
 
@@ -637,6 +401,46 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatusDisplay()
+		  Var Started As Boolean = Self.mServerState = "started"
+		  Var ButtonEnabled As Boolean
+		  Select Case Self.mServerState
+		  Case "started"
+		    Self.ServerStatusField.Text = "Running"
+		    ButtonEnabled = True
+		  Case "stopped"
+		    Self.ServerStatusField.Text = "Stopped"
+		    ButtonEnabled = True
+		  Case "stopping"
+		    Self.ServerStatusField.Text = "Stopping"
+		  Case "restarting"
+		    Self.ServerStatusField.Text = "Restarting"
+		  Case "suspended"
+		    Self.ServerStatusField.Text = "Suspended"
+		  Case "guardian_locked"
+		    Self.ServerStatusField.Text = "Locked by Guardian"
+		  Case "gs_installation"
+		    Self.ServerStatusField.Text = "Switching games"
+		  Case "backup_restore"
+		    Self.ServerStatusField.Text = "Restoring from backup"
+		  Case "backup_creation"
+		    Self.ServerStatusField.Text = "Creating backup"
+		  Case "beacon_checking"
+		    Self.ServerStatusField.Text = "Checking…"
+		  Case "beacon_exception"
+		    Self.ServerStatusField.Text = "Beacon Error"
+		  Else
+		    Self.ServerStatusField.Text = "Unknown state: " + Self.mServerState
+		  End Select
+		  
+		  Self.ControlToolbar.Item("PowerButton").Enabled = ButtonEnabled
+		  Self.ControlToolbar.Item("PowerButton").Toggled = Started
+		  Self.ControlToolbar.Item("PowerButton").HelpTag = If(Started, "Stop the server", "Start the server")
+		  Self.ControlToolbar.Item("PowerButton").Caption = If(Started, "Stop", "Start")
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
@@ -650,9 +454,42 @@ End
 		Private mProfile As Beacon.NitradoServerProfile
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mRefreshKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mServerState As String = "beacon_checking"
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
+#tag Events AdminNotesField
+	#tag Event
+		Sub TextChange()
+		  Self.mProfile.AdminNotes = Me.Text
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Changed = Me.Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.mDocument
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Profile = Self.mProfile
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Auth
 	#tag Event
 		Sub Authenticated()
@@ -690,10 +527,29 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Controls
+#tag Events ControlToolbar
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTab("PageGeneral", "General"))
+		  Me.Append(OmniBarItem.CreateTab("PageNotes", "Notes"))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("PowerButton", "Stop", IconToolbarPower, "Stop the server", False))
+		  Me.Item("PageGeneral").Toggled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
 		  Select Case Item.Name
+		  Case "PageGeneral"
+		    Self.Pages.SelectedPanelIndex = 0
+		    Item.Toggled = True
+		    Me.Item("PageNotes").Toggled = False
+		  Case "PageNotes"
+		    Self.Pages.SelectedPanelIndex = 1
+		    Item.Toggled = True
+		    Me.Item("PageGeneral").Toggled = False
 		  Case "PowerButton"
 		    Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
 		    If Account Is Nil Then
@@ -703,81 +559,70 @@ End
 		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Account.AccessToken
 		    
-		    If Item.Toggled Then
+		    If Self.mServerState = "started" Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage = "" Then
 		        Return
 		      End If
 		      
 		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
+		      FormData.Value("message") = "Server stopped by Beacon (https://usebeacon.app)"
 		      FormData.Value("stop_message") = StopMessage
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
-		    Else
+		      
+		      Self.mServerState = "stopping"
+		    ElseIf Self.mServerState = "stopped" Then
 		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
+		      FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		      
+		      Self.mServerState = "restarting"
+		    Else
+		      Self.ShowAlert("Cannot do that right now.", "The server is neither started nor stopped. Please wait for the current process to finish.")
+		      Return
 		    End If
 		    
-		    Item.Enabled = False
+		    CallLater.Cancel(Self.mRefreshKey)
+		    Self.mRefreshKey = ""
+		    
+		    Self.UpdateStatusDisplay()
 		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events RefreshTimer
-	#tag Event
-		Sub Action()
-		  Self.RefreshServerStatus()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerNameField
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.Name = Me.Value
-		  Self.Controls.Caption = Me.Value
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MessageOfTheDayArea
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.MessageOfTheDay = Me.RTFData
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MessageDurationField
-	#tag Event
-		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0
-		  MaxValue = 86400
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
-		    Self.mProfile.MessageDuration = Me.DoubleValue
-		    Self.Changed = Self.mProfile.Modified
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
 		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -843,22 +688,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"

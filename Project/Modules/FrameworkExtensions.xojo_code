@@ -19,20 +19,20 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
 		  Var Words() As String = Title.Split(" ")
-		  If Words.LastRowIndex >= 0 And Words(Words.LastRowIndex) = Suffix Then
-		    Words.AddRow("2")
-		  ElseIf Words.LastRowIndex >= 1 And Words(Words.LastRowIndex - 1) = Suffix Then
+		  If Words.LastIndex >= 0 And Words(Words.LastIndex) = Suffix Then
+		    Words.Add("2")
+		  ElseIf Words.LastIndex >= 1 And Words(Words.LastIndex - 1) = Suffix Then
 		    Var CopyNum As Integer
 		    #Pragma BreakOnExceptions Off
 		    Try
-		      CopyNum = Integer.FromString(Words(Words.LastRowIndex), Locale.Raw) + 1
-		      Words(Words.LastRowIndex) = CopyNum.ToString(Locale.Raw, "0")
+		      CopyNum = Integer.FromString(Words(Words.LastIndex), Locale.Raw) + 1
+		      Words(Words.LastIndex) = CopyNum.ToString(Locale.Raw, "0")
 		    Catch Err As RuntimeException
-		      Words.AddRow(Suffix)
+		      Words.Add(Suffix)
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		  Else
-		    Words.AddRow(Suffix)
+		    Words.Add(Suffix)
 		  End If
 		  Return Words.Join(" ")
 		End Function
@@ -49,7 +49,7 @@ Protected Module FrameworkExtensions
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Bottom(Extends Ctl As RectControl) As Integer
 		  Return Ctl.Top + Ctl.Height
 		End Function
@@ -130,8 +130,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source() As String) As String()
 		  Var Result() As String
-		  Result.ResizeTo(Source.LastRowIndex)
-		  For I As Integer = 0 To Source.LastRowIndex
+		  Result.ResizeTo(Source.LastIndex)
+		  For I As Integer = 0 To Source.LastIndex
 		    Result(I) = Source(I)
 		  Next
 		  Return Result
@@ -139,6 +139,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CompareValues(Value1 As Double, Value2 As Double) As Integer
+		  If Value1 > Value2 Then
+		    Return 1
+		  ElseIf Value1 < Value2 Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
 		  #if TargetWin32
 		    If Win = Nil Or Parent = Nil Then
@@ -208,7 +220,17 @@ Protected Module FrameworkExtensions
 		  End If
 		  
 		  Var Parts() As String = Name.Split(".")
-		  Return Parts(Parts.LastRowIndex)
+		  Return "." + Parts(Parts.LastIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExtensionMatches(Extends File As FolderItem, DesiredExtension As String) As Boolean
+		  If DesiredExtension.BeginsWith(".") = False Then
+		    DesiredExtension = "." + DesiredExtension
+		  End If
+		  
+		  Return File.Extension = DesiredExtension
 		End Function
 	#tag EndMethod
 
@@ -223,7 +245,7 @@ Protected Module FrameworkExtensions
 		  // Replaces NthField
 		  Var Fields() As String = Source.Split(Separator)
 		  Var Index As Integer = OneBasedIndex - 1
-		  If Index < 0 Or Index > Fields.LastRowIndex Then
+		  If Index < 0 Or Index > Fields.LastIndex Then
 		    Return ""
 		  Else
 		    Return Fields(Index)
@@ -264,16 +286,10 @@ Protected Module FrameworkExtensions
 		    Return Round(DoubleValue)
 		  Case "String"
 		    Var StringValue As String = Value
-		    Return Val(StringValue)
+		    Return Integer.FromString(StringValue, Locale.Raw)
 		  Else
 		    Return 0
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
-		  Return File.Name.EndsWith(Type.PrimaryExtension)
 		End Function
 	#tag EndMethod
 
@@ -290,13 +306,13 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Left(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
+		Function Left(Extends Source As MemoryBlock, Length As Integer) As MemoryBlock
 		  Return Source.Middle(0, Length)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Left(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
+		Sub Left(Extends Target As MemoryBlock, Length As Integer, Assigns NewData As MemoryBlock)
 		  Target.Middle(0, Length) = NewData
 		End Sub
 	#tag EndMethod
@@ -309,9 +325,9 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger) As MemoryBlock
+		Function Middle(Extends Source As MemoryBlock, Offset As Integer, Length As Integer) As MemoryBlock
 		  Offset = Min(Offset, Source.Size)
-		  Var Bound As UInteger = Min(Offset + Length, Source.Size)
+		  Var Bound As Integer = Min(Offset + Length, Source.Size)
 		  Length = Bound - Offset
 		  
 		  Var Mem As New MemoryBlock(Length)
@@ -322,14 +338,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger, Assigns NewData As MemoryBlock)
+		Sub Middle(Extends Source As MemoryBlock, Offset As Integer, Length As Integer, Assigns NewData As MemoryBlock)
 		  If NewData = Nil Then
 		    Return
 		  End If
 		  
 		  Offset = Min(Offset, Source.Size)
-		  Var Bound As UInteger = Min(Offset + Length, Source.Size)
-		  Var TailLength As UInteger = Source.Size - Bound
+		  Var Bound As Integer = Min(Offset + Length, Source.Size)
+		  Var TailLength As Integer = Source.Size - Bound
 		  Length = Bound - Offset
 		  Var Delta As Integer = NewData.Size - Length
 		  
@@ -350,14 +366,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NearestMultiple(Original As Double, Factor As Double) As Double
-		  Var Whole As Integer = Floor(Original)
-		  If Whole = Original Then
-		    Return Original
+		Function NearestMultiple(Value As Double, Factor As Double) As Double
+		  // If this is already a whole number, there's no reason for more math.
+		  Var Whole As Integer = Floor(Value)
+		  If Whole = Value Then
+		    Return Value
 		  End If
 		  
-		  Var Multiplier As Double = 1 / Factor
-		  Return Round(Original * Multiplier) / Multiplier
+		  Return Round(Value * Factor) / Factor
 		End Function
 	#tag EndMethod
 
@@ -378,8 +394,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
 		  Try
-		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Var Contents As MemoryBlock = Stream.Read(Stream.Length)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As MemoryBlock = Stream.ReadAll(Nil)
 		    Stream.Close
 		    Return Contents
 		  Catch Err As RuntimeException
@@ -402,24 +418,24 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Right(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
+		Function Right(Extends Source As MemoryBlock, Length As Integer) As MemoryBlock
 		  Return Source.Middle(Source.Size - Length, Length)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Right(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
+		Sub Right(Extends Target As MemoryBlock, Length As Integer, Assigns NewData As MemoryBlock)
 		  Target.Middle(Target.Size - Length, Length) = NewData
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Right(Extends Ctl As RectControl) As Integer
 		  Return Ctl.Left + Ctl.Width
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function SelectedRowTag(Extends Menu As PopupMenu) As Variant
 		  If Menu.SelectedRowIndex > -1 Then
 		    Return Menu.RowTagAt(Menu.SelectedRowIndex)
@@ -434,7 +450,7 @@ Protected Module FrameworkExtensions
 		  Var Hours As Integer = Floor(Offset)
 		  Var Minutes As Integer = (Offset - Floor(Offset)) * 60
 		  
-		  Return Str(Source.Year, "0000") + "-" + Str(Source.Month, "00") + "-" + Str(Source.Day, "00") + " " + Str(Source.Hour, "00") + ":" + Str(Source.Minute, "00") + ":" + Str(Source.Second, "00") + If(Zone.SecondsFromGMT < 0, "-", "+") + Str(Hours, "00") + ":" + Str(Minutes, "00")
+		  Return Source.Year.ToString(Locale.Raw, "0000") + "-" + Source.Month.ToString(Locale.Raw, "00") + "-" + Source.Day.ToString(Locale.Raw, "00") + " " + Source.Hour.ToString(Locale.Raw, "00") + ":" + Source.Minute.ToString(Locale.Raw, "00") + ":" + Source.Second.ToString(Locale.Raw, "00") + If(Zone.SecondsFromGMT < 0, "-", "+") + Hours.ToString(Locale.Raw, "00") + ":" + Minutes.ToString(Locale.Raw, "00")
 		End Function
 	#tag EndMethod
 
@@ -451,9 +467,9 @@ Protected Module FrameworkExtensions
 		    Return
 		  End If
 		  
-		  Var Year As Integer = Val(Matches.SubExpressionString(1))
-		  Var Month As Integer = Val(Matches.SubExpressionString(2))
-		  Var Day As Integer = Val(Matches.SubExpressionString(3))
+		  Var Year As Integer = Integer.FromString(Matches.SubExpressionString(1), Locale.Raw)
+		  Var Month As Integer = Integer.FromString(Matches.SubExpressionString(2), Locale.Raw)
+		  Var Day As Integer = Integer.FromString(Matches.SubExpressionString(3), Locale.Raw)
 		  Var Hour As Integer
 		  Var Minute As Integer
 		  Var Second As Integer
@@ -461,19 +477,19 @@ Protected Module FrameworkExtensions
 		  Var Offset As Double
 		  Var ExpressionCount As Integer = Matches.SubExpressionCount
 		  
-		  If ExpressionCount >= 8 And Matches.SubExpressionString(4) <> "" Then
-		    Hour = Val(Matches.SubExpressionString(5))
-		    Minute = Val(Matches.SubExpressionString(6))
-		    Second = Val(Matches.SubExpressionString(7))
+		  If ExpressionCount >= 8 And Matches.SubExpressionString(4).IsEmpty = False Then
+		    Hour = Integer.FromString(Matches.SubExpressionString(5), Locale.Raw)
+		    Minute = Integer.FromString(Matches.SubExpressionString(6), Locale.Raw)
+		    Second = Integer.FromString(Matches.SubExpressionString(7), Locale.Raw)
 		    If ExpressionCount >= 9 Then
-		      Nanosecond = Val("0" + Matches.SubExpressionString(8)) * 1000000000
+		      Nanosecond = Double.FromString("0" + Matches.SubExpressionString(8), Locale.Raw) * 1000000000
 		    End If
 		    
-		    If ExpressionCount >= 12 And Matches.SubExpressionString(9) <> "" Then
-		      Var OffsetHour As Integer = Val(Matches.SubExpressionString(11))
+		    If ExpressionCount >= 12 And Matches.SubExpressionString(9).IsEmpty = False Then
+		      Var OffsetHour As Integer = Integer.FromString(Matches.SubExpressionString(11), Locale.Raw)
 		      Var OffsetMinute As Integer
-		      If ExpressionCount >= 14 And Matches.SubExpressionString(13) <> "" Then
-		        OffsetMinute = Val(Matches.SubExpressionString(13))
+		      If ExpressionCount >= 14 And Matches.SubExpressionString(13).IsEmpty = False Then
+		        OffsetMinute = Integer.FromString(Matches.SubExpressionString(13), Locale.Raw)
 		      End If
 		      Offset = OffsetHour + (OffsetMinute / 60)
 		      If Matches.SubExpressionString(10) = "-" Then
@@ -484,6 +500,16 @@ Protected Module FrameworkExtensions
 		  
 		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(Offset))
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Sum(Extends Values() As Double, ValueBetween As Double = 0) As Double
+		  Var Total As Double
+		  For Each Value As Double In Values
+		    Total = Total + Value
+		  Next
+		  Return Total + (ValueBetween * (Values.Count - 1))
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -505,8 +531,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToString(Extends Source() As String) As String()
 		  Var Result() As String
-		  Result.ResizeTo(Source.LastRowIndex)
-		  For I As Integer = 0 To Source.LastRowIndex
+		  Result.ResizeTo(Source.LastIndex)
+		  For I As Integer = 0 To Source.LastIndex
 		    Result(I) = Source(I)
 		  Next
 		  Return Result
@@ -514,11 +540,24 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
-		  Var Now As DateTime = DateTime.Now
+		Function TotalSeconds(Extends Interval As DateInterval) As Double
+		  Var Now As DateTime = DateTime.Now(New TimeZone(0))
 		  Var Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UserVersion(Extends Source As SQLiteDatabase) As Integer
+		  Var Results As RowSet = Source.SelectSQL("PRAGMA user_version;")
+		  Return Results.ColumnAt(0).IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UserVersion(Extends Source As SQLiteDatabase, Assigns Value As Integer)
+		  Source.ExecuteSQL("PRAGMA user_version = " + Value.ToString(Locale.Raw, "0") + ";")
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -537,15 +576,15 @@ Protected Module FrameworkExtensions
 		    Var Possibles() As Double
 		    For Each Possible As Variant In Elements
 		      Var Decoded As Double = VariantToDouble(Possible, ResolveWithFirst)
-		      Possibles.AddRow(Decoded)
+		      Possibles.Add(Decoded)
 		    Next
-		    If Possibles.LastRowIndex = -1 Then
+		    If Possibles.LastIndex = -1 Then
 		      Return 0
 		    End If
 		    If ResolveWithFirst Then
 		      Return Possibles(0)
 		    Else
-		      Return Possibles(Possibles.LastRowIndex)
+		      Return Possibles(Possibles.LastIndex)
 		    End If
 		    
 		    Return 0
@@ -601,7 +640,7 @@ Protected Module FrameworkExtensions
 		      Stream = BinaryStream.Create(File, True)
 		    End If
 		    
-		    Var CurrentThread As Thread = App.CurrentThread
+		    Var CurrentThread As Thread = Thread.Current
 		    If CurrentThread = Nil Then
 		      Stream.Write(Contents)
 		    Else

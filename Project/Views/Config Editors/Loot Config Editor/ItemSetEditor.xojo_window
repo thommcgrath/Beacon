@@ -26,6 +26,7 @@ Begin BeaconContainer ItemSetEditor
    Visible         =   True
    Width           =   560
    Begin BeaconListbox EntryList
+      AllowInfiniteScroll=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -36,6 +37,9 @@ Begin BeaconContainer ItemSetEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -56,6 +60,7 @@ Begin BeaconContainer ItemSetEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -79,69 +84,6 @@ Begin BeaconContainer ItemSetEditor
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Item Set Contents"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   ""
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
    End
    Begin ItemSetSettingsContainer Settings
       AcceptFocus     =   False
@@ -179,6 +121,7 @@ Begin BeaconContainer ItemSetEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
@@ -192,6 +135,8 @@ Begin BeaconContainer ItemSetEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -202,10 +147,85 @@ Begin BeaconContainer ItemSetEditor
       Visible         =   True
       Width           =   560
    End
+   Begin OmniBar EditorToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   560
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Var ShouldUseCompactMode As Boolean = Self.Width < 600
+		  If ShouldUseCompactMode = Self.mUsingCompactMode Then
+		    Return
+		  End If
+		  
+		  If ShouldUseCompactMode Then
+		    Self.mExpandedSortColumn = Self.EntryList.HeadingIndex
+		    Self.mExpandedSortDirection = Self.EntryList.ColumnSortDirectionAt(Self.EntryList.HeadingIndex)
+		    
+		    Self.EntryList.ColumnCount = 1
+		    
+		    Self.EntryList.HeadingIndex = 0
+		    Self.EntryList.ColumnSortDirectionAt(0) = Self.mCompactSortDirection
+		    Self.EntryList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
+		  Else
+		    Self.mCompactSortDirection = Self.EntryList.ColumnSortDirectionAt(0)
+		    
+		    Self.EntryList.ColumnCount = 4
+		    
+		    Self.EntryList.HeadingIndex = Self.mExpandedSortColumn
+		    Self.EntryList.ColumnSortDirectionAt(Self.mExpandedSortColumn) = Self.mExpandedSortDirection
+		    Self.EntryList.DefaultRowHeight = BeaconListbox.StandardRowHeight
+		  End If
+		  
+		  Self.mUsingCompactMode = ShouldUseCompactMode
+		  
+		  Self.UpdateEntryList()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mCompactSortDirection = Listbox.SortDirections.Ascending
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument()
@@ -220,15 +240,15 @@ End
 		      Continue
 		    End If
 		    
-		    Sources.AddRow(EntryList.RowTagAt(I))
+		    Sources.Add(EntryList.RowTagAt(I))
 		  Next
 		  
 		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
-		  If Entries = Nil Or Entries.LastRowIndex <> Sources.LastRowIndex Then
+		  If Entries = Nil Or Entries.LastIndex <> Sources.LastIndex Then
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Entries.LastRowIndex
+		  For I As Integer = 0 To Entries.LastIndex
 		    Var Source As Beacon.SetEntry = Sources(I)
 		    Var Idx As Integer = Self.mSet.IndexOf(Source)
 		    If Idx > -1 Then
@@ -296,7 +316,7 @@ End
 		  If SelectEntries <> Nil Then
 		    For Each Entry As Beacon.SetEntry In SelectEntries
 		      If Entry <> Nil Then
-		        Selected.AddRow(Entry.UniqueID)
+		        Selected.Add(Entry.UniqueID)
 		      End If
 		    Next
 		    ScrollToSelection = True
@@ -304,7 +324,7 @@ End
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
 		        Var Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
-		        Selected.AddRow(Entry.UniqueID)
+		        Selected.Add(Entry.UniqueID)
 		      End If
 		    Next
 		  End If
@@ -322,6 +342,11 @@ End
 		    Return
 		  End If
 		  
+		  Var RangeSeparator As String = " - "
+		  If Self.mUsingCompactMode Then
+		    RangeSeparator = "-"
+		  End If
+		  
 		  For I As Integer = 0 To Self.mSet.LastRowIndex
 		    Var Entry As Beacon.SetEntry = Self.mSet(I)
 		    If Entry = Nil Then
@@ -331,45 +356,71 @@ End
 		    Var RelativeWeight As Double = Self.mSet.RelativeWeight(I)
 		    Var ChanceText As String
 		    If RelativeWeight < 0.01 Then
-		      ChanceText = "< 1%"
+		      Var OnePercent As Double = 0.01
+		      ChanceText = "< " + OnePercent.ToString(Locale.Current, "0%")
 		    Else
-		      ChanceText = Str(RelativeWeight * 100, "0") + "%"
+		      ChanceText = RelativeWeight.ToString(Locale.Current, "0%")
 		    End If
 		    
 		    Var QualityText As String
 		    If Entry.MinQuality = Entry.MaxQuality Then
 		      QualityText = Language.LabelForQuality(Entry.MinQuality)
 		    Else
-		      QualityText = Language.LabelForQuality(Entry.MinQuality, True) + " - " + Language.LabelForQuality(Entry.MaxQuality, True)
+		      QualityText = Language.LabelForQuality(Entry.MinQuality, True) + RangeSeparator + Language.LabelForQuality(Entry.MaxQuality, True)
 		    End If
 		    
 		    Var QuantityText As String
 		    If Entry.MinQuantity = Entry.MaxQuantity Then
 		      QuantityText = Entry.MinQuantity.ToString
 		    Else
-		      QuantityText = Entry.MinQuantity.ToString + " - " + Entry.MaxQuantity.ToString
+		      QuantityText = Entry.MinQuantity.ToString + RangeSeparator + Entry.MaxQuantity.ToString
 		    End If
 		    
-		    Var FiguresText As String
+		    Var WeightText As String
 		    Var Weight As Double = Entry.RawWeight
 		    If Floor(Weight) = Weight Then
-		      FiguresText = Format(Weight, "-0,")
+		      WeightText = Weight.ToString(Locale.Current, ",##0")
 		    Else
-		      FiguresText = Format(Weight, "-0,.0####")
+		      WeightText = Weight.ToString(Locale.Current, ",##0.0####")
 		    End If
-		    FiguresText = FiguresText + " wt"
 		    
-		    If Entry.CanBeBlueprint Then
-		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
+		    Var BlueprintText As String = BlueprintChance.ToString(Locale.Current, "0%")
+		    
+		    Var FiguresText As String
+		    
+		    Var MainColumnTag As String = Entry.Label
+		    Var MainColumnText As String
+		    If Self.mUsingCompactMode Then
+		      If Entry.Count > 1 Then
+		        MainColumnText = QuantityText + " of " + MainColumnTag
+		      Else
+		        MainColumnText = QuantityText + " " + MainColumnTag
+		      End If
+		      MainColumnText = MainColumnText + EndOfLine + "Quality: " + QualityText + Encodings.UTF8.Chr(9) + "Weight: " + WeightText 
+		      If Entry.CanBeBlueprint Then
+		        MainColumnText = MainColumnText + Encodings.UTF8.Chr(9) + "Blueprint Chance: " + BlueprintText
+		      End If
+		    Else
+		      MainColumnText = MainColumnTag
+		      
+		      FiguresText = WeightText + " wt"
+		      
+		      If Entry.CanBeBlueprint Then
+		        FiguresText = FiguresText + ", " + BlueprintText + " bp"
+		      End If
 		    End If
 		    
 		    EntryList.AddRow("")
 		    Var Idx As Integer = EntryList.LastAddedRowIndex
-		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = Entry.Label
-		    EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
-		    EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
-		    EntryList.CellValueAt(Idx, Self.ColumnFigures) = FiguresText
+		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = MainColumnText
+		    If Self.mUsingCompactMode Then
+		    Else
+		      EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
+		      EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
+		      EntryList.CellValueAt(Idx, Self.ColumnFigures) = FiguresText
+		    End If
 		    
+		    EntryList.CellTagAt(Idx, Self.ColumnLabel) = MainColumnTag
 		    EntryList.RowTagAt(Idx) = Entry
 		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UniqueID) > -1
 		  Next
@@ -392,12 +443,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Var TotalCount As UInteger = Self.EntryList.RowCount
-		  Var SelectedCount As UInteger = Self.EntryList.SelectedRowCount
+		  Var TotalCount As Integer = Self.EntryList.RowCount
+		  Var SelectedCount As Integer = Self.EntryList.SelectedRowCount
 		  
-		  Var Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
 		  If SelectedCount > 0 Then
-		    Caption = Format(SelectedCount, "0,") + " of " + Caption + " Selected"
+		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
 		  End If
 		  Self.StatusBar1.Caption = Caption
 		End Sub
@@ -414,7 +465,23 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mCompactSortDirection As Listbox.SortDirections
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExpandedSortColumn As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExpandedSortDirection As Listbox.SortDirections
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSet As Beacon.ItemSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsingCompactMode As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -449,6 +516,9 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.setentry", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = MinEditorWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -475,22 +545,22 @@ End
 		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.AddRow(Beacon.SetEntry(Me.RowTagAt(I)).Export)
+		      Entries.Add(Beacon.SetEntry(Me.RowTagAt(I)).SaveData)
 		    End If
 		  Next
 		  
-		  If Entries.LastRowIndex = -1 Then
+		  If Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Contents As String
-		  If Entries.LastRowIndex = 0 Then
+		  If Entries.LastIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Entries(0), False)
 		  Else
 		    Contents = Beacon.GenerateJSON(Entries, False)
 		  End If
 		  
-		  Board.AddRawData(Contents, Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Contents
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -512,7 +582,7 @@ End
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		  If Info.FullName = "Dictionary" Then
 		    // Single item
-		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
+		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Parsed)
 		    If Entry <> Nil Then
 		      Self.mSet.Append(Entry)
 		      Modified = True
@@ -521,7 +591,7 @@ End
 		    // Multiple items
 		    Var Dicts() As Variant = Parsed
 		    For Each Dict As Dictionary In Dicts
-		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
+		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Dict)
 		      If Entry <> Nil Then
 		        Self.mSet.Append(Entry)
 		        Modified = True
@@ -582,7 +652,7 @@ End
 		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Entries.AddRow(Me.RowTagAt(I))
+		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
@@ -603,12 +673,12 @@ End
 		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(I) And Beacon.SetEntry(Me.RowTagAt(I)).Count > 1 Then
-		        Entries.AddRow(Me.RowTagAt(I))
+		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
 		    Var Replacements() As Beacon.SetEntry = Beacon.SetEntry.Split(Entries)
-		    If Replacements = Nil Or Replacements.LastRowIndex = -1 Then
+		    If Replacements = Nil Or Replacements.LastIndex = -1 Then
 		      Return True
 		    End If
 		    
@@ -630,7 +700,7 @@ End
 		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(I) Then
-		        Entries.AddRow(Me.RowTagAt(I))
+		        Entries.Add(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
@@ -656,7 +726,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.EditEntry.Enabled = Me.CanEdit
+		  Var EditButton As OmniBarItem = Self.EditorToolbar.Item("EditEntryButton")
+		  If (EditButton Is Nil) = False Then
+		    EditButton.Enabled = Me.CanEdit
+		  End If
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -668,7 +741,8 @@ End
 		  Var Value1, Value2 As Double
 		  Select Case Column
 		  Case Self.ColumnLabel
-		    Return False
+		    Result = Me.CellTagAt(Row1, Column).StringValue.Compare(Me.CellTagAt(Row2, Column).StringValue, ComparisonOptions.CaseInsensitive, Locale.Raw)
+		    Return True
 		  Case Self.ColumnQuantity
 		    If Entry1.MinQuantity = Entry2.MinQuantity Then
 		      Value1 = Entry1.MaxQuantity
@@ -711,40 +785,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddEntry"
-		    Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
-		    If Entries = Nil Then
-		      Return
-		    End If
-		    
-		    For Each Entry As Beacon.SetEntry In Entries
-		      Self.mSet.Append(Entry)
-		    Next
-		    
-		    Self.UpdateEntryList(Entries)
-		    RaiseEvent Updated
-		  Case "EditEntry"
-		    Self.EditSelectedEntries()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var AddButton As New BeaconToolbarItem("AddEntry", IconToolbarAdd)
-		  AddButton.HelpTag = "Add engrams to this item set."
-		  
-		  Var EditButton As New BeaconToolbarItem("EditEntry", IconToolbarEdit, False)
-		  EditButton.HelpTag = "Edit the selected entries."
-		  
-		  Me.LeftItems.Append(AddButton)
-		  Me.LeftItems.Append(EditButton)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Settings
 	#tag Event
 		Sub Resized()
@@ -761,6 +801,41 @@ End
 	#tag Event
 		Sub SettingsChanged()
 		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditorToolbar
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "AddEntryButton"
+		    Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
+		    If Entries = Nil Then
+		      Return
+		    End If
+		    
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Self.mSet.Append(Entry)
+		    Next
+		    
+		    Self.UpdateEntryList(Entries)
+		    RaiseEvent Updated
+		  Case "EditEntryButton"
+		    Self.EditSelectedEntries()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Set Entries"))
+		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
+		  Me.Append(OmniBarItem.CreateButton("AddEntryButton", "New Entry", IconToolbarAdd, "Add engrams to this item set."))
+		  Me.Append(OmniBarItem.CreateButton("EditEntryButton", "Edit", IconToolbarEdit, "Edit the selected entries.", False))
+		  
+		  Me.Item("Title").Priority = 5
+		  Me.Item("TitleSeparator").Priority = 5
 		End Sub
 	#tag EndEvent
 #tag EndEvents

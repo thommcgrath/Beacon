@@ -3,7 +3,7 @@ Begin BeaconWindow SupportTicketWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "3"
+   DefaultLocation =   3
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconWindow SupportTicketWindow
    MinimumWidth    =   600
    Resizeable      =   True
    Title           =   "New Support Ticket"
-   Type            =   "0"
+   Type            =   0
    Visible         =   True
    Width           =   600
    Begin GroupBox DisclosureGroup
@@ -77,13 +77,13 @@ Begin BeaconWindow SupportTicketWindow
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   422
          Transparent     =   False
          Underline       =   False
-         Value           =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon document, and any backed up ini files."
+         Value           =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon project, and any backed up ini files."
          Visible         =   True
          Width           =   512
       End
@@ -117,7 +117,7 @@ Begin BeaconWindow SupportTicketWindow
          Underline       =   False
          Value           =   False
          Visible         =   True
-         VisualState     =   "0"
+         VisualState     =   0
          Width           =   512
       End
    End
@@ -141,7 +141,7 @@ Begin BeaconWindow SupportTicketWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   14
       TabPanelIndex   =   0
@@ -173,7 +173,7 @@ Begin BeaconWindow SupportTicketWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -217,7 +217,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   54
@@ -253,7 +253,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   54
@@ -295,7 +295,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -331,7 +331,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -398,7 +398,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   88
@@ -440,7 +440,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -476,7 +476,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   120
@@ -523,12 +523,13 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   226
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   0
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True
@@ -559,7 +560,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   194
@@ -626,7 +627,7 @@ Begin BeaconWindow SupportTicketWindow
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -648,7 +649,7 @@ Begin BeaconWindow SupportTicketWindow
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   500
-      RunMode         =   "0"
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -668,9 +669,9 @@ End
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  If (Identity Is Nil) = False Then
-		    Self.mUserID = Identity.Identifier
-		    If Beacon.ValidateEmail(Identity.LoginKey) Then
-		      Self.EmailField.Value = Identity.LoginKey
+		    Self.mUserID = Identity.UserID
+		    If Beacon.ValidateEmail(Identity.Username) Then
+		      Self.EmailField.Text = Identity.Username
 		    End If
 		  End If
 		  
@@ -713,7 +714,7 @@ End
 		  
 		  Var Entry As New ArchiveEntryMBS
 		  Entry.PathName = Path
-		  Entry.Size = Data.Size
+		  Entry.Size = CType(Data.Size, UInt64)
 		  Entry.Permissions = &o0644
 		  Entry.FileType = ArchiveEntryMBS.kFileTypeRegular
 		  
@@ -761,13 +762,8 @@ End
 		    Return
 		  End If
 		  
-		  Var Bound As Integer = Win.ViewCount - 1
-		  For Idx As Integer = 0 To Bound
-		    Var View As BeaconSubview = Win.ViewAtIndex(Idx)
-		    If (View IsA DocumentEditorView) = False Then
-		      Continue
-		    End If
-		    
+		  Var Editors() As DocumentEditorView = App.MainWindow.DocumentEditors
+		  For Each View As BeaconSubview In Editors
 		    Var Document As Beacon.Document = DocumentEditorView(View).Document
 		    If Document Is Nil Then
 		      Continue
@@ -860,13 +856,13 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var Name As String = Self.NameField.Value.Trim
+		  Var Name As String = Self.NameField.Text.Trim
 		  If Name.IsEmpty Then
 		    Self.ShowAlert("Please provide some sort of name", "It might not seem like much, but a name can help solve certain problems, especially if the problem is related to a purchase.")
 		    Return
 		  End If
 		  
-		  Var Email As String = Self.EmailField.Value.Trim
+		  Var Email As String = Self.EmailField.Text.Trim
 		  If Not Beacon.ValidateEmail(Email) Then
 		    Self.ShowAlert("Please provide a valid email address", "You would not be able to receive a reply without an email address.")
 		    Return
@@ -877,7 +873,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Host As String = Self.HostField.Value.Trim
+		  Var Host As String = Self.HostField.Text.Trim
 		  If Host.IsEmpty Then
 		    Self.ShowAlert("Please include the name of your host", "While Beacon works for all hosts, including single player and self-hosted servers, instructions can vary vary depending on the host. This information helps to get accurate answers more quickly.")
 		    Return
@@ -886,11 +882,11 @@ End
 		  Var Document As Beacon.Document
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
 		    Document = Self.DocumentMenu.RowTagAt(Self.DocumentMenu.SelectedRowIndex)
-		  ElseIf Not Self.ShowConfirm("Are you sure you do not wish to include a document?", "Including a Beacon document provides a ton of information and helps get you an answer faster. If you cannot find your document in the menu, open the document first. Are you sure you do not want to include a document?", "Do Not Include", "Cancel") Then
+		  ElseIf Not Self.ShowConfirm("Are you sure you do not wish to include a project?", "Including a Beacon project provides a ton of information and helps get you an answer faster. If you cannot find your project in the menu, open the project first. Are you sure you do not want to include a project?", "Do Not Include", "Cancel") Then
 		    Return
 		  End If
 		  
-		  Var Body As String = Self.BodyField.Value.Trim
+		  Var Body As String = Self.BodyField.Text.Trim
 		  If Body.IsEmpty Or Body.Length < 60 Then
 		    Self.ShowAlert("Please include a more detailed description of your issue", "The more information, the better.")
 		    Return
@@ -963,8 +959,8 @@ End
 		    Self.Changed = True
 		  End If
 		  
-		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Value.IsEmpty Then
-		    Self.HostField.Value = "Nitrado"
+		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Text.IsEmpty Then
+		    Self.HostField.Text = "Nitrado"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1014,7 +1010,7 @@ End
 		    Else
 		      Identity = New Beacon.Identity
 		    End If
-		    Self.mProgress.Detail = "Attaching document…"
+		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"
 		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.ToDictionary(Identity), True)
 		    
@@ -1077,16 +1073,16 @@ End
 		  End Select
 		  
 		  Var Parts() As String
-		  Parts.AddRow("Content-Disposition: form-data; name=""name""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketName)
-		  Parts.AddRow("Content-Disposition: form-data; name=""email""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketEmail)
-		  Parts.AddRow("Content-Disposition: form-data; name=""platform""" + EndOfLine.Windows + EndOfLine.Windows + Platform)
-		  Parts.AddRow("Content-Disposition: form-data; name=""host""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketHost)
-		  Parts.AddRow("Content-Disposition: form-data; name=""body""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketBody)
-		  Parts.AddRow("Content-Disposition: form-data; name=""user""" + EndOfLine.Windows + EndOfLine.Windows + Self.mUserID)
-		  Parts.AddRow("Content-Disposition: form-data; name=""archive""; filename=""" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
-		  Parts.AddRow("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + SystemInformationMBS.OSVersionString)
-		  Parts.AddRow("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.ShortVersion)
-		  Parts.AddRow("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
+		  Parts.Add("Content-Disposition: form-data; name=""name""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketName)
+		  Parts.Add("Content-Disposition: form-data; name=""email""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketEmail)
+		  Parts.Add("Content-Disposition: form-data; name=""platform""" + EndOfLine.Windows + EndOfLine.Windows + Platform)
+		  Parts.Add("Content-Disposition: form-data; name=""host""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketHost)
+		  Parts.Add("Content-Disposition: form-data; name=""body""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketBody)
+		  Parts.Add("Content-Disposition: form-data; name=""user""" + EndOfLine.Windows + EndOfLine.Windows + Self.mUserID)
+		  Parts.Add("Content-Disposition: form-data; name=""archive""; filename=""" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
+		  Parts.Add("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + SystemInformationMBS.OSVersionString)
+		  Parts.Add("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.ShortVersion)
+		  Parts.Add("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
 		  
 		  Var PostBody As String = "--" + Boundary + EndOfLine.Windows + Parts.Join(EndOfLine.Windows + "--" + Boundary + EndOfLine.Windows) + EndOfLine.Windows + "--" + Boundary + "--"
 		  

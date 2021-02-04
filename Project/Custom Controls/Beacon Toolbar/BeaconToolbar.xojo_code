@@ -180,8 +180,10 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
+		  #Pragma Unused Highlighted
+		  #Pragma Unused SafeArea
 		  
 		  Self.PaintContent(G)
 		End Sub
@@ -361,12 +363,13 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
 		  #Pragma Unused Key
-		  #Pragma Unused Value
+		  #Pragma Unused OldValue
+		  #Pragma Unused NewValue
 		  
 		  Self.Invalidate
 		End Sub
@@ -489,7 +492,7 @@ Implements ObservationKit.Observer
 		    Var CaptionSize As Double = 0
 		    
 		    G.FontSize = CaptionSize
-		    Var CaptionWidth As Integer = Ceil(G.TextWidth(Caption))
+		    Var CaptionWidth As Integer = Ceiling(G.TextWidth(Caption))
 		    
 		    If CaptionWidth > ContentRect.Width Then
 		      ContentRect = OffsetContentRect
@@ -581,7 +584,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As UInteger
+			  Var Borders As Integer
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderBottom
 			  Else
@@ -605,7 +608,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As UInteger
+			  Var Borders As Integer
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderLeft
 			  Else
@@ -629,7 +632,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As UInteger
+			  Var Borders As Integer
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderRight
 			  Else
@@ -653,7 +656,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var Borders As UInteger
+			  Var Borders As Integer
 			  If Value Then
 			    Borders = Self.mBorders Or BeaconUI.BorderTop
 			  Else
@@ -677,7 +680,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
 			    Self.Invalidate
 			  End If
@@ -833,6 +836,30 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

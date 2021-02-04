@@ -55,6 +55,7 @@ Begin ContainerControl LootSourceSettingsContainer
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
@@ -68,6 +69,8 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -398,9 +401,9 @@ End
 	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSource()
 		  Var Results() As Beacon.LootSource
-		  For I As Integer = 0 To Self.mSources.LastRowIndex
+		  For I As Integer = 0 To Self.mSources.LastIndex
 		    If Self.mSources(I).Value <> Nil Then
-		      Results.AddRow(Beacon.LootSource(Self.mSources(I).Value))
+		      Results.Add(Beacon.LootSource(Self.mSources(I).Value))
 		    End If
 		  Next
 		  Return Results
@@ -411,9 +414,9 @@ End
 		Sub LootSources(Assigns Sources() As Beacon.LootSource)
 		  Self.mSettingUp = True
 		  
-		  Self.mSources.ResizeTo(Sources.LastRowIndex)
+		  Self.mSources.ResizeTo(Sources.LastIndex)
 		  
-		  If Sources.LastRowIndex = -1 Then
+		  If Sources.LastIndex = -1 Then
 		    Self.MinItemSetsField.Clear
 		    Self.MaxItemSetsField.Clear
 		    Self.NoDuplicatesCheck.VisualState = CheckBox.VisualStates.Unchecked
@@ -424,7 +427,7 @@ End
 		    Var CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
 		    Var CommonAppendMode As CheckBox.VisualStates = If(Sources(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
 		    
-		    For I As Integer = 0 To Sources.LastRowIndex
+		    For I As Integer = 0 To Sources.LastIndex
 		      Self.mSources(I) = New WeakRef(Sources(I))
 		      
 		      If Sources(I).MinItemSets <> CommonMinItemSets Then
@@ -514,13 +517,13 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If
 		  
 		  Var Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.LastRowIndex
+		  For I As Integer = 0 To Sources.LastIndex
 		    Sources(I).MinItemSets = Value
 		  Next
 		  RaiseEvent SettingsChanged
@@ -528,7 +531,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim = "" And Self.mSources.LastRowIndex > 0 Then
+		  If Value.Trim = "" And Self.mSources.LastIndex > 0 Then
 		    Return True
 		  End If
 		End Function
@@ -555,13 +558,13 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Text)
 		  If Value = 0 Then
 		    Return
 		  End If
 		  
 		  Var Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.LastRowIndex
+		  For I As Integer = 0 To Sources.LastIndex
 		    Sources(I).MaxItemSets = Value
 		  Next
 		  RaiseEvent SettingsChanged
@@ -569,7 +572,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim = "" And Self.mSources.LastRowIndex > 0 Then
+		  If Value.Trim = "" And Self.mSources.LastIndex > 0 Then
 		    Return True
 		  End If
 		End Function
@@ -597,7 +600,7 @@ End
 		  End If
 		  
 		  Var Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.LastRowIndex
+		  For I As Integer = 0 To Sources.LastIndex
 		    Sources(I).PreventDuplicates = Me.Value
 		  Next
 		  
@@ -653,7 +656,7 @@ End
 		  End If
 		  
 		  Var Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.LastRowIndex
+		  For I As Integer = 0 To Sources.LastIndex
 		    Sources(I).AppendMode = Me.Value
 		  Next
 		  

@@ -1,10 +1,12 @@
 #tag Class
 Protected Class App
 Inherits Application
-Implements NotificationKit.Receiver
+Implements NotificationKit.Receiver,Beacon.Application
 	#tag Event
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
+		  
+		  OmniBar.RebuildColors()
 		End Sub
 	#tag EndEvent
 
@@ -40,6 +42,27 @@ Implements NotificationKit.Receiver
 		  FileNewPreset.Enable
 		  FileOpen.Enable
 		  FileImport.Enable
+		  
+		  If Preferences.OnlineEnabled Then
+		    HelpSyncCloudFiles.Visible = True
+		    HelpUpdateEngrams.Visible = True
+		    HelpSeparator2.Visible = True
+		    
+		    If UserCloud.IsBusy = False Then
+		      HelpSyncCloudFiles.Enable
+		    End If
+		    
+		    If Keyboard.OptionKey Then
+		      HelpUpdateEngrams.Text = "Refresh Blueprints"
+		    Else
+		      HelpUpdateEngrams.Text = "Update Blueprints"
+		    End If
+		    HelpUpdateEngrams.Enable
+		  Else
+		    HelpSyncCloudFiles.Visible = False
+		    HelpUpdateEngrams.Visible = False
+		    HelpSeparator2.Visible = False
+		  End If
 		  
 		  Var Counter As Integer = 1
 		  For I As Integer = 0 To WindowCount - 1
@@ -125,21 +148,23 @@ Implements NotificationKit.Receiver
 		  #EndIf
 		  Self.RebuildRecentMenu
 		  
+		  SystemColors.Init
+		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
-		  ConfigNames.AddRow("deployments")
-		  ConfigNames.AddRow("maps")
+		  ConfigNames.Add("accounts")
+		  ConfigNames.Add("deployments")
 		  Var ConfigLabels() As String
 		  For Each ConfigName As String In ConfigNames
-		    ConfigLabels.AddRow(Language.LabelForConfig(ConfigName))
+		    ConfigLabels.Add(Language.LabelForConfig(ConfigName))
 		  Next
 		  ConfigLabels.SortWith(ConfigNames)
 		  For Each ConfigName As String In ConfigNames
 		    EditorMenu.AddMenu(New ConfigGroupMenuItem(ConfigName))
 		  Next
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		  
-		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
 		  AddHandler mIdentityManager.NeedsLogin, WeakAddressOf mIdentityManager_NeedsLogin
 		  
@@ -149,17 +174,19 @@ Implements NotificationKit.Receiver
 		    // Not critically important
 		  End Try
 		  
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckBetaExpiration)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupLogs)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_PrivacyCheck)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupDatabase)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CleanupConfigBackups)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_ShowMainWindow)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_RequestUser)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckUpdates)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_NewsletterPrompt)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_GettingStarted)
-		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckScreenSize)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabase)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CleanupConfigBackups)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckUpdates)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckScreenSize)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SubmitExceptions)
+		  If BeaconUI.WebContentSupported Then
+		    Self.mLaunchQueue.Add(AddressOf LaunchQueue_WelcomeWindow)
+		  End If
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -221,9 +248,7 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
-			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.Documents.ShowOpenDocument()
-			End If
+			Self.ShowOpenDocument()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -231,7 +256,7 @@ Implements NotificationKit.Receiver
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
 			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.ShowView(Nil)
+			Self.mMainWindow.ShowHome()
 			End If
 			Return True
 		End Function
@@ -241,6 +266,22 @@ Implements NotificationKit.Receiver
 		Function HelpAdminSpawnCodes() As Boolean Handles HelpAdminSpawnCodes.Action
 			Self.ShowSpawnCodes()
 			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpAPIBuilder() As Boolean Handles HelpAPIBuilder.Action
+			Call Self.HandleURL("beacon://action/showapibuilder")
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpAPIGuide() As Boolean Handles HelpAPIGuide.Action
+			Call Self.HandleURL("beacon://action/showguide")
+			Return True
+			
 		End Function
 	#tag EndMenuHandler
 
@@ -261,7 +302,7 @@ Implements NotificationKit.Receiver
 	#tag MenuHandler
 		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
 			Var Dialog As New SaveFileDialog
-			Dialog.SuggestedFileName = "Authorization Request" + BeaconFileTypes.BeaconAuth.PrimaryExtension
+			Dialog.SuggestedFileName = "Authorization Request" + Beacon.FileExtensionAuth
 			
 			Var File As FolderItem = Dialog.ShowModal()
 			If File = Nil Then
@@ -274,7 +315,7 @@ Implements NotificationKit.Receiver
 			Var Signed As MemoryBlock = Identity.Sign(HardwareID)
 			
 			Var Dict As New Dictionary
-			Dict.Value("UserID") = Identity.Identifier
+			Dict.Value("UserID") = Identity.UserID
 			Dict.Value("Signed") = EncodeHex(Signed)
 			Dict.Value("Device") = HardwareID
 			
@@ -289,8 +330,7 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
-			Var Win As New SupportTicketWindow
-			Win.Show
+			Self.StartTicket()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -317,39 +357,34 @@ Implements NotificationKit.Receiver
 		End Function
 	#tag EndMenuHandler
 
+	#tag MenuHandler
+		Function HelpSyncCloudFiles() As Boolean Handles HelpSyncCloudFiles.Action
+			UserCloud.Sync(True)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
+			If Keyboard.OptionKey Then
+			Call Self.HandleURL(Beacon.URLScheme + "://action/refreshengrams")
+			Else
+			Call Self.HandleURL(Beacon.URLScheme + "://action/checkforengrams")
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
+
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
-		  Self.CheckFolder(AppSupport)
+		  Call AppSupport.CheckIsFolder
 		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
-		  Self.CheckFolder(CompanyFolder)
+		  Call CompanyFolder.CheckIsFolder
 		  Var AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
-		  Self.CheckFolder(AppFolder)
+		  Call AppFolder.CheckIsFolder
 		  Return AppFolder
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AutosaveFolder(Create As Boolean = False) As FolderItem
-		  Var Folder As FolderItem = Self.ApplicationSupport.Child("Autosave")
-		  If Folder = Nil Then
-		    Return Nil
-		  End If
-		  If Not Folder.Exists Then
-		    If Create Then
-		      Folder.CreateFolder
-		    Else
-		      Return Nil
-		    End If
-		  End If
-		  Return Folder
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function BackupsFolder() As FolderItem
-		  Return Self.ApplicationSupport.Child("Backups")
 		End Function
 	#tag EndMethod
 
@@ -359,40 +394,27 @@ Implements NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function BuildVersion() As String
-		  Var VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
+		  Var VersionString As String = Self.MajorVersion.ToString(Locale.Raw, "0") + "." + Self.MinorVersion.ToString(Locale.Raw, "0")
 		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
-		    VersionString = VersionString + "." + Str(Self.BugVersion, "0")
+		    VersionString = VersionString + "." + Self.BugVersion.ToString(Locale.Raw, "0")
 		  End If
 		  Select Case Self.StageCode
 		  Case Application.Development
-		    Return VersionString + "pa" + Str(Self.NonReleaseVersion, "0")
+		    Return VersionString + "pa" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Case Application.Alpha
-		    Return VersionString + "a" + Str(Self.NonReleaseVersion, "0")
+		    Return VersionString + "a" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Case Application.Beta
-		    Return VersionString + "b" + Str(Self.NonReleaseVersion, "0")
+		    Return VersionString + "b" + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		  Else
 		    If Self.NonReleaseVersion <= 0 Then
 		      Return VersionString
 		    Else
-		      Return VersionString + "." + Str(Self.NonReleaseVersion, "0")
+		      Return VersionString + "." + Self.NonReleaseVersion.ToString(Locale.Raw, "0")
 		    End If
 		  End Select
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckFolder(Folder As FolderItem)
-		  If Folder.Exists Then
-		    If Not Folder.IsFolder Then
-		      Folder.Remove
-		      Folder.CreateFolder
-		    End If
-		  Else
-		    Folder.CreateFolder
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -418,64 +440,9 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CleanupConfigBackups()
-		  Var BackupsRoot As FolderItem = Self.BackupsFolder
-		  If BackupsRoot = Nil Or BackupsRoot.Exists = False Then
-		    Return
-		  End If
-		  
-		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "^(\d{4})-(\d{2})-(\d{2}) (\d{2}).(\d{2}).(\d{2}) GMT"
-		  
-		  Var Zone As New TimeZone(0)
-		  For Each ServerFolder As FolderItem In BackupsRoot.Children
-		    If ServerFolder.IsFolder = False Then
-		      Continue
-		    End If
-		    
-		    Var Timestamps() As Integer
-		    Var Folders() As FolderItem
-		    For Each BackupFolder As FolderItem In ServerFolder.Children
-		      Try
-		        If BackupFolder.IsFolder = False Then
-		          Continue
-		        End If
-		        
-		        Var Matches As RegexMatch = Matcher.Search(BackupFolder.Name)
-		        If Matches = Nil Then
-		          Continue
-		        End If
-		        
-		        Var Year As Integer = Matches.SubExpressionString(1).ToInteger
-		        Var Month As Integer = Matches.SubExpressionString(2).ToInteger
-		        Var Day As Integer = Matches.SubExpressionString(3).ToInteger
-		        Var Hour As Integer = Matches.SubExpressionString(4).ToInteger
-		        Var Minute As Integer = Matches.SubExpressionString(5).ToInteger
-		        Var Second As Integer = Matches.SubExpressionString(6).ToInteger
-		        
-		        Var BackupTime As New DateTime(Year, Month, Day, Hour, Minute, Second, 0, Zone)
-		        Timestamps.AddRow(BackupTime.SecondsFrom1970)
-		        Folders.AddRow(BackupFolder)
-		      Catch Err As RuntimeException
-		      End Try
-		    Next
-		    
-		    // Keep the very first and the most recent three
-		    If Timestamps.Count < 5 Then
-		      Continue
-		    End If
-		    
-		    Timestamps.SortWith(Folders)
-		    
-		    For I As Integer = 1 To Timestamps.LastRowIndex - 3
-		      If Folders(I).DeepDelete Then
-		        App.Log("Removed backup " + Folders(I).NativePath)
-		      Else
-		        App.Log("Unable to clean up backup " + Folders(I).NativePath)
-		      End If
-		    Next
-		  Next
-		End Sub
+		Function GenericLootSourceIcon() As Picture
+		  Return IconLootStandard
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -508,7 +475,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    If Char = BreakChar Then
-		      Args.AddRow(Arg)
+		      Args.Add(Arg)
 		      Arg = ""
 		    Else
 		      Arg = Arg + Char
@@ -516,10 +483,10 @@ Implements NotificationKit.Receiver
 		  Next
 		  
 		  If Arg <> "" Then
-		    Args.AddRow(Arg)
+		    Args.Add(Arg)
 		  End If
 		  
-		  If Args.LastRowIndex > 0 Then
+		  If Args.LastIndex > 0 Then
 		    Var Path As String = DefineEncoding(Args(1), Encodings.UTF8)
 		    If Beacon.IsBeaconURL(Path) Then
 		      // Given a url
@@ -546,7 +513,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  If Self.CurrentThread = Nil Then
+		  If Thread.Current = Nil Then
 		    Self.PresentException(Error)
 		  Else
 		    Call CallLater.Schedule(0, AddressOf PresentException, Error)
@@ -557,7 +524,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
 		  If Self.mMainWindow Is Nil Then
-		    Self.mPendingURLs.AddRow(URL)
+		    Self.mPendingURLs.Add(URL)
 		    Return True
 		  End If
 		  
@@ -574,19 +541,17 @@ Implements NotificationKit.Receiver
 		    
 		    Select Case Instructions
 		    Case "showdocuments"
-		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneDocuments)
+		      Self.mMainWindow.ShowDocuments()
 		    Case "showpresets"
-		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PanePresets)
-		    Case "showengrams"
-		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneEngrams)
-		    Case "showmods"
-		      Self.mMainWindow.Tools.ShowMods()
+		      Self.mMainWindow.ShowPresets()
+		    Case "showengrams", "showblueprints", "showmods"
+		      Self.mMainWindow.ShowBlueprints()
 		    Case "showidentity"
-		      Self.mMainWindow.Tools.ShowIdentity()
+		      IdentityWindow.Show()
 		    Case "showguide"
-		      Self.mMainWindow.Tools.ShowAPIGuide()
+		      ShowURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
 		    Case "showapibuilder"
-		      Self.mMainWindow.Tools.ShowAPIBuilder()
+		      APIBuilderWindow.Show()
 		    Case "shownewsletterprompt"
 		      SubscribeDialog.Present()
 		    Case "checkforupdate"
@@ -603,7 +568,28 @@ Implements NotificationKit.Receiver
 		      End If
 		    Case "refreshuser"
 		      Self.IdentityManager.RefreshUserDetails()
-		      Self.mMainWindow.ShowLibraryPane(LibraryPane.PaneMenu)
+		    Case "releasenotes"
+		      Self.ShowReleaseNotes()
+		    Case "enableonline"
+		      UserWelcomeWindow.Present(False)
+		    Case "signin"
+		      UserWelcomeWindow.Present(True)
+		    Case "showaccount"
+		      ShowURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
+		    Case "spawncodes"
+		      Self.ShowSpawnCodes()
+		    Case "reportproblem"
+		      Self.ShowBugReporter()
+		    Case "exit"
+		      Quit
+		    Case "signout"
+		      Preferences.OnlineEnabled = False
+		      Preferences.OnlineToken = ""
+		      Self.IdentityManager.CurrentIdentity = Nil
+		      
+		      UserWelcomeWindow.Present(False)
+		    Case "syncusercloud"
+		      UserCloud.Sync(True)
 		    Else
 		      Break
 		    End Select
@@ -658,7 +644,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL
-		    Self.mMainWindow.Documents.OpenURL(FileURL)
+		    Self.mMainWindow.Documents.OpenDocument(FileURL)
 		  End If
 		  
 		  Return True
@@ -778,6 +764,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    Preferences.LastUsedScreenSize = ScreenSize
 		  End If
+		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 
@@ -793,40 +780,8 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CleanupConfigBackups()
-		  Self.CleanupConfigBackups()
+		  Beacon.CleanupConfigBackups()
 		  Self.NextLaunchQueueTask
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LaunchQueue_GettingStarted()
-		  Var Notification As New Beacon.UserNotification("How about a nice tutorial video?")
-		  Notification.SecondaryMessage = "Click here to watch a video for first-time users of Beacon, or just to get a better understanding of how loot works."
-		  Notification.ActionURL = Beacon.WebURL("/videos/introduction_to_loot_drops_with")
-		  Notification.DoNotResurrect = True
-		  
-		  LocalData.SharedInstance.SaveNotification(Notification)
-		  
-		  Self.NextLaunchQueueTask
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LaunchQueue_NewsletterPrompt()
-		  If Preferences.HasShownSubscribeDialog Then
-		    Self.NextLaunchQueueTask
-		    Return
-		  End If
-		  
-		  Var Notification As New Beacon.UserNotification("Welcome to Beacon!")
-		  Notification.SecondaryMessage = "Beacon has an announcement list used to inform users of important updates and changes. Click here to sign up."
-		  Notification.ActionURL = "beacon://action/shownewsletterprompt"
-		  Notification.DoNotResurrect = True
-		  
-		  LocalData.SharedInstance.SaveNotification(Notification)
-		  Preferences.HasShownSubscribeDialog = True
-		  
-		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 
@@ -921,8 +876,26 @@ Implements NotificationKit.Receiver
 		  
 		  While Self.mPendingURLs.Count > 0
 		    Call Self.HandleURL(Self.mPendingURLs(0), False)
-		    Self.mPendingURLs.RemoveRowAt(0)
+		    Self.mPendingURLs.RemoveAt(0)
 		  Wend
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SubmitExceptions()
+		  ExceptionWindow.SubmitPendingReports()
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_WelcomeWindow()
+		  If Preferences.NewestUsedBuild < 10500000 Then
+		    // Show what's new window.
+		    WhatsNewWindow.Present
+		  End If
 		  
 		  Self.NextLaunchQueueTask()
 		End Sub
@@ -950,7 +923,7 @@ Implements NotificationKit.Receiver
 		  If RawContent <> Nil And RawContent.Size > 0 Then
 		    Base64 = EncodeBase64(RawContent, 0)
 		  End If
-		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
+		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " " + Base64)
 		End Sub
 	#tag EndMethod
 
@@ -996,7 +969,7 @@ Implements NotificationKit.Receiver
 		  If Code = 102 Then
 		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
 		  Else
-		    App.Log("IPC error " + Str(Code, "-0"))
+		    App.Log("IPC error " + Code.ToString(Locale.Raw, "0"))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1023,7 +996,7 @@ Implements NotificationKit.Receiver
 		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
 		    Var Document As Beacon.DocumentURL = Sender.Tag
-		    Self.mMainWindow.Documents.OpenURL(Document)
+		    Self.mMainWindow.Documents.OpenDocument(Document)
 		    Return True
 		  End If
 		End Function
@@ -1058,12 +1031,12 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub NextLaunchQueueTask()
-		  If Self.mLaunchQueue.LastRowIndex = -1 Then
+		  If Self.mLaunchQueue.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Task As LaunchQueueTask = Self.mLaunchQueue(0)
-		  Self.mLaunchQueue.RemoveRowAt(0)
+		  Self.mLaunchQueue.RemoveAt(0)
 		  
 		  Task.Invoke()
 		End Sub
@@ -1078,6 +1051,12 @@ Implements NotificationKit.Receiver
 		    Preferences.OnlineToken = ""
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
+		  Case UserCloud.Notification_SyncStarted
+		    HelpSyncCloudFiles.Text = "Syncing Cloud Files…"
+		    HelpSyncCloudFiles.Enabled = False
+		  Case UserCloud.Notification_SyncFinished
+		    HelpSyncCloudFiles.Text = "Sync Cloud Files"
+		    HelpSyncCloudFiles.Enabled = True
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1092,7 +1071,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.JsonFile) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionDelta) Or File.ExtensionMatches(Beacon.FileExtensionJSON) Then
 		    Try
 		      Var Content As String = File.Read(Encodings.UTF8)
 		      LocalData.SharedInstance.Import(Content)
@@ -1102,25 +1081,25 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionPreset) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Presets.OpenPreset(File, Import)
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.IniFile) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionINI) Then
 		    Self.mMainWindow.BringToFront()
 		    Self.mMainWindow.Documents.ImportFile(File)
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionProject) Then
 		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.OpenFile(File)
+		    Self.mMainWindow.Documents.OpenDocument(File)
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.BeaconIdentity) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionIdentity) Then
 		    Call Self.ImportIdentityFile(File)
 		    Return
 		  End If
@@ -1153,7 +1132,7 @@ Implements NotificationKit.Receiver
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
-		  If Documents.LastRowIndex > -1 Then
+		  If Documents.LastIndex > -1 Then
 		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Var Item As New MenuItem("Clear Menu")
@@ -1165,6 +1144,13 @@ Implements NotificationKit.Receiver
 		    Item.Enabled = False
 		    FileOpenRecent.AddMenu(Item)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReportException(Err As RuntimeException)
+		  // Does not display the exception to the user, instead uploads it directly to the server.
+		  ExceptionWindow.Report(Err)
 		End Sub
 	#tag EndMethod
 
@@ -1213,6 +1199,23 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ShowOpenDocument(Parent As Window = Nil)
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
+		  
+		  Var File As FolderItem
+		  If Parent Is Nil Then
+		    File = Dialog.ShowModal
+		  Else
+		    File = Dialog.ShowModalWithin(Parent.TrueWindow)
+		  End If
+		  If (File Is Nil) = False Then
+		    Self.OpenDocument(File)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
 		  ShowURL(Beacon.WebURL("/history?stage=" + Self.StageCode.ToString(Locale.Raw, "0") + "#build" + Self.BuildNumber.ToString(Locale.Raw, "0")))
 		End Sub
@@ -1221,6 +1224,13 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub ShowSpawnCodes()
 		  ShowURL(Beacon.WebURL("/spawn/"))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StartTicket()
+		  Var Win As New SupportTicketWindow
+		  Win.Show
 		End Sub
 	#tag EndMethod
 
@@ -1280,12 +1290,12 @@ Implements NotificationKit.Receiver
 		Function UserAgent() As String
 		  If Self.mUserAgent.IsEmpty Then
 		    Var Components() As String
-		    Components.AddRow("Language=Xojo/" + XojoVersionString)
-		    Components.AddRow("Platform=" + SystemInformationMBS.OSName + "/" + SystemInformationMBS.OSVersionString)
+		    Components.Add("Language=Xojo/" + XojoVersionString)
+		    Components.Add("Platform=" + SystemInformationMBS.OSName + "/" + SystemInformationMBS.OSVersionString)
 		    #if Target32Bit
-		      Components.AddRow("Architecture=32-bit " + If(TargetARM, "ARM", "Intel"))
+		      Components.Add("Architecture=32-bit " + If(TargetARM, "ARM", "Intel"))
 		    #else
-		      Components.AddRow("Architecture=64-bit " + If(TargetARM, "ARM", "Intel"))
+		      Components.Add("Architecture=64-bit " + If(TargetARM, "ARM", "Intel"))
 		    #endif
 		    
 		    Self.mUserAgent = "Beacon/" + Self.BuildVersion + " (" + Components.Join("; ") + ")"

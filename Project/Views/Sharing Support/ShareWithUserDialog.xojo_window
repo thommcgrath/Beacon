@@ -56,7 +56,7 @@ Begin BeaconDialog ShareWithUserDialog
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Add User to Document"
+      Value           =   "Add User to Project"
       Visible         =   True
       Width           =   410
    End
@@ -315,7 +315,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var EnteredValue As String = Self.UserIDField.Value
+		  Var EnteredValue As String = Self.UserIDField.Text
 		  If v4UUID.IsValid(EnteredValue) Or (EnteredValue.Length > 9 And EnteredValue.Right(9).BeginsWith("#")) Or Beacon.ValidateEmail(EnteredValue) Then
 		    Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(EnteredValue.ReplaceAll(",", ",,"))))
 		  Else

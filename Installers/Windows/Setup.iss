@@ -78,6 +78,8 @@ Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: not Is64B
 Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconAuth.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconData.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -101,6 +103,16 @@ Root: HKCR; Subkey: ".beaconpreset"; ValueData: "BeaconPreset"; Flags: uninsdele
 Root: HKCR; Subkey: "BeaconPreset"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconPreset\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconPreset\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+
+Root: HKCR; Subkey: ".beaconauth"; ValueData: "BeaconAuth"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconAuth"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconAuth\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconAuth.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconAuth\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+
+Root: HKCR; Subkey: ".beacondata"; ValueData: "BeaconData"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconData"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconData\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconData.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconData\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: "beacon"; ValueType: "string"; ValueData: "URL:Beacon"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "beacon"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""

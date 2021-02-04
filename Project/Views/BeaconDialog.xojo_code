@@ -1,6 +1,16 @@
 #tag Class
 Protected Class BeaconDialog
 Inherits Window
+	#tag Event
+		Sub Open()
+		  #if TargetWindows
+		    Self.MenuBar = DialogMenuBar
+		  #endif
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub ShowModalWithin(ParentWindow As Window)
 		  Self.CorrectWindowPlacement(ParentWindow)
@@ -16,6 +26,11 @@ Inherits Window
 		  
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
 
 
 	#tag ViewBehavior

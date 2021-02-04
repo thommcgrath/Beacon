@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
    MinimumWidth    =   660
    Resizeable      =   True
    Title           =   "Creature Replacements"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   660
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -84,7 +84,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -114,7 +114,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -151,7 +151,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   174
@@ -186,7 +186,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   174
@@ -244,7 +244,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   0
@@ -276,7 +276,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -293,6 +293,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          AllowAutoHideScrollbars=   True
          AllowExpandableRows=   False
          AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
          AllowResizableColumns=   False
          AllowRowDragging=   False
          AllowRowReordering=   False
@@ -302,13 +303,16 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
          DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         GridLinesHorizontalStyle=   "0"
-         GridLinesVerticalStyle=   "0"
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
          HasBorder       =   True
          HasHeader       =   True
          HasHorizontalScrollbar=   False
@@ -325,8 +329,9 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   "1"
+         RowSelectionType=   1
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   2
@@ -364,7 +369,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -396,7 +401,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -417,7 +422,7 @@ End
 		  Self.SwapButtons()
 		  
 		  If Self.mTargetCreature <> Nil Then
-		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
+		    Self.TargetCreatureField.Text = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
 		    
 		    Var Replacements() As Beacon.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
@@ -442,9 +447,9 @@ End
 		  Var DefinedCreatures() As Beacon.Creature = SpawnSet.ReplacedCreatures
 		  
 		  If TargetCreature <> Nil Then
-		    For I As Integer = 0 To DefinedCreatures.LastRowIndex
+		    For I As Integer = 0 To DefinedCreatures.LastIndex
 		      If DefinedCreatures(I) = TargetCreature Then
-		        DefinedCreatures.RemoveRowAt(I)
+		        DefinedCreatures.RemoveAt(I)
 		        Exit
 		      End If
 		    Next
@@ -516,9 +521,9 @@ End
 	#tag Event
 		Sub Action()
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, EngramSelectorDialog.SelectModes.Single)
-		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
+		  If Creatures <> Nil And Creatures.LastIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
-		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
+		    Self.TargetCreatureField.Text = Self.mTargetCreature.Label
 		    Self.TargetCreatureField.Italic = False
 		  End If
 		End Sub
@@ -561,7 +566,7 @@ End
 		      Continue
 		    End If
 		    
-		    Creatures.AddRow(Me.RowTagAt(I))
+		    Creatures.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Creatures, "replacement", "replacements") = False Then
@@ -569,10 +574,10 @@ End
 		  End If
 		  
 		  For I As Integer = Bound DownTo 0
-		    For X As Integer = 0 To Creatures.LastRowIndex
+		    For X As Integer = 0 To Creatures.LastIndex
 		      If Me.RowTagAt(I) = Creatures(X) Then
 		        Me.RemoveRowAt(I)
-		        Creatures.RemoveRowAt(X)
+		        Creatures.RemoveAt(X)
 		        Continue For I
 		      End If
 		    Next

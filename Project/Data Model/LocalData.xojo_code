@@ -16,10 +16,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Tags() As String
 		      Var Temp() As Variant = BlueprintData.Value("tags")
 		      For Each Tag As String In Temp
-		        Tags.AddRow(Tag)
+		        Tags.Add(Tag)
 		      Next
 		      TagString = Tags.Join(",")
-		      Tags.AddRowAt(0, "object")
+		      Tags.AddAt(0, "object")
 		      TagStringForSearching = Tags.Join(",")
 		    Catch Err As RuntimeException
 		      
@@ -42,7 +42,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Columns.Value("class_string") = ClassString
 		    Columns.Value("tags") = TagString
 		    
-		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
+		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR path = ?2;", ObjectID.StringValue, Path)
 		    If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		      Var Assignments() As String
 		      Var Values() As Variant
@@ -52,9 +52,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If Entry.Key = "object_id" Then
 		          WhereClause = "object_id = ?" + NextPlaceholder.ToString
 		        Else
-		          Assignments.AddRow(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
+		          Assignments.Add(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
 		        End If
-		        Values.AddRow(Entry.Value)
+		        Values.Add(Entry.Value)
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
 		      
@@ -70,9 +70,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Values() As Variant
 		      Var NextPlaceholder As Integer = 1
 		      For Each Entry As DictionaryEntry In Columns
-		        ColumnNames.AddRow(Entry.Key.StringValue)
-		        Placeholders.AddRow("?" + NextPlaceholder.ToString)
-		        Values.AddRow(Entry.Value)
+		        ColumnNames.Add(Entry.Key.StringValue)
+		        Placeholders.Add("?" + NextPlaceholder.ToString)
+		        Values.Add(Entry.Value)
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
 		      
@@ -92,22 +92,39 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.BeginTransaction()
 		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
 		  If Results.RowCount = 1 Then
-		    If Results.Column("mod_id").StringValue = Self.UserModID Then
+		    If Results.Column("mod_id").StringValue = Beacon.UserModID Then
 		      Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3 WHERE object_id = ?1;", Modifier.ModifierID, Modifier.Label, Modifier.Pattern)
 		    End If
 		  Else
-		    Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern) VALUES (?1, ?2, ?3, ?4);", Modifier.ModifierID, Self.UserModID, Modifier.Label, Modifier.Pattern)
+		    Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern) VALUES (?1, ?2, ?3, ?4);", Modifier.ModifierID, Beacon.UserModID, Modifier.Label, Modifier.Pattern)
 		  End If
 		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AdvanceDeltaQueue()
+		  If Self.mDeltaDownloadQueue.Count = 0 Then
+		    Self.CheckingForEngramUpdates = False
+		    Return
+		  End If
+		  
+		  Var Downloader As New URLConnection
+		  AddHandler Downloader.ContentReceived, WeakAddressOf mDeltaDownload_ContentReceived
+		  AddHandler Downloader.Error, WeakAddressOf mDeltaDownload_Error
+		  AddHandler Downloader.ReceivingProgressed, WeakAddressOf mDeltaDownload_ReceivingProgressed
+		  Downloader.Send("GET", Self.mDeltaDownloadQueue(0))
+		  Self.mDeltaDownloadQueue.RemoveAt(0)
+		  Self.mDeltaDownloader = Downloader
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AllMods() As Beacon.ModDetails()
 		  Var Mods() As Beacon.ModDetails
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled FROM mods ORDER BY name;")
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods ORDER BY name;")
 		  While Not Results.AfterLastRow
-		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue))
+		    Mods.Add(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -126,7 +143,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Var Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
 		    If Modifier <> Nil Then
-		      Modifiers.AddRow(Modifier)
+		      Modifiers.Add(Modifier)
 		    End If
 		    
 		    Results.MoveToNextRow
@@ -157,7 +174,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Keys() As Variant = Dict.Keys
 		  Var Tags() As String
 		  For Each Key As String In Keys
-		    Tags.AddRow(Key)
+		    Tags.Add(Key)
 		  Next
 		  Tags.Sort
 		  
@@ -169,15 +186,51 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter
 		  
-		  If Self.mTransactions.LastRowIndex = -1 Then
-		    Self.mTransactions.AddRowAt(0, "")
+		  If Self.mTransactions.LastIndex = -1 Then
+		    Self.mTransactions.AddAt(0, "")
 		    Self.SQLExecute("BEGIN TRANSACTION;")
 		  Else
 		    Var Savepoint As String = "Savepoint_" + EncodeHex(Crypto.GenerateRandomBytes(4))
-		    Self.mTransactions.AddRowAt(0, Savepoint)
+		    Self.mTransactions.AddAt(0, Savepoint)
 		    Self.SQLExecute("SAVEPOINT " + Savepoint + ";")
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintLabels(Category As String, Mods As Beacon.StringList) As Dictionary
+		  Var CacheKey As String = Category + ":" + Mods.Hash
+		  If Self.mBlueprintLabelsCacheKey <> CacheKey Then
+		    Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Category, "", Mods, "")
+		    Var Temp As New Dictionary
+		    For Each Blueprint As Beacon.Blueprint In Blueprints
+		      Var Matches() As Beacon.Blueprint
+		      If Temp.HasKey(Blueprint.Label) Then
+		        Matches = Temp.Value(Blueprint.Label)
+		      End If
+		      Matches.Add(Blueprint)
+		      Temp.Value(Blueprint.Label) = Matches
+		    Next
+		    
+		    Var Dict As New Dictionary
+		    For Each Entry As DictionaryEntry In Temp
+		      Var Base As String = Entry.Key
+		      Var Matches() As Beacon.Blueprint = Entry.Value
+		      If Matches.Count = 1 Then
+		        Dict.Value(Matches(0).ObjectID) = Base
+		      Else
+		        For Each Sibling As Beacon.Blueprint In Matches
+		          Dict.Value(Sibling.ObjectID) = Base.Disambiguate(Sibling.ModName)
+		        Next
+		      End If
+		    Next
+		    
+		    Self.mBlueprintLabelsCacheDict = Dict
+		    Self.mBlueprintLabelsCacheKey = CacheKey
+		  End If
+		  
+		  Return Self.mBlueprintLabelsCacheDict
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -193,20 +246,34 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #endif
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
-		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT NOT NULL, object_id TEXT NOT NULL, label TEXT NOT NULL, contents TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT, used_stats INTEGER, mating_interval_min INTEGER, mating_interval_max INTEGER);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', groups TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, tags TEXT NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT NOT NULL, header TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT, nitrado_format TEXT);")
+		  Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER NOT NULL UNIQUE);")
+		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
+		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE news (uuid TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT NOT NULL, detail TEXT, url TEXT, min_version INTEGER, max_version INTEGER, moment TEXT NOT NULL, min_os_version TEXT);")
+		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE);")
+		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  
+		  For Each Category As String In Categories
+		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_mod_id_idx ON " + Category + "(mod_id);")
+		  Next
+		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
+		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
+		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
@@ -214,21 +281,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Categories() As String = Beacon.Categories
 		  Var DeleteStatements() As String
 		  For Each Category As String In Categories
-		    DeleteStatements.AddRow("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
+		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
-		  For Each Category As String In Categories
-		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
-		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
-		  Next
-		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
-		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
-		  
-		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled) VALUES (?1, ?2, ?3, ?4);", Self.UserModID, Self.UserModName, True, True)
+		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id) VALUES (?1, ?2, ?3, ?4, ?5);", Beacon.UserModID, Beacon.UserModName, True, True, Beacon.UserModWorkshopID)
 		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -236,29 +293,76 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CacheEngram(Engram As Beacon.Engram)
-		  Var Arr(0) As Beacon.Engram
-		  Arr(0) = Engram
-		  Self.CacheEngrams(Arr)
+		Private Sub Cache(Creatures() As Beacon.Creature)
+		  For Each Creature As Beacon.Creature In Creatures
+		    Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CacheEngrams(Engrams() As Beacon.Engram)
+		Private Sub Cache(Creature As Beacon.Creature)
+		  Var Arr(0) As Beacon.Creature
+		  Arr(0) = Creature
+		  Self.Cache(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Cache(Engrams() As Beacon.Engram)
 		  For Each Engram As Beacon.Engram In Engrams
-		    Self.mEngramCache.Value(Engram.ClassString) = Engram
-		    Self.mEngramCache.Value(Engram.Path) = Engram
-		    Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
+		    Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		    
 		    If Engram.HasUnlockDetails Then
-		      Self.mEngramCache.Value(Engram.EntryString) = Engram
+		      Var SimilarEngrams() As Beacon.Engram
+		      If Self.mEngramCache.HasKey(Engram.EntryString) Then
+		        SimilarEngrams = Self.mEngramCache.Value(Engram.EntryString)
+		      End If
+		      
+		      Var Found As Boolean
+		      For Idx As Integer = 0 To SimilarEngrams.LastIndex
+		        If SimilarEngrams(Idx).ObjectID = Engram.ObjectID Then
+		          SimilarEngrams(Idx) = Engram
+		          Found = True
+		          Exit For Idx
+		        End If
+		      Next
+		      If Not Found Then
+		        SimilarEngrams.Add(Engram)
+		      End If
+		      Self.mEngramCache.Value(Engram.EntryString) = SimilarEngrams
 		    End If
 		  Next
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Cache(Engram As Beacon.Engram)
+		  Var Arr(0) As Beacon.Engram
+		  Arr(0) = Engram
+		  Self.Cache(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Cache(SpawnPoints() As Beacon.SpawnPoint)
+		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		    Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Cache(SpawnPoint As Beacon.SpawnPoint)
+		  Var Arr(0) As Beacon.SpawnPoint
+		  Arr(0) = SpawnPoint
+		  Self.Cache(Arr)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub CheckForEngramUpdates(ForceRefresh As Boolean = False)
-		  If Self.mCheckingForUpdates Then
+		  If Self.CheckingForEngramUpdates Then
 		    Return
 		  End If
 		  
@@ -267,36 +371,54 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  If Self.mUpdater = Nil Then
-		    Self.mUpdater = New URLConnection
-		    Self.mUpdater.AllowCertificateValidation = True
-		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
-		    Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
-		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
-		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
+		  Self.mUpdater = New URLConnection
+		  Self.mUpdater.AllowCertificateValidation = True
+		  Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
+		  Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
+		  AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
+		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
+		  
+		  Self.CheckingForEngramUpdates = True
+		  Var CheckURL As String = Self.ClassesURL(ForceRefresh)
+		  App.Log("Checking for blueprint updates from " + CheckURL)
+		  Self.mUpdater.Send("GET", CheckURL)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CheckingForEngramUpdates() As Boolean
+		  Return Self.mCheckingForUpdates
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckingForEngramUpdates(Assigns Value As Boolean)
+		  If Self.mCheckingForUpdates = Value Then
+		    Return
 		  End If
 		  
-		  Self.mCheckingForUpdates = True
-		  Var CheckURL As String = Self.ClassesURL(ForceRefresh)
-		  App.Log("Checking for engram updates from " + CheckURL)
-		  Self.mUpdater.Send("GET", CheckURL)
+		  Self.mCheckingForUpdates = Value
+		  If Value Then
+		    NotificationKit.Post(Self.Notification_EngramUpdateStarted, Nil)
+		  Else
+		    NotificationKit.Post(Self.Notification_EngramUpdateFinished, Self.LastSync)
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ClassesURL(ForceRefresh As Boolean) As String
-		  Var Version As Integer = App.BuildNumber
-		  Var CheckURL As String = Beacon.WebURL("/download/classes?version=" + Version.ToString)
+		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Self.EngramsVersion.ToString(Locale.Raw, "0"))
 		  
 		  If ForceRefresh = False Then
 		    Var LastSync As String = Self.Variable("sync_time")
 		    If LastSync <> "" Then
-		      CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
+		      CheckURL = CheckURL + "&since=" + EncodeURLComponent(LastSync)
 		    End If
 		  End If
 		  
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
-		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier)
+		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
 		  End If
 		  
 		  Return CheckURL
@@ -324,12 +446,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub Commit()
-		  If Self.mTransactions.LastRowIndex = -1 Then
+		  If Self.mTransactions.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Savepoint As String = Self.mTransactions(0)
-		  Self.mTransactions.RemoveRowAt(0)
+		  Self.mTransactions.RemoveAt(0)
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("COMMIT TRANSACTION;")
@@ -345,9 +467,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function ConsoleSafeMods() As Beacon.ModDetails()
 		  Var Mods() As Beacon.ModDetails
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled FROM mods WHERE console_safe = 1 ORDER BY name;")
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE console_safe = 1 ORDER BY name;")
 		  While Not Results.AfterLastRow
-		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue))
+		    Mods.Add(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -362,9 +484,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mLock = New CriticalSection
 		  Self.mDropsLabelCacheDict = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
+		  Self.mBlueprintLabelsCacheDict = New Dictionary
 		  
 		  Var AppSupport As FolderItem = App.ApplicationSupport
-		  Var ShouldImportCloud As Boolean
 		  
 		  Var LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
@@ -382,7 +504,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mBase.CreateDatabase
 		    
 		    Self.BuildSchema()
-		    ShouldImportCloud = True
 		  End If
 		  
 		  Var CurrentSchemaVersion As Integer = Self.mBase.UserVersion
@@ -398,7 +519,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    // Relocate the current library
 		    Var Counter As Integer = 1
 		    Do
-		      Var Destination As FolderItem = BackupsFolder.Child("Library " + Str(CurrentSchemaVersion, "-0") + If(Counter > 1, "-" + Str(Counter, "-0"), "") + ".sqlite")
+		      Var Destination As FolderItem = BackupsFolder.Child("Library " + CurrentSchemaVersion.ToString(Locale.Raw, "0") + If(Counter > 1, "-" + Counter.ToString(Locale.Raw, "0"), "") + ".sqlite")
 		      If Destination.Exists Then
 		        Counter = Counter + 1
 		        Continue
@@ -412,26 +533,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var SearchFolders(1) As FolderItem
 		    SearchFolders(0) = BackupsFolder
 		    SearchFolders(1) = AppSupport
-		    Var SearchPrefix As String = "Library " + Str(Self.SchemaVersion, "-0")
-		    Var SearchSuffix As String = ".sqlite"
+		    Var Pattern As New RegEx
+		    Pattern.SearchPattern = "^Library " + Self.SchemaVersion.ToString(Locale.Raw, "0") + "(-(\d+))?\.sqlite$"
 		    For Each SearchFolder As FolderItem In SearchFolders
 		      Var Candidates() As FolderItem
 		      Var Versions() As Integer
 		      For I As Integer = 0 To SearchFolder.Count - 1
 		        Var Filename As String = SearchFolder.ChildAt(I).Name
-		        If Filename = SearchPrefix + SearchSuffix Then
-		          Candidates.AddRow(SearchFolder.ChildAt(I))
-		          Versions.AddRow(1)
-		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
-		          Candidates.AddRow(SearchFolder.ChildAt(I))
-		          Versions.AddRow(Integer.FromString(Filename.Middle(SearchPrefix.Length + 1, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length + 1))))
+		        Var Matches As RegexMatch = Pattern.Search(Filename)
+		        If Matches Is Nil Then
+		          Continue
+		        End If
+		        Candidates.Add(SearchFolder.ChildAt(I))
+		        If Matches.SubExpressionCount >= 3 Then
+		          Versions.Add(Integer.FromString(Matches.SubExpressionString(2)))
+		        Else
+		          Versions.Add(1)
 		        End If
 		      Next
 		      
-		      If Candidates.LastRowIndex > -1 Then
+		      If Candidates.LastIndex > -1 Then
 		        Versions.SortWith(Candidates)
 		        
-		        Var RestoreFile As FolderItem = Candidates(Candidates.LastRowIndex)
+		        Var RestoreFile As FolderItem = Candidates(Candidates.LastIndex)
 		        RestoreFile.MoveTo(AppSupport.Child("Library.sqlite"))
 		        
 		        Self.mBase = New SQLiteDatabase
@@ -445,35 +569,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
 		    Call Self.mBase.CreateDatabase
 		    Self.BuildSchema()
-		    ShouldImportCloud = True
 		  End If
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
-		  
-		  // Careful removing this, the commit updates the mLastCommitTime property
-		  Self.BeginTransaction()
-		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Self.UserModID, True)
-		  Self.Commit()
-		  
-		  Var Migrated As Boolean
-		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
-		    Try
-		      Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
-		    Catch Err As RuntimeException
-		      Var Message As String = Introspection.GetType(Err).FullName + " " + Err.Message
-		      App.Log("Database migration failed: " + Message.Trim)
-		    End Try
-		  End If
-		  If ShouldImportCloud And Migrated = False Then
-		    // Per https://github.com/thommcgrath/Beacon/issues/191 cloud data should be imported
-		    Self.mNextSyncImportAll = True
-		  End If
-		  
-		  If CurrentSchemaVersion < Self.SchemaVersion Then
-		    // Since the database version changed, import the local classes file. This helps
-		    // to mitigate issues where new columns have been added to records already synced.
-		    Self.ImportLocalClasses()
-		  End If
+		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 400;")
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
@@ -491,11 +590,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Sub DeleteBlueprints(Blueprints() As Beacon.Blueprint)
 		  Var ObjectIDs() As String
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    ObjectIDs.AddRow("'" + Blueprint.ObjectID + "'")
+		    ObjectIDs.Add("'" + Blueprint.ObjectID + "'")
 		  Next
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = '" + Self.UserModID + "' AND object_id IN (" + ObjectIDs.Join(",") + ");")
+		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = '" + Beacon.UserModID + "' AND object_id IN (" + ObjectIDs.Join(",") + ");")
 		  Self.Commit()
 		  
 		  Self.SyncUserEngrams()
@@ -514,18 +613,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteNotification(Notification As Beacon.UserNotification)
-		  If Notification = Nil Then
-		    Return
-		  End If
-		  
-		  Self.BeginTransaction()
-		  Self.SQLExecute("UPDATE notifications SET deleted = 1 WHERE notification_id = ?1;", Notification.Identifier)
-		  Self.Commit()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub DeletePreset(Preset As Beacon.Preset)
 		  If Not Self.IsPresetCustom(Preset) Then
 		    Return
@@ -535,7 +622,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Preset.PresetID)
 		  Self.Commit()
 		  
-		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension)
+		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + Beacon.FileExtensionPreset)
 		  
 		  Self.LoadPresets()
 		End Sub
@@ -547,23 +634,23 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return True
 		  End If
 		  
-		  If Engram.ModID = Self.UserModID Then
+		  If Engram.ModID = Beacon.UserModID Then
 		    Return True
 		  End If
 		  
 		  Var ObjectID As String = Engram.ObjectID
 		  
 		  If Self.mEngramCache.HasKey(ObjectID) Then
-		    Return Beacon.Engram(Self.mEngramCache.Value(ObjectID)).ModID = Self.UserModID
+		    Return Beacon.Engram(Self.mEngramCache.Value(ObjectID)).ModID = Beacon.UserModID
 		  End If
 		  
 		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE object_id = ?1;", ObjectID)
-		  Return Results.RowCount = 0 Or Results.Column("mod_id").StringValue = Self.UserModID
+		  Return Results.RowCount = 0 Or Results.Column("mod_id").StringValue = Beacon.UserModID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		Function GetBlueprintByID(ObjectID As v4UUID) As Beacon.Blueprint
 		  Var Results As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
 		  If Results.RowCount <> 1 Then
 		    Return Nil
@@ -577,6 +664,82 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Case Beacon.CategorySpawnPoints
 		    Return Self.GetSpawnPointByID(ObjectID)
 		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Blueprint()
+		  // This is not the most efficient method, but there shouldn't be a lot
+		  // of items with duplicate classes, so it probably won't matter.
+		  
+		  Var Blueprints() As Beacon.Blueprint
+		  
+		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE class_string = ?1;"
+		  If (Mods Is Nil) = False Then
+		    SQL = SQL.Left(SQL.Length - 1) + " AND mod_id IN (" + Mods.SQLValue + ");"
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, ClassString)
+		  If Results.RowCount = 0 Then
+		    Return Blueprints
+		  End If
+		  
+		  For Each Result As DatabaseRow In Results
+		    Var Blueprint As Beacon.Blueprint
+		    Var ObjectID As String = Result.Column("object_id").StringValue
+		    
+		    Select Case Result.Column("category").StringValue
+		    Case Beacon.CategoryEngrams
+		      Blueprint = Self.GetEngramByID(ObjectID)
+		    Case Beacon.CategoryCreatures
+		      Blueprint = Self.GetCreatureByID(ObjectID)
+		    Case Beacon.CategorySpawnPoints
+		      Blueprint = Self.GetSpawnPointByID(ObjectID)
+		    End Select
+		    If (Blueprint Is Nil) = False Then
+		      Blueprints.Add(Blueprint)
+		    End If
+		  Next
+		  
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprintsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Blueprint()
+		  // This is not the most efficient method, but there shouldn't be a lot
+		  // of items with duplicate paths, so it probably won't matter.
+		  
+		  Var Blueprints() As Beacon.Blueprint
+		  
+		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE path = ?1;"
+		  If (Mods Is Nil) = False Then
+		    SQL = SQL.Left(SQL.Length - 1) + " AND mod_id IN (" + Mods.SQLValue + ");"
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, Path)
+		  If Results.RowCount = 0 Then
+		    Return Blueprints
+		  End If
+		  
+		  For Each Result As DatabaseRow In Results
+		    Var Blueprint As Beacon.Blueprint
+		    Var ObjectID As String = Result.Column("object_id").StringValue
+		    
+		    Select Case Result.Column("category").StringValue
+		    Case Beacon.CategoryEngrams
+		      Blueprint = Self.GetEngramByID(ObjectID)
+		    Case Beacon.CategoryCreatures
+		      Blueprint = Self.GetCreatureByID(ObjectID)
+		    Case Beacon.CategorySpawnPoints
+		      Blueprint = Self.GetSpawnPointByID(ObjectID)
+		    End Select
+		    If (Blueprint Is Nil) = False Then
+		      Blueprints.Add(Blueprint)
+		    End If
+		  Next
+		  
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 
@@ -595,7 +758,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
 		  Try
 		    Var Results As RowSet
-		    Results = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName.Lowercase)
+		    Results = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName)
 		    If Results.RowCount <> 1 Then
 		      Return False
 		    End If
@@ -612,92 +775,69 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByClass(ClassString As String) As Beacon.Creature
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		    ClassString = ClassString + "_C"
-		  End If
-		  
-		  If Self.mCreatureCache.HasKey(ClassString) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
-		      Self.mCreatureCache.Value(Creatures(0).ClassString) = Creatures(0)
-		      For Each Creature As Beacon.Creature In Creatures
-		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
-		      Next
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  Return Self.mCreatureCache.Value(ClassString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mCreatureCache.HasKey(CreatureID.StringValue) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureID.StringValue)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
-		      For Each Creature As Beacon.Creature In Creatures
-		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
-		      Next
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
+		  Var CreatureUUID As String = CreatureID
+		  If Self.mCreatureCache.HasKey(CreatureUUID) Then
+		    Return Self.mCreatureCache.Value(CreatureUUID)
 		  End If
-		  Return Self.mCreatureCache.Value(CreatureID.StringValue)
+		  
+		  Try
+		    Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureUUID)
+		    If Results.RowCount <> 1 Then
+		      Return Nil
+		    End If
+		    
+		    Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
+		    Self.Cache(Creatures)
+		    Return Creatures(0)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByPath(Path As String) As Beacon.Creature
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If Self.mCreatureCache.HasKey(Path) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
-		      For Each Creature As Beacon.Creature In Creatures
-		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
-		      Next
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
+		Function GetCreaturesByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.class_string = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND creatures.mod_id IN (" + Mods.SQLValue + ")"
 		  End If
-		  Return Self.mCreatureCache.Value(Path)
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, ClassString)
+		  Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Rows)
+		  Self.Cache(Creatures)
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreaturesByPath(Path As String, Mods As Beacon.StringList) As Beacon.Creature()
+		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.path = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND creatures.mod_id IN (" + Mods.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Path)
+		  Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Rows)
+		  Self.Cache(Creatures)
+		  Return Creatures
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
-		    Var RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
+		    Var RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Beacon.UserModID)
 		    If RS.RowCount = 0 Then
 		      Return Nil
 		    End If
 		    
 		    Var Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
-		    Self.CacheEngrams(Engrams)
+		    Self.Cache(Engrams)
 		    Return Engrams
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -717,68 +857,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByClass(ClassString As String) As Beacon.Engram
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		    ClassString = ClassString + "_C"
-		  End If
-		  
-		  If Self.mEngramCache.HasKey(ClassString) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      Self.CacheEngrams(Engrams)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  Return Self.mEngramCache.Value(ClassString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If EntryString.Length < 2 Or EntryString.Right(2) <> "_C" Then
-		    EntryString = EntryString + "_C"
-		  End If
-		  
-		  If Self.mEngramCache.HasKey(EntryString) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE entry_string IS NOT NULL AND LOWER(entry_string) = ?1;", EntryString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      Self.CacheEngrams(Engrams)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  Return Self.mEngramCache.Value(EntryString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetEngramByID(EngramID As v4UUID) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
 		  If Self.mEngramCache.HasKey(EngramID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID.StringValue)
-		      If Results.RowCount = 0 Then
+		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      Self.CacheEngrams(Engrams)
+		      Self.Cache(Engrams)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
@@ -808,23 +898,65 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByPath(Path As String) As Beacon.Engram
+		Function GetEngramsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.class_string = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND engrams.mod_id IN (" + Mods.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, ClassString)
+		  Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Rows)
+		  Self.Cache(Engrams)
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByEntryString(EntryString As String, Mods As Beacon.StringList) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mEngramCache.HasKey(Path) = False Then
+		  If EntryString.Length < 2 Or EntryString.Right(2) <> "_C" Then
+		    EntryString = EntryString + "_C"
+		  End If
+		  
+		  Var Engrams() As Beacon.Engram
+		  If Self.mEngramCache.HasKey(EntryString) Then
+		    Engrams = Self.mEngramCache.Value(EntryString)
+		  Else
+		    Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.entry_string = ?1;"
+		    If (Mods Is Nil) = False Then
+		      SQL = SQL.Left(SQL.Length - 1) + " AND engrams.mod_id IN (" + Mods.SQLValue + ");"
+		    End If
+		    
 		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		      Var Results As RowSet = Self.SQLSelect(SQL, EntryString)
 		      If Results.RowCount = 0 Then
-		        Return Nil
+		        Return Engrams
 		      End If
 		      
-		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      Self.CacheEngrams(Engrams)
+		      Engrams = Self.RowSetToEngram(Results)
+		      Self.Cache(Engrams)
 		    Catch Err As RuntimeException
-		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mEngramCache.Value(Path)
+		  
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Engram()
+		  Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.path = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND engrams.mod_id IN (" + Mods.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Path)
+		  Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Rows)
+		  Self.Cache(Engrams)
+		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -844,7 +976,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Var Results As RowSet = Self.SQLSelect("SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		    Var Results As RowSet = Self.SQLSelect("SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources WHERE class_string = ?1;", ClassString)
 		    If Results.RowCount = 0 Then
 		      Return Nil
 		    End If
@@ -858,35 +990,106 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetNotifications() As Beacon.UserNotification()
-		  Var Notifications() As Beacon.UserNotification
-		  Var Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
-		  While Not Results.AfterLastRow
-		    Var Notification As New Beacon.UserNotification
-		    Notification.Message = Results.Column("message").StringValue
-		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue
-		    Notification.ActionURL = Results.Column("action_url").StringValue
-		    Notification.Read = Results.Column("read").BooleanValue
-		    Notification.Timestamp = NewDateFromSQLDateTime(Results.Column("moment").StringValue)
-		    Try
-		      Notification.UserData = Beacon.ParseJSON(Results.Column("user_data").StringValue)
-		    Catch Err As RuntimeException
-		    End Try
-		    Notifications.AddRow(Notification)
-		    
-		    Results.MoveToNextRow
-		  Wend
-		  Return Notifications
+		Function GetMap(Named As String) As Beacon.Map
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = $1 OR ark_identifier = $1 LIMIT 1;", Named)
+		  If Rows.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Return New Beacon.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPathsWithCraftingCosts(Mods As Beacon.StringList, Mask As UInt64) As String()
-		  Var SQL As String = "SELECT path FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
-		  If (Mods Is Nil) = False And Mods.Count > 0 Then
+		Function GetMaps() As Beacon.Map()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
+		  Var Maps() As Beacon.Map
+		  For Each Row As DatabaseRow In Rows
+		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
+		  Next
+		  Return Maps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps(Mask As UInt64) As Beacon.Map()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & $1) = mask ORDER BY official DESC, sort;", Mask)
+		  Var Maps() As Beacon.Map
+		  For Each Row As DatabaseRow In Rows
+		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
+		  Next
+		  Return Maps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  If ModID = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE mod_id = ?1;", ModID.StringValue)
+		  If Results.RowCount = 1 Then
+		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetModWithWorkshopID(WorkshopID As Integer) As Beacon.ModDetails
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE workshop_id = ?1;", WorkshopID)
+		  If Results.RowCount = 1 Then
+		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetNews() As NewsItem()
+		  Var OSMajor, OSMinor, OSBug As Integer
+		  #if TargetMacOS
+		    OSMajor = SystemInformationMBS.MacMajorVersion
+		    OSMinor = SystemInformationMBS.MacMinorVersion
+		    OSBug = SystemInformationMBS.MacBugFixVersion
+		  #elseif TargetWin32
+		    OSMajor = SystemInformationMBS.WinMajorVersion
+		    OSMinor = SystemInformationMBS.WinMinorVersion
+		    OSBug = SystemInformationMBS.WinBuildNumber
+		  #endif
+		  
+		  Var BuildNumber As Integer = App.BuildNumber
+		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid, title, COALESCE(detail, '') AS detail, COALESCE(url, '') AS url, min_os_version FROM news WHERE (min_version IS NULL OR min_version <= ?1) AND (max_version IS NULL OR max_version >= ?1) ORDER BY moment DESC;", BuildNumber)
+		  Var Items() As NewsItem
+		  For Each Row As DatabaseRow In Rows
+		    If Row.Column("min_os_version").Value.IsNull = False Then
+		      Var MinOSVersionParts() As String = Row.Column("min_os_version").StringValue.Split(".")
+		      Var MinOSMajor As Integer = MinOSVersionParts(0).ToInteger
+		      Var MinOSMinor As Integer = MinOSVersionParts(1).ToInteger
+		      Var MinOSBug As Integer = MinOSVersionParts(2).ToInteger
+		      Var Supported As Boolean = OSMajor > MinOSMajor Or (OSMajor = MinOSMajor And OSMinor > MinOSMinor) Or (OSMajor = MinOSMajor And OSMinor = MinOSMinor AND OSBug >= MinOSBug)
+		      If Not Supported Then
+		        Continue
+		      End If
+		    End If
+		    
+		    Var Item As New NewsItem
+		    Item.UUID = Row.Column("uuid").StringValue
+		    Item.Title = Row.Column("title").StringValue
+		    Item.Detail = Row.Column("detail").StringValue
+		    Item.URL = Row.Column("url").StringValue
+		    Items.Add(Item)
+		  Next
+		  Return Items
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetObjectIDsWithCraftingCosts(Mods As Beacon.StringList, Mask As UInt64) As String()
+		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
 		    Var List() As String
 		    For Each ModID As String In Mods
-		      List.AddRow("'" + ModID + "'")
+		      List.Add("'" + ModID + "'")
 		    Next
 		    SQL = SQL + " AND mod_id IN (" + List.Join(",") + ")"
 		  End If
@@ -894,7 +1097,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Rows As RowSet = Self.SQLSelect(SQL)
 		  Var Results() As String
 		  While Not Rows.AfterLastRow
-		    Results.AddRow(Rows.Column("path").StringValue)
+		    Results.Add(Rows.Column("object_id").StringValue)
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Results
@@ -913,7 +1116,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetPresetModifier(ModifierID As String) As Beacon.PresetModifier
-		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ModifierID)
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE object_id = ?1;", ModifierID)
 		  If Results.RowCount <> 1 Then
 		    Return Nil
 		  End If
@@ -927,129 +1130,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(Engram As Beacon.Engram) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost(Engram)
-		  
-		  Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
-		  If Results.RowCount = 0 Then
-		    Return Cost
-		  End If
-		  
-		  Var Raw As String = Results.Column("recipe").StringValue
-		  Var Dicts() As Variant
-		  Try
-		    Dicts = Beacon.ParseJSON(Raw)
-		  Catch Err As RuntimeException
-		    Return Cost
-		  End Try
-		  
-		  For Each Dict As Dictionary In Dicts
-		    Var Quantity As Integer = Dict.Lookup("quantity", 0).IntegerValue
-		    If Quantity <= 0 Then
-		      Continue
-		    End If
-		    
-		    Var Ingredient As Beacon.Engram
-		    Try
-		      If Dict.HasKey("object_id") Then
-		        Ingredient = Self.GetEngramByID(Dict.Value("object_id").StringValue)
-		      ElseIf Dict.HasKey("path") Then
-		        Ingredient = Self.GetEngramByPath(Dict.Value("path").StringValue)
-		      End If
-		    Catch Err As RuntimeException
-		      Continue
-		    End Try
-		    If Ingredient = Nil Then
-		      Continue
-		    End If
-		    
-		    Var Exact As Boolean = Dict.Lookup("exact", False).BooleanValue
-		    
-		    Cost.Append(Ingredient, Quantity, Exact)
-		  Next
-		  
-		  If (Cost Is Nil) = False Then
-		    Cost.Modified = False
-		  End If
-		  Return Cost
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
-		  If Path.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var Engram As Beacon.Engram = Self.GetEngramByPath(Path)
-		  If Engram Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Return Self.GetRecipeForEngram(Engram)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(EngramID As v4UUID) As Beacon.CraftingCost
-		  If EngramID = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var Engram As Beacon.Engram = Self.GetEngramByID(EngramID)
-		  If Engram Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Return Self.GetRecipeForEngram(Engram)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		    ClassString = ClassString + "_C"
-		  End If
-		  
-		  If Self.mSpawnPointCache.HasKey(ClassString) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		      Self.mSpawnPointCache.Value(SpawnPoints(0).ClassString) = SpawnPoints(0)
-		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
-		      Next
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  Return Self.mSpawnPointCache.Value(ClassString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
 		  // Part of the Beacon.DataSource interface.
 		  
 		  If Self.mSpawnPointCache.HasKey(SpawnPointID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID.StringValue)
-		      If Results.RowCount = 0 Then
+		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
 		      
 		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
-		      Next
+		      Self.Cache(SpawnPoints)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
@@ -1059,26 +1151,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
-		  // Part of the Beacon.DataSource interface.
-		  
-		  If Self.mSpawnPointCache.HasKey(Path) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		      If Results.RowCount = 0 Then
-		        Return Nil
-		      End If
-		      
-		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
-		      Next
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
+		Function GetSpawnPointsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
+		  Var SQL As String = Self.SpawnPointSelectSQL + " WHERE spawn_points.class_string = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND spawn_points.mod_id IN (" + Mods.SQLValue + ")"
 		  End If
-		  Return Self.mSpawnPointCache.Value(Path)
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, ClassString)
+		  Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Rows)
+		  Self.Cache(SpawnPoints)
+		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointsByPath(Path As String, Mods As Beacon.StringList) As Beacon.SpawnPoint()
+		  Var SQL As String = Self.SpawnPointSelectSQL + " WHERE spawn_points.path = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND spawn_points.mod_id IN (" + Mods.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Path)
+		  Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Rows)
+		  Self.Cache(SpawnPoints)
+		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -1086,14 +1184,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetSpawnPointsForCreature(Creature As Beacon.Creature, Mods As Beacon.StringList, Tags As String) As Beacon.SpawnPoint()
 		  Var Clauses() As String
 		  Var Values() As Variant
-		  Clauses.AddRow("LOWER(spawn_points.groups) LIKE :placeholder:")
-		  Values.AddRow("%" + Creature.Path.Lowercase + "%")
+		  Clauses.Add("spawn_points.sets LIKE :placeholder:")
+		  Values.Add("%" + Creature.ObjectID + "%")
 		  
 		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, Tags, Clauses, Values)
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.SpawnPoint Then
-		      SpawnPoints.AddRow(Beacon.SpawnPoint(Blueprint))
+		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
 		    End If
 		  Next
 		  
@@ -1131,11 +1229,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods.LastRowIndex > -1 Then
 		      Var Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.AddRow("?" + Str(NextPlaceholder))
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    
 		    Var SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Clauses.Join(") AND (") + ");"
@@ -1154,11 +1252,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, BackgroundColor As Color) As Picture
-		  Const IncludeExperimentalBadge = False
-		  
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
-		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
+		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
 		  Var PrimaryColor, AccentColor As Color
 		  Var IconID As String
@@ -1166,14 +1262,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
-		    If IncludeExperimentalBadge And Results.Column("experimental").BooleanValue Then
-		      BadgeSheet = IconExperimentalBadge
-		      IconID = IconID + "exp"
-		    End If
 		    IconID = Results.Column("icon_id").StringValue
 		    PrimaryColor = Source.UIColor
 		  Else
-		    SpriteSheet = IconLootStandard
+		    SpriteSheet = App.GenericLootSourceIcon()
 		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
 		    PrimaryColor = &cFFFFFF00
 		  End If
@@ -1216,7 +1308,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Badges.ApplyMask(BadgesMask)
 		    
-		    Var Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
+		    Var Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height)
 		    Sprites.Graphics.DrawPicture(SpriteSheet, 0, 0)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(0, 0, Width, Height), 0, Height)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)
@@ -1252,7 +1344,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Combined.Graphics.DrawPicture(HighlightRep, 0, 0, Combined.Width, Combined.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
 		    Combined.Graphics.DrawPicture(ColorRep, 0, 0, Combined.Width, Combined.Height, 0, 0, ColorRep.Width, ColorRep.Height)
 		    
-		    Bitmaps.AddRow(Combined)
+		    Bitmaps.Add(Combined)
 		  Next
 		  
 		  Var Icon As New Picture(Width, Height, Bitmaps)
@@ -1263,7 +1355,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String)
-		  Self.mPendingImports.AddRow(Content)
+		  Self.mImporting = True
+		  Self.mPendingImports.Add(Content)
 		  
 		  If Self.mImportThread = Nil Then
 		    Self.mImportThread = New Thread
@@ -1280,9 +1373,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function ImportCloudEngrams() As Boolean
 		  Var EngramsUpdated As Boolean = False
-		  Var EngramsContent As MemoryBlock = UserCloud.Read("/Engrams.json")
-		  If EngramsContent = Nil Then
-		    Return False
+		  Var EngramsContent As MemoryBlock = UserCloud.Read("/Blueprints.json")
+		  Var LegacyMode As Boolean
+		  If EngramsContent Is Nil Then
+		    EngramsContent = UserCloud.Read("/Engrams.json")
+		    If EngramsContent Is Nil Then
+		      Return False
+		    End If
+		    LegacyMode = True
 		  End If
 		  Var Blueprints() As Variant
 		  Try
@@ -1292,27 +1390,41 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End Try
 		  Self.BeginTransaction()
-		  Self.DeleteDataForMod(Self.UserModID)
-		  For Each Dict As Dictionary In Blueprints
-		    Try
-		      Var Category As String = Dict.Value("category")
-		      Var Path As String = Dict.Value("path") 
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		      If Results.RowCount <> 0 Then
-		        Continue
-		      End If
-		      
-		      Var ObjectID As v4UUID = Dict.Value("object_id").StringValue
-		      Var ClassString As String = Dict.Value("class_string")
-		      Var Label As String = Dict.Value("label")         
-		      Var Availability As UInt64 = Dict.Value("availability")
-		      Var Tags As String = Dict.Value("tags")
-		      Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
-		      EngramsUpdated = True
-		    Catch Err As RuntimeException
-		    End Try
-		  Next
+		  Self.DeleteDataForMod(Beacon.UserModID)
+		  If Not LegacyMode Then
+		    Var Unpacked() As Beacon.Blueprint
+		    For Each Dict As Dictionary In Blueprints
+		      Try
+		        Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Dict)
+		        If (Blueprint Is Nil) = False Then
+		          Unpacked.Add(Blueprint)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    Call Self.SaveBlueprints(Unpacked, True)
+		  Else
+		    For Each Dict As Dictionary In Blueprints
+		      Try
+		        Var Category As String = Dict.Value("category")
+		        Var Path As String = Dict.Value("path") 
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE path = ?1;", Path)
+		        If Results.RowCount <> 0 Then
+		          Continue
+		        End If
+		        
+		        Var ObjectID As v4UUID = Dict.Value("object_id").StringValue
+		        Var ClassString As String = Dict.Value("class_string")
+		        Var Label As String = Dict.Value("label")         
+		        Var Availability As UInt64 = Dict.Value("availability")
+		        Var Tags As String = Dict.Value("tags")
+		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Beacon.UserModID)      
+		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
+		        EngramsUpdated = True
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  End If
 		  Self.Commit()
 		  Return EngramsUpdated
 		End Function
@@ -1346,10 +1458,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var EngramsUpdated, PresetsUpdated As Boolean
 		  For Each Action As Dictionary In Actions
 		    Var RemotePath As String = Action.Value("Path")
-		    If RemotePath = "/Engrams.json" Then
+		    If RemotePath = "/Engrams.json" Or RemotePath = "/Blueprints.json" Then
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
-		        Self.DeleteDataForMod(Self.UserModID)
+		        Self.DeleteDataForMod(Beacon.UserModID)
 		        EngramsUpdated = True
 		      Case "GET"
 		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
@@ -1359,7 +1471,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.BeginTransaction()
-		        Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, PresetID.Lowercase)
+		        Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, PresetID)
 		        Self.Commit()
 		        PresetsUpdated = True
 		      Case "GET"
@@ -1383,12 +1495,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function Importing() As Boolean
-		  Return (Self.mImportThread Is Nil) = False And Self.mImportThread.ThreadState <> Thread.ThreadStates.NotRunning
+		  Return Self.mImporting
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ImportInner(Content As String) As Boolean
+		  If Content.Bytes < 2 Then
+		    Return False
+		  End If
+		  
+		  Content = Beacon.Decompress(Content)
+		  
+		  Var BuildNumber As Integer = App.BuildNumber
+		  
 		  Var ChangeDict As Dictionary
 		  Try
 		    ChangeDict = Beacon.ParseJSON(Content)
@@ -1396,6 +1516,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    App.Log("Cannot import classes because the data is not valid JSON.")
 		    Return False
 		  End Try
+		  
+		  If ChangeDict.HasKey("game") And ChangeDict.Value("game").IsNull = False And ChangeDict.Value("game").Type = Variant.TypeString And ChangeDict.Value("game").StringValue <> "ark" Then
+		    App.Log("Cannot import classes because the data is for the wrong game.")
+		    Return False
+		  End If
 		  
 		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As String In RequiredKeys
@@ -1406,7 +1531,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Next
 		  
 		  Var FileVersion As Integer = ChangeDict.Value("beacon_version")
-		  If FileVersion <> 4 Then
+		  If FileVersion <> Self.EngramsVersion Then
 		    App.Log("Cannot import classes because file format is not correct for this version. Get correct classes from " + Self.ClassesURL(True))
 		    Return False
 		  End If
@@ -1433,51 +1558,33 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
 		    
 		    If ShouldTruncate Then
-		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Beacon.UserModID)
+		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Beacon.UserModID)
+		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Beacon.UserModID)
 		      Self.SQLExecute("DELETE FROM official_presets;")
-		      Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID) // Mods must be deleted last
+		      Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Beacon.UserModID)
+		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Beacon.UserModID) // Mods must be deleted last
 		    End If
 		    
-		    // Caution!! This field always contains all mods.
 		    Var Mods() As Variant = ChangeDict.Value("mods")
-		    Var RetainMods() As String
-		    RetainMods.AddRow(Self.UserModID)
-		    Var BuildNumber As Integer = App.BuildNumber
 		    For Each ModData As Dictionary In Mods
-		      Var ModID As String = ModData.Value("mod_id")
-		      Var ModName As String = ModData.Value("name")
-		      Var ConsoleSafe As Boolean = ModData.Value("console_safe")
-		      Var DefaultEnabled As Boolean = ModData.Lookup("default_enabled", ConsoleSafe)
+		      Var ModID As String = ModData.Value("mod_id").StringValue.Lowercase
+		      Var ModName As String = ModData.Value("name").StringValue
+		      Var ConsoleSafe As Boolean = ModData.Value("console_safe").BooleanValue
+		      Var DefaultEnabled As Boolean = ModData.Value("default_enabled").BooleanValue
+		      Var WorkshopID As Integer = ModData.Value("workshop_id").IntegerValue
 		      If ModData.HasKey("min_version") And ModData.Value("min_version").IntegerValue > BuildNumber Then
 		        // This mod is too new
 		        Continue
 		      End If
 		      
-		      ModID = ModID.Lowercase
-		      
-		      Var Results As RowSet = Self.SQLSelect("SELECT name, console_safe, default_enabled FROM mods WHERE mod_id = ?1;", ModID)
+		      Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RowCount = 1 Then
-		        If ModName.Compare(Results.Column("name").StringValue, ComparisonOptions.CaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
-		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled = ?4 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe, DefaultEnabled)
-		        End If
+		        Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5 WHERE mod_id = ?1 AND (name != ?2 OR console_safe != ?3 OR default_enabled != ?4 OR workshop_id != ?5);", ModID, ModName, ConsoleSafe, DefaultEnabled, WorkshopID)
 		      Else
-		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled) VALUES (?1, ?2, ?3, ?4);", ModID, ModName, ConsoleSafe, DefaultEnabled)
+		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id) VALUES (?1, ?2, ?3, ?4, ?5);", ModID, ModName, ConsoleSafe, DefaultEnabled, WorkshopID)
 		      End If
-		      
-		      RetainMods.AddRow(ModID)
 		    Next
-		    Var ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
-		    While Not ModResults.AfterLastRow
-		      Var ModID As String = ModResults.Column("mod_id").StringValue.Lowercase
-		      If RetainMods.IndexOf(ModID) = -1 Then
-		        Self.DeleteDataForMod(ModID)
-		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
-		      End If
-		      ModResults.MoveToNextRow
-		    Wend
 		    
 		    // When deleting, loot_source_icons must be done after loot_sources
 		    Var Deletions() As Variant = ChangeDict.Value("deletions")
@@ -1488,11 +1595,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Case "loot_sources"
 		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID.StringValue)
 		      Case "loot_source_icons"
-		        DeleteIcons.AddRow(ObjectID)
+		        DeleteIcons.Add(ObjectID)
 		      Case Beacon.CategoryEngrams, Beacon.CategoryCreatures, Beacon.CategorySpawnPoints
 		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
 		      Case "presets"
 		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
+		      Case "mods"
+		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ObjectID.StringValue)
+		      Case "maps"
+		        Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectID.StringValue)
 		      End Select
 		    Next
 		    For Each IconID As v4UUID In DeleteIcons
@@ -1501,6 +1612,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Var LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
 		    For Each Dict As Dictionary In LootSourceIcons
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
 		      Var IconID As String = Dict.Value("id")
 		      Var IconData As MemoryBlock = DecodeBase64(Dict.Value("icon_data"))
 		      
@@ -1513,12 +1628,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
 		      End If
 		    Next
-		    If LootSourceIcons.LastRowIndex > -1 Then
+		    If LootSourceIcons.LastIndex > -1 Then
 		      Self.IconCache = Nil
 		    End If
 		    
 		    Var LootSources() As Variant = ChangeDict.Value("loot_sources")
 		    For Each Dict As Dictionary In LootSources
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
 		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Var Label As String = Dict.Value("label")
 		      Var AlternateLabel As Variant = Dict.Lookup("alternate_label", Nil)
@@ -1535,7 +1654,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var IconID As v4UUID = Dict.Value("icon").StringValue
 		      Var Requirements As String = Dict.Lookup("requirements", "{}")
 		      
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR path = ?2;", ObjectID.StringValue, Path)
 		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14, alternate_label = ?15 WHERE object_id = ?1;", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements, AlternateLabel)
 		      Else
@@ -1550,6 +1669,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ChangeDict.HasKey("engrams") Then
 		      Var Engrams() As Variant = ChangeDict.Value("engrams")
 		      For Each Dict As Dictionary In Engrams
+		        If Dict.Value("min_version") > BuildNumber Then
+		          Continue
+		        End If
+		        
 		        Var ExtraColumns As New Dictionary
 		        Var EntryString As Variant = Dict.Lookup("entry_string", Nil)
 		        If IsNull(EntryString) = False Then
@@ -1578,6 +1701,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ChangeDict.HasKey("creatures") Then
 		      Var Creatures() As Variant = ChangeDict.Value("creatures")
 		      For Each Dict As Dictionary In Creatures
+		        If Dict.Value("min_version") > BuildNumber Then
+		          Continue
+		        End If
+		        
 		        Var ExtraColumns As New Dictionary
 		        ExtraColumns.Value("incubation_time") = Dict.Lookup("incubation_time", Nil)
 		        ExtraColumns.Value("mature_time") = Dict.Lookup("mature_time", Nil)
@@ -1599,9 +1726,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ChangeDict.HasKey("spawn_points") Then
 		      Var SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
 		      For Each Dict As Dictionary In SpawnPoints
+		        If Dict.Value("min_version") > BuildNumber Then
+		          Continue
+		        End If
+		        
 		        Var ExtraColumns As New Dictionary
-		        If IsNull(Dict.Value("groups")) = False Then
-		          ExtraColumns.Value("groups") = Beacon.GenerateJSON(Dict.Value("groups"), False)
+		        If IsNull(Dict.Value("sets")) = False Then
+		          ExtraColumns.Value("sets") = Beacon.GenerateJSON(Dict.Value("sets"), False)
 		        End If
 		        If IsNull(Dict.Value("limits")) = False Then
 		          ExtraColumns.Value("limits") = Beacon.GenerateJSON(Dict.Value("limits"), False)
@@ -1615,6 +1746,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ChangeDict.HasKey("ini_options") Then
 		      Var Options() As Variant = ChangeDict.Value("ini_options")
 		      For Each Dict As Dictionary In Options
+		        If Dict.Value("min_version") > BuildNumber Then
+		          Continue
+		        End If
+		        
 		        Var ObjectID As v4UUID = Dict.Value("id").StringValue
 		        Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
 		        Var File As String = Dict.Value("file").StringValue
@@ -1625,16 +1760,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Var Tags() As String
 		          Var Temp() As Variant = Dict.Value("tags")
 		          For Each Tag As String In Temp
-		            Tags.AddRow(Tag)
+		            Tags.Add(Tag)
 		          Next
 		          TagString = Tags.Join(",")
-		          Tags.AddRowAt(0, "object")
+		          Tags.AddAt(0, "object")
 		          TagStringForSearching = Tags.Join(",")
 		        Catch Err As RuntimeException
 		          
 		        End Try
 		        
-		        Var Values(14) As Variant
+		        Var Values(15) As Variant
 		        Values(0) = ObjectID.StringValue
 		        Values(1) = Dict.Value("label")
 		        Values(2) = ModID.StringValue
@@ -1651,11 +1786,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Var NitradoEq As Dictionary = Dict.Value("nitrado_guided_equivalent")
 		          Values(12) = NitradoEq.Value("path")
 		          Values(13) = NitradoEq.Value("format")
+		          Values(14) = NitradoEq.Value("deploy_style")
 		        Else
 		          Values(12) = Nil
 		          Values(13) = Nil
+		          Values(14) = Nil
 		        End If
-		        Values(14) = TagString
+		        Values(15) = TagString
 		        
 		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = $1 OR (file = $2 AND header = $3 AND key = $4);", ObjectID.StringValue, File, Header, Key)
 		        If Results.RowCount > 1 Then
@@ -1664,11 +1801,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If Results.RowCount = 1 Then
 		          // Update
 		          Var OriginalObjectID As v4UUID = Results.Column("object_id").StringValue
-		          Values.AddRow(OriginalObjectID.StringValue)
-		          Self.SQLExecute("UPDATE ini_options SET object_id = $1, label = $2, mod_id = $3, native_editor_version = $4, file = $5, header = $6, key = $7, value_type = $8, max_allowed = $9, description = $10, default_value = $11, alternate_label = $12, nitrado_path = $13, nitrado_format = $14, tags = $15 WHERE object_id = $16;", Values)
+		          Values.Add(OriginalObjectID.StringValue)
+		          Self.SQLExecute("UPDATE ini_options SET object_id = $1, label = $2, mod_id = $3, native_editor_version = $4, file = $5, header = $6, key = $7, value_type = $8, max_allowed = $9, description = $10, default_value = $11, alternate_label = $12, nitrado_path = $13, nitrado_format = $14, nitrado_deploy_style = $15, tags = $16 WHERE object_id = $17;", Values)
 		        Else
 		          // Insert
-		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);", Values)
+		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);", Values)
+		        End If
+		      Next
+		    End If
+		    
+		    If ChangeDict.HasKey("maps") Then
+		      Var Maps() As Dictionary = ChangeDict.Value("maps").DictionaryArrayValue
+		      For Each MapDict As Dictionary In Maps
+		        Var MapID As String = MapDict.Value("map_id")
+		        Var ModID As String = MapDict.Value("mod_id")
+		        Var Label As String = MapDict.Value("label")
+		        Var Identifier As String = MapDict.Value("identifier")
+		        Var Difficulty As Double = MapDict.Value("difficulty")
+		        Var Official As Boolean = MapDict.Value("official")
+		        Var Mask As UInt64 = MapDict.Value("mask")
+		        Var Sort As Integer = MapDict.Value("sort")
+		        
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = $1;", MapID)
+		        If Results.RowCount = 1 Then
+		          Self.SQLExecute("UPDATE maps SET mod_id = $2, label = $3, ark_identifier = $4, difficulty_scale = $5, official = $6, mask = $7, sort = $8 WHERE object_id = $1;", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		        Else
+		          Self.SQLExecute("INSERT INTO maps (object_id, mod_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		        End If
 		      Next
 		    End If
@@ -1676,6 +1834,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var ReloadPresets As Boolean
 		    Var Presets() As Variant = ChangeDict.Value("presets")
 		    For Each Dict As Dictionary In Presets
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
 		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Var Label As String = Dict.Value("label")
 		      Var Contents As String = Dict.Value("contents")
@@ -1691,6 +1853,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Var PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
 		    For Each Dict As Dictionary In PresetModifiers
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
 		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Var Label As String = Dict.Value("label")
 		      Var Pattern As String = Dict.Value("pattern")
@@ -1753,9 +1919,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
 		    Self.Commit()
 		    
+		    // Force analyze
+		    Self.SQLExecute("VACUUM;")
+		    Self.SQLExecute("ANALYZE;")
+		    
 		    If ReloadPresets Then
 		      Self.LoadPresets()
 		    End If
+		    
+		    Self.mDropsLabelCacheMask = 0
+		    Self.mDropsLabelCacheDict = New Dictionary
+		    Self.mSpawnLabelCacheMask = 0
+		    Self.mSpawnLabelCacheDict = New Dictionary
+		    Self.mBlueprintLabelsCacheKey = ""
+		    Self.mBlueprintLabelsCacheDict = New Dictionary
 		    
 		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.SQLDateTimeWithOffset)
 		    
@@ -1779,7 +1956,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub ImportLocalClasses()
-		  Var File As FolderItem = App.ResourcesFolder.Child("Classes.json")
+		  Var File As FolderItem = App.ResourcesFolder.Child("Complete.beacondata")
 		  If File.Exists Then
 		    Var Content As MemoryBlock = File.Read(Encodings.UTF8)
 		    If Content <> Nil Then
@@ -1860,23 +2037,36 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT groups, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID.StringValue)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID)
 		  If Rows.RowCount = 0 Then
 		    Return
 		  End If
 		  
-		  SpawnPoint.SetsString = Rows.Column("groups").StringValue
+		  SpawnPoint.SetsString = Rows.Column("sets").StringValue
 		  SpawnPoint.LimitsString = Rows.Column("limits").StringValue
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
+		  Var Ingredients() As Beacon.RecipeIngredient
+		  If (Engram Is Nil) = False Then
+		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID)
+		    If Results.RowCount = 1 Then
+		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value, Nil)
+		    End If
+		  End If
+		  Return Ingredients
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
 		  Self.mPresets.ResizeTo(-1)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Self.UserModID) // Loading the presets will refill all the needed custom modifiers
-		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) != object_id AND LOWER(object_id) IN (SELECT object_id FROM custom_presets);") // To clean up object_id values that are not lowercase
-		  Self.SQLExecute("UPDATE custom_presets SET object_id = LOWER(object_id) WHERE LOWER(object_id) != object_id;")
+		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Beacon.UserModID) // Loading the presets will refill all the needed custom modifiers
+		  Self.SQLExecute("DELETE FROM custom_presets WHERE object_id != object_id AND object_id IN (SELECT object_id FROM custom_presets);") // To clean up object_id values that are not lowercase
+		  Self.SQLExecute("UPDATE custom_presets SET object_id = object_id WHERE object_id != object_id;")
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE object_id NOT IN (SELECT object_id FROM custom_presets WHERE user_id = ?1)", Self.UserID), Beacon.Preset.Types.BuiltIn)
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1 AND object_id IN (SELECT object_id FROM official_presets)", Self.UserID), Beacon.Preset.Types.CustomizedBuiltIn)
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1 AND object_id NOT IN (SELECT object_id FROM official_presets)", Self.UserID), Beacon.Preset.Types.Custom)
@@ -1899,7 +2089,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      
 		      Preset.Type = Type
-		      Self.mPresets.AddRow(Preset)
+		      Self.mPresets.Add(Preset)
 		    End If
 		    Results.MoveToNextRow
 		  Wend
@@ -1912,9 +2102,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Drops() As Beacon.LootSource = Self.SearchForLootSources("", New Beacon.StringList, True)
 		    Var Labels() As String
 		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Drops.LastRowIndex)
+		    Labels.ResizeTo(Drops.LastIndex)
 		    
-		    For I As Integer = 0 To Drops.LastRowIndex
+		    For I As Integer = 0 To Drops.LastIndex
 		      If Drops(I).ValidForMask(Availability) = False Then
 		        Continue
 		      End If
@@ -1925,11 +2115,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Idx > -1 Then
 		        Var Filtered As UInt64 = Drops(Idx).Availability And Availability
 		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label + " (" + Maps.Label + ")"
+		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label.Disambiguate(Maps.Label)
 		        
 		        Filtered = Drops(I).Availability And Availability
 		        Maps = Beacon.Maps.ForMask(Filtered)
-		        Label = Label + " (" + Maps.Label + ")"
+		        Label = Label.Disambiguate(Maps.Label)
 		      End If
 		      
 		      Dict.Value(Drops(I).Path) = Label
@@ -1944,218 +2134,52 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function MigrateData(Source As FolderItem, FromSchemaVersion As Integer) As Boolean
-		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
-		    App.Log("Unable to attach database " + Source.NativePath)
-		    Return False
+		Private Sub mDeltaDownload_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  
+		  Self.mDeltaDownloader = Nil
+		  
+		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
+		    Self.mDeltaDownloadQueue.RemoveAll
+		    App.Log("Failed to download blueprints delta: HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
+		    Self.CheckingForEngramUpdates = False
+		    Return
 		  End If
 		  
-		  App.Log("Migrating data from schema " + Str(FromSchemaVersion, "-0") + " at " + Source.NativePath)
+		  Self.Import(Content)
+		  Self.AdvanceDeltaQueue()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDeltaDownload_Error(Sender As URLConnection, Err As RuntimeException)
+		  #Pragma Unused Sender
 		  
-		  Var MigrateLegacyCustomEngrams As Boolean = FromSchemaVersion <= 5
-		  Var Commands() As String
+		  Self.mDeltaDownloader = Nil
+		  Self.mDeltaDownloadQueue.RemoveAll
 		  
-		  // Mods
-		  If FromSchemaVersion >= 18 Then
-		    Commands.AddRow("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
-		  ElseIf FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO mods (mod_id, name, console_safe, default_enabled) SELECT mod_id, name, console_safe, console_safe AS default_enabled FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
-		  End If
+		  App.Log("Failed to download blueprints delta: " + Err.Message)
+		  Self.CheckingForEngramUpdates = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDeltaDownload_ReceivingProgressed(Sender As URLConnection, BytesReceived As Int64, TotalBytes As Int64, NewData As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused TotalBytes
+		  #Pragma Unused NewData
 		  
-		  // Loot Sources
-		  If FromSchemaVersion >= 8 Then  
-		    Commands.AddRow("INSERT INTO loot_source_icons SELECT * FROM legacy.loot_source_icons;")
-		    If FromSchemaVersion >= 14 Then
-		      Commands.AddRow("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
-		    Else
-		      Commands.AddRow("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements) SELECT object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements FROM legacy.loot_sources;")
-		    End If
-		  End If
-		  
-		  // Engrams
-		  If FromSchemaVersion >= 17 Then
-		    Commands.AddRow("INSERT INTO engrams SELECT * FROM legacy.engrams;")
-		  ElseIf FromSchemaVersion >= 15 Then
-		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points, stack_size, item_id) SELECT object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points, stack_size, item_id FROM legacy.engrams;")
-		  ElseIf FromSchemaVersion >= 14 Then
-		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points) SELECT object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points FROM legacy.engrams;")
-		  ElseIf FromSchemaVersion >= 9 Then
-		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, tags FROM legacy.engrams;")
-		  ElseIf FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 0;")
-		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 1;")
-		    Commands.AddRow("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, CASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Self.UserModID + "';")
-		  End If
-		  
-		  // Variables
-		  If FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO variables SELECT * FROM legacy.variables WHERE LOWER(legacy.variables.key) != 'sync_time';")
-		  End If
-		  
-		  // Official Presets
-		  If FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
-		  End If
-		  
-		  // Notifications
-		  If FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO notifications SELECT * FROM legacy.notifications;")
-		  End If
-		  
-		  // Config Help
-		  If FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO config_help (config_name, title, body, detail_url) SELECT LOWER(config_name), title, body, detail_url FROM legacy.config_help;")
-		  End If
-		  
-		  // Preset Modifiers
-		  If FromSchemaVersion >= 6 Then
-		    Commands.AddRow("INSERT INTO preset_modifiers SELECT * FROM legacy.preset_modifiers")
-		  End If
-		  
-		  // Game Variables
-		  If FromSchemaVersion >= 7 Then
-		    Commands.AddRow("INSERT INTO game_variables SELECT * FROM legacy.game_variables;")
-		  End If
-		  
-		  // Custom Presets
-		  If FromSchemaVersion >= 13 Then
-		    Commands.AddRow("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
-		  ElseIf FromSchemaVersion >= 3 Then
-		    Commands.AddRow("INSERT INTO custom_presets (user_id, object_id, label, contents) SELECT '" + Self.UserID + "' AS user_id, LOWER(object_id), label, contents FROM legacy.custom_presets;")
-		  End If
-		  
-		  // Creatures
-		  If FromSchemaVersion >= 17 Then
-		    // Adds used_stats
-		    Commands.AddRow("INSERT INTO creatures SELECT * FROM legacy.creatures;")
-		  ELseIf FromSchemaVersion >= 16 Then
-		    // Adds mating_interval_min and mating_interval_max
-		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, alternate_label, availability, path, class_string, tags, incubation_time, mature_time, stats, mating_interval_min, mating_interval_max) SELECT object_id, mod_id, label, alternate_label, availability, path, class_string, tags, incubation_time, mature_time, stats, mating_interval_min, mating_interval_max FROM legacy.creatures;")
-		  ElseIf FromSchemaVersion >= 14 Then
-		    // Adds alternate_label column
-		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, alternate_label, availability, path, class_string, tags, incubation_time, mature_time, stats) SELECT object_id, mod_id, label, alternate_label, availability, path, class_string, tags, incubation_time, mature_time, stats FROM legacy.creatures;")
-		  ElseIf FromSchemaVersion >= 10 Then
-		    // Adds stats column
-		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time, stats) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time, stats FROM legacy.creatures;")
-		  ElseIf FromSchemaVersion >= 9 Then
-		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time FROM legacy.creatures;")
-		  End If
-		  
-		  // Spawn Points
-		  If FromSchemaVersion >= 14 Then
-		    Commands.AddRow("INSERT INTO spawn_points SELECT * FROM legacy.spawn_points;")
-		  ElseIf FromSchemaVersion >= 12 Then
-		    Commands.AddRow("INSERT INTO spawn_points (object_id, mod_id, label, availability, path, class_string, tags, groups, limits) SELECT object_id, mod_id, label, availability, path, class_string, tags, groups, limits FROM legacy.spawn_points;")
-		  End If
-		  
-		  // Spawn Points
-		  If FromSchemaVersion >= 15 Then
-		    Commands.AddRow("INSERT INTO ini_options SELECT * FROM legacy.ini_options")
-		  End If
-		  
-		  // Searchable Tags
-		  If FromSchemaVersion >= 9 Then
-		    Commands.AddRow("INSERT INTO searchable_tags SELECT DISTINCT * FROM legacy.searchable_tags;")
-		  End If
-		  
-		  // Sanity checking
-		  Commands.AddRow("DELETE FROM loot_sources WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.AddRow("DELETE FROM blueprints WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.AddRow("DELETE FROM preset_modifiers WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  
-		  If Commands.LastRowIndex > -1 Then
-		    Self.BeginTransaction()
-		    Try
-		      For Each Command As String In Commands
-		        Self.SQLExecute(Command)
-		      Next
-		    Catch Err As RuntimeException
-		      Self.Rollback()
-		      Self.mBase.RemoveDatabase("legacy")
-		      App.Log("Unable to migrate data: " + Err.Message)
-		      Return False
-		    End Try
-		    
-		    If MigrateLegacyCustomEngrams Then
-		      Var Results As RowSet = Self.SQLSelect("SELECT path, class_string, label, availability, can_blueprint FROM legacy.engrams WHERE built_in = 0;")
-		      While Not Results.AfterLastRow
-		        Try
-		          Var ObjectID As New v4UUID
-		          Var Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
-		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID.StringValue, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
-		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID.StringValue, "engrams", Tags)
-		        Catch Err As RuntimeException
-		          Self.Rollback()
-		          Self.mBase.RemoveDatabase("legacy")
-		          App.Log("Unable to migrate data: " + Err.Message)
-		          Return False
-		        End Try
-		        
-		        Results.MoveToNextRow
-		      Wend
-		    End If
-		    
-		    Self.Commit()
-		  End If
-		  
-		  Self.mBase.RemoveDatabase("legacy")
-		  
-		  If FromSchemaVersion <= 2 Then
-		    Var SupportFolder As FolderItem = App.ApplicationSupport
-		    Var PresetsFolder As FolderItem = SupportFolder.Child("Presets")
-		    If PresetsFolder.Exists Then
-		      For I As Integer = PresetsFolder.Count - 1 DownTo 0
-		        Var File As FolderItem = PresetsFolder.ChildAt(I)
-		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
-		          File.Remove
-		          Continue
-		        End If
-		        
-		        Var Content As String = File.Read(Encodings.UTF8)
-		        
-		        Try
-		          Var Dict As Dictionary = Beacon.ParseJSON(Content)
-		          Var PresetID As String = Dict.Value("ID")
-		          Var Label As String = Dict.Value("Label")
-		          
-		          Self.BeginTransaction()
-		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, ?2, ?3, ?4);", Self.UserID, PresetID.Lowercase, Label, Content)
-		          Self.Commit()
-		          
-		          File.Remove
-		        Catch Err As RuntimeException
-		          While Self.mTransactions.LastRowIndex > -1
-		            Self.Rollback()
-		          Wend
-		          Continue
-		        End Try
-		      Next
-		      
-		      PresetsFolder.Remove
-		    End If
-		  End If
-		  
-		  If FromSchemaVersion < 9 Then
-		    Var Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
-		    Var Results As RowSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1;", Self.UserID)
-		    While Not Results.AfterLastRow
-		      Call UserCloud.Write("/Presets/" + Results.Column("object_id").StringValue.Lowercase + Extension, Results.Column("contents").StringValue)
-		      Results.MoveToNextRow
-		    Wend
-		    
-		    Self.SyncUserEngrams()
-		  End If
-		  
-		  App.Log("Migration complete")
-		  Return True
-		End Function
+		  Self.mDeltaDownloadedBytes = Self.mDeltaDownloadedBytes + CType(BytesReceived, UInt64)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  If Self.mPendingImports.LastRowIndex = -1 Then
+		  If Self.mPendingImports.LastIndex = -1 Then
+		    Self.mImporting = False
 		    Return
 		  End If
 		  
@@ -2165,10 +2189,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Success As Boolean
 		  While Self.mPendingImports.Count > 0
 		    Var Content As String = Self.mPendingImports(0)
-		    Self.mPendingImports.RemoveRowAt(0)
+		    Self.mPendingImports.RemoveAt(0)
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Wend
+		  Self.mImporting = False
 		  Var SyncNew As DateTime = Self.LastSync
 		  
 		  If SyncOriginal <> SyncNew Then
@@ -2188,42 +2213,59 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
-		  If ModID = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled FROM mods WHERE mod_id = ?1;", ModID.StringValue)
-		  If Results.RowCount = 1 Then
-		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue)
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub mUpdater_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
+		  Self.mUpdater = Nil
+		  
 		  If HTTPStatus <> 200 Then
-		    App.Log("Engram update returned HTTP " + Str(HTTPStatus, "-0"))
-		    NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
+		    App.Log("Blueprint update returned HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
+		    Self.CheckingForEngramUpdates = False
 		    Return
 		  End If
 		  
-		  Var ExpectedHash As String = Sender.ResponseHeader("Content-MD5")
-		  Var ComputedHash As String = EncodeHex(Crypto.MD5(Content))
-		  
-		  If ComputedHash <> ExpectedHash Then
-		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
-		    NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
+		  Try
+		    Var Parsed As Variant = Beacon.ParseJSON(Content)
+		    If Parsed Is Nil Or (Parsed IsA Dictionary) = False Then
+		      App.Log("No blueprint updates available.")
+		      Self.CheckingForEngramUpdates = False
+		      Return
+		    End If
+		    
+		    Var Dict As Dictionary = Parsed
+		    If Not Dict.HasAllKeys("total_size", "files") Then
+		      App.Log("Blueprint update is missing keys.")
+		      Self.CheckingForEngramUpdates = False
+		      Return
+		    End If
+		    
+		    Self.mDeltaDownloadedBytes = 0
+		    Self.mDeltaDownloadTotalBytes = Dict.Value("total_size")
+		    
+		    Var Files() As Object = Dict.Value("files")
+		    For Each FileInfo As Object In Files
+		      Var UpdateURL As String = Dictionary(FileInfo).Lookup("url", "")
+		      If UpdateURL.IsEmpty Then
+		        Continue
+		      End If
+		      
+		      Self.mDeltaDownloadQueue.Add(UpdateURL)
+		    Next
+		    
+		    If Self.mDeltaDownloadQueue.Count = 0 Then
+		      App.Log("No blueprint updates available.")
+		      Self.CheckingForEngramUpdates = False
+		      Return
+		    End If
+		    
+		    Self.AdvanceDeltaQueue
+		  Catch Err As RuntimeException
+		    App.Log("Unable to parse blueprint delta JSON: " + Err.Message)
+		    Self.CheckingForEngramUpdates = False
 		    Return
-		  End If
-		  
-		  Self.Import(Content)
-		  
-		  Self.mCheckingForUpdates = False
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -2231,10 +2273,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
-		  App.Log("Engram check error: " + Error.Reason)
-		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
+		  Self.mUpdater = Nil
 		  
-		  Self.mCheckingForUpdates = False
+		  App.Log("Blueprint check error: " + Error.Reason)
+		  Self.CheckingForEngramUpdates = False
 		End Sub
 	#tag EndMethod
 
@@ -2271,7 +2313,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function Presets() As Beacon.Preset()
 		  Var Results() As Beacon.Preset
 		  For Each Preset As Beacon.Preset In Self.mPresets
-		    Results.AddRow(New Beacon.Preset(Preset))
+		    Results.Add(New Beacon.Preset(Preset))
 		  Next
 		  Return Results
 		End Function
@@ -2290,12 +2332,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub Rollback()
-		  If Self.mTransactions.LastRowIndex = -1 Then
+		  If Self.mTransactions.LastIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Savepoint As String = Self.mTransactions(0)
-		  Self.mTransactions.RemoveRowAt(0)
+		  Self.mTransactions.RemoveAt(0)
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("ROLLBACK TRANSACTION;")
@@ -2309,35 +2351,40 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
+		Private Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
 		  Var Creatures() As Beacon.Creature
 		  While Not Results.AfterLastRow
-		    Var Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		    Creature.Label = Results.Column("label").StringValue
-		    If IsNull(Results.Column("alternate_label").Value) = False Then
-		      Creature.AlternateLabel = Results.Column("alternate_label").StringValue
-		    End If
-		    Creature.Availability = Results.Column("availability").IntegerValue
-		    Creature.TagString = Results.Column("tags").StringValue
-		    Creature.ModID = Results.Column("mod_id").StringValue
-		    Creature.ModName = Results.Column("mod_name").StringValue
-		    If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
-		      Creature.ConsumeStats(Results.Column("stats").StringValue)
-		      Creature.StatsMask = Results.Column("used_stats").Value
+		    Var CreatureID As String = Results.Column("object_id").StringValue
+		    If Self.mCreatureCache.HasKey(CreatureID) = False Then
+		      Var Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, CreatureID)
+		      Creature.Label = Results.Column("label").StringValue
+		      If IsNull(Results.Column("alternate_label").Value) = False Then
+		        Creature.AlternateLabel = Results.Column("alternate_label").StringValue
+		      End If
+		      Creature.Availability = Results.Column("availability").Value
+		      Creature.TagString = Results.Column("tags").StringValue
+		      Creature.ModID = Results.Column("mod_id").StringValue
+		      Creature.ModName = Results.Column("mod_name").StringValue
+		      If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
+		        Creature.ConsumeStats(Results.Column("stats").StringValue)
+		        Creature.StatsMask = Results.Column("used_stats").Value
+		      End If
+		      
+		      If Results.Column("incubation_time").Value <> Nil Then
+		        Creature.IncubationTime = Results.Column("incubation_time").DoubleValue
+		      End If
+		      If Results.Column("mature_time").Value <> Nil Then
+		        Creature.MatureTime = Results.Column("mature_time").DoubleValue
+		      End If
+		      If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
+		        Creature.MinMatingInterval = Results.Column("mating_interval_min").DoubleValue
+		        Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
+		      End If
+		      
+		      Self.mCreatureCache.Value(CreatureID) = Creature.ImmutableVersion
 		    End If
 		    
-		    If Results.Column("incubation_time").Value <> Nil Then
-		      Creature.IncubationTime = Results.Column("incubation_time").Value.UInt64Value
-		    End If
-		    If Results.Column("mature_time").Value <> Nil Then
-		      Creature.MatureTime = Results.Column("mature_time").Value.UInt64Value
-		    End If
-		    If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
-		      Creature.MinMatingInterval = Results.Column("mating_interval_min").Value.UInt64Value
-		      Creature.MaxMatingInterval = Results.Column("mating_interval_max").Value.UInt64Value
-		    End If
-		    
-		    Creatures.AddRow(Creature)
+		    Creatures.Add(Self.mCreatureCache.Value(CreatureID))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Creatures
@@ -2345,34 +2392,38 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
+		Private Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
 		  Var Engrams() As Beacon.Engram
 		  While Not Results.AfterLastRow
-		    Var Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		    Engram.Label = Results.Column("label").StringValue
-		    If IsNull(Results.Column("alternate_label").Value) = False Then
-		      Engram.AlternateLabel = Results.Column("alternate_label").StringValue
-		    End If
-		    Engram.Availability = Results.Column("availability").IntegerValue
-		    Engram.TagString = Results.Column("tags").StringValue
-		    Engram.ModID = Results.Column("mod_id").StringValue
-		    Engram.ModName = Results.Column("mod_name").StringValue
-		    If IsNull(Results.Column("entry_string").Value) = False Then
-		      Engram.EntryString = Results.Column("entry_string").StringValue
-		      
-		      If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
-		        Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
-		        Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		    Var EngramID As String = Results.Column("object_id").StringValue
+		    If Self.mEngramCache.HasKey(EngramID) = False Then
+		      Var Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, EngramID)
+		      Engram.Label = Results.Column("label").StringValue
+		      If IsNull(Results.Column("alternate_label").Value) = False Then
+		        Engram.AlternateLabel = Results.Column("alternate_label").StringValue
 		      End If
-		    End If
-		    If IsNull(Results.Column("stack_size").Value) = False Then
-		      Engram.StackSize = Results.Column("stack_size").IntegerValue
-		    End If
-		    If IsNull(Results.Column("item_id").Value) = False Then
-		      Engram.ItemID = Results.Column("item_id").IntegerValue
+		      Engram.Availability = Results.Column("availability").Value
+		      Engram.TagString = Results.Column("tags").StringValue
+		      Engram.ModID = Results.Column("mod_id").StringValue
+		      Engram.ModName = Results.Column("mod_name").StringValue
+		      If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
+		        Engram.EntryString = Results.Column("entry_string").StringValue
+		        
+		        If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
+		          Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
+		          Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		        End If
+		      End If
+		      If IsNull(Results.Column("stack_size").Value) = False Then
+		        Engram.StackSize = Results.Column("stack_size").IntegerValue
+		      End If
+		      If IsNull(Results.Column("item_id").Value) = False Then
+		        Engram.ItemID = Results.Column("item_id").IntegerValue
+		      End If
+		      Self.mEngramCache.Value(EngramID) = Engram.ImmutableVersion
 		    End If
 		    
-		    Engrams.AddRow(Engram)
+		    Engrams.Add(Self.mEngramCache.Value(EngramID))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
@@ -2380,7 +2431,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
+		Private Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
 		  Var Sources() As Beacon.LootSource
 		  While Not Results.AfterLastRow
 		    Var HexColor As String = Results.Column("uicolor").StringValue
@@ -2417,9 +2468,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Source As New Beacon.CustomLootContainer(Results.Column("class_string").StringValue)
 		    Source.Label = Results.Column("label").StringValue
 		    Source.Path = Results.Column("path").StringValue
-		    Source.Availability = Results.Column("availability").IntegerValue
+		    Source.Availability = Results.Column("availability").Value
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
-		    Source.UIColor = RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		    Source.UIColor = Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
@@ -2428,9 +2479,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
 		      Var Sets() As Beacon.ItemSet
 		      For Each Dict As Dictionary In SetDicts
-		        Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		        Var Set As Beacon.ItemSet = Beacon.ItemSet.FromSaveData(Dict)
 		        If Set <> Nil Then
-		          Sets.AddRow(Set)
+		          Sets.Add(Set)
 		        End If
 		      Next
 		      Source.MandatoryItemSets = Sets
@@ -2440,7 +2491,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
 		    End If
 		    
-		    Sources.AddRow(New Beacon.LootContainer(Source))
+		    Sources.Add(New Beacon.LootContainer(Source))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Sources
@@ -2448,31 +2499,28 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
+		Private Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  While Not Results.AfterLastRow
-		    Var Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
-		    Point.Label = Results.Column("label").StringValue
-		    If IsNull(Results.Column("alternate_label").Value) = False Then
-		      Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		    Var PointID As String = Results.Column("object_id").StringValue
+		    If Self.mSpawnPointCache.HasKey(PointID) = False Then
+		      Var Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, PointID)
+		      Point.Label = Results.Column("label").StringValue
+		      If IsNull(Results.Column("alternate_label").Value) = False Then
+		        Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		      End If
+		      Point.Availability = Results.Column("availability").Value
+		      Point.TagString = Results.Column("tags").StringValue
+		      Point.ModID = Results.Column("mod_id").StringValue
+		      Point.ModName = Results.Column("mod_name").StringValue
+		      Point.Modified = False
+		      Self.mSpawnPointCache.Value(PointID) = Point.ImmutableVersion
 		    End If
-		    Point.Availability = Results.Column("availability").IntegerValue
-		    Point.TagString = Results.Column("tags").StringValue
-		    Point.ModID = Results.Column("mod_id").StringValue
-		    Point.ModName = Results.Column("mod_name").StringValue
-		    Point.Modified = False
-		    SpawnPoints.AddRow(New Beacon.SpawnPoint(Point))
+		    
+		    SpawnPoints.Add(Self.mSpawnPointCache.Value(PointID))
 		    Results.MoveToNextRow
 		  Wend
 		  Return SpawnPoints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
-		  Var Arr(0) As Beacon.Blueprint
-		  Arr(0) = Blueprint
-		  Return (Self.SaveBlueprints(Arr, Replace) = 1)
 		End Function
 	#tag EndMethod
 
@@ -2484,8 +2532,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Try
 		      Var Update As Boolean
-		      Var ObjectID As v4UUID
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID.StringValue, Blueprint.Path.Lowercase)
+		      Var ObjectID As String
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR (mod_id = ?2 AND path = ?3);", Blueprint.ObjectID, Beacon.UserModID, Blueprint.Path)
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
 		        ObjectID = Results.Column("object_id").StringValue
@@ -2494,8 +2542,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Continue
 		        End If
 		        
-		        Var ModID As v4UUID = Results.Column("mod_id").StringValue
-		        If ModID <> Self.UserModID Then
+		        Var ModID As String = Results.Column("mod_id").StringValue
+		        If ModID <> Beacon.UserModID Then
 		          Continue
 		        End If
 		        
@@ -2508,15 +2556,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
+		      If Blueprint.Path.IsEmpty Or Blueprint.ClassString.IsEmpty Then
+		        Continue
+		      End If
+		      
 		      Var Category As String = Blueprint.Category
 		      Var Columns As New Dictionary
-		      Columns.Value("object_id") = ObjectID.StringValue
+		      Columns.Value("object_id") = ObjectID
 		      Columns.Value("path") = Blueprint.Path
 		      Columns.Value("class_string") = Blueprint.ClassString
 		      Columns.Value("label") = Blueprint.Label
 		      Columns.Value("tags") = Blueprint.TagString
 		      Columns.Value("availability") = Blueprint.Availability
-		      Columns.Value("mod_id") = Self.UserModID
+		      Columns.Value("mod_id") = Beacon.UserModID
 		      
 		      Select Case Blueprint
 		      Case IsA Beacon.Creature
@@ -2528,12 +2580,50 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Columns.Value("incubation_time") = Nil
 		          Columns.Value("mature_time") = Nil
 		        End If
+		        If Creature.MinMatingInterval > 0 And Creature.MaxMatingInterval > 0 Then
+		          Columns.Value("mating_interval_min") = Creature.MinMatingInterval
+		          Columns.Value("mating_interval_max") = Creature.MaxMatingInterval
+		        Else
+		          Columns.Value("mating_interval_min") = Nil
+		          Columns.Value("mating_interval_max") = Nil
+		        End If
+		        Columns.Value("used_stats") = Creature.StatsMask
+		        
+		        Var StatDicts() As Dictionary
+		        Var StatValues() As Beacon.CreatureStatValue = Creature.AllStatValues
+		        For Each StatValue As Beacon.CreatureStatValue In StatValues
+		          StatDicts.Add(StatValue.SaveData)
+		        Next
+		        Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
+		        
 		        CacheDict = Self.mCreatureCache
 		      Case IsA Beacon.SpawnPoint
-		        Columns.Value("groups") = Beacon.SpawnPoint(Blueprint).SetsString(False)
+		        Columns.Value("sets") = Beacon.SpawnPoint(Blueprint).SetsString(False)
 		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
 		        CacheDict = Self.mSpawnPointCache
 		      Case IsA Beacon.Engram
+		        Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
+		        Columns.Value("recipe") = Beacon.RecipeIngredient.ToJSON(Engram.Recipe, False)
+		        If Engram.EntryString.IsEmpty Then
+		          Columns.Value("entry_string") = Nil
+		        Else
+		          Columns.Value("entry_string") = Engram.EntryString
+		        End If
+		        If Engram.RequiredPlayerLevel Is Nil Then
+		          Columns.Value("required_level") = Nil
+		        Else
+		          Columns.Value("required_level") = Engram.RequiredPlayerLevel.IntegerValue
+		        End If
+		        If Engram.RequiredUnlockPoints Is Nil Then
+		          Columns.Value("required_points") = Nil
+		        Else
+		          Columns.Value("required_points") = Engram.RequiredUnlockPoints.IntegerValue
+		        End If
+		        If Engram.StackSize Is Nil Then
+		          Columns.Value("stack_size") = Nil
+		        Else
+		          Columns.Value("stack_size") = Engram.StackSize.IntegerValue
+		        End If
 		        CacheDict = Self.mEngramCache
 		      End Select
 		      
@@ -2546,32 +2636,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          If Entry.Key = "object_id" Then
 		            WhereClause = "object_id = ?" + NextPlaceholder.ToString
 		          Else
-		            Assignments.AddRow(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
+		            Assignments.Add(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
 		          End If
-		          Values.AddRow(Entry.Value)
+		          Values.Add(Entry.Value)
 		          NextPlaceholder = NextPlaceholder + 1
 		        Next
 		        
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID.StringValue, Blueprint.TagString)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
 		      Else
 		        Var ColumnNames(), Placeholders() As String
 		        Var Values() As Variant
 		        Var NextPlaceholder As Integer = 1
 		        For Each Entry As DictionaryEntry In Columns
-		          ColumnNames.AddRow(Entry.Key.StringValue)
-		          Placeholders.AddRow("?" + NextPlaceholder.ToString)
-		          Values.AddRow(Entry.Value)
+		          ColumnNames.Add(Entry.Key.StringValue)
+		          Placeholders.Add("?" + NextPlaceholder.ToString)
+		          Values.Add(Entry.Value)
 		          NextPlaceholder = NextPlaceholder + 1
 		        Next
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID.StringValue, Blueprint.TagString)
+		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
 		      End If
 		      
 		      If CacheDict <> Nil Then
-		        If CacheDict.HasKey(Blueprint.ObjectID.StringValue) Then
-		          CacheDict.Remove(Blueprint.ObjectID.StringValue)
+		        If CacheDict.HasKey(Blueprint.ObjectID) Then
+		          CacheDict.Remove(Blueprint.ObjectID)
 		        End If
 		        If CacheDict.HasKey(Blueprint.Path) Then
 		          CacheDict.Remove(Blueprint.Path)
@@ -2579,7 +2669,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If CacheDict.HasKey(Blueprint.ClassString) Then
 		          CacheDict.Remove(Blueprint.ClassString)
 		        End If
-		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails Then
+		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails And CacheDict.HasKey(Beacon.Engram(Blueprint).EntryString) Then
 		          CacheDict.Remove(Beacon.Engram(Blueprint).EntryString)
 		        End If
 		      End If
@@ -2602,42 +2692,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveNotification(Notification As Beacon.UserNotification)
-		  If Notification = Nil Then
-		    Return
-		  End If
-		  
-		  Var UserDataString As String = "{}"
-		  If (Notification.UserData Is Nil) = False Then
-		    Try
-		      UserDataString = Beacon.GenerateJSON(Notification.UserData, False)
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Self.BeginTransaction()
-		  Var Results As RowSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
-		  Var Deleted As Boolean = Results.RowCount = 1 And Results.Column("deleted").BooleanValue = True
-		  Var Read As Boolean = Results.RowCount = 1 And Results.Column("read").BooleanValue
-		  If Notification.DoNotResurrect And (Deleted Or Read)  Then
-		    Self.Rollback
-		    Return
-		  End If
-		  
-		  Try
-		    Var Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
-		    Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, UserDataString)
-		    Self.Commit
-		    
-		    If Notify Then
-		      NotificationKit.Post(Self.Notification_NewAppNotification, Notification)
-		    End If
-		  Catch Err As RuntimeException
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SavePreset(Preset As Beacon.Preset)
 		  Self.SavePreset(Preset, True)
 		End Sub
@@ -2651,7 +2705,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, ?2, ?3, ?4);", Self.UserID, Preset.PresetID, Preset.Label, Content)
 		  Self.Commit()
 		  
-		  Call UserCloud.Write("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
+		  Call UserCloud.Write("/Presets/" + Preset.PresetID.Lowercase + Beacon.FileExtensionPreset, Content)
 		  
 		  If Reload Then
 		    Self.LoadPresets()
@@ -2676,7 +2730,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Clauses() As String
 		    Var Values As New Dictionary
 		    If SearchText <> "" Then
-		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR (alternate_label IS NOT NULL AND LOWER(alternate_label) LIKE LOWER(?" + Str(NextPlaceholder) + ")) OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + ") OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
@@ -2696,30 +2750,34 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
 		      Var Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.AddRow("?" + NextPlaceholder.ToString)
+		        Placeholders.Add("?" + NextPlaceholder.ToString)
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If Tags <> "" Then
 		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
-		      Clauses.AddRow("searchable_tags.tags MATCH ?" + Str(NextPlaceholder, "0"))
+		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
-		    If ExtraClauses.LastRowIndex > -1 And ExtraClauses.LastRowIndex = ExtraValues.LastRowIndex Then
-		      For I As Integer = 0 To ExtraClauses.LastRowIndex
-		        Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
-		        Var Value As Variant = ExtraValues(I)
-		        Clauses.AddRow(Clause)
-		        Values.Value(NextPlaceholder) = Value
-		        NextPlaceholder = NextPlaceholder + 1
+		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
+		      For I As Integer = 0 To ExtraClauses.LastIndex
+		        If ExtraClauses(I).IndexOf(":placeholder:") > -1 Then
+		          Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
+		          Var Value As Variant = ExtraValues(I)
+		          Clauses.Add(Clause)
+		          Values.Value(NextPlaceholder) = Value
+		          NextPlaceholder = NextPlaceholder + 1
+		        Else
+		          Clauses.Add(ExtraClauses(I))
+		        End If
 		      Next
 		    End If
 		    
-		    If Clauses.LastRowIndex > -1 Then
+		    If Clauses.LastIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
@@ -2735,20 +2793,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Case Beacon.CategoryEngrams
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      For Each Engram As Beacon.Engram In Engrams
-		        Self.CacheEngram(Engram)
-		        Blueprints.AddRow(Engram)
+		        Self.Cache(Engram)
+		        Blueprints.Add(Engram)
 		      Next
 		    Case Beacon.CategoryCreatures
 		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
 		      For Each Creature As Beacon.Creature In Creatures
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Blueprints.AddRow(Creature)
+		        Blueprints.Add(Creature)
 		      Next
 		    Case Beacon.CategorySpawnPoints
 		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Blueprints.AddRow(SpawnPoint)
+		        Blueprints.Add(SpawnPoint)
 		      Next
 		    End Select
 		  Catch Err As RuntimeException
@@ -2765,28 +2823,46 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Values As New Dictionary
 		  Var Idx As Integer = 1
 		  
-		  If File.IsEmpty = False Then
-		    Values.Value(Idx) = File.Lowercase
-		    Clauses.AddRow("LOWER(file) = $" + Idx.ToString)
-		    Idx = Idx + 1
-		  End If
-		  If Header.IsEmpty = False Then
-		    Values.Value(Idx) = Header.Lowercase
-		    Clauses.AddRow("LOWER(header) = $" + Idx.ToString)
-		    Idx = Idx + 1
+		  If File = Beacon.ConfigFileGameUserSettings Then
+		    If Header.IsEmpty = False Then
+		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
+		      Values.Value(Idx) = Header
+		      Idx = Idx + 1
+		    Else
+		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
+		    End If
+		  Else
+		    If File.IsEmpty = False Then
+		      If File = "CommandLine" Then
+		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
+		      ElseIf File.IndexOf("*") > -1 Then
+		        Values.Value(Idx) = File.ReplaceAll("*", "%")
+		        Clauses.Add("file LIKE ?" + Idx.ToString)
+		        Idx = Idx + 1
+		      Else
+		        Values.Value(Idx) = File
+		        Clauses.Add("file = ?" + Idx.ToString)
+		        Idx = Idx + 1
+		      End If
+		    End If
+		    If Header.IsEmpty = False Then
+		      Values.Value(Idx) = Header
+		      Clauses.Add("header = ?" + Idx.ToString)
+		      Idx = Idx + 1
+		    End If
 		  End If
 		  If Key.IsEmpty = False Then
 		    If Key.IndexOf("*") > -1 Then
-		      Values.Value(Idx) = Key.Lowercase.ReplaceAll("*", "%")
-		      Clauses.AddRow("LOWER(key) LIKE $" + Idx.ToString)
+		      Values.Value(Idx) = Key.ReplaceAll("*", "%")
+		      Clauses.Add("key LIKE ?" + Idx.ToString)
 		    Else
-		      Values.Value(Idx) = Key.Lowercase
-		      Clauses.AddRow("LOWER(key) = $" + Idx.ToString)
+		      Values.Value(Idx) = Key
+		      Clauses.Add("key = ?" + Idx.ToString)
 		    End If
 		    Idx = Idx + 1
 		  End If
 		  
-		  Var SQL As String = "SELECT object_id, label, file, header, key, value_type, max_allowed, description, default_value, nitrado_path, nitrado_format FROM ini_options"
+		  Var SQL As String = "SELECT object_id, label, file, header, key, value_type, max_allowed, description, default_value, nitrado_path, nitrado_format, nitrado_deploy_style FROM ini_options"
 		  If Clauses.Count > 0 Then
 		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
 		  End If
@@ -2822,6 +2898,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var DefaultValue As Variant = Rows.Column("default_value").Value
 		      Var NitradoPath As NullableString
 		      Var NitradoFormat As Beacon.ConfigKey.NitradoFormats = Beacon.ConfigKey.NitradoFormats.Unsupported
+		      Var NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles = Beacon.ConfigKey.NitradoDeployStyles.Unsupported
 		      If IsNull(Rows.Column("nitrado_format").Value) = False Then
 		        NitradoPath = Rows.Column("nitrado_path").StringValue
 		        Select Case Rows.Column("nitrado_format").StringValue
@@ -2830,14 +2907,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Case "Value"
 		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Value
 		        End Select
+		        Select Case Rows.Column("nitrado_deploy_style").StringValue
+		        Case "Guided"
+		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Guided
+		        Case "Expert"
+		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Expert
+		        Case "Both"
+		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Both
+		        End Select
 		      End If
 		      
-		      Results.AddRow(New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat))
+		      Results.Add(New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle))
 		      
 		      Rows.MoveToNextRow
 		    Wend
 		  Catch Err As RuntimeException
-		    ExceptionWindow.Report(Err)
+		    App.ReportException(Err)
 		  End Try
 		  Return Results
 		End Function
@@ -2851,7 +2936,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.AddRow(Beacon.Engram(Blueprint))
+		      Engrams.Add(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -2871,23 +2956,23 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods.LastRowIndex > -1 Then
 		      Var Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.AddRow("?" + Str(NextPlaceholder))
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If SearchText <> "" Then
-		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    If Not IncludeExperimental Then
-		      Clauses.AddRow("experimental = 0")
+		      Clauses.Add("experimental = 0")
 		    End If
 		    
 		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
-		    If Clauses.LastRowIndex > -1 Then
+		    If Clauses.LastIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY sort_order, label;"
@@ -2915,6 +3000,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Beacon.Data = mInstance
 		    Var Results As RowSet = mInstance.SQLSelect("SELECT EXISTS(SELECT 1 FROM blueprints) AS populated;")
 		    If Results.Column("populated").BooleanValue = False Then
+		      mInstance.mNextSyncImportAll = True
 		      mInstance.ImportLocalClasses()
 		    End If
 		    If Preferences.OnlineEnabled Then
@@ -2931,9 +3017,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Points() As Beacon.SpawnPoint = Self.SearchForSpawnPoints("", New Beacon.StringList)
 		    Var Labels() As String
 		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Points.LastRowIndex)
+		    Labels.ResizeTo(Points.LastIndex)
 		    
-		    For I As Integer = 0 To Points.LastRowIndex
+		    For I As Integer = 0 To Points.LastIndex
 		      If Points(I).ValidForMask(Availability) = False Then
 		        Continue
 		      End If
@@ -2944,14 +3030,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Idx > -1 Then
 		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
 		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Points(Idx).Path) = Points(Idx).Label + " (" + Maps.Label + ")"
+		        Dict.Value(Points(Idx).ObjectID) = Points(Idx).Label.Disambiguate(Maps.Label)
 		        
 		        Filtered = Points(I).Availability And Availability
 		        Maps = Beacon.Maps.ForMask(Filtered)
-		        Label = Label + " (" + Maps.Label + ")"
+		        Label = Label.Disambiguate(Maps.Label)
 		      End If
 		      
-		      Dict.Value(Points(I).Path) = Label
+		      Dict.Value(Points(I).ObjectID) = Label
 		    Next
 		    
 		    Self.mSpawnLabelCacheDict = Dict
@@ -2966,7 +3052,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
 		  Self.mLock.Enter
 		  
-		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		  If Values.LastIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
 		    Var Dict As Dictionary = Values(0)
 		    Values.ResizeTo(-1)
@@ -2974,16 +3060,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      // I know this line looks insane, but it's correct. Placeholders start at 1.
 		      For I As Integer = 1 To Dict.KeyCount
-		        Values.AddRow(Dict.Value(I))
+		        Values.Add(Dict.Value(I))
 		      Next
 		    Catch Err As TypeMismatchException
 		      Values.ResizeTo(-1)
 		    End Try
-		  ElseIf Values.LastRowIndex = 0 And Values(0).IsArray Then
+		  ElseIf Values.LastIndex = 0 And Values(0).IsArray Then
 		    Values = Values(0)
 		  End If
 		  
-		  For I As Integer = 0 To Values.LastRowIndex
+		  For I As Integer = 0 To Values.LastIndex
 		    Var Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
@@ -3011,7 +3097,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Function SQLSelect(SQLString As String, ParamArray Values() As Variant) As RowSet
 		  Self.mLock.Enter
 		  
-		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		  If Values.LastIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
 		    Var Dict As Dictionary = Values(0)
 		    Values.ResizeTo(-1)
@@ -3019,14 +3105,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      // I know this line looks insane, but it's correct. Placeholders start at 1.
 		      For I As Integer = 1 To Dict.KeyCount
-		        Values.AddRow(Dict.Value(I))
+		        Values.Add(Dict.Value(I))
 		      Next
 		    Catch Err As TypeMismatchException
 		      Values.ResizeTo(-1)
 		    End Try
 		  End If
 		  
-		  For I As Integer = 0 To Values.LastRowIndex
+		  For I As Integer = 0 To Values.LastIndex
 		    Var Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
@@ -3073,27 +3159,126 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
-		  Var Dicts() As Dictionary
-		  While Not Results.AfterLastRow
-		    Var Dict As New Dictionary  
-		    Dict.Value("class_string") = Results.Column("class_string").StringValue  
-		    Dict.Value("path") = Results.Column("path").StringValue  
-		    Dict.Value("tags") = Results.Column("tags").StringValue
-		    Dict.Value("object_id") = Results.Column("object_id").StringValue
-		    Dict.Value("label") = Results.Column("label").StringValue
-		    Dict.Value("availability") = Results.Column("availability").IntegerValue
-		    Dict.Value("category") = Results.Column("category").StringValue
-		    Dicts.AddRow(Dict)
-		    
-		    Results.MoveToNextRow()
-		  Wend
+		  Var Mods As New Beacon.StringList(Beacon.UserModID)
+		  Var Packed() As Dictionary
 		  
-		  If Dicts.Count > 0 Then
-		    Var Content As String = Beacon.GenerateJSON(Dicts, False)
-		    Call UserCloud.Write("Engrams.json", Content)
+		  Var Engrams() As Beacon.Engram = Self.SearchForEngrams("", Mods, "")
+		  For Each Engram As Beacon.Engram In Engrams
+		    Var Dict As Dictionary = Engram.Pack
+		    If Dict Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packed.Add(Dict)
+		  Next
+		  
+		  Var Creatures() As Beacon.Creature = Self.SearchForCreatures("", Mods, "")
+		  For Each Creature As Beacon.Creature In Creatures
+		    Var Dict As Dictionary = Creature.Pack
+		    If Dict Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packed.Add(Dict)
+		  Next
+		  
+		  Var SpawnPoints() As Beacon.SpawnPoint = Self.SearchForSpawnPoints("", Mods, "")
+		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		    Var Dict As Dictionary = SpawnPoint.Pack
+		    If Dict Is Nil Then
+		      Continue
+		    End If
+		    
+		    Packed.Add(Dict)
+		  Next
+		  
+		  If Packed.Count > 0 Then
+		    Var Content As String = Beacon.GenerateJSON(Packed, True)
+		    Call UserCloud.Write("Blueprints.json", Content)
 		  Else
-		    Call UserCloud.Delete("Engrams.json")
+		    Call UserCloud.Delete("Blueprints.json")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateNews()
+		  Var Socket As New URLConnection
+		  AddHandler Socket.ContentReceived, WeakAddressOf UpdateNews_ContentReceived
+		  Socket.RequestHeader("User-Agent") = App.UserAgent
+		  Socket.Send("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateNews_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  
+		  If HTTPStatus <> 200 Then
+		    Return
+		  End If
+		  
+		  Var Parsed As Variant
+		  Try
+		    Parsed = Beacon.ParseJSON(Content)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var Items() As Dictionary
+		  Try
+		    Items = Parsed.DictionaryArrayValue
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Self.BeginTransaction()
+		  
+		  Var Changed As Boolean
+		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid FROM news")
+		  Var ItemsToRemove() As String
+		  For Each Row As DatabaseRow In Rows
+		    ItemsToRemove.Add(Row.Column("uuid").StringValue)
+		  Next
+		  
+		  For Each Item As Dictionary In Items
+		    Try
+		      Var UUID As String = Item.Value("uuid")
+		      Var Title As String = Item.Value("title")
+		      Var Detail As Variant = Item.Value("detail")
+		      Var ItemURL As Variant = Item.Value("url")
+		      Var MinVersion As Variant = Item.Value("min_version")
+		      Var MaxVersion As Variant = Item.Value("max_version")
+		      Var Moment As String = Item.Value("timestamp")
+		      Var MinOSVersion As Variant
+		      #if TargetMacOS
+		        MinOSVersion = Item.Value("mac_min_os")
+		      #elseif TargetWindows
+		        MinOSVersion = Item.Value("win_min_os")
+		      #endif
+		      
+		      Var Idx As Integer = ItemsToRemove.IndexOf(UUID)
+		      If Idx > -1 Then
+		        ItemsToRemove.RemoveAt(Idx)
+		      Else
+		        Self.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
+		        Changed = True
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Changed = Changed Or ItemsToRemove.Count > 0
+		  
+		  If ItemsToRemove.Count > 0 Then
+		    Self.SQLExecute("DELETE FROM news WHERE uuid IN ('" + ItemsToRemove.Join("','") + "');")
+		  End If
+		  
+		  Self.Commit()
+		  
+		  If Changed Then
+		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -3101,7 +3286,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h1
 		Protected Function UserID() As String
 		  Try
-		    Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		    Return App.IdentityManager.CurrentIdentity.UserID
 		  Catch Err As RuntimeException
 		    Return v4UUID.CreateNull
 		  End Try
@@ -3111,7 +3296,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function Variable(Key As String) As String
 		  Try
-		    Var Results As RowSet = Self.SQLSelect("SELECT value FROM variables WHERE LOWER(key) = LOWER(?1);", Key)
+		    Var Results As RowSet = Self.SQLSelect("SELECT value FROM variables WHERE key = ?1;", Key)
 		    If Results.RowCount = 1 Then
 		      Return Results.Column("value").StringValue
 		    End If
@@ -3143,6 +3328,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBlueprintLabelsCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlueprintLabelsCacheKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCheckForUpdatesAfterImport As Boolean
 	#tag EndProperty
 
@@ -3155,6 +3348,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDeltaDownloadedBytes As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeltaDownloader As URLConnection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeltaDownloadQueue() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeltaDownloadTotalBytes As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDropsLabelCacheDict As Dictionary
 	#tag EndProperty
 
@@ -3164,6 +3373,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mEngramCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImporting As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -3229,6 +3442,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = EngramsVersion, Type = Double, Dynamic = False, Default = \"5", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
 	#tag EndConstant
 
@@ -3236,6 +3452,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_EngramsChanged, Type = String, Dynamic = False, Default = \"Engrams Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_EngramUpdateFinished, Type = String, Dynamic = False, Default = \"Engram Update Finished", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_EngramUpdateStarted, Type = String, Dynamic = False, Default = \"Engram Update Started", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ImportFailed, Type = String, Dynamic = False, Default = \"Import Failed", Scope = Public
@@ -3247,22 +3469,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_ImportSuccess, Type = String, Dynamic = False, Default = \"Import Success", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_NewAppNotification, Type = String, Dynamic = False, Default = \"New App Notification", Scope = Public
+	#tag Constant, Name = Notification_NewsUpdated, Type = String, Dynamic = False, Default = \"News Updated", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"18", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"20", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = UserModName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Public
 	#tag EndConstant
 
 

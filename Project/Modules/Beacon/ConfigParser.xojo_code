@@ -18,7 +18,7 @@ Private Class ConfigParser
 		        Return True
 		      Case Self.TypeArray
 		        Var Values() As Variant = Self.mValue
-		        Values.AddRow(Self.SubParser.Value)
+		        Values.Add(Self.SubParser.Value)
 		        Self.mValue = Values
 		        Var Consumed As Boolean = Self.SubParser.ConsumedLastChar
 		        Self.SubParser = Nil
@@ -34,20 +34,20 @@ Private Class ConfigParser
 		  
 		  If InQuotes Then
 		    Var LastChar As String
-		    If Self.Buffer.LastRowIndex > -1 Then
-		      LastChar = Self.Buffer(Self.Buffer.LastRowIndex)
+		    If Self.Buffer.LastIndex > -1 Then
+		      LastChar = Self.Buffer(Self.Buffer.LastIndex)
 		    End If
 		    
 		    If Char = """" Then
 		      If LastChar = "\" Then
-		        Self.Buffer(Self.Buffer.LastRowIndex) = Char
+		        Self.Buffer(Self.Buffer.LastIndex) = Char
 		      Else
 		        InQuotes = False
 		      End If
 		    ElseIf Char = "n" And LastChar = "\" Then
-		      Self.Buffer(Self.Buffer.LastRowIndex) = EndOfLine
+		      Self.Buffer(Self.Buffer.LastIndex) = EndOfLine
 		    Else
-		      Self.Buffer.AddRow(Char)
+		      Self.Buffer.Add(Char)
 		    End If
 		    Return False
 		  End If
@@ -56,14 +56,14 @@ Private Class ConfigParser
 		  Case Self.TypeIntrinsic
 		    Select Case Char
 		    Case "("
-		      If Self.Buffer.LastRowIndex = -1 Then
+		      If Self.Buffer.LastIndex = -1 Then
 		        Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
 		        Self.Type = Self.TypeArray
 		        
 		        Var Values() As Variant
 		        Self.mValue = Values
 		      Else
-		        Self.Buffer.AddRow(Char)
+		        Self.Buffer.Add(Char)
 		      End If
 		    Case "="
 		      If Not Self.KeyFound Then
@@ -76,11 +76,11 @@ Private Class ConfigParser
 		        Self.SubParser.KeyFound = True
 		        Self.KeyFound = True
 		      Else
-		        Self.Buffer.AddRow(Char)
+		        Self.Buffer.Add(Char)
 		      End If
 		    Case ")", ",", LineEndingChar
 		      If Self.Level = 0 And Char <> LineEndingChar Then
-		        Self.Buffer.AddRow(Char)
+		        Self.Buffer.Add(Char)
 		      Else
 		        Self.ConsumedLastChar = False
 		        Self.mValue = Self.Buffer.Join("")
@@ -91,7 +91,7 @@ Private Class ConfigParser
 		    Case """"
 		      Self.InQuotes = True
 		    Else
-		      Self.Buffer.AddRow(Char)
+		      Self.Buffer.Add(Char)
 		    End Select
 		  Case Self.TypeArray
 		    Select Case Char

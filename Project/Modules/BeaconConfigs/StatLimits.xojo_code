@@ -2,55 +2,37 @@
 Protected Class StatLimits
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  For I As Integer = 0 To Self.mValues.LastRowIndex
+		  Var Values() As Beacon.ConfigValue
+		  Var EnableClamping As Boolean = False
+		  
+		  For I As Integer = 0 To Self.mValues.LastIndex
 		    If Self.mValues(I) = Nil Then
 		      Continue
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue("?", "ClampItemStats", "true"))
-		    Return
-		  Next
-		  
-		  Values.AddRow(New Beacon.ConfigValue("?", "ClampItemStats", "false"))
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused SourceDocument
-		  #Pragma Unused Profile
-		  
-		  For I As Integer = 0 To Self.mValues.LastRowIndex
-		    If Self.mValues(I) = Nil Then
-		      Continue
-		    End If
+		    EnableClamping = True
 		    
 		    Var Value As Double = Self.mValues(I)
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]", Value.PrettyText))
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ItemStatClamps[" + I.ToString + "]=" + Value.PrettyText, I))
 		  Next
-		End Sub
+		  
+		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ClampItemStats=" + If(EnableClamping, "True", "False")))
+		  
+		  Return Values
+		End Function
 	#tag EndEvent
 
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused SourceDocument
-		  #Pragma Unused Profile
-		  
-		  For I As Integer = 0 To Self.mValues.LastRowIndex
-		    If Self.mValues(I) = Nil Then
-		      Continue
-		    End If
-		    
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "True"))
-		    Return
-		  Next
-		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "False"))
-		End Sub
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "ItemStatClamps"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ClampItemStats"))
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -146,20 +128,21 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "StatLimits"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameStatLimits
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.StatLimits
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.StatLimits
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
 		  Var Config As New BeaconConfigs.StatLimits()
 		  
-		  For Index As Integer = 0 To Config.mValues.LastRowIndex
+		  For Index As Integer = 0 To Config.mValues.LastIndex
 		    Var ValueTestOne As Double = ParsedData.DoubleValue("ItemStatClamps[" + Index.ToString + "]", 100.0, True)
 		    Var ValueTestTwo As Double = ParsedData.DoubleValue("ItemStatClamps[" + Index.ToString + "]", 200.0, True)
 		    

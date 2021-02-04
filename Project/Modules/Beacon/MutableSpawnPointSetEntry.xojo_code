@@ -5,7 +5,7 @@ Inherits Beacon.SpawnPointSetEntry
 		Sub Append(Level As Beacon.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
 		  If Idx = -1 Then
-		    Self.mLevels.AddRow(New Beacon.SpawnPointLevel(Level))
+		    Self.mLevels.Add(New Beacon.SpawnPointLevel(Level))
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -14,7 +14,7 @@ Inherits Beacon.SpawnPointSetEntry
 	#tag Method, Flags = &h0
 		Sub Creature(Assigns Value As Beacon.Creature)
 		  If Self.mCreature <> Value Then
-		    Self.mCreature = Value
+		    Self.mCreature = New Beacon.BlueprintReference(Value.ImmutableVersion)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -22,7 +22,7 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub ID(Assigns Value As v4UUID)
-		  If Not IsNull(Value) Then
+		  If (Value Is Nil) = False Then
 		    Self.mID = Value
 		  End If
 		End Sub
@@ -47,7 +47,7 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub LevelBound(Assigns Value As Integer)
-		  If Self.mLevels.LastRowIndex <> Value Then
+		  If Self.mLevels.LastIndex <> Value Then
 		    Self.mLevels.ResizeTo(Value)
 		    Self.Modified = True
 		  End If
@@ -74,8 +74,8 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Levels(Assigns NewLevels() As Beacon.SpawnPointLevel)
-		  Self.mLevels.ResizeTo(NewLevels.LastRowIndex)
-		  For I As Integer = 0 To NewLevels.LastRowIndex
+		  Self.mLevels.ResizeTo(NewLevels.LastIndex)
+		  For I As Integer = 0 To NewLevels.LastIndex
 		    Self.mLevels(I) = New Beacon.SpawnPointLevel(NewLevels(I))
 		  Next
 		  Self.Modified = True
@@ -144,7 +144,7 @@ Inherits Beacon.SpawnPointSetEntry
 		Sub Remove(Level As Beacon.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
 		  If Idx > -1 Then
-		    Self.mLevels.RemoveRowAt(Idx)
+		    Self.mLevels.RemoveAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -152,7 +152,7 @@ Inherits Beacon.SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
-		  Self.mLevels.RemoveRowAt(Idx)
+		  Self.mLevels.RemoveAt(Idx)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

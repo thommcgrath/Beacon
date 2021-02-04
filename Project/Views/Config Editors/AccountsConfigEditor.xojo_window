@@ -25,46 +25,12 @@ Begin ConfigEditor AccountsConfigEditor
    Transparent     =   True
    Visible         =   True
    Width           =   784
-   Begin BeaconToolbar Header
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      BorderTop       =   False
-      Caption         =   "Accounts"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   41
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Visible         =   True
-      Width           =   784
-   End
    Begin BeaconListbox List
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
       AllowFocusRing  =   False
+      AllowInfiniteScroll=   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
@@ -74,13 +40,16 @@ Begin ConfigEditor AccountsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
+      GridLinesHorizontalStyle=   0
+      GridLinesVerticalStyle=   0
       HasBorder       =   False
       HasHeader       =   True
       HasHorizontalScrollbar=   False
@@ -97,8 +66,9 @@ Begin ConfigEditor AccountsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
-      RowSelectionType=   "1"
+      RowSelectionType=   1
       Scope           =   2
       SelectionChangeBlocked=   False
       TabIndex        =   1
@@ -115,6 +85,40 @@ Begin ConfigEditor AccountsConfigEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
+   Begin OmniBar ConfigToolbar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   41
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   784
+   End
 End
 #tag EndWindow
 
@@ -130,7 +134,7 @@ End
 		  Var Selected() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(I) Then
-		      Selected.AddRow(Beacon.ExternalAccount(Self.List.RowTagAt(I)).UUID)
+		      Selected.Add(Beacon.ExternalAccount(Self.List.RowTagAt(I)).UUID)
 		    End If
 		  Next
 		  
@@ -140,10 +144,10 @@ End
 		  Var ProfileCount As Integer = Self.Document.ServerProfileCount
 		  Var Profiles() As Beacon.ServerProfile
 		  For Idx As Integer = 0 To ProfileCount - 1
-		    Profiles.AddRow(Self.Document.ServerProfile(Idx))
+		    Profiles.Add(Self.Document.ServerProfile(Idx))
 		  Next
 		  
-		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastRowIndex
+		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastIndex
 		    Var Account As Beacon.ExternalAccount = Accounts(Idx)
 		    Var ServerCount As Integer
 		    For Each Profile As Beacon.ServerProfile In Profiles
@@ -159,14 +163,6 @@ End
 		  Next
 		  
 		  Self.List.Sort
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 
@@ -208,7 +204,7 @@ End
 		      Continue
 		    End If
 		    
-		    Accounts.AddRow(Me.RowTagAt(I))
+		    Accounts.Add(Me.RowTagAt(I))
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Accounts, "account", "accounts") = False Then
@@ -239,9 +235,9 @@ End
 		  Var Accounts() As Dictionary
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    Var Account As Beacon.ExternalAccount = Me.RowTagAt(Idx)
-		    Accounts.AddRow(Account.AsDictionary)
+		    Accounts.Add(Account.AsDictionary)
 		  Next
-		  Board.AddRawData(Beacon.GenerateJSON(Accounts, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Accounts, False)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -273,9 +269,32 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConfigToolbar
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="IsFrontmost"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewTitle"
+		Visible=true
+		Group="Behavior"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ViewIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
@@ -286,7 +305,7 @@ End
 		Name="Progress"
 		Visible=false
 		Group="Behavior"
-		InitialValue="ProgressNone"
+		InitialValue=""
 		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
@@ -305,14 +324,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

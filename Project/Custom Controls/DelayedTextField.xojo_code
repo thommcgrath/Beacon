@@ -15,7 +15,7 @@ Inherits UITweaks.ResizedTextField
 		  
 		  Self.mTimer = New Timer
 		  Self.mTimer.RunMode = Timer.RunModes.Off
-		  Self.mTimer.Period = 250
+		  Self.mTimer.Period = 100
 		  AddHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
 		  
 		  Super.Constructor
@@ -51,6 +51,14 @@ Inherits UITweaks.ResizedTextField
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Text"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Bold"
 			Visible=true
@@ -132,14 +140,6 @@ Inherits UITweaks.ResizedTextField
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Hint"
-			Visible=true
-			Group="Initial State"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
 			Visible=true
 			Group="Initial State"
 			InitialValue=""

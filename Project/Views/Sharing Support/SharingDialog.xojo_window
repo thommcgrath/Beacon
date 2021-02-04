@@ -22,7 +22,7 @@ Begin BeaconDialog SharingDialog
    Placement       =   0
    Resizable       =   "False"
    Resizeable      =   True
-   Title           =   "Document Sharing"
+   Title           =   "Project Sharing"
    Visible         =   True
    Width           =   600
    Begin GroupBox WriteAccessGroup
@@ -110,13 +110,13 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   336
          Transparent     =   False
          Underline       =   False
-         Value           =   "Users listed here will be able to make changes to this document and deploy changes to servers. Only the document owner may add or remove users."
+         Value           =   "Users listed here will be able to make changes to this project and deploy changes to servers. Only the project owner may add or remove users."
          Visible         =   True
          Width           =   520
       End
@@ -143,6 +143,7 @@ Begin BeaconDialog SharingDialog
          Width           =   16
       End
       Begin BeaconListbox UserList
+         AllowInfiniteScroll=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -153,6 +154,9 @@ Begin BeaconDialog SharingDialog
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -173,6 +177,7 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -229,7 +234,7 @@ Begin BeaconDialog SharingDialog
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Document Sharing"
+      Value           =   "Project Sharing"
       Visible         =   True
       Width           =   560
    End
@@ -324,7 +329,7 @@ Begin BeaconDialog SharingDialog
          Top             =   88
          Transparent     =   False
          Underline       =   False
-         Value           =   "https://api.beaconapp.cc/v1/document"
+         Value           =   "https://api.usebeacon.app/v1/document"
          Visible         =   True
          Width           =   428
       End
@@ -414,13 +419,13 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   176
          Transparent     =   False
          Underline       =   False
-         Value           =   "Documents shared with the community will be available for download from the Beacon website and the Community section of the Documents list. Community members will have read-only access, unless listed below."
+         Value           =   "Projects shared with the community will be available for download from the Beacon website and the Community section of the Projects tab. Community members will have read-only access, unless listed below."
          Visible         =   True
          Width           =   520
       End
@@ -449,7 +454,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "3"
+         TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   248
@@ -484,7 +489,7 @@ Begin BeaconDialog SharingDialog
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
-         TextAlignment   =   "0"
+         TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   248
@@ -514,7 +519,7 @@ Begin BeaconDialog SharingDialog
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
-         MacButtonStyle  =   "0"
+         MacButtonStyle  =   0
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   0
@@ -531,7 +536,7 @@ Begin BeaconDialog SharingDialog
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   200
-      RunMode         =   "1"
+      RunMode         =   1
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -562,7 +567,7 @@ End
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mUsersChanged Then
-		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your document.", "Adding or removing a user updates the encryption keys inside your document, so it is necessary to save the document before newly authorized users are able to access it.")
+		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your project.", "Adding or removing a user updates the encryption keys inside your project, so it is necessary to save the project before newly authorized users are able to access it.")
 		  End If
 		  
 		  Win.Close
@@ -575,9 +580,9 @@ End
 		  
 		  If Response.HTTPStatus <> 200 Or Response.JSONParsed = False Then
 		    If Response.HTTPStatus = 403 Then
-		      Self.CommunityStatusField.Value = "Not Authorized"
+		      Self.CommunityStatusField.Text = "Not Authorized"
 		    Else
-		      Self.CommunityStatusField.Value = "Unknown"
+		      Self.CommunityStatusField.Text = "Unknown"
 		    End If
 		    Self.CommunityShareButton.Caption = "Share"
 		    Self.CommunityShareButton.Enabled = False
@@ -590,24 +595,24 @@ End
 		    
 		    Select Case Status
 		    Case "Requested"
-		      Self.CommunityStatusField.Value = "Private (Sharing Request Pending)"
+		      Self.CommunityStatusField.Text = "Private (Sharing Request Pending)"
 		      Self.CommunityShareButton.Caption = "Share"
 		      Self.CommunityShareButton.Enabled = False
 		    Case "Approved"
-		      Self.CommunityStatusField.Value = "Shared"
+		      Self.CommunityStatusField.Text = "Shared"
 		      Self.CommunityShareButton.Caption = "Unshare"
 		      Self.CommunityShareButton.Enabled = True
 		    Case "Private", "Approved But Private"
-		      Self.CommunityStatusField.Value = "Private"
+		      Self.CommunityStatusField.Text = "Private"
 		      Self.CommunityShareButton.Caption = "Share"
 		      Self.CommunityShareButton.Enabled = True
 		    Case "Denied"
-		      Self.CommunityStatusField.Value = "Private (Sharing Request Denied)"
+		      Self.CommunityStatusField.Text = "Private (Sharing Request Denied)"
 		      Self.CommunityShareButton.Caption = "Share"
 		      Self.CommunityShareButton.Enabled = False
 		    End Select
 		  Catch Err As RuntimeException
-		    Self.CommunityStatusField.Value = "Unknown"
+		    Self.CommunityStatusField.Text = "Unknown"
 		    Self.CommunityShareButton.Caption = "Share"
 		    Self.CommunityShareButton.Enabled = False
 		    Return
@@ -623,7 +628,7 @@ End
 		    Var Dicts() As Variant
 		    Var Parsed As Variant = Response.JSON
 		    If IsNull(Parsed) = False And Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
-		      Dicts.AddRow(Parsed)
+		      Dicts.Add(Parsed)
 		    Else
 		      Dicts = Parsed
 		    End If
@@ -685,7 +690,7 @@ End
 		  Users.Sort
 		  
 		  For Each UserID As String In Users
-		    If UserID = App.IdentityManager.CurrentIdentity.Identifier Then
+		    If UserID = App.IdentityManager.CurrentIdentity.UserID Then
 		      Continue
 		    End If
 		    Me.AddRow("", UserID)
@@ -698,7 +703,7 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
 		    Var UserCount As Integer = Me.SelectedRowCount
-		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this document with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the document is saved. This document will no longer appear in the user's cloud documents and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
+		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this project with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the project is saved. This project will no longer appear in the user's cloud projects and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
 		      Return
 		    End If
 		  End If
@@ -728,7 +733,7 @@ End
 #tag Events DownloadLinkLabel
 	#tag Event
 		Sub Open()
-		  Me.Value = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
+		  Me.Text = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -736,7 +741,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Board As New Clipboard
-		  Board.Text = Self.DownloadLinkLabel.Value
+		  Board.Text = Self.DownloadLinkLabel.Text
 		  
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
@@ -750,10 +755,17 @@ End
 		  If Me.Caption = "Share" Then
 		    Var Description As String = Self.mDocument.Description.Trim
 		    If Description.IsEmpty Then
-		      Self.ShowAlert("Your document has no description and will be rejected if shared.", "This might be the best document ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
-		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.Metadata.ConfigName)
+		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
+		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.NameMetadata)
 		      Self.Hide()
 		      Return
+		    End If
+		    
+		    If Self.mDocument.Modified Then
+		      Var ShouldCancel As Boolean = Self.ShowConfirm("Your project should be saved first.", "Your publish request will be based on the last time your saved your project. You have made changes since your last save, so you should save before requesting the project be published.", "Cancel", "Request Anyway")
+		      If ShouldCancel Then
+		        Return
+		      End If
 		    End If
 		    
 		    DesiredStatus = "Requested"
@@ -769,7 +781,7 @@ End
 		  APISocket.Start(Request)
 		  
 		  Me.Enabled = False
-		  Self.CommunityStatusField.Value = "Sharing…"
+		  Self.CommunityStatusField.Text = "Sharing…"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -780,7 +792,7 @@ End
 		  APISocket.Start(Request)
 		  
 		  Var Users() As String = Self.mDocument.GetUsers
-		  If Users.LastRowIndex > -1 Then
+		  If Users.LastIndex > -1 Then
 		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("/user/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
 		    APISocket.Start(UsersLookup)
 		    Self.UsernameLookupSpinner.Visible = True

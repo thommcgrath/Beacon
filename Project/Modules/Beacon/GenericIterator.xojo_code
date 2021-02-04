@@ -3,8 +3,8 @@ Protected Class GenericIterator
 Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Items() As Variant)
-		  Self.mItems.ResizeTo(Items.LastRowIndex)
-		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		  Self.mItems.ResizeTo(Items.LastIndex)
+		  For I As Integer = 0 To Self.mItems.LastIndex
 		    Self.mItems(I) = Items(I)
 		  Next
 		  Self.mIndex = -1
@@ -16,7 +16,7 @@ Implements Iterator
 		  // Part of the Iterator interface.
 		  
 		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= Self.mItems.LastRowIndex
+		  Return Self.mIndex <= Self.mItems.LastIndex
 		End Function
 	#tag EndMethod
 

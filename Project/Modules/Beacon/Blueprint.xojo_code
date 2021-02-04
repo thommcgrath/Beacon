@@ -32,13 +32,19 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Blueprint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As v4UUID
+		Function ModID() As String
 		  
 		End Function
 	#tag EndMethod
@@ -56,9 +62,21 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As v4UUID
+		Function MutableVersion() As Beacon.MutableBlueprint
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ObjectID() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -69,12 +87,6 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
 		  
 		End Function
 	#tag EndMethod

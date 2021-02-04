@@ -3,7 +3,7 @@ Begin BeaconDialog SpawnPointLimitDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   1
    FullScreen      =   False
    HasBackgroundColor=   False
    HasCloseButton  =   False
@@ -21,7 +21,7 @@ Begin BeaconDialog SpawnPointLimitDialog
    MinimumWidth    =   64
    Resizeable      =   False
    Title           =   "Creature Limit"
-   Type            =   "8"
+   Type            =   8
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   20
@@ -84,7 +84,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   52
@@ -114,7 +114,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -190,7 +190,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "2"
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   186
@@ -226,7 +226,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   154
@@ -261,7 +261,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   186
@@ -291,7 +291,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -323,7 +323,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -348,10 +348,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature, CreaturesInSpawnPoint() As Beacon.Creature)
-		  If SelectedCreatures.LastRowIndex = -1 Then
+		  If SelectedCreatures.LastIndex = -1 Then
 		    Self.mDisableSelection = False
 		    Self.mSelectedCreature = Nil
-		  ElseIf SelectedCreatures.LastRowIndex = 0 Then
+		  ElseIf SelectedCreatures.LastIndex = 0 Then
 		    Self.mDisableSelection = False
 		    Self.mSelectedCreature = SelectedCreatures(0)
 		  Else
@@ -361,45 +361,45 @@ End
 		  
 		  Var SelectableCreatures() As Beacon.Creature
 		  Var Map As New Dictionary
-		  If IsNull(Self.mSelectedCreature) = False Then
-		    Map.Value(Self.mSelectedCreature.Path) = Self.mSelectedCreature
+		  If (Self.mSelectedCreature Is Nil) = False Then
+		    Map.Value(Self.mSelectedCreature.ObjectID) = Self.mSelectedCreature
 		  End If 
 		  For Each Creature As Beacon.Creature In DefinedCreatures
-		    If IsNull(Creature) Then
+		    If Creature Is Nil Then
 		      Continue
 		    End If
 		    
-		    Map.Value(Creature.Path) = Creature
+		    Map.Value(Creature.ObjectID) = Creature
 		  Next
 		  
 		  Var CreatureLabels() As String
 		  For Each Creature As Beacon.Creature In CreaturesInSpawnPoint
-		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
+		    If Creature Is Nil Or Map.HasKey(Creature.ObjectID) Then
 		      Continue
 		    End If
 		    
-		    SelectableCreatures.AddRow(Creature)
-		    CreatureLabels.AddRow(Creature.Label)
-		    Map.Value(Creature.Path) = Creature
+		    SelectableCreatures.Add(Creature)
+		    CreatureLabels.Add(Creature.Label)
+		    Map.Value(Creature.ObjectID) = Creature
 		  Next
 		  CreatureLabels.SortWith(SelectableCreatures)
 		  
 		  // Do this after the sort so the indexes match up
 		  If IsNull(Self.mSelectedCreature) = False Then
-		    SelectableCreatures.AddRow(Self.mSelectedCreature)
+		    SelectableCreatures.Add(Self.mSelectedCreature)
 		  End If
 		  
 		  If SelectableCreatures.Count > 0 Then
-		    SelectableCreatures.AddRow(Nil)
+		    SelectableCreatures.Add(Nil)
 		  End If
 		  
 		  Var AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", Mods, "")
 		  For Each Creature As Beacon.Creature In AllCreatures
-		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
+		    If IsNull(Creature) Or Map.HasKey(Creature.ObjectID) Then
 		      Continue
 		    End If
 		    
-		    SelectableCreatures.AddRow(Creature)
+		    SelectableCreatures.Add(Creature)
 		  Next
 		  
 		  Self.mSelectableCreatures = SelectableCreatures
@@ -454,7 +454,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Title, Body, HelpURL As String
-		  Call LocalData.SharedInstance.GetConfigHelp(BeaconConfigs.SpawnPoints.ConfigName, Title, Body, HelpURL)
+		  Call LocalData.SharedInstance.GetConfigHelp(BeaconConfigs.NameSpawnPoints, Title, Body, HelpURL)
 		  ShowURL(HelpURL)
 		End Sub
 	#tag EndEvent
@@ -468,7 +468,7 @@ End
 		    Me.Enabled = False
 		  Else
 		    For Each Creature As Beacon.Creature In Self.mSelectableCreatures
-		      If IsNull(Creature) Then
+		      If Creature Is Nil Then
 		        #if TargetMacOS
 		          Me.AddSeparator
 		        #endif
@@ -477,7 +477,7 @@ End
 		      
 		      Me.AddRow(Creature.Label, Creature)
 		      
-		      If Self.mSelectedCreature <> Nil And Self.mSelectedCreature.Path = Creature.Path Then
+		      If (Self.mSelectedCreature Is Nil) = False And Self.mSelectedCreature = Creature Then
 		        Me.SelectedRowIndex = Me.RowCount - 1
 		      End If
 		    Next
@@ -490,7 +490,7 @@ End
 		Sub Open()
 		  If Self.mLimit <> Nil Then
 		    Var Limit As Double = Self.mLimit * 100
-		    Me.Value = Limit.PrettyText + "%"
+		    Me.Text = Limit.PrettyText + "%"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -503,7 +503,7 @@ End
 		    Return
 		  End If
 		  
-		  Var PercentageString As String = Self.PercentageField.Value.Trim
+		  Var PercentageString As String = Self.PercentageField.Text.Trim
 		  If PercentageString.EndsWith("%") Then
 		    PercentageString = PercentageString.Left(PercentageString.Length - 1)
 		  End If

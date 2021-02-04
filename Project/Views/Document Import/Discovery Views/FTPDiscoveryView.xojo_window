@@ -659,118 +659,6 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   80
       End
-      Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         HelpTag         =   ""
-         Index           =   0
-         InitialParent   =   "ViewPanel"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   3
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   52
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   560
-      End
-      Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   1
-         HelpTag         =   ""
-         Index           =   1
-         InitialParent   =   "ViewPanel"
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   4
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   257
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   560
-      End
-      Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   204
-         HelpTag         =   ""
-         Index           =   2
-         InitialParent   =   "ViewPanel"
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   5
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   53
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   1
-      End
-      Begin FadedSeparator BrowseBorders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   204
-         HelpTag         =   ""
-         Index           =   3
-         InitialParent   =   "ViewPanel"
-         Left            =   579
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   6
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   53
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   1
-      End
       Begin ColumnBrowser Browser
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -887,12 +775,136 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   80
       End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         HelpTag         =   ""
+         Index           =   0
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   3
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   52
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   560
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   1
+         HelpTag         =   ""
+         Index           =   1
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   4
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   257
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   560
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   204
+         HelpTag         =   ""
+         Index           =   2
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   5
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   53
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         ContentHeight   =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   204
+         HelpTag         =   ""
+         Index           =   3
+         InitialParent   =   "ViewPanel"
+         Left            =   579
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollActive    =   False
+         ScrollingEnabled=   False
+         ScrollSpeed     =   20
+         TabIndex        =   6
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   53
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   1
+      End
    End
    Begin Timer StatusWatcher
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
-      RunMode         =   "2"
+      RunMode         =   2
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -920,24 +932,24 @@ End
 		  Checker.SearchPattern = ":(\d{1,5})$"
 		  Checker.ReplacementPattern = ""
 		  
-		  Var CheckedValue As String = Self.ServerHostField.Value.Trim
+		  Var CheckedValue As String = Self.ServerHostField.Text.Trim
 		  
 		  Var Matches As RegexMatch = Checker.Search(CheckedValue)
 		  If Matches Is Nil Then
-		    If Self.ServerHostField.Value <> CheckedValue Then
-		      Self.ServerHostField.Value = CheckedValue
+		    If Self.ServerHostField.Text <> CheckedValue Then
+		      Self.ServerHostField.Text = CheckedValue
 		    End If
 		    Return
 		  End If
 		  
-		  Self.ServerHostField.Value = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
-		  Self.ServerPortField.Value = Matches.SubExpressionString(1)
+		  Self.ServerHostField.Text = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
+		  Self.ServerPortField.Text = Matches.SubExpressionString(1)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckServerActionButton()
-		  Var Enabled As Boolean = Self.ServerHostField.Value.Length > 0 And Val(Self.ServerPortField.Value) > 0 And Self.ServerUserField.Value.Length > 0 And Self.ServerPassField.Value.Length > 0
+		  Var Enabled As Boolean = Self.ServerHostField.Text.Length > 0 And Val(Self.ServerPortField.Text) > 0 And Self.ServerUserField.Text.Length > 0 And Self.ServerPassField.Text.Length > 0
 		  If Self.ServerActionButton.Enabled <> Enabled Then
 		    Self.ServerActionButton.Enabled = Enabled
 		  End If
@@ -970,14 +982,14 @@ End
 		    If File.IsDirectory Then
 		      Child = Child + "/"
 		    End If
-		    Children.AddRow(Child)
+		    Children.Add(Child)
 		  Next
 		  Self.Browser.AppendChildren(Children)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mEngine_Wait(Sender As Beacon.FTPIntegrationEngine, Controller As Beacon.TaskWaitController)
+		Private Function mEngine_Wait(Sender As Beacon.FTPIntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  #Pragma Unused Sender
 		  
 		  Select Case Controller.Action
@@ -987,8 +999,9 @@ End
 		    Self.mBrowserRoot = Dictionary(Controller.UserData).Value("Root")
 		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
 		    Self.Browser.Reset()
+		    Return True
 		  End Select
-		End Sub
+		End Function
 	#tag EndMethod
 
 
@@ -1071,13 +1084,13 @@ End
 		Sub Action()
 		  Var GameIniPath As String = Self.Browser.CurrentPath
 		  Var Components() As String = GameIniPath.Split("/")
-		  If Components.LastRowIndex <= 2 Then
+		  If Components.LastIndex <= 2 Then
 		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
 		    Return
 		  End If
-		  Components.RemoveRowAt(Components.LastRowIndex) // Remove Game.ini
-		  Components.RemoveRowAt(Components.LastRowIndex) // Remove WindowsServer
-		  Components.RemoveRowAt(Components.LastRowIndex) // Remove Config
+		  Components.RemoveAt(Components.LastIndex) // Remove Game.ini
+		  Components.RemoveAt(Components.LastIndex) // Remove WindowsServer
+		  Components.RemoveAt(Components.LastIndex) // Remove Config
 		  
 		  // Should now equal the "Saved" directory
 		  Dictionary(Self.mActiveController.UserData).Value("path") = Components.Join("/")
@@ -1113,7 +1126,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PathSelected(Path As String)
-		  Self.BrowseActionButton.Enabled = Path.EndsWith("Game.ini")
+		  Self.BrowseActionButton.Enabled = Path.EndsWith(Beacon.ConfigFileGame)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1130,10 +1143,10 @@ End
 		  Self.CheckHostForPort()
 		  
 		  Self.mProfile = New Beacon.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Value
-		  Self.mProfile.Port = CDbl(Self.ServerPortField.Value)
-		  Self.mProfile.Username = Self.ServerUserField.Value
-		  Self.mProfile.Password = Self.ServerPassField.Value
+		  Self.mProfile.Host = Self.ServerHostField.Text
+		  Self.mProfile.Port = CDbl(Self.ServerPortField.Text)
+		  Self.mProfile.Username = Self.ServerUserField.Text
+		  Self.mProfile.Password = Self.ServerPassField.Text
 		  
 		  Select Case Self.ServerModeMenu.SelectedRowIndex
 		  Case 1
@@ -1165,7 +1178,7 @@ End
 		      Self.ShowAlert("There was a problem connecting to the FTP server", ErrorMessage)
 		      Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		    Else
-		      Self.DiscoveringMessage.Value = Self.mEngine.Logs(True)
+		      Self.DiscoveringMessage.Text = Self.mEngine.Logs(True)
 		    End If
 		  End If
 		End Sub

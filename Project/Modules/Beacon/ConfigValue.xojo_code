@@ -1,67 +1,169 @@
 #tag Class
 Protected Class ConfigValue
 	#tag Method, Flags = &h0
-		Sub Constructor(Header As String, Key As String, Value As String)
-		  Self.mHeader = Header
-		  Self.mKey = Key
-		  Self.mValue = Value
+		Sub Constructor(Key As Beacon.ConfigKey, Command As String, Index As Integer = 0)
+		  Self.ParseCommand(Command)
+		  Self.mSortKey = Self.mAttributedKey + ":" + Index.ToString("00000")
+		  Self.mKeyDetails = Key
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub FillConfigDict(Dict As Dictionary, Values() As Beacon.ConfigValue)
-		  If Values = Nil Then
-		    Return
+		Sub Constructor(Key As Beacon.ConfigKey, Command As String, SortKey As String)
+		  Self.ParseCommand(Command)
+		  Self.mSortKey = SortKey
+		  Self.mKeyDetails = Key
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(File As String, Header As String, Command As String, Index As Integer = 0)
+		  Self.ParseCommand(Command)
+		  Self.mSortKey = Self.mAttributedKey + ":" + Index.ToString("00000")
+		  
+		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey)
+		  Var ConfigKey As Beacon.ConfigKey
+		  If Keys.Count >= 1 Then
+		    ConfigKey = Keys(0)
+		  Else
+		    ConfigKey = New Beacon.ConfigKey(File, Header, Self.mSimplifiedKey)
 		  End If
 		  
-		  For Each Value As Beacon.ConfigValue In Values
-		    Var SimplifiedKey As String = Value.SimplifiedKey
-		    
-		    Var Header As String = Value.Header
-		    Var Section As Dictionary
-		    If Dict.HasKey(Header) Then
-		      Section = Dict.Value(Header)
-		    Else
-		      Section = New Dictionary
-		    End If
-		    
-		    Var Arr() As String
-		    If Section.HasKey(SimplifiedKey) Then
-		      Arr = Section.Value(SimplifiedKey)
-		    End If
-		    Arr.AddRow(Value.Key + "=" + Value.Value)
-		    Section.Value(SimplifiedKey) = Arr
-		    
-		    Dict.Value(Header) = Section
-		  Next
+		  Self.mKeyDetails = ConfigKey
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(File As String, Header As String, Command As String, SortKey As String)
+		  Self.ParseCommand(Command)
+		  Self.mSortKey = SortKey
+		  
+		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey)
+		  Var ConfigKey As Beacon.ConfigKey
+		  If Keys.Count >= 1 Then
+		    ConfigKey = Keys(0)
+		  Else
+		    ConfigKey = New Beacon.ConfigKey(File, Header, Self.mSimplifiedKey)
+		  End If
+		  
+		  Self.mKeyDetails = ConfigKey
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ParseCommand(Command As String)
+		  Self.mCommand = Command
+		  
+		  Var Pos As Integer = Command.IndexOf("=")
+		  If Pos > -1 Then
+		    Self.mAttributedKey = Command.Left(Pos)
+		    Self.mValue = Command.Middle(Pos + 1).Trim
+		  Else
+		    Self.mAttributedKey = Command
+		    Self.mValue = "True"
+		  End If
+		  
+		  Self.mSimplifiedKey = Self.SimplifyKey(Self.mAttributedKey)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function SimplifyKey(Key As String) As String
+		  Var Idx As Integer = Key.IndexOf("[")
+		  If Idx = -1 Then
+		    Return Key
+		  Else
+		    Return Key.Left(Idx)
+		  End If
+		End Function
 	#tag EndMethod
 
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mHeader
+			  Return Self.mAttributedKey
+			End Get
+		#tag EndGetter
+		AttributedKey As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCommand
+			End Get
+		#tag EndGetter
+		Command As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mKeyDetails
+			End Get
+		#tag EndGetter
+		Details As Beacon.ConfigKey
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mKeyDetails.File
+			End Get
+		#tag EndGetter
+		File As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mHash.IsEmpty Then
+			    Var Raw As String = Self.mKeyDetails.File.Lowercase + ":" + Self.mKeyDetails.Header.Lowercase + ":" + Self.mSortKey.Lowercase
+			    #if DebugBuild
+			      Self.mHash = Raw
+			    #else
+			      Self.mHash = EncodeHex(Crypto.SHA256(Raw)).Lowercase
+			    #endif
+			  End If
+			  Return Self.mHash
+			End Get
+		#tag EndGetter
+		Hash As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mKeyDetails.Header
 			End Get
 		#tag EndGetter
 		Header As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mKey
-			End Get
-		#tag EndGetter
-		Key As String
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
-		Private mHeader As String
+		Private mAttributedKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKey As String
+		Private mCommand As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKeyDetails As Beacon.ConfigKey
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSimplifiedKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSortKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -71,15 +173,32 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Var Idx As Integer = Self.mKey.IndexOf("[")
-			  If Idx = -1 Then
-			    Return Self.mKey
-			  Else
-			    Return Self.mKey.Left(Idx)
-			  End If
+			  Return Self.mSimplifiedKey
 			End Get
 		#tag EndGetter
 		SimplifiedKey As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mKeyDetails Is Nil Then
+			    Return False
+			  Else
+			    Return (Self.mKeyDetails.MaxAllowed Is Nil) = False And Self.mKeyDetails.MaxAllowed.DoubleValue = 1
+			  End If
+			End Get
+		#tag EndGetter
+		SingleInstance As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSortKey
+			End Get
+		#tag EndGetter
+		SortKey As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -134,14 +253,6 @@ Protected Class ConfigValue
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Key"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Value"
 			Visible=false
 			Group="Behavior"
@@ -159,6 +270,46 @@ Protected Class ConfigValue
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SimplifiedKey"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Command"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="File"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Hash"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AttributedKey"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SortKey"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

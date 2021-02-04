@@ -5,7 +5,7 @@ Protected Module BeaconUI
 		  // Opacity = 1.0 means unchanged, may not actually be opaque
 		  // Opacity = 0.5 means cut opacity in half
 		  
-		  Return RGB(SourceColor.Red, SourceColor.Green, SourceColor.Blue, 255 + ((SourceColor.Alpha - 255) * Opacity))
+		  Return Color.RGB(SourceColor.Red, SourceColor.Green, SourceColor.Blue, 255 + ((SourceColor.Alpha - 255) * Opacity))
 		End Function
 	#tag EndMethod
 
@@ -22,7 +22,7 @@ Protected Module BeaconUI
 		  Var Blue As Integer = (Color1.Blue * Color1Percent) + (Color2.Blue * Color2Percent)
 		  Var Alpha As Integer = (Color1.Alpha * Color1Percent) + (Color2.Alpha * Color2Percent)
 		  
-		  Return RGB(Red, Green, Blue, Alpha)
+		  Return Color.RGB(Red, Green, Blue, Alpha)
 		End Function
 	#tag EndMethod
 
@@ -72,12 +72,12 @@ Protected Module BeaconUI
 		  #elseif TargetWin32
 		    Return G.FontAscent * 0.75
 		  #else
-		    Return G.FontAscent
+		    Return G.Font.Ascent
 		  #endif
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Capture(Extends Win As Window) As Picture
 		  #if TargetWin32
 		    Declare Sub BitBlt Lib "GDI32" (DestinationContext As Ptr, X As Integer, Y As Integer, Width As Integer, Height As Integer, SourceContext As Integer, SrcX As Integer, SrcY As Integer, RasterOperationCode As Integer)
@@ -128,7 +128,7 @@ Protected Module BeaconUI
 		    Var Pics() As Picture
 		    For Scale As Double = 1.0 To 3.0
 		      If Scale = HorizontalScale And Scale = VerticalScale Then
-		        Pics.AddRow(WindowPic)
+		        Pics.Add(WindowPic)
 		        Continue
 		      End If
 		      
@@ -136,7 +136,7 @@ Protected Module BeaconUI
 		      Pic.HorizontalResolution = 72 * Scale
 		      Pic.VerticalResolution = 72 * Scale
 		      Pic.Graphics.DrawPicture(WindowPic, 0, 0, Pic.Width, Pic.Height, 0, 0, WindowPic.Width, WindowPic.Height)
-		      Pics.AddRow(Pic)
+		      Pics.Add(Pic)
 		    Next
 		    
 		    Return New Picture(Win.Width, Win.Height, Pics)
@@ -160,85 +160,63 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateWeightIndicator(OffsetPercent As Double, WeightPercent As Double, WidthInPoints As Integer, HeightInPoints As Integer, Scale As Double = 1.0) As Picture
-		  Var Pic As New Picture(WidthInPoints * Scale, HeightInPoints * Scale)
-		  ' Pic.Graphics.ScaleX = Scale
-		  ' Pic.Graphics.ScaleY = Scale
-		  ' Pic.HorizontalResolution = 72 * Scale
-		  ' Pic.VerticalResolution = 72 * Scale
-		  
-		  Pic.Graphics.DrawingColor = &c000000
-		  Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
-		  
-		  Pic.Graphics.DrawingColor = &cFFFFFF
-		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
-		  
-		  Var CenterPoint As New Xojo.Point(Pic.Width / 2, Pic.Height / 2)
-		  
-		  Var Angles(1) As Double
-		  Angles(0) = (360 * OffsetPercent) - 90
-		  Angles(1) = (360 * (OffsetPercent + WeightPercent)) - 90
-		  
-		  Var Radius As Double = Min(Pic.Width, Pic.Height) / 2
-		  Var Distance As Double = Radius * 1.5
-		  Var Points(2) As Integer
-		  Points(1) = Round(CenterPoint.X)
-		  Points(2) = Round(CenterPoint.Y)
-		  For Each Angle As Double In Angles
-		    While Angle >= 270
-		      Angle = Angle - 360
-		    Wend
-		    Var Rads As Double = Angle * 0.01745329252
-		    Var LegX As Double = CenterPoint.X + (Distance * Cos(Rads))
-		    Var LegY As Double = CenterPoint.Y + (Distance * Sin(Rads))
-		    Points.AddRow(Round(LegX))
-		    Points.AddRow(Round(LegY))
-		  Next
-		  
-		  Pic.Graphics.DrawingColor = &c000000
-		  Pic.Graphics.FillPolygon(Points)
-		  
-		  Var Mask As New Picture(Pic.Width, Pic.Height, 32)
-		  Mask.Graphics.DrawingColor = &c000000
-		  Mask.Graphics.FillOval(0, 0, Mask.Width, Mask.Height)
-		  Pic.ApplyMask(Mask)
-		  
-		  Var Final As New Picture(Pic.Width, Pic.Height, 32)
-		  Final.Graphics.DrawPicture(Pic, 0, 0)
-		  
-		  Return New Picture(WidthInPoints, HeightInPoints, Array(Final))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Darker(Extends Source As Color, Percent As Double) As Color
 		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value * (1 - Percent))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color) As Color
-		  For Percent As Double = 0.0 To 1.0 Step 0.01
-		    Var Darker As Color = ForegroundColor.Darker(Percent)
-		    Var Lighter As Color = ForegroundColor.Lighter(Percent)
-		    If Darker.ContrastAgainst(BackgroundColor) >= 4.5 Then
-		      Return Darker
-		    ElseIf Lighter.ContrastAgainst(BackgroundColor) >= 4.5 Then
-		      Return Lighter
-		    End If
-		  Next
-		  
-		  Var WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
-		  Var BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
-		  If WhiteContrast > BlackContrast Then
-		    Return &cFFFFFF
-		  Else
-		    Return &c000000
+		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color, ChangeForeground As Boolean = True, RequiredContrast As Double = 4.5) As Color
+		  If mContrastingColors Is Nil Then
+		    mContrastingColors = New Dictionary
 		  End If
+		  
+		  Var TargetColor, TestAgainst As Color
+		  If ChangeForeground Then
+		    TargetColor = ForegroundColor
+		    TestAgainst = BackgroundColor
+		  Else
+		    TargetColor = BackgroundColor
+		    TestAgainst = ForegroundColor
+		  End If
+		  
+		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex + ":" + RequiredContrast.ToString + ":" + ChangeForeground.ToString
+		  If mContrastingColors.HasKey(Key) = False Then
+		    Var ComputedColor As Color
+		    
+		    Var Computed As Boolean
+		    For Percent As Double = 0.0 To 1.0 Step 0.01
+		      Var Darker As Color = TargetColor.Darker(Percent)
+		      Var Lighter As Color = TargetColor.Lighter(Percent)
+		      If Darker.ContrastAgainst(TestAgainst) >= RequiredContrast Then
+		        ComputedColor = Darker
+		        Computed = True
+		        Exit
+		      ElseIf Lighter.ContrastAgainst(TestAgainst) >= RequiredContrast Then
+		        ComputedColor = Lighter
+		        Computed = True
+		        Exit
+		      End If
+		    Next
+		    
+		    If Computed = False Then
+		      Var WhiteContrast As Double = TestAgainst.ContrastAgainst(&cFFFFFF)
+		      Var BlackContrast As Double = TestAgainst.ContrastAgainst(&c000000)
+		      If WhiteContrast > BlackContrast Then
+		        ComputedColor = &cFFFFFF
+		      Else
+		        ComputedColor = &c000000
+		      End If
+		    End If
+		    
+		    mContrastingColors.Value(Key) = ComputedColor
+		  End If
+		  
+		  Return mContrastingColors.Value(Key)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub FixTabFont(Extends Panel As TabPanel)
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
@@ -261,19 +239,35 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function GlobalizeCoordinate(Extends Target As RectControl, Coordinate As Xojo.Point) As Xojo.Point
+		  Var Globalized As New Xojo.Point(Target.Left + Coordinate.X, Target.Top + Coordinate.Y)
+		  
+		  Var Parent As Window = Target.Window
+		  Do
+		    Globalized = New Xojo.Point(Globalized.X + Parent.Left, Globalized.Y + Parent.Top)
+		    If Parent IsA ContainerControl Then
+		      Parent = ContainerControl(Parent).Window
+		    Else
+		      Return Globalized
+		    End If
+		  Loop
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
+		Protected Function IconWithColor(Icon As Picture, FillColor As Color, MinFactor As Double, MaxFactor As Double, Overlay As Picture = Nil) As Picture
 		  Var Width As Integer = Icon.Width
 		  Var Height As Integer = Icon.Height
 		  
 		  Var Bitmaps() As Picture
-		  For Factor As Integer = 1 To 3
+		  For Factor As Integer = MinFactor To MaxFactor
 		    Var ScaledIcon As Picture = Icon.BestRepresentation(Width, Height, Factor)
 		    
 		    Var Pic As New Picture(Width * Factor, Height * Factor)
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
-		    Pic.Graphics.DrawingColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
+		    Pic.Graphics.DrawingColor = Color.RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    
 		    Var Mask As New Picture(Width * Factor, Height * Factor)
@@ -289,14 +283,20 @@ Protected Module BeaconUI
 		    End If
 		    
 		    If FillColor.Alpha <> 0 Then
-		      Mask.Graphics.DrawingColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
+		      Mask.Graphics.DrawingColor = Color.RGB(255, 255, 255, 255 - FillColor.Alpha)
 		      Mask.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    End If
 		    
 		    Pic.ApplyMask(Mask)
-		    Bitmaps.AddRow(Pic)
+		    Bitmaps.Add(Pic)
 		  Next
 		  Return New Picture(Width, Height, Bitmaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
+		  Return IconWithColor(Icon, FillColor, 1, 3, Overlay)
 		End Function
 	#tag EndMethod
 
@@ -334,7 +334,7 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub RemoveAllRows(Extends Menu As MenuItem)
 		  For I As Integer = Menu.LastRowIndex DownTo 0
 		    Menu.RemoveMenuAt(I)
@@ -342,7 +342,7 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ResizeCells(Extends Target As SegmentedButton)
 		  #if TargetMacOS
 		    Var Handle As Integer = Target.Handle
@@ -380,14 +380,41 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target64Bit))
+		Sub ShowAlert(Extends Win As MobileScreen, Message As String, Explanation As String)
+		  Win.ShowAlert(Message, Explanation)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
 		  ShowAlert(Win, Message, Explanation)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetIOS and (Target64Bit))
+		Protected Sub ShowAlert(Win As MobileScreen = Nil, Message As String, Explanation As String)
+		  #Pragma Unused Win
+		  
+		  Var Dialog As New MobileMessageBox
+		  Dialog.Title = Message
+		  Dialog.Message = Explanation
+		  Dialog.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Sub ShowAlert(Win As Window = Nil, Message As String, Explanation As String)
+		  If (Thread.Current Is Nil) = False Then
+		    // Can't show the alert right now
+		    Var Dict As New Dictionary
+		    Dict.Value("Window") = Win
+		    Dict.Value("Message") = Message
+		    Dict.Value("Explanation") = Explanation
+		    Call CallLater.Schedule(0, AddressOf ShowAlertLater, Dict)
+		    Return
+		  End If
+		  
 		  Try
 		    Win = Win.TrueWindow
 		  Catch Err As RuntimeException
@@ -400,7 +427,7 @@ Protected Module BeaconUI
 		  Dialog.Explanation = Explanation
 		  
 		  Try
-		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
+		    If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
 		      Call Dialog.ShowModal()
 		    Else
 		      Var FocusControl As RectControl = Win.Focus
@@ -414,25 +441,34 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private Sub ShowAlertLater(Argument As Variant)
+		  If Argument.IsNull = False And Argument IsA Dictionary Then
+		    Var Dict As Dictionary = Argument
+		    ShowAlert(Dict.Value("Window"), Dict.Value("Message").StringValue, Dict.Value("Explanation").StringValue)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowConfirm(Extends Win As Window, Account As Beacon.ExternalAccount) As Boolean
 		  Return ShowConfirm(Win, Account)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateCaption As String) As BeaconUI.ConfirmResponses
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As Window = Nil, Account As Beacon.ExternalAccount) As Boolean
 		  If Account Is Nil Then
 		    Return False
@@ -454,13 +490,13 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
 		  Try
 		    Win = Win.TrueWindow
@@ -482,7 +518,7 @@ Protected Module BeaconUI
 		  
 		  Var Result As MessageDialogButton
 		  Try
-		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
+		    If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
 		      Result = Dialog.ShowModal()
 		    Else
 		      Var FocusControl As RectControl = Win.Focus
@@ -505,29 +541,29 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowDeleteConfirmation(Extends Win As Window, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun, Restore)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ShowDeleteConfirmation(Extends Win As Window, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var Names() As String
 		  For Each Item As Beacon.NamedItem In Items
-		    Names.AddRow(Item.Label)
+		    Names.Add(Item.Label)
 		  Next
 		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var UniqueNames() As String
 		  Var UseGenericNames As Boolean
@@ -535,7 +571,7 @@ Protected Module BeaconUI
 		    If UniqueNames.IndexOf(Name) > -1 Then
 		      UseGenericNames = True
 		    Else
-		      UniqueNames.AddRow(Name)
+		      UniqueNames.Add(Name)
 		    End If
 		  Next
 		  UseGenericNames = UseGenericNames Or UniqueNames.Count > 8
@@ -544,7 +580,7 @@ Protected Module BeaconUI
 		  If Restore Then
 		    If UseGenericNames Then
 		      Message = "Are you sure you want to restore these " + Names.Count.ToString + " " + PluralNoun + " to their default settings?"
-		    ElseIf Names.LastRowIndex = 0 Then
+		    ElseIf Names.LastIndex = 0 Then
 		      Message = "Are you sure you want to restore the " + SingularNoun + " " + UniqueNames(0) + " to its default settings?"
 		    Else
 		      Message = "Are you sure you want to restore the " + PluralNoun + " " + Language.EnglishOxfordList(UniqueNames) + " to their default settings?"
@@ -552,7 +588,7 @@ Protected Module BeaconUI
 		  Else
 		    If UseGenericNames Then
 		      Message = "Are you sure you want to delete these " + Names.Count.ToString + " " + PluralNoun + "?"
-		    ElseIf Names.LastRowIndex = 0 Then
+		    ElseIf Names.LastIndex = 0 Then
 		      Message = "Are you sure you want to delete the " + SingularNoun + " " + UniqueNames(0) + "?"
 		    Else
 		      Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(UniqueNames) + "?"
@@ -560,6 +596,16 @@ Protected Module BeaconUI
 		  End If
 		  
 		  Return ShowConfirm(Win, Message, "This action cannot be undone.", If(Restore, "Restore", "Delete"), "Cancel")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WebContentSupported() As Boolean
+		  #if TargetMacOS
+		    Return SystemInformationMBS.IsHighSierra(True)
+		  #elseif TargetWindows
+		    Return SystemInformationMBS.IsWindows10(True)
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -572,6 +618,10 @@ Protected Module BeaconUI
 
 	#tag Property, Flags = &h21
 		Private mColorProfile As BeaconUI.ColorProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContrastingColors As Dictionary
 	#tag EndProperty
 
 

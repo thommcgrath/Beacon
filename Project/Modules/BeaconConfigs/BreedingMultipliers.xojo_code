@@ -2,22 +2,54 @@
 Protected Class BreedingMultipliers
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier", Self.BabyCuddleGracePeriodMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier", Self.BabyCuddleIntervalMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier", Self.BabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier", Self.BabyFoodConsumptionSpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier", Self.BabyImprintingStatScaleMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintAmountMultiplier", Self.BabyImprintAmountMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier", Self.BabyMatureSpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier", Self.EggHatchSpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LayEggIntervalMultiplier", Self.LayEggIntervalMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingIntervalMultiplier", Self.MatingIntervalMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingSpeedMultiplier", Self.MatingSpeedMultiplier.PrettyText))
-		End Sub
+		  Var Values() As Beacon.ConfigValue
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier=" + Self.BabyCuddleGracePeriodMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier=" + Self.BabyCuddleIntervalMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier=" + Self.BabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier=" + Self.BabyFoodConsumptionSpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier=" + Self.BabyImprintingStatScaleMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyImprintAmountMultiplier=" + Self.BabyImprintAmountMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier=" + Self.BabyMatureSpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier=" + Self.EggHatchSpeedMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LayEggIntervalMultiplier=" + Self.LayEggIntervalMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MatingIntervalMultiplier=" + Self.MatingIntervalMultiplier.PrettyText))
+		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MatingSpeedMultiplier=" + Self.MatingSpeedMultiplier.PrettyText))
+		  If (Self.mAllowAnyoneBabyImprintCuddle Is Nil) = False Then
+		    Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "AllowAnyoneBabyImprintCuddle=" + If(Self.AllowAnyoneBabyImprintCuddle, "True", "False")))
+		  End If
+		  If (Self.mDisableImprintDinoBuff Is Nil) = False Then
+		    Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "DisableImprintDinoBuff=" + If(Self.DisableImprintDinoBuff, "True", "False")))
+		  End If
+		  Return Values
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function GetManagedKeys() As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyImprintAmountMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "LayEggIntervalMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MatingIntervalMultiplier"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MatingSpeedMultiplier"))
+		  If (Self.mAllowAnyoneBabyImprintCuddle Is Nil) = False Then
+		    Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "AllowAnyoneBabyImprintCuddle"))
+		  End If
+		  If (Self.mDisableImprintDinoBuff Is Nil) = False Then
+		    Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "DisableImprintDinoBuff"))
+		  End If
+		  Return Keys
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -36,6 +68,17 @@ Inherits Beacon.ConfigGroup
 		  Self.mLayEggIntervalMultiplier = Dict.Lookup("LayEggIntervalMultiplier", 1.0)
 		  Self.mMatingIntervalMultiplier = Dict.Lookup("MatingIntervalMultiplier", 1.0)
 		  Self.mMatingSpeedMultiplier = Dict.Lookup("MatingSpeedMultiplier", 1.0)
+		  
+		  If Dict.HasKey("AllowAnyoneBabyImprintCuddle") Then
+		    Self.mAllowAnyoneBabyImprintCuddle = Dict.BooleanValue("AllowAnyoneBabyImprintCuddle", False)
+		  Else
+		    Self.mAllowAnyoneBabyImprintCuddle = Nil
+		  End If
+		  If Dict.HasKey("DisableImprintDinoBuff") Then
+		    Self.mDisableImprintDinoBuff = Dict.BooleanValue("DisableImprintDinoBuff", False)
+		  Else
+		    Self.mDisableImprintDinoBuff = Nil
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -54,13 +97,19 @@ Inherits Beacon.ConfigGroup
 		  Dict.Value("LayEggIntervalMultiplier") = Self.mLayEggIntervalMultiplier
 		  Dict.Value("MatingIntervalMultiplier") = Self.mMatingIntervalMultiplier
 		  Dict.Value("MatingSpeedMultiplier") = Self.mMatingSpeedMultiplier
+		  If (Self.mAllowAnyoneBabyImprintCuddle Is Nil) = False Then
+		    Dict.Value("AllowAnyoneBabyImprintCuddle") = Self.mAllowAnyoneBabyImprintCuddle.BooleanValue
+		  End If
+		  If (Self.mDisableImprintDinoBuff Is Nil) = False Then
+		    Dict.Value("DisableImprintDinoBuff") = Self.mDisableImprintDinoBuff.BooleanValue
+		  End If
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
-		  Return "BreedingMultipliers"
+		Function ConfigName() As String
+		  Return BeaconConfigs.NameBreedingMultipliers
 		End Function
 	#tag EndMethod
 
@@ -78,16 +127,19 @@ Inherits Beacon.ConfigGroup
 		  Self.mLayEggIntervalMultiplier = 1.0
 		  Self.mMatingIntervalMultiplier = 1.0
 		  Self.mMatingSpeedMultiplier = 1.0
+		  Self.mAllowAnyoneBabyImprintCuddle = False
+		  Self.mDisableImprintDinoBuff = False
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.BreedingMultipliers
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.BreedingMultipliers
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
+		  #Pragma Unused Mods
 		  
-		  If ParsedData.HasAnyKey("BabyMatureSpeedMultiplier", "EggHatchSpeedMultiplier", "BabyFoodConsumptionSpeedMultiplier", "LayEggIntervalMultiplier", "BabyCuddleGracePeriodMultiplier", "BabyCuddleIntervalMultiplier", "BabyCuddleLoseImprintQualitySpeedMultiplier", "BabyImprintingStatScaleMultiplier", "MatingIntervalMultiplier", "MatingSpeedMultiplier") = False Then
+		  If CommandLineOptions.HasAnyKey("AllowAnyoneBabyImprintCuddle", "DisableImprintDinoBuff") = False And ParsedData.HasAnyKey("BabyMatureSpeedMultiplier", "EggHatchSpeedMultiplier", "BabyFoodConsumptionSpeedMultiplier", "LayEggIntervalMultiplier", "BabyCuddleGracePeriodMultiplier", "BabyCuddleIntervalMultiplier", "BabyCuddleLoseImprintQualitySpeedMultiplier", "BabyImprintingStatScaleMultiplier", "MatingIntervalMultiplier", "MatingSpeedMultiplier", "AllowAnyoneBabyImprintCuddle", "DisableImprintDinoBuff") = False Then
 		    Return Nil
 		  End If
 		  
@@ -115,10 +167,40 @@ Inherits Beacon.ConfigGroup
 		  Multipliers.mBabyImprintAmountMultiplier = BabyImprintAmountMultiplier
 		  Multipliers.mMatingIntervalMultiplier = MatingIntervalMultiplier
 		  Multipliers.mMatingSpeedMultiplier = MatingSpeedMultiplier
+		  
+		  If CommandLineOptions.HasKey("AllowAnyoneBabyImprintCuddle") Then
+		    Multipliers.mAllowAnyoneBabyImprintCuddle = CommandLineOptions.BooleanValue("AllowAnyoneBabyImprintCuddle", False)
+		  ElseIf ParsedData.HasKey("AllowAnyoneBabyImprintCuddle") Then
+		    Multipliers.mAllowAnyoneBabyImprintCuddle = ParsedData.BooleanValue("AllowAnyoneBabyImprintCuddle", False)
+		  End If
+		  
+		  If CommandLineOptions.HasKey("DisableImprintDinoBuff") Then
+		    Multipliers.mDisableImprintDinoBuff = CommandLineOptions.BooleanValue("DisableImprintDinoBuff", False)
+		  ElseIf ParsedData.HasKey("DisableImprintDinoBuff") Then
+		    Multipliers.mDisableImprintDinoBuff = ParsedData.BooleanValue("DisableImprintDinoBuff", False)
+		  End If
+		  
 		  Return Multipliers
 		End Function
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mAllowAnyoneBabyImprintCuddle
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAllowAnyoneBabyImprintCuddle <> Value Then
+			    Self.mAllowAnyoneBabyImprintCuddle = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		AllowAnyoneBabyImprintCuddle As NullableBoolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -244,6 +326,23 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mDisableImprintDinoBuff
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mDisableImprintDinoBuff <> Value Then
+			    Self.mDisableImprintDinoBuff = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		DisableImprintDinoBuff As NullableBoolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mEggHatchSpeedMultiplier
 			End Get
 		#tag EndGetter
@@ -274,6 +373,10 @@ Inherits Beacon.ConfigGroup
 		#tag EndSetter
 		LayEggIntervalMultiplier As Double
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowAnyoneBabyImprintCuddle As NullableBoolean
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -335,6 +438,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Property, Flags = &h21
 		Private mBabyMatureSpeedMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDisableImprintDinoBuff As NullableBoolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
