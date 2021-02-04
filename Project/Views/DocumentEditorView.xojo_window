@@ -736,7 +736,21 @@ End
 		          Self.ActiveConfigSet = Self.ActiveConfigSet
 		        End If
 		      Case "help"
-		        Break
+		        Var HelpURL As String = Beacon.WebURL("/help/config_sets")
+		        If App.MainWindow Is Nil Then
+		          // No logical way for this to happen.
+		          ShowURL(HelpURL)
+		          Return
+		        End If
+		        
+		        Var Component As HelpComponent = App.MainWindow.Help(False)
+		        If Component Is Nil Then
+		          ShowURL(HelpURL)
+		          Return
+		        End If
+		        
+		        App.MainWindow.ShowHelp()
+		        Component.LoadURL(HelpURL)
 		      End Select
 		    Else
 		      Self.ActiveConfigSet = Choice.Tag.StringValue

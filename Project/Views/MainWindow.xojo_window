@@ -607,6 +607,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Help(SwitchTo As Boolean = True) As HelpComponent
+		  If SwitchTo Then
+		    Self.SwitchView(Self.PageHelp)
+		  End If
+		  
+		  Return Self.HelpComponent1
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mBusyWatcher_Action(Sender As Timer)
 		  If Self.Busy Then

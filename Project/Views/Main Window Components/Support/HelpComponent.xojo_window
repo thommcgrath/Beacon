@@ -54,13 +54,11 @@ End
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Self.mHelpLoaded Or BeaconUI.WebContentSupported = False Then
+		  If Self.mHelpLoaded Then
 		    Return
 		  End If
 		  
-		  Var URL As String = Self.HelpURL
-		  
-		  Self.HelpViewer.LoadURL(URL)
+		  Self.LoadURL(Self.HelpURL)
 		End Sub
 	#tag EndEvent
 
@@ -69,6 +67,17 @@ End
 		Shared Function HelpURL() As String
 		  Return Beacon.WebURL("/help/" + App.BuildVersion)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadURL(URL As String)
+		  If BeaconUI.WebContentSupported = False Then
+		    ShowURL(URL)
+		    Return
+		  End If
+		  
+		  Self.HelpViewer.LoadURL(URL)
+		End Sub
 	#tag EndMethod
 
 
