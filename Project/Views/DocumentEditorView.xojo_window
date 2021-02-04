@@ -351,6 +351,10 @@ End
 		    FileExport.Enable
 		  End If
 		  
+		  If Self.Document.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
+		    ViewSwitchToBaseConfigSet.Enable
+		  End If
+		  
 		  If Self.CurrentPanel <> Nil Then
 		    Self.CurrentPanel.EnableMenuItems()
 		  End If
@@ -437,6 +441,17 @@ End
 			
 			Self.Document.NewIdentifier()
 			Call Self.SaveAs()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function ViewSwitchToBaseConfigSet() As Boolean Handles ViewSwitchToBaseConfigSet.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
+			Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
 			Return True
 		End Function
 	#tag EndMenuHandler

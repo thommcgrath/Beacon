@@ -491,6 +491,13 @@ End
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function ViewHelp() As Boolean Handles ViewHelp.Action
+			Self.ShowHelp()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function ViewPresets() As Boolean Handles ViewPresets.Action
 			Self.ShowPresets()
 			Return True

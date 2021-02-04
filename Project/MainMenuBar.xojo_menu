@@ -290,6 +290,36 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem ViewHelp
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Help"
+         ShortcutKey = "4"
+         Shortcut = "Cmd+4"
+         MenuModifier = True
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator7
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem ViewSwitchToBaseConfigSet
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Switch to Base Config Set"
+         ShortcutKey = "B"
+         Shortcut = "Cmd+B"
+         MenuModifier = True
+         AutoEnabled = False
+         AutoEnable = False
+         Visible = True
+      End
    End
    Begin MenuItem EditorMenu
       SpecialMenu = 0
