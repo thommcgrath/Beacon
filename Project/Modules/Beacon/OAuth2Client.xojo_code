@@ -28,7 +28,7 @@ Protected Class OAuth2Client
 		  QueryParams.Value("redirect_uri") = Self.RedirectURI
 		  
 		  Self.StartTask()
-		  SimpleHTTP.Post(Self.mEndpoint, QueryParams, AddressOf Refresh_Callback, Nil)
+		  SimpleHTTP.Post(Self.mEndpoint, QueryParams, WeakAddressOf Refresh_Callback, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -149,7 +149,7 @@ Protected Class OAuth2Client
 		    RaiseEvent AuthenticationError("Socket error " + HTTPStatus.ToString("0"))
 		    Return
 		  ElseIf HTTPStatus <> 200 Then
-		    Self.mCheckStatusKey = CallLater.Schedule(5000, AddressOf CheckStatus)
+		    Self.mCheckStatusKey = CallLater.Schedule(5000, WeakAddressOf CheckStatus)
 		    Return
 		  End If
 		  
@@ -232,7 +232,7 @@ Protected Class OAuth2Client
 		  
 		  Self.StartTask()
 		  Self.mRequestID = RequestID
-		  Self.mCheckStatusKey = CallLater.Schedule(5000, AddressOf CheckStatus)
+		  Self.mCheckStatusKey = CallLater.Schedule(5000, WeakAddressOf CheckStatus)
 		  
 		  RaiseEvent ShowWaitingWindow()
 		End Sub
