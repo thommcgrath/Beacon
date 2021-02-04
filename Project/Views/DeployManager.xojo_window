@@ -1385,6 +1385,8 @@ End
 		        AnyCancelled = True
 		      ElseIf Engine.Finished And Engine.Errored = False Then
 		        Status = "Finished"
+		      ElseIf Engine.Throttled And Engine.Errored = False Then
+		        Status = "Waiting for another action…"
 		      Else
 		        Status = Engine.Logs(True)
 		      End If

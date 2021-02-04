@@ -64,6 +64,10 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Profile As Beacon.ServerProfile)
+		  If Self.ConnectionLock Is Nil Then
+		    Self.ConnectionLock = New Semaphore(Preferences.DeployMaxConnections)
+		  End If
+		  
 		  Self.mProfile = Profile
 		  Self.mID = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase()
 		  Self.Log("Getting started…")
@@ -309,6 +313,12 @@ Protected Class IntegrationEngine
 		  
 		  Self.mLastRefresh = System.Microseconds
 		  RaiseEvent RefreshServerStatus
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ReleaseConnection()
+		  Self.ConnectionLock.Release
 		End Sub
 	#tag EndMethod
 
@@ -575,6 +585,14 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub SignalConnection()
+		  Self.mThrottled = True
+		  Self.ConnectionLock.Signal
+		  Self.mThrottled = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub StartServer(Verbose As Boolean = True)
 		  Var EventFired As Boolean
 		  Var Confirmed As Boolean = Self.State = Self.StateRunning
@@ -708,6 +726,12 @@ Protected Class IntegrationEngine
 		  
 		  Self.CleanupCallbacks()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Throttled() As Boolean
+		  Return Self.mThrottled
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -853,6 +877,10 @@ Protected Class IntegrationEngine
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private Shared ConnectionLock As Semaphore
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mActiveWaitController As Beacon.TaskWaitController
 	#tag EndProperty
 
@@ -930,6 +958,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mStopMessage As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThrottled As Boolean
 	#tag EndProperty
 
 

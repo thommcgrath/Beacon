@@ -78,6 +78,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
@@ -96,6 +97,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          HasBackColor    =   False
          Height          =   782
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -131,6 +133,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -166,6 +169,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -201,6 +205,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   1120
@@ -267,6 +272,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0
@@ -302,6 +308,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   782
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          IsFrontmost     =   False
          Left            =   0

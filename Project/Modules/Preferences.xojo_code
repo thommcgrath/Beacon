@@ -281,6 +281,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("Deploy Max Connections", 3)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Deploy Max Connections") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployMaxConnections As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Deploy: Review Changes", False)
 			End Get
 		#tag EndGetter

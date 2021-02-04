@@ -141,6 +141,7 @@ Inherits Beacon.IntegrationEngine
 		    Path = Transfer.Path + "/" + Transfer.Filename
 		  End If
 		  
+		  Self.SignalConnection
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
 		  Self.SetTLSValues()
@@ -155,6 +156,7 @@ Inherits Beacon.IntegrationEngine
 		    Transfer.SetError("Could not download: " + Self.mSocket.LasterrorMessage + ", code " + Self.mSocket.Lasterror.ToString(Locale.Raw, "0"))
 		  End If
 		  Self.mSocketLock.Leave
+		  Self.ReleaseConnection
 		End Sub
 	#tag EndEvent
 
@@ -173,6 +175,7 @@ Inherits Beacon.IntegrationEngine
 		    Path = Transfer.Path + "/" + Transfer.Filename
 		  End If
 		  
+		  Self.SignalConnection
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
 		  Self.mSocket.OptionUpload = True
@@ -188,6 +191,7 @@ Inherits Beacon.IntegrationEngine
 		  Else
 		    Transfer.Success = True
 		  End If
+		  Self.ReleaseConnection
 		End Sub
 	#tag EndEvent
 
