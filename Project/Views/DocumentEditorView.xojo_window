@@ -722,8 +722,8 @@ End
 		  Next
 		  
 		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  Menu.AddMenu(New MenuItem("Manage Config Sets…", "beacon:manage"))
-		  Menu.AddMenu(New MenuItem("Learn more about Config Sets…", "beacon:help"))
+		  Menu.AddMenu(New MenuItem("Manage config sets…", "beacon:manage"))
+		  Menu.AddMenu(New MenuItem("Learn more about config sets…", "beacon:help"))
 		  
 		  Var Origin As Point = Self.ConfigSetPicker.GlobalizeCoordinate(Self.mConfigPickerMenuOrigin)
 		  Var Choice As MenuItem = Menu.PopUp(Origin.X, Origin.Y)
@@ -736,7 +736,7 @@ End
 		          Self.ActiveConfigSet = Self.ActiveConfigSet
 		        End If
 		      Case "help"
-		        Var HelpURL As String = Beacon.WebURL("/help/config_sets")
+		        Var HelpURL As String = HelpComponent.HelpURL("config_sets")
 		        If App.MainWindow Is Nil Then
 		          // No logical way for this to happen.
 		          ShowURL(HelpURL)
