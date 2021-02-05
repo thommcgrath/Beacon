@@ -64,8 +64,12 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function HelpURL() As String
-		  Return Beacon.WebURL("/help/" + App.BuildVersion)
+		Shared Function HelpURL(ChildPath As String = "") As String
+		  If ChildPath.IsEmpty = False And ChildPath.BeginsWith("/") = False Then
+		    ChildPath = "/" + ChildPath
+		  End If
+		  
+		  Return Beacon.WebURL("/help/" + App.BuildVersion + ChildPath)
 		End Function
 	#tag EndMethod
 
