@@ -18,13 +18,14 @@ $query = preg_replace('/\s+/', ' | ', trim($query));
 $query = preg_replace('/(\w+)/', '$1:*', $query);
 
 $database = BeaconCommon::Database();
+$version = BeaconCommon::NewestVersionForStage(3);
 
 $items = array();
-$results = $database->Query('SELECT COUNT(id) AS result_count FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $2 AND max_version >= $2;', $query, BeaconCommon::BeaconVersion());
+$results = $database->Query('SELECT COUNT(id) AS result_count FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $2 AND max_version >= $2;', $query, $version);
 $result_count = $results->Field('result_count');
 $name_map = [];
 if ($result_count > 0) {
-	$results = $database->Query('SELECT id, title, body, type, subtype, uri, mods.mod_id, mods.name AS mod_name, ts_rank(lexemes, keywords) AS rank FROM search_contents LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id), to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND GREATEST(search_contents.min_version, mods.min_version) <= $3 AND search_contents.max_version >= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, BeaconCommon::BeaconVersion());
+	$results = $database->Query('SELECT id, title, body, type, subtype, uri, mods.mod_id, mods.name AS mod_name, ts_rank(lexemes, keywords) AS rank FROM search_contents LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id), to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND GREATEST(search_contents.min_version, mods.min_version) <= $3 AND search_contents.max_version >= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, $version);
 	while (!$results->EOF()) {
 		$summary = $results->Field('body');
 		if (strlen($summary) > 200) {
