@@ -24,7 +24,7 @@ Begin Window DocumentImportWindow
    Resizable       =   "True"
    Resizeable      =   False
    SystemUIVisible =   "True"
-   Title           =   "Document Import"
+   Title           =   "Import"
    Visible         =   True
    Width           =   600
    Begin DocumentImportView DocumentImportView1
