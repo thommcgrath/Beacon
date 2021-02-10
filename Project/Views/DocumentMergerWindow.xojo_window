@@ -24,7 +24,7 @@ Begin BeaconDialog DocumentMergerWindow
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
-   Title           =   "Import From Project"
+   Title           =   "Import Results"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -50,7 +50,7 @@ Begin BeaconDialog DocumentMergerWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Select Groups to Import"
+      Text            =   "Import Results"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
