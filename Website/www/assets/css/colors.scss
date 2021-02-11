@@ -104,6 +104,10 @@
 	$explore-border-color: $separator-color;
 	$tag-red-fill: contrasting-color($background-color, #a61c2c);
 	$tag-red-text: contrasting-color($tag-red-fill, #ffffff);
+	$tag-grey-fill: contrasting-color($background-color, #808080);
+	$tag-grey-text: contrasting-color($tag-grey-fill, #ffffff);
+	$tag-blue-fill: contrasting-color($background-color, #1d4397);
+	$tag-blue-text: contrasting-color($tag-blue-fill, #ffffff);
 	
 	body {
 		color: $foreground-color;
@@ -141,6 +145,16 @@
 		&.red {
 			background-color: $tag-red-fill;
 			color: $tag-red-text;
+		}
+		
+		&.grey {
+			background-color: $tag-grey-fill;
+			color: $tag-grey-text;
+		}
+		
+		&.blue {
+			background-color: $tag-blue-fill;
+			color: $tag-blue-text;
 		}
 	}
 	

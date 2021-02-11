@@ -109,6 +109,14 @@ a {
 	&+& {
 		margin-left: 6px;
 	}
+	
+	&.left-space {
+		margin-left: 1em;
+	}
+	
+	&.right-space {
+		margin-right: 1em;
+	}
 }
 
 .text-left {

@@ -9,6 +9,7 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::AddHeaderLine('<script src="https://js.stripe.com/v3/"></script>');
 
 $database = BeaconCommon::Database();
+$stable_version = BeaconCommon::NewestVersionForStage(3);
 
 $results = $database->Query('SELECT product_id, stripe_sku, retail_price FROM products;');
 $product_details = [];
@@ -400,6 +401,13 @@ BeaconTemplate::FinishScript();
 				<td class="text-center bullet-column">&#10687;</td>
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
+			<?php if ($stable_version >= 10500300) { ?>
+			<tr>
+				<td>Decay and Spoil<?php if ($stable_version < 10600300) { ?><span class="tag blue mini left-space">New in Beacon 1.5</span><?php } ?><br><span class="smaller text-lighter">Change and preview item decay, decomposition, and spoil times.</span></td>
+				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<?php } ?>
 			<tr>
 				<td>Crafting Costs<br><span class="smaller text-lighter">Change the cost of any craftable item in Ark.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
