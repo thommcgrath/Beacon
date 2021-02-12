@@ -1,5 +1,7 @@
 <?php
 
+$stable_version = BeaconCommon::MinVersion();
+$suffix = $stable_version >= 10500300 ? '_15' : '';
 BeaconTemplate::StartStyles(); ?>
 <style>
 
@@ -23,19 +25,19 @@ BeaconTemplate::StartStyles(); ?>
 }
 
 #img_signin_menu {
-	background-image: url(/omni/welcome/menu.png);
+	background-image: url(/omni/welcome/menu<?php echo $suffix; ?>.png);
 	width: 150px;
 	height: 118px;
 }
 
 #img_signin_link {
-	background-image: url(/omni/welcome/signin.png);
+	background-image: url(/omni/welcome/signin<?php echo $suffix; ?>.png);
 	width: 150px;
 	height: 59px;
 }
 
 #img_signin_enable {
-	background-image: url(/omni/welcome/enable_cloud.png);
+	background-image: url(/omni/welcome/enable_cloud<?php echo $suffix; ?>.png);
 	width: 150px;
 	height: 59px;
 	clear: left;
@@ -43,13 +45,13 @@ BeaconTemplate::StartStyles(); ?>
 }
 
 #img_signin_options {
-	background-image: url(/omni/welcome/options.png);
+	background-image: url(/omni/welcome/options<?php echo $suffix; ?>.png);
 	width: 150px;
 	height: 59px;
 }
 
 #img_signin_fields {
-	background-image: url(/omni/welcome/fields.png);
+	background-image: url(/omni/welcome/fields<?php echo $suffix; ?>.png);
 	width: 150px;
 	height: 59px;
 	clear: left;
@@ -58,15 +60,15 @@ BeaconTemplate::StartStyles(); ?>
 
 @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
 	#img_signin_menu {
-		background-image: url(/omni/welcome/menu@2x.png);
+		background-image: url(/omni/welcome/menu<?php echo $suffix; ?>@2x.png);
 	}
 	
 	#img_signin_options {
-		background-image: url(/omni/welcome/options@2x.png);
+		background-image: url(/omni/welcome/options<?php echo $suffix; ?>@2x.png);
 	}
 	
 	#img_signin_fields {
-		background-image: url(/omni/welcome/fields@2x.png);
+		background-image: url(/omni/welcome/fields<?php echo $suffix; ?>@2x.png);
 	}
 }
 
