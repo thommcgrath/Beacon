@@ -1,6 +1,6 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
-header('Cache-Control: max-age 14400');
+header('Cache-Control: no-cache');
 ?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <div id="stable-table" class="downloads-table"></div>
 <div id="prerelease-table" class="downloads-table"></div>
