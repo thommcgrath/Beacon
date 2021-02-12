@@ -184,7 +184,7 @@ $stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_nu
 	<p>Links: <?php echo implode(', ', $prerelease_links); ?></p>
 </div>
 <?php } ?>
-<?php if ($stable_136->RecordCount() == 1) { ?>
+<?php if ($stable_136->RecordCount() == 1 && $build >= 10400000 && $build < 10500300) { ?>
 <h3 id="legacy">Legacy Stable Version 1.3.6</h3>
 <div class="indent">
 	<p>In very rare cases, some users on Windows 7 are unable to connect to Nitrado using Beacon 1.4 and newer. While we wait for a bug fix from our dev tool provider, Beacon 1.3.6 is available as an alternative.</p>
