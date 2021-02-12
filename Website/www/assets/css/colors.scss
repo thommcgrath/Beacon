@@ -598,6 +598,18 @@
 			}	
 		}
 	}
+	
+	.downloads-table {
+		.row {
+			border-color: $separator-color;
+			
+			&:first-child {
+				background-color: $accent-color;
+				color: $accent-text-color;
+				border-color: $accent-color;
+			}
+		}
+	}
 }
 
 @include setup-colors(#000000, #ffffff, #713a9a);

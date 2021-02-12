@@ -1167,6 +1167,41 @@ ul.object_list {
 	padding: 16px;
 }
 
+.downloads-table {
+	.row {
+		padding: 10px;
+		display: flex;
+		align-items: center;
+		border-width: 1px;
+		border-style: solid;
+		border-top-width: 0px;
+		
+		&:first-child {
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+			border-top-width: 1px;
+		}
+		
+		&:last-child {
+			border-bottom-left-radius: 10px;
+			border-bottom-right-radius: 10px;
+		}
+		
+		.label {
+			flex: 1 1;
+		}
+		
+		.button {
+			flex: 0 0 80px;
+			margin-left: 10px;
+		}
+	}
+	
+	&+.downloads-table {
+		margin-top: 20px;
+	}
+}
+
 @media (min-width: $breakpoint_mini) {
 	#header_logo {
 		height: 80px;
