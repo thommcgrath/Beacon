@@ -106,6 +106,9 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h0
 		Function Build(ForFile As String) As String
 		  Var Headers() As String = Self.Headers(ForFile)
+		  If ForFile = Beacon.ConfigFileGameUserSettings And Headers.IndexOf(Beacon.ServerSettingsHeader) = -1 Then
+		    Headers.Add(Beacon.ServerSettingsHeader)
+		  End If
 		  Var Sections() As String
 		  Var EOL As String = Encodings.UTF8.Chr(10)
 		  
