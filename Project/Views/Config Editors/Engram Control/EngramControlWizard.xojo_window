@@ -235,12 +235,15 @@ Begin BeaconDialog EngramControlWizard
       Width           =   80
    End
    Begin Thread WorkThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
 End
 #tag EndWindow
@@ -446,6 +449,7 @@ End
 		      End If
 		      
 		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPoints(Engram) = 0
 		      Config.RequiredPlayerLevel(Engram) = 0
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
@@ -463,6 +467,7 @@ End
 		        Continue
 		      End If
 		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPoints(Engram) = 0
 		      Config.RequiredPlayerLevel(Engram) = 0
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
@@ -476,6 +481,7 @@ End
 		      End If
 		      
 		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPoints(Engram) = 0
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
 		    Next
@@ -492,6 +498,7 @@ End
 		        Continue
 		      End If
 		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPoints(Engram) = 0
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
 		    Next
@@ -510,6 +517,7 @@ End
 		      End If
 		      
 		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPoints(Engram) = 0
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
 		    Next
@@ -574,6 +582,7 @@ End
 		        Continue
 		      End If
 		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPoints(Engram) = 0
 		      Config.RequiredPlayerLevel(Engram) = Level
 		      Config.Hidden(Engram) = False
 		      Self.Increment()
