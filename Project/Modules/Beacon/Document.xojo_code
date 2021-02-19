@@ -764,10 +764,15 @@ Implements ObservationKit.Observable
 		    
 		    // Doc.ConfigSet will add the states. We don't need them.
 		    Doc.mConfigSetStates.ResizeTo(-1)
-		    Var States() As Variant = Dict.Value("Config Set Priorities")
-		    For Each State As Dictionary In States
-		      Doc.mConfigSetStates.Add(Beacon.ConfigSetState.FromDictionary(State))
-		    Next
+		    If Dict.HasKey("Config Set Priorities") Then
+		      Try
+		        Var States() As Variant = Dict.Value("Config Set Priorities")
+		        For Each State As Dictionary In States
+		          Doc.mConfigSetStates.Add(Beacon.ConfigSetState.FromDictionary(State))
+		        Next
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
 		  ElseIf Dict.HasKey("Configs") Then
 		    Doc.ConfigSet(BaseConfigSetName) = LoadConfigSet(Dict.Value("Configs"), Identity, Doc)
 		  End If

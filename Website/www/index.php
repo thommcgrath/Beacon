@@ -6,6 +6,7 @@ BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that
 $hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
 
 $public_build = BeaconCommon::MinVersion();
+$hero_img_prefix = $public_build >= 10500300 ? 'hero15' : 'hero';
 
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
@@ -87,15 +88,27 @@ BeaconTemplate::StartStyles();
 	height: 0px;
 }
 
+<?php if ($hero_img_prefix === 'hero15') { ?>
 #hero.mac {
-	background-image: url(/assets/images/hero-mac.png);
+	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
 	padding-top: calc(764 / 1312 * 100%);
 }
 
 #hero.windows {
-	background-image: url(/assets/images/hero-windows.png);
+	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
 	padding-top: calc(764 / 1312 * 100%);
 }
+<?php } else { ?>
+#hero.mac {
+	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
+	padding-top: calc(493 / 800 * 100%);
+}
+
+#hero.windows {
+	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
+	padding-top: calc(523 / 800 * 100%);
+}
+<?php } ?>
 
 #nitrado_container {
 	margin-bottom: 2.5%;
@@ -129,22 +142,22 @@ BeaconTemplate::StartStyles();
 
 @media (prefers-color-scheme: dark) {
 	#hero.mac {
-		background-image: url(/assets/images/hero-mac-dark.png);
+		background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac-dark.png'); ?>);
 	}
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
 	#hero.mac {
-		background-image: url(/assets/images/hero-mac@2x.png);
+		background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac@2x.png'); ?>);
 	}
 
 	#hero.windows {
-		background-image: url(/assets/images/hero-windows@2x.png);
+		background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows@2x.png'); ?>);
 	}
 
 	@media (prefers-color-scheme: dark) {
 		#hero.mac {
-			background-image: url(/assets/images/hero-mac-dark@2x.png);
+			background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac-dark@2x.png'); ?>);
 		}
 	}
 }

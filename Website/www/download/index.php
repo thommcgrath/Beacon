@@ -1,213 +1,35 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
-
-$database = BeaconCommon::Database();
-$results = $database->Query("SELECT mac_url, win_32_url, win_64_url, win_combo_url, build_display, build_number, delta_version FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
-if ($results->RecordCount() != 1) {
-	echo 'Whoops, no version information was found.';
-	exit;
-}
-
-$primary_links = array();
-$alternate_links = array();
-$version = $results->Field('build_display');
-$build = intval($results->Field('build_number'));
-$stable_engrams_version = $results->Field('delta_version');
-
-if (BeaconCommon::IsMacOS()) {
-	$primary_links[] = array(
-		'label' => 'Download for Mac',
-		'url' => $results->Field('mac_url')
-	);
-	
-	if (is_null($results->Field('win_64_url')) === false) {
-		$alternate_links[] = array(
-			'label' => 'Download for Windows (64-bit)',
-			'url' => $results->Field('win_64_url')
-		);
-	}
-	if (is_null($results->Field('win_32_url')) === false) {
-		$alternate_links[] = array(
-			'label' => 'Download for Windows (32-bit)',
-			'url' => $results->Field('win_32_url')
-		);
-	}
-	if ((is_null($results->Field('win_64_url')) || is_null($results->Field('win_32_url'))) && is_null($results->Field('win_combo_url')) === false) {
-		$alternate_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_combo_url')
-		);
-	}
-} elseif (BeaconCommon::IsWindows()) {
-	$is_64 = BeaconCommon::IsWindows64();
-	
-	if ($is_64 && is_null($results->Field('win_64_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_64_url')
-		);
-		
-		if (is_null($results->Field('win_32_url')) === false) {
-			$alternate_links[] = array(
-				'label' => 'Download for Windows (32-bit)',
-				'url' => $results->Field('win_32_url')
-			);
-		}
-	} elseif ($is_64 === false && is_null($results->Field('win_32_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_32_url')
-		);
-		
-		if (is_null($results->Field('win_64_url')) === false) {
-			$alternate_links[] = array(
-				'label' => 'Download for Windows (64-bit)',
-				'url' => $results->Field('win_64_url')
-			);
-		}
-	} elseif (is_null($results->Field('win_combo_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_combo_url')
-		);
-	} elseif (is_null($results->Field('win_64_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_64_url')
-		);
-	} elseif (is_null($results->Field('win_32_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_32_url')
-		);
-	}
-	
-	$alternate_links[] = array(
-		'label' => 'Download for Mac',
-		'url' => $results->Field('mac_url')
-	);
-} else {
-	$primary_links[] = array(
-		'label' => 'Download for Mac',
-		'url' => $results->Field('mac_url')
-	);
-	
-	if (is_null($results->Field('win_64_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows (64-bit)',
-			'url' => $results->Field('win_64_url')
-		);
-	}
-	if (is_null($results->Field('win_32_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows (32-bit)',
-			'url' => $results->Field('win_32_url')
-		);
-	}
-	if ((is_null($results->Field('win_64_url')) || is_null($results->Field('win_32_url'))) && is_null($results->Field('win_combo_url')) === false) {
-		$primary_links[] = array(
-			'label' => 'Download for Windows',
-			'url' => $results->Field('win_combo_url')
-		);
-	}
-}
-
-$alternate_links[] = array(
-	'label' => 'System Requirements',
-	'url' => '#requirements'
-);
-
-$alternate_html = array();
-foreach ($alternate_links as $link) {
-	$alternate_html[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($link['url'])) . '" rel="nofollow">' . htmlentities($link['label']) . '</a>';
-}
-
-if ($stable_engrams_version >= 5) {
-	$results = $database->Query('SELECT path, created FROM update_files WHERE version = $1 AND type = \'Complete\';', $stable_engrams_version);
-	$last_database_update = new DateTime($results->Field('created'));
-	$engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
-} else {
-	$last_database_update = BeaconCommon::NewestUpdateTimestamp($build);
-	$engrams_url = 'classes?version=' . $build;
-}
-$prerelease = $database->Query('SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;', $build);
-$stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_number = 10306300;');
-
-?><h1>Current Version</h1>
-<p class="text-center">Version <?php echo $version; ?></p>
-<p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
-<p class="text-center"><?php foreach ($primary_links as $link) { ?><a class="button" href="<?php echo BeaconCommon::SignDownloadURL($link['url']); ?>" rel="nofollow"><?php echo htmlentities($link['label']); ?></a><?php } ?><br><span class="mini"><?php echo implode(' | ' , $alternate_html); ?></span></p>
-<h3>Engrams Database</h3>
-<div class="indent">
-	<p><a href="<?php echo $engrams_url; ?>" rel="nofollow">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
-</div>
-<?php if ($prerelease->RecordCount() == 1) {
-	
-	$prerelease_links = array('<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('mac_url'))) . '" rel="nofollow">Mac Download</a>');
-	$is_64 = BeaconCommon::IsMacOS() || BeaconCommon::IsWindows64();
-	
-	if (is_null($prerelease->Field('win_64_url')) && is_null($prerelease->Field('win_32_url'))) {
-		$prerelease_links[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('win_combo_url'))) . '" rel="nofolow">Windows Download</a>';
-	} else {
-		if (is_null($prerelease->Field('win_64_url')) === false) {
-			$label = 'Windows Download';
-			if ($is_64 === false && is_null($prerelease->Field('win_32_url')) === false) {
-				$label .= ' (64-bit)';
-			}
-			$prerelease_links[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('win_64_url'))) . '" rel="nofolow">' . $label . '</a>';
-		}
-		if (is_null($prerelease->Field('win_32_url')) === false) {
-			$label = 'Windows Download';
-			if ($is_64 === true && is_null($prerelease->Field('win_64_url')) === false) {
-				$label .= ' (32-bit)';
-			}
-			$prerelease_links[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('win_32_url'))) . '" rel="nofolow">' . $label . '</a>';
-		}
-	}
-	
-	$prerelease_links[] = '<a href="/history?stage=' . htmlentities($prerelease->Field('stage')) . '#build' . htmlentities($prerelease->Field('build_number')) . '">Release Notes</a>';
-	
-	$prerelease_engrams_version = $prerelease->Field('delta_version');
-	if ($prerelease_engrams_version == $stable_engrams_version) {
-		$prerelease_engrams_url = $engrams_url;
-	} elseif ($prerelease_engrams_version >= 5) {
-		$results = $database->Query('SELECT path FROM update_files WHERE version = $1 AND type = \'Complete\';', $prerelease_engrams_version);
-		$prerelease_engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
-	} else {
-		$prerelease_engrams_url = 'classes?version=' . $prerelease->Field('build_number');
-	}
-	$prerelease_links[] = '<a href="' . $prerelease_engrams_url . '" rel="nofollow">Engrams Database</a>';
-?>
-<h3 id="preview">Preview Release</h3>
-<div class="indent">
-	<p>Beacon <?php echo htmlentities($prerelease->Field('build_display')); ?> is available for testing. Preview releases may not be stable and users should make backups of any data they are not willing to lose. To create a backup, launch Beacon and choose &quot;Open Data Folder&quot; from the &quot;Help&quot; menu. The folder shown contains valuable user data. Copy the folder to a safe location, along with any Beacon files desired.</p>
-	<p>Links: <?php echo implode(', ', $prerelease_links); ?></p>
-</div>
-<?php } ?>
-<?php if ($stable_136->RecordCount() == 1) { ?>
-<h3 id="legacy">Legacy Stable Version 1.3.6</h3>
-<div class="indent">
-	<p>In very rare cases, some users on Windows 7 are unable to connect to Nitrado using Beacon 1.4 and newer. While we wait for a bug fix from our dev tool provider, Beacon 1.3.6 is available as an alternative.</p>
-	<p><a href="<?php echo htmlentities(BeaconCommon::SignDownloadURL($stable_136->Field('win_combo_url'))); ?>" rel="nofollow">Windows Download</a></p>
-</div>
-<?php } ?>
+header('Cache-Control: no-cache');
+?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
+<div id="stable-table" class="downloads-table"></div>
+<div id="prerelease-table" class="downloads-table"></div>
 <h3 id="requirements">System Requirements</h3>
 <div class="double_column">
 	<div class="column">
 		<p><strong>Mac</strong></p>
 		<ul>
-			<li>Big Sur (11), El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
+			<li id="mac_version_requirements">Big Sur (11), El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
 			<li>1280x720 screen resolution or greater. Retina screens will need 2560x1440 pixels or greater.</li>
 		</ul>
 	</div>
 	<div class="column">
 		<p><strong>Windows</strong></p>
 		<ul>
-			<li>Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, or newer.</li>
+			<li id="win_version_requirements">Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, or newer.</li>
 			<li>1280x720 screen resolution or greater. Windows scaling settings will affect this number. For example, a 150% scaling setting would require 1.5 times more pixels, which is 1920x1080. At 200% scaling, the minimum screen resolution is 2560x1440.</li>
 		</ul>
 	</div>
 </div><?php
+
+$database = BeaconCommon::Database();
+$download_links = [
+	'current' => BuildLinksForStage($database, 3)
+];
+$prerelease_stage = $database->Query('SELECT stage FROM updates WHERE build_number > $1 AND stage < 3 ORDER BY build_number DESC LIMIT 1;', $download_links['current']['build_number']);
+if ($prerelease_stage->RecordCount() === 1) {
+	$download_links['preview'] = BuildLinksForStage($database, $prerelease_stage->Field('stage'));
+}
 
 BeaconTemplate::StartScript();
 ?><script>
@@ -239,8 +61,180 @@ let updateScreenNotice = function() {
 	}
 };
 
-document.addEventListener('DOMContentLoaded', updateScreenNotice);
+let buildDownloadsTable = function() {
+	let agent = navigator.userAgent;
+	let isWindows = navigator.platform === 'Win32';
+	let isMac = navigator.platform === 'MacIntel';
+	let isWindows64 = isWindows && (agent.includes('x86_64') || agent.includes('x86-64') || agent.includes('Win64') || agent.includes('x64') || agent.includes('amd64') || agent.includes('AMD64') || agent.includes('WOW64') || agent.includes('x64_64'));
+	
+	let addChildRow = function(table, label, url, buttonCaption = 'Download') {
+		let childRow = document.createElement('div');
+		childRow.classList.add('row');
+		let childLabel = document.createElement('div');
+		childLabel.classList.add('label');
+		childLabel.innerHTML = label;
+		let childDownload = document.createElement('div');
+		childDownload.classList.add('button');
+		let childButton = document.createElement('a');
+		childButton.classList.add('button');
+		childButton.href = url;
+		childButton.innerText = buttonCaption;
+		childDownload.appendChild(childButton);
+		childRow.appendChild(childLabel);
+		childRow.appendChild(childDownload);
+		table.appendChild(childRow);
+	};
+	
+	let addChildRows = function(table, data, recommend) {
+		if (isWindows64) {
+			addChildRow(table, 'Windows 64-bit' + (recommend ? '<span class="tag blue mini left-space">Recommended</span>' : '') + '<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
+			addChildRow(table, 'Windows 32-bit<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
+			addChildRow(table, 'Mac<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
+		} else if (isWindows) {
+			addChildRow(table, 'Windows 32-bit' + (recommend ? '<span class="tag blue mini left-space">Recommended</span>' : '') + '<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
+			addChildRow(table, 'Windows 64-bit<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
+			addChildRow(table, 'Mac<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
+		} else if (isMac) {
+			addChildRow(table, 'Mac' + (recommend ? '<span class="tag blue mini left-space">Recommended</span>' : '') + '<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
+			addChildRow(table, 'Windows 64-bit<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
+			addChildRow(table, 'Windows 32-bit<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
+		} else {
+			let warningRow = document.createElement('div');
+			warningRow.classList.add('row');
+			let warningLabel = document.createElement('div');
+			warningLabel.classList.add('full');
+			warningLabel.classList.add('text-red');
+			warningLabel.innerText = 'Sorry, this version of Beacon is not compatible with your device. But just in case a mistake was made, here are the download links.';
+			warningRow.appendChild(warningLabel)
+			table.appendChild(warningRow);
+			
+			addChildRow(table, 'Mac<br><span class="mini text-lighter">For macOS ' + data.mac_display_versions + '</span>', data.mac_url);
+			addChildRow(table, 'Windows 64-bit<br><span class="mini text-lighter">For 64-bit versions of ' + data.win_display_versions + '</span>', data.win_64_url);
+			addChildRow(table, 'Windows 32-bit<br><span class="mini text-lighter">For 32-bit versions of ' + data.win_display_versions + '</span>', data.win_32_url);
+		}
+		addChildRow(table, 'Engrams Database, updated <time datetime="' + data.engrams_date + '">' + data.engrams_date_display + '</time>', data.engrams_url);
+		addChildRow(table, 'Release Notes', data.history_url, 'View');
+	};
+	
+	let download_data = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
+	let stable_table = document.getElementById('stable-table');
+	let prerelease_table = document.getElementById('prerelease-table');
+	
+	let current = download_data.current;
+	let headerRow = document.createElement('div');
+	headerRow.classList.add('row');
+	let headerBody = document.createElement('div');
+	headerBody.classList.add('full');
+	headerBody.innerText = 'Stable Version: Beacon ' + current.build_display;
+	headerRow.appendChild(headerBody);
+	stable_table.appendChild(headerRow);
+	
+	addChildRows(stable_table, current, true);
+	
+	let prerelease = download_data.preview;
+	if (prerelease) {
+		let headerRow = document.createElement('div');
+		headerRow.classList.add('row');
+		let headerBody = document.createElement('div');
+		headerBody.classList.add('full');
+		headerBody.innerText = 'Preview Version: Beacon ' + prerelease.build_display;
+		headerRow.appendChild(headerBody);
+		prerelease_table.appendChild(headerRow);
+		
+		
+		addChildRows(prerelease_table, prerelease, false);
+	} else {
+		prerelease_table.classList.add('hidden');
+	}
+	
+	document.getElementById('mac_version_requirements').innerText = 'macOS ' + current.mac_display_versions;
+	document.getElementById('win_version_requirements').innerText = current.win_display_versions;
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+	updateScreenNotice();
+	buildDownloadsTable();
+});
 
 </script><?php
 BeaconTemplate::FinishScript();
+
+function BuildLinksForStage(BeaconDatabase $database, int $stage) {
+	$results = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version, min_mac_version, min_win_version FROM updates WHERE stage = $1 ORDER BY build_number DESC LIMIT 1;", $stage);
+	if ($results->RecordCount() === 0) {
+		return null;
+	}
+	
+	$build = intval($results->Field('build_number'));
+	$delta_version = intval($results->Field('delta_version'));
+	$stage = intval($results->Field('stage'));
+	
+	$data = [
+		'mac_url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
+		'win_combo_url' => BeaconCommon::SignDownloadURL($results->Field('win_combo_url')),
+		'win_64_url' => BeaconCommon::SignDownloadURL($results->Field('win_64_url')),
+		'win_32_url' => BeaconCommon::SignDownloadURL($results->Field('win_32_url')),
+		'build_display' => $results->Field('build_display'),
+		'build_number' => $build,
+		'stage' => $stage
+	];
+	
+	$min_mac_version = $results->Field('min_mac_version');
+	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
+	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
+	$mac_versions = [];
+	if ($min_mac_version <= 101600) {
+		$mac_versions[] = '11 Big Sur';
+	}
+	if ($min_mac_version <= 101500) {
+		$mac_versions[] = '10.15 Catalina';
+	}
+	if ($min_mac_version <= 101400) {
+		$mac_versions[] = '10.14 Mojave';
+	}
+	if ($min_mac_version <= 101300) {
+		$mac_versions[] = '10.13 High Sierra';
+	}
+	if ($min_mac_version <= 101200) {
+		$mac_versions[] = '10.12 Sierra';
+	}
+	if ($min_mac_version <= 101100) {
+		$mac_versions[] = '10.11 El Capitan';
+	}
+	$data['mac_display_versions'] = BeaconCommon::ArrayToEnglish($mac_versions, 'or');
+	
+	$min_win_version = $results->Field('min_win_version');
+	list($win_major, $win_minor, $win_build) = explode('.', $min_win_version, 3);
+	$min_win_version = ($win_major * 1000000) + ($win_minor * 10000) + $win_build;
+	$win_versions = [];
+	if ($min_win_version <= 100000000) {
+		$win_versions[] = 'Windows 10';
+	}
+	if ($min_win_version <= 60309600) {
+		$win_versions[] = 'Windows 8.1';
+	}
+	if ($min_win_version <= 60309200) {
+		$win_versions[] = 'Windows 8';
+	}
+	if ($min_win_version <= 60107601) {
+		$win_versions[] = 'Windows 7 with Service Pack 1';
+	}
+	$data['win_display_versions'] = BeaconCommon::ArrayToEnglish($win_versions, 'or');
+	
+	if ($delta_version >= 5) {
+		$results = $database->Query('SELECT path, created FROM update_files WHERE version = $1 AND type = \'Complete\';', $delta_version);
+		$last_database_update = new DateTime($results->Field('created'));
+		$data['engrams_url'] = 'https://updates.usebeacon.app' . $results->Field('path');
+	} else {
+		$last_database_update = BeaconCommon::NewestUpdateTimestamp($build);
+		$data['engrams_url'] = BeaconCommon::AbsoluteURL('/classes?version=' . $build);
+	}
+	$data['engrams_date'] = $last_database_update->format('c');
+	$data['engrams_date_display'] = $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC';
+	
+	$data['history_url'] = BeaconCommon::AbsoluteURL('/history?stage=' . $stage . '#build' . $build);
+	
+	return $data;
+}
+
 ?>

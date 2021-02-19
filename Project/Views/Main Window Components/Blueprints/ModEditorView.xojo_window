@@ -86,6 +86,7 @@ Begin BeaconSubview ModEditorView
       _ScrollWidth    =   -1
    End
    Begin ClipboardWatcher Watcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   1000
@@ -619,7 +620,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As Beacon.Blueprint = BlueprintEditorDialog.Present(Self, Nil)
+		    Var Blueprint As Beacon.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ModID, Self.mController.ModName)
 		    If (Blueprint Is Nil) = False Then
 		      Self.mController.SaveBlueprint(Blueprint)
 		      Self.UpdateList()

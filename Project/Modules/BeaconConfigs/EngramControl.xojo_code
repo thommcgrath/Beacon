@@ -73,22 +73,16 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    If Not AutoUnlocked Then
-		      If Not Self.EffectivelyHidden(Engram) Then
+		    Var EffectivelyHidden As Boolean = Self.EffectivelyHidden(Engram)
+		    If Not EffectivelyHidden Then
+		      If AutoUnlocked Then
+		        Arguments.Add("EngramPointsCost=0")
+		        Arguments.Add("RemoveEngramPreReq=True")
+		      Else
 		        If Self.mOverrides.HasAttribute(Engram, Self.KeyRemovePrerequisites) Then
 		          Var RemovePrereq As Boolean = Self.mOverrides.Value(Engram, Self.KeyRemovePrerequisites).BooleanValue
 		          If RemovePrereq = True Then
 		            Arguments.Add("RemoveEngramPreReq=True")
-		          End If
-		        End If
-		        
-		        If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) Then
-		          Var Level As Integer = Round(Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).DoubleValue)
-		          Arguments.Add("EngramLevelRequirement=" + Level.ToString)
-		        Else
-		          Var Level As NullableDouble = Engram.RequiredPlayerLevel
-		          If (Level Is Nil) = False Then
-		            Arguments.Add("EngramLevelRequirement=" + Level.IntegerValue.ToString)
 		          End If
 		        End If
 		        
@@ -100,6 +94,16 @@ Inherits Beacon.ConfigGroup
 		          If (Points Is Nil) = False Then
 		            Arguments.Add("EngramPointsCost=" + Points.IntegerValue.ToString)
 		          End If
+		        End If
+		      End If
+		      
+		      If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) Then
+		        Var Level As Integer = Round(Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).DoubleValue)
+		        Arguments.Add("EngramLevelRequirement=" + Level.ToString)
+		      Else
+		        Var Level As NullableDouble = Engram.RequiredPlayerLevel
+		        If (Level Is Nil) = False Then
+		          Arguments.Add("EngramLevelRequirement=" + Level.IntegerValue.ToString)
 		        End If
 		      End If
 		    End If

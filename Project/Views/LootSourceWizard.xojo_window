@@ -762,7 +762,7 @@ Begin BeaconDialog LootSourceWizard
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         Text            =   "Min Sets:"
+         Text            =   "Min Item Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -841,7 +841,7 @@ Begin BeaconDialog LootSourceWizard
          TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
-         Text            =   "Max Sets:"
+         Text            =   "Max Item Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"

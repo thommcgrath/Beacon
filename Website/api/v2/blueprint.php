@@ -201,12 +201,12 @@ if ($method === 'GET') {
 function GetModIDs(array &$mod_ids, array $blueprints) {
 	foreach ($blueprints as $blueprint) {
 		if (isset($blueprint['mod']['id']) === false) {
-			BeaconAPI::ReplyError('Blueprint is missing mod id.', 400, $blueprint);
+			BeaconAPI::ReplyError('Blueprint is missing mod id.', $blueprint, 400);
 		}
 		
 		$mod_id = $blueprint['mod']['id'];
 		if (BeaconCommon::IsUUID($mod_id) === false) {
-			BeaconAPI::ReplyError('Blueprint mod id is not a v4 UUID.', 400, $blueprint);
+			BeaconAPI::ReplyError('Blueprint mod id is not a v4 UUID.', $blueprint, 400);
 		}
 		
 		if (in_array($mod_id, $mod_ids) === false) {

@@ -1614,11 +1614,21 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Blueprint As Beacon.Blueprint)
-		  If (Blueprint Is Nil) = False Then
-		    Self.mOriginalBlueprint = Blueprint.ImmutableVersion
-		  End If
-		  Super.Constructor
+		  Self.mOriginalBlueprint = Blueprint.ImmutableVersion
+		  Self.mModUUID = Blueprint.ModID
+		  Self.mModName = Blueprint.ModName
 		  
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(ModUUID As String, ModName As String)
+		  Self.mOriginalBlueprint = Nil
+		  Self.mModUUID = ModUUID
+		  Self.mModName = ModName
+		  
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
@@ -1736,7 +1746,31 @@ End
 		    Return Nil
 		  End If
 		  
+		  If Blueprint Is Nil Then
+		    Var Err As New NilObjectException
+		    Err.Message = "Blueprint cannot be nil"
+		    Raise Err
+		  End If
+		  
 		  Var Win As New BlueprintEditorDialog(Blueprint)
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  Var EditedBlueprint As Beacon.Blueprint
+		  If Not Win.mCancelled Then
+		    EditedBlueprint = Win.mModifiedBlueprint.ImmutableVersion
+		  End If
+		  Win.Close
+		  Return EditedBlueprint
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, ModUUID As String, ModName As String) As Beacon.Blueprint
+		  If Parent Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Win As New BlueprintEditorDialog(ModUUID, ModName)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Var EditedBlueprint As Beacon.Blueprint
@@ -1818,6 +1852,8 @@ End
 		  Blueprint.Label = Label
 		  Blueprint.Tags = Tags
 		  Blueprint.Availability = Availability
+		  Blueprint.ModID = Self.mModUUID
+		  Blueprint.ModName = Self.mModName
 		  
 		  Select Case Blueprint
 		  Case IsA Beacon.MutableEngram
@@ -2033,6 +2069,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mModifiedBlueprint As Beacon.Blueprint
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

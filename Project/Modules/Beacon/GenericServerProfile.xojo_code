@@ -1,6 +1,13 @@
 #tag Class
 Protected Class GenericServerProfile
 Inherits Beacon.ServerProfile
+	#tag Event
+		Sub WriteToDictionary(Dict As Dictionary)
+		  Dict.Value("Provider") = "Generic"
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(ProfileName As String, Mask As UInt64)
 		  // Do not call the parent constructor

@@ -2963,7 +2963,7 @@ End
 		  Var Creature As Beacon.Creature = Self.CreatureMenu.RowTagAt(Self.CreatureMenu.SelectedRowIndex)
 		  Var Config As BeaconConfigs.StatMultipliers = Self.Config(False)
 		  
-		  Var TopPos As Integer = 157
+		  Var TopPos As Integer = 137
 		  Var Stats() As Beacon.Stat = Beacon.Stats.All
 		  For Each Stat As Beacon.Stat In Stats
 		    Var Visible As Boolean = (Creature.StatsMask And Stat.Mask) = Stat.Mask
