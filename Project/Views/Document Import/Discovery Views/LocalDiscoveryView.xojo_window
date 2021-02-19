@@ -272,6 +272,7 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -312,6 +313,7 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   214
    End
    Begin Timer TextChangeDelayTrigger
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
@@ -428,13 +430,13 @@ End
 		  Case ConfigFileType.GameIni
 		    Self.mGameIniFile = File
 		    Self.mGameIniContent = Content
-		    OtherFilename = Beacon.ConfigFileGameUserSettings
+		    OtherFilename = File.Name.Replace(Beacon.ConfigFileGame, Beacon.ConfigFileGameUserSettings)
 		    OtherContent = Self.mGameUserSettingsIniContent
 		    OtherType = ConfigFileType.GameUserSettingsIni
 		  Case ConfigFileType.GameUserSettingsIni
 		    Self.mGameUserSettingsIniFile = File
 		    Self.mGameUserSettingsIniContent = Content
-		    OtherFilename = Beacon.ConfigFileGame
+		    OtherFilename = File.Name.Replace(Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGame)
 		    OtherContent = Self.mGameIniContent
 		    OtherType = ConfigFileType.GameIni
 		  End Select
@@ -445,7 +447,7 @@ End
 		  End If
 		  
 		  Var OtherFile As FolderItem = File.Parent.Child(OtherFilename)
-		  If OtherFile <> Nil And OtherFile.Exists Then
+		  If OtherFile <> Nil And OtherFile.Exists And OtherFile.NativePath.Compare(File.NativePath, ComparisonOptions.CaseSensitive) <> 0 And Self.ShowConfirm("Import '" + OtherFilename + "' as well?", "Beacon found a file named '" + OtherFilename + "' in the same folder that looks like it belongs with this one. Would you like to import it?", "Yes", "No") Then
 		    Self.AddFile(OtherFile, OtherType)
 		  End If
 		  
