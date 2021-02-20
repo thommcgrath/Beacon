@@ -864,7 +864,9 @@ Inherits Beacon.IntegrationEngine
 		  Else
 		    Transfer.Success = True
 		  End If
-		  Transfer.Content = Socket.LastContent
+		  If (Socket.LastContent Is Nil) = False Then
+		    Transfer.Content = Socket.LastContent
+		  End If
 		  Return Not Transfer.Success
 		End Function
 	#tag EndMethod
