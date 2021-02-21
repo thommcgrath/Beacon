@@ -483,7 +483,7 @@ Protected Module BeaconUI
 		  Else
 		    // Named account
 		    Message = "Beacon needs permission to access the " + Provider + " account " + Account.Label + ". Open your browser to authorize " + Provider + "?"
-		    Explanation = " Make sure you authenticate with the account + " + Account.Label + " to prevent errors."
+		    Explanation = " Make sure you authenticate with the account " + Account.Label + " to prevent errors."
 		  End If
 		  
 		  Return ShowConfirm(Win, Message, Explanation, "Continue", "Cancel")
