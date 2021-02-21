@@ -38,6 +38,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   62
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -150,6 +151,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -201,7 +203,7 @@ End
 		    Self.List.CellValueAt(Idx, Self.ColumnName) = Document.Name
 		    Self.List.CellValueAt(Idx, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellValueAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellValueAt(Idx, Self.ColumnUpdated) = Document.LastUpdated.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.CellValueAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		    Self.List.CellValueAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, ",##0")
 		    Self.List.RowTagAt(Idx) = Document
 		    Self.List.Selected(Idx) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
