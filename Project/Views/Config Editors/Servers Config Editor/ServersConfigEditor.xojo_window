@@ -172,6 +172,15 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Hidden()
+		  Var Container As ServerViewContainer = Self.CurrentView
+		  If (Container Is Nil) = False Then
+		    Container.SwitchedFrom()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.UpdateList()
 		End Sub
@@ -213,6 +222,17 @@ End
 		    Self.ServerList.CellValueAt(I, 0) = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Self.ServerList.Selected(I) = Selected
 		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
+		  #Pragma Unused FireSetupUI
+		  
+		  Var Container As ServerViewContainer = Self.CurrentView
+		  If (Container Is Nil) = False Then
+		    Container.SwitchedTo(UserData)
+		  End If
 		End Sub
 	#tag EndEvent
 

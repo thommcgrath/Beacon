@@ -38,9 +38,9 @@ Inherits BeaconSubview
 
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
-		  If IsEventImplemented("Shown") Then
-		    RaiseEvent Shown(UserData)
-		  Else
+		  Var FireSetupUI As Boolean
+		  RaiseEvent Shown(UserData, FireSetupUI)
+		  If FireSetupUI Then
 		    Self.SetupUI()
 		  End If
 		End Sub
@@ -285,7 +285,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Shown(UserData As Variant = Nil)
+		Event Shown(UserData As Variant, ByRef FireSetupUI As Boolean)
 	#tag EndHook
 
 
