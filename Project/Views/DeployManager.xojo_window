@@ -720,6 +720,10 @@ End
 		  Var ProfileBound As Integer = Self.Document.ServerProfileCount - 1
 		  For Idx As Integer = 0 To ProfileBound
 		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(Idx)
+		    If Profile.DeployCapable = False Then
+		      Continue
+		    End If
+		    
 		    Var Label As String = Profile.Name
 		    If Profile.SecondaryName.Length > 0 Then
 		      Label = Label + EndOfLine + Profile.SecondaryName
