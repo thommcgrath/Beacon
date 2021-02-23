@@ -8,7 +8,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Values() As Beacon.ConfigValue
 		  
-		  Values.Add(New Beacon.ConfigValue("CommandLineFlag", "-", "AutoDestroyStructures"))
+		  Values.Add(New Beacon.ConfigValue("CommandLineFlag", "-", "AutoDestroyStructures=" + If(Self.mAutoDestroyStructures, "True", "False")))
 		  
 		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "AutoDestroyDecayedDinos=" + If(Self.mAutoDestroyDecayedDinos, "True", "False")))
 		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "AutoDestroyOldStructuresMultiplier=" + Self.mAutoDestroyOldStructuresMultiplier.PrettyText))
