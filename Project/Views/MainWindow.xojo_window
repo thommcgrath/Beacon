@@ -603,19 +603,19 @@ End
 
 	#tag Method, Flags = &h0
 		Function HasModifications() As Boolean
-		  If Self.DocumentsComponent1.HasModifications Then
+		  If (Self.DocumentsComponent1 Is Nil) = False And Self.DocumentsComponent1.HasModifications Then
 		    Return True
 		  End If
 		  
-		  If Self.DashboardPane1.HasModifications Then
+		  If (Self.DashboardPane1 Is Nil) = False And Self.DashboardPane1.HasModifications Then
 		    Return True
 		  End If
 		  
-		  If Self.BlueprintsComponent1.HasModifications Then
+		  If (Self.BlueprintsComponent1 Is Nil) = False And Self.BlueprintsComponent1.HasModifications Then
 		    Return True
 		  End If
 		  
-		  If Self.PresetsComponent1.HasModifications Then
+		  If (Self.PresetsComponent1 Is Nil) = False And Self.PresetsComponent1.HasModifications Then
 		    Return True
 		  End If
 		End Function

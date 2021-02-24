@@ -535,10 +535,12 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.mName <> "" Then
+			  If Self.mName.IsEmpty = False Then
 			    Return Self.mName
-			  Else
+			  ElseIf Self.SecondaryName.IsEmpty = False Then
 			    Return Self.SecondaryName
+			  Else
+			    Return "An Unnamed ARK Server"
 			  End If
 			End Get
 		#tag EndGetter

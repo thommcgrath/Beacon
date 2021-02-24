@@ -64,13 +64,20 @@ Inherits URLConnection
 
 	#tag Method, Flags = &h0
 		Sub Send(Method As String, URL As String)
-		  Self.mOriginThread = Thread.Current
-		  Self.RequestHeader("User-Agent") = App.UserAgent
-		  Self.mLastURL = URL
-		  Super.Send(Method, URL)
-		  If Self.mOriginThread <> Nil Then
-		    Self.mOriginThread.Pause
-		  End If
+		  Try
+		    Self.mOriginThread = Thread.Current
+		    Self.RequestHeader("User-Agent") = App.UserAgent
+		    Self.mLastURL = URL
+		    Super.Send(Method, URL)
+		    If Self.mOriginThread <> Nil Then
+		      Self.mOriginThread.Pause
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Invalid URL: `" + URL + "`")
+		    Self.mLastContent = Nil
+		    Self.mLastHTTPStatus = 0
+		    Self.mLastException = Err
+		  End Try
 		End Sub
 	#tag EndMethod
 

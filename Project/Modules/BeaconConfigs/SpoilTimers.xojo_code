@@ -8,7 +8,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Values() As Beacon.ConfigValue
 		  
-		  Values.Add(New Beacon.ConfigValue("CommandLineFlag", "-", "AutoDestroyStructures"))
+		  Values.Add(New Beacon.ConfigValue("CommandLineFlag", "-", "AutoDestroyStructures=" + If(Self.mAutoDestroyStructures, "True", "False")))
 		  
 		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "AutoDestroyDecayedDinos=" + If(Self.mAutoDestroyDecayedDinos, "True", "False")))
 		  Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "AutoDestroyOldStructuresMultiplier=" + Self.mAutoDestroyOldStructuresMultiplier.PrettyText))
@@ -28,7 +28,9 @@ Inherits Beacon.ConfigGroup
 		  
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DisableDinoDecayPvE=" + If(Self.mDisableDinoDecayPvE, "True", "False")))
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DisableStructureDecayPvE=" + If(Self.mDisableStructureDecayPvE, "True", "False")))
-		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "PvEStructureDecayDestructionPeriod=" + Self.mPvEStructureDecayDestructionPeriod.ToString(Locale.Raw, "0")))
+		  If Self.mPvEStructureDecayDestructionPeriod <> 0 Then
+		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "PvEStructureDecayDestructionPeriod=" + Self.mPvEStructureDecayDestructionPeriod.ToString(Locale.Raw, "0")))
+		  End If
 		  Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "PvEStructureDecayPeriodMultiplier=" + Self.mPvEStructureDecayPeriodMultiplier.PrettyText))
 		  
 		  Return Values

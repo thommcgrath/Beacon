@@ -737,7 +737,7 @@ End
 		    Self.List.CellValueAt(I, Self.ColumnName) = Document.Name
 		    Self.List.CellValueAt(I, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellValueAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
-		    Self.List.CellValueAt(I, Self.ColumnUpdated) = Document.LastUpdated.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.CellValueAt(I, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		    Self.List.CellValueAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, ",##0")
 		    Self.List.RowTagAt(I) = Document
 		    Self.List.Selected(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1

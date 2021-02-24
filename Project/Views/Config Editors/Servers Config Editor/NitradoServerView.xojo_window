@@ -282,6 +282,15 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Hidden()
+		  If Self.mRefreshKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mRefreshKey)
+		    Self.mRefreshKey = ""
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
 		  If Account Is Nil Then
@@ -299,6 +308,10 @@ End
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
+		  
+		  If Self.mRefreshKey.IsEmpty And Self.Auth.IsAuthenticated Then
+		    Self.RefreshServerStatus()
+		  End If
 		  
 		  Self.AdminNotesField.Text = Self.mProfile.AdminNotes
 		  Self.SettingsView.RefreshUI()
@@ -333,7 +346,11 @@ End
 		  
 		  Self.UpdateStatusDisplay()
 		  
-		  Self.mRefreshKey = CallLater.Schedule(5000, WeakAddressOf RefreshServerStatus)
+		  If Self.IsFrontmost Then
+		    Self.mRefreshKey = CallLater.Schedule(5000, WeakAddressOf RefreshServerStatus)
+		  Else
+		    Self.mRefreshKey = ""
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -389,6 +406,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
+		  If Self.mRefreshKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mRefreshKey)
+		  End If
+		  
 		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
 		  If Account Is Nil Then
 		    Return

@@ -47,8 +47,12 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastUpdated() As DateTime
-		  Return Self.mLastUpdated
+		Function LastUpdated(InTimeZone As TimeZone = Nil) As DateTime
+		  If InTimeZone Is Nil Or Self.mLastUpdated Is Nil Then
+		    Return Self.mLastUpdated
+		  Else
+		    Return New DateTime(Self.mLastUpdated.SecondsFrom1970, InTimeZone)
+		  End If
 		End Function
 	#tag EndMethod
 

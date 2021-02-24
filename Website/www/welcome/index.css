@@ -1,6 +1,6 @@
 body {
 	margin: 0px;
-	font-family: source-code-pro, monospace;
+	font-family: acumin-pro, sans-serif;
 	font-weight: 400;
 	font-style: normal;
 	overflow: hidden;
@@ -139,6 +139,54 @@ button:enabled:active {
 
 #navigator_pips .pip:hover {
 	cursor: pointer;
+}
+
+.duo {
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: space-between;
+	width: 620px;
+	height: 308px;
+}
+
+.duo .duo-text *:first-child, .duo .duo-image *:first-child {
+	margin-top: 0px;
+}
+
+.duo .duo-text *:last-child, .duo .duo-image *:last-child {
+	margin-bottom: 0px;
+}
+
+.duo.duo-left {
+}
+
+.duo.duo-right {
+	flex-direction: row-reverse;
+}
+
+.duo .duo-image {
+	flex: 0 1 300px;
+	text-align: center;
+}
+
+.duo .duo-image * {
+	max-width: 100%;
+}
+
+.duo .duo-image img {
+	display: block;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.duo .duo-text {
+	flex: 0 1 300px;
+	font-size: 11pt;
+}
+
+.duo .duo-text h1 {
+	font-size: 16pt;
 }
 
 @media (prefers-color-scheme: dark) {

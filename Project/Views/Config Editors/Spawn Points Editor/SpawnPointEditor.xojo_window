@@ -1120,7 +1120,15 @@ End
 		    End If
 		    
 		    Var UUID As String = Entry.Key
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(UUID)
+		    Var Creature As Beacon.Creature
+		    Try
+		      Creature = Beacon.Data.GetCreatureByID(UUID)
+		    Catch Err As UnsupportedFormatException
+		      Var Creatures() As Beacon.Creature = Beacon.Data.GetCreaturesByPath(UUID, Self.Document.Mods)
+		      If Creatures.Count > 0 Then
+		        Creature = Creatures(0)
+		      End If
+		    End Try
 		    If Creature Is Nil Then
 		      Continue
 		    End If
