@@ -155,7 +155,7 @@ Begin ContainerControl CommonServerSettingsView
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
