@@ -90,76 +90,82 @@ Inherits Beacon.ConfigGroup
 		  For Idx As Integer = Lines.LastIndex DownTo 0
 		    Lines(Idx) = Lines(Idx).Trim
 		    If Lines(Idx).IsEmpty Or Lines(Idx).BeginsWith("//") Then
-		      Lines.Remove(Idx)
+		      Lines.RemoveAt(Idx)
 		    End If
 		  Next
 		  
-		  // Next, server-specific blocks are important
-		  Var HeaderStack() As String = Array(DefaultHeader)
-		  Var ServersStack() As String = Array("")
-		  Var Map As New Dictionary
-		  Var MapKey As String = ""
-		  For Idx As Integer = 0 To Lines.LastIndex
-		    Var Line As String = Lines(Idx)
-		    
-		    If Line.BeginsWith("#Server") Then
-		      Var IDList As String = Line.Middle(Line.IndexOf(" ") + 1).Trim
-		      HeaderStack.Add(HeaderStack(HeaderStack.LastIndex))
-		      ServersStack.Add(IDList)
-		      MapKey = ServersStack.Join(".")
-		      Continue
-		    ElseIf Line.BeginsWith("#End") Then
-		      If ServersStack.Count > 1 Then
-		        ServersStack.RemoveAt(ServersStack.LastIndex)
-		        HeaderStack.RemoveAt(HeaderStack.LastIndex)
+		  Try
+		    // Next, server-specific blocks are important
+		    Var HeaderStack() As String = Array(DefaultHeader)
+		    Var ServersStack() As String = Array("")
+		    Var Map As New Dictionary
+		    Var MapKey As String = ""
+		    For Idx As Integer = 0 To Lines.LastIndex
+		      Var Line As String = Lines(Idx)
+		      
+		      If Line.BeginsWith("#Server") Then
+		        Var IDList As String = Line.Middle(Line.IndexOf(" ") + 1).Trim
+		        HeaderStack.Add(HeaderStack(HeaderStack.LastIndex))
+		        ServersStack.Add(IDList)
 		        MapKey = ServersStack.Join(".")
-		        
-		        // Switch the context back
-		        Line = "[" + HeaderStack(HeaderStack.LastIndex) + "]"
-		      End If
-		    ElseIf Line.BeginsWith("[") And Line.EndsWith("]") Then
-		      Var Header As String = Line.Middle(1, Line.Length - 2)
-		      HeaderStack.Remove(HeaderStack.LastIndex)
-		      HeaderStack.Add(Header)
-		    ElseIf Line.IsEmpty Then
-		      Continue
-		    End If
-		    
-		    Var ContextLines() As String
-		    If Map.HasKey(MapKey) Then
-		      ContextLines = Map.Value(MapKey)
-		    End If
-		    ContextLines.Add(Line)
-		    Map.Value(MapKey) = ContextLines
-		  Next
-		  
-		  Var FinishedLines() As String
-		  Var ProfileShort As String
-		  If (Profile Is Nil) = False Then
-		    ProfileShort = Profile.ProfileID.Left(8)
-		  End If
-		  For Each Entry As DictionaryEntry In Map
-		    Var Key As String = Entry.Key
-		    If Key.IsEmpty = False Then
-		      If (Profile Is Nil) Then
+		        Continue
+		      ElseIf Line.BeginsWith("#End") Then
+		        If ServersStack.Count > 1 Then
+		          ServersStack.RemoveAt(ServersStack.LastIndex)
+		          HeaderStack.RemoveAt(HeaderStack.LastIndex)
+		          MapKey = ServersStack.Join(".")
+		          
+		          // Switch the context back
+		          Line = "[" + HeaderStack(HeaderStack.LastIndex) + "]"
+		        End If
+		      ElseIf Line.BeginsWith("[") And Line.EndsWith("]") Then
+		        Var Header As String = Line.Middle(1, Line.Length - 2)
+		        HeaderStack.RemoveAt(HeaderStack.LastIndex)
+		        HeaderStack.Add(Header)
+		      ElseIf Line.IsEmpty Then
 		        Continue
 		      End If
 		      
-		      Var Components() As String = Key.Split(".")
-		      For Each Component As String In Components
-		        If Component.IsEmpty = False And Component.IndexOf(ProfileShort) = -1 Then
-		          Continue For Entry
-		        End If
-		      Next
-		    End If
-		    
-		    Var ContextLines() As String = Entry.Value
-		    For Each Line As String In ContextLines
-		      FinishedLines.Add(Line)
+		      Var ContextLines() As String
+		      If Map.HasKey(MapKey) Then
+		        ContextLines = Map.Value(MapKey)
+		      End If
+		      ContextLines.Add(Line)
+		      Map.Value(MapKey) = ContextLines
 		    Next
-		  Next
-		  
-		  Return FinishedLines.Join(EndOfLine)
+		    
+		    Var FinishedLines() As String
+		    Var ProfileShort As String
+		    If (Profile Is Nil) = False Then
+		      ProfileShort = Profile.ProfileID.Left(8)
+		    End If
+		    For Each Entry As DictionaryEntry In Map
+		      Var Key As String = Entry.Key
+		      If Key.IsEmpty = False Then
+		        If (Profile Is Nil) Then
+		          Continue
+		        End If
+		        
+		        Var Components() As String = Key.Split(".")
+		        For Each Component As String In Components
+		          If Component.IsEmpty = False And Component.IndexOf(ProfileShort) = -1 Then
+		            Continue For Entry
+		          End If
+		        Next
+		      End If
+		      
+		      Var ContextLines() As String = Entry.Value
+		      For Each Line As String In ContextLines
+		        FinishedLines.Add(Line)
+		      Next
+		    Next
+		    
+		    // And put it all back together
+		    Return FinishedLines.Join(EndOfLine)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName)
+		    Return Lines.Join(EndOfLine)
+		  End Try
 		End Function
 	#tag EndMethod
 
