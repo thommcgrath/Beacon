@@ -250,7 +250,7 @@ Protected Class OAuth2Client
 		  #Pragma Unused Tag
 		  
 		  If Status <= 0 Then
-		    If Content Is Nil Then
+		    If (Content Is Nil) Or Content.Size < 1 Then
 		      App.Log("Socket error " + Status.ToString("0") + ": Nil content")
 		    Else
 		      App.Log("Socket error " + Status.ToString("0") + ": " + Content.StringValue(0, Content.Size))
