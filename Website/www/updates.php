@@ -85,7 +85,7 @@ if ($results->RecordCount() == 0) {
 $values = array(
 	'build' => intval($results->Field('build_number')),
 	'version' => $results->Field('build_display'),
-	'preview' => $results->Field('preview'),
+	'preview' => ($current_build < 10500000) ? 'Beacon\'s biggest update ever is here!' : $results->Field('preview'),
 	'notes_url' => BeaconCommon::AbsoluteURL('/history' . (intval($results->Field('stage')) != 3 ? '?stage=' . $results->Field('stage') : '')),
 	'mac' => array(
 		'url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
