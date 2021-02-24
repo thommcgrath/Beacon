@@ -67,7 +67,7 @@ Protected Interface Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReportException(Err As RuntimeException)
+		Sub ReportException(Err As RuntimeException, Comments As String = "")
 		  
 		End Sub
 	#tag EndMethod

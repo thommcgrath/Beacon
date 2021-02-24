@@ -1799,7 +1799,12 @@ End
 		      Continue
 		    End If
 		    
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(Me.RowTagAt(I))
+		    Var Creature As Beacon.Creature
+		    Try
+		      Creature = Beacon.Data.GetCreatureByID(Me.RowTagAt(I))
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Creature UUID: " + Me.RowTagAt(I).StringValue)
+		    End Try
 		    If Creature Is Nil Then
 		      Continue
 		    End If

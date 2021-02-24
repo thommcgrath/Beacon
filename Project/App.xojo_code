@@ -1148,9 +1148,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReportException(Err As RuntimeException)
+		Sub ReportException(Err As RuntimeException, Comments As String = "")
 		  // Does not display the exception to the user, instead uploads it directly to the server.
-		  ExceptionWindow.Report(Err)
+		  ExceptionWindow.Report(Err, Comments)
 		End Sub
 	#tag EndMethod
 
