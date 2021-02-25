@@ -24,7 +24,7 @@ Protected Class ConfigOrganizer
 		      // Key does not exist yet
 		      Siblings.Add(Value)
 		      Self.mValues.Value(Value.Hash) = Siblings
-		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, header, simplekey) VALUES (?1, ?2, ?3, ?4);", Value.Hash, Value.File, Value.Header, Value.SimplifiedKey)
+		      Self.mIndex.ExecuteSQL("INSERT INTO keymap (hash, file, header, simplekey, sortkey) VALUES (?1, ?2, ?3, ?4, ?5);", Value.Hash, Value.File, Value.Header, Value.SimplifiedKey, Value.SortKey)
 		      Continue
 		    End If
 		    
@@ -119,7 +119,7 @@ Protected Class ConfigOrganizer
 		    // This is special cased so that launch options get sorted with the rest of ServerSettings
 		    Var Values() As Beacon.ConfigValue
 		    If ForFile = Beacon.ConfigFileGameUserSettings And Header = Beacon.ServerSettingsHeader Then
-		      Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE (file = ?1 AND header = ?2) OR file IN ('CommandLineOption', 'CommandLineFlag') ORDER BY simplekey;", ForFile, Header)
+		      Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE (file = ?1 AND header = ?2) OR file IN ('CommandLineOption', 'CommandLineFlag') ORDER BY sortkey;", ForFile, Header)
 		      Values = Self.FilteredValues(Rows)
 		    Else
 		      Values = Self.FilteredValues(ForFile, Header)
@@ -152,7 +152,7 @@ Protected Class ConfigOrganizer
 		  Self.mValues = New Dictionary
 		  Self.mIndex = New SQLiteDatabase
 		  Self.mIndex.Connect
-		  Self.mIndex.ExecuteSQL("CREATE TABLE keymap (hash TEXT NOT NULL PRIMARY KEY COLLATE NOCASE, file TEXT NOT NULL COLLATE NOCASE, header TEXT NOT NULL COLLATE NOCASE, simplekey TEXT NOT NULL COLLATE NOCASE);")
+		  Self.mIndex.ExecuteSQL("CREATE TABLE keymap (hash TEXT NOT NULL PRIMARY KEY COLLATE NOCASE, file TEXT NOT NULL COLLATE NOCASE, header TEXT NOT NULL COLLATE NOCASE, simplekey TEXT NOT NULL COLLATE NOCASE, sortkey TEXT NOT NULL COLLATE NOCASE);")
 		End Sub
 	#tag EndMethod
 
@@ -216,7 +216,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function FilteredValues() As Beacon.ConfigValue()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap ORDER BY file, header, simplekey;")
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap ORDER BY file, header, sortkey;")
 		  Return Self.FilteredValues(Rows)
 		End Function
 	#tag EndMethod
@@ -243,14 +243,14 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function FilteredValues(ForFile As String) As Beacon.ConfigValue()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 ORDER BY header, simplekey;", ForFile)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 ORDER BY header, sortkey;", ForFile)
 		  Return Self.FilteredValues(Rows)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function FilteredValues(ForFile As String, ForHeader As String) As Beacon.ConfigValue()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY simplekey;", ForFile, ForHeader)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
 		  Return Self.FilteredValues(Rows)
 		End Function
 	#tag EndMethod
@@ -282,7 +282,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function Keys(ForFile As String, ForHeader As String) As String()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY simplekey;", ForFile, ForHeader)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
 		  Var Keys() As String
 		  For Each Row As DatabaseRow In Rows
 		    Keys.Add(Row.Column("simplekey").StringValue)
