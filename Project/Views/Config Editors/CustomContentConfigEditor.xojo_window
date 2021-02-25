@@ -289,6 +289,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function SelectionIsCommented() As Boolean
+		  Var Content As String = Self.ConfigArea.Text
+		  Var Boundary As String = EndOfLine
+		  
+		  Var Prefix As String = Content.Left(Self.ConfigArea.SelectionStart)
+		  Var LineStartPos As Integer
+		  Do
+		    Var Pos As Integer = Prefix.IndexOf(LineStartPos, Boundary)
+		    If Pos = -1 Then
+		      Exit
+		    Else
+		      LineStartPos = Pos + Boundary.Length
+		    End If
+		  Loop
+		  
+		  Var LineEndPos As Integer = Content.IndexOf(LineStartPos, Boundary)
+		  If LineEndPos = -1 Then
+		    LineEndPos = Content.Length
+		  End If
+		  
+		  Var Line As String = Content.Middle(LineStartPos, LineEndPos - LineStartPos).Trim
+		  Return Line.BeginsWith("//")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
 		  If Self.ConfigArea.SelectionStart >= Self.ConfigArea.Text.Length Then
 		    Return False
@@ -302,6 +328,74 @@ End
 		    End If
 		  Next
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ToggleComment()
+		  Var StartPos As Integer = Self.ConfigArea.SelectionStart
+		  Var EndPos As Integer = StartPos + Self.ConfigArea.SelectionLength
+		  Var PreContent As String = Self.ConfigArea.Text.Left(StartPos)
+		  Var PostContent As String = Self.ConfigArea.Text.Middle(EndPos)
+		  Var SelContent As String = Self.ConfigArea.Text.Middle(StartPos, EndPos - StartPos)
+		  
+		  Var PreLines() As String = PreContent.Split(EndOfLine)
+		  Var SelLines() As String = SelContent.Split(EndOfLine)
+		  Var PostLines() As String = PostContent.Split(EndOfLine)
+		  If SelLines.Count > 0 And PreLines.Count > 0 Then
+		    SelLines(0) = PreLines(PreLines.LastIndex) + SelLines(0)
+		    PreLines.RemoveAt(PreLines.LastIndex)
+		  ElseIf PreLines.Count > 0 Then
+		    SelLines.Add(PreLines(PreLines.LastIndex))
+		    PreLines.RemoveAt(PreLines.LastIndex)
+		  End If
+		  If SelLines.Count > 0 And PostLines.Count > 0 Then
+		    SelLines(SelLines.LastIndex) = SelLines(SelLines.LastIndex) + PostLines(0)
+		    PostLines.RemoveAt(0)
+		  ElseIf PostLines.Count > 0 Then
+		    SelLines.Add(PostLines(PostLines.LastIndex))
+		    PostLines.RemoveAt(PostLines.LastIndex)
+		  End If
+		  
+		  If SelLines.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var RemoveComments As Boolean
+		  RemoveComments = SelLines(0).Trim.BeginsWith("//")
+		  For Idx As Integer = 0 To SelLines.LastIndex
+		    SelLines(Idx) = SelLines(Idx).Trim
+		    
+		    If RemoveComments Then
+		      If SelLines(Idx).BeginsWith("//") Then
+		        SelLines(Idx) = SelLines(Idx).Middle(2).Trim
+		      End If
+		    Else
+		      If SelLines(Idx).BeginsWith("//") = False Then
+		        SelLines(Idx) = "// " + SelLines(Idx)
+		      End If
+		    End If
+		  Next
+		  
+		  If PreLines.Count > 0 Then
+		    PreContent = PreLines.Join(EndOfLine) + EndOfLine
+		  Else
+		    PreContent = ""
+		  End If
+		  
+		  If PostLines.Count > 0 Then
+		    PostContent = EndOfLine + PostLines.Join(EndOfLine)
+		  Else
+		    PostContent = ""
+		  End If
+		  
+		  SelContent = SelLines.Join(EndOfLine)
+		  
+		  Self.ConfigArea.Text = PreContent + SelContent + PostContent
+		  Self.ConfigArea.SelectionStart = PreContent.Length
+		  Self.ConfigArea.SelectionLength = SelContent.Length
+		  
+		  Self.UpdateCommentButton()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -347,6 +441,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateCommentButton()
+		  Var CommentButton As OmniBarItem = Self.ConfigToolbar.Item("CommentButton")
+		  If CommentButton Is Nil Then
+		    Return
+		  End If
+		  
+		  If Self.SelectionIsCommented Then
+		    CommentButton.HelpTag = "Uncomment the current line"
+		    CommentButton.Caption = "Uncomment"
+		    CommentButton.Icon = IconToolbarUncomment
+		  Else
+		    CommentButton.HelpTag = "Comment the current line"
+		    CommentButton.Caption = "Comment"
+		    CommentButton.Icon = IconToolbarComment
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateEncryptButton()
 		  Var EncryptButton As OmniBarItem = Self.ConfigToolbar.Item("EncryptButton")
 		  If EncryptButton Is Nil Then
@@ -354,12 +467,12 @@ End
 		  End If
 		  
 		  If Self.SelectionIsEncrypted Then
-		    EncryptButton.HelpTag = "Convert the encrypted value to plain text."
+		    EncryptButton.HelpTag = "Convert the encrypted value to plain text"
 		    EncryptButton.Caption = "Decrypt"
 		    EncryptButton.Enabled = True
 		    EncryptButton.Icon = IconToolbarUnlock
 		  Else
-		    EncryptButton.HelpTag = "Encrypt the selected text when saving."
+		    EncryptButton.HelpTag = "Encrypt the selected text when saving"
 		    EncryptButton.Caption = "Encrypt"
 		    EncryptButton.Enabled = Self.ConfigArea.SelectionLength > 0
 		    EncryptButton.Icon = IconToolbarLock
@@ -490,6 +603,7 @@ End
 	#tag Event
 		Sub SelChange()
 		  Self.UpdateEncryptButton()
+		  Self.UpdateCommentButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -499,7 +613,8 @@ End
 		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini"))
 		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini"))
 		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("EncryptButton", "Encrypt", IconToolbarLock, "Encrypt the selected text when saving.", False))
+		  Me.Append(OmniBarItem.CreateButton("EncryptButton", "Encrypt", IconToolbarLock, "Encrypt the selected text when saving", False))
+		  Me.Append(OmniBarItem.CreateButton("CommentButton", "Comment", IconToolbarComment, "Comment the current line"))
 		  
 		  Me.Item("GameUserSettingsIniButton").Toggled = True
 		End Sub
@@ -511,6 +626,8 @@ End
 		  Select Case Item.Name
 		  Case "EncryptButton"
 		    Self.ToggleEncryption()
+		  Case "CommentButton"
+		    Self.ToggleComment()
 		  Case "GameUserSettingsIniButton", "GameIniButton"
 		    If Item.Toggled Then
 		      // Don't do anything
