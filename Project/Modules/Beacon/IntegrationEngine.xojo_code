@@ -412,13 +412,13 @@ Protected Class IntegrationEngine
 		  
 		  Var RewriteError As RuntimeException
 		  
-		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(GameIniOriginal, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Organizer, Self.Document.TrustKey, Format, RewriteError)
+		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, GameIniOriginal, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Organizer, Self.Document.TrustKey, Format, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return
 		  End If
 		  
-		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Organizer, Self.Document.TrustKey, Format, RewriteError)
+		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Organizer, Self.Document.TrustKey, Format, RewriteError)
 		  If (RewriteError Is Nil) = False Then
 		    Self.SetError(RewriteError)
 		    Return

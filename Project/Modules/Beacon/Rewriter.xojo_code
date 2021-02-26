@@ -32,7 +32,7 @@ Inherits Global.Thread
 		  Var Error As RuntimeException
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameIni) = Self.FlagCreateGameIni Then
-		    Var GameIni As String = Self.Rewrite(InitialGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Self.mOrganizer, TrustKey, Format, Error)
+		    Var GameIni As String = Self.Rewrite(Self.mSource, InitialGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Self.mOrganizer, TrustKey, Format, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -43,7 +43,7 @@ Inherits Global.Thread
 		  End If
 		  
 		  If (Self.mOutputFlags And Self.FlagCreateGameUserSettingsIni) = Self.FlagCreateGameUserSettingsIni Then
-		    Var GameUserSettingsIni As String = Self.Rewrite(InitialGameUserSettingsIni, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Self.mOrganizer, TrustKey, Format, Error)
+		    Var GameUserSettingsIni As String = Self.Rewrite(Self.mSource, InitialGameUserSettingsIni, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Self.mOrganizer, TrustKey, Format, Error)
 		    If (Error Is Nil) = False Then
 		      Self.mFinished = True
 		      Self.mError = Error
@@ -179,14 +179,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Rewrite(Flags As Integer)
-		  Self.mOutputFlags = Flags And (Self.FlagCreateGameIni Or Self.FlagCreateGameUserSettingsIni Or Self.FlagCreateCommandLine)
-		  Super.Start
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, File As String, Organizer As Beacon.ConfigOrganizer, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Beacon.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Organizer As Beacon.ConfigOrganizer, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
 		  // This is the new master method
 		  
 		  Try
@@ -261,16 +254,25 @@ Inherits Global.Thread
 		    End If
 		    
 		    If TrustKey.IsEmpty = False Then
-		      // Build the Beacon section
+		      // Build the Beacon section\
+		      Var SourceString As String = CType(Source, Integer).ToString(Locale.Raw, "0")
+		      Select Case Source
+		      Case Sources.Deploy
+		        SourceString = "Deploy"
+		      Case Sources.Original
+		        SourceString = "Original"
+		      Case Sources.SmartCopy
+		        SourceString = "Smart Copy"
+		      Case Sources.SmartSave
+		        SourceString = "Smart Save"
+		      End Select
+		      
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build=" + App.BuildNumber.ToString(Locale.Raw, "0")))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "LastUpdated=" + DateTime.Now.SQLDateTimeWithOffset))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Trust=" + TrustKey))
-		      If InitialContent.IsEmpty Then
-		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Behavior=Original"))
-		      Else
-		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Behavior=Rewrite"))
-		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA256(InitialContent)).Lowercase))
-		      End If
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Source=" + SourceString))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "InitialSize=" + InitialContent.Bytes.ToString(Locale.Raw, "0")))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA256(InitialContent)).Lowercase))
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
 		      For HeaderIdx As Integer = 0 To ManagedHeaders.LastIndex
 		        Var Header As String = ManagedHeaders(HeaderIdx)
@@ -343,14 +345,21 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, DefaultHeader As String, File As String, Document As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
+		Shared Function Rewrite(Source As Beacon.Rewriter.Sources, InitialContent As String, DefaultHeader As String, File As String, Document As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Error As RuntimeException) As String
 		  Try
 		    Var Organizer As Beacon.ConfigOrganizer = Document.CreateConfigOrganizer(Identity, Profile)
-		    Return Rewrite(InitialContent, DefaultHeader, File, Organizer, Document.TrustKey, Format, Error)
+		    Return Rewrite(Source, InitialContent, DefaultHeader, File, Organizer, Document.TrustKey, Format, Error)
 		  Catch Err As RuntimeException
 		    Error = Err
 		  End Try
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Rewrite(Flags As Integer)
+		  Self.mOutputFlags = Flags And (Self.FlagCreateGameIni Or Self.FlagCreateGameUserSettingsIni Or Self.FlagCreateCommandLine)
+		  Super.Start
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -523,6 +532,10 @@ Inherits Global.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSource As Beacon.Rewriter.Sources
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTriggers() As String
 	#tag EndProperty
 
@@ -543,6 +556,20 @@ Inherits Global.Thread
 		Profile As Beacon.ServerProfile
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSource
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mSource = Value
+			End Set
+		#tag EndSetter
+		Source As Beacon.Rewriter.Sources
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = FlagCreateCommandLine, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
@@ -560,55 +587,15 @@ Inherits Global.Thread
 		ASCII
 	#tag EndEnum
 
+	#tag Enum, Name = Sources, Type = Integer, Flags = &h0
+		Original
+		  Deploy
+		  SmartCopy
+		SmartSave
+	#tag EndEnum
+
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DebugIdentifier"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ThreadID"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ThreadState"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="ThreadStates"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Paused"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -688,6 +675,20 @@ Inherits Global.Thread
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Source"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Beacon.Rewriter.Sources"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Original"
+				"1 - Deploy"
+				"2 - SmartCopy"
+				"3 - SmartSave"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
