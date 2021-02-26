@@ -243,14 +243,24 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function FilteredValues(ForFile As String) As Beacon.ConfigValue()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 ORDER BY header, sortkey;", ForFile)
+		  Var Rows As RowSet
+		  If ForFile = Beacon.ConfigFileGameUserSettings Then
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file IN (?1, 'CommandLineOption', 'CommandLineFlag') ORDER BY header, sortkey;", ForFile)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 ORDER BY header, sortkey;", ForFile)
+		  End If
 		  Return Self.FilteredValues(Rows)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function FilteredValues(ForFile As String, ForHeader As String) As Beacon.ConfigValue()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
+		  Var Rows As RowSet
+		  If ForFile = Beacon.ConfigFileGameUserSettings And ForHeader = Beacon.ServerSettingsHeader Then
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE (file = ?1 AND header = ?2) OR file = 'CommandLineOption' OR file = 'CommandLineFlag' ORDER BY sortkey;", ForFile, ForHeader)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
+		  End If
 		  Return Self.FilteredValues(Rows)
 		End Function
 	#tag EndMethod
