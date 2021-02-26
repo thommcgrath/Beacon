@@ -5,12 +5,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.2+
-		      Return New ColorGroup("alternateSelectedControlTextColor")
+		      Return New ColorGroupMimic("alternateSelectedControlTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return New ColorGroup(&cFFFFFF00)
+		  Return New ColorGroupMimic(&cFFFFFF00)
 		End Function
 	#tag EndMethod
 
@@ -122,7 +122,7 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("controlAccentColor")
+		        Return New ColorGroupMimic("controlAccentColor")
 		      End If
 		    #elseif TargetWindows
 		      If UseWindowsColors Then
@@ -132,7 +132,7 @@ Protected Module SystemColors
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c5c248700, &c8030bf00)
+		  Return New ColorGroupMimic(&c5c248700, &c8030bf00)
 		End Function
 	#tag EndMethod
 
@@ -141,12 +141,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("controlBackgroundColor")
+		      Return New ColorGroupMimic("controlBackgroundColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFFFFFF00, &c1E1E1E00)
+		  Return New ColorGroupMimic(&cFFFFFF00, &c1E1E1E00)
 		End Function
 	#tag EndMethod
 
@@ -155,12 +155,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("controlColor")
+		      Return New ColorGroupMimic("controlColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFFFFFF00, &cFFFFFFC0)
+		  Return New ColorGroupMimic(&cFFFFFF00, &cFFFFFFC0)
 		End Function
 	#tag EndMethod
 
@@ -169,22 +169,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("controlTextColor")
+		      Return New ColorGroupMimic("controlTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000027, &cFFFFFF27)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function CreateColorGroup(LightColor As Color, DarkColor As Color) As ColorGroup
-		  If SupportsDualColors Then
-		    Return New ColorGroup(LightColor, DarkColor)
-		  Else
-		    Return New ColorGroup(LightColor)
-		  End If
+		  Return New ColorGroupMimic(&c00000027, &cFFFFFF27)
 		End Function
 	#tag EndMethod
 
@@ -193,12 +183,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("disabledControlTextColor")
+		      Return New ColorGroupMimic("disabledControlTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c000000C0, &cFFFFFFC0)
+		  Return New ColorGroupMimic(&c000000C0, &cFFFFFFC0)
 		End Function
 	#tag EndMethod
 
@@ -208,13 +198,13 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.13+
 		      If MacIsHighSierra Then
-		        Return New ColorGroup("findHighlightColor")
+		        Return New ColorGroupMimic("findHighlightColor")
 		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return New ColorGroup(&cFFFF0000)
+		  Return New ColorGroupMimic(&cFFFF0000)
 		End Function
 	#tag EndMethod
 
@@ -269,12 +259,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("gridColor")
+		      Return New ColorGroupMimic("gridColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cCCCCCC00, &cFFFFFFE6)
+		  Return New ColorGroupMimic(&cCCCCCC00, &cFFFFFFE6)
 		End Function
 	#tag EndMethod
 
@@ -283,12 +273,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("headerTextColor")
+		      Return New ColorGroupMimic("headerTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000027, &cFFFFFF00)
+		  Return New ColorGroupMimic(&c00000027, &cFFFFFF00)
 		End Function
 	#tag EndMethod
 
@@ -297,12 +287,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("highlightColor")
+		      Return New ColorGroupMimic("highlightColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFFFFFF00, &cB4B4B400)
+		  Return New ColorGroupMimic(&cFFFFFF00, &cB4B4B400)
 		End Function
 	#tag EndMethod
 
@@ -346,12 +336,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("keyboardFocusIndicatorColor")
+		      Return New ColorGroupMimic("keyboardFocusIndicatorColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c0067F4BF, &c1AA9FFB2)
+		  Return New ColorGroupMimic(&c0067F4BF, &c1AA9FFB2)
 		End Function
 	#tag EndMethod
 
@@ -360,14 +350,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("labelColor")
+		      Return New ColorGroupMimic("labelColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("label")
+		      Return New ColorGroupMimic("label")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000027, &cFFFFFF27)
+		  Return New ColorGroupMimic(&c00000027, &cFFFFFF27)
 		End Function
 	#tag EndMethod
 
@@ -376,14 +366,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("linkColor")
+		      Return New ColorGroupMimic("linkColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("link")
+		      Return New ColorGroupMimic("link")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c0068DA00, &c419CFF00)
+		  Return New ColorGroupMimic(&c0068DA00, &c419CFF00)
 		End Function
 	#tag EndMethod
 
@@ -393,13 +383,13 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("primaryContentBackgroundColor")
+		        Return New ColorGroupMimic("primaryContentBackgroundColor")
 		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cfffefe00, &c16161600)
+		  Return New ColorGroupMimic(&cfffefe00, &c16161600)
 		End Function
 	#tag EndMethod
 
@@ -409,13 +399,13 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("secondaryContentBackgroundColor")
+		        Return New ColorGroupMimic("secondaryContentBackgroundColor")
 		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cf1f2f200, &cfffefef3)
+		  Return New ColorGroupMimic(&cf1f2f200, &cfffefef3)
 		End Function
 	#tag EndMethod
 
@@ -424,14 +414,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("placeholderTextColor")
+		      Return New ColorGroupMimic("placeholderTextColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("placeholderText")
+		      Return New ColorGroupMimic("placeholderText")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c000000C0, &cFFFFFFC0)
+		  Return New ColorGroupMimic(&c000000C0, &cFFFFFFC0)
 		End Function
 	#tag EndMethod
 
@@ -440,14 +430,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("quaternaryLabelColor")
+		      Return New ColorGroupMimic("quaternaryLabelColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("quaternaryLabel")
+		      Return New ColorGroupMimic("quaternaryLabel")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c000000E6, &cFFFFFFE6)
+		  Return New ColorGroupMimic(&c000000E6, &cFFFFFFE6)
 		End Function
 	#tag EndMethod
 
@@ -456,14 +446,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("secondaryLabelColor")
+		      Return New ColorGroupMimic("secondaryLabelColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("secondaryLabel")
+		      Return New ColorGroupMimic("secondaryLabel")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000080, &cFFFFFF73)
+		  Return New ColorGroupMimic(&c00000080, &cFFFFFF73)
 		End Function
 	#tag EndMethod
 
@@ -473,7 +463,7 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("selectedContentBackgroundColor")
+		        Return New ColorGroupMimic("selectedContentBackgroundColor")
 		      End If
 		    #elseif TargetWindows
 		      If UseWindowsColors Then
@@ -483,7 +473,7 @@ Protected Module SystemColors
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c47156d00, &c5b188e00)
+		  Return New ColorGroupMimic(&c47156d00, &c5b188e00)
 		End Function
 	#tag EndMethod
 
@@ -492,12 +482,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("selectedControlColor")
+		      Return New ColorGroupMimic("selectedControlColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cB3D7FF00, &c3F638B00)
+		  Return New ColorGroupMimic(&cB3D7FF00, &c3F638B00)
 		End Function
 	#tag EndMethod
 
@@ -506,12 +496,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("selectedControlTextColor")
+		      Return New ColorGroupMimic("selectedControlTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000027, &cFFFFFF27)
+		  Return New ColorGroupMimic(&c00000027, &cFFFFFF27)
 		End Function
 	#tag EndMethod
 
@@ -520,12 +510,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("selectedMenuItemTextColor")
+		      Return New ColorGroupMimic("selectedMenuItemTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return New ColorGroup(&cFFFFFF00)
+		  Return New ColorGroupMimic(&cFFFFFF00)
 		End Function
 	#tag EndMethod
 
@@ -534,12 +524,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("selectedTextBackgroundColor")
+		      Return New ColorGroupMimic("selectedTextBackgroundColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cB3D7FF00, &c3F638B00)
+		  Return New ColorGroupMimic(&cB3D7FF00, &c3F638B00)
 		End Function
 	#tag EndMethod
 
@@ -548,12 +538,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("selectedTextColor")
+		      Return New ColorGroupMimic("selectedTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000000, &cFFFFFF00)
+		  Return New ColorGroupMimic(&c00000000, &cFFFFFF00)
 		End Function
 	#tag EndMethod
 
@@ -563,15 +553,15 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("separatorColor")
+		        Return New ColorGroupMimic("separatorColor")
 		      End If
 		    #elseif TargetiOS
-		      Return New ColorGroup("separator")
+		      Return New ColorGroupMimic("separator")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c000000E6, &cFFFFFFE6)
+		  Return New ColorGroupMimic(&c000000E6, &cFFFFFFE6)
 		End Function
 	#tag EndMethod
 
@@ -580,12 +570,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("shadowColor")
+		      Return New ColorGroupMimic("shadowColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return New ColorGroup(&c00000000)
+		  Return New ColorGroupMimic(&c00000000)
 		End Function
 	#tag EndMethod
 
@@ -612,14 +602,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemBlueColor")
+		      Return New ColorGroupMimic("systemBlueColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemBlue")
+		      Return New ColorGroupMimic("systemBlue")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c007AFF00, &c0A84FF00)
+		  Return New ColorGroupMimic(&c007AFF00, &c0A84FF00)
 		End Function
 	#tag EndMethod
 
@@ -628,12 +618,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemBrownColor")
+		      Return New ColorGroupMimic("systemBrownColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cA2845E00, &cAC8E6800)
+		  Return New ColorGroupMimic(&cA2845E00, &cAC8E6800)
 		End Function
 	#tag EndMethod
 
@@ -642,14 +632,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemGrayColor")
+		      Return New ColorGroupMimic("systemGrayColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemGray")
+		      Return New ColorGroupMimic("systemGray")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c8E8E9300, &c98989D00)
+		  Return New ColorGroupMimic(&c8E8E9300, &c98989D00)
 		End Function
 	#tag EndMethod
 
@@ -658,14 +648,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemGreenColor")
+		      Return New ColorGroupMimic("systemGreenColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemGreen")
+		      Return New ColorGroupMimic("systemGreen")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c28CD4100, &c32D74B00)
+		  Return New ColorGroupMimic(&c28CD4100, &c32D74B00)
 		End Function
 	#tag EndMethod
 
@@ -674,14 +664,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemOrangeColor")
+		      Return New ColorGroupMimic("systemOrangeColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemOrange")
+		      Return New ColorGroupMimic("systemOrange")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFF950000, &cFF9F0A00)
+		  Return New ColorGroupMimic(&cFF950000, &cFF9F0A00)
 		End Function
 	#tag EndMethod
 
@@ -690,14 +680,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemPinkColor")
+		      Return New ColorGroupMimic("systemPinkColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemPink")
+		      Return New ColorGroupMimic("systemPink")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFF2D5500, &cFF375F00)
+		  Return New ColorGroupMimic(&cFF2D5500, &cFF375F00)
 		End Function
 	#tag EndMethod
 
@@ -706,14 +696,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemPurpleColor")
+		      Return New ColorGroupMimic("systemPurpleColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemPurple")
+		      Return New ColorGroupMimic("systemPurple")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cAF52DE00, &cBF5AF200)
+		  Return New ColorGroupMimic(&cAF52DE00, &cBF5AF200)
 		End Function
 	#tag EndMethod
 
@@ -722,14 +712,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemRedColor")
+		      Return New ColorGroupMimic("systemRedColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemRed")
+		      Return New ColorGroupMimic("systemRed")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFF3B3000, &cFF453A00)
+		  Return New ColorGroupMimic(&cFF3B3000, &cFF453A00)
 		End Function
 	#tag EndMethod
 
@@ -738,14 +728,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("systemYellowColor")
+		      Return New ColorGroupMimic("systemYellowColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("systemYellow")
+		      Return New ColorGroupMimic("systemYellow")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFFCC0000, &cFFD60A00)
+		  Return New ColorGroupMimic(&cFFCC0000, &cFFD60A00)
 		End Function
 	#tag EndMethod
 
@@ -754,14 +744,14 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.10+
-		      Return New ColorGroup("tertiaryLabelColor")
+		      Return New ColorGroupMimic("tertiaryLabelColor")
 		    #elseif TargetiOS
-		      Return New ColorGroup("tertiaryLabel")
+		      Return New ColorGroupMimic("tertiaryLabel")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c000000C0, &cFFFFFFC0)
+		  Return New ColorGroupMimic(&c000000C0, &cFFFFFFC0)
 		End Function
 	#tag EndMethod
 
@@ -770,12 +760,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("textBackgroundColor")
+		      Return New ColorGroupMimic("textBackgroundColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cFFFFFF00, &c1E1E1E00)
+		  Return New ColorGroupMimic(&cFFFFFF00, &c1E1E1E00)
 		End Function
 	#tag EndMethod
 
@@ -784,12 +774,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("textColor")
+		      Return New ColorGroupMimic("textColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000000, &cFFFFFF00)
+		  Return New ColorGroupMimic(&c00000000, &cFFFFFF00)
 		End Function
 	#tag EndMethod
 
@@ -798,12 +788,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.8+
-		      Return New ColorGroup("underPageBackgroundColor")
+		      Return New ColorGroupMimic("underPageBackgroundColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c9696961A, &c28282800)
+		  Return New ColorGroupMimic(&c9696961A, &c28282800)
 		End Function
 	#tag EndMethod
 
@@ -813,13 +803,13 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("unemphasizedSelectedContentBackgroundColor")
+		        Return New ColorGroupMimic("unemphasizedSelectedContentBackgroundColor")
 		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cDCDCDC00, &c46464600)
+		  Return New ColorGroupMimic(&cDCDCDC00, &c46464600)
 		End Function
 	#tag EndMethod
 
@@ -829,13 +819,13 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("unemphasizedSelectedTextBackgroundColor")
+		        Return New ColorGroupMimic("unemphasizedSelectedTextBackgroundColor")
 		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cDCDCDC00, &c46464600)
+		  Return New ColorGroupMimic(&cDCDCDC00, &c46464600)
 		End Function
 	#tag EndMethod
 
@@ -845,13 +835,13 @@ Protected Module SystemColors
 		    #if TargetMacOS
 		      // 10.14+
 		      If MacIsMojave Then
-		        Return New ColorGroup("unemphasizedSelectedTextColor")
+		        Return New ColorGroupMimic("unemphasizedSelectedTextColor")
 		      End If
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000000, &cFFFFFF00)
+		  Return New ColorGroupMimic(&c00000000, &cFFFFFF00)
 		End Function
 	#tag EndMethod
 
@@ -860,12 +850,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("windowBackgroundColor")
+		      Return New ColorGroupMimic("windowBackgroundColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&cECECEC00, &c32323200)
+		  Return New ColorGroupMimic(&cECECEC00, &c32323200)
 		End Function
 	#tag EndMethod
 
@@ -874,12 +864,12 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.0+
-		      Return New ColorGroup("windowFrameTextColor")
+		      Return New ColorGroupMimic("windowFrameTextColor")
 		    #endif
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Return CreateColorGroup(&c00000027, &cFFFFFF27)
+		  Return New ColorGroupMimic(&c00000027, &cFFFFFF27)
 		End Function
 	#tag EndMethod
 
