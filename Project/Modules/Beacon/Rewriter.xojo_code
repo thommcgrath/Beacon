@@ -265,6 +265,12 @@ Inherits Global.Thread
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Build=" + App.BuildNumber.ToString(Locale.Raw, "0")))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "LastUpdated=" + DateTime.Now.SQLDateTimeWithOffset))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Trust=" + TrustKey))
+		      If InitialContent.IsEmpty Then
+		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Behavior=Original"))
+		      Else
+		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Behavior=Rewrite"))
+		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA256(InitialContent)).Lowercase))
+		      End If
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
 		      For HeaderIdx As Integer = 0 To ManagedHeaders.LastIndex
 		        Var Header As String = ManagedHeaders(HeaderIdx)
