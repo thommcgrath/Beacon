@@ -1252,39 +1252,44 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, BackgroundColor As Color) As Picture
+		  Var ForegroundColor As Color = Source.UIColor
+		  Select Case ForegroundColor
+		  Case &cFFF02A00
+		    ForegroundColor = SystemColors.SystemYellowColor
+		  Case &cE6BAFF00
+		    ForegroundColor = SystemColors.SystemPurpleColor
+		  Case &c00FF0000
+		    ForegroundColor = SystemColors.SystemGreenColor
+		  Case &cFFBABA00
+		    ForegroundColor = SystemColors.SystemRedColor
+		  Case &c88C8FF00
+		    ForegroundColor = SystemColors.SystemBlueColor
+		  End Select
+		  
+		  Return IconForLootSource(Source, ForegroundColor, BackgroundColor)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IconForLootSource(Source As Beacon.LootSource, ForegroundColor As Color, BackgroundColor As Color) As Picture
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
 		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
-		  Var PrimaryColor, AccentColor As Color
+		  Var AccentColor As Color
 		  Var IconID As String
 		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
 		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
 		    IconID = Results.Column("icon_id").StringValue
-		    PrimaryColor = Source.UIColor
 		  Else
 		    SpriteSheet = App.GenericLootSourceIcon()
 		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
-		    PrimaryColor = &cFFFFFF00
 		  End If
 		  AccentColor = BackgroundColor
 		  
-		  Select Case PrimaryColor
-		  Case &cFFF02A00
-		    PrimaryColor = SystemColors.SystemYellowColor
-		  Case &cE6BAFF00
-		    PrimaryColor = SystemColors.SystemPurpleColor
-		  Case &c00FF0000
-		    PrimaryColor = SystemColors.SystemGreenColor
-		  Case &cFFBABA00
-		    PrimaryColor = SystemColors.SystemRedColor
-		  Case &c88C8FF00
-		    PrimaryColor = SystemColors.SystemBlueColor
-		  End Select
-		  
-		  IconID = IconID + PrimaryColor.ToHex + BackgroundColor.ToHex
+		  IconID = IconID + ForegroundColor.ToHex + BackgroundColor.ToHex
 		  If Self.IconCache = Nil Then
 		    Self.IconCache = New Dictionary
 		  End If
@@ -1292,7 +1297,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return IconCache.Value(IconID)
 		  End If
 		  
-		  PrimaryColor = BeaconUI.FindContrastingColor(BackgroundColor, PrimaryColor)
+		  ForegroundColor = BeaconUI.FindContrastingColor(BackgroundColor, ForegroundColor)
 		  
 		  Var Height As Integer = (SpriteSheet.Height / 2) / 3
 		  Var Width As Integer = (SpriteSheet.Width / 2) / 3
@@ -1330,7 +1335,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
 		  Var ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
 		  
-		  Var Highlight As Picture = HighlightMask.WithColor(PrimaryColor)
+		  Var Highlight As Picture = HighlightMask.WithColor(ForegroundColor)
 		  Var Fill As Picture = ColorMask.WithColor(AccentColor)
 		  
 		  Var Bitmaps() As Picture
