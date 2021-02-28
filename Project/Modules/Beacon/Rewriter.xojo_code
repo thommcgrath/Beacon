@@ -197,6 +197,23 @@ Inherits Global.Thread
 		        Continue
 		      End If
 		    Next
+		    
+		    If Trusted Then
+		      // Thanks to a deploy bug in how Beacon blends configs from InitialContent, do not trust if the deploy version is between > 1.4.8.4 and < 1.5.0.5
+		      Var TrustVersions() As Beacon.ConfigValue = ParsedValues.FilteredValues(File, "Beacon", "Build")
+		      For Each TrustVersion As Beacon.ConfigValue In TrustVersions
+		        Try
+		          Var TrustBuild As Integer = TrustVersion.Value.ToInteger
+		          If TrustBuild > 10408304 And TrustBuild < 10500305 Then
+		            Trusted = False
+		          End If
+		        Catch Err As RuntimeException
+		          // Let's err on the side of caution
+		          Trusted = False
+		        End Try
+		      Next
+		    End If
+		    
 		    If Trusted Then
 		      Var ManagedKeys() As Beacon.ConfigValue = ParsedValues.FilteredValues(File, "Beacon", "ManagedKeys")
 		      For Each ManagedKey As Beacon.ConfigValue In ManagedKeys
@@ -246,15 +263,13 @@ Inherits Global.Thread
 		      ParsedValues.Remove(File, Value.Header, Value.SimplifiedKey)
 		    Next
 		    
-		    // Then add everything remaining in Parsed to Final
-		    FinalOrganizer.Add(ParsedValues.FilteredValues(File))
-		    
-		    If FinalOrganizer.Count = 0 Then
+		    If FinalOrganizer.Count = 0 And ParsedValues.Count = 0 Then
+		      // Both the new stuff and the initial stuff are empty
 		      Return ""
 		    End If
 		    
 		    If TrustKey.IsEmpty = False Then
-		      // Build the Beacon section\
+		      // Build the Beacon section
 		      Var SourceString As String = CType(Source, Integer).ToString(Locale.Raw, "0")
 		      Select Case Source
 		      Case Sources.Deploy
@@ -273,6 +288,7 @@ Inherits Global.Thread
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "Source=" + SourceString))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "InitialSize=" + InitialContent.Bytes.ToString(Locale.Raw, "0")))
 		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA256(InitialContent)).Lowercase))
+		      FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "WasTrusted=" + If(Trusted, "True", "False")))
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
 		      For HeaderIdx As Integer = 0 To ManagedHeaders.LastIndex
 		        Var Header As String = ManagedHeaders(HeaderIdx)
@@ -284,6 +300,9 @@ Inherits Global.Thread
 		        FinalOrganizer.Add(New Beacon.ConfigValue(File, "Beacon", "ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))", "ManagedKeys:" + Header))
 		      Next
 		    End If
+		    
+		    // Now add everything remaining in Parsed to Final
+		    FinalOrganizer.Add(ParsedValues.FilteredValues(File))
 		    
 		    If File = Beacon.ConfigFileGameUserSettings Then
 		      Const QualityHeader = "/Script/ShooterGame.ShooterGameUserSettings"
@@ -596,6 +615,53 @@ Inherits Global.Thread
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DebugIdentifier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThreadID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThreadState"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="ThreadStates"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Paused"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
