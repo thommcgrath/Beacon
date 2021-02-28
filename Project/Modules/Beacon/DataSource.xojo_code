@@ -241,7 +241,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
+		Function SaveBlueprints(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint, ErrorDict As Dictionary) As Boolean
 		  
 		End Function
 	#tag EndMethod
