@@ -72,8 +72,6 @@ Inherits Beacon.IntegrationEngine
 		          FormData.Value("value") = NewValue
 		        End If
 		        Changes.Add(FormData)
-		        
-		        App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
 		      End If
 		    Next
 		  Next
