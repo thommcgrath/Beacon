@@ -330,6 +330,8 @@ Protected Class IntegrationEngine
 		Private Sub RunDeploy(Sender As Thread)
 		  #Pragma Unused Sender
 		  
+		  Self.Log("Starting deploy of " + Self.Profile.Name)
+		  
 		  // Give the implementor time to setup
 		  RaiseEvent Begin
 		  
