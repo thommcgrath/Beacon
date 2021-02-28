@@ -4,6 +4,7 @@ header('Cache-Control: no-cache');
 ?><p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <div id="stable-table" class="downloads-table"></div>
 <div id="prerelease-table" class="downloads-table"></div>
+<div id="legacy-table" class="downloads-table"></div>
 <h3 id="requirements">System Requirements</h3>
 <div class="double_column">
 	<div class="column">
@@ -24,7 +25,8 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 $download_links = [
-	'current' => BuildLinksForStage($database, 3)
+	'current' => BuildLinksForStage($database, 3),
+	'legacy' => BuildLinksForVersion($database, 10408304)
 ];
 $prerelease_stage = $database->Query('SELECT stage FROM updates WHERE build_number > $1 AND stage < 3 ORDER BY build_number DESC LIMIT 1;', $download_links['current']['build_number']);
 if ($prerelease_stage->RecordCount() === 1) {
@@ -119,6 +121,7 @@ let buildDownloadsTable = function() {
 	let download_data = <?php echo json_encode($download_links, JSON_PRETTY_PRINT); ?>;
 	let stable_table = document.getElementById('stable-table');
 	let prerelease_table = document.getElementById('prerelease-table');
+	let legacy_table = document.getElementById('legacy-table');
 	
 	let current = download_data.current;
 	let headerRow = document.createElement('div');
@@ -141,10 +144,24 @@ let buildDownloadsTable = function() {
 		headerRow.appendChild(headerBody);
 		prerelease_table.appendChild(headerRow);
 		
-		
 		addChildRows(prerelease_table, prerelease, false);
 	} else {
 		prerelease_table.classList.add('hidden');
+	}
+	
+	let legacy = download_data.legacy;
+	if (legacy) {
+		let headerRow = document.createElement('div');
+		headerRow.classList.add('row');
+		let headerBody = document.createElement('div');
+		headerBody.classList.add('full');
+		headerBody.innerText = 'Legacy Version: Beacon ' + legacy.build_display;
+		headerRow.appendChild(headerBody);
+		legacy_table.appendChild(headerRow);
+		
+		addChildRows(legacy_table, legacy, false);
+	} else {
+		legacy_table.classList.add('hidden');
 	}
 	
 	document.getElementById('mac_version_requirements').innerText = 'macOS ' + current.mac_display_versions;
@@ -165,6 +182,19 @@ function BuildLinksForStage(BeaconDatabase $database, int $stage) {
 		return null;
 	}
 	
+	return BuildLinksForResults($database, $results);
+}
+
+function BuildLinksForVersion(BeaconDatabase $database, int $build) {
+	$results = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version, min_mac_version, min_win_version FROM updates WHERE build_number = $1;", $build);
+	if ($results->RecordCount() === 0) {
+		return null;
+	}
+	
+	return BuildLinksForResults($database, $results);
+}
+
+function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results) {
 	$build = intval($results->Field('build_number'));
 	$delta_version = intval($results->Field('delta_version'));
 	$stage = intval($results->Field('stage'));
