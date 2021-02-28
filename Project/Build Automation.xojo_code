@@ -31,7 +31,7 @@
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""ATSApplicationFontsPath"" ""Fonts/""")
-					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""LSMinimumSystemVersion"" ""10.11.0""")
+					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""LSMinimumSystemVersion"" ""10.12.0""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""NSAppAccentColorName"" ""BeaconBrand""")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
