@@ -476,12 +476,12 @@ Inherits Listbox
 		  Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off
 		  AddHandler mTypeaheadTimer.Action, WeakAddressOf mTypeaheadTimer_Action
 		  
-		  Super.Constructor
-		  
 		  Self.mScrollWatchTimer = New Timer
 		  Self.mScrollWatchTimer.RunMode = Timer.RunModes.Off
 		  Self.mScrollWatchTimer.Period = 100
 		  AddHandler mScrollWatchTimer.Action, WeakAddressOf mScrollWatchTimer_Action
+		  
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
@@ -857,12 +857,12 @@ Inherits Listbox
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
+			  Return (Self.mScrollWatchTimer Is Nil) = False And Self.mScrollWatchTimer.RunMode = Timer.RunModes.Multiple
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Value = Self.AllowInfiniteScroll Then
+			  If (Self.mScrollWatchTimer Is Nil) Or Value = Self.AllowInfiniteScroll Then
 			    Return
 			  End If
 			  

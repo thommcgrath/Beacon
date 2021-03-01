@@ -3,13 +3,23 @@ Protected Class LocalBlueprintController
 Inherits BlueprintController
 	#tag Event
 		Sub Publish(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint)
-		  LocalData.SharedInstance.DeleteBlueprints(BlueprintsToDelete)
-		  
-		  Var NumSaved As Integer = LocalData.SharedInstance.SaveBlueprints(BlueprintsToSave)
-		  If NumSaved = BlueprintsToSave.Count Then
+		  Var Errors As New Dictionary
+		  Var Success As Boolean = Beacon.Data.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  If Success Then
 		    Self.FinishPublishing(True, "")
 		  Else
-		    Self.FinishPublishing(False, "Only saved " + NumSaved.ToString(Locale.Current, ",##0") + " of " + BlueprintsToSave.Count.ToString(Locale.Current, ",##0") + " blueprints.")
+		    Var Reasons() As String
+		    For Each Entry As DictionaryEntry In Errors
+		      Var Blueprint As Beacon.Blueprint = Entry.Key
+		      Var Err As RuntimeException = Entry.Value
+		      
+		      If Err.Message.BeginsWith("Unique constraint failed") Then
+		        Reasons.Add(Blueprint.Label + ": A blueprint already exists with this path.")
+		      Else
+		        Reasons.Add(Blueprint.Label + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
+		      End If
+		    Next
+		    Self.FinishPublishing(False, "The following blueprints had saving errors: " + EndOfLine + EndOfLine + Reasons.Join(EndOfLine))
 		  End If
 		End Sub
 	#tag EndEvent
@@ -19,31 +29,12 @@ Inherits BlueprintController
 		  Var Mods As New Beacon.StringList(0)
 		  Mods(0) = Beacon.UserModID
 		  
-		  Var Engrams() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
-		  Var Creatures() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
-		  Var Spawns() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, "")
-		  
-		  Var Blueprints() As Beacon.Blueprint = Engrams
-		  Var Offset As Integer = Engrams.Count
-		  Blueprints.ResizeTo((Engrams.Count + Creatures.Count + Spawns.Count) - 1)
-		  For Idx As Integer = 0 To Creatures.LastIndex
-		    Blueprints(Idx + Offset) = Creatures(Idx)
-		  Next
-		  Offset = Offset + Creatures.Count
-		  For Idx As Integer = 0 To Spawns.LastIndex
-		    Blueprints(Idx + Offset) = Spawns(Idx)
-		  Next
+		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints("", Mods, "")
 		  
 		  Self.CacheBlueprints(Blueprints)
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Function AutoPublish() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ModID() As String
@@ -54,6 +45,12 @@ Inherits BlueprintController
 	#tag Method, Flags = &h0
 		Function ModName() As String
 		  Return Beacon.UserModName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UseSaveTerminology() As Boolean
+		  Return True
 		End Function
 	#tag EndMethod
 

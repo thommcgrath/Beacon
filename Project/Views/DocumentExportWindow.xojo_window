@@ -816,9 +816,11 @@ End
 		  Select Case Self.CurrentMode
 		  Case Beacon.RewriteModeGameIni
 		    Self.SharedRewriter.InitialGameIniContent = ClipboardContents
+		    Self.SharedRewriter.Source = Beacon.Rewriter.Sources.SmartCopy
 		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameIni)
 		  Case Beacon.RewriteModeGameUserSettingsIni
 		    Self.SharedRewriter.InitialGameUserSettingsIniContent = ClipboardContents
+		    Self.SharedRewriter.Source = Beacon.Rewriter.Sources.SmartCopy
 		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameUserSettingsIni)
 		  End Select
 		  
@@ -875,9 +877,11 @@ End
 		  Select Case Self.CurrentMode
 		  Case Beacon.RewriteModeGameIni
 		    Self.SharedRewriter.InitialGameIniContent = Content
+		    Self.SharedRewriter.Source = Beacon.Rewriter.Sources.SmartSave
 		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameIni)
 		  Case Beacon.RewriteModeGameUserSettingsIni
 		    Self.SharedRewriter.InitialGameUserSettingsIniContent = Content
+		    Self.SharedRewriter.Source = Beacon.Rewriter.Sources.SmartSave
 		    Self.SharedRewriter.Rewrite(Beacon.Rewriter.FlagCreateGameUserSettingsIni)
 		  End Select
 		  
@@ -1027,6 +1031,7 @@ End
 		  Self.SharedRewriter.Cancel
 		  Self.SharedRewriter.InitialGameIniContent = ""
 		  Self.SharedRewriter.InitialGameUserSettingsIniContent = ""
+		  Self.SharedRewriter.Source = Beacon.Rewriter.Sources.Original
 		  Self.SharedRewriter.Document = Self.mDocument
 		  Self.SharedRewriter.Identity = App.IdentityManager.CurrentIdentity
 		  Self.SharedRewriter.Profile = Self.mCurrentProfile

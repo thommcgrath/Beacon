@@ -521,11 +521,27 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerFilesListed(Value As Variant)
-		  Var Params() As Variant = Value
-		  RaiseEvent FilesListed(Params(0).StringValue, Params(1))
+		  Var Params() As Variant
+		  Var Path As String
+		  Var Files() As Beacon.FTPFileListing
+		  Try
+		    Params = Value
+		    Path = Params(0).StringValue
+		    Files = Params(1)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName)
+		    RaiseEvent FileListError(Err)
+		    Return
+		  End Try
+		  
+		  RaiseEvent FilesListed(Path, Files)
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event FileListError(Err As RuntimeException)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event FilesListed(Path As String, Files() As Beacon.FTPFileListing)

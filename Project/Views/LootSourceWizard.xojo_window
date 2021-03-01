@@ -1726,7 +1726,12 @@ End
 		  End If
 		  
 		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
-		  Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
+		  Var Icon As Picture
+		  If Me.Selected(Row) And IsHighlighted Then
+		    Icon = LocalData.SharedInstance.IconForLootSource(Source, TextColor, BackgroundColor)
+		  Else
+		    Icon = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
+		  End If
 		  
 		  G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))
 		End Sub

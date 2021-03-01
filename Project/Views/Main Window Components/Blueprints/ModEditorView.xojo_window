@@ -338,9 +338,13 @@ End
 		    Self.UpdatePublishButton()
 		  End If
 		  
-		  If Sender.AutoPublish = False Then
-		    If Success Then
+		  If Success Then
+		    If Sender.UseSaveTerminology = False Then
 		      Self.ShowAlert("Your changes have been published.", "Because Beacon generates new update files every 15 minutes, it may take some time for the changes to be available to users.")
+		    End If
+		  Else
+		    If Sender.UseSaveTerminology Then
+		      Self.ShowAlert("Beacon was unable to save the changes.", Reason)
 		    Else
 		      Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
 		    End If
@@ -605,12 +609,12 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("ExportFile", "Export", IconToolbarExport, "Export selected blueprints to a file on your computer."))
 		  
-		  If Self.mController.AutoPublish Then
-		    Return
-		  End If
-		  
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
-		  Me.Append(OmniBarItem.CreateButton("Publish", "Publish", IconToolbarPublish, "Publish your changes to Beacon's users.", False))
+		  If Self.mController.UseSaveTerminology Then
+		    Me.Append(OmniBarItem.CreateButton("Publish", "Save", IconToolbarSaveToDisk, "Save your changes.", False))
+		  Else
+		    Me.Append(OmniBarItem.CreateButton("Publish", "Publish", IconToolbarPublish, "Publish your changes to Beacon's users.", False))
+		  End If
 		  Me.Append(OmniBarItem.CreateButton("Discard", "Revert", IconToolbarRevert, "Revert your changes.", False))
 		End Sub
 	#tag EndEvent

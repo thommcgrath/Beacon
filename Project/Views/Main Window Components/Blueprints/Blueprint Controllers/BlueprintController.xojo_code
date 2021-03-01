@@ -1,12 +1,6 @@
 #tag Class
 Protected Class BlueprintController
 	#tag Method, Flags = &h0
-		Function AutoPublish() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Blueprint(ObjectID As String) As Beacon.Blueprint
 		  If Self.mBlueprints.HasKey(ObjectID) Then
 		    Return Self.mBlueprints.Value(ObjectID)
@@ -127,10 +121,6 @@ Protected Class BlueprintController
 		    
 		    Self.mBlueprintsToDelete.Value(ObjectID) = Blueprint
 		  Next
-		  
-		  If Self.AutoPublish Then
-		    Self.Publish()
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -271,10 +261,6 @@ Protected Class BlueprintController
 		      Self.mBlueprintsToDelete.Remove(ObjectID)
 		    End If
 		  Next
-		  
-		  If Self.AutoPublish Then
-		    Self.Publish()
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -287,6 +273,12 @@ Protected Class BlueprintController
 		    End If
 		  Next
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UseSaveTerminology() As Boolean
+		  Return False
 		End Function
 	#tag EndMethod
 

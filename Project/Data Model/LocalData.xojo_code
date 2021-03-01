@@ -234,6 +234,36 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub BuildIndexes()
+		  // When changing these, don't forget to update the DROP INDEX statements in ImportInner.
+		  
+		  Var Categories() As String = Beacon.Categories
+		  For Each Category As String In Categories
+		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_mod_id_idx ON " + Category + "(mod_id);")
+		  Next
+		  
+		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
+		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
+		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
+		  
+		  // For performance, rebuild the blueprints view too.
+		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
+		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
+		  Var DeleteStatements() As String
+		  For Each Category As String In Categories
+		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
+		  Next
+		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub BuildSchema()
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
@@ -262,28 +292,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE);")
 		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  
-		  For Each Category As String In Categories
-		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
-		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
-		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
-		    Self.SQLExecute("CREATE INDEX " + Category + "_mod_id_idx ON " + Category + "(mod_id);")
-		  Next
-		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
-		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
-		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
+		  Self.BuildIndexes()
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
-		  
-		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
-		  Var Categories() As String = Beacon.Categories
-		  Var DeleteStatements() As String
-		  For Each Category As String In Categories
-		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
-		  Next
-		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
 		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id) VALUES (?1, ?2, ?3, ?4, ?5);", Beacon.UserModID, Beacon.UserModName, True, True, Beacon.UserModWorkshopID)
 		  Self.Commit()
@@ -575,30 +586,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 400;")
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DeleteBlueprint(Blueprint As Beacon.Blueprint)
-		  Var Arr(0) As Beacon.Blueprint
-		  Arr(0) = Blueprint
-		  Self.DeleteBlueprints(Arr)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub DeleteBlueprints(Blueprints() As Beacon.Blueprint)
-		  Var ObjectIDs() As String
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    ObjectIDs.Add("'" + Blueprint.ObjectID + "'")
-		  Next
-		  
-		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = '" + Beacon.UserModID + "' AND object_id IN (" + ObjectIDs.Join(",") + ");")
-		  Self.Commit()
-		  
-		  Self.SyncUserEngrams()
-		  NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -1252,39 +1239,44 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, BackgroundColor As Color) As Picture
+		  Var ForegroundColor As Color = Source.UIColor
+		  Select Case ForegroundColor
+		  Case &cFFF02A00
+		    ForegroundColor = SystemColors.SystemYellowColor
+		  Case &cE6BAFF00
+		    ForegroundColor = SystemColors.SystemPurpleColor
+		  Case &c00FF0000
+		    ForegroundColor = SystemColors.SystemGreenColor
+		  Case &cFFBABA00
+		    ForegroundColor = SystemColors.SystemRedColor
+		  Case &c88C8FF00
+		    ForegroundColor = SystemColors.SystemBlueColor
+		  End Select
+		  
+		  Return IconForLootSource(Source, ForegroundColor, BackgroundColor)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IconForLootSource(Source As Beacon.LootSource, ForegroundColor As Color, BackgroundColor As Color) As Picture
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
 		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
-		  Var PrimaryColor, AccentColor As Color
+		  Var AccentColor As Color
 		  Var IconID As String
 		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
 		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
 		    IconID = Results.Column("icon_id").StringValue
-		    PrimaryColor = Source.UIColor
 		  Else
 		    SpriteSheet = App.GenericLootSourceIcon()
 		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
-		    PrimaryColor = &cFFFFFF00
 		  End If
 		  AccentColor = BackgroundColor
 		  
-		  Select Case PrimaryColor
-		  Case &cFFF02A00
-		    PrimaryColor = SystemColors.SystemYellowColor
-		  Case &cE6BAFF00
-		    PrimaryColor = SystemColors.SystemPurpleColor
-		  Case &c00FF0000
-		    PrimaryColor = SystemColors.SystemGreenColor
-		  Case &cFFBABA00
-		    PrimaryColor = SystemColors.SystemRedColor
-		  Case &c88C8FF00
-		    PrimaryColor = SystemColors.SystemBlueColor
-		  End Select
-		  
-		  IconID = IconID + PrimaryColor.ToHex + BackgroundColor.ToHex
+		  IconID = IconID + ForegroundColor.ToHex + BackgroundColor.ToHex
 		  If Self.IconCache = Nil Then
 		    Self.IconCache = New Dictionary
 		  End If
@@ -1292,7 +1284,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return IconCache.Value(IconID)
 		  End If
 		  
-		  PrimaryColor = BeaconUI.FindContrastingColor(BackgroundColor, PrimaryColor)
+		  ForegroundColor = BeaconUI.FindContrastingColor(BackgroundColor, ForegroundColor)
 		  
 		  Var Height As Integer = (SpriteSheet.Height / 2) / 3
 		  Var Width As Integer = (SpriteSheet.Width / 2) / 3
@@ -1330,7 +1322,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
 		  Var ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
 		  
-		  Var Highlight As Picture = HighlightMask.WithColor(PrimaryColor)
+		  Var Highlight As Picture = HighlightMask.WithColor(ForegroundColor)
 		  Var Fill As Picture = ColorMask.WithColor(AccentColor)
 		  
 		  Var Bitmaps() As Picture
@@ -1389,8 +1381,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
-		  Self.BeginTransaction()
-		  Self.DeleteDataForMod(Beacon.UserModID)
 		  If Not LegacyMode Then
 		    Var Unpacked() As Beacon.Blueprint
 		    For Each Dict As Dictionary In Blueprints
@@ -1402,8 +1392,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
-		    Call Self.SaveBlueprints(Unpacked, True)
+		    
+		    Var Mods As New Beacon.StringList(0)
+		    Mods(0) = Beacon.UserModID
+		    
+		    Call Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Nil)
 		  Else
+		    Self.BeginTransaction()
+		    Self.DeleteDataForMod(Beacon.UserModID)
+		    
 		    For Each Dict As Dictionary In Blueprints
 		      Try
 		        Var Category As String = Dict.Value("category")
@@ -1424,8 +1421,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
+		    Self.Commit()
 		  End If
-		  Self.Commit()
 		  Return EngramsUpdated
 		End Function
 	#tag EndMethod
@@ -1551,11 +1548,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    // Drop indexes
 		    Var Categories() As String = Beacon.Categories
 		    For Each Category As String In Categories
-		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category +"_class_string_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_path_uidx;")
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_path_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_class_string_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_mod_id_idx;")
 		    Next
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_sort_order_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS maps_mod_id_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS custom_presets_user_id_object_id_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS engrams_entry_string_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS ini_options_file_header_key_idx;")
 		    
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Beacon.UserModID)
@@ -1909,12 +1912,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    // Restore Indexes
-		    For Each Category As String In Categories
-		      Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
-		      Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
-		    Next
-		    Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
-		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
+		    Self.BuildIndexes()
 		    
 		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
 		    Self.Commit()
@@ -1945,6 +1943,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return True
 		  Catch Err As RuntimeException
 		    Self.Rollback()
+		    App.Log(Err, CurrentMethodName)
 		    Return False
 		  End Try
 		  
@@ -2525,35 +2524,46 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
-		  Var CountSaved As Integer
+		Function SaveBlueprints(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint, ErrorDict As Dictionary) As Boolean
+		  Var CountSuccess, CountErrors As Integer
 		  
 		  Self.BeginTransaction()
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		  For Each Blueprint As Beacon.Blueprint In BlueprintsToDelete
+		    Var TransactionStarted As Boolean
 		    Try
-		      Var Update As Boolean
-		      Var ObjectID As String
+		      Self.BeginTransaction()
+		      TransactionStarted = True
+		      Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 OR (mod_id = ?2 AND path = ?3);", Blueprint.ObjectID, Beacon.UserModID, Blueprint.Path)
+		      Self.Commit()
+		      TransactionStarted = False
+		      CountSuccess = CountSuccess + 1
+		    Catch Err As RuntimeException
+		      If TransactionStarted Then
+		        Self.Rollback()
+		      End If
+		      If (ErrorDict Is Nil) = False Then
+		        ErrorDict.Value(Blueprint) = Err
+		      End If
+		      CountErrors = CountErrors + 1
+		    End Try
+		  Next
+		  
+		  For Each Blueprint As Beacon.Blueprint In BlueprintsToSave
+		    Var TransactionStarted As Boolean
+		    Try
+		      Var UpdateObjectID As String
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR (mod_id = ?2 AND path = ?3);", Blueprint.ObjectID, Beacon.UserModID, Blueprint.Path)
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
-		        ObjectID = Results.Column("object_id").StringValue
-		        
-		        If Replace = False Or ObjectID <> Blueprint.ObjectID Then
-		          Continue
-		        End If
+		        UpdateObjectID = Results.Column("object_id").StringValue
 		        
 		        Var ModID As String = Results.Column("mod_id").StringValue
 		        If ModID <> Beacon.UserModID Then
 		          Continue
 		        End If
-		        
-		        Update = True
 		      ElseIf Results.RowCount > 1 Then
 		        // What the hell?
 		        Continue
-		      Else
-		        Update = False
-		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
 		      If Blueprint.Path.IsEmpty Or Blueprint.ClassString.IsEmpty Then
@@ -2562,7 +2572,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Var Category As String = Blueprint.Category
 		      Var Columns As New Dictionary
-		      Columns.Value("object_id") = ObjectID
+		      Columns.Value("object_id") = Blueprint.ObjectID
 		      Columns.Value("path") = Blueprint.Path
 		      Columns.Value("class_string") = Blueprint.ClassString
 		      Columns.Value("label") = Blueprint.Label
@@ -2627,7 +2637,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        CacheDict = Self.mEngramCache
 		      End Select
 		      
-		      If Update Then
+		      Self.BeginTransaction()
+		      TransactionStarted = True
+		      If UpdateObjectID.IsEmpty = False Then
 		        Var Assignments() As String
 		        Var Values() As Variant
 		        Var NextPlaceholder As Integer = 1
@@ -2643,7 +2655,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, UpdateObjectID, Blueprint.TagString)
 		      Else
 		        Var ColumnNames(), Placeholders() As String
 		        Var Values() As Variant
@@ -2656,8 +2668,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
+		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, Blueprint.ObjectID, Blueprint.TagString)
 		      End If
+		      Self.Commit()
+		      TransactionStarted = False
 		      
 		      If CacheDict <> Nil Then
 		        If CacheDict.HasKey(Blueprint.ObjectID) Then
@@ -2674,20 +2688,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		      End If
 		      
-		      CountSaved = CountSaved + 1
+		      CountSuccess = CountSuccess + 1
 		    Catch Err As RuntimeException
-		      Self.Rollback()
-		      Return 0
+		      If TransactionStarted Then
+		        Self.Rollback()
+		      End If
+		      If (ErrorDict Is Nil) = False Then
+		        ErrorDict.Value(Blueprint) = Err
+		      End If
+		      CountErrors = CountErrors + 1
 		    End Try
 		  Next
-		  Self.Commit()
-		  
-		  If CountSaved > 0 Then
+		  If CountErrors = 0 And CountSuccess > 1 Then
+		    Self.Commit()
+		    
 		    Self.SyncUserEngrams()
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		    
+		    Return True
+		  Else
+		    Self.Rollback()
+		    
+		    Return False
 		  End If
-		  
-		  Return CountSaved
 		End Function
 	#tag EndMethod
 

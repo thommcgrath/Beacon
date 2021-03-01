@@ -72,8 +72,6 @@ Inherits Beacon.IntegrationEngine
 		          FormData.Value("value") = NewValue
 		        End If
 		        Changes.Add(FormData)
-		        
-		        App.Log("Need to change " + NitradoPath + " from `" + CurrentValue + "` to `" + NewValue + "`")
 		      End If
 		    Next
 		  Next
@@ -99,7 +97,7 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		    
 		    Var RewriteError As RuntimeException
-		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, ExtraGameIniOrganizer, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), RewriteError)
+		    ExtraGameIni = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, ExtraGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, ExtraGameIniOrganizer, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), RewriteError)
 		    If (RewriteError Is Nil) = False Then
 		      Self.SetError(RewriteError)
 		      Return False

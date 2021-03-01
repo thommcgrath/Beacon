@@ -956,7 +956,7 @@ End
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
 		  InsertData.Value("stage") = Str(Self.mStageCode, "-0")
 		  InsertData.Value("preview") = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
-		  InsertData.Value("min_mac_version") = "'10.11.0'"
+		  InsertData.Value("min_mac_version") = "'10.12.0'"
 		  InsertData.Value("min_win_version") = "'6.1.7601'"
 		  InsertData.Value("delta_version") = If(Self.mBuildNumber >= 10500000, 5, 4)
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"

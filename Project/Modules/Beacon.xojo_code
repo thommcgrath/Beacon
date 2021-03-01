@@ -139,8 +139,8 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Categories() As String()
+	#tag Method, Flags = &h1
+		Protected Function Categories() As String()
 		  Return Array(CategoryEngrams, CategoryCreatures, CategorySpawnPoints)
 		End Function
 	#tag EndMethod
@@ -1617,14 +1617,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprint(Extends Source As Beacon.DataSource, Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
-		  Var Arr(0) As Beacon.Blueprint
-		  Arr(0) = Blueprint
-		  Return (Source.SaveBlueprints(Arr, Replace) = 1)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SaveData(Extends Source As Beacon.LootSource) As Dictionary
 		  // Mandatory item sets should not be part of this.
 		  
@@ -1640,6 +1632,20 @@ Protected Module Beacon
 		  Keys.Value("bAppendMode") = Source.AppendMode
 		  Source.EditSaveData(Keys)
 		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForBlueprints(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Blueprint()
+		  Var Categories() As String = Beacon.Categories
+		  Var Blueprints() As Beacon.Blueprint
+		  For Each Category As String In Categories
+		    Var Results() As Beacon.Blueprint = Source.SearchForBlueprints(Category, SearchText, Mods, Tags)
+		    For Each Result As Beacon.Blueprint In Results
+		      Blueprints.Add(Result)
+		    Next
+		  Next
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 
