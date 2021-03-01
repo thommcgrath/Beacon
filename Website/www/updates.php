@@ -65,8 +65,10 @@ if ($include_notices) {
 
 if (isset($version_column) && isset($os_version)) {
 	$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 AND os_version_as_integer(' . $version_column . ') <= os_version_as_integer($3) ORDER BY build_number DESC;', $current_build, $stage, $os_version);
+	$required = $database->Query('SELECT COUNT(update_id) AS num_required_updates FROM updates WHERE stage >= $2 AND build_number >= $1 AND $1 <@ lock_versions AND os_version_as_integer(' . $version_column . ') <= os_version_as_integer($3);', $current_build, $stage, $os_version)->Field('num_required_updates') > 0;
 } else {
 	$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 ORDER BY build_number DESC;', $current_build, $stage);
+	$required = $database->Query('SELECT COUNT(update_id) AS num_required_updates FROM updates WHERE stage >= $2 AND build_number >= $1 AND $1 <@ lock_versions;', $current_build, $stage)->Field('num_required_updates') > 0;
 }
 if ($results->RecordCount() == 0) {
 	if ($html_mode) {
@@ -82,11 +84,14 @@ if ($results->RecordCount() == 0) {
 	exit;
 }
 
+
+
 $values = array(
 	'build' => intval($results->Field('build_number')),
 	'version' => $results->Field('build_display'),
 	'preview' => ($current_build < 10500000) ? 'Beacon\'s biggest update ever is here!' : $results->Field('preview'),
 	'notes_url' => BeaconCommon::AbsoluteURL('/history' . (intval($results->Field('stage')) != 3 ? '?stage=' . $results->Field('stage') : '')),
+	'required' => $required,
 	'mac' => array(
 		'url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
 		'signature' => $results->Field('mac_signature')
