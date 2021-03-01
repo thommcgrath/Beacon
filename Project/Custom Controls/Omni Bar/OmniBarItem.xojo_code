@@ -138,6 +138,16 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function CreateShadowBrush(ShadowColor As Color) As ShadowBrush
+		  Var Brush As New ShadowBrush
+		  Brush.ShadowColor = ShadowColor
+		  Brush.BlurAmount = 0
+		  Brush.Offset = New Point(0, 1)
+		  Return Brush
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function CreateSpace(Name As String = "") As OmniBarItem
 		  If Name.IsEmpty Then
@@ -211,14 +221,13 @@ Implements ObservationKit.Observable
 		  Var HighlightRect As New Rect(0, CellTop - Margins, G.Width, CellHeight + (Margins * 2))
 		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
 		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, ForeColor, Factor, Factor)
-		  Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor, Factor, Factor)
 		  
 		  If BackColor.Alpha < 255 Then
 		    G.DrawingColor = BackColor
 		    G.FillRoundRectangle(HighlightRect.Left, HighlightRect.Top, HighlightRect.Width, HighlightRect.Height, CornerRadius, CornerRadius)
 		  End If
 		  
-		  G.DrawPicture(Shadow, IconRect.Left, IconRect.Top + 1, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
+		  G.ShadowBrush = Self.CreateShadowBrush(ShadowColor)
 		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		  
 		  If Self.Caption.IsEmpty = False Then
@@ -226,11 +235,10 @@ Implements ObservationKit.Observable
 		    Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
 		    Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + (Margins / 2) + G.FontAscent, G.ScaleY)
 		    
-		    G.DrawingColor = ShadowColor
-		    G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, G.Width, True)
 		    G.DrawingColor = ForeColor
 		    G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, G.Width, True)
 		  End If
+		  G.ShadowBrush = Nil
 		  
 		  If MouseDown And Self.Enabled Then
 		    G.DrawingColor = &c00000080
@@ -283,10 +291,10 @@ Implements ObservationKit.Observable
 		  Var IconRect As New Rect(NearestMultiple((G.Width - Self.Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Self.Icon.Height) / 2, G.ScaleY), Self.Icon.Width, Self.Icon.Height)
 		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
 		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, ForeColor, Factor, Factor)
-		  Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor, Factor, Factor)
 		  
-		  G.DrawPicture(Shadow, IconRect.Left, IconRect.Top + 1, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
+		  G.ShadowBrush = Self.CreateShadowBrush(ShadowColor)
 		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
+		  G.ShadowBrush = Nil
 		End Sub
 	#tag EndMethod
 
@@ -300,9 +308,9 @@ Implements ObservationKit.Observable
 		  Const Spacing = 10
 		  Var X As Integer = (G.Width - 2) / 2
 		  
-		  G.DrawingColor = Colors.SeparatorColor
+		  G.DrawingColor = Colors.TextColor.AtOpacity(0.2)
 		  G.DrawLine(X, Spacing, X, G.Height - Spacing)
-		  G.DrawingColor = Colors.TextShadowColor
+		  G.DrawingColor = Colors.TextShadowColor.AtOpacity(0.5)
 		  G.DrawLine(X + 1, Spacing + 1, X + 1, (G.Height - Spacing) + 1)
 		End Sub
 	#tag EndMethod
@@ -366,6 +374,8 @@ Implements ObservationKit.Observable
 		  // Draw as text, with an icon to the left if available.
 		  // Accessory comes first, as it may change the hover and pressed appearances
 		  
+		  G.ShadowBrush = Self.CreateShadowBrush(ShadowColor)
+		  
 		  Var AccessoryImage As Picture
 		  Var AccessoryRect As New Rect(G.Width - Self.AccessoryIconSize, NearestMultiple((G.Height - Self.AccessoryIconSize) / 2, G.ScaleY), Self.AccessoryIconSize, Self.AccessoryIconSize)
 		  Var AccessoryColor As Color
@@ -409,8 +419,6 @@ Implements ObservationKit.Observable
 		    
 		    Var IconTop As Double = NearestMultiple((G.Height - Self.Icon.Height) / 2, G.ScaleY)
 		    Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, Forecolor)
-		    Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor)
-		    G.DrawPicture(Shadow, 0, IconTop + 1, Icon.Width, Icon.Height, 0, 0, Icon.Width, Icon.Height)
 		    G.DrawPicture(Icon, 0, IconTop, Icon.Width, Icon.Height, 0, 0, Icon.Width, Icon.Height)
 		  End If
 		  
@@ -422,11 +430,11 @@ Implements ObservationKit.Observable
 		  Var CaptionLeft As Double = NearestMultiple(CaptionOffset + ((CaptionSpace - Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth)) / 2), G.ScaleX)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
-		  G.DrawingColor = ShadowColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, Self.MaxCaptionWidth, True)
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
 		  G.Bold = False
+		  
+		  G.ShadowBrush = Nil
 		End Sub
 	#tag EndMethod
 
@@ -454,10 +462,10 @@ Implements ObservationKit.Observable
 		  End If
 		  ShadowColor = Colors.TextShadowColor
 		  
-		  G.DrawingColor = ShadowColor
-		  G.DrawText(Self.Caption, 0, CaptionBaseline + 1, Self.MaxCaptionWidth, True)
+		  G.ShadowBrush = Self.CreateShadowBrush(ShadowColor)
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Self.Caption, 0, CaptionBaseline, Self.MaxCaptionWidth, True)
+		  G.ShadowBrush = Nil
 		End Sub
 	#tag EndMethod
 

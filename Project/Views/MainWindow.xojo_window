@@ -729,6 +729,7 @@ End
 		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarUpdate, Preview)
 		      UpdateItem.AlwaysUseActiveColor = True
 		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
+		      UpdateItem.Caption = "Update Ready"
 		      
 		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
 		      If Idx > -1 Then
@@ -736,8 +737,19 @@ End
 		      Else
 		        Self.NavBar.Append(UpdateItem)
 		      End If
+		      
+		      SoundUpdateAvailable.Play
 		    Else
 		      UpdateItem.HelpTag = Preview
+		    End If
+		    
+		    Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Blue
+		  Else
+		    Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Natural
+		    
+		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
+		    If (UpdateItem Is Nil) = False Then
+		      Self.NavBar.Remove(UpdateItem)
 		    End If
 		  End If
 		End Sub

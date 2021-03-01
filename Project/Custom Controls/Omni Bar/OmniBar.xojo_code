@@ -215,13 +215,17 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused SafeArea
 		  
-		  If Self.mColorProfile Is Nil Then
-		    Self.mColorProfile = New OmniBarColorProfile
+		  Var ColorProfile As OmniBarColorProfile
+		  If Self.mColorProfiles.HasKey(Self.mBackgroundColor) = False Then
+		    Self.mColorProfiles.Value(Self.mBackgroundColor) = New OmniBarColorProfile(Self.mBackgroundColor)
 		  End If
+		  ColorProfile = Self.mColorProfiles.Value(Self.mBackgroundColor)
 		  
 		  Self.mItemRects = Self.ComputeRects(G)
 		  
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
+		  G.DrawingColor = ColorProfile.FillColor
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
@@ -262,7 +266,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		    
 		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
-		    Item.DrawInto(Clip, Self.mColorProfile, MouseDown, MouseHover, LocalPoint, Highlighted)
+		    Item.DrawInto(Clip, ColorProfile, MouseDown, MouseHover, LocalPoint, Highlighted)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -395,6 +399,10 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  If Self.mColorProfiles Is Nil Then
+		    Self.mColorProfiles = New Dictionary
+		  End If
+		  
 		  Super.Constructor
 		  
 		  Self.mHoldTimer = New Timer
@@ -570,7 +578,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Shared Sub RebuildColors()
-		  mColorProfile = Nil
+		  mColorProfiles = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -670,6 +678,23 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mBackgroundColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mBackgroundColor <> Value Then
+			    Self.mBackgroundColor = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		BackgroundColor As OmniBar.BackgroundColors
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mLeftPadding
 			End Get
 		#tag EndGetter
@@ -689,7 +714,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mColorProfile As OmniBarColorProfile
+		Private mBackgroundColor As OmniBar.BackgroundColors
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mColorProfiles As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -782,6 +811,19 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Constant, Name = StatePressed, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
+
+
+	#tag Enum, Name = BackgroundColors, Type = Integer, Flags = &h0
+		Natural
+		  Blue
+		  Gray
+		  Green
+		  Orange
+		  Pink
+		  Purple
+		  Red
+		Yellow
+	#tag EndEnum
 
 
 	#tag ViewBehavior
@@ -1045,6 +1087,25 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BackgroundColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="OmniBar.BackgroundColors"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Natural"
+				"1 - Blue"
+				"2 - Gray"
+				"3 - Green"
+				"4 - Orange"
+				"5 - Pink"
+				"6 - Purple"
+				"7 - Red"
+				"8 - Yellow"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

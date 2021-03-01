@@ -1,42 +1,97 @@
 #tag Class
 Protected Class OmniBarColorProfile
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Var BackgroundColor As Color = SystemColors.WindowBackgroundColor
-		  
-		  Self.AccentColor = SystemColors.SelectedContentBackgroundColor
-		  Self.Blue = SystemColors.SystemBlueColor
-		  Self.Brown = SystemColors.SystemBrownColor
-		  Self.Gray = SystemColors.SystemGrayColor
-		  Self.Green = SystemColors.SystemGreenColor
-		  Self.Orange = SystemColors.SystemOrangeColor
-		  Self.Pink = SystemColors.SystemPinkColor
-		  Self.Purple = SystemColors.SystemPurpleColor
-		  Self.Red = SystemColors.SystemRedColor
-		  Self.Yellow = SystemColors.SystemYellowColor
-		  
-		  Self.AccentedText = BeaconUI.FindContrastingColor(BackgroundColor, SystemColors.ControlAccentColor)
-		  Self.BlueText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Blue)
-		  Self.BrownText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Brown)
-		  Self.GrayText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Gray)
-		  Self.GreenText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Green)
-		  Self.OrangeText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Orange)
-		  Self.PinkText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Pink)
-		  Self.PurpleText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Purple)
-		  Self.RedText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Red)
-		  Self.YellowText = BeaconUI.FindContrastingColor(BackgroundColor, Self.Yellow)
-		  
+		Sub Constructor(BackgroundColor As OmniBar.BackgroundColors)
 		  Self.SeparatorColor = SystemColors.SeparatorColor
 		  
-		  Self.TextColor = SystemColors.ControlTextColor
-		  Self.DisabledTextColor = SystemColors.DisabledControlTextColor
-		  Self.TextShadowColor = Self.ShadowColor(Self.TextColor)
-		  
-		  Self.ToggledButtonIconColor = SystemColors.AlternateSelectedControlTextColor
-		  Self.ToggledButtonShadowColor = Self.ShadowColor(Self.ToggledButtonIconColor)
-		  Self.ToggledButtonInactiveColor = SystemColors.QuaternaryLabelColor
-		  
-		  Self.AccessoryColor = SystemColors.TertiaryLabelColor
+		  If BackgroundColor = OmniBar.BackgroundColors.Natural Then
+		    Var EstimatedBackground As Color = SystemColors.WindowBackgroundColor
+		    
+		    Self.FillColor = &cFFFFFFFF
+		    Self.AccentColor = SystemColors.SelectedContentBackgroundColor
+		    
+		    Self.Blue = SystemColors.SystemBlueColor
+		    Self.Brown = SystemColors.SystemBrownColor
+		    Self.Gray = SystemColors.SystemGrayColor
+		    Self.Green = SystemColors.SystemGreenColor
+		    Self.Orange = SystemColors.SystemOrangeColor
+		    Self.Pink = SystemColors.SystemPinkColor
+		    Self.Purple = SystemColors.SystemPurpleColor
+		    Self.Red = SystemColors.SystemRedColor
+		    Self.Yellow = SystemColors.SystemYellowColor
+		    
+		    Self.AccentedText = BeaconUI.FindContrastingColor(EstimatedBackground, SystemColors.ControlAccentColor)
+		    Self.BlueText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Blue)
+		    Self.BrownText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Brown)
+		    Self.GrayText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Gray)
+		    Self.GreenText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Green)
+		    Self.OrangeText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Orange)
+		    Self.PinkText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Pink)
+		    Self.PurpleText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Purple)
+		    Self.RedText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Red)
+		    Self.YellowText = BeaconUI.FindContrastingColor(EstimatedBackground, Self.Yellow)
+		    
+		    Self.TextColor = SystemColors.ControlTextColor
+		    Self.DisabledTextColor = SystemColors.DisabledControlTextColor
+		    Self.TextShadowColor = Self.ShadowColor(Self.TextColor)
+		    
+		    Self.ToggledButtonIconColor = SystemColors.AlternateSelectedControlTextColor
+		    Self.ToggledButtonShadowColor = Self.ShadowColor(Self.ToggledButtonIconColor)
+		    Self.ToggledButtonInactiveColor = SystemColors.QuaternaryLabelColor
+		    
+		    Self.AccessoryColor = SystemColors.TertiaryLabelColor
+		  Else
+		    Select Case BackgroundColor
+		    Case OmniBar.BackgroundColors.Blue
+		      Self.FillColor = &c2861d9
+		    Case OmniBar.BackgroundColors.Gray
+		      Self.FillColor = &c807f80
+		    Case OmniBar.BackgroundColors.Green
+		      Self.FillColor = &c629e41
+		    Case OmniBar.BackgroundColors.Orange
+		      Self.FillColor = &ccb702c
+		    Case OmniBar.BackgroundColors.Pink
+		      Self.FillColor = &cc84884
+		    Case OmniBar.BackgroundColors.Purple
+		      Self.FillColor = &c713a9a
+		    Case OmniBar.BackgroundColors.Red
+		      Self.FillColor = &cB33531
+		    Case OmniBar.BackgroundColors.Yellow
+		      Self.FillColor = &cd9ad3f
+		    End Select
+		    
+		    Self.AccentColor = &cFFFFFF
+		    Self.Blue = &cFFFFFF
+		    Self.Brown = &cFFFFFF
+		    Self.Gray = &cFFFFFF
+		    Self.Green = &cFFFFFF
+		    Self.Orange = &cFFFFFF
+		    Self.Pink = &cFFFFFF
+		    Self.Purple = &cFFFFFF
+		    Self.Red = &cFFFFFF
+		    Self.Yellow = &cFFFFFF
+		    
+		    Self.AccentedText = &cFFFFFF
+		    Self.BlueText = &cFFFFFF
+		    Self.BrownText = &cFFFFFF
+		    Self.GrayText = &cFFFFFF
+		    Self.GreenText = &cFFFFFF
+		    Self.OrangeText = &cFFFFFF
+		    Self.PinkText = &cFFFFFF
+		    Self.PurpleText = &cFFFFFF
+		    Self.RedText = &cFFFFFF
+		    Self.YellowText = &cFFFFFF
+		    
+		    Self.TextColor = &cFFFFFF
+		    Self.DisabledTextColor = &cFFFFFF80
+		    Self.TextShadowColor = &c000000A0
+		    
+		    Self.ToggledButtonIconColor = Self.FillColor
+		    Self.ToggledButtonShadowColor = &cFFFFFFFF
+		    Self.ToggledButtonInactiveColor = &cFFFFFF80
+		    
+		    Self.AccessoryColor = &cFFFFFFAA
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -45,7 +100,7 @@ Protected Class OmniBarColorProfile
 		  If ForegroundColor.IsBright Then
 		    Return &c000000C0
 		  Else
-		    Return &cFFFFFF40
+		    Return &cFFFFFF
 		  End If
 		End Function
 	#tag EndMethod
@@ -81,6 +136,10 @@ Protected Class OmniBarColorProfile
 
 	#tag Property, Flags = &h0
 		DisabledTextColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		FillColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
