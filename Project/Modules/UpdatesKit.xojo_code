@@ -37,6 +37,12 @@ Protected Module UpdatesKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function AvailableUpdateRequired() As Boolean
+		  Return mAvailableUpdateRequired
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub Cancel()
 		  If (mSocket Is Nil) = False Then
 		    mSocket.Disconnect
@@ -229,10 +235,11 @@ Protected Module UpdatesKit
 		      Return
 		    End If
 		    
-		    Var Version As String = Dict.Value("version")
-		    Var NotesHTML As String = Dict.Value("notes")
-		    Var NotesURL As String = Dict.Lookup("notes_url", "")
-		    Var PreviewText As String = Dict.Lookup("preview", "")
+		    mAvailableDisplayVersion = Dict.Value("version")
+		    mAvailableNotes = Dict.Value("notes")
+		    mAvailableNotesURL = Dict.Lookup("notes_url", "")
+		    mAvailablePreview = Dict.Lookup("preview", "")
+		    mAvailableUpdateRequired = Dict.Lookup("required", False)
 		    Var Location As Dictionary
 		    #if TargetMacOS
 		      Location = Dict.Value("mac")
@@ -245,15 +252,8 @@ Protected Module UpdatesKit
 		        NotificationKit.Post(Notification_NoUpdates)
 		      End If
 		    #endif
-		    Var PackageURL As String = Location.Value("url")
-		    Var Signature As String = Location.Value("signature")
-		    
-		    mAvailableDisplayVersion = Version
-		    mAvailablePreview = PreviewText
-		    mAvailableNotes = NotesHTML
-		    mAvailableNotesURL = NotesURL
-		    mAvailableDownloadURL = PackageURL
-		    mAvailableSignature = Signature
+		    mAvailableDownloadURL = Location.Value("url")
+		    mAvailableSignature = Location.Value("signature")
 		    
 		    NotificationKit.Post(Notification_UpdateAvailable, LatestBuild)
 		  Catch Err As RuntimeException
@@ -373,6 +373,10 @@ Protected Module UpdatesKit
 
 	#tag Property, Flags = &h21
 		Private mAvailableSignature As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAvailableUpdateRequired As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

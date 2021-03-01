@@ -743,7 +743,17 @@ End
 		      UpdateItem.HelpTag = Preview
 		    End If
 		    
-		    Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Blue
+		    If UpdatesKit.AvailableUpdateRequired Then
+		      Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Red
+		      
+		      If Not Self.HasModifications Then
+		        Self.Hide
+		      End If
+		      
+		      UpdateWindow.Present
+		    Else
+		      Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Blue
+		    End If
 		  Else
 		    Self.NavBar.BackgroundColor = OmniBar.BackgroundColors.Natural
 		    

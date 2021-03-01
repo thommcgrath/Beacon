@@ -506,11 +506,12 @@ End
 		  
 		  If mInstance = Nil Then
 		    mInstance = New UpdateWindow
+		    mInstance.ViewPanel.SelectedPanelIndex = UpdateWindow.ViewCheck
+		    mInstance.Show
+		    UpdatesKit.Check()
+		  Else
+		    mInstance.Show
 		  End If
-		  
-		  mInstance.ViewPanel.SelectedPanelIndex = UpdateWindow.ViewCheck
-		  mInstance.Show
-		  UpdatesKit.Check()
 		End Sub
 	#tag EndMethod
 
@@ -520,6 +521,12 @@ End
 		  Self.mSignature = Signature
 		  Self.mNotesURL = NotesURL
 		  Self.ResultsNotesButton.Enabled = NotesURL.BeginsWith("https://")
+		  
+		  If UpdatesKit.AvailableUpdateRequired Then
+		    Self.ResultsCancelButton.Caption = "Quit"
+		    Self.ResultsMessageLabel.Text = "A required Beacon update is available."
+		    Self.ResultsExplanationLabel.Text = "This update is required. Beacon will not function until updated."
+		  End If
 		  
 		  Var PathComponents() As String = FrameworkExtensions.FieldAtPosition(URL, "?", 1).Split("/")
 		  Var Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastIndex), "#", 1)
@@ -647,7 +654,11 @@ End
 #tag Events ResultsCancelButton
 	#tag Event
 		Sub Action()
-		  Self.Close
+		  If UpdatesKit.AvailableUpdateRequired Then
+		    Quit
+		  Else
+		    Self.Close
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
