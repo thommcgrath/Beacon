@@ -1,38 +1,74 @@
-#tag Class
-Protected Class UpdateChecker
-	#tag Method, Flags = &h0
-		Sub Cancel()
-		  If Self.mSocket <> Nil Then
-		    Self.mSocket.Disconnect
-		    Self.mSocket = Nil
+#tag Module
+Protected Module UpdatesKit
+	#tag Method, Flags = &h1
+		Protected Function AvailableDisplayVersion() As String
+		  Return mAvailableDisplayVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailableDownloadURL() As String
+		  Return mAvailableDownloadURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailableNotes() As String
+		  Return mAvailableNotes
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailableNotesURL() As String
+		  Return mAvailableNotesURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailablePreview() As String
+		  Return mAvailablePreview
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function AvailableSignature() As String
+		  Return mAvailableSignature
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Cancel()
+		  If (mSocket Is Nil) = False Then
+		    mSocket.Disconnect
+		    mSocket = Nil
 		  End If
 		  
-		  Self.mChecking = False
+		  mChecking = False
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Check(Silent As Boolean)
-		  If Self.mChecking Then
+	#tag Method, Flags = &h1
+		Protected Sub Check()
+		  If mChecking Then
 		    Return
 		  End If
 		  
-		  Self.mSilent = Silent
-		  Self.mChecking = True
+		  mChecking = True
+		  mLastCheckTime = DateTime.Now
 		  
-		  Self.mSocket = New URLConnection
-		  Self.mSocket.AllowCertificateValidation = True
-		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
-		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
-		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf Self.mSocket_ContentReceived
-		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.mSocket.RequestHeader("User-Agent") = App.UserAgent
+		  mSocket = New URLConnection
+		  mSocket.AllowCertificateValidation = True
+		  AddHandler mSocket.Error, AddressOf mSocket_Error
+		  AddHandler mSocket.HeadersReceived, AddressOf mSocket_HeadersReceived
+		  AddHandler mSocket.ContentReceived, AddressOf mSocket_ContentReceived
+		  mSocket.RequestHeader("Cache-Control") = "no-cache"
+		  mSocket.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  Var Params As New Dictionary
 		  Params.Value("build") = App.BuildNumber.ToString
 		  Params.Value("stage") = App.StageCode.ToString
-		  Params.Value("arch") = If(Self.IsARM, "arm", "x86")
-		  If Self.Is64Bit Then
+		  Params.Value("arch") = If(IsARM, "arm", "x86")
+		  If Is64Bit Then
 		    Params.Value("arch") = Params.Value("arch").StringValue + "_64"
 		  End If
 		  Params.Value("osversion") = OSVersion
@@ -51,7 +87,7 @@ Protected Class UpdateChecker
 		    End Try
 		  #endif
 		  
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)))
+		  mSocket.Send("GET", Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)))
 		End Sub
 	#tag EndMethod
 
@@ -100,25 +136,78 @@ Protected Class UpdateChecker
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function IsBusy() As Boolean
+		  Return mChecking
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IsCheckingAutomatically() As Boolean
+		  Return (mAutoCheckTimer Is Nil) = False And mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub IsCheckingAutomatically(Assigns Value As Boolean)
+		  If IsCheckingAutomatically = Value Then
+		    // No changes necessary
+		    Return
+		  End If
+		  
+		  If mAutoCheckTimer Is Nil Then
+		    If Value = False Then
+		      Return
+		    End If
+		    
+		    mAutoCheckTimer = New Timer
+		    mAutoCheckTimer.Period = 60000 // Does not actually check every minute, that is throttled by the event
+		    AddHandler mAutoCheckTimer.Action, AddressOf mAutoCheckTimer_Action
+		  End If
+		  
+		  If Value And mAutoCheckTimer.RunMode <> Timer.RunModes.Multiple Then
+		    App.Log("Automatic update checking is enabled.")
+		    mAutoCheckTimer_Action(mAutoCheckTimer) // Force fire it now to catch up
+		    mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
+		  ElseIf Value = False And mAutoCheckTimer.RunMode <> Timer.RunModes.Off Then
+		    App.Log("Automatic update checking has been stopped.")
+		    mAutoCheckTimer.RunMode = Timer.RunModes.Off
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IsUpdateAvailable() As Boolean
+		  Return mAvailableDisplayVersion.IsEmpty = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mAutoCheckTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  If (mLastCheckTime Is Nil) Or DateTime.Now.SecondsFrom1970 - mLastCheckTime.SecondsFrom1970 >= 3600 Then
+		    Check()
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
 		  
-		  If Self.mSocket <> Nil Then
-		    Self.mSocket = Nil
+		  If Sender = mSocket Then
+		    mChecking = False
+		    mSocket = Nil
 		  End If
-		  
-		  Self.mChecking = False
 		  
 		  Var Dict As Dictionary
 		  Try
 		    Dict = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
-		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("Invalid definition file.")
-		    End If
+		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
 		    Return
 		  End Try
 		  
@@ -129,18 +218,14 @@ Protected Class UpdateChecker
 		  
 		  If Dict.KeyCount = 0 Then
 		    // No update
-		    If Not Self.mSilent Then
-		      RaiseEvent NoUpdate()
-		    End If
+		    NotificationKit.Post(Notification_NoUpdates, Nil)
 		    Return
 		  End If
 		  
 		  Try
 		    Var LatestBuild As Integer = Dict.Value("build")
 		    If LatestBuild <= App.BuildNumber Then
-		      If Not Self.mSilent Then
-		        RaiseEvent NoUpdate()
-		      End If
+		      NotificationKit.Post(Notification_NoUpdates, Nil)
 		      Return
 		    End If
 		    
@@ -157,17 +242,22 @@ Protected Class UpdateChecker
 		      If Dict.HasKey("lin") Then
 		        Location = Dict.Value("lin")
 		      Else
-		        RaiseEvent NoUpdate()
+		        NotificationKit.Post(Notification_NoUpdates)
 		      End If
 		    #endif
 		    Var PackageURL As String = Location.Value("url")
 		    Var Signature As String = Location.Value("signature")
 		    
-		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, NotesURL, PackageURL, Signature)
-		  Catch Err As KeyNotFoundException
-		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("Invalid definition file.")
-		    End If
+		    mAvailableDisplayVersion = Version
+		    mAvailablePreview = PreviewText
+		    mAvailableNotes = NotesHTML
+		    mAvailableNotesURL = NotesURL
+		    mAvailableDownloadURL = PackageURL
+		    mAvailableSignature = Signature
+		    
+		    NotificationKit.Post(Notification_UpdateAvailable, LatestBuild)
+		  Catch Err As RuntimeException
+		    NotificationKit.Post(Notification_Error, "Invalid definition file.")
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -175,15 +265,13 @@ Protected Class UpdateChecker
 	#tag Method, Flags = &h21
 		Private Sub mSocket_Error(Sender As URLConnection, Error As RuntimeException)
 		  Sender.Disconnect
-		  Self.mChecking = False
 		  
-		  If Self.mSocket <> Nil Then
-		    Self.mSocket = Nil
+		  If Sender = mSocket Then
+		    mChecking = False
+		    mSocket = Nil
 		  End If
 		  
-		  If Not Self.mSilent Then
-		    RaiseEvent CheckError(Error.Reason)
-		  End If
+		  NotificationKit.Post(Notification_Error, Error.Reason)
 		End Sub
 	#tag EndMethod
 
@@ -192,18 +280,21 @@ Protected Class UpdateChecker
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
-		    Self.mChecking = False
 		    Sender.Disconnect
-		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("The update definition was not found.")
+		    
+		    If Sender = mSocket Then
+		      mChecking = False
+		      mSocket = Nil
 		    End If
+		    
+		    NotificationKit.Post(Notification_Error, "The update definition was not found.")
 		    Return
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function OSVersion() As String
+		Private Function OSVersion() As String
 		  Var MajorVersion, MinorVersion, BugVersion As Integer
 		  OSVersion(MajorVersion, MinorVersion, BugVersion)
 		  Return MajorVersion.ToString(Locale.Raw, "0") + "." + MinorVersion.ToString(Locale.Raw, "0") + "." + BugVersion.ToString(Locale.Raw, "0")
@@ -211,7 +302,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub OSVersion(ByRef MajorVersion As Integer, ByRef MinorVersion As Integer, ByRef BugVersion As Integer)
+		Sub OSVersion(ByRef MajorVersion As Integer, ByRef MinorVersion As Integer, ByRef BugVersion As Integer)
 		  #if TargetMacOS
 		    Declare Function NSClassFromString Lib "AppKit" (ClassName As CFStringRef) As Ptr
 		    Declare Function ProcessInfo Lib "AppKit" Selector "processInfo" (ClassRef As Ptr) As Ptr
@@ -240,8 +331,8 @@ Protected Class UpdateChecker
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function VerifyFile(File As Global.FolderItem, Signature As String) As Boolean
+	#tag Method, Flags = &h1
+		Protected Function VerifyFile(File As Global.FolderItem, Signature As String) As Boolean
 		  If File = Nil Or File.Exists = False Then
 		    Return False
 		  End If
@@ -256,31 +347,55 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 
-	#tag Hook, Flags = &h0
-		Event CheckError(Message As String)
-	#tag EndHook
+	#tag Property, Flags = &h21
+		Private mAutoCheckTimer As Timer
+	#tag EndProperty
 
-	#tag Hook, Flags = &h0
-		Event NoUpdate()
-	#tag EndHook
+	#tag Property, Flags = &h21
+		Private mAvailableDisplayVersion As String
+	#tag EndProperty
 
-	#tag Hook, Flags = &h0
-		Event UpdateAvailable(Version As String, PreviewText As String, Notes As String, NotesURL As String, URL As String, Signature As String)
-	#tag EndHook
+	#tag Property, Flags = &h21
+		Private mAvailableDownloadURL As String
+	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mAvailableNotes As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAvailableNotesURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAvailablePreview As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAvailableSignature As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mChecking As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSilent As Boolean
+		Private mLastCheckTime As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSocket As URLConnection
 	#tag EndProperty
 
+
+	#tag Constant, Name = Notification_Error, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.error", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_NoUpdates, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.none", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_UpdateAvailable, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.available", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = PublicKey, Type = String, Dynamic = False, Default = \"30820120300D06092A864886F70D01010105000382010D003082010802820101008F9D9B313D28FDE0FD2100032D2E1A7F968A2E4975AF93A507823A95EFFE6A73176BD76D1286CC5DE513D3F4163F6F4E3D2A2FC472D540533020035FA0ED3FDFA33CBA289A94753D70546544459BE69E99B3B08AACBF489DEFA45BA1CC04DE0976DE2DABDC523A13FCEAE701468D994FEC116F30D44B307FD80AB13B1E15E76EA8B1366EC22E814F15D8021993FAE0BA39DF440EEF17550BC3A6CE2831A1B479E93088F2CAACFD19179D1C0744F0293A94C06D8F7D1D73C089D950F86953C2605F70462A889C4A1160B70192C1F97964F0741ED74713E10FF9CDC5BE6205385E5245297D41C31A75067699CB85D9FA6F806E8C770C5E91D706BCD5426C3080B1020111", Scope = Private
 	#tag EndConstant
@@ -309,27 +424,19 @@ Protected Class UpdateChecker
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			InitialValue=""
 			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -341,6 +448,14 @@ Protected Class UpdateChecker
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Top"
 			Visible=true
 			Group="Position"
@@ -349,5 +464,5 @@ Protected Class UpdateChecker
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Class
-#tag EndClass
+End Module
+#tag EndModule

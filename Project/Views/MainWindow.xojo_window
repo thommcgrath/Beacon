@@ -371,7 +371,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, BeaconSubview.Notification_ViewShown)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
 		  #endif
@@ -459,7 +459,7 @@ End
 		    End If
 		  #endif
 		  
-		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -681,7 +681,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case App.Notification_UpdateFound
+		  Case UpdatesKit.Notification_UpdateAvailable
 		    Self.SetupUpdateUI()
 		  Case BeaconSubview.Notification_ViewShown
 		    Self.UpdateEditorMenu()
@@ -716,13 +716,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
-		  If App.UpdateAvailable Then
-		    Var Data As Dictionary = App.UpdateDetails
-		    Var Preview As String = Data.Value("Preview")
+		  If UpdatesKit.IsUpdateAvailable Then
+		    Var Preview As String = UpdatesKit.AvailablePreview
 		    If Preview.IsEmpty = False Then
 		      Preview = Preview + " Click here to update."
 		    Else
-		      Preview = "Beacon " + Data.Value("Version") + " is now available! Click here to update."
+		      Preview = "Beacon " + UpdatesKit.AvailableDisplayVersion + " is now available! Click here to update."
 		    End If
 		    
 		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")

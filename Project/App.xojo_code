@@ -162,7 +162,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    EditorMenu.AddMenu(New ConfigGroupMenuItem(ConfigName))
 		  Next
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
@@ -294,7 +294,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function HelpCheckforUpdates() As Boolean Handles HelpCheckforUpdates.Action
-			Self.CheckForUpdates(False)
+			Self.CheckForUpdates()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -417,24 +417,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub CheckForUpdates(Silent As Boolean)
-		  If Silent Then
-		    If Not Preferences.OnlineEnabled Then
-		      Return
-		    End If
-		    
-		    If Self.mUpdateChecker = Nil Then
-		      Self.mUpdateChecker = New UpdateChecker
-		      AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
-		      AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate
-		    End If
-		    
-		    Self.mUpdateChecker.Check(False)
-		  Else
-		    If Self.GetOnlinePermission() Then
-		      UpdateWindow.Present()
-		    End If
+	#tag Method, Flags = &h21
+		Private Sub CheckForUpdates()
+		  If Self.GetOnlinePermission() Then
+		    UpdateWindow.Present()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -555,7 +541,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "shownewsletterprompt"
 		      SubscribeDialog.Present()
 		    Case "checkforupdate"
-		      Self.CheckForUpdates(False)
+		      Self.CheckForUpdates()
 		    Case "checkforengrams"
 		      If Self.GetOnlinePermission() Then
 		        EngramsUpdateWindow.ShowIfNecessary()
@@ -771,10 +757,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CheckUpdates()
 		  If Preferences.OnlineEnabled Then
-		    Self.CheckForUpdates(True)
-		  Else
-		    Self.NextLaunchQueueTask()
+		    UpdatesKit.IsCheckingAutomatically = True
 		  End If
+		  
+		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 
@@ -1002,33 +988,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub mUpdateChecker_NoUpdate(Sender As UpdateChecker)
-		  #Pragma Unused Sender
-		  
-		  Self.NextLaunchQueueTask()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, NotesURL As String, URL As String, Signature As String)
-		  #Pragma Unused Sender
-		  
-		  Var Data As New Dictionary
-		  Data.Value("Version") = Version
-		  Data.Value("Notes") = Notes
-		  Data.Value("Download") = URL
-		  Data.Value("Signature") = Signature
-		  Data.Value("Preview") = PreviewText
-		  Data.Value("Notes URL") = NotesURL
-		  Self.mUpdateData = Data
-		  
-		  NotificationKit.Post(Self.Notification_UpdateFound, Data)
-		  
-		  Self.NextLaunchQueueTask()
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub NextLaunchQueueTask()
 		  If Self.mLaunchQueue.LastIndex = -1 Then
@@ -1057,6 +1016,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Case UserCloud.Notification_SyncFinished
 		    HelpSyncCloudFiles.Text = "Sync Cloud Files"
 		    HelpSyncCloudFiles.Enabled = True
+		  Case Preferences.Notification_OnlineStateChanged
+		    UpdatesKit.IsCheckingAutomatically = Preferences.OnlineEnabled
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1273,20 +1234,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UpdateAvailable() As Boolean
-		  Return Self.mUpdateData <> Nil
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UpdateDetails() As Dictionary
-		  If Self.mUpdateData <> Nil Then
-		    Return Self.mUpdateData.Clone
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function UserAgent() As String
 		  If Self.mUserAgent.IsEmpty Then
 		    Var Components() As String
@@ -1342,14 +1289,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdateChecker As UpdateChecker
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUpdateData As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mUserAgent As String
 	#tag EndProperty
 
@@ -1372,9 +1311,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_UpdateFound, Type = Text, Dynamic = False, Default = \"Update Found", Scope = Public
 	#tag EndConstant
 
 

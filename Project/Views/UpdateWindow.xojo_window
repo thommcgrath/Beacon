@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow UpdateWindow
+Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -47,7 +47,7 @@ Begin BeaconWindow UpdateWindow
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel
@@ -363,7 +363,7 @@ Begin BeaconWindow UpdateWindow
          Visible         =   True
          Width           =   120
       End
-      Begin Label Label1
+      Begin Label ResultsExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -430,12 +430,6 @@ Begin BeaconWindow UpdateWindow
          Width           =   64
       End
    End
-   Begin UpdateChecker Checker
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
@@ -450,12 +444,16 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable)
+		  
 		  Self.mInstance = Nil
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable)
+		  
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -469,6 +467,39 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case UpdatesKit.Notification_Error
+		    Var Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Unable to check for updates."
+		    Dialog.Explanation = "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible."
+		    Dialog.ActionButton.Caption = "Report Now"
+		    Dialog.CancelButton.Visible = True
+		    
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		    If Choice = Dialog.ActionButton Then
+		      App.ShowBugReporter()
+		    End If
+		    
+		    Self.Close
+		  Case UpdatesKit.Notification_NoUpdates
+		    Var Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "You are using the latest version."
+		    Dialog.Explanation = "Beacon automatically checks for updates on each launch so you won't miss a release."
+		    
+		    Call Dialog.ShowModalWithin(Self)
+		    Self.Close
+		  Case UpdatesKit.Notification_UpdateAvailable
+		    Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature)
+		  End Select
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Sub Present()
 		  // Will check for updates
@@ -479,7 +510,7 @@ End
 		  
 		  mInstance.ViewPanel.SelectedPanelIndex = UpdateWindow.ViewCheck
 		  mInstance.Show
-		  mInstance.Checker.Check(False)
+		  UpdatesKit.Check()
 		End Sub
 	#tag EndMethod
 
@@ -576,7 +607,7 @@ End
 #tag Events CheckCancelButton
 	#tag Event
 		Sub Action()
-		  Self.Checker.Cancel
+		  UpdatesKit.Cancel
 		  Self.Close
 		End Sub
 	#tag EndEvent
@@ -598,7 +629,7 @@ End
 		  End If
 		  
 		  If Self.mFile.Exists Then
-		    If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
+		    If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
 		      Self.LaunchUpdate()
 		      Return
 		    Else
@@ -643,46 +674,6 @@ End
 		  #Pragma Unused SafeArea
 		  
 		  G.DrawPicture(IconApp, 0, 0)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Checker
-	#tag Event
-		Sub CheckError(Message As String)
-		  #Pragma Unused Message
-		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to check for updates."
-		  Dialog.Explanation = "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible."
-		  Dialog.ActionButton.Caption = "Report Now"
-		  Dialog.CancelButton.Visible = True
-		  
-		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		  If Choice = Dialog.ActionButton Then
-		    App.ShowBugReporter()
-		  End If
-		  
-		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub NoUpdate()
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "You are using the latest version."
-		  Dialog.Explanation = "Beacon automatically checks for updates on each launch so you won't miss a release."
-		  
-		  Call Dialog.ShowModalWithin(Self)
-		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub UpdateAvailable(Version As String, PreviewText As String, Notes As String, NotesURL As String, URL As String, Signature As String)
-		  #Pragma Unused PreviewText
-		  #Pragma Unused Notes
-		  
-		  Self.ShowResults(Version, NotesURL, URL, Signature)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -736,7 +727,7 @@ End
 		    Return
 		  End If
 		  
-		  If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
+		  If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
 		    Self.Hide
 		    
 		    Var Confirm As New MessageDialog
