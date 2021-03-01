@@ -901,6 +901,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin Timer StatusWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
@@ -961,6 +962,25 @@ End
 		  #Pragma Unused Sender
 		  
 		  Self.ShouldFinish(Data)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mEngine_FileListError(Sender As Beacon.FTPIntegrationEngine, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  Self.Browser.Enabled = True
+		  Self.BrowseSpinner.Visible = False
+		  
+		  Var Reason As String
+		  If Err.Message.IsEmpty Then
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		    Reason = "Unhandled " + Info.FullName
+		  Else
+		    Reason = Err.Message
+		  End If
+		  
+		  Self.ShowAlert("Beacon was unable to retrieve the file list.", Reason)
 		End Sub
 	#tag EndMethod
 
@@ -1165,6 +1185,7 @@ End
 		  AddHandler mEngine.Wait, WeakAddressOf mEngine_Wait
 		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
 		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed
+		  AddHandler mEngine.FileListError, WeakAddressOf mEngine_FileListError
 		  Self.mEngine.BeginDiscovery
 		End Sub
 	#tag EndEvent
