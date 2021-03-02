@@ -65,7 +65,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Profile As Beacon.ServerProfile)
 		  Self.mProfile = Profile
-		  Self.mID = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase()
+		  Self.mID = Profile.ProfileID.Left(8)
 		  Self.Log("Getting started…")
 		End Sub
 	#tag EndMethod
