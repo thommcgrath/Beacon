@@ -178,7 +178,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys() As Beacon.ConfigKey()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap;")
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap;")
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
@@ -187,14 +187,13 @@ Protected Class ConfigOrganizer
 		Private Function DistinctKeys(Rows As RowSet) As Beacon.ConfigKey()
 		  Var Results() As Beacon.ConfigKey
 		  For Each Row As DatabaseRow In Rows
-		    Var Hash As String = Row.Column("hash").StringValue
-		    Var Values() As Beacon.ConfigValue = Self.mValues.Value(Hash)
-		    For Each Value As Beacon.ConfigValue In Values
-		      If (Value.Details Is Nil) = False Then
-		        Results.Add(Value.Details)
-		        Continue
-		      End If
-		    Next
+		    Var File As String = Row.Column("file").StringValue
+		    Var Header As String = Row.Column("header").StringValue
+		    Var SimpleKey As String = Row.Column("simplekey").StringValue
+		    Var Key As Beacon.ConfigKey = Beacon.Data.GetConfigKey(File, Header, SimpleKey)
+		    If (Key Is Nil) = False Then
+		      Results.Add(Key)
+		    End If
 		  Next
 		  Return Results
 		End Function
@@ -202,14 +201,14 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys(ForFile As String) As Beacon.ConfigKey()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1;", ForFile)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap WHERE file = ?1;", ForFile)
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys(ForFile As String, ForHeader As String) As Beacon.ConfigKey()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2;", ForFile, ForHeader)
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap WHERE file = ?1 AND header = ?2;", ForFile, ForHeader)
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
