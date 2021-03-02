@@ -291,7 +291,12 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function Keys(ForFile As String, ForHeader As String) As String()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
+		  Var Rows As RowSet
+		  If ForFile = Beacon.ConfigFileGameUserSettings And ForHeader = Beacon.ServerSettingsHeader Then
+		    Rows = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE (file = ?1 AND header = ?2) OR file IN ('CommandLineOption', 'CommandLineFlag') ORDER BY sortkey;", ForFile, ForHeader)
+		  Else
+		    Rows = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
+		  End If
 		  Var Keys() As String
 		  For Each Row As DatabaseRow In Rows
 		    Keys.Add(Row.Column("simplekey").StringValue)
