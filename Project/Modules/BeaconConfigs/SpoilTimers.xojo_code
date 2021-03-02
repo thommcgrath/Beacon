@@ -47,7 +47,7 @@ Inherits Beacon.ConfigGroup
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "AutoDestroyOldStructuresMultiplier"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "ClampItemSpoilingTimes"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "FastDecayUnsnappedCoreStructures"))
-		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "OnlyDecayUnsnappedCoreStructures"))
+		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "OnlyAutoDestroyCoreStructures"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "OnlyDecayUnsnappedCoreStructures"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "PvEDinoDecayPeriodMultiplier"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "PvPDinoDecay"))
