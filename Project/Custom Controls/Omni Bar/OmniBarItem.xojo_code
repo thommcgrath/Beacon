@@ -423,9 +423,9 @@ Implements ObservationKit.Observable
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
 		  G.DrawingColor = ShadowColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, Self.MaxCaptionWidth, True)
+		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, CaptionSpace, True)
 		  G.DrawingColor = ForeColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
+		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, CaptionSpace, True)
 		  G.Bold = False
 		End Sub
 	#tag EndMethod
@@ -459,6 +459,33 @@ Implements ObservationKit.Observable
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Self.Caption, 0, CaptionBaseline, Self.MaxCaptionWidth, True)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FlexRange() As Beacon.Range
+		  Select Case Self.mType
+		  Case OmniBarItem.Types.Tab
+		    Var MinWidth, MaxWidth As Integer
+		    If Self.Caption.IsEmpty = False Then
+		      MinWidth = Self.MinCaptionWidth
+		      MaxWidth = Self.MaxCaptionWidth
+		    End If
+		    If (Self.Icon Is Nil) = False Then
+		      If Self.Caption.IsEmpty Then
+		        MinWidth = Self.Icon.Width + (Self.ButtonPadding * 2)
+		        MaxWidth = MinWidth
+		      Else
+		        MinWidth = MinWidth + Self.Icon.Width
+		        MaxWidth = MaxWidth + Self.Icon.Width
+		      End If
+		    End If
+		    If Self.CanBeClosed Or Self.HasUnsavedChanges Then
+		      MinWidth = MinWidth + Self.AccessoryIconSize
+		      MaxWidth = MaxWidth + Self.AccessoryIconSize
+		    End If
+		    Return New Beacon.Range(MinWidth, MaxWidth)
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -821,6 +848,24 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mType = OmniBarItem.Types.Tab And Self.mIsFlexible = True
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var OldValue As Boolean = Self.IsFlexible
+			  If OldValue <> Value Then
+			    Self.mIsFlexible = Value
+			    Self.NotifyObservers("MajorChange", OldValue, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		IsFlexible As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mType = Types.HorizontalResizer Or Self.mType = Types.VerticalResizer
 			End Get
 		#tag EndGetter
@@ -877,6 +922,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mIndeterminateTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsFlexible As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1012,6 +1061,9 @@ Implements ObservationKit.Observable
 	#tag EndConstant
 
 	#tag Constant, Name = MaxCaptionWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MinCaptionWidth, Type = Double, Dynamic = False, Default = \"40", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ProgressIndeterminate, Type = Double, Dynamic = False, Default = \"-1", Scope = Public

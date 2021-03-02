@@ -313,11 +313,13 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  
 		  Const DefaultEdgePadding = 20
 		  
-		  Var NextPos As Double = 0
-		  Var Rects() As Rect
-		  Var FlexSpaceIndexes() As Integer
-		  Rects.ResizeTo(Self.mItems.LastIndex)
+		  Var AvailableWidth As Integer = G.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
+		  
 		  G.Bold = True // Assume all are toggled for the sake of spacing
+		  Var Widths(), Margins() As Integer
+		  Widths.ResizeTo(Self.mItems.LastIndex)
+		  Margins.ResizeTo(Self.mItems.LastIndex)
+		  Var FlexSpaceIndexes(), FlexItemIndexes() As Integer
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    If Item Is Nil Then
@@ -326,14 +328,17 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    
 		    If Item.Type = OmniBarItem.Types.FlexSpace Then
 		      FlexSpaceIndexes.Add(Idx)
-		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		      Widths(Idx) = 0
 		    ElseIf Item.Priority < MinPriority Then
-		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		      Widths(Idx) = 0
 		    Else
-		      Var ItemWidth As Double = Item.Width(G)
+		      If Item.IsFlexible Then
+		        FlexItemIndexes.Add(Idx)
+		      End If
+		      
 		      Var Previousitem As OmniBarItem
 		      For PreviousIdx As Integer = Idx - 1 DownTo 0
-		        If Rects(PreviousIdx).Width > 0 Then
+		        If Widths(PreviousIdx) > 0 Then
 		          PreviousItem = Self.mItems(PreviousIdx)
 		          Exit For PreviousIdx
 		        End If
@@ -346,34 +351,41 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		        LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
 		      End If
 		      
-		      Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
-		      If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
-		        NextPos = Rects(Idx).Right
-		      End If
+		      Widths(Idx) = Item.Width(G)
+		      Margins(Idx) = LeftMargin
 		    End If
 		  Next
-		  
-		  Var MinX, MaxX As Integer
-		  Var First As Boolean = True
-		  For Idx As Integer = 0 To Rects.LastIndex
-		    If Rects(Idx).Width = 0 Then
-		      Continue
-		    End If
-		    If First Then
-		      MinX = Rects(Idx).Left
-		      MaxX = Rects(Idx).Right
-		      First = False
+		  Var ItemsWidth As Integer = Widths.Sum + Margins.Sum
+		  If ItemsWidth > AvailableWidth Then
+		    Var Overflow As Integer = ItemsWidth - AvailableWidth
+		    Var ReducibleSpace As Integer
+		    For Each Idx As Integer In FlexItemIndexes
+		      Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
+		      ReducibleSpace = ReducibleSpace + Max(0, Widths(Idx) - Range.Min)
+		    Next
+		    If ReducibleSpace > Overflow Then
+		      // Enough space to reduce items and show all content
+		      Var RemainingOverflow As Integer = Overflow
+		      Var RemoveFromEach As Integer = Ceiling(RemainingOverflow / FlexItemIndexes.Count)
+		      For Each Idx As Integer In FlexItemIndexes
+		        Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
+		        Var NewWidth As Integer = Max(Widths(Idx) - RemoveFromEach, Range.Min)
+		        RemainingOverflow = RemainingOverflow - NewWidth
+		        //RemoveFromEach = Ceiling(RemainingOverflow / (FlexItemIndexes.Count - (Idx + 1)))
+		        Widths(Idx) = NewWidth
+		      Next
 		    Else
-		      MinX = Min(MinX, Rects(Idx).Left)
-		      MaxX = Max(MaxX, Rects(Idx).Right)
+		      // Even at min size, this isn't fitting
+		      For Each Idx As Integer In FlexItemIndexes
+		        Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
+		        Widths(Idx) = Range.Min
+		      Next
 		    End If
-		  Next
-		  
-		  Var AvailableWidth As Integer = G.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
-		  Var ItemsWidth As Integer = MaxX - MinX
+		    ItemsWidth = Widths.Sum + Margins.Sum
+		  End If
 		  Fits = (ItemsWidth <= AvailableWidth)
 		  
-		  If FlexSpaceIndexes.Count > 0 Then
+		  If ItemsWidth <= AvailableWidth And FlexSpaceIndexes.Count > 0 Then
 		    Var FlexWidth As Integer = AvailableWidth - ItemsWidth
 		    Var FlexItemWidth As Integer = Max(Floor(FlexWidth / FlexSpaceIndexes.Count), 0)
 		    Var FlexRemainder As Integer = AvailableWidth - (FlexItemWidth * FlexSpaceIndexes.Count)
@@ -381,12 +393,80 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    For FlexNum As Integer = 0 To FlexSpaceIndexes.LastIndex
 		      Var Idx As Integer = FlexSpaceIndexes(FlexNum)
 		      Var ItemWidth As Integer = FlexItemWidth + If(FlexNum < FlexRemainder, 1, 0)
-		      Rects(Idx) = New Rect(Rects(Idx).Left, Rects(Idx).Top, ItemWidth, Rects(Idx).Height)
-		      For ItemIdx As Integer = Idx + 1 To Rects.LastIndex
-		        Rects(ItemIdx).Offset(ItemWidth, 0)
-		      Next
+		      Widths(Idx) = ItemWidth
 		    Next
 		  End If
+		  
+		  Var NextPos As Double = 0
+		  Var Rects() As Rect
+		  Rects.ResizeTo(Self.mItems.LastIndex)
+		  For Idx As Integer = 0 To Self.mItems.LastIndex
+		    Var Item As OmniBarItem = Self.mItems(Idx)
+		    If Item Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var ItemWidth As Integer = Widths(Idx)
+		    Var LeftMargin As Integer = Margins(Idx)
+		    
+		    Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
+		    If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
+		      NextPos = Rects(Idx).Right
+		    End If
+		    
+		    #if false
+		      If Item.IsFlexible Then
+		        FlexItemIndexes.Add(Idx)
+		      End If
+		      
+		      If Item.Type = OmniBarItem.Types.FlexSpace Then
+		        FlexSpaceIndexes.Add(Idx)
+		        Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		      ElseIf Item.Priority < MinPriority Then
+		        Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		      Else
+		        Var IdealItemWidth As Integer = Item.Width(G)
+		        Var Previousitem As OmniBarItem
+		        For PreviousIdx As Integer = Idx - 1 DownTo 0
+		          If Rects(PreviousIdx).Width > 0 Then
+		            PreviousItem = Self.mItems(PreviousIdx)
+		            Exit For PreviousIdx
+		          End If
+		        Next
+		        
+		        Var LeftMargin As Integer
+		        If PreviousItem Is Nil Then
+		          LeftMargin = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
+		        Else
+		          LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
+		        End If
+		        
+		        Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
+		        If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
+		          NextPos = Rects(Idx).Right
+		        End If
+		      End If
+		    #endif
+		  Next
+		  
+		  #if false
+		    Var MinX, MaxX As Integer
+		    Var First As Boolean = True
+		    For Idx As Integer = 0 To Rects.LastIndex
+		      If Rects(Idx).Width = 0 Then
+		        Continue
+		      End If
+		      If First Then
+		        MinX = Rects(Idx).Left
+		        MaxX = Rects(Idx).Right
+		        First = False
+		      Else
+		        MinX = Min(MinX, Rects(Idx).Left)
+		        MaxX = Max(MaxX, Rects(Idx).Right)
+		      End If
+		    Next
+		  #endif
+		  
 		  
 		  G.Bold = False
 		  Return Rects

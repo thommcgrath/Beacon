@@ -513,6 +513,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Sum(Extends Values() As Integer, ValueBetween As Integer = 0) As Integer
+		  Var Total As Integer
+		  For Each Value As Integer In Values
+		    Total = Total + Value
+		  Next
+		  Return Total + (ValueBetween * (Values.Count - 1))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToHex(Extends Source As Color) As String
 		  Return Source.Red.ToHex(2).Lowercase + Source.Green.ToHex(2).Lowercase + Source.Blue.ToHex(2).Lowercase + Source.Alpha.ToHex(2).Lowercase
 		End Function
