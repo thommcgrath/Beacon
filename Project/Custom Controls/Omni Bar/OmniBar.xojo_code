@@ -74,14 +74,12 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
-		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Var OldRect As Rect = Self.mItemRects(OldIndex)
-		    Self.Invalidate(OldRect.Left, OldRect.Top, OldRect.Width, OldRect.Height)
+		  If OldIndex <> -1 And Self.mMouseOverIndex <> OldIndex Then
+		    Self.Invalidate(OldIndex)
 		  End If
 		  
-		  If Self.mMouseOverIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Var OverRect As Rect = Self.mItemRects(Self.mMouseOverIndex)
-		    Self.Invalidate(OverRect.Left, OverRect.Top, OverRect.Width, OverRect.Height)
+		  If Self.mMouseOverIndex <> -1 And Self.mMouseOverIndex <> OldIndex Then
+		    Self.Invalidate(Self.mMouseOverIndex)
 		  End If
 		  
 		  If Self.mMouseDownIndex > -1 Then
@@ -138,11 +136,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
-		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
+		  If OldIndex <> -1 And Self.mMouseOverIndex <> OldIndex Then
 		    Self.Invalidate(OldIndex)
 		  End If
 		  
-		  If Self.mMouseOverIndex > -1 Then
+		  If Self.mMouseOverIndex <> -1 Then
 		    Self.Invalidate(Self.mMouseOverIndex)
 		  End If
 		  
@@ -182,24 +180,52 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    RaiseEvent ResizeFinished(Self.mItems(Self.mMouseDownIndex))
 		  End If
 		  
-		  If Self.mMouseDownIndex > -1 And Self.mUsedLongAction = False And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
-		    Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
-		    Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
-		    Var FirePressed As Boolean = True
-		    If Item.CanBeClosed Then
-		      Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.AccessoryIconSize, (Self.Height - OmniBarItem.AccessoryIconSize) / 2, OmniBarItem.AccessoryIconSize, OmniBarItem.AccessoryIconSize)
-		      If AccessoryRect.Contains(Self.mMousePoint) Then
-		        FirePressed = False
-		        RaiseEvent ShouldCloseItem(Item)
+		  Var ReleasedOnPressedItem As Boolean = Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex
+		  If ReleasedOnPressedItem Then
+		    If Self.mMouseDownIndex > -1 And Self.mUsedLongAction = False And Self.mItems(Self.mMouseDownIndex).Enabled = True And Self.mItems(Self.mMouseDownIndex).IsResizer = False Then
+		      Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
+		      Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		      Var FirePressed As Boolean = True
+		      If Item.CanBeClosed Then
+		        Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.AccessoryIconSize, (Self.Height - OmniBarItem.AccessoryIconSize) / 2, OmniBarItem.AccessoryIconSize, OmniBarItem.AccessoryIconSize)
+		        If AccessoryRect.Contains(Self.mMousePoint) Then
+		          FirePressed = False
+		          RaiseEvent ShouldCloseItem(Item)
+		        End If
 		      End If
-		    End If
-		    
-		    If FirePressed Then
-		      Var InsetRect As Rect = ItemRect
-		      If (Item.InsetRect Is Nil) = False Then
-		        InsetRect = New Rect(ItemRect.Left + Item.InsetRect.Left, ItemRect.Top + Item.InsetRect.Top, Min(ItemRect.Width, Item.InsetRect.Width), Min(ItemRect.Height, Item.InsetRect.Height))
+		      
+		      If FirePressed Then
+		        Var InsetRect As Rect = ItemRect
+		        If (Item.InsetRect Is Nil) = False Then
+		          InsetRect = New Rect(ItemRect.Left + Item.InsetRect.Left, ItemRect.Top + Item.InsetRect.Top, Min(ItemRect.Width, Item.InsetRect.Width), Min(ItemRect.Height, Item.InsetRect.Height))
+		        End If
+		        RaiseEvent ItemPressed(Item, InsetRect)
 		      End If
-		      RaiseEvent ItemPressed(Item, InsetRect)
+		    ElseIf Self.mMouseDownIndex = Self.OverflowItemIndex Then
+		      Var Base As New MenuItem
+		      For Idx As Integer = Self.mOverflowStopIndex + 1 To Self.mItems.LastIndex
+		        Var Item As OmniBarItem = Self.mItems(Idx)
+		        Select Case Item.Type
+		        Case OmniBarItem.Types.Button, OmniBarItem.Types.Tab
+		          Var Menu As New MenuItem(Item.Caption, Idx)
+		          Menu.HasCheckMark = Item.Toggled
+		          Base.AddMenu(Menu)
+		        Case OmniBarItem.Types.Separator
+		          Var Menu As New MenuItem(MenuItem.TextSeparator)
+		          Base.AddMenu(Menu)
+		        Case OmniBarItem.Types.Title
+		          Var Menu As New MenuItem(Item.Caption)
+		          Menu.Enabled = False
+		          Base.AddMenu(Menu)
+		        End Select
+		      Next
+		      
+		      Var Position As Point = Self.Window.GlobalPosition
+		      Var Choice As MenuItem = Base.PopUp(Position.X + Self.mOverflowRect.Left, Position.Y + Self.mOverflowRect.Bottom)
+		      If (Choice Is Nil) = False And Choice.Tag.IsNull = False Then
+		        Var Item As OmniBarItem = Self.Item(Choice.Tag.IntegerValue)
+		        RaiseEvent ItemPressed(Item, Self.mOverflowRect)
+		      End If
 		    End If
 		  End If
 		  
@@ -219,17 +245,25 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Self.mColorProfile = New OmniBarColorProfile
 		  End If
 		  
-		  Self.mItemRects = Self.ComputeRects(G)
+		  Var RequiresOverflow As Boolean
+		  Self.mItemRects = Self.ComputeRects(G, RequiresOverflow)
 		  
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
+		  Self.mOverflowStopIndex = -1
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    Var ItemRect As Rect = Self.mItemRects(Idx)
 		    If Item Is Nil Or ItemRect Is Nil Then
 		      Continue
+		    End If
+		    
+		    If RequiresOverflow And ItemRect.Right > G.Width - (Self.OverflowWidth + Self.RightEdgePadding) Then
+		      // Don't draw any more
+		      Self.mOverflowStopIndex = Idx - 1
+		      Exit For Idx
 		    End If
 		    
 		    Var ShouldDraw As Boolean
@@ -264,6 +298,33 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
 		    Item.DrawInto(Clip, Self.mColorProfile, MouseDown, MouseHover, LocalPoint, Highlighted)
 		  Next
+		  
+		  If Not RequiresOverflow Then
+		    Self.mOverflowRect = Nil
+		    Return
+		  End If
+		  
+		  Var OverflowToggled As Boolean
+		  If Self.mMouseOverIndex = Self.OverflowItemIndex Then
+		    OverflowToggled = True
+		  Else
+		    For Idx As Integer = Self.mOverflowStopIndex + 1 To Self.mItems.LastIndex
+		      If Self.mItems(Idx).Toggled Then
+		        OverflowToggled = True
+		      End If
+		    Next
+		  End If
+		  
+		  Var OverflowPressed As Boolean = OverflowToggled And Self.mMouseDownIndex = Self.OverflowItemIndex
+		  
+		  Self.mOverflowRect = New Rect(G.Width - (Self.OverflowWidth + Self.RightEdgePadding), NearestMultiple((G.Height - Self.OverflowWidth) / 2, G.ScaleY), Self.OverflowWidth, Self.OverflowWidth)
+		  
+		  Var LocalOverflowPoint As Point
+		  If (Self.mMousePoint Is Nil) = False Then
+		    LocalOverflowPoint = Self.mOverflowRect.LocalPoint(Self.mMousePoint)
+		  End If
+		  Var Clip As Graphics = G.Clip(Self.mOverflowRect.Left, Self.mOverflowRect.Top, Self.mOverflowRect.Width, Self.mOverflowRect.Height)
+		  OmniBarItem.DrawOverflow(Clip, Self.mColorProfile, OverflowPressed, OverflowToggled, LocalOverflowPoint, Highlighted)
 		End Sub
 	#tag EndEvent
 
@@ -281,7 +342,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ComputeRects(G As Graphics) As Rect()
+		Private Function ComputeRects(G As Graphics, ByRef RequiresOverflow As Boolean) As Rect()
 		  Var UniquePriorities As New Dictionary
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    UniquePriorities.Value(Self.mItems(Idx).Priority) = True
@@ -292,14 +353,15 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Next
 		  Var Fits As Boolean
 		  If Priorities.Count = 1 Then
-		    Return Self.ComputeRects(G, Priorities(0), Fits)
+		    Return Self.ComputeRects(G, Priorities(0), True, Fits, RequiresOverflow)
 		  End If
 		  Priorities.Sort
 		  
 		  For Idx As Integer = 0 To Priorities.LastIndex
 		    Var Priority As Integer = Priorities(Idx)
-		    Var Rects() As Rect = Self.ComputeRects(G, Priority, Fits)
-		    If Fits Or Idx = Priorities.LastIndex Then
+		    Var AllowOverflow As Boolean = Idx = Priorities.LastIndex
+		    Var Rects() As Rect = Self.ComputeRects(G, Priority, AllowOverflow, Fits, RequiresOverflow)
+		    If Fits Or AllowOverflow Then
 		      Return Rects
 		    End If
 		  Next
@@ -307,13 +369,12 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ComputeRects(G As Graphics, MinPriority As Integer, ByRef Fits As Boolean) As Rect()
+		Private Function ComputeRects(G As Graphics, MinPriority As Integer, AllowOverflow As Boolean, ByRef Fits As Boolean, ByRef RequiresOverflow As Boolean) As Rect()
 		  // First, compute the rectangles for each item. It's ok to assume left alignment here,
 		  // as we'll apply an offset later.
 		  
-		  Const DefaultEdgePadding = 20
-		  
-		  Var AvailableWidth As Integer = G.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
+		  RequiresOverflow = False
+		  Var AvailableWidth As Integer = G.Width - (Self.LeftEdgePadding + Self.RightEdgePadding)
 		  
 		  G.Bold = True // Assume all are toggled for the sake of spacing
 		  Var Widths(), Margins() As Integer
@@ -344,7 +405,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      
 		      Var LeftMargin As Integer
 		      If PreviousItem Is Nil Then
-		        LeftMargin = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
+		        LeftMargin = If(Self.LeftPadding = -1, Self.DefaultEdgePadding, Self.LeftPadding)
 		      Else
 		        LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
 		      End If
@@ -370,22 +431,35 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    If ReducibleSpace > Overflow Then
 		      // Enough space to reduce items and show all content
 		      Var RemainingOverflow As Integer = Overflow
-		      Var RemoveFromEach As Integer = Floor(RemainingOverflow / FlexItemIndexes.Count)
-		      Var AdditionalPixels As Integer = Overflow - (RemoveFromEach * FlexItemIndexes.Count)
 		      For FlexIdx As Integer = 0 To FlexItemIndexes.LastIndex
 		        Var Idx As Integer = FlexItemIndexes(FlexIdx)
-		        Var RemoveFromThis As Integer = RemoveFromEach
+		        Var RemainingItems As Integer = FlexItemIndexes.Count - FlexIdx
+		        Var RemoveFromThis As Integer = Ceiling(RemainingOverflow / RemainingItems)
+		        Var AdditionalPixels As Integer = RemainingOverflow - (RemoveFromThis * RemainingItems)
 		        If FlexIdx < AdditionalPixels Then
-		          RemoveFromThis = RemoveFromThis + 1
+		          RemoveFromThis = RemoveFromThis - 1
 		        End If
 		        
 		        Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
 		        Var NewWidth As Integer = Max(Widths(Idx) - RemoveFromThis, Range.Min)
-		        RemainingOverflow = RemainingOverflow - NewWidth
+		        Var PixelsRemoved As Integer = Widths(Idx) - NewWidth
+		        // If PixelsRemoved < RemoveFromThis Then
+		        // // These pixels will need to be removed from other items
+		        // Break
+		        // End If
+		        RemainingOverflow = RemainingOverflow - PixelsRemoved
 		        Widths(Idx) = NewWidth
 		      Next
 		    Else
 		      // Even at min size, this isn't fitting
+		      If AllowOverflow = False Then
+		        // Since WithOverflow is false, this will be tried again at a lower priority, so there's really no reason to continue.
+		        Return Nil
+		      End If
+		      
+		      RequiresOverflow = True
+		      AvailableWidth = AvailableWidth - (Self.OverflowWidth + Self.RightEdgePadding)
+		      
 		      For Each Idx As Integer In FlexItemIndexes
 		        Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
 		        Widths(Idx) = Range.Min
@@ -446,7 +520,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		        
 		        Var LeftMargin As Integer
 		        If PreviousItem Is Nil Then
-		          LeftMargin = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
+		          LeftMargin = If(Self.LeftPadding = -1, Self.DefaultEdgePadding, Self.LeftPadding)
 		        Else
 		          LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
 		        End If
@@ -521,7 +595,16 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return -1
 		  End If
 		  
-		  For Idx As Integer = 0 To Min(Self.mItemRects.LastIndex, Self.mItems.LastIndex)
+		  If (Self.mOverflowRect Is Nil) = False And Self.mOverflowRect.Contains(Point) Then
+		    Return Self.OverflowItemIndex
+		  End If
+		  
+		  Var Bound As Integer = Min(Self.mItemRects.LastIndex, Self.mItems.LastIndex)
+		  If Self.mOverflowStopIndex > -1 Then
+		    Bound = Min(Bound, Self.mOverflowStopIndex)
+		  End If
+		  
+		  For Idx As Integer = 0 To Bound
 		    If (Self.mItemRects(Idx) Is Nil) = False And (Self.mItems(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
 		      If Not Self.mItems(Idx).Clickable Then
 		        Return -1
@@ -567,6 +650,11 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(Idx As Integer)
+		  If Idx = Self.OverflowItemIndex And (Self.mOverflowRect Is Nil) = False Then
+		    Super.Invalidate(Self.mOverflowRect.Left, Self.mOverflowRect.Top, Self.mOverflowRect.Width, Self.mOverflowRect.Height)
+		    Return
+		  End If
+		  
 		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastIndex Then
 		    Super.Invalidate(False)
 		    Return
@@ -610,6 +698,16 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function LastIndex() As Integer
 		  Return Self.mItems.LastIndex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function LeftEdgePadding() As Integer
+		  If Self.LeftPadding < 0 Then
+		    Return Self.DefaultEdgePadding
+		  Else
+		    Return Self.LeftPadding
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -706,6 +804,16 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Self.Invalidate
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RightEdgePadding() As Integer
+		  If Self.RightPadding < 0 Then
+		    Return Self.DefaultEdgePadding
+		  Else
+		    Return Self.RightPadding
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -831,6 +939,14 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOverflowRect As Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverflowStopIndex As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRightPadding As Integer
 	#tag EndProperty
 
@@ -865,7 +981,16 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag Constant, Name = AlignRight, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = DefaultEdgePadding, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = FirstRowIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OverflowItemIndex, Type = Double, Dynamic = False, Default = \"-2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = OverflowWidth, Type = Double, Dynamic = False, Default = \"20", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = StateHover, Type = Double, Dynamic = False, Default = \"1", Scope = Private

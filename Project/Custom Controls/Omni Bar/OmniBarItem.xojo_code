@@ -138,6 +138,16 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function CreateShadowBrush(ShadowColor As Color) As ShadowBrush
+		  Var Brush As New ShadowBrush
+		  Brush.ShadowColor = ShadowColor
+		  Brush.BlurAmount = 0
+		  Brush.Offset = New Point(0, 1)
+		  Return Brush
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function CreateSpace(Name As String = "") As OmniBarItem
 		  If Name.IsEmpty Then
@@ -257,6 +267,48 @@ Implements ObservationKit.Observable
 		  Case OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
 		    Self.DrawResizer(G, Colors, MouseDown, MouseHover, LocalMousePoint, Highlighted)
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub DrawOverflow(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  Var ForeColor, ShadowColor As Color
+		  If MouseHover And Highlighted Then
+		    ForeColor = Colors.AccentColor
+		  Else
+		    ForeColor = Colors.TextColor
+		  End If
+		  ShadowColor = Colors.TextShadowColor
+		  
+		  G.DrawingColor = ForeColor
+		  G.ShadowBrush = CreateShadowBrush(ShadowColor)
+		  
+		  Var Path As New GraphicsPath
+		  Path.MoveToPoint(3, 5)
+		  Path.AddLineToPoint(6, 5)
+		  Path.AddLineToPoint(11, 10)
+		  Path.AddLineToPoint(6, 15)
+		  Path.AddLineToPoint(3, 15)
+		  Path.AddLineToPoint(8, 10)
+		  Path.AddLineToPoint(3, 5)
+		  G.FillPath(Path)
+		  
+		  Path = New GraphicsPath
+		  Path.MoveToPoint(9, 5)
+		  Path.AddLineToPoint(12, 5)
+		  Path.AddLineToPoint(17, 10)
+		  Path.AddLineToPoint(12, 15)
+		  Path.AddLineToPoint(9, 15)
+		  Path.AddLineToPoint(14, 10)
+		  Path.AddLineToPoint(9, 5)
+		  G.FillPath(Path)
+		  
+		  G.ShadowBrush = Nil
+		  
+		  If MouseDown Then
+		    G.DrawingColor = &c00000080
+		    G.FillRoundRectangle(0, 0, G.Width, G.Height, 6, 6)
+		  End If
 		End Sub
 	#tag EndMethod
 
