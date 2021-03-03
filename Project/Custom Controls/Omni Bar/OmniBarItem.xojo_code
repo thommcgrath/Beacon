@@ -418,14 +418,15 @@ Implements ObservationKit.Observable
 		    G.Bold = True
 		  End If
 		  
-		  Var CaptionSpace As Double = If(WithAccessory, AccessoryRect.Left, G.Width) - CaptionOffset
-		  Var CaptionLeft As Double = NearestMultiple(CaptionOffset + ((CaptionSpace - Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth)) / 2), G.ScaleX)
+		  Var CaptionRect As New Rect(CaptionOffset, 0, If(WithAccessory, AccessoryRect.Left - Self.ElementSpacing, G.Width) - CaptionOffset, G.Height)
+		  Var CaptionWidth As Double = Min(G.TextWidth(Self.Caption), CaptionRect.Width)
+		  Var CaptionLeft As Double = NearestMultiple(CaptionRect.HorizontalCenter - (CaptionWidth / 2), G.ScaleX)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
 		  G.DrawingColor = ShadowColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, CaptionSpace, True)
+		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, CaptionRect.Width, True)
 		  G.DrawingColor = ForeColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, CaptionSpace, True)
+		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, CaptionRect.Width, True)
 		  G.Bold = False
 		End Sub
 	#tag EndMethod
@@ -608,7 +609,7 @@ Implements ObservationKit.Observable
 		    Segments.Add(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
 		  Case OmniBarItem.Types.Tab
 		    If Self.Caption.IsEmpty = False Then
-		      Segments.Add(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth))
+		      Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption)), Self.MaxCaptionWidth))
 		    End If
 		    If (Self.Icon Is Nil) = False Then
 		      If Self.Caption.IsEmpty Then
@@ -1292,6 +1293,14 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsFlexible"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

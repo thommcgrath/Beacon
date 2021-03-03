@@ -424,6 +424,7 @@ End
 		  
 		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)
@@ -435,6 +436,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.DocumentController, AddToRecents As Boolean = True)
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)

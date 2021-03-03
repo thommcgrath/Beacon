@@ -179,6 +179,7 @@ End
 		  
 		  Var NavButton As OmniBarItem = OmniBarItem.CreateTab(View.ViewID, View.ViewTitle)
 		  NavButton.CanBeClosed = True
+		  NavButton.IsFlexible = True
 		  Self.Nav.Append(NavButton)
 		  
 		  View.LinkedOmniBarItem = NavButton

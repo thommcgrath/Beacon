@@ -320,6 +320,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Widths.ResizeTo(Self.mItems.LastIndex)
 		  Margins.ResizeTo(Self.mItems.LastIndex)
 		  Var FlexSpaceIndexes(), FlexItemIndexes() As Integer
+		  Var FirstMarginIndex As Integer = -1
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    If Item Is Nil Then
@@ -328,10 +329,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    
 		    If Item.Type = OmniBarItem.Types.FlexSpace Then
 		      FlexSpaceIndexes.Add(Idx)
-		      Widths(Idx) = 0
-		    ElseIf Item.Priority < MinPriority Then
-		      Widths(Idx) = 0
-		    Else
+		    ElseIf Item.Priority >= MinPriority Then
 		      If Item.IsFlexible Then
 		        FlexItemIndexes.Add(Idx)
 		      End If
@@ -351,11 +349,17 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		        LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
 		      End If
 		      
-		      Widths(Idx) = Item.Width(G)
-		      Margins(Idx) = LeftMargin
+		      Var ItemWidth As Integer = Item.Width(G)
+		      Widths(Idx) = ItemWidth
+		      If ItemWidth > 0 Then
+		        Margins(Idx) = LeftMargin
+		        If FirstMarginIndex = -1 Then
+		          FirstMarginIndex = Idx
+		        End If
+		      End If
 		    End If
 		  Next
-		  Var ItemsWidth As Integer = Widths.Sum + Margins.Sum
+		  Var ItemsWidth As Integer = Widths.Sum + (Margins.Sum - Margins(FirstMarginIndex))
 		  If ItemsWidth > AvailableWidth Then
 		    Var Overflow As Integer = ItemsWidth - AvailableWidth
 		    Var ReducibleSpace As Integer
@@ -366,12 +370,18 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    If ReducibleSpace > Overflow Then
 		      // Enough space to reduce items and show all content
 		      Var RemainingOverflow As Integer = Overflow
-		      Var RemoveFromEach As Integer = Ceiling(RemainingOverflow / FlexItemIndexes.Count)
-		      For Each Idx As Integer In FlexItemIndexes
+		      Var RemoveFromEach As Integer = Floor(RemainingOverflow / FlexItemIndexes.Count)
+		      Var AdditionalPixels As Integer = Overflow - (RemoveFromEach * FlexItemIndexes.Count)
+		      For FlexIdx As Integer = 0 To FlexItemIndexes.LastIndex
+		        Var Idx As Integer = FlexItemIndexes(FlexIdx)
+		        Var RemoveFromThis As Integer = RemoveFromEach
+		        If FlexIdx < AdditionalPixels Then
+		          RemoveFromThis = RemoveFromThis + 1
+		        End If
+		        
 		        Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
-		        Var NewWidth As Integer = Max(Widths(Idx) - RemoveFromEach, Range.Min)
+		        Var NewWidth As Integer = Max(Widths(Idx) - RemoveFromThis, Range.Min)
 		        RemainingOverflow = RemainingOverflow - NewWidth
-		        //RemoveFromEach = Ceiling(RemainingOverflow / (FlexItemIndexes.Count - (Idx + 1)))
 		        Widths(Idx) = NewWidth
 		      Next
 		    Else
@@ -381,7 +391,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		        Widths(Idx) = Range.Min
 		      Next
 		    End If
-		    ItemsWidth = Widths.Sum + Margins.Sum
+		    ItemsWidth = Widths.Sum + (Margins.Sum - Margins(FirstMarginIndex))
 		  End If
 		  Fits = (ItemsWidth <= AvailableWidth)
 		  
