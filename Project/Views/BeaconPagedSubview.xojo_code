@@ -316,6 +316,9 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    Self.CurrentPageID = NewPageID
+		  ElseIf (Panel Is Nil) = False Then
+		    Var NewCurrentIndex As Integer = Self.IndexOf(Self.CurrentPage)
+		    Panel.SelectedPanelIndex = NewCurrentIndex
 		  End If
 		End Sub
 	#tag EndMethod
