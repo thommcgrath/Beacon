@@ -237,6 +237,13 @@ End
 		    ShouldClose = True
 		    ShouldFocus = False // Doesn't matter
 		  End Select
+		  
+		  If ShouldClose Then
+		    Var Editors() As DocumentEditorView = Self.DocumentEditors
+		    For Each Editor As DocumentEditorView In Editors
+		      Editor.DiscardChanges()
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 

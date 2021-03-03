@@ -134,6 +134,39 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
+		  Var Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = "You have " + NumPages.ToString + " presets with unsaved changes. Do you want to review these changes before quitting?"
+		  Dialog.Explanation = "If you don't review your presets, all your changes will be lost."
+		  Dialog.ActionButton.Caption = "Review Changes…"
+		  Dialog.CancelButton.Visible = True
+		  Dialog.AlternateActionButton.Caption = "Discard Changes"
+		  Dialog.AlternateActionButton.Visible = True
+		  
+		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Select Case Choice
+		  Case Dialog.ActionButton
+		    ShouldClose = False
+		    ShouldFocus = True
+		  Case Dialog.CancelButton
+		    ShouldClose = False
+		    ShouldFocus = False
+		  Case Dialog.AlternateActionButton
+		    ShouldClose = True
+		    ShouldFocus = False // Doesn't matter
+		  End Select
+		  
+		  If ShouldClose Then
+		    Var Pages() As BeaconSubview = Self.ModifiedPages
+		    For Each Page As BeaconSubview In Pages
+		      Page.DiscardChanges()
+		    Next
+		  End If
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Function ClosePreset(Preset As Beacon.Preset) As Boolean
