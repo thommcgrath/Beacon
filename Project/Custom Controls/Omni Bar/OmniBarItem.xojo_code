@@ -272,6 +272,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Sub DrawOverflow(G As Graphics, Colors As OmniBarColorProfile, MouseDown As Boolean, MouseHover As Boolean, LocalMousePoint As Point, Highlighted As Boolean)
+		  #Pragma Unused LocalMousePoint
+		  
 		  Var ForeColor, ShadowColor As Color
 		  If MouseHover And Highlighted Then
 		    ForeColor = Colors.AccentColor

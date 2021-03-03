@@ -290,8 +290,11 @@ Protected Module Beacon
 		    
 		    Var StringValue As String
 		    Select Case Value.Type
-		    Case Variant.TypeInteger
-		      Var IntValue As Integer = Value
+		    Case Variant.TypeInt32
+		      Var IntValue As Int32 = Value
+		      StringValue = IntValue.ToString(Locale.Raw, "0")
+		    Case Variant.TypeInt64
+		      Var IntValue As Int64 = Value
 		      StringValue = IntValue.ToString(Locale.Raw, "0")
 		    Case Variant.TypeDouble
 		      Var DoubleValue As Double = Value
