@@ -443,10 +443,6 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		        Var Range As Beacon.Range = Self.mItems(Idx).FlexRange
 		        Var NewWidth As Integer = Max(Widths(Idx) - RemoveFromThis, Range.Min)
 		        Var PixelsRemoved As Integer = Widths(Idx) - NewWidth
-		        // If PixelsRemoved < RemoveFromThis Then
-		        // // These pixels will need to be removed from other items
-		        // Break
-		        // End If
 		        RemainingOverflow = RemainingOverflow - PixelsRemoved
 		        Widths(Idx) = NewWidth
 		      Next
