@@ -420,6 +420,10 @@ End
 
 	#tag MenuHandler
 		Function AdjustCosts() As Boolean Handles AdjustCosts.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.AdjustCosts()
 			Return True
 		End Function
@@ -427,6 +431,10 @@ End
 
 	#tag MenuHandler
 		Function CreateFibercraftServer() As Boolean Handles CreateFibercraftServer.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.CreateFibercraftServer()
 			Return True
 			
@@ -435,6 +443,10 @@ End
 
 	#tag MenuHandler
 		Function SetupElementTransfer() As Boolean Handles SetupElementTransfer.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 			If SetupTransferrableElementDialog.Present(Self, Config, Self.Document.Mods) Then
 			Call Self.Config(True) // Forces adding the config to the file

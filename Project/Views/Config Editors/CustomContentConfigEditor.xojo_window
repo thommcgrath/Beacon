@@ -217,6 +217,10 @@ End
 
 	#tag MenuHandler
 		Function EditorLookforSupportedConfigLines() As Boolean Handles EditorLookforSupportedConfigLines.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.LookForSupportedContent()
 			Return True
 		End Function
