@@ -366,6 +366,10 @@ Implements ObservationKit.Observable
 		    Var ConfigUpdated As Boolean
 		    Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(ReplacedCreature, Self.Mods, "")
 		    For Each SourceSpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      If SourceSpawnPoint.ValidForMask(Self.MapCompatibility) = False Then
+		        Continue
+		      End If
+		      
 		      Var SpawnPoint As Beacon.MutableSpawnPoint = SourceSpawnPoint.MutableClone
 		      LocalData.SharedInstance.LoadDefaults(SpawnPoint)
 		      
@@ -378,7 +382,7 @@ Implements ObservationKit.Observable
 		            If NewSet = Nil Then
 		              NewSet = New Beacon.MutableSpawnPointSet()
 		              NewSet.Weight = Set.Weight
-		              NewSet.Label = ReplacementCreature.Label
+		              NewSet.Label = ReplacementCreature.Label + " (Converted)"
 		              If IsNull(Set.SpreadRadius) Then
 		                NewSet.SpreadRadius = 650
 		              Else
