@@ -328,7 +328,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    LocalOverflowPoint = Self.mOverflowRect.LocalPoint(Self.mMousePoint)
 		  End If
 		  Var Clip As Graphics = G.Clip(Self.mOverflowRect.Left, Self.mOverflowRect.Top, Self.mOverflowRect.Width, Self.mOverflowRect.Height)
-		  OmniBarItem.DrawOverflow(Clip, Self.mColorProfile, OverflowPressed, OverflowToggled, LocalOverflowPoint, Highlighted)
+		  OmniBarItem.DrawOverflow(Clip, ColorProfile, OverflowPressed, OverflowToggled, LocalOverflowPoint, Highlighted)
 		End Sub
 	#tag EndEvent
 
