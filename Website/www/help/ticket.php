@@ -80,6 +80,12 @@ if ($has_expanded_parameters) {
 		'value' => $os
 	];
 }
+if (isset($_POST['archive_key'])) {
+	$custom_fields[] = [
+		'id' => 360041678091,
+		'value' => $_POST['archive_key']
+	];
+}
 
 $user = null;
 $email_id = null;
