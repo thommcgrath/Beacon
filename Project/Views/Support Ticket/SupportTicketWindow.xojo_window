@@ -835,6 +835,9 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = EncryptArchive, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PlatformEpic, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
@@ -848,6 +851,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SupportPublicKey, Type = String, Dynamic = False, Default = \"30820120300D06092A864886F70D01010105000382010D00308201080282010100C07639AB38648E98B5F7D325A60018B6F5A59D7AF329300A418C7F1C540CA75193438F233CAA8C02BCDCD075A1075B67C1BA0B21FCCF3C7799638E11F121FE24F175A360918037C27A968490A53B8C25454B20088B9DB587E5226378706C2E19DA0ED16BC44046D649EE05BD89D680C293E0C5E120072ACBD7FC44C9D5A51154BBB22E178FF0354B3D097CC968EC3B4DD0540933B439146C1BF4D9A00320F483B4A1710945A4BD00C6B20DAD13248BB2264B330070141DBFA66CEF9E907C4667D027466B6E4571C4400DD86244375E27DEF87AE2AA1C0E1801686AE88046889ED90680CE0AA6E40D559F39B0DF13ED8A910BA2B30620E514C14067833A8A3937020111", Scope = Private
 	#tag EndConstant
 
 
@@ -998,6 +1004,14 @@ End
 		  Self.mTicketArchive = New ArchiveWriterMBS
 		  Self.mTicketArchive.SetFormatZip
 		  Self.mTicketArchive.ZipSetCompressionDeflate
+		  
+		  #if Self.EncryptArchive
+		    Var Password As String = v4UUID.Create
+		    Var EncryptedPassword As String = EncodeBase64(Crypto.RSAEncrypt(Password, Self.SupportPublicKey), 0)
+		    Self.mTicketArchive.SetOption("zip", "encryption", "aes256")
+		    Self.mTicketArchive.SetPassphrase(Password)
+		  #endif
+		  
 		  If Not Self.mTicketArchive.CreateMemoryFile Then
 		    Self.SetError("Unable to create diagnostic archive: " + Self.ArchiveErrorReason)
 		    Return
@@ -1080,6 +1094,9 @@ End
 		  Parts.Add("Content-Disposition: form-data; name=""body""" + EndOfLine.Windows + EndOfLine.Windows + Self.mTicketBody)
 		  Parts.Add("Content-Disposition: form-data; name=""user""" + EndOfLine.Windows + EndOfLine.Windows + Self.mUserID)
 		  Parts.Add("Content-Disposition: form-data; name=""archive""; filename=""" + Self.mTicketEmail.Left(Self.mTicketEmail.IndexOf("@")) + ".zip""" + EndOfLine.Windows + "Content-Type: application/zip" + EndOfLine.Windows + EndOfLine.Windows + ArchiveBytes.StringValue(0, ArchiveBytes.Size))
+		  #if Self.EncryptArchive
+		    Parts.Add("Content-Disposition: form-data; name=""archive_key""" + EndOfLine.Windows + EndOfLine.Windows + EncryptedPassword)
+		  #endif
 		  Parts.Add("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + SystemInformationMBS.OSVersionString)
 		  Parts.Add("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.ShortVersion)
 		  Parts.Add("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
