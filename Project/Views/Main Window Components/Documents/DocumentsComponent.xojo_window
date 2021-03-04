@@ -237,6 +237,13 @@ End
 		    ShouldClose = True
 		    ShouldFocus = False // Doesn't matter
 		  End Select
+		  
+		  If ShouldClose Then
+		    Var Editors() As DocumentEditorView = Self.DocumentEditors
+		    For Each Editor As DocumentEditorView In Editors
+		      Editor.DiscardChanges()
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -424,6 +431,7 @@ End
 		  
 		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)
@@ -435,6 +443,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.DocumentController, AddToRecents As Boolean = True)
 		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
+		  NavItem.IsFlexible = True
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)

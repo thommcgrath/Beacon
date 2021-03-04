@@ -168,7 +168,7 @@ Protected Class ConfigKey
 		    Var SecondValueIsTrue As Boolean = (SecondValue = "True") Or (SecondValue = "1")
 		    Return FirstValueIsTrue = SecondValueIsTrue
 		  Else
-		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseInsensitive, Locale.Raw) = 0
+		    Return FirstValue.Compare(SecondValue, ComparisonOptions.CaseSensitive, Locale.Raw) = 0
 		  End Select
 		End Function
 	#tag EndMethod

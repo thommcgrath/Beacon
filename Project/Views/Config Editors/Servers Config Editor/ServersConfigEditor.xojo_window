@@ -239,6 +239,10 @@ End
 
 	#tag MenuHandler
 		Function CopyMOTDToAllServers() As Boolean Handles CopyMOTDToAllServers.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var CurrentProfileID As String = Self.CurrentProfileID
 			If CurrentProfileID.IsEmpty Then
 			Return True

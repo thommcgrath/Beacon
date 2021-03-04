@@ -105,7 +105,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMaxDinoLevel / 30
+			  Return Ceiling((Self.mMaxDinoLevel / 30) * 10000) / 10000
 			End Get
 		#tag EndGetter
 		#tag Setter

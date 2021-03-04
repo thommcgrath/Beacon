@@ -251,16 +251,12 @@ Inherits Global.Thread
 		    
 		    // Create a new organizer with the values from the original and unique values from the parsed
 		    Var FinalOrganizer As New Beacon.ConfigOrganizer
-		    FinalOrganizer.Add(Organizer.FilteredValues(File))
-		    If File = Beacon.ConfigFileGameUserSettings Then
-		      FinalOrganizer.Add(Organizer.FilteredValues("CommandLineOption"))
-		      FinalOrganizer.Add(Organizer.FilteredValues("CommandLineFlag"))
-		    End If
+		    FinalOrganizer.Add(Organizer.FilteredValues(File)) // Automatically grabs command line options
 		    
 		    // Remove everything from Parsed that is in Final, but don't do it by hash
 		    Var NewValues() As Beacon.ConfigValue = FinalOrganizer.FilteredValues(File)
 		    For Each Value As Beacon.ConfigValue In NewValues
-		      ParsedValues.Remove(File, Value.Header, Value.SimplifiedKey)
+		      ParsedValues.Remove(Value.File, Value.Header, Value.SimplifiedKey)
 		    Next
 		    
 		    If FinalOrganizer.Count = 0 And ParsedValues.Count = 0 Then

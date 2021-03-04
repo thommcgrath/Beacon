@@ -157,6 +157,13 @@ End
 		    ShouldClose = True
 		    ShouldFocus = False // Doesn't matter
 		  End Select
+		  
+		  If ShouldClose Then
+		    Var Pages() As BeaconSubview = Self.ModifiedPages
+		    For Each Page As BeaconSubview In Pages
+		      Page.DiscardChanges()
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -179,6 +186,7 @@ End
 		  
 		  Var NavButton As OmniBarItem = OmniBarItem.CreateTab(View.ViewID, View.ViewTitle)
 		  NavButton.CanBeClosed = True
+		  NavButton.IsFlexible = True
 		  Self.Nav.Append(NavButton)
 		  
 		  View.LinkedOmniBarItem = NavButton

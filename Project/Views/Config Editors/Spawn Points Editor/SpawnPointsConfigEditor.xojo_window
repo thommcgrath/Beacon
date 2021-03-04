@@ -373,6 +373,10 @@ End
 
 	#tag MenuHandler
 		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Var Changes As Integer = Self.Document.ConvertDinoReplacementsToSpawnOverrides()
 			Self.SetupUI()
 			If Changes = 0 Then

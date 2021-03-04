@@ -370,6 +370,15 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Hidden()
+		  Var Panel As ConfigEditor = Self.CurrentPanel
+		  If (Panel Is Nil) = False Then
+		    Panel.SwitchedFrom()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
 		    Var DocumentID As String = Self.mController.Document.DocumentID
@@ -406,6 +415,15 @@ End
 		  End If
 		  Return True
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  Var Panel As ConfigEditor = Self.CurrentPanel
+		  If (Panel Is Nil) = False Then
+		    Panel.SwitchedTo(UserData)
+		  End If
+		End Sub
 	#tag EndEvent
 
 
@@ -1202,6 +1220,11 @@ End
 			  If Self.mCurrentConfigName = Value Then
 			    Return
 			  End If
+			  
+			  If (Value = "accounts" Or Value = "deployments") And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
+			    Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
+			  End If
+			  
 			  Self.mCurrentConfigName = Value
 			  
 			  Var NewPanel As ConfigEditor

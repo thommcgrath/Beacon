@@ -4,7 +4,8 @@ Inherits Beacon.IntegrationEngine
 	#tag Event
 		Function ApplySettings(Organizer As Beacon.ConfigOrganizer) As Boolean
 		  Var Keys() As Beacon.ConfigKey = Organizer.DistinctKeys
-		  Var Changes() As Dictionary
+		  Var NewValues As New Dictionary
+		  Var KeysForPath As New Dictionary
 		  Var ExtraGameIniOrganizer As New Beacon.ConfigOrganizer
 		  
 		  // First we need to determine if guided mode *can* be supported.
@@ -31,49 +32,83 @@ Inherits Beacon.IntegrationEngine
 		      Continue
 		    End If
 		    
+		    Var NitradoPaths() As String = ConfigKey.NitradoPaths
 		    Var Values() As Beacon.ConfigValue = Organizer.FilteredValues(ConfigKey)
-		    Var NewValue As String
-		    Select Case ConfigKey.NitradoFormat
-		    Case Beacon.ConfigKey.NitradoFormats.Line
-		      Var Lines() As String
-		      For Each Value As Beacon.ConfigValue In Values
-		        Lines.Add(Value.Command)
-		      Next
-		      NewValue = Lines.Join(EndOfLine.UNIX)
-		    Case Beacon.ConfigKey.NitradoFormats.Value
-		      If Values.Count >= 1 Then
-		        NewValue = Values(0).Value
-		      Else
-		        // What?
-		        Break
+		    For Each NitradoPath As String In NitradoPaths
+		      KeysForPath.Value(NitradoPath) = ConfigKey
+		      
+		      Select Case ConfigKey.NitradoFormat
+		      Case Beacon.ConfigKey.NitradoFormats.Line
+		        Var Lines() As String
+		        If NewValues.HasKey(NitradoPath) Then
+		          Lines = NewValues.Value(NitradoPath)
+		        End If
+		        For Each Value As Beacon.ConfigValue In Values
+		          Lines.Add(Value.Command)
+		        Next
+		        NewValues.Value(NitradoPath) = Lines
+		      Case Beacon.ConfigKey.NitradoFormats.Value
+		        If Values.Count >= 1 Then
+		          If ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
+		            NewValues.Value(NitradoPath) = Values(Values.LastIndex).Value.Lowercase
+		          Else
+		            NewValues.Value(NitradoPath) = Values(Values.LastIndex).Value
+		          End If
+		        Else
+		          // This doesn't make sense
+		          Break
+		        End If
+		      End Select
+		    Next
+		  Next
+		  
+		  Var Changes As New Dictionary
+		  For Each Entry As DictionaryEntry In NewValues
+		    Var NitradoPath As String = Entry.Key
+		    Var ConfigKey As Beacon.ConfigKey = KeysForPath.Value(NitradoPath)
+		    Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
+		    Var FinishedValue As String
+		    If Entry.Value.Type = Variant.TypeString Then
+		      // Value comparison
+		      If ConfigKey.ValuesEqual(Entry.Value.StringValue, CurrentValue) Then
+		        Continue
 		      End If
-		    End Select
+		      FinishedValue = Entry.Value.StringValue
+		    ElseIf Entry.Value.IsArray And Entry.Value.ArrayElementType = Variant.TypeString Then
+		      // Line comparison, but if there is only one line, go back to value comparison
+		      Var NewLines() As String = Entry.Value
+		      FinishedValue = NewLines.Join(EndOfLine) // Prepare the finished value before sorting, even if we nay not use it
+		      
+		      Var CurrentLines() As String = CurrentValue.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
+		      
+		      If NewLines.Count = 1 And CurrentLines.Count = 1 And (ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeNumeric Or ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Or ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean) Then
+		        Var NewValue As String = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
+		        CurrentValue = CurrentLines(0).Middle(CurrentLines(0).IndexOf("=") + 1)
+		        If ConfigKey.ValuesEqual(NewValue, CurrentValue) Then
+		          Continue
+		        End If
+		        FinishedValue = NewLines(0)
+		      Else
+		        NewLines.Sort
+		        CurrentLines.Sort
+		        Var NewHash As String = EncodeHex(Crypto.SHA1(NewLines.Join(EndOfLine.UNIX).Lowercase))
+		        Var CurrentHash As String = EncodeHex(Crypto.SHA1(CurrentLines.Join(EndOfLine.UNIX).Lowercase))
+		        If NewHash = CurrentHash Then
+		          // No change
+		          Continue
+		        End If
+		      End If
+		    Else
+		      Continue
+		    End If
 		    
-		    If Self.mDoGuidedDeploy And NewValue.Length > 65535 Then
-		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + NewValue.Length.ToString + " characters, and Nitrado has a limit of 65,535 characters.")
-		      Self.SwitchToExpertMode(ConfigKey.Key, NewValue.Length)
+		    If Self.mDoGuidedDeploy And FinishedValue.Length > 65535 Then
+		      App.Log("Cannot use guided deploy because the key " + ConfigKey.SimplifiedKey + " needs " + FinishedValue.Length.ToString(Locale.Current, "0,") + " characters, and Nitrado has a limit of 65,535 characters.")
+		      Self.SwitchToExpertMode(ConfigKey.Key, FinishedValue.Length)
 		      Return False
 		    End If
 		    
-		    Var NitradoPaths() As String = ConfigKey.NitradoPaths
-		    For Each NitradoPath As String In NitradoPaths
-		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, NitradoPath)
-		      If ConfigKey.ValuesEqual(NewValue, CurrentValue) = False Then
-		        Var CategoryLength As Integer = NitradoPath.IndexOf(".")
-		        Var Category As String = NitradoPath.Left(CategoryLength)
-		        Var Key As String = NitradoPath.Middle(CategoryLength + 1)
-		        
-		        Var FormData As New Dictionary
-		        FormData.Value("category") = Category
-		        FormData.Value("key") = Key
-		        If ConfigKey.ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean Then
-		          FormData.Value("value") = NewValue.Lowercase
-		        Else
-		          FormData.Value("value") = NewValue
-		        End If
-		        Changes.Add(FormData)
-		      End If
-		    Next
+		    Changes.Value(NitradoPath) = FinishedValue
 		  Next
 		  
 		  If Self.mDoGuidedDeploy Then
@@ -116,8 +151,19 @@ Inherits Beacon.IntegrationEngine
 		  End If
 		  
 		  // Deploy changes
-		  For Each FormData As Dictionary In Changes
-		    Self.Log("Updating " + FormData.Value("key").StringValue + "…")
+		  For Each Entry As DictionaryEntry In Changes
+		    Var NitradoPath As String = Entry.Key
+		    Var NewValue As String = Entry.Value
+		    
+		    Var CategoryLength As Integer = NitradoPath.IndexOf(".")
+		    Var Category As String = NitradoPath.Left(CategoryLength)
+		    Var Key As String = NitradoPath.Middle(CategoryLength + 1)
+		    Var FormData As New Dictionary
+		    FormData.Value("category") = Category
+		    FormData.Value("key") = Key
+		    FormData.Value("value") = NewValue
+		    
+		    Self.Log("Updating " + Key + "…")
 		    
 		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken

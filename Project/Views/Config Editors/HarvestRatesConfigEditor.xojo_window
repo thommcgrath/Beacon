@@ -595,6 +595,10 @@ End
 
 	#tag MenuHandler
 		Function ConvertGlobalHarvestRate() As Boolean Handles ConvertGlobalHarvestRate.Action
+			If Self.IsFrontmost = False Then
+			Return False
+			End If
+			
 			Self.ConvertGlobalHarvestRate()
 			Return True
 		End Function

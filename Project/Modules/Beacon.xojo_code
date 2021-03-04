@@ -283,8 +283,27 @@ Protected Module Beacon
 		  
 		  #Pragma BreakOnExceptions False
 		  Try
-		    Var StringValue As String = Value
+		    If Value.IsNull Then
+		      Value = ""
+		      Return True
+		    End If
+		    
+		    Var StringValue As String
+		    Select Case Value.Type
+		    Case Variant.TypeInt32
+		      Var IntValue As Int32 = Value
+		      StringValue = IntValue.ToString(Locale.Raw, "0")
+		    Case Variant.TypeInt64
+		      Var IntValue As Int64 = Value
+		      StringValue = IntValue.ToString(Locale.Raw, "0")
+		    Case Variant.TypeDouble
+		      Var DoubleValue As Double = Value
+		      StringValue = DoubleValue.PrettyText(False)
+		    Else
+		      StringValue = Value
+		    End Select
 		    Value = StringValue
+		    
 		    Return True
 		  Catch Err As TypeMismatchException
 		    Return False

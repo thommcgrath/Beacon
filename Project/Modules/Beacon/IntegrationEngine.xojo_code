@@ -69,7 +69,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Self.mProfile = Profile
-		  Self.mID = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase()
+		  Self.mID = Profile.ProfileID.Left(8)
 		  Self.Log("Getting started…")
 		End Sub
 	#tag EndMethod

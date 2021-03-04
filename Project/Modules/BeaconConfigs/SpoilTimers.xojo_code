@@ -47,7 +47,7 @@ Inherits Beacon.ConfigGroup
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "AutoDestroyOldStructuresMultiplier"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "ClampItemSpoilingTimes"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "FastDecayUnsnappedCoreStructures"))
-		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "OnlyDecayUnsnappedCoreStructures"))
+		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "OnlyAutoDestroyCoreStructures"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "OnlyDecayUnsnappedCoreStructures"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "PvEDinoDecayPeriodMultiplier"))
 		  Keys.Add(New Beacon.ConfigKey("CommandLineOption", "?", "PvPDinoDecay"))
@@ -139,35 +139,55 @@ Inherits Beacon.ConfigGroup
 		  // Flags
 		  If CommandLineOptions.HasKey("AutoDestroyStructures") Then
 		    Spoil.AutoDestroyStructures = CommandLineOptions.BooleanValue("AutoDestroyStructures", Spoil.AutoDestroyStructures)
+		  ElseIf ParsedData.HasKey("AutoDestroyStructures") Then
+		    Spoil.AutoDestroyStructures = ParsedData.BooleanValue("AutoDestroyStructures", Spoil.AutoDestroyStructures)
 		  End If
 		  
 		  // Options
 		  If CommandLineOptions.HasKey("AutoDestroyDecayedDinos") Then
 		    Spoil.AutoDestroyDecayedDinos = CommandLineOptions.BooleanValue("AutoDestroyDecayedDinos", Spoil.AutoDestroyDecayedDinos)
+		  ElseIf ParsedData.HasKey("AutoDestroyDecayedDinos") Then
+		    Spoil.AutoDestroyDecayedDinos = ParsedData.BooleanValue("AutoDestroyDecayedDinos", Spoil.AutoDestroyDecayedDinos)
 		  End If
 		  If CommandLineOptions.HasKey("AutoDestroyOldStructuresMultiplier") Then
 		    Spoil.AutoDestroyOldStructuresMultiplier = CommandLineOptions.DoubleValue("AutoDestroyOldStructuresMultiplier", Spoil.AutoDestroyOldStructuresMultiplier)
+		  ElseIf ParsedData.HasKey("AutoDestroyOldStructuresMultiplier") Then
+		    Spoil.AutoDestroyOldStructuresMultiplier = ParsedData.DoubleValue("AutoDestroyOldStructuresMultiplier", Spoil.AutoDestroyOldStructuresMultiplier)
 		  End If
 		  If CommandLineOptions.HasKey("ClampItemSpoilingTimes") Then
 		    Spoil.ClampItemSpoilingTimes = CommandLineOptions.BooleanValue("ClampItemSpoilingTimes", Spoil.ClampItemSpoilingTimes)
+		  ElseIf ParsedData.HasKey("ClampItemSpoilingTimes") Then
+		    Spoil.ClampItemSpoilingTimes = ParsedData.BooleanValue("ClampItemSpoilingTimes", Spoil.ClampItemSpoilingTimes)
 		  End If
 		  If CommandLineOptions.HasKey("FastDecayUnsnappedCoreStructures") Then
 		    Spoil.FastDecayUnsnappedCoreStructures = CommandLineOptions.BooleanValue("FastDecayUnsnappedCoreStructures", Spoil.FastDecayUnsnappedCoreStructures)
+		  ElseIf ParsedData.HasKey("FastDecayUnsnappedCoreStructures") Then
+		    Spoil.FastDecayUnsnappedCoreStructures = ParsedData.BooleanValue("FastDecayUnsnappedCoreStructures", Spoil.FastDecayUnsnappedCoreStructures)
 		  End If
 		  If CommandLineOptions.HasKey("OnlyAutoDestroyCoreStructures") Then
 		    Spoil.OnlyAutoDestroyCoreStructures = CommandLineOptions.BooleanValue("OnlyAutoDestroyCoreStructures", Spoil.OnlyAutoDestroyCoreStructures)
+		  ElseIf ParsedData.HasKey("OnlyAutoDestroyCoreStructures") Then
+		    Spoil.OnlyAutoDestroyCoreStructures = ParsedData.BooleanValue("OnlyAutoDestroyCoreStructures", Spoil.OnlyAutoDestroyCoreStructures)
 		  End If
 		  If CommandLineOptions.HasKey("OnlyDecayUnsnappedCoreStructures") Then
 		    Spoil.OnlyDecayUnsnappedCoreStructures = CommandLineOptions.BooleanValue("OnlyDecayUnsnappedCoreStructures", Spoil.OnlyDecayUnsnappedCoreStructures)
+		  ElseIf ParsedData.HasKey("OnlyDecayUnsnappedCoreStructures") Then
+		    Spoil.OnlyDecayUnsnappedCoreStructures = ParsedData.BooleanValue("OnlyDecayUnsnappedCoreStructures", Spoil.OnlyDecayUnsnappedCoreStructures)
 		  End If
 		  If CommandLineOptions.HasKey("PvEDinoDecayPeriodMultiplier") Then
 		    Spoil.PvEDinoDecayPeriodMultiplier = CommandLineOptions.DoubleValue("PvEDinoDecayPeriodMultiplier", Spoil.PvEDinoDecayPeriodMultiplier)
+		  ElseIf ParsedData.HasKey("PvEDinoDecayPeriodMultiplier") Then
+		    Spoil.PvEDinoDecayPeriodMultiplier = ParsedData.DoubleValue("PvEDinoDecayPeriodMultiplier", Spoil.PvEDinoDecayPeriodMultiplier)
 		  End If
 		  If CommandLineOptions.HasKey("PvPDinoDecay") Then
 		    Spoil.PvPDinoDecay = CommandLineOptions.BooleanValue("PvPDinoDecay", Spoil.PvPDinoDecay)
+		  ElseIf ParsedData.HasKey("PvPDinoDecay") Then
+		    Spoil.PvPDinoDecay = ParsedData.BooleanValue("PvPDinoDecay", Spoil.PvPDinoDecay)
 		  End If
 		  If CommandLineOptions.HasKey("PvPStructureDecay") Then
 		    Spoil.PvPStructureDecay = CommandLineOptions.BooleanValue("PvPStructureDecay", Spoil.PvPStructureDecay)
+		  ElseIf ParsedData.HasKey("PvPStructureDecay") Then
+		    Spoil.PvPStructureDecay = ParsedData.BooleanValue("PvPStructureDecay", Spoil.PvPStructureDecay)
 		  End If
 		  
 		  // Game.ini
@@ -413,7 +433,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mAutoDestroyDecayedDinos As Boolean = True
+		Private mAutoDestroyDecayedDinos As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -421,7 +441,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAutoDestroyStructures As Boolean = True
+		Private mAutoDestroyStructures As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
