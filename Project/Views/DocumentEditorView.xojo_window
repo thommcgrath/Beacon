@@ -1205,6 +1205,11 @@ End
 			  If Self.mCurrentConfigName = Value Then
 			    Return
 			  End If
+			  
+			  If (Value = "accounts" Or Value = "deployments") And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
+			    Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
+			  End If
+			  
 			  Self.mCurrentConfigName = Value
 			  
 			  Var NewPanel As ConfigEditor
