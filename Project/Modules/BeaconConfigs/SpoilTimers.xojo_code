@@ -433,7 +433,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mAutoDestroyDecayedDinos As Boolean = True
+		Private mAutoDestroyDecayedDinos As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -441,7 +441,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAutoDestroyStructures As Boolean = True
+		Private mAutoDestroyStructures As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
