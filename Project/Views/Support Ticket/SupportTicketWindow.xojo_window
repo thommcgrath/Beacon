@@ -1096,7 +1096,22 @@ End
 		    Return
 		  End If
 		  
-		  Self.SetError("Server replied with an HTTP status: " + Socket.LastHTTPStatus.ToString)
+		  Var Message As String = "Server replied with an HTTP status: " + Socket.LastHTTPStatus.ToString
+		  Try
+		    Var ErrorDict As Dictionary = Beacon.ParseJSON(Socket.LastString)
+		    If ErrorDict.HasKey("message") Then
+		      Message = ErrorDict.Value("message")
+		    End If
+		    If ErrorDict.HasKey("detail") Then
+		      Var Detail As Variant = ErrorDict.Value("detail")
+		      If Detail.IsNull = False And Detail.Type = Variant.TypeString Then
+		        Message = Message + ": " + Detail.StringValue
+		      End If
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.SetError(Message)
 		  
 		  Exception Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Ticket submission thread")
