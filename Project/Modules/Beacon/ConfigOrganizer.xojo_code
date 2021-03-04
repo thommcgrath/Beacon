@@ -178,7 +178,7 @@ Protected Class ConfigOrganizer
 
 	#tag Method, Flags = &h0
 		Function DistinctKeys() As Beacon.ConfigKey()
-		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap;")
+		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT file, header, simplekey FROM keymap ORDER BY sortkey;")
 		  Return Self.DistinctKeys(Rows)
 		End Function
 	#tag EndMethod
