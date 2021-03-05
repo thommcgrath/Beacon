@@ -470,6 +470,7 @@ Protected Class IntegrationEngine
 		      Self.Cancel
 		      Return
 		    End If
+		    Self.Log("Backup finished")
 		    
 		    If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
 		      RaiseEvent CreateCheckpoint

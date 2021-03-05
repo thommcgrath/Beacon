@@ -942,6 +942,8 @@ Inherits Beacon.IntegrationEngine
 		    Return
 		  End If
 		  
+		  Self.Log("Saving previous configuration as profile…")
+		  
 		  Var FormData As New Dictionary
 		  FormData.Value("name") = "Beacon " + Self.Label
 		  
@@ -959,6 +961,7 @@ Inherits Beacon.IntegrationEngine
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    If Response.Value("status") = "success" Then
 		      Self.mCheckpointCreated = True
+		      Self.Log("Created configuration profile """ + FormData.Value("name").StringValue + """")
 		    Else
 		      Self.SetError("Error: Could not backup current settings.")
 		    End If
