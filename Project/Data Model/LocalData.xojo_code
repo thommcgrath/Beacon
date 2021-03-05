@@ -2699,7 +2699,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      CountErrors = CountErrors + 1
 		    End Try
 		  Next
-		  If CountErrors = 0 And CountSuccess > 1 Then
+		  If CountErrors = 0 And CountSuccess > 0 Then
 		    Self.Commit()
 		    
 		    Self.SyncUserEngrams()
