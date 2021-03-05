@@ -936,8 +936,8 @@ End
 		Private Function Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController) As Boolean
 		  Select Case Controller.Action
 		  Case "Backup"
-		    Var UserData As Dictionary = Controller.UserData
 		    Try
+		      Var UserData As Dictionary = Controller.UserData
 		      Var BackupsFolder As FolderItem = App.BackupsFolder
 		      If Not BackupsFolder.Exists Then
 		        BackupsFolder.CreateFolder
