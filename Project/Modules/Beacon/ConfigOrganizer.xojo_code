@@ -191,9 +191,10 @@ Protected Class ConfigOrganizer
 		    Var Header As String = Row.Column("header").StringValue
 		    Var SimpleKey As String = Row.Column("simplekey").StringValue
 		    Var Key As Beacon.ConfigKey = Beacon.Data.GetConfigKey(File, Header, SimpleKey)
-		    If (Key Is Nil) = False Then
-		      Results.Add(Key)
+		    If Key Is Nil Then
+		      Key = New Beacon.ConfigKey(File, Header, SimpleKey)
 		    End If
+		    Results.Add(Key)
 		  Next
 		  Return Results
 		End Function
