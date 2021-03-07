@@ -112,14 +112,6 @@ Inherits Beacon.IntegrationEngine
 		  Next
 		  
 		  If Self.mDoGuidedDeploy Then
-		    // Create a checkpoint before making changes
-		    If Self.BackupEnabled Then
-		      Self.CreateCheckpoint()
-		      If Self.Finished Then
-		        Return False
-		      End If
-		    End If
-		    
 		    // Generate a new user-settings.ini file
 		    Var ExtraGameIniSuccess As Boolean
 		    Var ExtraGameIni As String = Self.GetFile(Self.mGamePath + "user-settings.ini", DownloadFailureMode.MissingAllowed, False, ExtraGameIniSuccess)
@@ -130,18 +122,47 @@ Inherits Beacon.IntegrationEngine
 		    If ExtraGameIni.BeginsWith("[" + Beacon.ShooterGameHeader + "]") = False Then
 		      ExtraGameIni = "[" + Beacon.ShooterGameHeader + "]" + EndOfLine.UNIX + ExtraGameIni
 		    End If
-		    
 		    Var RewriteError As RuntimeException
-		    ExtraGameIni = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, ExtraGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, ExtraGameIniOrganizer, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), RewriteError)
+		    Var ExtraGameIniRewritten As String = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, ExtraGameIni, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, ExtraGameIniOrganizer, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), RewriteError)
 		    If (RewriteError Is Nil) = False Then
 		      Self.SetError(RewriteError)
 		      Return False
 		    End If
 		    
 		    // Need to remove the header that the rewriter adds
-		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
+		    ExtraGameIniRewritten = ExtraGameIniRewritten.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
 		    
-		    If Not Self.PutFile(ExtraGameIni, Self.mGamePath + "user-settings.ini") Then
+		    // Create a checkpoint before making changes
+		    If Self.BackupEnabled Then
+		      Var OldFiles As New Dictionary
+		      OldFiles.Value("Config.json") = Beacon.GenerateJSON(Self.mCurrentSettings, True)
+		      OldFiles.Value("user-settings.ini") = ExtraGameIni
+		      
+		      Var NewSettings As Dictionary = Self.mCurrentSettings.Clone
+		      For Each Entry As DictionaryEntry In Changes
+		        Var NitradoPath As String = Entry.Key
+		        Var NewValue As String = Entry.Value
+		        
+		        Var CategoryLength As Integer = NitradoPath.IndexOf(".")
+		        Var Category As String = NitradoPath.Left(CategoryLength)
+		        Var Key As String = NitradoPath.Middle(CategoryLength + 1)
+		        
+		        Var CategoryDict As Dictionary = NewSettings.Value(Category)
+		        CategoryDict.Value(Key) = NewValue
+		      Next
+		      
+		      Var NewFiles As New Dictionary
+		      NewFiles.Value("Config.json") = Beacon.GenerateJSON(NewSettings, True)
+		      NewFiles.Value("user-settings.ini") = ExtraGameIniRewritten
+		      
+		      Self.RunBackup(OldFiles, NewFiles)
+		      
+		      If Self.Finished Then
+		        Return False
+		      End If
+		    End If
+		    
+		    If Not Self.PutFile(ExtraGameIniRewritten, Self.mGamePath + "user-settings.ini") Then
 		      Self.Finished = True
 		      Return False
 		    End If

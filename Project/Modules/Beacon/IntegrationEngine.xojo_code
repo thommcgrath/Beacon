@@ -330,6 +330,30 @@ Protected Class IntegrationEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub RunBackup(OldFiles As Dictionary, NewFiles As Dictionary)
+		  Var Dict As New Dictionary
+		  Dict.Value("Old Files") = OldFiles
+		  Dict.Value("New Files") = NewFiles
+		  
+		  Var Controller As New Beacon.TaskWaitController("Backup", Dict)
+		  
+		  Self.Log("Creating backup…")
+		  Self.Wait(Controller)
+		  If Controller.Cancelled Then
+		    Self.Cancel
+		    Return
+		  ElseIf Self.Finished Then
+		    Return
+		  End If
+		  Self.Log("Backup finished")
+		  
+		  If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
+		    RaiseEvent CreateCheckpoint
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub RunDeploy(Sender As Thread)
 		  #Pragma Unused Sender
@@ -460,27 +484,18 @@ Protected Class IntegrationEngine
 		  
 		  // Run the backup if requested
 		  If Self.BackupEnabled Then
-		    Var Dict As New Dictionary
-		    Dict.Value(Beacon.ConfigFileGame) = GameIniOriginal
-		    Dict.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniOriginal
-		    Dict.Value("New Game.ini") = GameIniRewritten
-		    Dict.Value("New GameUserSettings.ini") = GameUserSettingsIniRewritten
+		    Var OldFiles As New Dictionary
+		    OldFiles.Value(Beacon.ConfigFileGame) = GameIniOriginal
+		    OldFiles.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniOriginal
 		    
-		    Var Controller As New Beacon.TaskWaitController("Backup", Dict)
+		    Var NewFiles As New Dictionary
+		    NewFiles.Value(Beacon.ConfigFileGame) = GameIniRewritten
+		    NewFiles.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
 		    
-		    Self.Log("Backing up config files…")
-		    Self.Wait(Controller)
-		    If Controller.Cancelled Then
-		      Self.Cancel
+		    Self.RunBackup(OldFiles, NewFiles)
+		    
+		    If Self.Finished Then
 		      Return
-		    End If
-		    Self.Log("Backup finished")
-		    
-		    If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
-		      RaiseEvent CreateCheckpoint
-		      If Self.Finished Then
-		        Return
-		      End If
 		    End If
 		  End If
 		  

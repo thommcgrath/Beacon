@@ -953,28 +953,29 @@ End
 		        MomentFolder.CreateFolder
 		      End If
 		      
-		      Var OutStream As TextOutputStream
-		      
-		      OutStream = TextOutputStream.Create(MomentFolder.Child(Beacon.ConfigFileGame))
-		      OutStream.Write(UserData.Value(Beacon.ConfigFileGame).StringValue)
-		      OutStream.Close
-		      
-		      OutStream = TextOutputStream.Create(MomentFolder.Child(Beacon.ConfigFileGameUserSettings))
-		      OutStream.Write(UserData.Value(Beacon.ConfigFileGameUserSettings).StringValue)
-		      OutStream.Close
+		      Var OldFiles As Dictionary = UserData.Value("Old Files")
+		      For Each Entry As DictionaryEntry In OldFiles
+		        Var Filename As String = Entry.Key
+		        Var Content As String = Entry.Value
+		        Var OutStream As TextOutputStream = TextOutputStream.Create(MomentFolder.Child(Filename))
+		        OutStream.Write(Content)
+		        OutStream.Close
+		      Next
 		      
 		      Var CurrentFolder As FolderItem = EngineFolder.Child("Current")
-		      If Not CurrentFolder.Exists Then
-		        CurrentFolder.CreateFolder
+		      If CurrentFolder.Exists Then
+		        Call CurrentFolder.DeepDelete
 		      End If
+		      CurrentFolder.CreateFolder
 		      
-		      OutStream = TextOutputStream.Create(CurrentFolder.Child(Beacon.ConfigFileGame))
-		      OutStream.Write(UserData.Value("New Game.ini").StringValue)
-		      OutStream.Close
-		      
-		      OutStream = TextOutputStream.Create(CurrentFolder.Child(Beacon.ConfigFileGameUserSettings))
-		      OutStream.Write(UserData.Value("New GameUserSettings.ini").StringValue)
-		      OutStream.Close
+		      Var NewFiles As Dictionary = UserData.Value("New Files")
+		      For Each Entry As DictionaryEntry In NewFiles
+		        Var Filename As String = Entry.Key
+		        Var Content As String = Entry.Value
+		        Var OutStream As TextOutputStream = TextOutputStream.Create(CurrentFolder.Child(Filename))
+		        OutStream.Write(Content)
+		        OutStream.Close
+		      Next
 		    Catch Err As RuntimeException
 		      Controller.Cancelled = True
 		      
