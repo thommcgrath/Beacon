@@ -159,6 +159,9 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 
+	#tag Constant, Name = ProviderGameServerApp, Type = String, Dynamic = False, Default = \"GameServerApp.com", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = ProviderNitrado, Type = String, Dynamic = False, Default = \"Nitrado", Scope = Public
 	#tag EndConstant
 

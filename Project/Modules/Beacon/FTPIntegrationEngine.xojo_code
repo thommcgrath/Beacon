@@ -87,7 +87,7 @@ Inherits Beacon.IntegrationEngine
 		      Self.SetError("The server either refused all connection attempts or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
 		    Else
 		      Self.SetError("The server either refused the connection or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
-		    ENd If
+		    End If
 		    Return Nil
 		  End If
 		  
@@ -141,7 +141,7 @@ Inherits Beacon.IntegrationEngine
 		    Path = Transfer.Path + "/" + Transfer.Filename
 		  End If
 		  
-		  Self.SignalConnection
+		  Var Locked As Boolean = Preferences.SignalConnection()
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
 		  Self.SetTLSValues()
@@ -156,7 +156,9 @@ Inherits Beacon.IntegrationEngine
 		    Transfer.SetError("Could not download: " + Self.mSocket.LasterrorMessage + ", code " + Self.mSocket.Lasterror.ToString(Locale.Raw, "0"))
 		  End If
 		  Self.mSocketLock.Leave
-		  Self.ReleaseConnection
+		  If Locked Then
+		    Preferences.ReleaseConnection()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -175,7 +177,7 @@ Inherits Beacon.IntegrationEngine
 		    Path = Transfer.Path + "/" + Transfer.Filename
 		  End If
 		  
-		  Self.SignalConnection
+		  Var Locked As Boolean = Preferences.SignalConnection()
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
 		  Self.mSocket.OptionUpload = True
@@ -191,7 +193,9 @@ Inherits Beacon.IntegrationEngine
 		  Else
 		    Transfer.Success = True
 		  End If
-		  Self.ReleaseConnection
+		  If Locked Then
+		    Preferences.ReleaseConnection()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -371,57 +375,9 @@ Inherits Beacon.IntegrationEngine
 		    ElseIf Line.BeginsWith("Commandline: ") Then
 		      // Here's the command line
 		      Var CommandLine As String = Line.Middle(13)
-		      Var InQuotes As Boolean
-		      Var Characters() As String = CommandLine.Split("")
-		      Var Buffer, Params() As String
-		      For Each Char As String In Characters
-		        If Char = """" Then
-		          If InQuotes Then
-		            Params.Add(Buffer)
-		            Buffer = ""
-		            InQuotes = False
-		          Else
-		            InQuotes = True
-		          End If
-		        ElseIf Char = " " Then
-		          If InQuotes = False And Buffer.Length > 0 Then
-		            Params.Add(Buffer)
-		            Buffer = ""
-		          End If
-		        ElseIf Char = "-" And Buffer.Length = 0 Then
-		          Continue
-		        Else
-		          Buffer = Buffer + Char
-		        End If
-		      Next
-		      If Buffer.Length > 0 Then
-		        Params.Add(Buffer)
-		        Buffer = ""
-		      End If
-		      
-		      Var StartupParams() As String = Params.Shift.Split("?")
-		      Var Map As String = StartupParams.Shift
-		      Call StartupParams.Shift // The listen statement
-		      StartupParams.Merge(Params)
-		      
-		      Var CommandLineOptions As New Dictionary
-		      For Each Parameter As String In StartupParams
-		        Var KeyPos As Integer = Parameter.IndexOf("=")
-		        Var Key As String
-		        Var Value As Variant
-		        If KeyPos = -1 Then
-		          Key = Parameter
-		          Value = True
-		        Else
-		          Key = Parameter.Left(KeyPos)
-		          Value = Parameter.Middle(KeyPos + 1)
-		        End If
-		        CommandLineOptions.Value(Key) = Value
-		      Next
-		      
-		      Data.Profile.Mask = Beacon.Maps.MaskForIdentifier(Map)
-		      Data.CommandLineOptions = CommandLineOptions
-		      
+		      Var Options As Dictionary = Beacon.ParseCommandLine(CommandLine)
+		      Data.Profile.Mask = Beacon.Maps.MaskForIdentifier(Options.Value("Map"))
+		      Data.CommandLineOptions = Options
 		      FoundCommandLine = True
 		    End If
 		  Next

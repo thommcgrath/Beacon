@@ -173,6 +173,17 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub ReleaseConnection()
+		  If Thread.Current Is Nil Or mConnectionLock Is Nil Then
+		    Return
+		  End If
+		  
+		  mConnectionLockCount = mConnectionLockCount
+		  mConnectionLock.Release
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub SaveWindowPosition(Extends Win As Window)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
@@ -225,6 +236,23 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SignalConnection() As Boolean
+		  If Thread.Current Is Nil Then
+		    Return False
+		  End If
+		  
+		  If mConnectionLock Is Nil Then
+		    mConnectionLock = New Semaphore(MaxConnections)
+		  End If
+		  
+		  mConnectionLock.Signal
+		  mConnectionLockCount = mConnectionLockCount + 1
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
@@ -275,22 +303,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected DeployCreateBackup As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Deploy Max Connections", 3)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Deploy Max Connections") = Value
-			End Set
-		#tag EndSetter
-		Protected DeployMaxConnections As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -436,6 +448,37 @@ Protected Module Preferences
 		#tag EndSetter
 		Protected MainWindowPosition As Rect
 	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Max Connections", 3)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If MaxConnections = Value Then
+			    Return
+			  End If
+			  
+			  mManager.IntegerValue("Max Connections") = Value
+			  
+			  If mConnectionLockCount = 0 Then
+			    mConnectionLock = New Semaphore(Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Protected MaxConnections As Integer
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mConnectionLock As Semaphore
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConnectionLockCount As Integer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mManager As PreferencesManager

@@ -1205,6 +1205,63 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ParseCommandLine(CommandLine As String) As Dictionary
+		  // This shouldn't take long, but still, probably best to only use this on a thread
+		  
+		  Var InQuotes As Boolean
+		  Var Characters() As String = CommandLine.Split("")
+		  Var Buffer, Params() As String
+		  For Each Char As String In Characters
+		    If Char = """" Then
+		      If InQuotes Then
+		        Params.Add(Buffer)
+		        Buffer = ""
+		        InQuotes = False
+		      Else
+		        InQuotes = True
+		      End If
+		    ElseIf Char = " " Then
+		      If InQuotes = False And Buffer.Length > 0 Then
+		        Params.Add(Buffer)
+		        Buffer = ""
+		      End If
+		    ElseIf Char = "-" And Buffer.Length = 0 Then
+		      Continue
+		    Else
+		      Buffer = Buffer + Char
+		    End If
+		  Next
+		  If Buffer.Length > 0 Then
+		    Params.Add(Buffer)
+		    Buffer = ""
+		  End If
+		  
+		  Var StartupParams() As String = Params.Shift.Split("?")
+		  Var Map As String = StartupParams.Shift
+		  Call StartupParams.Shift // The listen statement
+		  StartupParams.Merge(Params)
+		  
+		  Var CommandLineOptions As New Dictionary
+		  For Each Parameter As String In StartupParams
+		    Var KeyPos As Integer = Parameter.IndexOf("=")
+		    Var Key As String
+		    Var Value As Variant
+		    If KeyPos = -1 Then
+		      Key = Parameter
+		      Value = True
+		    Else
+		      Key = Parameter.Left(KeyPos)
+		      Value = Parameter.Middle(KeyPos + 1)
+		    End If
+		    CommandLineOptions.Value(Key) = Value
+		  Next
+		  
+		  CommandLineOptions.Value("Map") = Map
+		  Return CommandLineOptions
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ParseInterval(Input As String) As DateInterval
 		  Input = Input.Trim
 		  If Input.IsEmpty Then

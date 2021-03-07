@@ -787,11 +787,12 @@ Begin ContainerControl DocumentImportView
          Transparent     =   False
          Underline       =   False
          Value           =   False
-         Visible         =   False
+         Visible         =   True
          Width           =   560
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -888,6 +889,7 @@ End
 		  Self.LocalDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.NitradoDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.ConnectorDiscoveryView1.PullValuesFromDocument(Document)
+		  Self.GSADiscoveryView1.PullValuesFromDocument(Document)
 		End Sub
 	#tag EndMethod
 
@@ -1033,6 +1035,8 @@ End
 		    RaiseEvent ShouldResize(Self.StatusPageHeight)
 		  Case Self.PageConnector
 		    ConnectorDiscoveryView1.Begin
+		  Case Self.PageGSA
+		    Self.GSADiscoveryView1.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1284,8 +1288,10 @@ End
 		  If AllFinished Then
 		    Me.RunMode = Timer.RunModes.Off
 		    If ErrorCount = 0 Then
+		      SoundDeploySuccess.Play
 		      Self.Finish()
 		    ElseIf SuccessCount > 0 Then
+		      SoundDeployFailed.Play
 		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
 		        Self.Finish()
 		      Else
@@ -1299,6 +1305,7 @@ End
 		        #endif
 		      End If
 		    Else
+		      SoundDeployFailed.Play
 		      Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
 		    End If
 		  End If

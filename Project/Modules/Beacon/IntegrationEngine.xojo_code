@@ -64,12 +64,12 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Profile As Beacon.ServerProfile)
-		  If Self.ConnectionLock Is Nil Then
-		    Self.ConnectionLock = New Semaphore(Preferences.DeployMaxConnections)
-		  End If
-		  
 		  Self.mProfile = Profile
-		  Self.mID = Profile.ProfileID.Left(8)
+		  If Profile Is Nil Then
+		    Self.mID = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase
+		  Else
+		    Self.mID = Profile.ProfileID.Left(8)
+		  End If
 		  Self.Log("Getting started…")
 		End Sub
 	#tag EndMethod
@@ -313,12 +313,6 @@ Protected Class IntegrationEngine
 		  
 		  Self.mLastRefresh = System.Microseconds
 		  RaiseEvent RefreshServerStatus
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ReleaseConnection()
-		  Self.ConnectionLock.Release
 		End Sub
 	#tag EndMethod
 
@@ -584,14 +578,6 @@ Protected Class IntegrationEngine
 		  Self.ErrorMessage = Message
 		  Self.Errored = True
 		  Self.Finished = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub SignalConnection()
-		  Self.mThrottled = True
-		  Self.ConnectionLock.Signal
-		  Self.mThrottled = False
 		End Sub
 	#tag EndMethod
 
@@ -878,10 +864,6 @@ Protected Class IntegrationEngine
 		#tag EndGetter
 		ActiveWaitController As Beacon.TaskWaitController
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private Shared ConnectionLock As Semaphore
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mActiveWaitController As Beacon.TaskWaitController

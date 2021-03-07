@@ -242,7 +242,7 @@ Begin DiscoveryView NitradoDiscoveryView
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
-         Caption         =   "Link Another Nitrado Account"
+         Caption         =   "Link Another Account"
          Default         =   False
          Enabled         =   True
          FontName        =   "System"
@@ -268,7 +268,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   214
+         Width           =   160
       End
       Begin Label FindingStatus
          AllowAutoDeactivate=   True
@@ -313,10 +313,10 @@ Begin DiscoveryView NitradoDiscoveryView
          Border          =   True
          ColumnCount     =   3
          ColumnsResizable=   False
-         ColumnWidths    =   "22,*,200"
+         ColumnWidths    =   "26,*,200"
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   22
+         DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
          DefaultSortColumn=   0
          DefaultSortDirection=   0
          EditCaption     =   "Edit"
@@ -373,6 +373,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Timer StatusWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
@@ -612,13 +613,6 @@ End
 	#tag Property, Flags = &h21
 		Private mSelectedServers As Dictionary
 	#tag EndProperty
-
-
-	#tag Structure, Name = MacVersionInfo, Flags = &h21, Attributes = \"StructureAlignment \x3D 1"
-		MajorVersion As Integer
-		  MinorVersion As Integer
-		BugVersion As Integer
-	#tag EndStructure
 
 
 #tag EndWindowCode

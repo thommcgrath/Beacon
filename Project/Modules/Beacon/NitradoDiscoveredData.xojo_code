@@ -26,7 +26,11 @@ Inherits Beacon.DiscoveredData
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
 		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  
+		  Var Locked As Boolean = Preferences.SignalConnection
 		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mConfigPath + "/" + Filename), Beacon.NitradoIntegrationEngine.ConnectionTimeout)
+		  If Locked Then
+		    Preferences.ReleaseConnection
+		  End If
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Status <> 200 Then
@@ -51,7 +55,11 @@ Inherits Beacon.DiscoveredData
 		  Var FetchSocket As New URLConnection
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
 		  FetchSocket.RequestHeader("User-Agent") = App.UserAgent
+		  Locked = Preferences.SignalConnection
 		  Content = FetchSocket.SendSync("GET", FetchURL, Beacon.NitradoIntegrationEngine.ConnectionTimeout)
+		  If Locked Then
+		    Preferences.ReleaseConnection
+		  End If
 		  Status = FetchSocket.HTTPStatusCode
 		  
 		  If Status <> 200 Then

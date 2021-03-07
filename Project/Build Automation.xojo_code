@@ -9,6 +9,13 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
 				End
+				Begin CopyFilesBuildStep CopyDebugResourcesLinux
+					AppliesTo = 1
+					Architecture = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vR1NBSUQudHh0
+				End
 				Begin IDEScriptBuildStep DownloadClassesDebugLinux , AppliesTo = 1, Architecture = 0
 					Var AppName As String = CurrentBuildAppName
 					If TargetMacOS Then
@@ -40,6 +47,13 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
+				End
+				Begin CopyFilesBuildStep CopyDebugResourcesMac
+					AppliesTo = 1
+					Architecture = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vR1NBSUQudHh0
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
@@ -83,6 +97,13 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
+				End
+				Begin CopyFilesBuildStep CopyDebugResourcesWindows
+					AppliesTo = 1
+					Architecture = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vR1NBSUQudHh0
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugWin , AppliesTo = 3, Architecture = 0
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
