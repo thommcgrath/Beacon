@@ -108,42 +108,8 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Width           =   627
       End
    End
-   Begin HelpDrawer HelpDrawer
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      Body            =   ""
-      Borders         =   8
-      ContentHeight   =   0
-      DetailURL       =   ""
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   487
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   858
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Title           =   ""
-      Top             =   41
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   False
-      Width           =   300
-   End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -189,6 +155,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -793,37 +760,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub HideHelpDrawer()
-		  If Not Self.mHelpDrawerOpen Then
-		    Return
-		  End If
-		  Self.mHelpDrawerOpen = False
-		  
-		  If Self.mHelpDrawerAnimation <> Nil Then
-		    Self.mHelpDrawerAnimation.Cancel
-		    Self.mHelpDrawerAnimation = Nil
-		  End If
-		  If Self.mPagesAnimation <> Nil Then
-		    Self.mPagesAnimation.Cancel
-		    Self.mPagesAnimation = Nil
-		  End If
-		  
-		  Self.mHelpDrawerAnimation = New AnimationKit.MoveTask(Self.HelpDrawer)
-		  Self.mHelpDrawerAnimation.Left = Self.Width
-		  Self.mHelpDrawerAnimation.DurationInSeconds = 0.15
-		  Self.mHelpDrawerAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  AddHandler Self.mHelpDrawerAnimation.Completed, WeakAddressOf Self.mHelpDrawerAnimation_Completed
-		  Self.mHelpDrawerAnimation.Run
-		  
-		  Self.mPagesAnimation = New AnimationKit.MoveTask(Self.PagePanel1)
-		  Self.mPagesAnimation.Width = Self.Width
-		  Self.mPagesAnimation.DurationInSeconds = 0.15
-		  Self.mPagesAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mPagesAnimation.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ImportAndDeployCallback(Documents() As Beacon.Document)
 		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Documents)
 		End Sub
@@ -905,17 +841,6 @@ End
 		  Self.Autosave()
 		  Self.UpdateConfigList()
 		  Self.Panel_ContentsChanged(Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mHelpDrawerAnimation_Completed(Sender As AnimationKit.MoveTask)
-		  #Pragma Unused Sender
-		  
-		  If Self.Closed = False And Self.mHelpDrawerOpen = False Then
-		    Self.HelpDrawer.Visible = False
-		    Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth)
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1044,39 +969,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowHelpDrawer()
-		  If Self.mHelpDrawerOpen Then
-		    Return
-		  End If
-		  Self.mHelpDrawerOpen = True
-		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + Self.HelpDrawer.Width
-		  
-		  If Self.mHelpDrawerAnimation <> Nil Then
-		    Self.mHelpDrawerAnimation.Cancel
-		    Self.mHelpDrawerAnimation = Nil
-		  End If
-		  If Self.mPagesAnimation <> Nil Then
-		    Self.mPagesAnimation.Cancel
-		    Self.mPagesAnimation = Nil
-		  End If
-		  
-		  Self.HelpDrawer.Visible = True
-		  
-		  Self.mHelpDrawerAnimation = New AnimationKit.MoveTask(Self.HelpDrawer)
-		  Self.mHelpDrawerAnimation.Left = Self.Width - Self.HelpDrawer.Width
-		  Self.mHelpDrawerAnimation.DurationInSeconds = 0.15
-		  Self.mHelpDrawerAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mHelpDrawerAnimation.Run
-		  
-		  Self.mPagesAnimation = New AnimationKit.MoveTask(Self.PagePanel1)
-		  Self.mPagesAnimation.Width = Self.Width - Self.HelpDrawer.Width
-		  Self.mPagesAnimation.DurationInSeconds = 0.15
-		  Self.mPagesAnimation.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mPagesAnimation.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ShowIssues()
 		  ResolveIssuesDialog.Present(Self, Self.Document, AddressOf GoToIssue)
 		  Self.Changed = Self.Document.Modified
@@ -1136,18 +1028,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateHelpForConfig(ConfigName As String)
-		  Var Title, Body, DetailURL As String
-		  Call LocalData.SharedInstance.GetConfigHelp(ConfigName, Title, Body, DetailURL)
-		  Self.HelpDrawer.Title = Title
-		  Self.HelpDrawer.Body = Body
-		  Self.HelpDrawer.DetailURL = DetailURL
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateMinimumDimensions()
-		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + If(Self.mHelpDrawerOpen, Self.HelpDrawer.Width, 0) + Self.PagePanel1.Left
+		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + Self.PagePanel1.Left
 		  Self.MinimumHeight = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumHeight, Self.LocalMinHeight), Self.LocalMinHeight) + Self.PagePanel1.Top
 		End Sub
 	#tag EndMethod
@@ -1232,8 +1114,6 @@ End
 			  If Value.IsEmpty = False Then
 			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
 			    
-			    Self.UpdateHelpForConfig(Value)
-			    
 			    If Self.mController.Document <> Nil Then
 			      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Value
 			    End If
@@ -1305,8 +1185,6 @@ End
 			        Embed = True
 			      End If
 			    End If
-			  Else
-			    Self.UpdateHelpForConfig("")
 			  End If
 			  
 			  If Self.CurrentPanel = NewPanel Then
@@ -1391,14 +1269,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private Shared mEditorRefs As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mHelpDrawerAnimation As AnimationKit.MoveTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mHelpDrawerOpen As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1537,12 +1407,6 @@ End
 		    Self.BeginImport(False)
 		  Case "ExportButton"
 		    Self.BeginExport()
-		  Case "HelpButton"
-		    If Self.mHelpDrawerOpen Then
-		      Self.HideHelpDrawer()
-		    Else
-		      Self.ShowHelpDrawer()
-		    End If
 		  Case "ShareButton"
 		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
 		      SharingDialog.Present(Self, Self.Document)
