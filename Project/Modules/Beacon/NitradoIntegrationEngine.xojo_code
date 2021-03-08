@@ -189,11 +189,7 @@ Inherits Beacon.IntegrationEngine
 		    Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		    Sock.SetFormData(FormData)
-		    Var Locked As Boolean = Preferences.SignalConnection()
-		    Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
-		    If Locked Then
-		      Preferences.ReleaseConnection()
-		    End If
+		    Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
 		    If Self.Finished Or Self.CheckError(Sock) Then
 		      Return False
 		    End If
@@ -244,11 +240,7 @@ Inherits Beacon.IntegrationEngine
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		    
 		    // Odd request, but we're just trying to test validity
-		    Var Locked As Boolean = Preferences.SignalConnection()
-		    Sock.Send("GET", "https://api.nitrado.net/countries/states")
-		    If Locked Then
-		      Preferences.ReleaseConnection()
-		    End If
+		    Self.SendRequest(Sock, "GET", "https://api.nitrado.net/countries/states")
 		    Var Status As Integer = Sock.LastHTTPStatus
 		    If Status = 401 Then
 		      // A new account is needed
@@ -278,11 +270,7 @@ Inherits Beacon.IntegrationEngine
 		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Self.Log("Finding servers…")
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Socket.Send("GET", "https://api.nitrado.net/services")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Socket, "GET", "https://api.nitrado.net/services")
 		  If Self.Finished Or Self.CheckError(Socket) Then
 		    Return Servers
 		  End If
@@ -343,11 +331,7 @@ Inherits Beacon.IntegrationEngine
 		      // Lookup server information
 		      Var DetailsSocket As New SimpleHTTP.SynchronousHTTPSocket
 		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		      Locked = Preferences.SignalConnection()
-		      DetailsSocket.Send("GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		      If Locked Then
-		        Preferences.ReleaseConnection()
-		      End If
+		      Self.SendRequest(DetailsSocket, "GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers")
 		      If Self.Finished Or Self.CheckError(DetailsSocket) Then
 		        Continue
 		      End If
@@ -458,11 +442,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.RequestHeader("Cache-Control") = "no-cache"
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Sock.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath))
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FullPath))
 		  Var Content As MemoryBlock = Sock.LastContent
 		  Var Status As Integer = Sock.LastHTTPStatus
 		  
@@ -494,11 +474,7 @@ Inherits Beacon.IntegrationEngine
 		  Var SizeSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  SizeSocket.RequestHeader("Cache-Control") = "no-cache"
 		  SizeSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  Locked = Preferences.SignalConnection()
-		  SizeSocket.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath))
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(SizeSocket, "GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/size?path=" + EncodeURLComponent(FullPath))
 		  If SizeSocket.LastHTTPStatus <> 200 Then
 		    Call Self.CheckSocketForError(Sock, Transfer)
 		    Return
@@ -535,11 +511,7 @@ Inherits Beacon.IntegrationEngine
 		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  FetchSocket.RequestHeader("Cache-Control") = "no-cache"
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  Locked = Preferences.SignalConnection()
-		  FetchSocket.Send("GET", FetchURL)
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(FetchSocket, "GET", FetchURL)
 		  
 		  If Self.CheckSocketForError(FetchSocket, Transfer) Then
 		    Return
@@ -565,11 +537,7 @@ Inherits Beacon.IntegrationEngine
 		  // Since the process is about to upload, we need to find the log file and determine how long to wait
 		  // First we need to look up the current time, since we cannot trust the user's clock
 		  Var TimeLookupSocket As New SimpleHTTP.SynchronousHTTPSocket
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  TimeLookupSocket.Send("GET", BeaconAPI.URL("/now"))
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(TimeLookupSocket, "GET", BeaconAPI.URL("/now"))
 		  Var TimeString As String = TimeLookupSocket.LastString
 		  Var Now As DateTime
 		  Try
@@ -640,11 +608,7 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Sock.Send("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Sock, "GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
@@ -734,11 +698,7 @@ Inherits Beacon.IntegrationEngine
 		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
 		  Sock.SetFormData(FormData)
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
@@ -770,11 +730,7 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("message") = "Server is being stopped by Beacon (https://usebeacon.app)"
 		  FormData.Value("stop_message") = Self.StopMessage
 		  Sock.SetFormData(FormData)
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
@@ -817,11 +773,7 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("path") = Path
 		  FormData.Value("file") = Filename
 		  Sock.SetFormData(FormData)
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
 		  Var PermissionErrorMessage As String
 		  If Self.CheckSocketForError(Sock, PermissionErrorMessage) Then
 		    Transfer.SetError(PermissionErrorMessage)
@@ -859,11 +811,7 @@ Inherits Beacon.IntegrationEngine
 		  PutSocket.RequestHeader("Content-MD5") = EncodeBase64(Crypto.MD5(Transfer.Content))
 		  PutSocket.SetRequestContent(Transfer.Content, "application/octet-stream")
 		  PutSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Locked = Preferences.SignalConnection()
-		  PutSocket.Send("POST", PutURL)
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(PutSocket, "POST", PutURL)
 		  If Self.CheckSocketForError(Sock, Transfer) Then
 		    Var AdditionalLines As String = EndOfLine + "Check your " + Filename + " file on Nitrado. Nitrado may have accepted partial file content."
 		    If Self.BackupEnabled Then
@@ -1023,11 +971,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.SetFormData(FormData)
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Sock, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets")
 		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
@@ -1165,11 +1109,7 @@ Inherits Beacon.IntegrationEngine
 		  ExpertToggleSocket.SetFormData(FormData)
 		  
 		  Self.Log("Enabling expert mode…", True)
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  ExpertToggleSocket.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(ExpertToggleSocket, "POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
 		  If Self.Finished Or Self.CheckError(ExpertToggleSocket) Then
 		    Return
 		  End If

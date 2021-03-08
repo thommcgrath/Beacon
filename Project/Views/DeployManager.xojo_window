@@ -666,9 +666,10 @@ Begin BeaconAutopositionWindow DeployManager
       End
    End
    Begin Timer DeployWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Period          =   50
+      Period          =   250
       RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
@@ -1384,18 +1385,11 @@ End
 		    
 		    Var Engine As Beacon.IntegrationEngine = Self.ServerList.CellTagAt(I, 1)
 		    If IsNull(Engine) = False Then
-		      Var Status As String
 		      If Engine.Cancelled Then
-		        Status = "Cancelled"
 		        AnyCancelled = True
-		      ElseIf Engine.Finished And Engine.Errored = False Then
-		        Status = "Finished"
-		      ElseIf Engine.Throttled And Engine.Errored = False Then
-		        Status = "Waiting for another action…"
-		      Else
-		        Status = Engine.Logs(True)
 		      End If
-		      Label = Label + EndOfLine + Status
+		      
+		      Label = Label + EndOfLine + Engine.Status
 		      
 		      If Engine.Finished then
 		        If Engine.Errored Then

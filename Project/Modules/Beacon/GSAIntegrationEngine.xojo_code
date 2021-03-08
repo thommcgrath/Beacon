@@ -15,11 +15,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Socket.RequestHeader("GSA-ID") = Beacon.GSAIntegrationEngine.GSAID
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Socket.Send("GET", "https://api.gameserverapp.com/system-api/v1/config-template")
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.SendRequest(Socket, "GET", "https://api.gameserverapp.com/system-api/v1/config-template")
 		  If Socket.LastHTTPStatus <> 200 Or Socket.LastString.IsEmpty Then
 		    // Something went wrong
 		    If Socket.LastException Is Nil Then

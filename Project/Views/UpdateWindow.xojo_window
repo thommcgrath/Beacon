@@ -724,7 +724,7 @@ End
 		  If Self.DownloadProgressBar.MaximumValue <> 1000 Then
 		    Self.DownloadProgressBar.MaximumValue = 1000
 		  End If
-		  Self.DownloadProgressBar.Value = (BytesReceived / TotalBytes) * Self.DownloadProgressBar.MaximumValue
+		  Self.DownloadProgressBar.Value = ((BytesReceived + NewData.Bytes) / TotalBytes) * Self.DownloadProgressBar.MaximumValue
 		End Sub
 	#tag EndEvent
 	#tag Event

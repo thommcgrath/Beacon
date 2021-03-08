@@ -569,6 +569,20 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub SendRequest(Socket As SimpleHTTP.SynchronousHTTPSocket, Method As String, URL As String)
+		  Self.mThrottled = True
+		  Var Locked As Boolean = Preferences.SignalConnection()
+		  Self.mThrottled = False
+		  Self.mActiveSocket = Socket
+		  Socket.Send(Method, URL)
+		  Self.mActiveSocket = Nil
+		  If Locked Then
+		    Preferences.ReleaseConnection()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub SetError(Err As RuntimeException)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Reason As String
@@ -643,6 +657,41 @@ Protected Class IntegrationEngine
 		Protected Sub State(Assigns Value As Integer)
 		  Self.mServerState = Value
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Status() As String
+		  If Self.Cancelled Then
+		    Return "Cancelled"
+		  ElseIf Self.Finished And Self.Errored = False Then
+		    Return "Finished"
+		  ElseIf Self.Throttled And Self.Errored = False Then
+		    Return "Waiting for another action…"
+		  ElseIf (Self.mActiveSocket Is Nil) = False And (Self.mActiveSocket.Phase = SimpleHTTP.SynchronousHTTPSocket.Phases.Sending Or Self.mActiveSocket.Phase = SimpleHTTP.SynchronousHTTPSocket.Phases.Receiving) Then
+		    Select Case Self.mActiveSocket.Phase
+		    Case SimpleHTTP.SynchronousHTTPSocket.Phases.Sending
+		      Var Sent As Int64 = Self.mActiveSocket.SentBytes
+		      Var Total As Int64 = Self.mActiveSocket.SendingBytes
+		      If Total > -1 Then
+		        Var Percent As Double = Sent / Total
+		        Return "Uploaded " + Beacon.BytesToString(Sent) + " of " + Beacon.BytesToString(Total) + " (" + Percent.ToString(Locale.Current, "0%") + ")"
+		      Else
+		        Return "Uploaded " + Beacon.BytesToString(Sent)
+		      End If
+		    Case SimpleHTTP.SynchronousHTTPSocket.Phases.Receiving
+		      Var Received As Int64 = Self.mActiveSocket.ReceivedBytes
+		      Var Total As Int64 = Self.mActiveSocket.ReceivingBytes
+		      If Total > -1 Then
+		        Var Percent As Double = Received / Total
+		        Return "Downloaded " + Beacon.BytesToString(Received) + " of " + Beacon.BytesToString(Total) + " (" + Round(Received / Total).ToString(Locale.Current, "0%") + ")"
+		      Else
+		        Return "Downloaded " + Beacon.BytesToString(Received)
+		      End If
+		    End Select
+		  Else
+		    Return Self.Logs(True)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -879,6 +928,10 @@ Protected Class IntegrationEngine
 		#tag EndGetter
 		ActiveWaitController As Beacon.TaskWaitController
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mActiveSocket As SimpleHTTP.SynchronousHTTPSocket
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mActiveWaitController As Beacon.TaskWaitController
