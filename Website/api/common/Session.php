@@ -112,7 +112,7 @@ class Session implements \JsonSerializable {
 	public static function GetForUserID(string $user_id) {
 		try {
 			$database = \BeaconCommon::Database();
-			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE sessions.user_id = $1 ORDER BY valid_until DESC;', $user_id);
+			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE sessions.user_id = $1 WHERE sessions.valid_until >= CURRENT_TIMESTAMP ORDER BY valid_until DESC;', $user_id);
 			return static::GetFromResults($results);
 		} catch (\Exception $err) {
 			return [];
