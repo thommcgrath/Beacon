@@ -178,7 +178,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "© 2016-2020 The ZAZ Studios, All Rights Reserved."
+      Text            =   "© 2016-?1 The ZAZ Studios, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
@@ -463,6 +463,15 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Text = "Version " + App.BuildVersion
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CopyrightLabel
+	#tag Event
+		Sub Open()
+		  Var BuildDate As DateTime = App.BuildDateTime
+		  Var Year As Integer = BuildDate.Year
+		  Me.Text = Language.ReplacePlaceholders(Me.Text, Year.ToString(Locale.Raw, "0000"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
