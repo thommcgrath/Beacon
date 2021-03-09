@@ -794,6 +794,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreatureColorByID(ID As Integer) As Beacon.CreatureColor
+		  Var Rows As RowSet = Self.SQLSelect("SELECT color_id, label, hex_value FROM colors WHERE color_id = ?1;", ID)
+		  Var Colors() As Beacon.CreatureColor = Self.RowSetToCreatureColors(Rows)
+		  If Colors.Count = 1 Then
+		    Return Colors(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCreaturesByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
 		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.class_string = ?1"
 		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
@@ -2445,6 +2455,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function RowSetToCreatureColors(Rows As RowSet) As Beacon.CreatureColor()
+		  Var CreatureColors() As Beacon.CreatureColor
+		  For Each Row As DatabaseRow In Rows
+		    Var Label As String = Row.Column("label").StringValue
+		    Var ID As Integer = Row.Column("color_id").IntegerValue
+		    Var HexValue As String = Row.Column("hex_value").StringValue
+		    CreatureColors.Add(New Beacon.CreatureColor(ID, Label, HexValue))
+		  Next
+		  Return CreatureColors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
 		  Var Engrams() As Beacon.Engram
 		  While Not Results.AfterLastRow
@@ -3002,6 +3025,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    App.ReportException(Err)
 		  End Try
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForCreatureColors(Label As String = "") As Beacon.CreatureColor()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT color_id, label, hex_value FROM colors WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Label.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%")
+		  Var Colors() As Beacon.CreatureColor = Self.RowSetToCreatureColors(Rows)
+		  Return Colors
 		End Function
 	#tag EndMethod
 

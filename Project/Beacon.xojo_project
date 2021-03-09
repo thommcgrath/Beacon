@@ -506,6 +506,7 @@ Sound=SoundUpdateAvailable;../Sounds/UpdateAvailable.wav;&h000000000289F7FF;&h00
 Sound=SoundDeployFailed;../Sounds/DeployFailed.wav;&h000000006EC0DFFF;&h0000000041DD7FFF;false
 Sound=SoundDeploySuccess;../Sounds/DeploySuccess.wav;&h00000000071AFFFF;&h0000000041DD7FFF;false
 Class=GSADiscoveredData;Modules/Beacon/GSADiscoveredData.xojo_code;&h00000000664D2FFF;&h0000000055ADDFFF;false
+Class=CreatureColor;Modules/Beacon/CreatureColor.xojo_code;&h00000000148B67FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5
