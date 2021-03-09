@@ -644,6 +644,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function EscapeLikeValue(Value As String, EscapeChar As String = "\") As String
+		  Return Value.ReplaceAll("%", EscapeChar + "%").ReplaceAll("_", EscapeChar + "_")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function GetBlueprintByID(ObjectID As v4UUID) As Beacon.Blueprint
 		  Var Results As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
@@ -2870,8 +2876,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Clauses() As String
 		    Var Values As New Dictionary
 		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + ") OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + ") ESCAPE '\' OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
@@ -2976,8 +2982,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If File = "CommandLine" Then
 		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
 		      ElseIf File.IndexOf("*") > -1 Then
-		        Values.Value(Idx) = File.ReplaceAll("*", "%")
-		        Clauses.Add("file LIKE ?" + Idx.ToString)
+		        Values.Value(Idx) = Self.EscapeLikeValue(File).ReplaceAll("*", "%")
+		        Clauses.Add("file LIKE ?" + Idx.ToString + " ESCAPE '\'")
 		        Idx = Idx + 1
 		      Else
 		        Values.Value(Idx) = File
@@ -2993,8 +2999,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  If Key.IsEmpty = False Then
 		    If Key.IndexOf("*") > -1 Then
-		      Values.Value(Idx) = Key.ReplaceAll("*", "%")
-		      Clauses.Add("key LIKE ?" + Idx.ToString)
+		      Values.Value(Idx) = Self.EscapeLikeValue(Key).ReplaceAll("*", "%")
+		      Clauses.Add("key LIKE ?" + Idx.ToString + " ESCAPE '\'")
 		    Else
 		      Values.Value(Idx) = Key
 		      Clauses.Add("key = ?" + Idx.ToString)
@@ -3070,7 +3076,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SearchForCreatureColors(Label As String = "") As Beacon.CreatureColor()
-		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Label.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%")
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
 		  Return Self.RowSetToCreatureColors(Rows)
 		End Function
 	#tag EndMethod
@@ -3092,7 +3098,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SearchForGameEvents(Label As String = "") As Beacon.GameEvent()
-		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Label.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%")
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
 		  Return Self.RowSetToGameEvents(Rows)
 		End Function
 	#tag EndMethod
@@ -3117,8 +3123,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    If Not IncludeExperimental Then
