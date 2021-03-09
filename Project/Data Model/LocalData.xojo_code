@@ -795,7 +795,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetCreatureColorByID(ID As Integer) As Beacon.CreatureColor
-		  Var Rows As RowSet = Self.SQLSelect("SELECT color_id, label, hex_value FROM colors WHERE color_id = ?1;", ID)
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE color_id = ?1;", ID)
 		  Var Colors() As Beacon.CreatureColor = Self.RowSetToCreatureColors(Rows)
 		  If Colors.Count = 1 Then
 		    Return Colors(0)
@@ -962,6 +962,30 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Rows)
 		  Self.Cache(Engrams)
 		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetGameEventByArkCode(ArkCode As String) As Beacon.GameEvent
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE ark_code = ?1;", ArkCode)
+		  Var GameEvents() As Beacon.GameEvent = Self.RowSetToGameEvents(Rows)
+		  If GameEvents.Count = 1 Then
+		    Return GameEvents(0)
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetGameEventByUUID(EventUUID As String) As Beacon.GameEvent
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE event_id = ?1;", EventUUID)
+		  Var GameEvents() As Beacon.GameEvent = Self.RowSetToGameEvents(Rows)
+		  If GameEvents.Count = 1 Then
+		    Return GameEvents(0)
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -2507,6 +2531,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function RowSetToGameEvents(Rows As RowSet) As Beacon.GameEvent()
+		  Var GameEvents() As Beacon.GameEvent
+		  For Each Row As DatabaseRow In Rows
+		    Var Label As String = Row.Column("label").StringValue
+		    Var EventUUID As String = Row.Column("event_id").StringValue
+		    Var ArkCode As String = Row.Column("ark_code").StringValue
+		    Var ColorsJSON As String = Row.Column("colors").StringValue
+		    Var RatesJSON As String = Row.Column("rates").StringValue
+		    Var EngramsJSON As String = Row.Column("engrams").StringValue
+		    GameEvents.Add(New Beacon.GameEvent(EventUUID, Label, ArkCode, ColorsJSON, RatesJSON, EngramsJSON))
+		  Next
+		  Return GameEvents
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
 		  Var Sources() As Beacon.LootSource
 		  While Not Results.AfterLastRow
@@ -3030,9 +3070,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SearchForCreatureColors(Label As String = "") As Beacon.CreatureColor()
-		  Var Rows As RowSet = Self.SQLSelect("SELECT color_id, label, hex_value FROM colors WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Label.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%")
-		  Var Colors() As Beacon.CreatureColor = Self.RowSetToCreatureColors(Rows)
-		  Return Colors
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Label.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%")
+		  Return Self.RowSetToCreatureColors(Rows)
 		End Function
 	#tag EndMethod
 
@@ -3048,6 +3087,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		  Next
 		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForGameEvents(Label As String = "") As Beacon.GameEvent()
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Label.ReplaceAll("%", "\%").ReplaceAll("_", "\_") + "%")
+		  Return Self.RowSetToGameEvents(Rows)
 		End Function
 	#tag EndMethod
 
@@ -3544,6 +3590,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 
+	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C creatures.used_stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
@@ -3551,6 +3600,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = EngramsVersion, Type = Double, Dynamic = False, Default = \"5", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private

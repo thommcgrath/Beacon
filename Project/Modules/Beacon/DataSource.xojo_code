@@ -121,6 +121,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetGameEventByArkCode(ArkCode As String) As Beacon.GameEvent
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetGameEventByUUID(EventUUID As String) As Beacon.GameEvent
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
 		  
 		End Function
@@ -278,6 +290,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForGameEvents(Label As String = "") As Beacon.GameEvent()
 		  
 		End Function
 	#tag EndMethod
