@@ -114,6 +114,8 @@ function DataForVersion(int $version, $since) {
 		'ini_options' => BeaconConfigLine::GetAll(MIN_VERSION, $since),
 		'spawn_points' => BeaconSpawnPoint::GetAll(MIN_VERSION, $since),
 		'maps' => BeaconMap::GetAll($since),
+		'events' => BeaconEvent::GetAll($since),
+		'colors' => BeaconColor::GetAll($since),
 		'beacon_version' => $version,
 		'is_full' => is_null($since) ? true : false,
 		'min_version' => 0

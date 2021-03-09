@@ -566,6 +566,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Self.ShowSpawnCodes()
 		    Case "reportproblem"
 		      Self.ShowBugReporter()
+		    Case "newhelpticket"
+		      Self.StartTicket()
 		    Case "exit"
 		      Quit
 		    Case "signout"
