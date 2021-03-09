@@ -243,14 +243,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_mod_id_idx ON " + Category + "(mod_id);")
+		    Self.SQLExecute("CREATE INDEX " + Category + "_label_idx ON " + Category + "(label);")
 		  Next
 		  
 		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
+		  Self.SQLExecute("CREATE INDEX loot_sources_label_idx ON loot_sources(label);")
 		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX events_ark_code_uidx ON events(ark_code);")
+		  Self.SQLExecute("CREATE INDEX events_label_idx ON events(label);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX colors_color_uuid_uidx ON colors(color_uuid);")
+		  Self.SQLExecute("CREATE INDEX colors_label_idx ON colors(label);")
 		  
 		  // For performance, rebuild the blueprints view too.
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
@@ -291,6 +297,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE);")
 		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
 		  
 		  Self.BuildIndexes()
 		  
@@ -1552,13 +1560,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_path_idx;")
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_class_string_idx;")
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_mod_id_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_label_idx;")
 		    Next
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_sort_order_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_label_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS maps_mod_id_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS custom_presets_user_id_object_id_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS engrams_entry_string_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS ini_options_file_header_key_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS events_ark_code_uidx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS events_label_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS colors_color_uuid_uidx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS colors_label_idx;")
 		    
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Beacon.UserModID)
@@ -1591,26 +1605,30 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    // When deleting, loot_source_icons must be done after loot_sources
 		    Var Deletions() As Variant = ChangeDict.Value("deletions")
-		    Var DeleteIcons() As v4UUID
+		    Var DeleteIcons() As String
 		    For Each Deletion As Dictionary In Deletions
-		      Var ObjectID As v4UUID = Deletion.Value("object_id").StringValue
+		      Var ObjectID As String = Deletion.Value("object_id").StringValue
 		      Select Case Deletion.Value("group")
 		      Case "loot_sources"
-		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID.StringValue)
+		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID)
 		      Case "loot_source_icons"
 		        DeleteIcons.Add(ObjectID)
 		      Case Beacon.CategoryEngrams, Beacon.CategoryCreatures, Beacon.CategorySpawnPoints
-		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
+		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", ObjectID)
 		      Case "presets"
-		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
+		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
 		      Case "mods"
-		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ObjectID.StringValue)
+		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ObjectID)
 		      Case "maps"
-		        Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectID.StringValue)
+		        Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectID)
+		      Case "colors"
+		        Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectID)
+		      Case "events"
+		        Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectID)
 		      End Select
 		    Next
-		    For Each IconID As v4UUID In DeleteIcons
-		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID.StringValue)
+		    For Each IconID As String In DeleteIcons
+		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID)
 		    Next
 		    
 		    Var LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
@@ -1907,6 +1925,42 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Self.SQLExecute("UPDATE game_variables SET value = ?2 WHERE key = ?1;", Key, Value)
 		        Else
 		          Self.SQLExecute("INSERT INTO game_variables (key, value) VALUES (?1, ?2);", Key, Value)
+		        End If
+		      Next
+		    End If
+		    
+		    If ChangeDict.HasKey("colors") Then
+		      Var Colors() As Variant = ChangeDict.Value("colors")
+		      For Each Dict As Dictionary In Colors
+		        Var ColorID As Integer = Dict.Value("color_id")
+		        Var ColorUUID As String = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, "color " + ColorID.ToString(Locale.Raw, "0"))
+		        Var Label As String = Dict.Value("label")
+		        Var HexValue As String = Dict.Value("hex")
+		        
+		        Var Results As RowSet = Self.SQLSelect("SELECT color_id FROM colors WHERE color_id = ?1;", ColorID)
+		        If Results.RowCount = 1 Then
+		          Self.SQLExecute("UPDATE colors SET color_uuid = ?2, label = ?3, hex_value = ?4 WHERE color_id = ?1;", ColorID, ColorUUID, Label, HexValue)
+		        Else
+		          Self.SQLExecute("INSERT INTO colors (color_id, color_uuid, label, hex_value) VALUES (?1, ?2, ?3, ?4);", ColorID, ColorUUID, Label, HexValue)
+		        End If
+		      Next
+		    End If
+		    
+		    If ChangeDict.HasKey("events") Then
+		      Var Events() As Variant = ChangeDict.Value("events")
+		      For Each Dict As Dictionary In Events
+		        Var EventID As String = Dict.Value("event_id")
+		        Var Label As String = Dict.Value("label")
+		        Var ArkCode As String = Dict.Value("ark_code")
+		        Var Rates As String = Beacon.GenerateJSON(Dict.Value("rates"), False)
+		        Var Colors As String = Beacon.GenerateJSON(Dict.Value("colors"), False)
+		        Var Engrams As String = Beacon.GenerateJSON(Dict.Value("engrams"), False)
+		        
+		        Var Results As RowSet = Self.SQLSelect("SELECT event_id FROM events WHERE event_id = ?1;", EventID)
+		        If Results.RowCount = 1 Then
+		          Self.SQLExecute("UPDATE events SET label = ?2, ark_code = ?3, rates = ?4, colors = ?5, engrams = ?6 WHERE event_id = ?1;", EventID, Label, ArkCode, Rates, Colors, Engrams)
+		        Else
+		          Self.SQLExecute("INSERT INTO events (event_id, label, ark_code, rates, colors, engrams) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", EventID, Label, ArkCode, Rates, Colors, Engrams)
 		        End If
 		      Next
 		    End If
@@ -3498,7 +3552,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"21", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
