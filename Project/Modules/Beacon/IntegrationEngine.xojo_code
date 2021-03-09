@@ -683,7 +683,7 @@ Protected Class IntegrationEngine
 		      Var Total As Int64 = Self.mActiveSocket.ReceivingBytes
 		      If Total > -1 Then
 		        Var Percent As Double = Received / Total
-		        Return "Downloaded " + Beacon.BytesToString(Received) + " of " + Beacon.BytesToString(Total) + " (" + Round(Received / Total).ToString(Locale.Current, "0%") + ")"
+		        Return "Downloaded " + Beacon.BytesToString(Received) + " of " + Beacon.BytesToString(Total) + " (" + Percent.ToString(Locale.Current, "0%") + ")"
 		      Else
 		        Return "Downloaded " + Beacon.BytesToString(Received)
 		      End If
