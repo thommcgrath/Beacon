@@ -480,6 +480,7 @@ Implements ObservationKit.Observable
 		      End If
 		      
 		      If Groups(Idx).ConfigName = BeaconConfigs.NameCustomContent Then
+		        Organizer.AddManagedKeys(Groups(Idx).ManagedKeys)
 		        Organizer.Add(Groups(Idx).GenerateConfigValues(Self, Identity, Profile))
 		        Groups.RemoveAt(Idx)
 		        Exit
@@ -491,7 +492,9 @@ Implements ObservationKit.Observable
 		        Continue
 		      End If
 		      
-		      Organizer.Remove(Group.ManagedKeys) // Removes overlapping values found in custom config
+		      Var ManagedKeys() As Beacon.ConfigKey = Group.ManagedKeys
+		      Organizer.AddManagedKeys(ManagedKeys)
+		      Organizer.Remove(ManagedKeys) // Removes overlapping values found in custom config
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    

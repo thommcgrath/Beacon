@@ -187,6 +187,7 @@ Inherits Global.Thread
 		    
 		    // Get the initial values into an organizer
 		    Var ParsedValues As New Beacon.ConfigOrganizer(File, DefaultHeader, InitialContent)
+		    ParsedValues.Remove(Organizer.ManagedKeys) // Remove anything our groups already generate
 		    
 		    // Use the old Beacon section to determine which values to remove
 		    Var TrustValues() As Beacon.ConfigValue = ParsedValues.FilteredValues(File, "Beacon", "Trust")

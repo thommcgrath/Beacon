@@ -373,25 +373,9 @@ Protected Class IntegrationEngine
 		  Else
 		    Self.State = Self.StateUnsupported
 		  End If
+		  
 		  Var InitialServerState As Integer = Self.State
-		  
-		  Var Organizer As New Beacon.ConfigOrganizer
-		  Var Groups() As Beacon.ConfigGroup = Self.Document.CombinedConfigs(Self.mProfile.ConfigSetStates, Self.mIdentity)
-		  Var CustomContent As BeaconConfigs.CustomContent
-		  For Each Group As Beacon.ConfigGroup In Groups
-		    If Group IsA BeaconConfigs.CustomContent Then
-		      CustomContent = BeaconConfigs.CustomContent(Group)
-		      Continue
-		    End If
-		    
-		    Var Generated() As Beacon.ConfigValue = Group.GenerateConfigValues(Self.Document, Self.Identity, Self.Profile)
-		    Organizer.Add(Generated, False)
-		  Next
-		  
-		  If (CustomContent Is Nil) = False Then
-		    Var Generated() As Beacon.ConfigValue = CustomContent.GenerateConfigValues(Self.Document, Self.Identity, Self.Profile)
-		    Organizer.Add(Generated, True)
-		  End If
+		  Var Organizer As Beacon.ConfigOrganizer = Self.Document.CreateConfigOrganizer(Self.mIdentity, Self.mProfile)
 		  
 		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
 		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)

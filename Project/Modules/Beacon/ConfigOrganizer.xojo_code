@@ -104,6 +104,14 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddManagedKeys(Keys() As Beacon.ConfigKey)
+		  For Idx As Integer = 0 To Keys.LastIndex
+		    Self.mManagedKeys.Add(Keys(Idx))
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Build(ForFile As String) As String
 		  Var Headers() As String = Self.Headers(ForFile)
 		  If ForFile = Beacon.ConfigFileGameUserSettings And Headers.IndexOf(Beacon.ServerSettingsHeader) = -1 Then
@@ -307,6 +315,17 @@ Protected Class ConfigOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ManagedKeys() As Beacon.ConfigKey()
+		  Var Results() As Beacon.ConfigKey
+		  Results.ResizeTo(Self.mManagedKeys.LastIndex)
+		  For Idx As Integer = 0 To Self.mManagedKeys.LastIndex
+		    Results(Idx) = Self.mManagedKeys(Idx)
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Keys() As Beacon.ConfigKey)
 		  Self.mIndex.BeginTransaction
 		  For Each Key As Beacon.ConfigKey In Keys
@@ -386,6 +405,10 @@ Protected Class ConfigOrganizer
 
 	#tag Property, Flags = &h21
 		Private mIndex As SQLiteDatabase
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mManagedKeys() As Beacon.ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
