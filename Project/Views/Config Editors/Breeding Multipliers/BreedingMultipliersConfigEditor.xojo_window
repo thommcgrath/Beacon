@@ -1684,6 +1684,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Self.UpdateBaselineRates()
+		  
 		  Self.mFieldGroups.Add(New ControlGroup(MatureSpeedLabel, MatureSpeedField, MatureSpeedHelp))
 		  Self.mFieldGroups.Add(New ControlGroup(IncubationSpeedLabel, IncubationSpeedField, IncubationSpeedHelp))
 		  Self.mFieldGroups.Add(New ControlGroup(EggLayPeriodLabel, EggLayPeriodField, EggLayPeriodHelp))
@@ -1838,8 +1840,62 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateBaselineRates()
+		  Var MatingIntervalMultiplier As Double = 1.0
+		  Var EggHatchSpeedMultiplier As Double = 1.0
+		  Var BabyMatureSpeedMultiplier As Double = 1.0
+		  Var BabyCuddleIntervalMultiplier As Double = 1.0
+		  
+		  If Self.mComputeSinglePlayer Then
+		    MatingIntervalMultiplier = MatingIntervalMultiplier * Beacon.Data.GetDoubleVariable("SPMatingIntervalMultiplier", 0.125)
+		    EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * Beacon.Data.GetDoubleVariable("SPEggHatchSpeedMultiplier", 10.0)
+		    BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * Beacon.Data.GetDoubleVariable("SPBabyMatureSpeedMultiplier", 36.799)
+		    BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * Beacon.Data.GetDoubleVariable("SPBabyCuddleIntervalMultiplier", 0.167)
+		  End If
+		  
+		  If Self.mActiveEvent.IsEmpty = False Then
+		    Var ActiveEvent As Beacon.GameEvent = Beacon.Data.GetGameEventByArkCode(Self.mActiveEvent)
+		    If (ActiveEvent Is Nil) = False Then
+		      Var MatingIntervalMultiplierKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MatingIntervalMultiplier")
+		      If (MatingIntervalMultiplierKey Is Nil) = False Then
+		        MatingIntervalMultiplier = MatingIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(MatingIntervalMultiplierKey.UUID)
+		      End If
+		      
+		      Var EggHatchSpeedMultiplierKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier")
+		      If (EggHatchSpeedMultiplierKey Is Nil) = False Then
+		        EggHatchSpeedMultiplier = EggHatchSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(EggHatchSpeedMultiplierKey.UUID)
+		      End If
+		      
+		      Var BabyMatureSpeedMultiplierKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier")
+		      If (BabyMatureSpeedMultiplierKey Is Nil) = False Then
+		        BabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier * ActiveEvent.MultiplierForRateUUID(BabyMatureSpeedMultiplierKey.UUID)
+		      End If
+		      
+		      Var BabyCuddleIntervalMultiplierKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier")
+		      If (BabyCuddleIntervalMultiplierKey Is Nil) = False Then
+		        BabyCuddleIntervalMultiplier = BabyCuddleIntervalMultiplier * ActiveEvent.MultiplierForRateUUID(BabyCuddleIntervalMultiplierKey.UUID)
+		      End If
+		    End If
+		  End If
+		  
+		  Self.mBaselineRates = New Dictionary
+		  Self.mBaselineRates.Value("MatingIntervalMultiplier") = MatingIntervalMultiplier
+		  Self.mBaselineRates.Value("EggHatchSpeedMultiplier") = EggHatchSpeedMultiplier
+		  Self.mBaselineRates.Value("BabyMatureSpeedMultiplier") = BabyMatureSpeedMultiplier
+		  Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier") = BabyCuddleIntervalMultiplier
+		  Self.mBaselineRates.Value("BabyImprintAmountMultiplier") = 1.0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
-		  Var CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
+		  Var IncubationMultiplier As Double = Self.mBaselineRates.Value("EggHatchSpeedMultiplier").DoubleValue * Self.Config(False).EggHatchSpeedMultiplier
+		  Var MatureMultiplier As Double = Self.mBaselineRates.Value("BabyMatureSpeedMultiplier").DoubleValue * Self.Config(False).BabyMatureSpeedMultiplier
+		  Var CooldownMultiplier As Double = Self.mBaselineRates.Value("MatingIntervalMultiplier").DoubleValue * Self.Config(False).MatingIntervalMultiplier
+		  Var ImprintPeriodMultiplier As Double = Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue * Self.Config(False).BabyCuddleIntervalMultiplier
+		  Var ImprintAmountMultiplier As Double = Self.mBaselineRates.Value("BabyImprintAmountMultiplier").DoubleValue * Self.Config(False).BabyImprintAmountMultiplier
+		  
+		  Var CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * ImprintPeriodMultiplier
 		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
 		  Var SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
@@ -1847,11 +1903,6 @@ End
 		  End If
 		  Var Position As Integer = Self.CreaturesList.ScrollPosition
 		  Self.CreaturesList.RemoveAllRows
-		  
-		  Var IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
-		  Var MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
-		  Var CooldownMultiplier As Double = Self.Config(False).MatingIntervalMultiplier
-		  Var ImprintAmountMultiplier As Double = Self.Config(False).BabyImprintAmountMultiplier
 		  
 		  For Each Creature As Beacon.Creature In Creatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
@@ -1899,6 +1950,18 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mActiveEvent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBaselineRates As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mComputeSinglePlayer As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
@@ -2122,7 +2185,7 @@ End
 #tag Events ImprintPeriodPreviewField
 	#tag Event
 		Sub TextChange()
-		  If Self.SettingUp Then
+		  If Self.SettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
 		  
@@ -2131,7 +2194,8 @@ End
 		    Return
 		  End If
 		  
-		  Var Multiplier As Double = Interval.TotalSeconds / LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
+		  Var CuddlePeriod As Integer = Round(LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue)
+		  Var Multiplier As Double = Interval.TotalSeconds / CuddlePeriod
 		  
 		  Self.SettingUp = True
 		  Self.Config(True).BabyCuddleIntervalMultiplier = Multiplier
@@ -2209,6 +2273,8 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AutoTuneButton", "Auto Imprint", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
+		  Me.Append(OmniBarItem.CreateButton("BaselineButton", "Rates", IconToolbarRates, "Show chart for special modes such as events and single player."))
+		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("ShareLinkButton", "Share", IconToolbarLink, "Generates a link so you can share this breeding chart."))
 		End Sub
 	#tag EndEvent
@@ -2219,7 +2285,7 @@ End
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
 		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
-		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
+		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.mBaselineRates, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
 		    If Interval > 0 Then
 		      Self.ImprintPeriodField.Text = Interval.PrettyText
 		      Self.UpdateStats
@@ -2232,6 +2298,51 @@ End
 		    Var ImprintPeriodMultiplier As String = Config.BabyCuddleIntervalMultiplier.ToString(Format)
 		    Var ImprintAmountMultiplier As String = Config.BabyImprintAmountMultiplier.ToString(Format)
 		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier) + "&iam=" + EncodeURLComponent(ImprintAmountMultiplier)))
+		  Case "BaselineButton"
+		    Var Base As New MenuItem
+		    
+		    Var NormalMenuItem As New MenuItem("Normal Rates", "multiplayer")
+		    Var SingleMenuItem As New MenuItem("Single Player Rates", "singleplayer")
+		    NormalMenuItem.HasCheckMark = Not Self.mComputeSinglePlayer
+		    SingleMenuItem.HasCheckMark = Self.mComputeSinglePlayer
+		    Base.AddMenu(NormalMenuItem)
+		    Base.AddMenu(SingleMenuItem)
+		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Var NoEventItem As New MenuItem("No Event", "")
+		    NoEventItem.HasCheckMark = Self.mActiveEvent.IsEmpty
+		    Base.AddMenu(NoEventItem)
+		    
+		    Var Events() As Beacon.GameEvent = Beacon.Data.SearchForGameEvents()
+		    For Each GameEvent As Beacon.GameEvent In Events
+		      Var EventItem As New MenuItem(GameEvent.Label, GameEvent.ArkCode)
+		      EventItem.HasCheckMark = (GameEvent.ArkCode = Self.mActiveEvent)
+		      Base.AddMenu(EventItem)
+		    Next
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		    If Choice Is Nil Then
+		      Return
+		    End If
+		    
+		    Select Case Choice.Tag
+		    Case "multiplayer"
+		      Self.mComputeSinglePlayer = False
+		    Case "singleplayer"
+		      Self.mComputeSinglePlayer = True
+		    Else
+		      If Self.mActiveEvent = Choice.Tag Then
+		        Self.mActiveEvent = ""
+		      Else
+		        Self.mActiveEvent = Choice.Tag
+		      End If
+		    End Select
+		    
+		    Item.Toggled = Self.mComputeSinglePlayer Or Self.mActiveEvent.IsEmpty = False
+		    
+		    Self.UpdateBaselineRates()
+		    Self.UpdateStats()
 		  End Select
 		End Sub
 	#tag EndEvent

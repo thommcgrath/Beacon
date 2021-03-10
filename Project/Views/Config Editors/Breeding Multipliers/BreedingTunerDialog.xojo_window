@@ -374,8 +374,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Beacon.Creature)
+		Private Sub Constructor(BaselineRates As Dictionary, MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Beacon.Creature)
 		  // Calling the overridden superclass constructor.
+		  Self.mBaselineRates = BaselineRates
 		  Self.mMatureSpeedMultiplier = MatureSpeedMultiplier
 		  Self.mCreatures = Creatures
 		  Self.mImprintAmountMultiplier = ImprintAmountMultiplier
@@ -384,12 +385,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Beacon.Creature) As Double
+		Shared Function Present(Parent As Window, BaselineRates As Dictionary, MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Beacon.Creature) As Double
 		  If Parent = Nil Then
 		    Return 0
 		  End If
 		  
-		  Var Win As New BreedingTunerDialog(MatureSpeedMultiplier, ImprintAmountMultiplier, Creatures)
+		  Var Win As New BreedingTunerDialog(BaselineRates, MatureSpeedMultiplier, ImprintAmountMultiplier, Creatures)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Var Multiplier As Double = Win.mChosenMultiplier
 		  Win.Close
@@ -401,6 +402,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAutoCheckingCreatures As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBaselineRates As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -456,7 +461,7 @@ End
 		  // Get fastest maturing creature
 		  Var FastestMature As Double
 		  For Each Creature As Beacon.Creature In Creatures
-		    Var MatureSeconds As Double = Creature.MatureTime / Self.mMatureSpeedMultiplier
+		    Var MatureSeconds As Double = Creature.MatureTime / (Self.mMatureSpeedMultiplier * Self.mBaselineRates.Value("BabyMatureSpeedMultiplier").DoubleValue)
 		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If
@@ -464,8 +469,8 @@ End
 		  
 		  // Reduce the target by a set amount and compute the imprint multiplier
 		  Var TargetCuddleSeconds As Double = FastestMature * Threshold
-		  Var OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
-		  Var ImprintMultiplier As Double = (TargetCuddleSeconds / Self.mImprintAmountMultiplier) / OfficialCuddlePeriod
+		  Var OfficialCuddlePeriod As Integer = Round(LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue)
+		  Var ImprintMultiplier As Double = (TargetCuddleSeconds / (Self.mImprintAmountMultiplier * Self.mBaselineRates.Value("BabyImprintAmountMultiplier").DoubleValue)) / OfficialCuddlePeriod
 		  
 		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList
 		  Self.mChosenMultiplier = ImprintMultiplier

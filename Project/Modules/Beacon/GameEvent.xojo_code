@@ -50,6 +50,8 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(EventUUID As String, Label As String, ArkCode As String, ColorsJSON As String, RatesJSON As String, EngramsJSON As String)
+		  Self.Constructor()
+		  
 		  Self.mEventUUID = EventUUID
 		  Self.mLabel = Label
 		  Self.mArkCode = ArkCode
