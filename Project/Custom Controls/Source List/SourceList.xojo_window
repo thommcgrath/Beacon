@@ -609,12 +609,13 @@ End
 		  
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
-		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Self.Invalidate(OldIndex)
-		  End If
-		  
-		  If Self.mMouseOverIndex > -1 Then
-		    Self.Invalidate(Self.mMouseOverIndex)
+		  If Self.mMouseOverIndex <> OldIndex Then
+		    If OldIndex > -1 Then
+		      Self.Invalidate(OldIndex)
+		    End If
+		    If Self.mMouseOverIndex > -1 Then
+		      Self.Invalidate(Self.mMouseOverIndex)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
