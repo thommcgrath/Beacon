@@ -136,15 +136,14 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
-		  If OldIndex <> -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Self.Invalidate(OldIndex)
-		  End If
-		  
-		  If Self.mMouseOverIndex <> -1 Then
-		    Self.Invalidate(Self.mMouseOverIndex)
-		  End If
-		  
-		  If OldIndex <> Self.mMouseOverIndex Then
+		  If Self.mMouseOverIndex <> OldIndex Then
+		    If OldIndex > -1 Then
+		      Self.Invalidate(OldIndex)
+		    End If
+		    If Self.mMouseOverIndex > -1 Then
+		      Self.Invalidate(Self.mMouseOverIndex)
+		    End If
+		    
 		    App.HideTooltip
 		    CallLater.Cancel(Self.mHoverCallbackKey)
 		    
@@ -153,12 +152,16 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    End If
 		  End If
 		  
+		  Var TargetCursor As MouseCursor
 		  If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.HorizontalResizer And Self.mItems(Self.mMouseOverIndex).Enabled = True Then
-		    Self.MouseCursor = System.Cursors.SplitterEastWest
+		    TargetCursor = System.Cursors.SplitterEastWest
 		  ElseIf Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).Type = OmniBarItem.Types.VerticalResizer And Self.mItems(Self.mMouseOverIndex).Enabled = True Then
-		    Self.MouseCursor = System.Cursors.SplitterNorthSouth
+		    TargetCursor = System.Cursors.SplitterNorthSouth
 		  Else
-		    Self.MouseCursor = System.Cursors.StandardPointer
+		    TargetCursor = System.Cursors.StandardPointer
+		  End If
+		  If Self.MouseCursor <> TargetCursor Then
+		    Self.MouseCursor = TargetCursor
 		  End If
 		  
 		  #if TargetMacOS
