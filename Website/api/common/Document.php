@@ -409,32 +409,89 @@ class Document implements \JsonSerializable {
 		return '/' . strtolower($user_id) . '/Documents/' . strtolower($document_id) . '.beacon';
 	}
 	
-	public static function SaveFromContent(string $document_id, \BeaconUser $user, $content, string &$reason) {
-		if (is_array($content)) {
-			$document = $content;
-		} elseif (is_string($content)) {
-			if (\BeaconCommon::IsCompressed($content)) {
-				$content = gzdecode($content);
-			}
-			$document = json_decode($content, true);
-			if (is_null($document)) {
-				$reason = 'Unable to parse JSON.';
-				return false;
-			}
-		} else {
-			$reason = 'Supplied content is unknown data type.';
+	public static function SaveFromContent(string $document_id, \BeaconUser $user, $file_content, string &$reason) {
+		if (empty($file_content)) {
+			$reason = 'File is empty';
 			return false;
 		}
 		
+		if (\BeaconCommon::IsCompressed($file_content)) {
+			$file_content_compressed = $file_content;
+			$file_content = gzdecode($file_content_compressed);
+		} else {
+			$file_content_compressed = null;
+		}
+		
+		try {
+			$iter = \JsonMachine\JsonMachine::fromString($file_content, '', new \JsonMachine\JsonDecoder\PassThruDecoder);
+		} catch (\Exception $err) {
+			$reason = 'Unable to parse JSON.';
+			return false;
+		}
+		
+		$document = ['EditorNames' => []];
+		foreach ($iter as $key => $value) {
+			switch ($key) {
+			case 'Version':
+			case 'Identifier':
+			case 'EncryptionKeys':
+			case 'Map':
+			case 'Description':
+			case 'Title':
+			case 'DifficultyValue':
+			case 'ModSelections':
+			case 'ConsoleModsOnly';
+				$document[$key] = json_decode($value, true);
+				break;
+			case 'Configs':
+				$configs_iterator = \JsonMachine\JsonMachine::fromString($value, '', new \JsonMachine\JsonDecoder\PassThruDecoder);
+				foreach ($configs_iterator as $config_name => $config_contents) {
+					if ($config_name === 'Metadata') {
+						$config_parsed = json_decode($config_contents, true);
+						$document['Title'] = $config_parsed['Title'];
+						$document['Description'] = $config_parsed['Description'];
+					} elseif ($config_name === 'Difficulty') {
+						$config_parsed = json_decode($config_contents, true);
+						$document['DifficultyValue'] = $config_parsed['MaxDinoLevel'] / 30;
+					} else {
+						$document['EditorNames'][] = $config_name;
+					}
+				}
+				break;
+			case 'Config Sets':
+				$sets_iterator = \JsonMachine\JsonMachine::fromString($value, '', new \JsonMachine\JsonDecoder\PassThruDecoder);
+				foreach ($sets_iterator as $set_name => $set_contents) {
+					$configs_iterator = \JsonMachine\JsonMachine::fromString($set_contents, '', new \JsonMachine\JsonDecoder\PassThruDecoder);
+					foreach ($configs_iterator as $config_name => $config_contents) {
+						if ($set_name === 'Base' && $config_name === 'Metadata') {
+							$config_parsed = json_decode($config_contents, true);
+							$document['Title'] = $config_parsed['Title'];
+							$document['Description'] = $config_parsed['Description'];
+						} elseif ($set_name === 'Base' && $config_name === 'Difficulty') {
+							$config_parsed = json_decode($config_contents, true);
+							$document['DifficultyValue'] = $config_parsed['MaxDinoLevel'] / 30;
+						} else {
+							$document['EditorNames'][] = $config_name;
+						}
+					}
+				}
+				break;
+			case 'LootSources':
+				$document['EditorNames'][] = 'LootDrops';
+			}
+		}
+		$document['EditorNames'] = array_unique($document['EditorNames']);
+		sort($document['EditorNames']);
+		
+		// Catch some common errors
 		if (!\BeaconCommon::HasAllKeys($document, 'Version', 'Identifier')) {
 			$reason = 'Not all keys are present.';
 			return false;
 		}
-		if (is_null($document_id) == false && strtolower($document['Identifier']) !== strtolower($document_id)) {
+		if (empty($document_id) == false && strtolower($document['Identifier']) !== strtolower($document_id)) {
 			$reason = 'Document UUID of ' . strtolower($document['Identifier']) . ' in content does not match the resource UUID of ' . strtolower($document_id) . '.';
 			return false;
 		}
-		
 		$document_version = intval($document['Version']);
 		if ($document_version < 2) {
 			$reason = 'Version 1 documents are no longer not accepted.';
@@ -443,6 +500,10 @@ class Document implements \JsonSerializable {
 		
 		$database = \BeaconCommon::Database();
 		$document_id = $document['Identifier'];
+		$title = isset($document['Title']) ? $document['Title'] : '';
+		$description = isset($document['Description']) ? $document['Description'] : '';
+		$difficulty = isset($document['DifficultyValue']) ? $document['DifficultyValue'] : 4;
+		$mask = isset($document['Map']) ? $document['Map'] : 4;
 		
 		// check if the document already exists
 		$results = $database->Query('SELECT document_id FROM documents WHERE document_id = $1;', $document_id);
@@ -467,22 +528,9 @@ class Document implements \JsonSerializable {
 			}
 		}
 		
-		// gather document details
-		$editor_names = array();
-		$mod_ids = array();
-		$loot_drops_config = null;
-		$console_safe = false;
-		$title = '';
-		$description = '';
-		$difficulty = 4;
-		$mask = 1;
-		$public = false;
-		if (array_key_exists('Map', $document)) {
-			$mask = intval($document['Map']);
-		}
-		$guests_to_add = array();
-		$guests_to_remove = array();
-		if ($document_version >= 4 && array_key_exists('EncryptionKeys', $document) && is_array($document['EncryptionKeys']) && \BeaconCommon::IsAssoc($document['EncryptionKeys'])) {
+		$guests_to_add = [];
+		$guests_to_remove = [];
+		if (isset($document['EncryptionKeys']) && is_array($document['EncryptionKeys']) && \BeaconCommon::IsAssoc($document['EncryptionKeys'])) {
 			$encryption_keys = $document['EncryptionKeys'];
 			$allowed_users = array_keys($encryption_keys);
 			
@@ -508,122 +556,47 @@ class Document implements \JsonSerializable {
 				return false;
 			}
 		}
-		if ($document_version >= 3) {
-			if ($document_version >= 5) {
-				$base = $document['Config Sets']['Base'];
-			} else {
-				$base = $document['Configs'];
-			}
-			foreach ($base as $configname => $configcontent) {
-				if ($configname === 'LootDrops') {
-					$loot_drops_config = $configcontent['Contents'];
-					$editor_names[] = $configname;
-				} elseif ($configname === 'Metadata') {
-					$title = $configcontent['Title'];
-					$description = $configcontent['Description'];
-					$public = $configcontent['Public'];
-				} elseif ($configname === 'Difficulty') {
-					$difficulty = intval($configcontent['MaxDinoLevel']) / 30;
-				} else {
-					$editor_names[] = $configname;
+		
+		$mod_ids = [];
+		if (isset($document['ModSelections'])) {
+			$console_safe = true;
+			foreach ($document['ModSelections'] as $mod_id => $mod_enabled) {
+				if ($mod_enabled) {
+					$rows = $database->Query('SELECT mod_id, console_safe FROM mods WHERE confirmed = TRUE AND mod_id = $1;', $mod_id);
+					if ($rows->RecordCount() === 1) {
+						$mod_ids[] = $mod_id;
+						$console_safe = $console_safe && $rows->Field('console_safe');
+					}
 				}
+			}
+		} elseif (isset($document['ConsoleModsOnly'])) {
+			$console_mods_only = $document['ConsoleModsOnly'];
+			$rows = $database->Query('SELECT mod_id FROM mods WHERE confirmed = TRUE AND console_safe = TRUE AND default_enabled = TRUE;');
+			while (!$rows->EOF()) {
+				$mod_ids[] = $rows->Field('mod_id');
+				$rows->MoveNext();
 			}
 		} else {
-			$loot_drops_config = $document['LootSources'];
-			if (array_key_exists('Title', $document)) {
-				$title = $document['Title'];
-			}
-			if (array_key_exists('Description', $document)) {
-				$description = $document['Description'];
-			}
-			if (array_key_exists('DifficultyValue', $document)) {
-				$difficulty = $document['DifficultyValue'];
-			}
-			if (array_key_exists('Public', $document)) {
-				$public = $document['Public'];
-			}
-			$editor_names[] = 'LootDrops';
-		}
-		if (is_null($loot_drops_config) === false) {
-			$engram_classes = array();
-			$engram_paths = array();
-			try {
-				foreach($loot_drops_config as $drop) {
-					$sets = $drop['ItemSets'];
-					foreach ($sets as $set) {
-						$entries = $set['ItemEntries'];
-						foreach ($entries as $entry) {
-							$items = $entry['Items'];
-							foreach ($items as $item) {
-								if (array_key_exists('Path', $item)) {
-									$engram_paths[] = $database->EscapeLiteral($item['Path']);
-								} elseif (array_key_exists('Class', $item)) {
-									$engram_classes[] = $database->EscapeLiteral($item['Class']);
-								}
-							}
-						}
-					}
-				}
-				
-				$engram_classes = array_unique($engram_classes);
-				$engram_paths = array_unique($engram_paths);
-				$clauses = array();
-				if (count($engram_classes) > 0) {
-					$clauses[] = 'engrams.class_string IN (' . implode(',', $engram_classes) . ')';
-				}
-				if (count($engram_paths) > 0) {
-					$clauses[] = 'engrams.path IN (' . implode(',', $engram_paths) . ')';
-				}
-				
-				if (count($clauses) > 0) {
-					try {
-						$mods_lookup = $database->Query('SELECT DISTINCT mods.mod_id, mods.console_safe FROM engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id) WHERE ' . implode(' OR ', $clauses) . ';');
-						if ($mods_lookup->RecordCount() > 0) {
-							$console_safe = true;
-						}
-						while (!$mods_lookup->EOF()) {
-							$console_safe = $console_safe && $mods_lookup->Field('console_safe');
-							$mod_ids[] = $mods_lookup->Field('mod_id');
-							$mods_lookup->MoveNext();
-						}
-						
-						// that finds us the known mods, but doesn't help us with the rest.
-						if (array_key_exists('23ecf24c-377f-454b-ab2f-d9d8f31a5863', $mod_ids) === false && count($engram_classes) > 0) {
-							$unknown_results = $database->Query('SELECT * FROM (VALUES (' . implode('),(', $engram_classes) . ')) AS list(class_string) WHERE NOT EXISTS (SELECT class_string FROM engrams WHERE engrams.class_string = list.class_string);');
-							if ($unknown_results->RecordCount() > 0) {
-								$console_safe = false;
-								$mod_ids[] = '23ecf24c-377f-454b-ab2f-d9d8f31a5863';
-							}
-						}
-						if (array_key_exists('23ecf24c-377f-454b-ab2f-d9d8f31a5863', $mod_ids) === false && count($engram_paths) > 0) {
-							$unknown_results = $database->Query('SELECT * FROM (VALUES (' . implode('),(', $engram_paths) . ')) AS list(path) WHERE NOT EXISTS (SELECT path FROM engrams WHERE engrams.path = list.path);');
-							if ($unknown_results->RecordCount() > 0) {
-								$console_safe = false;
-								$mod_ids[] = '23ecf24c-377f-454b-ab2f-d9d8f31a5863';
-							}
-						}
-					} catch (\Exception $err) {
-						$reason = 'Database error: ' . $err->getMessage();
-						return false;
-					}
-				}
-			} catch (\Exception $err) {
-			}
+			$console_safe = false;
 		}
 		
-		if (\BeaconCloudStorage::PutFile(self::GenerateCloudStoragePath($owner_id, $document_id), gzencode(json_encode($document))) === false) {
+		if (is_null($file_content_compressed)) {
+			$file_content_compressed = gzencode($file_content);
+		}
+		
+		if (\BeaconCloudStorage::PutFile(self::GenerateCloudStoragePath($owner_id, $document_id), $file_content_compressed) === false) {
 			$reason = 'Unable to upload document to cloud storage platform.';
 			return false;
 		}
 		
-		$mods = '{' . implode(',',$mod_ids) . '}';
-		$editors = '{' . implode(',', $editor_names) . '}';
+		$mods = '{' . implode(',', $mod_ids) . '}';
+		$editors = '{' . implode(',', $document['EditorNames']) . '}';
 		try {
 			$database->BeginTransaction();
 			if ($new_document) {
 				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
-				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
+				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP, deleted = FALSE WHERE document_id = $1 AND user_id = $2;', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			}
 			foreach ($guests_to_add as $guest_id) {
 				$database->Query('INSERT INTO guest_documents (document_id, user_id) VALUES ($1, $2);', $document_id, $guest_id);
@@ -635,18 +608,6 @@ class Document implements \JsonSerializable {
 		} catch (\Exception $err) {
 			$reason = 'Database error: ' . $err->getMessage();
 			return false;
-		}
-		
-		// see if a publish request is needed
-		if (\BeaconCommon::MinVersion() < 10300107) {
-			$documents = self::GetByDocumentID($document_id);
-			if (count($documents) == 1) {
-				if ($public) {
-					$documents[0]->SetPublishStatus(self::PUBLISH_STATUS_REQUESTED);
-				} else {
-					$documents[0]->SetPublishStatus(self::PUBLISH_STATUS_PRIVATE);
-				}
-			}
 		}
 		
 		return true;

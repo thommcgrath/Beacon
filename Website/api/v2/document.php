@@ -213,40 +213,23 @@ case 'POST':
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
 	
-	$payload = BeaconAPI::JSONPayload();
-	if (BeaconCommon::IsAssoc($payload)) {
-		// single
-		$items = array($payload);
-		$single_mode = true;
-	} else {
-		// multiple
-		if ($document_id !== null) {
-			BeaconAPI::ReplyError('Do not specify a class when saving multiple documents.');
-		}
-		$items = $payload;
-		$single_mode = false;
+	/* 2021-03-11: Had to force this to save one file at a time, no longer
+		and it no longer returns the saved document. This was done because
+		php JSON is very memory intensive, and Beacon projects have become
+		complex enough that limits were being hit. */
+		
+	if (BeaconCommon::IsUUID($document_id) === false) {
+		BeaconAPI::ReplyError('Specify exactly one UUID to save a document.');
 	}
 	
+	$file_content = BeaconAPI::Body();
 	$user = BeaconAPI::User();
-	$documents = array();
-	$database->BeginTransaction();
-	foreach ($items as $document) {
-		if ($single_mode && is_null($document_id) === false) {
-			$this_document_id = $document_id;
-		} else {
-			$this_document_id = $document['Identifier'];
-		}
-		$reason = '';
-		$saved = BeaconDocument::SaveFromContent($this_document_id, $user, $document, $reason);
-		if ($saved === false) {
-			$database->Rollback();
-			BeaconAPI::ReplyError($reason, $document);
-		}
-		$documents[] = BeaconDocument::GetSharedDocumentByID($this_document_id, $user->UserID())[0];
+	$reason = '';
+	if (BeaconDocument::SaveFromContent($document_id, $user, $file_content, $reason) === false) {
+		BeaconAPI::ReplyError($reason);
 	}
-	$database->Commit();
 	
-	BeaconAPI::ReplySuccess($documents);
+	BeaconAPI::ReplySuccess();
 	
 	break;
 case 'DELETE':
