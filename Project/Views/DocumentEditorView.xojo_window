@@ -688,6 +688,21 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub DiscardConfigPanel(CacheKey As String)
+		  // This is indiscriminate and will close the current config if you ask it to.
+		  
+		  If Not Self.Panels.HasKey(CacheKey) Then
+		    Return
+		  End If
+		  
+		  Var Panel As ConfigEditor = Self.Panels.Value(CacheKey)
+		  RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+		  Panel.Close
+		  Self.Panels.Remove(CacheKey)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Document() As Beacon.Document
 		  Return Self.mController.Document
@@ -1012,14 +1027,11 @@ End
 		  Var SourceItems() As SourceListItem
 		  For I As Integer = 0 To Labels.LastIndex
 		    Var Item As New SourceListItem(Labels(I), Tags(I))
-		    If Not IsBase Then
-		      Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(Tags(I))
-		      If Group.SupportsConfigSets = False Then
-		        Continue
-		      End If
-		      
-		      Item.Unemphasized = Self.Document.HasConfigGroup(Tags(I)) = False Or Self.Document.ConfigGroup(Tags(I)).IsImplicit = True
+		    Var SupportsConfigSets As Boolean = BeaconConfigs.SupportsConfigSets(Tags(I))
+		    If IsBase = False And SupportsConfigSets = False Then
+		      Continue
 		    End If
+		    Item.CanDismiss = SupportsConfigSets And Self.Document.HasConfigGroup(Tags(I)) = True And Self.Document.ConfigGroup(Tags(I)).IsImplicit = False
 		    SourceItems.Add(Item)
 		  Next
 		  
@@ -1037,6 +1049,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.ViewTitle = Self.mController.Name
+		  Self.UpdateConfigList()
 		End Sub
 	#tag EndMethod
 
@@ -1128,12 +1141,7 @@ End
 			    If Self.mPanelHistory.LastIndex > 2 Then
 			      For I As Integer = Self.mPanelHistory.LastIndex DownTo 3
 			        Var PanelTag As String = Self.mPanelHistory(I)
-			        If Self.Panels.HasKey(PanelTag) Then
-			          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)
-			          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-			          Panel.Close
-			          Self.Panels.Remove(PanelTag)
-			        End If
+			        Self.DiscardConfigPanel(CacheKey)
 			      Next
 			    End If
 			    
@@ -1481,13 +1489,38 @@ End
 		  If (CurrentItem Is Nil) = False Then
 		    Try
 		      Var GroupName As String = CurrentItem.Tag
-		      CurrentItem.Unemphasized = Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName And (Self.Document.HasConfigGroup(GroupName) = False Or Self.Document.ConfigGroup(GroupName).IsImplicit = True)
+		      CurrentItem.CanDismiss = Self.Document.HasConfigGroup(GroupName) = True And Self.Document.ConfigGroup(GroupName).IsImplicit = False
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
 		  
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DismissPressed(Item As SourceListItem, ItemIndex As Integer, ItemRect As Rect)
+		  Var Label As String = Item.Caption
+		  If Self.ShowConfirm("Are you sure you want to restore """ + Label + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
+		    Var ConfigName As String = Item.Tag
+		    Var IsSelected As Boolean = Self.CurrentConfigName = ConfigName
+		    
+		    If IsSelected Then
+		      Self.CurrentConfigName = ""
+		    End If
+		    
+		    Self.Document.RemoveConfigGroup(ConfigName)
+		    
+		    Var CacheKey As String = Self.ActiveConfigSet + ":" + ConfigName
+		    Self.DiscardConfigPanel(CacheKey)
+		    
+		    If IsSelected Then
+		      Self.CurrentConfigName = ConfigName
+		    End If
+		    
+		    Self.Changed = True
+		    Self.UpdateConfigList()
+		  End If
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigSetPicker

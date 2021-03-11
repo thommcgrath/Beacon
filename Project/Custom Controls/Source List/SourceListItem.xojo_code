@@ -20,6 +20,24 @@ Protected Class SourceListItem
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCanDismiss
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mCanDismiss = Value
+			End Set
+		#tag EndSetter
+		CanDismiss As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mCanDismiss As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mCaption As String
 	#tag EndProperty
@@ -28,22 +46,18 @@ Protected Class SourceListItem
 		Private mTag As Variant
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUnemphasized As Boolean
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mUnemphasized
+			  Return False
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mUnemphasized = Value
+			  // Do nothing
 			End Set
 		#tag EndSetter
-		Unemphasized As Boolean
+		Attributes( Deprecated ) Unemphasized As Boolean
 	#tag EndComputedProperty
 
 
@@ -86,6 +100,14 @@ Protected Class SourceListItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CanDismiss"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

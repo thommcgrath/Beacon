@@ -139,6 +139,10 @@ End
 
 	#tag Method, Flags = &h0
 		Function IndexAtPoint(Point As Xojo.Point) As Integer
+		  If Point Is Nil Then
+		    Return -1
+		  End If
+		  
 		  For Idx As Integer = 0 To Self.mItemRects.LastIndex
 		    If (Self.mItemRects(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
 		      Return Idx
@@ -156,6 +160,16 @@ End
 		    End If
 		  Next
 		  Return -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function InDismissRect(Point As Point, Idx As Integer) As Boolean
+		  If Idx < Self.mDismissRects.FirstRowIndex Or Idx > Self.mDismissRects.LastRowIndex Then
+		    Return False
+		  End If
+		  
+		  Return (Self.mDismissRects(Idx) Is Nil) = False And Self.mDismissRects(Idx).Contains(Point)
 		End Function
 	#tag EndMethod
 
@@ -388,6 +402,34 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetMousePoint(Point As Point)
+		  Self.mMousePoint = Point
+		  
+		  Var OldIndex As Integer = Self.mMouseOverIndex
+		  Self.mMouseOverIndex = Self.IndexAtPoint(Point)
+		  
+		  If Self.mMouseOverIndex <> OldIndex Then
+		    If OldIndex > -1 Then
+		      Self.Invalidate(OldIndex)
+		    End If
+		    If Self.mMouseOverIndex > -1 Then
+		      Self.Invalidate(Self.mMouseOverIndex)
+		    End If
+		  End If
+		  
+		  If Self.mMouseOverIndex > -1 Then
+		    Var InsideDismissRect As Boolean = Self.InDismissRect(Point, Self.mMouseOverIndex)
+		    If InsideDismissRect <> Self.mInsideDismissRect Then
+		      Self.Invalidate(Self.mMouseOverIndex)
+		    End If
+		    Self.mInsideDismissRect = InsideDismissRect
+		  Else
+		    Self.mInsideDismissRect = False
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Sort()
 		  Var Names() As String
@@ -422,6 +464,10 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event DismissPressed(Item As SourceListItem, ItemIndex As Integer, ItemRect As Rect)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -433,6 +479,14 @@ End
 		Event ShouldChange(DesiredIndex As Integer) As Boolean
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mDismissRects() As Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInsideDismissRect As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mItemRects() As Rect
@@ -456,6 +510,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMouseDownIndex As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseDownInDismiss As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -525,19 +583,17 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Var MousePoint As New Xojo.Point(X, Y)
-		  Var Idx As Integer = Self.IndexAtPoint(MousePoint)
-		  If Idx = -1 Then
+		  Self.SetMousePoint(New Point(X, Y))
+		  If Self.mMousePoint Is Nil Then
 		    Self.mMouseDown = False
 		    Return True
 		  End If
 		  
 		  Self.mMouseDown = True
-		  Self.mMousePoint = MousePoint
-		  Self.mMouseDownPoint = MousePoint
-		  Self.mMouseDownIndex = Idx
-		  Self.mMouseOverIndex = Idx
-		  Self.mWasContextualClick = IsContextualClick
+		  Self.mMouseDownPoint = Self.mMousePoint
+		  Self.mMouseDownIndex = Self.mMouseOverIndex
+		  Self.mMouseDownInDismiss = Self.mInsideDismissRect
+		  Self.mWasContextualClick = IsContextualClick = True And Self.mMouseDownInDismiss = False
 		  Self.Invalidate(Self.mMouseDownIndex)
 		  
 		  If Self.mWasContextualClick Then
@@ -545,11 +601,11 @@ End
 		    Self.Refresh(Self.mMouseDownIndex)
 		    
 		    Var ItemRect As Rect
-		    If Idx >= Self.mItemRects.FirstIndex And Idx <= Self.mItemRects.LastIndex Then
-		      ItemRect = Self.mItemRects(Idx)
+		    If Self.mMouseOverIndex >= Self.mItemRects.FirstIndex And Self.mMouseOverIndex <= Self.mItemRects.LastIndex Then
+		      ItemRect = Self.mItemRects(Self.mMouseOverIndex)
 		    End If
 		    
-		    RaiseEvent ContextualClick(X, Y, Idx, ItemRect)
+		    RaiseEvent ContextualClick(X, Y, Self.mMouseOverIndex, ItemRect)
 		  End If
 		  
 		  Return True
@@ -561,20 +617,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mMousePoint = New Xojo.Point(X, Y)
-		  
-		  Var OldIndex As Integer = Self.mMouseOverIndex
-		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
-		  
-		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Var OldRect As Rect = Self.mItemRects(OldIndex)
-		    Self.Invalidate(OldRect.Left, OldRect.Top, OldRect.Width, OldRect.Height)
-		  End If
-		  
-		  If Self.mMouseOverIndex > -1 Then
-		    Var OverRect As Rect = Self.mItemRects(Self.mMouseOverIndex)
-		    Self.Invalidate(OverRect.Left, OverRect.Top, OverRect.Width, OverRect.Height)
-		  End If
+		  Self.SetMousePoint(New Xojo.Point(X, Y))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -590,12 +633,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mMousePoint = Nil
-		  
-		  If Self.mMouseOverIndex <> -1 Then
-		    Self.Invalidate(Self.mMouseOverIndex)
-		    Self.mMouseOverIndex = -1
-		  End If
+		  Self.SetMousePoint(Nil)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -604,19 +642,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mMousePoint = New Point(X, Y)
-		  Var OldIndex As Integer = Self.mMouseOverIndex
-		  
-		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
-		  
-		  If Self.mMouseOverIndex <> OldIndex Then
-		    If OldIndex > -1 Then
-		      Self.Invalidate(OldIndex)
-		    End If
-		    If Self.mMouseOverIndex > -1 Then
-		      Self.Invalidate(Self.mMouseOverIndex)
-		    End If
-		  End If
+		  Self.SetMousePoint(New Point(X, Y))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -625,10 +651,14 @@ End
 		    Return
 		  End If
 		  
-		  Self.mMousePoint = New Point(X, Y)
+		  Self.SetMousePoint(New Point(X, Y))
 		  
-		  If Self.mWasContextualClick = False And Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex Then
-		    Self.SelectedRowIndex = Self.mMouseDownIndex
+		  If Self.mWasContextualClick = False And Self.mMouseDownIndex > -1 And Self.mMouseOverIndex = Self.mMouseDownIndex Then
+		    If Self.mMouseDownInDismiss And Self.mInsideDismissRect Then
+		      RaiseEvent DismissPressed(Self.mItems(Self.mMouseDownIndex), Self.mMouseDownIndex, Self.mItemRects(Self.mMouseDownIndex))
+		    Else
+		      Self.SelectedRowIndex = Self.mMouseDownIndex
+		    End If
 		  End If
 		  
 		  Self.mMouseDown = False
@@ -642,21 +672,44 @@ End
 		  Var Rects() As Rect
 		  Rects.ResizeTo(Self.mItems.LastIndex)
 		  
+		  Var DismissRects() As Rect
+		  DismissRects.ResizeTo(Self.mItems.LastIndex)
+		  
 		  Const RowHeight = 30
 		  Const Inset = 10
 		  Const CornerRadius = 8
 		  Const Padding = 8
+		  Const DismissSize = 16
 		  
 		  Me.ContentHeight = (Self.mItems.Count * RowHeight) + (Inset * 2)
 		  
-		  Var ItemWidth As Integer = SafeArea.Width - (Inset * 2)
+		  Var LeftMargin As Integer = Max(SafeArea.Left + (Padding / 4), Inset)
+		  Var RightMargin As Integer = Max((G.Width - SafeArea.Right) + (Padding / 4), Inset)
+		  Var LeftPadding As Integer = Padding
+		  Var RightPadding As Integer = Padding
+		  Var ItemWidth As Integer = G.Width - (LeftMargin + RightMargin)
+		  Var HasDismissButtons As Boolean
 		  Var RowTop As Integer = Inset - Me.ScrollPosition
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
-		    Rects(Idx) = New Rect(Inset, RowTop, ItemWidth, RowHeight)
+		    Rects(Idx) = New Rect(LeftMargin, RowTop, ItemWidth, RowHeight)
+		    If Self.mItems(Idx).CanDismiss Then
+		      HasDismissButtons = True
+		      DismissRects(Idx) = New Rect(Rects(Idx).Right - ((Padding / 4) + DismissSize), Rects(Idx).VerticalCenter - (DismissSize - 8), DismissSize, DismissSize)
+		    End If
+		    HasDismissButtons = HasDismissButtons Or Self.mItems(Idx).CanDismiss
 		    RowTop = RowTop + RowHeight
 		  Next
 		  
+		  Var CaptionMaxWidth As Integer = ItemWidth - (LeftPadding + RightPadding)
+		  Var IconDismissRegular As Picture
+		  If HasDismissButtons Then
+		    CaptionMaxWidth = ItemWidth - (LeftPadding + (RightPadding * 1.25) + DismissSize)
+		    
+		    IconDismissRegular = BeaconUI.IconWithColor(IconDismissEditor, SystemColors.TertiaryLabelColor, G.ScaleX, G.ScaleX)
+		  End If
+		  
 		  Self.mItemRects = Rects
+		  Self.mDismissRects = DismissRects
 		  
 		  Var Viewport As New Rect(0, 0, G.Width, G.Height)
 		  For Idx As Integer = 0 To Self.mItems.LastIndex
@@ -679,20 +732,39 @@ End
 		    
 		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
 		    Var CaptionBaseline As Double = (Clip.Height / 2) + (Clip.CapHeight / 2)
-		    Var CaptionLeft As Double = Padding
+		    Var CaptionLeft As Double = LeftPadding
 		    
 		    If Self.SelectedRowIndex = Idx Then
 		      Clip.DrawingColor = If(Highlighted, SystemColors.SelectedContentBackgroundColor, SystemColors.UnemphasizedSelectedContentBackgroundColor)
 		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		      Clip.DrawingColor = If(Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.UnemphasizedSelectedTextColor)
-		    ElseIf Self.mItems(Idx).Unemphasized = True Then
-		      Clip.DrawingColor = SystemColors.TertiaryLabelColor
 		    Else
 		      Clip.DrawingColor = SystemColors.LabelColor
 		    End If
-		    Clip.DrawText(Self.mItems(Idx).Caption, CaptionLeft, CaptionBaseline, Clip.Width - (Padding * 2), True)
+		    Clip.DrawText(Self.mItems(Idx).Caption, CaptionLeft, CaptionBaseline, CaptionMaxWidth, True)
 		    
-		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx Then
+		    If Self.mItems(Idx).CanDismiss Then
+		      Var DismissRect As Rect = Self.mDismissRects(Idx).LocalRect(ItemRect)
+		      Var DismissIcon As Picture
+		      If Self.mInsideDismissRect And Self.mMouseOverIndex = Idx Then
+		        // Hover, both selected and not.
+		        DismissIcon = BeaconUI.IconWithColor(IconDismissEditor, Clip.DrawingColor, G.ScaleX, G.ScaleY)
+		        Clip.DrawingColor = Clip.DrawingColor.AtOpacity(0.2)
+		        Clip.FillRoundRectangle(DismissRect.Left, DismissRect.Top, DismissRect.Width, DismissRect.Height, 6, 6)
+		      ElseIf SelectedRowIndex = Idx Then
+		        // Selected, no hover.
+		        DismissIcon = BeaconUI.IconWithColor(IconDismissEditor, Clip.DrawingColor.AtOpacity(0.5), G.ScaleX, G.ScaleY)
+		      Else
+		        DismissIcon = IconDismissRegular
+		      End If
+		      Clip.DrawPicture(DismissIcon, DismissRect.Left, DismissRect.Top)
+		      If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx And Self.mInsideDismissRect = True Then
+		        Clip.DrawingColor = &c000000AA
+		        Clip.FillRoundRectangle(DismissRect.Left, DismissRect.Top, DismissRect.Width, DismissRect.Height, 6, 6)
+		      End If
+		    End If
+		    
+		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx And Self.mInsideDismissRect = False And Self.mMouseDownInDismiss = False Then
 		      Clip.DrawingColor = &c000000AA
 		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		    End If

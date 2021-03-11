@@ -205,6 +205,38 @@ Protected Module BeaconConfigs
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SupportsConfigSets(ConfigName As String) As Boolean
+		  If mConfigSetSupport Is Nil Then
+		    mConfigSetSupport = New Dictionary
+		  End If
+		  
+		  If mConfigSetSupport.HasKey(ConfigName) = False Then
+		    Var Instance As Beacon.ConfigGroup
+		    
+		    #Pragma BreakOnExceptions False
+		    Try
+		      Instance = CreateInstance(ConfigName)
+		    Catch Err As RuntimeException
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
+		    If Instance Is Nil Then
+		      mConfigSetSupport.Value(ConfigName) = False
+		    Else
+		      mConfigSetSupport.Value(ConfigName) = Instance.SupportsConfigSets
+		    End If
+		  End If
+		  
+		  Return mConfigSetSupport.Value(ConfigName)
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mConfigSetSupport As Dictionary
+	#tag EndProperty
+
 
 	#tag Constant, Name = NameBreedingMultipliers, Type = String, Dynamic = False, Default = \"BreedingMultipliers", Scope = Protected
 	#tag EndConstant

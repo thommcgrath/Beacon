@@ -509,6 +509,7 @@ Class=GSADiscoveredData;Modules/Beacon/GSADiscoveredData.xojo_code;&h00000000664
 Class=CreatureColor;Modules/Beacon/CreatureColor.xojo_code;&h00000000148B67FF;&h0000000055ADDFFF;false
 Class=GameEvent;Modules/Beacon/GameEvent.xojo_code;&h00000000163AA7FF;&h0000000055ADDFFF;false
 MultiImage=IconToolbarRates;Icons/IconToolbarRates.xojo_image;&h0000000074E437FF;&h0000000007F977FF;false
+MultiImage=IconDismissEditor;Icons/IconDismissEditor.xojo_image;&h0000000052D07FFF;&h0000000007F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5

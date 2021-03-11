@@ -703,6 +703,7 @@ End
 		  
 		  Engrams = EngramControlEngramOverrideWizard.Present(Self, Self.Document, Engrams)
 		  If Engrams <> Nil And Engrams.LastIndex > -1 Then
+		    Self.Changed = True
 		    Self.SetupEngramsList(Engrams)
 		  End If
 		End Sub
