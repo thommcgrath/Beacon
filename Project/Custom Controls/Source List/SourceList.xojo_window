@@ -165,7 +165,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function InDismissRect(Point As Point, Idx As Integer) As Boolean
-		  If Idx < Self.mDismissRects.FirstRowIndex Or Idx > Self.mDismissRects.LastRowIndex Then
+		  If Idx < Self.mDismissRects.FirstIndex Or Idx > Self.mDismissRects.LastIndex Then
 		    Return False
 		  End If
 		  

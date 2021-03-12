@@ -1141,7 +1141,7 @@ End
 			    If Self.mPanelHistory.LastIndex > 2 Then
 			      For I As Integer = Self.mPanelHistory.LastIndex DownTo 3
 			        Var PanelTag As String = Self.mPanelHistory(I)
-			        Self.DiscardConfigPanel(CacheKey)
+			        Self.DiscardConfigPanel(PanelTag)
 			      Next
 			    End If
 			    
@@ -1499,6 +1499,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DismissPressed(Item As SourceListItem, ItemIndex As Integer, ItemRect As Rect)
+		  #Pragma Unused ItemIndex
+		  #Pragma Unused ItemRect
+		  
 		  Var Label As String = Item.Caption
 		  If Self.ShowConfirm("Are you sure you want to restore """ + Label + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
 		    Var ConfigName As String = Item.Tag
