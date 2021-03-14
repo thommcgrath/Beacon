@@ -64,7 +64,7 @@ Implements ObservationKit.Observable
 		  If Self.mHasProgressIndicator = True And Self.mProgress = Self.ProgressIndeterminate And Self.mIndeterminateTimer Is Nil Then
 		    Self.mIndeterminateTimer = New Timer
 		    Self.mIndeterminateTimer.RunMode = Timer.RunModes.Multiple
-		    Self.mIndeterminateTimer.Period = 1000/120
+		    Self.mIndeterminateTimer.Period = 1000/30
 		    AddHandler mIndeterminateTimer.Action, WeakAddressOf mIndeterminateTimer_Action
 		  ElseIf (Self.mHasProgressIndicator = False Or Self.mProgress <> Self.ProgressIndeterminate) And (Self.mIndeterminateTimer Is Nil) = False Then
 		    RemoveHandler mIndeterminateTimer.Action, WeakAddressOf mIndeterminateTimer_Action
