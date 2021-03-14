@@ -565,6 +565,17 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function InsideAccessoryRegion(ItemRect As Rect, MousePoint As Point) As Boolean
+		  If ItemRect Is Nil Or MousePoint Is Nil Or Self.mType <> OmniBarItem.Types.Tab Or Self.mCanBeClosed = False Or ItemRect.Contains(MousePoint) = False Then
+		    Return False
+		  End If
+		  
+		  Var AccessoryRect As New Rect(ItemRect.Right - Self.AccessoryIconSize, NearestMultiple(ItemRect.Top + ((ItemRect.Height - Self.AccessoryIconSize) / 2), 1.0), Self.AccessoryIconSize, Self.AccessoryIconSize)
+		  Return AccessoryRect.Contains(MousePoint)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Margin(Against As OmniBarItem) As Integer
 		  If (Against Is Nil) = False And Against.Type = OmniBarItem.Types.FlexSpace Then
 		    Return 0
