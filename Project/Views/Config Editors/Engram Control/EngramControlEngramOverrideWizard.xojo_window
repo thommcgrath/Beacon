@@ -975,6 +975,12 @@ End
 		    Next
 		  End If
 		  
+		  If (EditHidden Or EditLevel Or EditAutoUnlock Or EditPoints Or EditPrereq) = False Then
+		    // Need to at least change something
+		    EditHidden = True
+		    Hidden = False
+		  End If
+		  
 		  For Each Engram As Beacon.Engram In Engrams
 		    If EditHidden Then
 		      Self.mConfig.Hidden(Engram) = Hidden
