@@ -31,14 +31,14 @@ Inherits BeaconSubview
 	#tag Event
 		Sub Open()
 		  RaiseEvent Open
-		  Self.SetupUI()
+		  // Do not call SetupUI here, it's redundant. Shown will handle that.
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
-		  Var FireSetupUI As Boolean
+		  Var FireSetupUI As Boolean = True
 		  RaiseEvent Shown(UserData, FireSetupUI)
 		  If FireSetupUI Then
 		    Self.SetupUI()
@@ -231,8 +231,8 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub SetupUI()
+	#tag Method, Flags = &h0
+		Sub SetupUI()
 		  Var SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Var FocusControl As RectControl = Self.Focus
@@ -240,6 +240,10 @@ Inherits BeaconSubview
 		    ClearFocus()
 		  #else
 		    Self.SetFocus()
+		  #endif
+		  #if DebugBuild
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
+		    System.DebugLog(Info.Name + ".SetupUI")
 		  #endif
 		  RaiseEvent SetupUI
 		  If FocusControl <> Nil Then
