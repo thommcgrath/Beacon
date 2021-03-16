@@ -8,7 +8,7 @@
   #define MyAppVersion Trim(GetFileProductVersion("..\..\Project\Builds - Beacon\Windows\Beacon\Beacon.exe"))
 #endif
 #define MyAppPublisher "The ZAZ Studios"
-#define MyAppURL "https://beaconapp.cc/"
+#define MyAppURL "https://usebeacon.app/"
 #define MyAppExeName "Beacon.exe"
 #define MyAppResources "Beacon Resources"
 
@@ -48,7 +48,7 @@ ChangesAssociations=yes
 #ifdef x64
   ArchitecturesInstallIn64BitMode=x64
 #endif
-SignTool=TheZAZ /d $qBeacon$q /du $qhttps://beaconapp.cc$q $f
+SignTool=TheZAZ /d $qBeacon$q /du $qhttps://usebeaon.app$q $f
 WizardStyle=modern
 SetupIconFile=../../Artwork/App.ico
 
