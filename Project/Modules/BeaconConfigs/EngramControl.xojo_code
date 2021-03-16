@@ -727,7 +727,19 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SaveEntryString(ForEngram As Beacon.Engram)
+		  If (ForEngram Is Nil) = False And ForEngram.EntryString.IsEmpty = False Then
+		    Self.mOverrides.Value(ForEngram, Self.KeyEntryString) = ForEngram.EntryString
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SetAttributeForEngram(Engram As Beacon.Engram, Key As String, Value As Variant)
+		  If Engram Is Nil Then
+		    Return
+		  End If
+		  
 		  If Value.IsNull And Self.mOverrides.HasAttribute(Engram, Key) Then
 		    Self.mOverrides.Remove(Engram, Key)
 		    Self.Modified = True
@@ -737,6 +749,9 @@ Inherits Beacon.ConfigGroup
 		  Var CurrentValue As Variant = Self.mOverrides.Value(Engram, Key)
 		  If CurrentValue <> Value Then
 		    Self.mOverrides.Value(Engram, Key) = Value
+		    If Engram.EntryString.IsEmpty = False And Key <> Self.KeyEntryString Then
+		      Self.mOverrides.Value(Engram, Self.KeyEntryString) = Engram.EntryString
+		    End If
 		    Self.Modified = True
 		  End If
 		End Sub
