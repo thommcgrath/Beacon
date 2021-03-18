@@ -59,6 +59,21 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CheckProgressTimer()
+		  If Self.mHasProgressIndicator = True And Self.mProgress = Self.ProgressIndeterminate And Self.mIndeterminateTimer Is Nil Then
+		    Self.mIndeterminateTimer = New Timer
+		    Self.mIndeterminateTimer.RunMode = Timer.RunModes.Multiple
+		    Self.mIndeterminateTimer.Period = 1000/30
+		    AddHandler mIndeterminateTimer.Action, WeakAddressOf mIndeterminateTimer_Action
+		  ElseIf (Self.mHasProgressIndicator = False Or Self.mProgress <> Self.ProgressIndeterminate) And (Self.mIndeterminateTimer Is Nil) = False Then
+		    RemoveHandler mIndeterminateTimer.Action, WeakAddressOf mIndeterminateTimer_Action
+		    Self.mIndeterminateTimer.RunMode = Timer.RunModes.Off
+		    Self.mIndeterminateTimer = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Clickable() As Boolean
 		  Select Case Self.Type
@@ -548,6 +563,17 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function InsideAccessoryRegion(ItemRect As Rect, MousePoint As Point) As Boolean
+		  If ItemRect Is Nil Or MousePoint Is Nil Or Self.mType <> OmniBarItem.Types.Tab Or Self.mCanBeClosed = False Or ItemRect.Contains(MousePoint) = False Then
+		    Return False
+		  End If
+		  
+		  Var AccessoryRect As New Rect(ItemRect.Right - Self.AccessoryIconSize, NearestMultiple(ItemRect.Top + ((ItemRect.Height - Self.AccessoryIconSize) / 2), 1.0), Self.AccessoryIconSize, Self.AccessoryIconSize)
+		  Return AccessoryRect.Contains(MousePoint)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Margin(Against As OmniBarItem) As Integer
 		  If (Against Is Nil) = False And Against.Type = OmniBarItem.Types.FlexSpace Then
 		    Return 0
@@ -804,6 +830,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mHasProgressIndicator <> Value Then
 			    Self.mHasProgressIndicator = Value
+			    Self.CheckProgressTimer()
 			    Self.NotifyObservers("MinorChange", Not Value, Value)
 			  End If
 			End Set
@@ -1056,17 +1083,7 @@ Implements ObservationKit.Observable
 			  If Self.mProgress <> Value Then
 			    Var OldValue As Double = Self.mProgress
 			    Self.mProgress = Value
-			    
-			    If Value = Self.ProgressIndeterminate And Self.mIndeterminateTimer Is Nil Then
-			      Self.mIndeterminateTimer = New Timer
-			      Self.mIndeterminateTimer.RunMode = Timer.RunModes.Multiple
-			      Self.mIndeterminateTimer.Period = 1000/120
-			      AddHandler mIndeterminateTimer.Action, WeakAddressOf mIndeterminateTimer_Action
-			    ElseIf Value <> Self.ProgressIndeterminate And (Self.mIndeterminateTimer Is Nil) = False Then
-			      RemoveHandler mIndeterminateTimer.Action, WeakAddressOf mIndeterminateTimer_Action
-			      Self.mIndeterminateTimer.RunMode = Timer.RunModes.Off
-			      Self.mIndeterminateTimer = Nil
-			    End If
+			    Self.CheckProgressTimer()
 			    Self.NotifyObservers("MinorChange", OldValue, Value)
 			  End If
 			End Set

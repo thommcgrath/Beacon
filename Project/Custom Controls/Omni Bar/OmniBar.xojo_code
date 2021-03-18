@@ -48,6 +48,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  Var OldMousePoint As Point = Self.mMousePoint
 		  Self.mMousePoint = New Point(X, Y)
 		  
 		  If Self.mMouseDownIndex > -1 And Self.mItems(Self.mMouseDownIndex).IsResizer Then
@@ -74,12 +75,21 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
-		  If OldIndex <> -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Self.Invalidate(OldIndex)
-		  End If
-		  
-		  If Self.mMouseOverIndex <> -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Self.Invalidate(Self.mMouseOverIndex)
+		  If Self.mMouseOverIndex <> OldIndex Then
+		    If OldIndex > -1 Then
+		      Self.Invalidate(OldIndex)
+		    End If
+		    
+		    If Self.mMouseOverIndex > -1 Then
+		      Self.Invalidate(Self.mMouseOverIndex)
+		    End If
+		  ElseIf Self.mMouseOverIndex > -1 Then
+		    // Mouse is dragging inside an item
+		    Var WasInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), OldMousePoint)
+		    Var IsInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), Self.mMousePoint)
+		    If IsInsideAccessoryRect <> WasInsideAccessoryRect Then
+		      Self.Invalidate(Self.mMouseOverIndex)
+		    End If
 		  End If
 		  
 		  If Self.mMouseDownIndex > -1 Then
@@ -132,6 +142,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  Var OldMousePoint As Point = Self.mMousePoint
 		  Self.mMousePoint = New Point(X, Y)
 		  Var OldIndex As Integer = Self.mMouseOverIndex
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
@@ -149,6 +160,13 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    
 		    If Self.mMouseOverIndex > -1 And Self.mItems(Self.mMouseOverIndex).HelpTag.IsEmpty = False Then
 		      Self.mHoverCallbackKey = CallLater.Schedule(1000, WeakAddressOf ShowHoverTooltip)
+		    End If
+		  ElseIf Self.mMouseOverIndex > -1 Then
+		    // Cursor is moving inside an item
+		    Var WasInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), OldMousePoint)
+		    Var IsInsideAccessoryRect As Boolean = Self.mItems(Self.mMouseOverIndex).InsideAccessoryRegion(Self.mItemRects(Self.mMouseOverIndex), Self.mMousePoint)
+		    If IsInsideAccessoryRect <> WasInsideAccessoryRect Then
+		      Self.Invalidate(Self.mMouseOverIndex)
 		    End If
 		  End If
 		  
