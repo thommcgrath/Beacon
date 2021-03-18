@@ -25,6 +25,54 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function FilterServerNames(Names() As String) As String()
+		  Var Pattern As New Regex
+		  Pattern.SearchPattern = "(\S+)"
+		  
+		  Var WordCounts As New Dictionary
+		  For Each Name As String In Names
+		    Var Words() As String
+		    Do
+		      
+		      Var Match As RegexMatch = Pattern.Search(Name)
+		      If Match Is Nil Then
+		        Exit
+		      End If
+		      
+		      Var Word As String = Match.SubExpressionString(1)
+		      Words.Add(Word)
+		      Name = Name.Middle(Name.IndexOf(Word) + Word.Length)
+		    Loop
+		    
+		    For Each Word As String In Words
+		      WordCounts.Value(Word) = WordCounts.Lookup(Word, 0).IntegerValue + 1
+		    Next
+		  Next
+		  
+		  Var CommonWords() As String
+		  For Each Entry As DictionaryEntry In WordCounts
+		    Var Word As String = Entry.Key
+		    Var Count As Integer = Entry.Value
+		    If Count <> Names.Count Then
+		      Continue
+		    End If
+		    
+		    CommonWords.Add(Word)
+		  Next
+		  
+		  Var CleanedNames() As String
+		  For Each Name As String In Names
+		    For Each Word As String In CommonWords
+		      Name = Name.Replace(Word, "").ReplaceAll("  ", " ").Trim
+		    Next
+		    CleanedNames.Add(Name)
+		  Next
+		  
+		  Return CleanedNames
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function FolderItemErrorReason(ErrorCode As Integer) As String
 		  Select Case ErrorCode
 		  Case FolderItem.DestDoesNotExistError
