@@ -89,37 +89,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   120
    End
-   Begin ControlCanvas LogoCanvas
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   128
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   340
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   53
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   128
-   End
    Begin Label VersionLabel
       AutoDeactivate  =   True
       Bold            =   False
@@ -233,11 +202,11 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   30
+      Height          =   86
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   281
+      Left            =   279
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -250,11 +219,11 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   193
+      Top             =   137
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   247
+      Width           =   250
    End
    Begin LinkLabel WebsiteLink
       AutoDeactivate  =   True
@@ -331,7 +300,7 @@ End
 		Sub Open()
 		  Self.ViewTitle = "Home"
 		  
-		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink, EngramImportIndicator)
+		  Self.mMainGroup = New ControlGroup(TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink, EngramImportIndicator)
 		  Self.mCopyrightGroup = New ControlGroup(CopyrightLabel)
 		  
 		  Self.MinimumHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
@@ -448,17 +417,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LogoCanvas
-	#tag Event
-		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
-		  #Pragma Unused Areas
-		  #Pragma Unused Highlighted
-		  #Pragma Unused SafeArea
-		  
-		  G.DrawPicture(LogoColor, 0, 0)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events VersionLabel
 	#tag Event
 		Sub Open()
@@ -496,11 +454,11 @@ End
 		  
 		  Var TitleIcon As Picture
 		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then
-		    TitleIcon = IconBeaconOmniText
+		    TitleIcon = If(Color.IsDarkMode, LogoOmniDark, LogoOmniColor)
 		  Else
-		    TitleIcon = IconBeaconText
+		    TitleIcon = If(Color.IsDarkMode, LogoDark, LogoColor)
 		  End If
-		  G.DrawPicture(BeaconUI.IconWithColor(TitleIcon, SystemColors.LabelColor), 0, 0)
+		  G.DrawPicture(TitleIcon, 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
