@@ -26,8 +26,14 @@ Inherits Beacon.DiscoveredData
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
 		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  
+		  Var GetURL As String = "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mConfigPath + "/" + Filename)
 		  Var Locked As Boolean = Preferences.SignalConnection
-		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mConfigPath + "/" + Filename), Beacon.NitradoIntegrationEngine.ConnectionTimeout)
+		  Var Content As String
+		  Try
+		    Content = Sock.SendSync("GET", GetURL, Beacon.NitradoIntegrationEngine.ConnectionTimeout)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Requesting download from " + GetURL)
+		  End Try
 		  If Locked Then
 		    Preferences.ReleaseConnection
 		  End If
@@ -56,7 +62,11 @@ Inherits Beacon.DiscoveredData
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
 		  FetchSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Locked = Preferences.SignalConnection
-		  Content = FetchSocket.SendSync("GET", FetchURL, Beacon.NitradoIntegrationEngine.ConnectionTimeout)
+		  Try
+		    Content = FetchSocket.SendSync("GET", FetchURL, Beacon.NitradoIntegrationEngine.ConnectionTimeout)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Downloading file from " + FetchURL)
+		  End Try
 		  If Locked Then
 		    Preferences.ReleaseConnection
 		  End If
