@@ -1205,7 +1205,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ParseCommandLine(CommandLine As String) As Dictionary
+		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
 		  // This shouldn't take long, but still, probably best to only use this on a thread
 		  
 		  Var InQuotes As Boolean
@@ -1239,6 +1239,14 @@ Protected Module Beacon
 		  Var StartupParams() As String = Params.Shift.Split("?")
 		  Var Map As String = StartupParams.Shift
 		  Call StartupParams.Shift // The listen statement
+		  If PreserveSyntax Then
+		    For Idx As Integer = 0 To Params.LastIndex
+		      Params(Idx) = "-" + Params(Idx)
+		    Next
+		    For Idx As Integer = 0 To StartupParams.LastIndex
+		      StartupParams(Idx) = "?" + StartupParams(Idx)
+		    Next
+		  End If
 		  StartupParams.Merge(Params)
 		  
 		  Var CommandLineOptions As New Dictionary
@@ -1253,10 +1261,17 @@ Protected Module Beacon
 		      Key = Parameter.Left(KeyPos)
 		      Value = Parameter.Middle(KeyPos + 1)
 		    End If
+		    If PreserveSyntax Then
+		      Value = Parameter
+		    End If
 		    CommandLineOptions.Value(Key) = Value
 		  Next
 		  
-		  CommandLineOptions.Value("Map") = Map
+		  If PreserveSyntax Then
+		    CommandLineOptions.Value("?Map") = Map
+		  Else
+		    CommandLineOptions.Value("Map") = Map
+		  End If
 		  Return CommandLineOptions
 		End Function
 	#tag EndMethod

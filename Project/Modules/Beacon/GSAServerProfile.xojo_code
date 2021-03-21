@@ -2,8 +2,17 @@
 Protected Class GSAServerProfile
 Inherits Beacon.ServerProfile
 	#tag Event
+		Sub ReadFromDictionary(Dict As Dictionary)
+		  If Dict.HasKey("TemplateID") Then
+		    Self.mTemplateID = Dict.Value("TemplateID")
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteToDictionary(Dict As Dictionary)
 		  Dict.Value("Provider") = "GameServerApp"
+		  Dict.Value("TemplateID") = Self.mTemplateID
 		End Sub
 	#tag EndEvent
 
@@ -15,6 +24,12 @@ Inherits Beacon.ServerProfile
 		  Self.mTemplateID = TemplateID
 		  Self.Platform = Beacon.ServerProfile.PlatformPC
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

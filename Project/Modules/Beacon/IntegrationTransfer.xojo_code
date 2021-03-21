@@ -34,6 +34,20 @@ Protected Class IntegrationTransfer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SetError(Err As RuntimeException)
+		  Self.Success = False
+		  
+		  If Err Is Nil Then
+		    Self.ErrorMessage = "Nil exception"
+		    Return
+		  End If
+		  
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Self.ErrorMessage = "Unhandled " + Info.Name + ": " + Err.Message
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SetError(Message As String)
 		  Self.ErrorMessage = Message
 		  Self.Success = False
