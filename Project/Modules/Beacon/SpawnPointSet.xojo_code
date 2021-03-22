@@ -9,6 +9,12 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ColorSetClass() As String
+		  Return Self.mColorSetClass
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mWeight = 0.5
@@ -46,6 +52,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Self.mMinDistanceFromStructuresMultiplier = Source.mMinDistanceFromStructuresMultiplier
 		  Self.mMinDistanceFromTamedDinosMultiplier = Source.mMinDistanceFromTamedDinosMultiplier
 		  Self.mOffsetBeforeMultiplier = Source.mOffsetBeforeMultiplier
+		  Self.mColorSetClass = Source.mColorSetClass
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastIndex)
 		  For I As Integer = 0 To Source.mEntries.LastIndex
@@ -261,6 +268,12 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		        Next
 		      Next
 		    End If
+		  End If
+		  
+		  If SaveData.HasKey("color_set") Then
+		    Set.ColorSetClass = SaveData.Value("color_set")
+		  ElseIf SaveData.HasKey("Color Set Class") Then
+		    Set.ColorSetClass = SaveData.Value("Color Set Class")
 		  End If
 		  
 		  Set.Modified = False
@@ -538,6 +551,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  SaveData.Value("Weight") = Self.Weight
 		  SaveData.Value("Entries") = Entries
 		  SaveData.Value("Offset Before Multiplier") = Self.mOffsetBeforeMultiplier
+		  SaveData.Value("Color Set Class") = Self.mColorSetClass
 		  If Self.mGroupOffset <> Nil Then
 		    SaveData.Value("Spawn Offset") = Self.mGroupOffset.SaveData
 		  End If
@@ -584,6 +598,10 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mCachedHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mColorSetClass As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

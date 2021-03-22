@@ -73,6 +73,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreatureColorSetByClass(ClassString As String) As Beacon.CreatureColorSet
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorSetByUUID(UUID As String) As Beacon.CreatureColorSet
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCreaturesByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Creature()
 		  
 		End Function
@@ -284,6 +296,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function SearchForCreatureColors(Label As String = "") As Beacon.CreatureColor()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForCreatureColorSets(Label As String = "") As Beacon.CreatureColorSet()
 		  
 		End Function
 	#tag EndMethod

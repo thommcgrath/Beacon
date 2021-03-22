@@ -33,7 +33,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   307
+      Height          =   275
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -79,7 +79,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   370
+         Top             =   338
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -111,7 +111,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   370
+         Top             =   338
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -143,7 +143,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   370
+         Top             =   338
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -179,7 +179,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   219
+         Height          =   187
          Index           =   -2147483648
          InitialParent   =   "EntriesGroup"
          InitialValue    =   ""
@@ -218,7 +218,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   307
+      Height          =   275
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -264,7 +264,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   370
+         Top             =   338
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -296,7 +296,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   370
+         Top             =   338
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -328,7 +328,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   370
+         Top             =   338
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -364,7 +364,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   219
+         Height          =   187
          Index           =   -2147483648
          InitialParent   =   "ReplaceGroup"
          InitialValue    =   ""
@@ -583,7 +583,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   236
+      Height          =   268
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -598,7 +598,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   422
+      Top             =   390
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -631,7 +631,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   526
+         Top             =   494
          Transparent     =   False
          Underline       =   False
          Value           =   "Min Water Height:"
@@ -666,7 +666,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   492
+         Top             =   460
          Transparent     =   False
          Underline       =   False
          Value           =   "Spread Radius:"
@@ -701,7 +701,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   616
+         Top             =   584
          Transparent     =   False
          Underline       =   False
          Value           =   "Distance Multipliers:"
@@ -736,7 +736,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   458
+         Top             =   426
          Transparent     =   False
          Underline       =   False
          Value           =   "Offset (X, Y, Z):"
@@ -780,7 +780,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   526
+         Top             =   494
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -825,7 +825,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   492
+         Top             =   460
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -870,7 +870,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   616
+         Top             =   584
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -915,7 +915,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   616
+         Top             =   584
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -960,7 +960,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   616
+         Top             =   584
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1005,7 +1005,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   458
+         Top             =   426
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1050,7 +1050,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   458
+         Top             =   426
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1095,7 +1095,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   458
+         Top             =   426
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1128,7 +1128,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   "When enabled, any level multipliers will be applied before adding any level offsets. When disabled, offsets are added first, then the multipliers are used."
-         Top             =   560
+         Top             =   528
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -1156,7 +1156,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   15
          TabPanelIndex   =   0
@@ -1164,7 +1164,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   592
+         Top             =   560
          Transparent     =   False
          Underline       =   False
          Value           =   "Players"
@@ -1191,7 +1191,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   16
          TabPanelIndex   =   0
@@ -1199,7 +1199,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   592
+         Top             =   560
          Transparent     =   False
          Underline       =   False
          Value           =   "Structures"
@@ -1226,7 +1226,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   0
+         Scope           =   2
          Selectable      =   False
          TabIndex        =   17
          TabPanelIndex   =   0
@@ -1234,12 +1234,79 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   592
+         Top             =   560
          Transparent     =   False
          Underline       =   False
          Value           =   "Tames"
          Visible         =   True
          Width           =   89
+      End
+      Begin UITweaks.ResizedPopupMenu ColorSetsMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AdvancedGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   188
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   18
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   618
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   291
+      End
+      Begin UITweaks.ResizedLabel ColorSetsLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AdvancedGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   19
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Colors:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   618
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   136
       End
    End
    Begin OmniBar SpawnSetToolbar
@@ -1249,6 +1316,7 @@ Begin BeaconContainer SpawnPointSetEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -1525,6 +1593,28 @@ End
 		  Else
 		    Self.WaterMinHeightField.Clear
 		  End If
+		  
+		  Self.ColorSetsMenu.RemoveAllRows
+		  Self.ColorSetsMenu.AddRow("Unchanged", "")
+		  Self.ColorSetsMenu.SelectedRowIndex = 0
+		  #if TargetMacOS
+		    Self.ColorSetsMenu.AddRow(MenuItem.TextSeparator, "-")
+		  #endif
+		  Var FoundColorSet As Boolean
+		  If Set.ColorSetClass.IsEmpty Then
+		    FoundColorSet = True
+		  End If
+		  Var ColorSets() As Beacon.CreatureColorSet = Beacon.Data.SearchForCreatureColorSets()
+		  For Each ColorSet As Beacon.CreatureColorSet In ColorSets
+		    If FoundColorSet = False And ColorSet.ClassString = Set.ColorSetClass Then
+		      FoundColorSet = True
+		    End If
+		    Self.ColorSetsMenu.AddRow(ColorSet.Label, ColorSet.ClassString)
+		  Next
+		  If FoundColorSet = False Then
+		    Self.ColorSetsMenu.AddRowAt(1, Set.ColorSetClass, Set.ColorSetClass)
+		  End If
+		  Self.ColorSetsMenu.SelectByTag(Set.ColorSetClass)
 		  
 		  Self.UpdateEntriesList(Set)
 		  Self.UpdateReplacementsList(Set)
@@ -2237,6 +2327,18 @@ End
 		  If Self.SpawnSet.Modified Then
 		    RaiseEvent Changed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ColorSetsMenu
+	#tag Event
+		Sub Change()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  Self.SpawnSet.ColorSetClass = Me.SelectedRowTag
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents

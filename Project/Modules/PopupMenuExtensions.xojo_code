@@ -8,6 +8,13 @@ Protected Module PopupMenuExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddRowAt(Extends Menu As PopupMenu, Row As Integer, Text As String, Tag As Variant)
+		  Menu.AddRowAt(Row, Text)
+		  Menu.RowTagAt(Row) = Tag
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SelectByCaption(Extends Menu As PopupMenu, Caption As String)
 		  For I As Integer = 0 To Menu.RowCount - 1
 		    If Menu.RowValueAt(I) = Caption Then

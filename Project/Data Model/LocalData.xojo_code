@@ -257,6 +257,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE INDEX events_label_idx ON events(label);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX colors_color_uuid_uidx ON colors(color_uuid);")
 		  Self.SQLExecute("CREATE INDEX colors_label_idx ON colors(label);")
+		  Self.SQLExecute("CREATE INDEX color_sets_label_idx ON color_sets(label);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX color_sets_class_string_uidx ON color_sets(class_string);")
 		  
 		  // For performance, rebuild the blueprints view too.
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
@@ -299,6 +301,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE color_sets (color_set_id TEXT COLLATE NOCASE PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL);")
 		  
 		  Self.BuildIndexes()
 		  
@@ -805,6 +808,26 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Colors() As Beacon.CreatureColor = Self.RowSetToCreatureColors(Rows)
 		  If Colors.Count = 1 Then
 		    Return Colors(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorSetByClass(ClassString As String) As Beacon.CreatureColorSet
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE class_string = ?1;", ClassString)
+		  Var Sets() As Beacon.CreatureColorSet = Self.RowSetToCreatureColorSets(Rows)
+		  If Sets.Count = 1 Then
+		    Return Sets(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorSetByUUID(UUID As String) As Beacon.CreatureColorSet
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE color_set_id = ?1;", UUID)
+		  Var Sets() As Beacon.CreatureColorSet = Self.RowSetToCreatureColorSets(Rows)
+		  If Sets.Count = 1 Then
+		    Return Sets(0)
 		  End If
 		End Function
 	#tag EndMethod
@@ -1613,6 +1636,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("DROP INDEX IF EXISTS events_label_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS colors_color_uuid_uidx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS colors_label_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS color_sets_label_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS color_sets_class_string_uidx;")
 		    
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Beacon.UserModID)
@@ -1982,6 +2007,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Self.SQLExecute("UPDATE colors SET color_uuid = ?2, label = ?3, hex_value = ?4 WHERE color_id = ?1;", ColorID, ColorUUID, Label, HexValue)
 		        Else
 		          Self.SQLExecute("INSERT INTO colors (color_id, color_uuid, label, hex_value) VALUES (?1, ?2, ?3, ?4);", ColorID, ColorUUID, Label, HexValue)
+		        End If
+		      Next
+		    End If
+		    
+		    If ChangeDict.HasKey("color_sets") Then
+		      Var Sets() As Variant = ChangeDict.Value("color_sets")
+		      For Each Dict As Dictionary In Sets
+		        Var SetUUID As String = Dict.Value("color_set_id")
+		        Var Label As String = Dict.Value("label")
+		        Var ClassString As String = Dict.Value("class_string")
+		        
+		        Var Results As RowSet = Self.SQLSelect("SELECT color_set_id FROM color_sets WHERE color_set_id = ?1;", SetUUID)
+		        If Results.RowCount = 1 Then
+		          Self.SQLExecute("UPDATE color_sets SET label = ?2, class_string = ?3 WHERE color_set_id = ?1;", SetUUID, Label, ClassString)
+		        Else
+		          Self.SQLExecute("INSERT INTO color_sets (color_set_id, label, class_string) VALUES (?1, ?2, ?3);", SetUUID, Label, ClassString)
 		        End If
 		      Next
 		    End If
@@ -2494,6 +2535,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    CreatureColors.Add(New Beacon.CreatureColor(ID, Label, HexValue))
 		  Next
 		  Return CreatureColors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RowSetToCreatureColorSets(Rows As RowSet) As Beacon.CreatureColorSet()
+		  Var Sets() As Beacon.CreatureColorSet
+		  For Each Row As DatabaseRow In Rows
+		    Var Label As String = Row.Column("label").StringValue
+		    Var UUID As String = Row.Column("color_set_id").StringValue
+		    Var ClassString As String = Row.Column("class_string").StringValue
+		    Sets.Add(New Beacon.CreatureColorSet(UUID, Label, ClassString))
+		  Next
+		  Return Sets
 		End Function
 	#tag EndMethod
 
@@ -3082,6 +3136,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchForCreatureColorSets(Label As String = "") As Beacon.CreatureColorSet()
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
+		  Return Self.RowSetToCreatureColorSets(Rows)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
 		  Var ExtraValues(0) As Variant
@@ -3597,6 +3658,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 
 	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureColorSetSelectSQL, Type = String, Dynamic = False, Default = \"SELECT color_sets.color_set_id\x2C color_sets.label\x2C color_sets.class_string FROM color_sets", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C creatures.used_stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private

@@ -275,6 +275,10 @@ Implements Iterable
 		      Members.Add("bAddLevelOffsetBeforeMultiplier=" + If(Set.LevelOffsetBeforeMultiplier, "True", "False"))
 		    End If
 		    
+		    If Set.ColorSetClass.IsEmpty = False Then
+		      Members.Add("ColorSets=""" + Set.ColorSetClass + """")
+		    End If
+		    
 		    RenderedEntries.Add("(" + Members.Join(",") + ")")
 		  Next
 		  
@@ -449,6 +453,7 @@ Implements Iterable
 		            Var Set As New Beacon.MutableSpawnPointSet
 		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
 		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
+		            Set.ColorSetClass = Entry.Lookup("ColorSets", "")
 		            
 		            For I As Integer = 0 To Classes.LastIndex
 		              Var Creature As Beacon.Creature = Beacon.ResolveCreature("", "", Classes(I), Mods)

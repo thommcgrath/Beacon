@@ -12,6 +12,15 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ColorSetClass(Assigns Value As String)
+		  If Self.mColorSetClass <> Value Then
+		    Self.mColorSetClass = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Just making it public
 		  Super.Constructor()
