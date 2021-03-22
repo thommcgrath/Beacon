@@ -683,8 +683,6 @@ End
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_UpdateAvailable
 		    Self.SetupUpdateUI()
-		  Case BeaconSubview.Notification_ViewShown
-		    Self.UpdateEditorMenu()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -886,35 +884,6 @@ End
 		  
 		  For Idx As Integer = 0 To Self.NavBar.LastIndex
 		    Self.NavBar.Item(Idx).Toggled = (Idx = Index)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateEditorMenu()
-		  Var Menu As MenuItem = EditorMenu
-		  
-		  For I As Integer = Menu.LastRowIndex DownTo 0
-		    If Menu.MenuAt(I) IsA ConfigGroupMenuItem Then
-		      Exit For I
-		    End If
-		    Menu.RemoveMenuAt(I)
-		  Next
-		  
-		  Var Items() As MenuItem
-		  Var Component As BeaconSubview = Self.CurrentComponent
-		  If (Component Is Nil) = False Then
-		    Component.GetEditorMenuItems(Items)
-		  End If
-		  
-		  If Items.LastIndex = -1 Then
-		    Return
-		  End If
-		  
-		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		  
-		  For Each Item As MenuItem In Items
-		    Menu.AddMenu(Item)
 		  Next
 		End Sub
 	#tag EndMethod

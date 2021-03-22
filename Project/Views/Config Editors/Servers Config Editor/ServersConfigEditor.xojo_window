@@ -155,23 +155,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
-		  If Self.ServerList.SelectedRowCount > 0 Then
-		    Self.EnableEditorMenuItem("CopyMOTDToAllServers")
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var ReplicateItem As New MenuItem("Copy Message of the Day to All Servers")
-		  ReplicateItem.Name = "CopyMOTDToAllServers"
-		  ReplicateItem.Enabled = (Self.ServerList.SelectedRowCount = 1)
-		  Items.Add(ReplicateItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Hidden()
 		  Var Container As ServerViewContainer = Self.CurrentView
 		  If (Container Is Nil) = False Then

@@ -321,14 +321,6 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
-   Begin MenuItem EditorMenu
-      SpecialMenu = 0
-      Index = -2147483648
-      Text = "Editor"
-      AutoEnabled = True
-      AutoEnable = True
-      Visible = True
-   End
    Begin MenuItem WindowMenu
       SpecialMenu = 0
       Index = -2147483648

@@ -119,21 +119,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
-		  Self.EnableEditorMenuItem("EditorLookforSupportedConfigLines")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var ScanItem As New MenuItem("Setup Guided Editors")
-		  ScanItem.Name = "EditorLookforSupportedConfigLines"
-		  ScanItem.Enabled = True
-		  Items.Add(ScanItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
@@ -198,6 +183,15 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCustomContent)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RunTask(Task As BeaconConfigs.Task)
+		  Select Case Task.UUID
+		  Case "d29dc6f8-e834-4969-9cfe-b38e1c052156"
+		    Self.LookForSupportedContent()
+		  End Select
 		End Sub
 	#tag EndEvent
 

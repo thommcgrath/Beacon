@@ -124,22 +124,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
-		  Self.EnableEditorMenuItem("ConvertCreatureReplacementsToSpawnPointAdditions")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var ConvertReplacements As New MenuItem("Convert Creature Replacements to Spawn Point Additions")
-		  ConvertReplacements.Enabled = True
-		  ConvertReplacements.AutoEnabled = False
-		  ConvertReplacements.Name = "ConvertCreatureReplacementsToSpawnPointAdditions"
-		  Items.Add(ConvertReplacements)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameDinoAdjustments) = False Then
 		    Return True
@@ -166,6 +150,23 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameDinoAdjustments)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RunTask(Task As BeaconConfigs.Task)
+		  Select Case Task.UUID
+		  Case "614cfc80-b7aa-437d-b17e-01534f2ab778"
+		    Var Changes As Integer = Self.Document.ConvertDinoReplacementsToSpawnOverrides()
+		    Self.SetupUI
+		    If Changes = 0 Then
+		      Self.ShowAlert("No changes made", "Beacon was unable to find any replaced creatures that it could convert into spawn point additions.")
+		    ElseIf Changes = 1 Then
+		      Self.ShowAlert("Converted 1 creature replacement", "Beacon found 1 creature that it was able to convert into spawn point additions. The replaced creature has been disabled.")
+		    Else
+		      Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures that it was able to convert into spawn point additions. The replaced creatures have been disabled.")
+		    End If
+		  End Select
 		End Sub
 	#tag EndEvent
 

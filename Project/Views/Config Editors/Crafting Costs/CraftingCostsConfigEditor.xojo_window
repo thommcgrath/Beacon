@@ -321,33 +321,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
-		  Self.EnableEditorMenuItem("CreateFibercraftServer")
-		  Self.EnableEditorMenuItem("AdjustCosts")
-		  Self.EnableEditorMenuItem("SetupElementTransfer")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var CreateFibercraftItem As New MenuItem("Setup Fibercraft Server")
-		  CreateFibercraftItem.Name = "CreateFibercraftServer"
-		  CreateFibercraftItem.AutoEnabled = False
-		  Items.Add(CreateFibercraftItem)
-		  
-		  Var AdjustCostsItem As New MenuItem("Adjust All Crafting Costs")
-		  AdjustCostsItem.Name = "AdjustCosts"
-		  AdjustCostsItem.AutoEnabled = False
-		  Items.Add(AdjustCostsItem)
-		  
-		  Var SetupElementTransferItem As New MenuItem("Setup Transferrable Element")
-		  SetupElementTransferItem.Name = "SetupElementTransfer"
-		  SetupElementTransferItem.AutoEnabled = False
-		  Items.Add(SetupElementTransferItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.SetListWidth(Self.ListMinWidth)
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
@@ -391,6 +364,19 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCraftingCosts)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RunTask(Task As BeaconConfigs.Task)
+		  Select Case Task.UUID
+		  Case "94eced5b-be7d-441a-a5b3-f4a9bf40a856"
+		    Self.CreateFibercraftServer()
+		  Case "24376f12-c256-440c-87ca-2c8309a7a754"
+		    Self.AdjustCosts()
+		  Case "3db64fe3-9134-4a19-a255-7712c8c70a83"
+		    Self.SetupTransferrableElement()
+		  End Select
 		End Sub
 	#tag EndEvent
 
@@ -539,6 +525,17 @@ End
 		  Self.ListStatusBar.Width = ListWidth
 		  Self.Panel.Left = Self.ListSeparator.Left + Self.ListSeparator.Width
 		  Self.Panel.Width = EditorWidth
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetupTransferrableElement()
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  If SetupTransferrableElementDialog.Present(Self, Config, Self.Document.Mods) Then
+		    Call Self.Config(True) // Forces adding the config to the file
+		    Self.UpdateList()
+		    Self.Changed = Config.Modified
+		  End If
 		End Sub
 	#tag EndMethod
 

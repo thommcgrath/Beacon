@@ -150,18 +150,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
-		  ConfigNames.Add("accounts")
-		  ConfigNames.Add("deployments")
-		  Var ConfigLabels() As String
-		  For Each ConfigName As String In ConfigNames
-		    ConfigLabels.Add(Language.LabelForConfig(ConfigName))
-		  Next
-		  ConfigLabels.SortWith(ConfigNames)
-		  For Each ConfigName As String In ConfigNames
-		    EditorMenu.AddMenu(New ConfigGroupMenuItem(ConfigName))
-		  Next
-		  
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)

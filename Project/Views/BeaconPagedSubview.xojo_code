@@ -15,15 +15,6 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var Page As BeaconSubview = Self.CurrentPage
-		  If (Page Is Nil) = False Then
-		    Page.GetEditorMenuItems(Items)
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Hidden()
 		  Var CurrentPage As BeaconSubview = Self.CurrentPage
 		  If (CurrentPage Is Nil) = False Then

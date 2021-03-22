@@ -533,23 +533,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
-		  If Self.Config(False).HarvestAmountMultiplier <> 1.0 Then
-		    Self.EnableEditorMenuItem("ConvertGlobalHarvestRate")
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var ConvertGlobalItem As New MenuItem("Convert Global Harvest Rate to Individual Rates")
-		  ConvertGlobalItem.AutoEnabled = False
-		  ConvertGlobalItem.Name = "ConvertGlobalHarvestRate"
-		  Items.Add(ConvertGlobalItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the properties, it would likely be confusing for users
 		  
@@ -576,6 +559,15 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameHarvestRates)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RunTask(Task As BeaconConfigs.Task)
+		  Select Case Task.UUID
+		  Case "5265adcd-5c7e-437c-bce2-d10721afde43"
+		    Self.ConvertGlobalHarvestRate()
+		  End Select
 		End Sub
 	#tag EndEvent
 

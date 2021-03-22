@@ -306,52 +306,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
-		  Self.EnableEditorMenuItem("DocumentRebuildPresets")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  #if false
-		    Var AddLootSourceItem As New MenuItem("Add Loot Source…")
-		    AddLootSourceItem.Name = "DocumentAddBeacon"
-		    AddLootSourceItem.AutoEnabled = False
-		    Items.Add(AddLootSourceItem)
-		    
-		    Var DuplicateLootSourceItem As New MenuItem("Duplicate Loot Source")
-		    DuplicateLootSourceItem.Name = "DocumentDuplicateBeacon"
-		    DuplicateLootSourceItem.AutoEnabled = False
-		    Items.Add(DuplicateLootSourceItem)
-		    
-		    Var RemoveLootSourceItem As New MenuItem("Remove Loot Source")
-		    RemoveLootSourceItem.Name = "DocumentRemoveBeacon"
-		    RemoveLootSourceItem.AutoEnabled = False
-		    Items.Add(RemoveLootSourceItem)
-		    
-		    Items.Add(New MenuItem(MenuItem.TextSeparator))
-		    
-		    Var AddItemSetItem As New MenuItem("Add Item Set")
-		    AddItemSetItem.Name = "DocumentAddItemSet"
-		    AddItemSetItem.AutoEnabled = False
-		    Items.Add(AddItemSetItem)
-		    
-		    Var RemoveItemSetItem As New MenuItem("Remove Item Set")
-		    RemoveItemSetItem.Name = "DocumentRemoveItemSet"
-		    RemoveItemSetItem.AutoEnabled = False
-		    Items.Add(RemoveItemSetItem)
-		    
-		    Items.Add(New MenuItem(MenuItem.TextSeparator))
-		  #endif
-		  
-		  Var RebuildItem As New MenuItem("Rebuild Item Sets from Presets")
-		  RebuildItem.Name = "DocumentRebuildPresets"
-		  RebuildItem.AutoEnabled = False
-		  Items.Add(RebuildItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.NameLootDrops) = False Then
 		    Return False
@@ -422,6 +376,15 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootDrops)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub RunTask(Task As BeaconConfigs.Task)
+		  Select Case Task.UUID
+		  Case "08efc49c-f39f-4147-820d-201637c206b5"
+		    Self.RebuildAllItemSets()
+		  End Select
 		End Sub
 	#tag EndEvent
 

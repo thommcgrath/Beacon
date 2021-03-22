@@ -153,12 +153,6 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  RaiseEvent GetEditorMenuItems(Items)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function HasModifications() As Boolean
 		  Return Self.Changed
 		End Function
@@ -279,10 +273,6 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GetEditorMenuItems(Items() As MenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

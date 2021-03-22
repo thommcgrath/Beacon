@@ -329,14 +329,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  If Self.CurrentPanel <> Nil Then
-		    Self.CurrentPanel.GetEditorMenuItems(Items)
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Hidden()
 		  Var Panel As ConfigEditor = Self.CurrentPanel
 		  If (Panel Is Nil) = False Then
@@ -1406,6 +1398,7 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator())
 		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this project"))
 		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods"))
+		  Me.Append(OmniBarItem.CreateButton("ToolsButton", "Tools", IconToolbarTools, "Use convenience tools for this project"))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1458,6 +1451,35 @@ End
 		    
 		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
 		    Self.mModsPopoverController = Controller
+		  Case "ToolsButton"
+		    Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
+		    Var LastEditor As String
+		    Var Base As New MenuItem
+		    For Each Task As BeaconConfigs.Task In Tasks
+		      If Task.FirstEditor <> LastEditor Then
+		        If Base.Count > 0 Then
+		          Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		        End If
+		        
+		        Var Header As New MenuItem(Language.LabelForConfig(Task.FirstEditor))
+		        Header.Enabled = False
+		        Base.AddMenu(Header)
+		        LastEditor = Task.FirstEditor
+		      End If
+		      Base.AddMenu(New MenuItem(Task.Caption, Task))
+		    Next
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		    If Choice Is Nil Then
+		      Return
+		    End If
+		    
+		    Var Task As BeaconConfigs.Task = Choice.Tag
+		    If Task.IsRelevantForEditor(Self.CurrentConfigName) = False Then
+		      Self.CurrentConfigName = Task.FirstEditor
+		    End If
+		    Call Self.CurrentPanel.RunTask(Task.UUID)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1523,6 +1545,49 @@ End
 		    Self.Changed = True
 		    Self.UpdateConfigList()
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ContextualClick(MouseX As Integer, MouseY As Integer, ItemIndex As Integer, ItemRect As Rect)
+		  #Pragma Unused MouseX
+		  #Pragma Unused MouseY
+		  
+		  If ItemIndex <= -1 Then
+		    Return
+		  End If
+		  
+		  Const RestoreTag = "b4d7f3d8-17f2-425f-8ab8-9032d558b29d"
+		  
+		  Var Base As New MenuItem
+		  Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
+		  Var Item As SourceListItem = Me.Item(ItemIndex)
+		  Var ConfigName As String = Item.Tag
+		  For Each Task As BeaconConfigs.Task In Tasks
+		    If Task.IsRelevantForEditor(ConfigName) Then
+		      Base.AddMenu(New MenuItem(Task.Caption, Task.UUID))
+		    End If
+		  Next
+		  If Base.Count > 0 Then
+		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  End If
+		  Base.AddMenu(New MenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
+		  
+		  Var Position As Point = Me.Window.GlobalPosition
+		  Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		  If Choice Is Nil Then
+		    Return
+		  End If
+		  
+		  If Me.SelectedRowIndex <> ItemIndex Then
+		    Me.SelectedRowIndex = ItemIndex
+		  End If
+		  
+		  If Choice.Tag = RestoreTag Then
+		    Self.CurrentPanel.RestoreToDefault()
+		    Return
+		  End If
+		  
+		  Call Self.CurrentPanel.RunTask(Choice.Tag)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

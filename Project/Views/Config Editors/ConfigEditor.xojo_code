@@ -2,33 +2,6 @@
 Protected Class ConfigEditor
 Inherits BeaconSubview
 	#tag Event
-		Sub EnableMenuItems()
-		  If Self.SupportsRestore() Then
-		    Self.EnableEditorMenuItem("DocumentRestoreConfigToDefault")
-		  End If
-		  
-		  RaiseEvent EnableMenuItems
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Var PreCount As Integer = Items.Count
-		  RaiseEvent GetEditorMenuItems(Items)
-		  If Items.Count > PreCount Then
-		    // Something was added, so we need another separator
-		    Items.Add(New MenuItem(MenuItem.TextSeparator))
-		  End If
-		  
-		  Var RestoreItem As New MenuItem("Restore """ + Self.ConfigLabel + """ to Default", "restore")
-		  RestoreItem.Name = "DocumentRestoreConfigToDefault"
-		  RestoreItem.AutoEnabled = False
-		  RestoreItem.Enabled = Self.SupportsRestore()
-		  Items.Add(RestoreItem)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  RaiseEvent Open
 		  // Do not call SetupUI here, it's redundant. Shown will handle that.
@@ -53,15 +26,7 @@ Inherits BeaconSubview
 			Return False
 			End If
 			
-			If Not Self.SupportsRestore Then
-			Return True
-			End If
-			
-			If Self.ShowConfirm("Are you sure you want to restore """ + Self.ConfigLabel + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
-			RaiseEvent RestoreToDefault
-			Self.SetupUI()
-			Self.Changed = True
-			End If
+			Self.RestoreToDefault()
 			
 			Return True
 		End Function
@@ -97,15 +62,6 @@ Inherits BeaconSubview
 		Function Document() As Beacon.Document
 		  Return Self.mController.Document
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Shared Sub EnableEditorMenuItem(Named As String)
-		  Var Item As MenuItem = EditorMenu.Child(Named)
-		  If Item <> Nil Then
-		    Item.Enable
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -214,6 +170,29 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub RestoreToDefault()
+		  If Self.ShowConfirm("Are you sure you want to restore """ + Self.ConfigLabel + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
+		    RaiseEvent RestoreToDefault
+		    Self.SetupUI()
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RunTask(TaskUUID As String) As Boolean
+		  Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
+		  For Each Task As BeaconConfigs.Task In Tasks
+		    If Task.UUID = TaskUUID Then
+		      RaiseEvent RunTask(Task)
+		      Return True
+		    End If
+		  Next
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Shared Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
 		  Var Sanitizer As New RegEx
@@ -253,20 +232,6 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SupportsRestore() As Boolean
-		  Return True
-		End Function
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event EnableMenuItems()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GetEditorMenuItems(Items() As MenuItem)
-	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Open()
@@ -278,6 +243,10 @@ Inherits BeaconSubview
 
 	#tag Hook, Flags = &h0
 		Event RestoreToDefault()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RunTask(Task As BeaconConfigs.Task)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
