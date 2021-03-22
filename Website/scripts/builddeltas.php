@@ -116,6 +116,7 @@ function DataForVersion(int $version, $since) {
 		'maps' => BeaconMap::GetAll($since),
 		'events' => BeaconEvent::GetAll($since),
 		'colors' => BeaconColor::GetAll($since),
+		'color_sets' => BeaconColorSet::GetAll($since),
 		'beacon_version' => $version,
 		'is_full' => is_null($since) ? true : false,
 		'min_version' => 0
