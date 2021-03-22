@@ -514,8 +514,16 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  Static GroupName As String = BeaconConfigs.NameDifficulty
-		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))
+		  Var Group As Beacon.ConfigGroup
+		  If Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName Then
+		    Group = Self.ConfigGroup(BeaconConfigs.NameDifficulty, True)
+		  Else
+		    Group = Self.ConfigGroup(BeaconConfigs.NameDifficulty, False)
+		    If Group Is Nil Then
+		      Group = Self.ConfigGroup(BeaconConfigs.NameDifficulty, Beacon.Document.BaseConfigSetName, True)
+		    End If
+		  End If
+		  Return BeaconConfigs.Difficulty(Group)
 		End Function
 	#tag EndMethod
 
