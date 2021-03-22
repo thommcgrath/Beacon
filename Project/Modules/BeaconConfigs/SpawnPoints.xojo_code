@@ -157,11 +157,17 @@ Implements Iterable
 		      If IncludeLevels Then
 		        Var Levels() As Beacon.SpawnPointLevel = Entry.Levels
 		        Var MinLevels(), MaxLevels(), Difficulties() As String
-		        For Each Level As Beacon.SpawnPointLevel In Levels
-		          MinLevels.Add(Level.MinLevel.PrettyText)
-		          MaxLevels.Add(Level.MaxLevel.PrettyText)
-		          Difficulties.Add(Level.Difficulty.PrettyText)
-		        Next
+		        If Levels.Count > 0 Then
+		          For Each Level As Beacon.SpawnPointLevel In Levels
+		            MinLevels.Add(Level.MinLevel.PrettyText)
+		            MaxLevels.Add(Level.MaxLevel.PrettyText)
+		            Difficulties.Add(Level.Difficulty.PrettyText)
+		          Next
+		        Else
+		          MinLevels.Add("1")
+		          MaxLevels.Add("30.999999")
+		          Difficulties.Add("0")
+		        End If
 		        LevelMembers.Add("(EnemyLevelsMin=(" + MinLevels.Join(",") + "),EnemyLevelsMax=(" + MaxLevels.Join(",") + "),GameDifficulties=(" + Difficulties.Join(",") + "))")
 		      End If
 		      If IncludeOffsets Then
