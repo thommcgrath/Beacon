@@ -731,7 +731,7 @@ End
 		  Self.mActiveEngine = Nil
 		  
 		  If Sender.Errored Then
-		    Self.ShowAlert("Unable to retrieve server list from Nitrado", "The error message provided was:" + EndOfLine + EndOfLine + Sender.ErrorMessage + EndOfLine + EndOfLine + "This error may be temporary, so try again in a few minutes. If the problem persists, make sure your antivirus or malware protection is not blocking Beacon from contacting Nitrado's servers.")
+		    Self.ShowAlert("Unable to retrieve server list from GameServerApp.com", "The error message provided was:" + EndOfLine + EndOfLine + Sender.ErrorMessage + EndOfLine + EndOfLine + "This error may be temporary, so try again in a few minutes. If the problem persists, make sure your antivirus or malware protection is not blocking Beacon from contacting GameServerApp.com's servers.")
 		    Self.AdvanceListQueue()
 		    Return
 		  End If

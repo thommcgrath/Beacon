@@ -687,7 +687,7 @@ Implements ObservationKit.Observable
 		    Segments.Add(Max(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth), Self.ButtonIconSize) + (Self.ButtonPadding * 2))
 		  Case OmniBarItem.Types.Tab
 		    If Self.Caption.IsEmpty = False Then
-		      Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption)), Self.MaxCaptionWidth))
+		      Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption) + 2), Self.MaxCaptionWidth))
 		    End If
 		    If (Self.Icon Is Nil) = False Then
 		      If Self.Caption.IsEmpty Then
