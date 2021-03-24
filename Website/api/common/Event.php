@@ -6,9 +6,9 @@ class Event implements \JsonSerializable {
 	protected $event_id;
 	protected $event_name;
 	protected $event_code;
-	protected $event_rates;
-	protected $event_colors;
-	protected $event_engrams;
+	protected $event_rates = [];
+	protected $event_colors = [];
+	protected $event_engrams = [];
 	
 	protected static function SQLColumns() {
 		return [
@@ -73,9 +73,9 @@ class Event implements \JsonSerializable {
 		$obj->event_id = $row->Field('event_id');
 		$obj->event_name = $row->Field('event_name');
 		$obj->event_code = $row->Field('event_code');
-		$obj->event_rates = json_decode($row->Field('rates'), true);
-		$obj->event_colors = json_decode($row->Field('colors'), true);
-		$obj->event_engrams = json_decode($row->Field('engrams'), true);
+		$obj->event_rates = is_null($row->Field('rates')) === false ? json_decode($row->Field('rates'), true) : [];
+		$obj->event_colors = is_null($row->Field('colors')) === false ? json_decode($row->Field('colors'), true) : [];
+		$obj->event_engrams = is_null($row->Field('engrams')) === false ? json_decode($row->Field('engrams'), true) : [];
 		return $obj;
 	}
 	
