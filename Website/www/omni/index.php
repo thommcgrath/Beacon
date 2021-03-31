@@ -57,6 +57,10 @@ table.generic .bullet-column {
 	width: 100px;
 }
 
+td.bullet-column {
+	color: #008000;
+}
+
 #cart_back_paragraph {
 	float: left;
 }
@@ -357,96 +361,103 @@ BeaconTemplate::FinishScript();
 		</thead>
 		<tbody>
 			<tr>
-				<td>Loot Drops<br><span class="smaller text-lighter">Beacon's original purpose, editing loot drops, is what it does best.</span></td>
-				<td class="text-center">&#10687;</td>
-				<td class="text-center">&#10687;</td>
-			</tr>
-			<tr>
 				<td>Nitrado Server Control<br><span class="smaller text-lighter">Nitrado server owners can allow Beacon to directly control their server, including proper restart timing, config editing, and server settings changes.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
+			<?php if ($stable_version >= 10501300) { ?>
+			<tr>
+				<td>GameServerApp.com Support<?php if ($stable_version < 10600300) { ?><span class="tag blue mini left-space">New in Beacon 1.5.1</span><?php } ?><br><span class="smaller text-lighter">Import and update GameServerApp.com config templates with only a few clicks.</span></td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<?php } ?>
 			<tr>
 				<td>FTP Upload and Download<br><span class="smaller text-lighter">Beacon can use FTP edit your Game.ini and GameUserSettings.ini files right on the server.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>Download Community Beacon Files<br><span class="smaller text-lighter">Download Beacon files created by other users to make getting started with custom loot easier.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>Create Community Beacon Files<br><span class="smaller text-lighter">Share your creation with the world to serve as a starting point for others.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>Breeding Multipliers<br><span class="smaller text-lighter">Adjust any of the 8 breeding-related multipliers with realtime display of their effects on Ark's creatures and their imprint times.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>Day and Night Cycle<br><span class="smaller text-lighter">Change the length of Ark's days and nights using minutes instead of multipliers.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
-			</tr>
-			<tr>
-				<td>Player and Creature Stat Multipliers<br><span class="smaller text-lighter">Change the stats of players, wild creatures, and tamed creatures.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
-			</tr>
-			<tr>
-				<td>Item Stat Limits<br><span class="smaller text-lighter">Globally limit item stats to precise admin-defined amounts, just like official servers.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<?php if ($stable_version >= 10500300) { ?>
 			<tr>
 				<td>Decay and Spoil<?php if ($stable_version < 10600300) { ?><span class="tag blue mini left-space">New in Beacon 1.5</span><?php } ?><br><span class="smaller text-lighter">Change and preview item decay, decomposition, and spoil times.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<?php } ?>
 			<tr>
+				<td>Item Stat Limits<br><span class="smaller text-lighter">Globally limit item stats to precise admin-defined amounts, just like official servers.</span></td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<tr>
+				<td>Loot Drops<br><span class="smaller text-lighter">Beacon's original purpose, editing loot drops, is what it does best.</span></td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<tr>
+				<td>Stat Multipliers<br><span class="smaller text-lighter">Change the stats of players, wild creatures, and tamed creatures.</span></td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<tr>
 				<td>Crafting Costs<br><span class="smaller text-lighter">Change the cost of any craftable item in Ark.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
-			</tr>
-			<tr>
-				<td>Player &amp; Tame Experience<br><span class="smaller text-lighter">Control max level and the experience curve for both players and tamed dinos.</span></td>
-				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
-			</tr>
-			<tr>
-				<td>Stack Sizes<br><span class="smaller text-lighter">Ark finally allows admins to customize stack sizes, so Beacon Omni has an editor ready to go.</span></td>
-				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
-			</tr>
-			<tr>
-				<td>Harvest Rates<br><span class="smaller text-lighter">Change the harvest multiplier for any harvestable item in the game. Tip: this is a great way to improve server performance.</span></td>
-				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>Creature Adjustments<br><span class="smaller text-lighter">Adjust creature-specific damage and vulnerability multipliers, replace creatures with others, or disable specific creatures entirely.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
-				<td>Creature Spawn Points<br><span class="smaller text-lighter">Add, remove, or change the creatures available on any map. Want to add lots of Featherlights to The Island, or put one really high level Pteranodon on Aberration? It's possible.</span></td>
+				<td>Creature Spawns<br><span class="smaller text-lighter">Add, remove, or change the creatures available on any map. Want to add lots of Featherlights to The Island, or put one really high level Pteranodon on Aberration? It's possible.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>Engram Control<br><span class="smaller text-lighter">Change when engrams are unlockable, if they auto-unlock, and the number of engram points awarded each level. Beacon's powerful wizard allows users to instantly build full engram designs, such as auto-unlocking everything except tek items at spawn.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<tr>
+				<td>Harvest Rates<br><span class="smaller text-lighter">Change the harvest multiplier for any harvestable item in the game. Tip: this is a great way to improve server performance.</span></td>
+				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<tr>
+				<td>Levels and XP<br><span class="smaller text-lighter">Control max level and the experience curve for both players and tamed dinos.</span></td>
+				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<tr>
+				<td>Stack Sizes<br><span class="smaller text-lighter">Ark finally allows admins to customize stack sizes, so Beacon Omni has an editor ready to go.</span></td>
+				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
 				<td>More config types on the way<br><span class="smaller text-lighter">With each major release, Beacon adds new editor types to both the free edition and Beacon Omni.</span></td>
-				<td class="text-center bullet-column">&#10687;</td>
-				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
 			</tr>
 		</tbody>
 	</table>
