@@ -612,10 +612,10 @@
 	}
 }
 
-@include setup-colors(#000000, #ffffff, #713a9a);
+@include setup-colors(#000000, #ffffff, #9c0fb0);
 
 html.purple {
-	@include setup-colors(#ffffff, #713a9a, #ffffff);
+	@include setup-colors(#ffffff, #9c0fb0, #ffffff);
 	
 	#header_logo, .white-on-dark {
 		filter: brightness(0) invert(1);
