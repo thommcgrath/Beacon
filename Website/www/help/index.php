@@ -5,7 +5,7 @@ BeaconTemplate::SetTitle('Help');
 ob_start();
 ?><h2>Getting Started</h2>
 <div class="indent">
-	<p>New users who have no idea how to start customizing loot should <a href="/videos/introduction_to_loot_drops_with">watch this introductory video</a>.</p>
+	<p>New users who have no idea how to start customizing loot should <a href="/videos/welcome_to_beacon">watch this introductory video</a>.</p>
 </div>
 <h2>Some more personal help</h2>
 <div class="indent">

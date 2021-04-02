@@ -150,11 +150,11 @@ Begin DiscoveryView GSADiscoveryView
          Visible         =   True
          Width           =   118
       End
-      Begin TextArea UserTokenArea
+      Begin CodeArea UserTokenArea
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   True
-         AllowStyledText =   True
+         AllowStyledText =   False
          AllowTabs       =   False
          BackgroundColor =   &cFFFFFF00
          Bold            =   False
