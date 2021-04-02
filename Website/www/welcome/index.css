@@ -59,7 +59,6 @@ a {
 	right: 0px;
 	display: flex;
 	padding: 20px;
-	border-top: 1px solid rgba(0, 0, 0, 0.2);
 	align-items: center;
 	box-sizing: border-box;
 	background-color: rgba(255, 255, 255, 0.1);

@@ -3,6 +3,7 @@
 $original_version = intval($_GET['from']);
 $current_version = intval($_GET['to']);
 $pages = [];
+$page_direction = 'left';
 
 function StartPage(string $title) {
 	ob_start();
@@ -10,11 +11,16 @@ function StartPage(string $title) {
 }
 
 function EndPage() {
-	global $pages;
+	global $pages, $page_direction;
 	echo '</div>';
 	$content = ob_get_contents();
 	ob_end_clean();
 	$pages[] = $content;
+	if ($page_direction === 'left') {
+		$page_direction = 'right';
+	} else {
+		$page_direction = 'left';
+	}
 }
 
 if ($original_version < 1) {
@@ -24,15 +30,33 @@ if ($original_version < 1) {
 } else {
 	if ($current_version >= 10500000 && $original_version < 10500000) {
 		StartPage('New Look');
-		echo '<div class="duo duo-left"><div class="duo-image"><img src="beacon15-new-design.png" width="298" height="186" alt=""></div><div class="duo-text"><h1>Updated Design</h1><p>Beacon has grown a lot since the last time its layout was updated, and there is a lot more going on these days. The new design is faster to use, easier to discover, and more consistent.</p></div></div>';
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon15-new-design.png" width="298" height="186" alt=""></div><div class="duo-text"><h1>Updated Design</h1><p>Beacon has grown a lot since the last time its layout was updated, and there is a lot more going on these days. The new design is faster to use, easier to discover, and more consistent.</p></div></div>';
 		EndPage();
 		
 		StartPage('Config Sets');
-		echo '<div class="duo duo-right"><div class="duo-image"><img src="beacon15-config-sets-menu.png" width="298" height="242" alt=""></div><div class="duo-text"><h1>Introducing Config Sets</h1><p>Config sets are one of the most powerful features ever introduced to Beacon. Now you can setup small batches of changes that can be quickly applied to servers, such as enabling PvP on weekends or running a breeding event. For admins of multiple servers, config sets allow servers to share common settings, while maintaining differences that make them unique.</p></div></div>';
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon15-config-sets-menu.png" width="298" height="242" alt=""></div><div class="duo-text"><h1>Introducing Config Sets</h1><p>Config sets are one of the most powerful features ever introduced to Beacon. Now you can setup small batches of changes that can be quickly applied to servers, such as enabling PvP on weekends or running a breeding event. For admins of multiple servers, config sets allow servers to share common settings, while maintaining differences that make them unique.</p></div></div>';
 		EndPage();
 		
 		StartPage('Decay and Spoil Editor');
-		echo '<div class="duo duo-left"><div class="duo-image"><img src="beacon15-decay-spoil.png" width="298" height="195" alt=""></div><div class="duo-text"><h1>Decay and Spoil Editor</h1><p>The new Decay and Spoil editor allows easy control of structure decay and destruction, as well as spoil times, all with a nice chart to preview the effects. This new editor is free for all Beacon users.</div></div>';
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon15-decay-spoil.png" width="298" height="195" alt=""></div><div class="duo-text"><h1>Decay and Spoil Editor</h1><p>The new Decay and Spoil editor allows easy control of structure decay and destruction, as well as spoil times, all with a nice chart to preview the effects. This new editor is free for all Beacon users.</div></div>';
+		EndPage();
+	}
+	if ($current_version >= 10501000 && $original_version < 10501000 && $original_version >= 10500000) {
+		StartPage('Import Into Config Sets');
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon151-import.png" width="298" height="194" alt=""></div><div class="duo-text"><h1>Import Into Config Sets</h1><p>The import results window now allows you to select (or create) config sets to import individual config pieces into.</p></div></div>';
+		EndPage();
+	}
+	if ($current_version >= 10501000 && $original_version < 10501000) {
+		StartPage('Creature Colors');
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon151-colors.png" width="298" height="70" alt=""></div><div class="duo-text"><h1>Change Creature Colors</h1><p>You can now choose different color sets for your spawn overrides. That means you can have rainbow dinosaurs without running an event!</p></div></div>';
+		EndPage();
+		
+		StartPage('Breeding Multiplier Profiles');
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon151-breeding.png" width="298" height="274" alt=""></div><div class="duo-text"><h1>Breeding Multiplier Profiles</h1><p>Ever needed to compute breeding multipliers for single player or while an event was running? Beacon can now adjust its math to accomodate these situations.</p></div></div>';
+		EndPage();
+		
+		StartPage('New Hosting Provider');
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon151-gameserverapp.png" width="298" height="130" alt=""></div><div class="duo-text"><h1>GameServerApp.com Integration</h1><p>Beacon can now automatically import and update your GameServerApp.com config templates!</p></div></div>';
 		EndPage();
 	}
 }
