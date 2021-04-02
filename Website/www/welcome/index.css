@@ -19,6 +19,9 @@ a {
 	left: 0px;
 	bottom: 0px;
 	right: 0px;
+	background-image: url(/assets/images/header-background-colors.svg);
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
 }
 
 #main_wrapper.animated .page {
@@ -59,7 +62,7 @@ a {
 	border-top: 1px solid rgba(0, 0, 0, 0.2);
 	align-items: center;
 	box-sizing: border-box;
-	background-color: rgba(113, 58, 154, 0.5);
+	background-color: rgba(255, 255, 255, 0.1);
 	backdrop-filter: blur(6px);
 	-webkit-backdrop-filter: blur(6px);
 }
@@ -190,12 +193,9 @@ button:enabled:active {
 }
 
 @media (prefers-color-scheme: dark) {
-	body {
+	body, #main_wrapper {
 		background-color: #262626;
-	}
-	
-	#navigator {
-		background-color: rgba(38, 38, 38, 0.5);
+		background-image: none;
 	}
 	
 	a {
