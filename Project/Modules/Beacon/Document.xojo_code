@@ -9,12 +9,18 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
-		  Var SetDict As Dictionary = Self.ConfigSet(Self.ActiveConfigSet)
+		  Self.AddConfigGroup(Group, Self.ActiveConfigSet)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup, SetName As String)
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  If SetDict Is Nil Then
 		    SetDict = New Dictionary
 		  End If
 		  SetDict.Value(Group.ConfigName) = Group
-		  Self.ConfigSet(Self.ActiveConfigSet) = SetDict
+		  Self.ConfigSet(SetName) = SetDict
 		End Sub
 	#tag EndMethod
 
@@ -188,9 +194,16 @@ Implements ObservationKit.Observable
 		    Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
 		    If (Group Is Nil) = False Then
 		      Group.IsImplicit = True
-		      Self.AddConfigGroup(Group)
+		      Self.AddConfigGroup(Group, SetName)
 		    End If
 		    Return Group
+		  ElseIf SetName <> BaseConfigSetName And GroupName = BeaconConfigs.NameDifficulty Then
+		    // Create is false, we're not in the base config set, and we're looking for difficulty.
+		    // Return a *clone* of the base difficulty, but don't add it to the config set.
+		    Var BaseDifficulty As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.NameDifficulty, BaseConfigSetName, True)
+		    Var Clone As New BeaconConfigs.Difficulty(BeaconConfigs.Difficulty(BaseDifficulty).DifficultyValue)
+		    Clone.IsImplicit = BaseDifficulty.IsImplicit
+		    Return Clone
 		  End If
 		End Function
 	#tag EndMethod
@@ -514,14 +527,9 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  Var Group As Beacon.ConfigGroup
-		  If Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName Then
-		    Group = Self.ConfigGroup(BeaconConfigs.NameDifficulty, True)
-		  Else
-		    Group = Self.ConfigGroup(BeaconConfigs.NameDifficulty, False)
-		    If Group Is Nil Then
-		      Group = Self.ConfigGroup(BeaconConfigs.NameDifficulty, Beacon.Document.BaseConfigSetName, True)
-		    End If
+		  Var Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.NameDifficulty, Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName)
+		  If Group Is Nil Then
+		    Return Nil
 		  End If
 		  Return BeaconConfigs.Difficulty(Group)
 		End Function
@@ -921,7 +929,13 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function HasConfigGroup(GroupName As String) As Boolean
-		  Var SetDict As Dictionary = Self.ConfigSet(Self.ActiveConfigSet)
+		  Return Self.HasConfigGroup(GroupName, Self.ActiveConfigSet)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasConfigGroup(GroupName As String, SetName As String) As Boolean
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  If (SetDict Is Nil) = False Then
 		    Return SetDict.HasKey(GroupName)
 		  End If
@@ -1252,13 +1266,33 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(Group As Beacon.ConfigGroup)
-		  Self.RemoveConfigGroup(Group.ConfigName)
+		  If Group Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveConfigGroup(Group.ConfigName, Self.ActiveConfigSet)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(Group As Beacon.ConfigGroup, SetName As String)
+		  If Group Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.RemoveConfigGroup(Group.ConfigName, SetName)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(GroupName As String)
-		  Var SetDict As Dictionary = Self.ConfigSet(Self.ActiveConfigSet)
+		  Self.RemoveConfigGroup(GroupName, Self.ActiveConfigSet)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(GroupName As String, SetName As String)
+		  Var SetDict As Dictionary = Self.ConfigSet(SetName)
 		  If (SetDict Is Nil) = False And SetDict.HasKey(GroupName) Then
 		    SetDict.Remove(GroupName)
 		    Self.mModified = True

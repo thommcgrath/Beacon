@@ -346,12 +346,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameEngramControl)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Self.SetupEngramsList()
 		  Self.SetupPointsList()

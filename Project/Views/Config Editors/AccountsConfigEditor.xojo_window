@@ -124,12 +124,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.Accounts.RemoveAll
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var Selected() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex

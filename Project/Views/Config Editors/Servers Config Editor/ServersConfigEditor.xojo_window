@@ -170,14 +170,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  For I As Integer = Self.Document.ServerProfileCount - 1 DownTo 0
-		    Self.Document.Remove(Self.Document.ServerProfile(I))
-		  Next
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1

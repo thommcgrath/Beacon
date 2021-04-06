@@ -144,12 +144,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootScale)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var Multiplier As Double = Self.Config(False).Multiplier
 		  Self.LootScaleField.Text = Multiplier.ToString(Locale.Current, "0%")

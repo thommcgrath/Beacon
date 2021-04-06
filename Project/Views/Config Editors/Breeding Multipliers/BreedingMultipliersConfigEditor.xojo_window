@@ -1714,12 +1714,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameBreedingMultipliers)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
 		  Self.EggLayPeriodField.Text = Config.LayEggIntervalMultiplier.ToString(Locale.Current, "0.0#####")

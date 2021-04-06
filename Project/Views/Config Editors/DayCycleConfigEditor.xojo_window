@@ -1334,12 +1334,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameDayCycle)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var Instance As LocalData = LocalData.SharedInstance
 		  

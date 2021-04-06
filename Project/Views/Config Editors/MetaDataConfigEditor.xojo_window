@@ -325,13 +325,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameMetadata)
-		  Self.Document.Mods.ResizeTo(-1)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Document.Title
 		  Self.DescriptionArea.Text = Self.Document.Description

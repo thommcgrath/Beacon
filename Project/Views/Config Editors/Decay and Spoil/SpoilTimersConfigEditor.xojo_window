@@ -1758,12 +1758,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameSpoilTimers)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.SpoilTimers = Self.Config(False)
 		  

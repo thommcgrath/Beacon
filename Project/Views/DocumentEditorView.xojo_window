@@ -944,6 +944,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RestoreEditor(ConfigName As String)
+		  Var Label As String = Language.LabelForConfig(ConfigName)
+		  If Self.ShowConfirm("Are you sure you want to restore """ + Label + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
+		    Var IsSelected As Boolean = Self.CurrentConfigName = ConfigName
+		    
+		    If IsSelected Then
+		      Self.CurrentConfigName = ""
+		    End If
+		    
+		    Self.Document.RemoveConfigGroup(ConfigName)
+		    
+		    Var CacheKey As String = Self.ActiveConfigSet + ":" + ConfigName
+		    Self.DiscardConfigPanel(CacheKey)
+		    
+		    If IsSelected Then
+		      Self.CurrentConfigName = ConfigName
+		    End If
+		    
+		    Self.Changed = True
+		    Self.UpdateConfigList()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SaveAs()
 		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
 		  Case DocumentSaveToCloudWindow.StateSaved
@@ -1524,27 +1549,7 @@ End
 		  #Pragma Unused ItemIndex
 		  #Pragma Unused ItemRect
 		  
-		  Var Label As String = Item.Caption
-		  If Self.ShowConfirm("Are you sure you want to restore """ + Label + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
-		    Var ConfigName As String = Item.Tag
-		    Var IsSelected As Boolean = Self.CurrentConfigName = ConfigName
-		    
-		    If IsSelected Then
-		      Self.CurrentConfigName = ""
-		    End If
-		    
-		    Self.Document.RemoveConfigGroup(ConfigName)
-		    
-		    Var CacheKey As String = Self.ActiveConfigSet + ":" + ConfigName
-		    Self.DiscardConfigPanel(CacheKey)
-		    
-		    If IsSelected Then
-		      Self.CurrentConfigName = ConfigName
-		    End If
-		    
-		    Self.Changed = True
-		    Self.UpdateConfigList()
-		  End If
+		  Self.RestoreEditor(Item.Tag)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1583,7 +1588,7 @@ End
 		  End If
 		  
 		  If Choice.Tag = RestoreTag Then
-		    Self.CurrentPanel.RestoreToDefault()
+		    Self.RestoreEditor(ConfigName)
 		    Return
 		  End If
 		  

@@ -374,12 +374,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameLootDrops)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub RunTask(Task As BeaconConfigs.Task)
 		  Select Case Task.UUID
 		  Case "08efc49c-f39f-4147-820d-201637c206b5"

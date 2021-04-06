@@ -773,12 +773,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStatLimits)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Var Config As BeaconConfigs.StatLimits = Self.Config(False)
 		  For Stat As Integer = BeaconConfigs.StatLimits.StatGenericQuality To BeaconConfigs.StatLimits.StatHyperthermal

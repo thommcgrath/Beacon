@@ -257,12 +257,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameStackSizes)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
 		  Self.GlobalMultiplierField.Text = Self.Config(False).GlobalMultiplier.ToString(Locale.Current, "0.0#####")
 		  Self.UpdateList()

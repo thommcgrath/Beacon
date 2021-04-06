@@ -724,20 +724,35 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.MaxDinoLevelField.Text = "150"
-		  Self.Document.Difficulty.IsImplicit = True
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub SetupUI()
-		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		  Var Difficulty As BeaconConfigs.Difficulty = Self.Config(False)
 		  Self.MaxDinoLevelField.Text = Difficulty.MaxDinoLevel.ToString(Locale.Current, ",##0")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h1
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.Difficulty
+		  Static ConfigName As String = BeaconConfigs.NameDifficulty
+		  
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.Difficulty
+		  
+		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
+		    Config = BeaconConfigs.Difficulty(Self.mConfigRef.Value)
+		  Else
+		    Config = BeaconConfigs.Difficulty(Document.ConfigGroup(ConfigName, ForWriting))
+		    Self.mConfigRef = New WeakRef(Config)
+		  End If
+		  
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
+		  End If
+		  
+		  Return Config
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
@@ -760,6 +775,11 @@ End
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
 #tag Events MaxDinoLevelField
@@ -774,10 +794,12 @@ End
 		    Return
 		  End If
 		  
-		  If Self.Document.Difficulty.MaxDinoLevel <> Value Then
-		    Self.Document.Difficulty.MaxDinoLevel = Value
-		    Self.Document.Difficulty.IsImplicit = False
-		    Self.FillReferenceFields(Self.Document.Difficulty)
+		  Var Config As BeaconConfigs.Difficulty = Self.Config(False)
+		  If Config.MaxDinoLevel <> Value Then
+		    Config = Self.Config(True)
+		    Config.MaxDinoLevel = Value
+		    Config.IsImplicit = False
+		    Self.FillReferenceFields(Config)
 		    Self.Changed = Self.Document.Modified
 		  End If
 		End Sub

@@ -181,12 +181,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.RemoveConfigGroup(BeaconConfigs.NameCustomContent)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub RunTask(Task As BeaconConfigs.Task)
 		  Select Case Task.UUID
 		  Case "d29dc6f8-e834-4969-9cfe-b38e1c052156"
