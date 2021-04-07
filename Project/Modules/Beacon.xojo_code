@@ -1639,6 +1639,9 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function SanitizeFilename(Filename As String, MaxLength As Integer = 0) As String
+		  // Windows doesn't seem to agree with trailing whitespace
+		  Filename = Filename.Trim
+		  
 		  Var Searcher As New Regex
 		  Searcher.Options.ReplaceAllMatches = True
 		  
