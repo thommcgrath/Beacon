@@ -672,10 +672,10 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingcost", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
+	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"315", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageMultipleSelection, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -1010,15 +1010,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.Append(OmniBarItem.CreateTitle("EngramsTitle", "Engrams"))
-		  Me.Append(OmniBarItem.CreateSeparator("EngramsTitleSeparator"))
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddEngramButton", "New Recipe", IconToolbarAdd, "Change the recipe for a new item."))
 		  Me.Append(OmniBarItem.CreateButton("DuplicateButton", "Duplicate", IconToolbarClone, "Duplicate the selected recipe.", False))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
 		  
-		  Me.Item("EngramsTitle").Priority = 5
-		  Me.Item("EngramsTitleSeparator").Priority = 5
+		  Me.Item("ConfigTitle").Priority = 5
+		  Me.Item("ConfigTitleSeparator").Priority = 5
 		End Sub
 	#tag EndEvent
 	#tag Event
