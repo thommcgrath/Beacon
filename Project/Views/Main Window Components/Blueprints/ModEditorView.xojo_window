@@ -578,7 +578,7 @@ End
 		    
 		    Var ModifiedBlueprints() As Beacon.Blueprint = BlueprintMultiEditor.Present(Self, Blueprints)
 		    If (ModifiedBlueprints Is Nil) = False Then
-		      For Each Blueprint As Beacon.Blueprint In Blueprints
+		      For Each Blueprint As Beacon.Blueprint In ModifiedBlueprints
 		        Self.mController.SaveBlueprint(Blueprint)
 		      Next
 		    End If
