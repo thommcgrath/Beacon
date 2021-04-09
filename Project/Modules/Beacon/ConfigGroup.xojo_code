@@ -61,6 +61,25 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsImplicit() As Boolean
+		  If Self.mIsImplicit Then
+		    Return Not RaiseEvent HasContent()
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub IsImplicit(Assigns Value As Boolean)
+		  If Self.mIsImplicit <> Value Then
+		    Self.mIsImplicit = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Issues(Document As Beacon.Document, Identity As Beacon.Identity) As Beacon.Issue()
 		  Var Arr() As Beacon.Issue
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
@@ -174,6 +193,10 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event HasContent() As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event MergeFrom(Other As Beacon.ConfigGroup)
 	#tag EndHook
 
@@ -185,23 +208,6 @@ Protected Class ConfigGroup
 		Event WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 	#tag EndHook
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mIsImplicit
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mIsImplicit <> Value Then
-			    Self.mIsImplicit = Value
-			    Self.mModified = True
-			  End If
-			End Set
-		#tag EndSetter
-		IsImplicit As Boolean
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mIsImplicit As Boolean
@@ -255,14 +261,6 @@ Protected Class ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsImplicit"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

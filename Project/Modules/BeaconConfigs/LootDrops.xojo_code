@@ -76,6 +76,12 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
+		Function HasContent() As Boolean
+		  Return Self.mSources.Count > 0
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Other)
 		  For Each Drop As Beacon.LootSource In Source
@@ -207,6 +213,12 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function ConfigName() As String
 		  Return BeaconConfigs.NameLootDrops
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return Self.mSources.Count
 		End Function
 	#tag EndMethod
 
