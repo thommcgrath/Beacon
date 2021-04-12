@@ -918,7 +918,7 @@ End
 		    Self.mUpdateUITag = ""
 		  End If
 		  
-		  Self.mUpdateUITag = CallLater.Schedule(500, AddressOf UpdateUI)
+		  Self.mUpdateUITag = CallLater.Schedule(500, WeakAddressOf UpdateUI)
 		End Sub
 	#tag EndMethod
 
