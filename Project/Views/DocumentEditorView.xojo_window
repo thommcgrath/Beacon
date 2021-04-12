@@ -1109,6 +1109,10 @@ End
 		#tag Setter
 			Set
 			  Var ConfigName As String = Self.CurrentConfigName
+			  If Value <> Beacon.Document.BaseConfigSetName And BeaconConfigs.SupportsConfigSets(ConfigName) = False Then
+			    // If switching from base and on an editor that won't exist in the desired set, switch to something else
+			    ConfigName = BeaconConfigs.NameLootDrops
+			  End If
 			  Self.CurrentConfigName = "" // To unload the current version
 			  
 			  Self.Document.ActiveConfigSet = Value
