@@ -1540,7 +1540,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > -1
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1557,12 +1557,22 @@ End
 		Sub Change()
 		  Var EditEntriesButton As OmniBarItem = Self.PresetToolbar.Item("EditEntriesButton")
 		  If (EditEntriesButton Is Nil) = False Then
-		    EditEntriesButton.Enabled = Me.SelectedRowCount > 0
+		    EditEntriesButton.Enabled = Me.CanEdit()
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub DoubleClick()
+		  Self.EditSelectedEntries()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
 		  Self.EditSelectedEntries()
 		End Sub
 	#tag EndEvent
