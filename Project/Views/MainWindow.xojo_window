@@ -736,7 +736,9 @@ End
 		        Self.NavBar.Append(UpdateItem)
 		      End If
 		      
-		      SoundUpdateAvailable.Play
+		      If Preferences.PlaySoundForUpdate Then
+		        SoundUpdateAvailable.Play
+		      End If
 		    Else
 		      UpdateItem.HelpTag = Preview
 		    End If

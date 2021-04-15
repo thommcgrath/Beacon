@@ -229,6 +229,25 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem EditPrefsSeparator
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin PrefsMenuItem EditPreferences
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "#App.kEditPreferences"
+         ShortcutKey = ","
+         Shortcut = "Cmd+,"
+         MenuModifier = True
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
    End
    Begin MenuItem ViewMenu
       SpecialMenu = 0
@@ -395,7 +414,7 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpSeparator2
+      Begin ApplicationMenuItem HelpSeparator2
          SpecialMenu = 0
          Index = -2147483648
          Text = "-"

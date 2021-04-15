@@ -548,6 +548,51 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.BooleanValue("Play Sound After Deploy", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.BooleanValue("Play Sound After Deploy") = Value
+			End Set
+		#tag EndSetter
+		Protected PlaySoundAfterDeploy As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Play Sound After Import", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.BooleanValue("Play Sound After Import") = Value
+			End Set
+		#tag EndSetter
+		Protected PlaySoundAfterImport As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Play Sound For Update", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.BooleanValue("Play Sound For Update") = Value
+			End Set
+		#tag EndSetter
+		Protected PlaySoundForUpdate As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Show Experimental Sources", False)
 			End Get
 		#tag EndGetter

@@ -1424,15 +1424,21 @@ End
 		    If NumSuccess > 0 And NumErrored = 0 Then
 		      // Full success
 		      Explanation = "Your server" + If(NumSuccess > 1, "s have", " has") + " been updated. " + If(NumSuccess > 1, "Any servers that were running when the deploy started will now be starting up.", "If the server was running when the deploy started, it will now be starting up.")
-		      SoundDeploySuccess.Play
+		      If Preferences.PlaySoundAfterDeploy Then
+		        SoundDeploySuccess.Play
+		      End If
 		    ElseIf NumSuccess > 0 And NumErrored > 0 Then
 		      // Partial success
 		      Explanation = Language.NounWithQuantity(NumSuccess, "server", "servers") + " deployed successfully, but " + Language.NounWithQuantity(NumErrored, "server", "servers") + " did not. To view the logs for a server, select it on the left."
-		      SoundDeployFailed.Play
+		      If Preferences.PlaySoundAfterDeploy Then
+		        SoundDeployFailed.Play
+		      End If
 		    ElseIf NumSuccess = 0 And NumErrored > 0 Then
 		      // Full failure
 		      Explanation = "Your server" + If(NumErrored > 1, "s", "") + " did not update successfully. To view the logs for a server, select it on the left. Use your host's control panel to check on the status of your server" + If(NumErrored > 1, "s", "") + " because " + If(NumErrored > 1, "they", "it") + " may or may not be running."
-		      SoundDeployFailed.Play
+		      If Preferences.PlaySoundAfterDeploy Then
+		        SoundDeployFailed.Play
+		      End If
 		    Else
 		      // What?
 		    End If

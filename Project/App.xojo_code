@@ -162,6 +162,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    // Not critically important
 		  End Try
 		  
+		  #if TargetMacOS
+		    EditPrefsSeparator.Visible = False
+		  #endif
+		  
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
@@ -201,6 +205,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Function
 	#tag EndEvent
 
+
+	#tag MenuHandler
+		Function EditPreferences() As Boolean Handles EditPreferences.Action
+			PreferencesWindow.Present
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
@@ -1286,6 +1298,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"&Delete"
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"&Delete"
+	#tag EndConstant
+
+	#tag Constant, Name = kEditPreferences, Type = String, Dynamic = False, Default = \"Options\xE2\x80\xA6", Scope = Public
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"Preferences\xE2\x80\xA6"
 	#tag EndConstant
 
 	#tag Constant, Name = kFileQuit, Type = String, Dynamic = False, Default = \"&Quit", Scope = Public

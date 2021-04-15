@@ -1288,10 +1288,14 @@ End
 		  If AllFinished Then
 		    Me.RunMode = Timer.RunModes.Off
 		    If ErrorCount = 0 Then
-		      SoundDeploySuccess.Play
+		      If Preferences.PlaySoundAfterImport Then
+		        SoundDeploySuccess.Play
+		      End If
 		      Self.Finish()
 		    ElseIf SuccessCount > 0 Then
-		      SoundDeployFailed.Play
+		      If Preferences.PlaySoundAfterImport Then
+		        SoundDeployFailed.Play
+		      End If
 		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
 		        Self.Finish()
 		      Else
@@ -1305,7 +1309,9 @@ End
 		        #endif
 		      End If
 		    Else
-		      SoundDeployFailed.Play
+		      If Preferences.PlaySoundAfterImport Then
+		        SoundDeployFailed.Play
+		      End If
 		      Self.ShowAlert("No files imported.", "Beacon was not able to import anything from the selected files.")
 		    End If
 		  End If
