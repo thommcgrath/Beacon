@@ -3,10 +3,18 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Submit Ticket');
 BeaconTemplate::SetPageDescription('Submit a new support request');
 BeaconTemplate::AddScript('/assets/scripts/contact.js');
+
+$current_timestamp = time();
+$psk = BeaconCommon::GetGlobal('Support Ticket Key');
+$hash = hash('sha256', $current_timestamp . $psk);
+
 ob_start();
 ?><h2>Submit a new support request</h2>
+<div class="notice-block notice-info">If you already have Beacon installed, <a href="beacon://action/newhelpticket">create your support ticket inside Beacon</a> to include additional information that will save time.</div>
 <div id="contactErrorNotice" class="notice-block notice-warning hidden">Hey, it looks like the form wasn't filled out completely. Please give it another look.</div>
 <form method="post" action="/help/contact" id="contactForm">
+	<input type="hidden" name="timestamp" id="contactTimestampField" value="<?php echo htmlentities($current_timestamp); ?>">
+	<input type="hidden" name="hash" id="contactHashField" value="<?php echo htmlentities($hash); ?>">
 	<table width="100%" cellpadding="0" cellspacing="10">
 		<tr>
 			<td class="text-right bold">Name:</td>

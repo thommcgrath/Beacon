@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	let contactHostField = document.getElementById('contactHostField');
 	let contactBodyField = document.getElementById('contactBodyField');
 	let contactActionButton = document.getElementById('contactActionButton');
+	let contactTimestampField = document.getElementById('contactTimestampField');
+	let contactHashField = document.getElementById('contactHashField');
 	
 	let showError = function(message) {
 		contactErrorNotice.innerHTML = message;
@@ -50,12 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
 			return;
 		}
 		
+		let contactTimestamp = contactTimestampField.value.trim();
+		let contactHash = contactHashField.value.trim();
+		
 		request.post('/help/ticket', {
 			'name': contactName,
 			'email': contactEmail,
 			'platform': contactPlatform,
 			'host': contactHost,
-			'body': contactBody
+			'body': contactBody,
+			'timestamp': contactTimestamp,
+			'hash': contactHash
 		}, function(obj) {
 			dialog.show('Your support request has been submitted.', 'You will receive an email confirmation shortly.');
 			contactBodyField.value = '';

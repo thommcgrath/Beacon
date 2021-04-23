@@ -549,6 +549,12 @@
 		background-color: mix($text-yellow, $background-color, 3%);
 	}
 	
+	.notice-info {
+		border-color: mix($text-blue, $background-color, 35%);
+		color: $text-blue;
+		background-color: mix($text-blue, $background-color, 3%);
+	}
+	
 	div.comment-block {
 		background-color: rgba($foreground-color, 0.02);
 		border-color: rgba($foreground-color, 0.1);

@@ -5,17 +5,17 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	ReplyError("Method not allowed", 405);
+	ReplyError("Method not allowed.", 405);
 }
 
 $has_expanded_parameters = BeaconCommon::HasAnyKeys($_POST, 'user', 'os', 'version', 'build') || isset($_FILES['archive']);
 if ($has_expanded_parameters) {
 	if (BeaconCommon::HasAllKeys($_POST, 'name', 'email', 'platform', 'host', 'body', 'user', 'os', 'version', 'build') === false || isset($_FILES['archive']) === false) {
-		ReplyError("Missing parameters", 400);
+		ReplyError("Missing parameters.", 400);
 	}
 } else {
-	if (BeaconCommon::HasAllKeys($_POST, 'name', 'email', 'platform', 'host', 'body') === false) {
-		ReplyError("Missing parameters", 400);
+	if (BeaconCommon::HasAllKeys($_POST, 'name', 'email', 'platform', 'host', 'body', 'timestamp', 'hash') === false) {
+		ReplyError("Missing parameters.", 400);
 	}
 }
 
@@ -24,6 +24,9 @@ $email = trim($_POST['email']);
 $platform = trim($_POST['platform']);
 $host = trim($_POST['host']);
 $body = trim($_POST['body']);
+if (strlen($body) < 60) {
+	ReplyError('Please include a more detailed description of your issue.', 400);
+}
 
 if ($has_expanded_parameters) {
 	$user_id = trim($_POST['user']);
@@ -32,7 +35,22 @@ if ($has_expanded_parameters) {
 	$build = trim($_POST['build']);
 	
 	if (BeaconUser::ValidateEmail($email) === false) {
-		ReplyError('Could not validate email address', 400);
+		ReplyError('Could not validate email address.', 400);
+	}
+} else {
+	$timestamp = intval($_POST['timestamp']);
+	$min_timestamp = $timestamp + 60;
+	$max_timestamp = $timestamp + 3600;
+	$current_timestamp = time();
+	if ($current_timestamp < $min_timestamp || $current_timestamp > $max_timestamp) {
+		ReplyError('Ticket was submitted too quickly.', 400);
+	}
+	
+	$provided_hash = trim($_POST['hash']);
+	$psk = BeaconCommon::GetGlobal('Support Ticket Key');
+	$required_hash = hash('sha256', $timestamp . $psk);
+	if ($provided_hash !== $required_hash) {
+		ReplyError('Invalid parameters.', 400);
 	}
 }
 
@@ -45,11 +63,11 @@ $platform_map = [
 ];
 
 if (array_key_exists($platform, $platform_map) === false) {
-	ReplyError("Unknown platform $platform", 400);
+	ReplyError("Unknown platform $platform.", 400);
 }
 
 if ($has_expanded_parameters && is_uploaded_file($_FILES['archive']['tmp_name']) === false) {
-	ReplyError('Unable to receive archive', 400);
+	ReplyError('Unable to receive archive.', 400);
 }
 
 $custom_fields = [
@@ -132,7 +150,7 @@ if ($has_expanded_parameters) {
 		$response = json_decode($zendesk_body, true);
 		$attachment_token = $response['upload']['token'];
 	} else {
-		ReplyError('Unable to upload to ZenDesk', 500, $zendesk_body);
+		ReplyError('Unable to upload to ZenDesk.', 500, $zendesk_body);
 	}
 } else {
 	$user = BeaconUser::GetByEmail($email);
@@ -171,7 +189,7 @@ if ($status == 201) {
 	echo json_encode(['error' => false, 'message' => 'Ticked Created', 'detail' => null], JSON_PRETTY_PRINT);
 	exit;
 } else {
-	ReplyError('Unable to create ticket with ZenDesk', 500, $zendesk_body);
+	ReplyError('Unable to create ticket with ZenDesk.', 500, $zendesk_body);
 }
 
 function ReplyError(string $message, int $code, $detail = null) {
