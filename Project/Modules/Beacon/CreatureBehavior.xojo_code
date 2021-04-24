@@ -18,7 +18,10 @@ Protected Class CreatureBehavior
 		  Self.mTamedResistanceMultiplier = 1.0
 		  Self.mProhibitSpawning = False
 		  Self.mReplacementCreature = Nil
-		  Self.mPreventTaming = False
+		  Self.mProhibitTaming = False
+		  Self.mProhibitTransfer = False
+		  Self.mSpawnWeightMultiplier = 1.0
+		  Self.mSpawnLimitPercent = Nil
 		End Sub
 	#tag EndMethod
 
@@ -38,7 +41,10 @@ Protected Class CreatureBehavior
 		  Self.mResistanceMultiplier = Source.mResistanceMultiplier
 		  Self.mTamedDamageMultiplier = Source.mTamedDamageMultiplier
 		  Self.mTamedResistanceMultiplier = Source.mTamedResistanceMultiplier
-		  Self.mPreventTaming = Source.mPreventTaming
+		  Self.mProhibitTaming = Source.mProhibitTaming
+		  Self.mProhibitTransfer = Source.mProhibitTransfer
+		  Self.mSpawnWeightMultiplier = Source.mSpawnWeightMultiplier
+		  Self.mSpawnLimitPercent = Source.mSpawnLimitPercent
 		End Sub
 	#tag EndMethod
 
@@ -85,7 +91,14 @@ Protected Class CreatureBehavior
 		    Behavior.mResistanceMultiplier = Dict.Lookup("Resistance Multiplier", 1.0)
 		    Behavior.mTamedDamageMultiplier = Dict.Lookup("Tamed Damage Multiplier", 1.0)
 		    Behavior.mTamedResistanceMultiplier = Dict.Lookup("Tamed Resistance Multiplier", 1.0)
-		    Behavior.mPreventTaming = Dict.Lookup("Prevent Taming", False)
+		    Behavior.mProhibitTaming = Dict.Lookup("Prevent Taming", False)
+		    Behavior.mProhibitTransfer = Dict.Lookup("Prohibit Transfer", False)
+		    Behavior.mSpawnWeightMultiplier = Dict.Lookup("Spawn Weight Multiplier", 1.0)
+		    If Dict.HasKey("Spawn Limit Percent") Then
+		      Behavior.mSpawnLimitPercent = Dict.Value("Spawn Limit Percent").DoubleValue
+		    Else
+		      Behavior.mSpawnLimitPercent = Nil
+		    End If
 		  End If
 		  
 		  Return Behavior
@@ -111,14 +124,20 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PreventTaming() As Boolean
-		  Return Self.mPreventTaming
+		Function ProhibitSpawning() As Boolean
+		  Return Self.mProhibitSpawning
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ProhibitSpawning() As Boolean
-		  Return Self.mProhibitSpawning
+		Function ProhibitTaming() As Boolean
+		  Return Self.mProhibitTaming
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProhibitTransfer() As Boolean
+		  Return Self.mProhibitTransfer
 		End Function
 	#tag EndMethod
 
@@ -133,6 +152,18 @@ Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function ResistanceMultiplier() As Double
 		  Return Self.mResistanceMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SpawnLimitPercent() As NullableDouble
+		  Return Self.mSpawnLimitPercent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SpawnWeightMultiplier() As Double
+		  Return Self.mSpawnWeightMultiplier
 		End Function
 	#tag EndMethod
 
@@ -175,8 +206,17 @@ Protected Class CreatureBehavior
 		    If Self.mTamedResistanceMultiplier <> 1.0 Then
 		      Dict.Value("Tamed Resistance Multiplier") = Self.mTamedResistanceMultiplier
 		    End If
-		    If Self.mPreventTaming Then
+		    If Self.mProhibitTaming Then
 		      Dict.Value("Prevent Taming") = True
+		    End If
+		    If Self.mProhibitTransfer Then
+		      Dict.Value("Prohibit Transfer") = True
+		    End If
+		    If Self.mSpawnWeightMultiplier <> 1.0 Then
+		      Dict.Value("Spawn Weight Multiplier") = Self.mSpawnWeightMultiplier
+		    End If
+		    If (Self.mSpawnLimitPercent Is Nil) = False Then
+		      Dict.Value("Spawn Limit Percent") = Self.mSpawnLimitPercent.DoubleValue
 		    End If
 		  End If
 		  Return Dict
@@ -193,11 +233,15 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mPreventTaming As Boolean
+		Protected mProhibitSpawning As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mProhibitSpawning As Boolean
+		Protected mProhibitTaming As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mProhibitTransfer As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -206,6 +250,14 @@ Protected Class CreatureBehavior
 
 	#tag Property, Flags = &h1
 		Protected mResistanceMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSpawnLimitPercent As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSpawnWeightMultiplier As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

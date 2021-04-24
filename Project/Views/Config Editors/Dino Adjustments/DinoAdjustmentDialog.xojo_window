@@ -8,16 +8,16 @@ Begin BeaconDialog DinoAdjustmentDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   378
+   Height          =   410
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   378
+   MaxHeight       =   410
    MaximizeButton  =   False
    MaxWidth        =   626
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   378
+   MinHeight       =   410
    MinimizeButton  =   False
    MinWidth        =   626
    Placement       =   1
@@ -260,7 +260,7 @@ Begin BeaconDialog DinoAdjustmentDialog
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   168
+      Height          =   200
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -862,8 +862,41 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabIndex        =   12
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
+         Tooltip         =   "When checked, the creature cannot be tamed."
          Top             =   300
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   454
+      End
+      Begin CheckBox PreventTransferCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Prevent Transfer"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   13
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   "When checked, the creature cannot be downloaded from an obelisk."
+         Top             =   332
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -898,7 +931,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   338
+      Top             =   370
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -930,7 +963,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   338
+      Top             =   370
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1068,7 +1101,8 @@ End
 		        Win.TameDamageField.Text = Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.TameResistanceField.Text = Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
-		        Win.PreventTamingCheck.Value = Behavior.PreventTaming
+		        Win.PreventTamingCheck.Value = Behavior.ProhibitTaming
+		        Win.PreventTransferCheck.Value = Behavior.ProhibitTransfer
 		      End If
 		    End If
 		  End If
@@ -1089,7 +1123,8 @@ End
 		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Text)
 		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Text)
 		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Text)
-		    Behavior.PreventTaming = Win.PreventTamingCheck.Value
+		    Behavior.ProhibitTaming = Win.PreventTamingCheck.Value
+		    Behavior.ProhibitTransfer = Win.PreventTransferCheck.Value
 		  End If
 		  
 		  If IsNull(EditCreature) = False And TargetCreature <> EditCreature Then
@@ -1184,7 +1219,7 @@ End
 	#tag Constant, Name = HeightDisable, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"168", Scope = Private
+	#tag Constant, Name = HeightMultipliers, Type = Double, Dynamic = False, Default = \"200", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HeightReplace, Type = Double, Dynamic = False, Default = \"32", Scope = Private
@@ -1283,12 +1318,13 @@ End
 		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
 		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
 		    Var PreventTaming As Boolean = Self.PreventTamingCheck.Value
+		    Var PreventTransfer As Boolean = Self.PreventTransferCheck.Value
 		    
 		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
 		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")
 		      Return
 		    End If
-		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 And PreventTaming = False Then
+		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 And PreventTaming = False And PreventTransfer = False Then
 		      Self.ShowAlert("You haven't changed any multipliers", "There's no reason to save a creature adjustment with no differences than official.")
 		      Return
 		    End If

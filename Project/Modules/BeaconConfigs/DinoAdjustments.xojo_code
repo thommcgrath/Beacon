@@ -30,9 +30,25 @@ Inherits Beacon.ConfigGroup
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
 		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers=(ClassName=""" + Behavior.TargetCreature.ClassString + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")", "TamedDinoClassResistanceMultipliers:" + Behavior.TargetCreature.ClassString))
 		      End If
-		      If Behavior.PreventTaming Then
+		      If Behavior.ProhibitTaming Then
 		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventDinoTameClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventDinoTameClassNames:" + Behavior.TargetCreature.ClassString))
 		      End If
+		      If Behavior.ProhibitTransfer Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventTransferForClassNames=""" + Behavior.TargetCreature.ClassString + """", "PreventTransferForClassNames:" + Behavior.TargetCreature.ClassString))
+		      End If
+		      #if EnableSpawnWeights
+		        If Behavior.SpawnWeightMultiplier <> 1.0 Or (Behavior.SpawnLimitPercent Is Nil) = False Then
+		          Var Elements() As String = Array("DinoNameTag=""" + Behavior.TargetCreature.ClassString + """")
+		          If Behavior.SpawnWeightMultiplier <> 1.0 Then
+		            Elements.Add("SpawnWeightMultiplier=" + Behavior.SpawnWeightMultiplier.PrettyText)
+		          End If
+		          If (Behavior.SpawnLimitPercent Is Nil) = False Then
+		            Elements.Add("OverrideSpawnLimitPercentage=true")
+		            Elements.Add("SpawnLimitPercentage=" + Behavior.SpawnLimitPercent.DoubleValue.PrettyText)
+		          End If
+		          Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoSpawnWeightMultipliers=" + Elements.Join(","), "DinoSpawnWeightMultipliers:" + Behavior.TargetCreature.ClassString))
+		        End If
+		      #endif
 		    End If
 		  Next
 		  
@@ -49,6 +65,10 @@ Inherits Beacon.ConfigGroup
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventDinoTameClassNames"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PreventTransferForClassNames"))
+		  #if EnableSpawnWeights
+		    Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "DinoSpawnWeightMultipliers"))
+		  #endif
 		  Return Keys
 		End Function
 	#tag EndEvent
@@ -254,11 +274,39 @@ Inherits Beacon.ConfigGroup
 		    Try
 		      Var TargetClass As String = Entry
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
-		      Behavior.PreventTaming = True
+		      Behavior.ProhibitTaming = True
 		      Config.Add(Behavior)
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
+		  
+		  Var PreventTransferDinos() As Variant = ParsedData.AutoArrayValue("PreventTransferForClassNames")
+		  For Each Entry As Variant In PreventTransferDinos
+		    Try
+		      Var TargetClass As String = Entry
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, Beacon.ResolveCreature("", "", TargetClass, Mods))
+		      Behavior.ProhibitTransfer = True
+		      Config.Add(Behavior)
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  #if EnableSpawnWeights
+		    Var SpawnWeights() As Variant = ParsedData.AutoArrayValue("DinoSpawnWeightMultipliers")
+		    For Each Entry As Variant In SpawnWeights
+		      Try
+		        Var Dict As Dictionary = Entry
+		        Var TargetClass As String = Dict.Value("
+		        If Dict.HasKey("SpawnWeightMultiplier") Then
+		          
+		        End If
+		        If Dict.HasKey("SpawnLimitPercentage") Then
+		          
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  #endif
 		  
 		  If Config.Modified Then
 		    Return Config
@@ -326,6 +374,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 
+	#tag Constant, Name = EnableSpawnWeights, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
+	#tag EndConstant
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"
@@ -365,14 +417,6 @@ Inherits Beacon.ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsImplicit"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -13,23 +13,34 @@ Inherits Beacon.CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PreventTaming(Assigns Value As Boolean)
-		  If Self.mPreventTaming = Value Then
-		    Return
-		  End If
-		  
-		  Self.mPreventTaming = Value
-		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ProhibitSpawning(Assigns Value As Boolean)
 		  If Self.mProhibitSpawning = Value Then
 		    Return
 		  End If
 		  
 		  Self.mProhibitSpawning = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProhibitTaming(Assigns Value As Boolean)
+		  If Self.mProhibitTaming = Value Then
+		    Return
+		  End If
+		  
+		  Self.mProhibitTaming = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ProhibitTransfer(Assigns Value As Boolean)
+		  If Self.mProhibitTransfer = Value Then
+		    Return
+		  End If
+		  
+		  Self.mProhibitTransfer = Value
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -50,6 +61,28 @@ Inherits Beacon.CreatureBehavior
 		  End If
 		  
 		  Self.mResistanceMultiplier = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SpawnLimitPercent(Assigns Value As NullableDouble)
+		  If Self.mSpawnLimitPercent = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSpawnLimitPercent = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SpawnWeightMultiplier(Assigns Value As Double)
+		  If Self.mSpawnWeightMultiplier = Value Then
+		    Return
+		  End If
+		  
+		  Self.mSpawnWeightMultiplier = Value
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod

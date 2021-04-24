@@ -92,6 +92,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -328,8 +329,12 @@ End
 		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
 		      Self.List.AddRow(Label)
 		    Else
-		      If Behavior.PreventTaming Then
+		      If Behavior.ProhibitTaming And Behavior.ProhibitTransfer Then
+		        Label = Label + EndOfLine + "Cannot be tamed or transferred"
+		      ElseIf Behavior.ProhibitTaming Then
 		        Label = Label + EndOfLine + "Cannot be tamed"
+		      ElseIf Behavior.ProhibitTransfer Then
+		        Label = Label + EndOfLine + "Cannot be transferred"
 		      End If
 		      Self.List.AddRow(Label, Behavior.DamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.ResistanceMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedDamageMultiplier.ToString(Locale.Current, "0.0#####"), Behavior.TamedResistanceMultiplier.ToString(Locale.Current, "0.0#####"))
 		    End If
@@ -391,7 +396,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And (Board.Text.IndexOf("DinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("DinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("NPCReplacements") > -1))
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And (Board.Text.IndexOf("DinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("DinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("NPCReplacements") > -1 Or Board.Text.IndexOf("PreventTransferForClassName") > -1))
 		End Function
 	#tag EndEvent
 	#tag Event
