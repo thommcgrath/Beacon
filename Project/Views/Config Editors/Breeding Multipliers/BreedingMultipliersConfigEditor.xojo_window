@@ -1778,14 +1778,17 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub PlaceControlGroups()
-		  Const MaxColumnWidth = 340
+		  // 919px minimum width
+		  
+		  Const MinLabelWidth = 220
+		  Const MaxColumnWidth = 332
 		  
 		  If Self.mFieldGroups.Count = 0 Then
 		    Return
 		  End If
 		  
 		  Var AvailableWidth As Integer = Self.Width - 40
-		  Var NumColumns As Integer = Floor(AvailableWidth / MaxColumnWidth)
+		  Var NumColumns As Integer = Max(Floor(AvailableWidth / MaxColumnWidth), 3)
 		  Var TotalColumnWidth As Integer = AvailableWidth - ((NumColumns - 1) * 12)
 		  Var StandardColumnWidth As Integer = Floor(TotalColumnWidth / NumColumns)
 		  Var RowsPerColumn As Integer = Floor(Self.mFieldGroups.Count / NumColumns)
@@ -1810,13 +1813,20 @@ End
 		      Self.mFieldGroups(GroupIdx).Left = ColumnLeft
 		      Bottom = Max(Bottom, Self.mFieldGroups(GroupIdx).Bottom)
 		      
+		      Var FieldWidth As Integer = 100
+		      Var LabelWidth As Integer = ColumnWidth - (FieldWidth + 12)
+		      If LabelWidth < MinLabelWidth Then
+		        LabelWidth = MinLabelWidth
+		        FieldWidth = ColumnWidth - (LabelWidth + 12)
+		      End If
+		      
 		      Var GroupLabel As Label = Label(Self.mFieldGroups(GroupIdx).Member(0))
 		      Var GroupField As RectControl = Self.mFieldGroups(GroupIdx).Member(1)
 		      Var GroupHelp As Label = Label(Self.mFieldGroups(GroupIdx).Member(2))
-		      GroupLabel.Width = ColumnWidth - 112
+		      GroupLabel.Width = LabelWidth
 		      GroupField.Left = GroupLabel.Left + GroupLabel.Width + 12
 		      If GroupField IsA TextField Then
-		        GroupField.Width = 100
+		        GroupField.Width = FieldWidth
 		      ElseIf GroupField IsA SwitchControl Then
 		        GroupField.Width = 40
 		      End If
