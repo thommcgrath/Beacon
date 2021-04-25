@@ -465,7 +465,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFastDecayUnsnappedCoreStructures As Boolean = True
+		Private mFastDecayUnsnappedCoreStructures As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -481,11 +481,11 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOnlyAutoDestroyCoreStructures As Boolean
+		Private mOnlyAutoDestroyCoreStructures As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOnlyDecayUnsnappedCoreStructures As Boolean = True
+		Private mOnlyDecayUnsnappedCoreStructures As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -667,14 +667,6 @@ Inherits Beacon.ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IsImplicit"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
