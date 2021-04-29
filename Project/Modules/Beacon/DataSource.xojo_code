@@ -1,19 +1,19 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
-		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
+		Sub AddPresetModifier(ParamArray Modifiers() As Beacon.PresetModifier)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddPresetModifier(Modifiers() As Beacon.PresetModifier)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AllMods() As Beacon.ModDetails()
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AllPresetModifiers() As Beacon.PresetModifier()
 		  
 		End Function
 	#tag EndMethod
@@ -28,6 +28,18 @@ Protected Interface DataSource
 		Sub DeletePreset(Preset As Beacon.Preset)
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeletePresetModifier(Modifiers() As Beacon.PresetModifier) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeletePresetModifier(ParamArray Modifiers() As Beacon.PresetModifier) As Boolean
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -194,6 +206,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetPresetModifier(ModifierID As String) As Beacon.PresetModifier
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetPresetModifiers(IncludeOfficial As Boolean = True, IncludeCustom As Boolean = True) As Beacon.PresetModifier()
 		  
 		End Function
 	#tag EndMethod

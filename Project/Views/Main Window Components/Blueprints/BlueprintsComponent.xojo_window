@@ -215,7 +215,7 @@ End
 		  Var Mods As OmniBarItem = OmniBarItem.CreateTab(Self.ModsListView1.ViewID, "Mods")
 		  Mods.Toggled = True
 		  
-		  Me.Append(Mods)
+		  Me.Append(Mods, OmniBarItem.CreateSeparator)
 		  
 		  Self.ModsListView1.LinkedOmniBarItem = Mods
 		End Sub

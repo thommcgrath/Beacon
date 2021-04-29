@@ -228,7 +228,7 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RemoveFileFrom(LocalFile As FolderItem, RemotePath As String)
+		Private Sub RemoveFileFrom(LocalFile As FolderItem, RemotePath As String, IsRemote As Boolean)
 		  If LocalFile.Exists Then
 		    LocalFile.Remove
 		  End If
@@ -238,6 +238,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "DELETE"
 		  ActionDict.Value("Path") = RemotePath
+		  ActionDict.Value("Remote") = IsRemote
 		  SyncActions.Add(ActionDict)
 		  
 		  If SetupIndexDatabase Then
@@ -286,6 +287,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"
 		  ActionDict.Value("Path") = RemotePath
+		  ActionDict.Value("Remote") = True
 		  SyncActions.Add(ActionDict)
 		End Sub
 	#tag EndMethod
@@ -526,6 +528,7 @@ Protected Module UserCloud
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
 		  ActionDict.Value("Path") = RemotePath
+		  ActionDict.Value("Remote") = False
 		  SyncActions.Add(ActionDict)
 		End Sub
 	#tag EndMethod
@@ -545,12 +548,27 @@ Protected Module UserCloud
 	#tag Method, Flags = &h1
 		Protected Function Write(RemotePath As String, Content As MemoryBlock) As Boolean
 		  Var LocalFile As FolderItem = LocalFile(RemotePath)
-		  If (LocalFile Is Nil) = False And LocalFile.Write(Content) Then
-		    SetActionForPath(RemotePath, "PUT")
-		    
-		    Sync()
-		    Return True
+		  If LocalFile Is Nil Then
+		    Return False
 		  End If
+		  
+		  If LocalFile.Exists Then
+		    Var ExistingContent As MemoryBlock = LocalFile.Read
+		    Var ExistingHash As String = EncodeHex(Crypto.SHA256(ExistingContent))
+		    Var NewHash As String = EncodeHex(Crypto.SHA256(Content))
+		    If NewHash = ExistingHash Then
+		      // They are already the same
+		      Return True
+		    End If
+		  End If
+		  
+		  If Not LocalFile.Write(Content) Then
+		    Return False
+		  End If
+		  
+		  SetActionForPath(RemotePath, "PUT")
+		  Sync()
+		  Return True
 		End Function
 	#tag EndMethod
 

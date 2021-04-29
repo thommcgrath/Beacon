@@ -88,17 +88,41 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
-		  Self.BeginTransaction()
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
-		  If Results.RowCount = 1 Then
-		    If Results.Column("mod_id").StringValue = Beacon.UserModID Then
-		      Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3 WHERE object_id = ?1;", Modifier.ModifierID, Modifier.Label, Modifier.Pattern)
-		    End If
-		  Else
-		    Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern) VALUES (?1, ?2, ?3, ?4);", Modifier.ModifierID, Beacon.UserModID, Modifier.Label, Modifier.Pattern)
+		Sub AddPresetModifier(ParamArray Modifiers() As Beacon.PresetModifier)
+		  Self.AddPresetModifier(Modifiers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddPresetModifier(Modifiers() As Beacon.PresetModifier)
+		  If Modifiers Is Nil Or Modifiers.Count = 0 Then
+		    Return
 		  End If
+		  
+		  Self.BeginTransaction()
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT changes();")
+		  Var PreChanges As Integer = Rows.ColumnAt(0).IntegerValue
+		  
+		  For Each Modifier As Beacon.PresetModifier In Modifiers
+		    Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
+		    If Results.RowCount = 1 Then
+		      If Results.Column("mod_id").StringValue = Beacon.UserModID Then
+		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, advanced_pattern = ?4 WHERE object_id = ?1 AND (label != ?2 OR pattern != ?3 OR advanced_pattern != ?4);", Modifier.ModifierID, Modifier.Label, Modifier.Pattern, Modifier.AdvancedPattern)
+		      End If
+		    Else
+		      Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern, advanced_pattern) VALUES (?1, ?2, ?3, ?4, ?5);", Modifier.ModifierID, Beacon.UserModID, Modifier.Label, Modifier.Pattern, Modifier.AdvancedPattern)
+		    End If
+		  Next
+		  
+		  Rows = Self.SQLSelect("SELECT changes();")
+		  Var PostChanges As Integer = Rows.ColumnAt(0).IntegerValue
+		  
 		  Self.Commit()
+		  
+		  If PreChanges <> PostChanges Then
+		    Self.BackupUserPresetModifiers()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -132,27 +156,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AllPresetModifiers() As Beacon.PresetModifier()
-		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
-		  Var Modifiers() As Beacon.PresetModifier
-		  While Not Results.AfterLastRow
-		    Var Dict As New Dictionary
-		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue
-		    Dict.Value("Pattern") = Results.Column("pattern").StringValue
-		    Dict.Value("Label") = Results.Column("label").StringValue
-		    
-		    Var Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
-		    If Modifier <> Nil Then
-		      Modifiers.Add(Modifier)
-		    End If
-		    
-		    Results.MoveToNextRow
-		  Wend
-		  Return Modifiers
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function AllTags(Category As String = "") As String()
 		  Var Results As RowSet
 		  If Category <> "" Then
@@ -180,6 +183,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Return Tags
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BackupUserPresetModifiers()
+		  If Self.mTransactions.Count > 0 Then
+		    // Do not write to disk while there is still a transaction running
+		    Return
+		  End If
+		  
+		  Var Modifiers() As Beacon.PresetModifier = Self.GetPresetModifiers(False, True)
+		  Var Dictionaries() As Dictionary
+		  For Each Modifier As Beacon.PresetModifier In Modifiers
+		    Dictionaries.Add(Modifier.ToDictionary)
+		  Next
+		  
+		  Var Content As String = Beacon.GenerateJSON(Dictionaries, True)
+		  Call UserCloud.Write("/Presets/Modifiers.json", Content)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -291,7 +312,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL, advanced_pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE news (uuid TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT NOT NULL, detail TEXT, url TEXT, min_version INTEGER, max_version INTEGER, moment TEXT NOT NULL, min_os_version TEXT);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
@@ -624,6 +645,30 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Self.LoadPresets()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeletePresetModifier(ParamArray Modifiers() As Beacon.PresetModifier) As Boolean
+		  Return Self.DeletePresetModifier(Modifiers)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeletePresetModifier(Modifiers() As Beacon.PresetModifier) As Boolean
+		  Self.BeginTransaction()
+		  For Each Modifier As Beacon.PresetModifier In Modifiers
+		    // Make sure this modifier is not in use
+		    Var Rows As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE contents LIKE ?1;", "%" + Modifier.ModifierID + "%")
+		    If Rows.RowCount > 0 Then
+		      Self.Rollback()
+		      Return False
+		    End If
+		    Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1 AND object_id = ?2;", Beacon.UserModID, Modifier.ModifierID)
+		  Next
+		  Self.Commit()
+		  Self.BackupUserPresetModifiers()
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1188,6 +1233,39 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPresetModifiers(IncludeOfficial As Boolean = True, IncludeCustom As Boolean = True) As Beacon.PresetModifier()
+		  Var Modifiers() As Beacon.PresetModifier
+		  
+		  Var SQL As String = "SELECT object_id, label, pattern, advanced_pattern FROM preset_modifiers"
+		  If IncludeOfficial = False And IncludeCustom = True Then
+		    SQL = SQL + " WHERE mod_id = '" + Beacon.UserModID + "'"
+		  ElseIf IncludeOfficial = True And IncludeCustom = False Then
+		    SQL = SQL + " WHERE mod_id != '" + Beacon.UserModID + "'"
+		  ElseIf IncludeOfficial = False And IncludeCustom = False Then
+		    Return Modifiers
+		  End If
+		  SQL = SQL + " ORDER BY label;"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL)
+		  While Not Results.AfterLastRow
+		    Var Dict As New Dictionary
+		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue
+		    Dict.Value("Pattern") = Results.Column("pattern").StringValue
+		    Dict.Value("Label") = Results.Column("label").StringValue
+		    Dict.Value("Advanced Pattern") = Results.Column("advanced_pattern").StringValue
+		    
+		    Var Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
+		    If Modifier <> Nil Then
+		      Modifiers.Add(Modifier)
+		    End If
+		    
+		    Results.MoveToNextRow
+		  Wend
+		  Return Modifiers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
 		  // Part of the Beacon.DataSource interface.
 		  
@@ -1506,18 +1584,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Import presets from disk into the database
-		  Self.BeginTransaction()
-		  Var PresetPaths() As String = UserCloud.List("/Presets/")
-		  For Each RemotePath As String In PresetPaths
-		    Var PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
-		    If PresetContents <> Nil Then
-		      Call Self.ImportPreset(PresetContents)
-		    End If
-		  Next
-		  Self.Commit()
-		  
-		  // This reloads presets from the database
-		  Self.LoadPresets()
+		  Self.RestorePresetsFromCloud()
 		End Sub
 	#tag EndMethod
 
@@ -1526,6 +1593,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var EngramsUpdated, PresetsUpdated As Boolean
 		  For Each Action As Dictionary In Actions
 		    Var RemotePath As String = Action.Value("Path")
+		    Var IsRemote As Boolean = Action.Value("Remote")
+		    
 		    If RemotePath = "/Engrams.json" Or RemotePath = "/Blueprints.json" Then
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
@@ -1535,20 +1604,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
 		      End Select
 		    ElseIf RemotePath.BeginsWith("/Presets") Then
-		      Var PresetID As String = RemotePath.Middle(8, 36)
-		      Select Case Action.Value("Action")
-		      Case "DELETE"
-		        Self.BeginTransaction()
-		        Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, PresetID)
-		        Self.Commit()
+		      If IsRemote Then
 		        PresetsUpdated = True
-		      Case "GET"
-		        Var PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
-		        If PresetContents = Nil Then
-		          Continue
-		        End If
-		        PresetsUpdated = Self.ImportPreset(PresetContents) Or PresetsUpdated
-		      End Select
+		      End
 		    End If
 		  Next
 		  
@@ -1556,7 +1614,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		  End If
 		  If PresetsUpdated Then
-		    Self.LoadPresets()
+		    Self.RestorePresetsFromCloud()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1946,14 +2004,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Var Label As String = Dict.Value("label")
 		      Var Pattern As String = Dict.Value("pattern")
+		      Var AdvancedPattern As String = Dict.Lookup("advanced_pattern", "")
 		      Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
 		      
 		      ReloadPresets = True
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE object_id = ?1;", ObjectID.StringValue)
 		      If Results.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE object_id = ?1;", ObjectID.StringValue, Label, Pattern, ModID.StringValue)
+		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4, advanced_pattern = ?5 WHERE object_id = ?1;", ObjectID.StringValue, Label, Pattern, ModID.StringValue, AdvancedPattern)
 		      Else
-		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id) VALUES (?1, ?2, ?3, ?4);", ObjectID.StringValue, Label, Pattern, ModID.StringValue)
+		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id, advanced_pattern) VALUES (?1, ?2, ?3, ?4, ?5);", ObjectID.StringValue, Label, Pattern, ModID.StringValue, AdvancedPattern)
 		      End If
 		    Next
 		    
@@ -2198,7 +2257,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Sub LoadPresets()
 		  Self.mPresets.ResizeTo(-1)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Beacon.UserModID) // Loading the presets will refill all the needed custom modifiers
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE object_id != object_id AND object_id IN (SELECT object_id FROM custom_presets);") // To clean up object_id values that are not lowercase
 		  Self.SQLExecute("UPDATE custom_presets SET object_id = object_id WHERE object_id != object_id;")
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE object_id NOT IN (SELECT object_id FROM custom_presets WHERE user_id = ?1)", Self.UserID), Beacon.Preset.Types.BuiltIn)
@@ -2462,6 +2520,55 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Return Results.Column("path").StringValue
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RestorePresetsFromCloud()
+		  // 1. Remove custom presets
+		  // 2. Remove custom modifiers
+		  // 3. Load custom modifiers
+		  // 4. Load custom presets
+		  
+		  Self.BeginTransaction()
+		  
+		  Self.SQLExecute("DELETE FROM custom_presets;")
+		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Beacon.UserModID)
+		  
+		  Var ModifiersContent As MemoryBlock = UserCloud.Read("/Presets/Modifiers.json")
+		  If (ModifiersContent Is Nil) = False And ModifiersContent.Size > 0 Then
+		    Try
+		      Var Modifiers() As Beacon.PresetModifier
+		      Var Members() As Variant = Beacon.ParseJSON(DefineEncoding(ModifiersContent, Encodings.UTF8))
+		      For Each Member As Variant In Members
+		        If (Member IsA Dictionary) = False Then
+		          Continue
+		        End If
+		        
+		        Var Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Member)
+		        If (Modifier Is Nil) = False Then
+		          Modifiers.Add(Modifier)
+		        End If
+		      Next
+		      Self.AddPresetModifier(Modifiers)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Var PresetsList() As String = UserCloud.List("/Presets/")
+		  For Each RemotePath As String In PresetsList
+		    If RemotePath = "/Presets/Modifiers.json" Then
+		      Continue
+		    End If
+		    
+		    Var Contents As MemoryBlock = UserCloud.Read(RemotePath)
+		    If (Contents Is Nil) = False And Contents.Size > 0 Then
+		      Call Self.ImportPreset(Contents)
+		    End If
+		  Next
+		  
+		  Self.Commit()
+		  Self.LoadPresets()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -3705,7 +3812,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"21", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"22", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

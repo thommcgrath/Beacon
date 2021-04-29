@@ -117,25 +117,6 @@ Implements Beacon.Countable
 		    End If
 		  End If
 		  
-		  If Dict.HasKey("Modifier Definitions") Then
-		    // Only import the unknown ones. All get exported anyway.
-		    Var Definitions() As Variant = Dict.Value("Modifier Definitions")
-		    For Each Definition As Dictionary In Definitions
-		      If Not Definition.HasKey("ModifierID") Then
-		        Continue
-		      End If
-		      
-		      Var ModifierID As String = Definition.Value("ModifierID")
-		      Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
-		      If Modifier = Nil Then
-		        Modifier = Beacon.PresetModifier.FromDictionary(Definition)
-		        If Modifier <> Nil Then
-		          Beacon.Data.AddPresetModifier(Modifier)
-		        End If
-		      End If
-		    Next
-		  End If
-		  
 		  If Dict.HasKey("Modifiers") Then
 		    Var Modifiers As Dictionary = Dict.Value("Modifiers")
 		    For Each Set As DictionaryEntry In Modifiers
@@ -321,7 +302,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Shared Function SourceKindToModifierID(Kind As String) As String()
+		Attributes( Deprecated ) Protected Shared Function SourceKindToModifierID(Kind As String) As String()
 		  Var IDs() As String
 		  Select Case Kind
 		  Case "Bonus"
@@ -352,17 +333,6 @@ Implements Beacon.Countable
 		  Next
 		  Hashes.SortWith(Contents)
 		  
-		  // Export every definition, even though built-ins will be dropped on read. This preserves
-		  // the file in the future if a built-in is dropped.
-		  Var Definitions() As Dictionary
-		  For Each Entry As DictionaryEntry In Self.mModifierValues
-		    Var ModifierID As String = Entry.Key
-		    Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
-		    If Modifier <> Nil Then
-		      Definitions.Add(Modifier.ToDictionary)
-		    End If
-		  Next
-		  
 		  Var Dict As New Dictionary
 		  Dict.Value("Version") = 2
 		  Dict.Value("ID") = Self.PresetID
@@ -372,7 +342,6 @@ Implements Beacon.Countable
 		  Dict.Value("Max") = Self.MaxItems
 		  Dict.Value("Entries") = Contents
 		  Dict.Value("Modifiers") = Self.mModifierValues
-		  Dict.Value("Modifier Definitions") = Definitions
 		  Return Dict
 		End Function
 	#tag EndMethod

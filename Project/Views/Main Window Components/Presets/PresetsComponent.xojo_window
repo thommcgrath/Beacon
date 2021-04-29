@@ -32,6 +32,7 @@ Begin BeaconPagedSubview PresetsComponent
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -71,15 +72,16 @@ Begin BeaconPagedSubview PresetsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   1
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   300
       Begin ListPresetsComponent PresetsList
@@ -94,6 +96,7 @@ Begin BeaconPagedSubview PresetsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   262
+         Index           =   -2147483648
          InitialParent   =   "Views"
          IsFrontmost     =   False
          Left            =   0
@@ -117,6 +120,42 @@ Begin BeaconPagedSubview PresetsComponent
          Visible         =   True
          Width           =   300
       End
+      Begin ListPresetModifiersComponent ModifiersList
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   262
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         IsFrontmost     =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   0
+         MinimumWidth    =   0
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         ViewIcon        =   0
+         ViewTitle       =   "Untitled"
+         Visible         =   True
+         Width           =   300
+      End
    End
 End
 #tag EndWindow
@@ -131,6 +170,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.AppendPage(Self.PresetsList)
+		  Self.AppendPage(Self.ModifiersList)
 		End Sub
 	#tag EndEvent
 
@@ -311,7 +351,10 @@ End
 		  ListItem.Toggled = True
 		  Self.PresetsList.LinkedOmniBarItem = ListItem
 		  
-		  Me.Append(ListItem)
+		  Var ModifiersItem As OmniBarItem = OmniBarItem.CreateTab("ModifiersList", "Modifiers")
+		  Self.ModifiersList.LinkedOmniBarItem = ModifiersItem
+		  
+		  Me.Append(ListItem, ModifiersItem, OmniBarItem.CreateSeparator)
 		End Sub
 	#tag EndEvent
 	#tag Event

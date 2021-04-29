@@ -553,7 +553,7 @@ End
 		  
 		  Recents.Toggled = True
 		  
-		  Me.Append(Recents, Cloud, Community)
+		  Me.Append(Recents, Cloud, Community, OmniBarItem.CreateSeparator)
 		  
 		  Self.RecentDocumentsComponent1.LinkedOmniBarItem = Recents
 		  Self.CloudDocumentsComponent1.LinkedOmniBarItem = Cloud

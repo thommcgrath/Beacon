@@ -1107,7 +1107,7 @@ End
 		  Self.UpdateMinAndMaxFields
 		  
 		  Var AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
-		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
+		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.GetPresetModifiers
 		  Self.ModifiersList.RemoveAllRows()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
 		    If AppliedModifiers.IndexOf(Modifier.ModifierID) = -1 Then

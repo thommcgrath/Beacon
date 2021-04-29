@@ -8,25 +8,25 @@ Begin BeaconDialog PresetModifierEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   466
+   Height          =   236
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
+   MaxHeight       =   236
    MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaxWidth        =   500
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   466
+   MinHeight       =   236
    MinimizeButton  =   False
-   MinWidth        =   600
+   MinWidth        =   500
    Placement       =   1
    Resizable       =   "True"
    Resizeable      =   False
    SystemUIVisible =   "True"
    Title           =   "Modifier"
    Visible         =   True
-   Width           =   600
+   Width           =   500
    Begin UITweaks.ResizedPopupMenu GroupMenu
       AutoDeactivate  =   True
       Bold            =   False
@@ -57,7 +57,7 @@ Begin BeaconDialog PresetModifierEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   368
+      Width           =   268
    End
    Begin RangeField MinQualityField
       AcceptTabs      =   False
@@ -239,264 +239,13 @@ Begin BeaconDialog PresetModifierEditor
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Group:"
+      Text            =   "Selector:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   156
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   180
-   End
-   Begin UITweaks.ResizedTextField GroupNameField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   212
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   188
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   368
-   End
-   Begin DelayedTextField GroupPatternField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   212
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   13
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   222
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   368
-   End
-   Begin UITweaks.ResizedLabel GroupNameLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Name:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   188
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   180
-   End
-   Begin UITweaks.ResizedLabel GroupPatternLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "RegEx Pattern:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   222
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   180
-   End
-   Begin BeaconListbox MatchesList
-      AllowInfiniteScroll=   False
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   True
-      ColumnCount     =   1
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   -1
-      DefaultSortColumn=   0
-      DefaultSortDirection=   0
-      EditCaption     =   "Edit"
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
-      HeadingIndex    =   -1
-      Height          =   158
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   212
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      PreferencesKey  =   ""
-      RequiresSelection=   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   256
-      Transparent     =   False
-      TypeaheadColumn =   0
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      VisibleRowCount =   0
-      Width           =   368
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin UITweaks.ResizedLabel MatchesLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Matching Sources:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   256
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -515,7 +264,7 @@ Begin BeaconDialog PresetModifierEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   400
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -528,7 +277,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   426
+      Top             =   196
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -547,7 +296,7 @@ Begin BeaconDialog PresetModifierEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   408
+      Left            =   308
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -560,7 +309,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   426
+      Top             =   196
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -744,34 +493,6 @@ End
 		  // Calling the overridden superclass constructor.
 		  Self.mPreset = Preset
 		  Self.mEditID = EditModifierID
-		  
-		  Self.mSources = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, Preferences.ShowExperimentalLootSources)
-		  
-		  Var Win As MainWindow = App.MainWindow
-		  If Win <> Nil Then
-		    Var Classes() As String
-		    For Each Source As Beacon.LootSource In Self.mSources
-		      Classes.Add(Source.ClassString)
-		    Next
-		    
-		    Var Editors() As DocumentEditorView = Win.DocumentEditors
-		    For Each View As DocumentEditorView In Editors
-		      Var Document As Beacon.Document = View.Document
-		      If Document.HasConfigGroup(BeaconConfigs.NameLootDrops) Then
-		        Var Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.NameLootDrops))
-		        Var Sources As Beacon.LootSourceCollection = Config.DefinedSources
-		        Var SourcesBound As Integer = Sources.LastRowIndex
-		        For X As Integer = 0 To SourcesBound
-		          Var Source As Beacon.LootSource = Sources(X)
-		          If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
-		            Classes.Add(Source.ClassString)
-		            Self.mSources.Add(Source)
-		          End If
-		        Next
-		      End If
-		    Next
-		  End If
-		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -791,27 +512,6 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub SetEditorVisible(Visible As Boolean)
-		  If Self.MatchesList.Visible = Visible Then
-		    Return
-		  End If
-		  
-		  Self.GroupNameField.Visible = Visible
-		  Self.GroupNameLabel.Visible = Visible
-		  Self.GroupPatternField.Visible = Visible
-		  Self.GroupPatternLabel.Visible = Visible
-		  Self.MatchesLabel.Visible = Visible
-		  Self.MatchesList.Visible = Visible
-		  
-		  If Visible Then
-		    Self.Height = Self.Height + HeightDelta
-		  Else
-		    Self.Height = Self.Height - HeightDelta
-		  End If
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -825,36 +525,13 @@ End
 		Private mPreset As Beacon.MutablePreset
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mSources() As Beacon.LootSource
-	#tag EndProperty
-
-
-	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"238", Scope = Private
-	#tag EndConstant
-
 
 #tag EndWindowCode
 
 #tag Events GroupMenu
 	#tag Event
-		Sub Change()
-		  If Me.SelectedRowIndex = -1 Then
-		    Return
-		  End If
-		  
-		  Var Modifier As Beacon.PresetModifier = Me.RowTagAt(Me.SelectedRowIndex)
-		  If Modifier = Nil Then
-		    // Create a new one
-		    Self.SetEditorVisible(True)
-		  Else
-		    Self.SetEditorVisible(False)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub Open()
-		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
+		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.GetPresetModifiers
 		  Var Actives() As String = Self.mPreset.ActiveModifierIDs()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
 		    Var Editing As Boolean = Modifier.ModifierID = Self.mEditID
@@ -865,12 +542,6 @@ End
 		      End If
 		    End If
 		  Next
-		  
-		  If Me.RowCount > 0 Then
-		    Me.AddSeparator
-		  End If
-		  
-		  Me.AddRow("New Group…")
 		  
 		  If Me.SelectedRowIndex = -1 Then
 		    Me.SelectedRowIndex = 0
@@ -883,19 +554,6 @@ End
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = -10
 		  MaxValue = 10
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GroupPatternField
-	#tag Event
-		Sub TextChange()
-		  Var Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text)
-		  Var Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
-		  
-		  Self.MatchesList.RemoveAllRows()
-		  For Each Match As Beacon.LootSource In Matches
-		    Self.MatchesList.AddRow(Match.Label)
-		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -915,23 +573,11 @@ End
 		  End If
 		  
 		  If Self.GroupMenu.SelectedRowIndex = -1 Then
-		    BeaconUI.ShowAlert("No group selected", "Beacon can't set a modifier without selecting a group.")
+		    BeaconUI.ShowAlert("No selector chosen", "Beacon can't set a modifier without choosing a selector.")
 		    Return
 		  End If
 		  
 		  Var Modifier As Beacon.PresetModifier = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
-		  If Modifier = Nil Then
-		    If Self.GroupNameField.Text.Trim = "" Or Self.GroupPatternField.Text.Trim = "" Then
-		      BeaconUI.ShowAlert("Group definition is not complete", "A new group must have both a name and pattern.")
-		      Return
-		    End If
-		    If Self.MatchesList.RowCount = 0 And BeaconUI.ShowConfirm("The pattern does not appear to match any loot sources", "A pattern that doesn't match any loot sources isn't very useful. Would you like to make changes?", "Change", "Save Anyway") Then
-		      Return
-		    End If
-		    
-		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Text, Self.GroupPatternField.Text)
-		    LocalData.SharedInstance.AddPresetModifier(Modifier)
-		  End If
 		  
 		  Self.mPreset.ClearModifier(Self.mEditID)
 		  Self.mPreset.MinQualityModifier(Modifier) = MinQualityModifier

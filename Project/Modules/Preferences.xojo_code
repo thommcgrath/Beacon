@@ -589,6 +589,22 @@ Protected Module Preferences
 		Protected PlaySoundForUpdate As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.SizeValue("Preset Selector Editor Size", New Size(600, 400))
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.SizeValue("Preset Selector Editor Size") = Value
+			End Set
+		#tag EndSetter
+		Protected PresetSelectorEditorSize As Size
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get

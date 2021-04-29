@@ -66,7 +66,7 @@ Inherits Thread
 		          UploadFileTo(LocalFile, RemotePath)
 		        ElseIf LocalIsNewer = False And IsDeleted = True Then
 		          // Delete the file
-		          RemoveFileFrom(LocalFile, RemotePath)
+		          RemoveFileFrom(LocalFile, RemotePath, True)
 		        ElseIf FilesAreDifferent = True And LocalIsNewer = False Then
 		          // Retrieve the file
 		          RequestFileFrom(LocalFile, RemotePath, ServerModified, ServerSize, ServerHash)
@@ -89,7 +89,7 @@ Inherits Thread
 		          Case "PUT"
 		            UploadFileTo(LocalFile, RemotePath)
 		          Case "DELETE"
-		            RemoveFileFrom(LocalFile, RemotePath)
+		            RemoveFileFrom(LocalFile, RemotePath, False)
 		          End Select
 		          
 		          Files.MoveToNextRow
