@@ -240,6 +240,7 @@ Inherits Beacon.IntegrationEngine
 		      Else
 		        Reason = "HTTP " + Socket.LastHTTPStatus.ToString(Locale.Raw, "0") + " response"
 		      End Select
+		      App.Log("GameServerApp.com URL: " + Socket.LastURL)
 		      App.Log("GameServerApp.com Response: " + EncodeBase64(Socket.LastString, 0))
 		      Self.SetError(Reason)
 		    Else
