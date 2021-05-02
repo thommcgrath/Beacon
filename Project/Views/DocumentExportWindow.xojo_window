@@ -929,13 +929,13 @@ End
 		    Var MapLabelTop As Integer = Win.MapLabel.Top
 		    Win.MapLabel.Top = Win.MapOverrideCheck.Top
 		    Win.MapOverrideCheck.Top = MapLabelTop
-		    Win.MapMenu.Enabled = Not Win.MapOverrideCheck.Value
+		    Win.MapMenu.Enabled = Win.MapOverrideCheck.Value
 		    
 		    Var ConfigLabelTop As Integer = Win.ConfigSetsLabel.Top
 		    Win.ConfigSetsLabel.Top = Win.ConfigSetsOverrideCheck.Top
 		    Win.ConfigSetsOverrideCheck.Top = ConfigLabelTop
-		    Win.ConfigSetsField.Enabled = Not Win.ConfigSetsOverrideCheck.Value
-		    Win.ConfigSetsButton.Enabled = Not Win.ConfigSetsOverrideCheck.Value
+		    Win.ConfigSetsField.Enabled = Win.ConfigSetsOverrideCheck.Value
+		    Win.ConfigSetsButton.Enabled = Win.ConfigSetsOverrideCheck.Value
 		    
 		    Win.ProfileMenu.SelectedRowIndex = 0
 		  Else
@@ -945,10 +945,10 @@ End
 		  End If
 		  
 		  Var Maps() As Beacon.Map = Document.Maps
-		  If Maps.LastIndex = 0 Then
+		  If Maps.Count = 1 Then
 		    Win.MapMenu.AddRow(Maps(0).Name, Maps(0).Mask)
 		    Win.MapMenu.SelectedRowIndex = 0
-		  ElseIf Maps.LastIndex > 0 Then
+		  ElseIf Maps.Count > 1 Then
 		    Win.MapMenu.AddRow("All Maps", Beacon.Maps.UniversalMask)
 		    For Each Map As Beacon.Map In Maps
 		      Win.MapMenu.AddRow(Map.Name, Map.Mask)
