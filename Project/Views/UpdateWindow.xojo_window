@@ -473,26 +473,13 @@ End
 		  
 		  Select Case Notification.Name
 		  Case UpdatesKit.Notification_Error
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Unable to check for updates."
-		    Dialog.Explanation = "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible."
-		    Dialog.ActionButton.Caption = "Report Now"
-		    Dialog.CancelButton.Visible = True
-		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		    If Choice = Dialog.ActionButton Then
+		    If Self.ShowConfirm("Unable to check for updates.", "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible.", "Report Now", "Cancel") Then
 		      App.ShowBugReporter()
 		    End If
 		    
 		    Self.Close
 		  Case UpdatesKit.Notification_NoUpdates
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "You are using the latest version."
-		    Dialog.Explanation = "Beacon automatically checks for updates on each launch so you won't miss a release."
-		    
-		    Call Dialog.ShowModalWithin(Self)
+		    Self.ShowAlert("You are using the latest version.", "Beacon automatically checks for updates on each launch so you won't miss a release.")
 		    Self.Close
 		  Case UpdatesKit.Notification_UpdateAvailable
 		    Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature)
@@ -693,11 +680,7 @@ End
 		Sub Error(e As RuntimeException)
 		  Me.Disconnect
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to Download Update"
-		  Dialog.Explanation = e.Reason
-		  Call Dialog.ShowModalWithin(Self)
+		  Self.ShowAlert("Unable to Download Update", e.Reason)
 		  
 		  Self.Close
 		End Sub
@@ -707,11 +690,7 @@ End
 		  If HTTPStatus <> 200 Then
 		    Me.Disconnect
 		    
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Unable to Download Update"
-		    Dialog.Explanation = "The address " + URL + " could not be found."
-		    Call Dialog.ShowModalWithin(Self)
+		    Self.ShowAlert("Unable to Download Update", "The address " + URL + " could not be found.")
 		    
 		    Self.Close
 		  End If
@@ -741,26 +720,26 @@ End
 		  If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
 		    Self.Hide
 		    
-		    Var Confirm As New MessageDialog
-		    Confirm.Title = ""
-		    Confirm.Message = "Beacon is ready to update."
-		    Confirm.Explanation = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done, or ""Show Archive"" to install the update yourself."
-		    Confirm.ActionButton.Caption = "Install Now"
-		    Confirm.CancelButton.Caption = "Install On Quit"
-		    Confirm.CancelButton.Visible = True
-		    #if Not TargetMacOS
-		      Confirm.AlternateActionButton.Caption = "Show Archive"
-		      Confirm.AlternateActionButton.Visible = True
+		    Var Message As String = "Beacon is ready to update."
+		    Var Explanation As String = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done"
+		    Var ActionCaption As String = "Install Now"
+		    Var CancelCaption As String = "Install On Quit"
+		    Var AlternateCaption As String = ""
+		    #if TargetMacOS
+		      Explanation = Explanation + "."
+		    #else
+		      Explanation = Explanation + ", or ""Show Archive"" to install the update yourself."
+		      AlternateCaption = "Show Archive"
 		    #endif
 		    
-		    Var Selection As MessageDialogButton = Confirm.ShowModal
+		    Var Selection As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
 		    Select Case Selection
-		    Case Confirm.ActionButton
+		    Case BeaconUI.ConfirmResponses.Action
 		      Self.LaunchUpdate()
-		    Case Confirm.CancelButton
+		    Case BeaconUI.ConfirmResponses.Cancel
 		      App.LaunchOnQuit = Self.mFile
 		      Self.Close
-		    Case Confirm.AlternateActionButton
+		    Case BeaconUI.ConfirmResponses.Alternate
 		      Self.mFile.Parent.Open
 		      Self.Close
 		    End Select
@@ -770,15 +749,7 @@ End
 		  Self.mFile.Remove
 		  Self.mFile = Nil
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to Download Update"
-		  Dialog.Explanation = "The file was downloaded, but the integrity check did not match. Please report this problem."
-		  Dialog.ActionButton.Caption = "Report Now"
-		  Dialog.CancelButton.Visible = True
-		  
-		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		  If Choice = Dialog.ActionButton Then
+		  If Self.ShowConfirm("Unable to Download Update", "The file was downloaded, but the integrity check did not match. Please report this problem.", "Report Now", "Cancel") Then
 		    App.ShowBugReporter()
 		  End If
 		  

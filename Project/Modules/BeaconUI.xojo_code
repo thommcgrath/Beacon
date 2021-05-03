@@ -511,7 +511,7 @@ Protected Module BeaconUI
 		  Dialog.ActionButton.Caption = ActionCaption
 		  Dialog.CancelButton.Caption = CancelCaption
 		  Dialog.CancelButton.Visible = True
-		  If AlternateAction.Length > 0 Then
+		  If AlternateAction.IsEmpty = False Then
 		    Dialog.AlternateActionButton.Caption = AlternateAction
 		    Dialog.AlternateActionButton.Visible = True
 		  End If

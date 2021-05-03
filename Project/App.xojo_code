@@ -1067,11 +1067,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to open file"
-		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + File.Name
-		  Call Dialog.ShowModal
+		  BeaconUI.ShowAlert("Unable to open file", "Beacon doesn't know what to do with the file " + File.Name)
 		End Sub
 	#tag EndMethod
 

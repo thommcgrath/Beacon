@@ -171,17 +171,16 @@ End
 		      ImportDate = LocalData.SharedInstance.LastSync
 		    End If
 		    
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
+		    Var Message, Explanation As String
 		    If IsNull(ImportDate) Then
-		      Dialog.Message = "Blueprint definitions have not been updated"
-		      Dialog.Explanation = "No blueprint definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
+		      Message = "Blueprint definitions have not been updated"
+		      Explanation = "No blueprint definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
 		    Else
-		      Dialog.Message = "Blueprint definitions have been updated"
-		      Dialog.Explanation = "Blueprints are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
+		      Message = "Blueprint definitions have been updated"
+		      Explanation = "Blueprints are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
 		    End If
 		    Self.Hide
-		    Call Dialog.ShowModal
+		    Self.ShowAlert(Message, Explanation)
 		    
 		    Self.Close
 		  End Select

@@ -136,24 +136,15 @@ End
 
 	#tag Event
 		Sub ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "You have " + NumPages.ToString + " presets with unsaved changes. Do you want to review these changes before quitting?"
-		  Dialog.Explanation = "If you don't review your presets, all your changes will be lost."
-		  Dialog.ActionButton.Caption = "Review Changes…"
-		  Dialog.CancelButton.Visible = True
-		  Dialog.AlternateActionButton.Caption = "Discard Changes"
-		  Dialog.AlternateActionButton.Visible = True
-		  
-		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("You have " + NumPages.ToString + " presets with unsaved changes. Do you want to review these changes before quitting?", "If you don't review your presets, all your changes will be lost.", "Review Changes…", "Cancel", "Discard Changes")
 		  Select Case Choice
-		  Case Dialog.ActionButton
+		  Case BeaconUI.ConfirmResponses.Action
 		    ShouldClose = False
 		    ShouldFocus = True
-		  Case Dialog.CancelButton
+		  Case BeaconUI.ConfirmResponses.Cancel
 		    ShouldClose = False
 		    ShouldFocus = False
-		  Case Dialog.AlternateActionButton
+		  Case BeaconUI.ConfirmResponses.Alternate
 		    ShouldClose = True
 		    ShouldFocus = False // Doesn't matter
 		  End Select
