@@ -362,6 +362,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True

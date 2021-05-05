@@ -47,7 +47,7 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel

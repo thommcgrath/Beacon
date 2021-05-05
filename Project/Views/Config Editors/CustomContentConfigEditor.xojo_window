@@ -81,6 +81,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True

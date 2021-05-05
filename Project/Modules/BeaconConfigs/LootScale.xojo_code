@@ -124,14 +124,6 @@ Inherits Beacon.ConfigGroup
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="IsImplicit"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

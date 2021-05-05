@@ -197,7 +197,7 @@ Protected Class ScrollEvent
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -205,7 +205,7 @@ Protected Class ScrollEvent
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

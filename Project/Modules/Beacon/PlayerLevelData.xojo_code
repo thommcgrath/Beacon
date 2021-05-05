@@ -112,7 +112,7 @@ Protected Class PlayerLevelData
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mExperience"
+			Name="MaxLevel"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

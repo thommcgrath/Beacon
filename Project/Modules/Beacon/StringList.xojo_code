@@ -284,7 +284,7 @@ Implements Iterable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mModified"
+			Name="Modified"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

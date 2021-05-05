@@ -104,6 +104,7 @@ Begin ConfigEditor LootScaleConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True

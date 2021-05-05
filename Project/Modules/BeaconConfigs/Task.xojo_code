@@ -121,14 +121,6 @@ Protected Class Task
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

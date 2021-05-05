@@ -95,6 +95,7 @@ Begin BeaconSubview NewsPane Implements NotificationKit.Receiver
       Width           =   300
    End
    Begin Timer RefreshTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   21600000

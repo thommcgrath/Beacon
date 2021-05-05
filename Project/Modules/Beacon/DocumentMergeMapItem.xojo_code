@@ -25,6 +25,14 @@ Inherits Beacon.DocumentMergeItem
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Label"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -73,19 +81,11 @@ Inherits Beacon.DocumentMergeItem
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DestinationConfigSet"
+			Name="AddMode"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Map"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

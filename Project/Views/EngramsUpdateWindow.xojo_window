@@ -87,6 +87,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Width           =   410
    End
    Begin Timer RevealTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   1

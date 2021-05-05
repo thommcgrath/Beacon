@@ -488,6 +488,14 @@ Protected Class OmniBarColorProfile
 			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FillColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

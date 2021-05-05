@@ -687,6 +687,14 @@ Protected Class ServerProfile
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AdminNotes"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

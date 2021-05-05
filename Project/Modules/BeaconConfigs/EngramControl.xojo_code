@@ -887,14 +887,6 @@ Inherits Beacon.ConfigGroup
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="IsImplicit"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="OnlyAllowSpecifiedEngrams"
 			Visible=false
 			Group="Behavior"

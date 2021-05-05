@@ -151,6 +151,7 @@ Begin BeaconDialog ProgressWindow
       Width           =   80
    End
    Begin Timer UpdateTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   10

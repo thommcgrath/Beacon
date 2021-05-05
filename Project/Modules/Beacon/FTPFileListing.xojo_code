@@ -70,14 +70,6 @@ Protected Class FTPFileListing
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mIsDirectory"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

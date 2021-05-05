@@ -300,6 +300,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -664,6 +665,7 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   210
    End
    Begin Beacon.Rewriter SharedRewriter
+      DebugIdentifier =   ""
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -673,8 +675,11 @@ Begin BeaconDialog DocumentExportWindow
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
+      Source          =   ""
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
 End
 #tag EndWindow

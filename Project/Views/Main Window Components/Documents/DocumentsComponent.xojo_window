@@ -32,6 +32,7 @@ Begin BeaconPagedSubview DocumentsComponent
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -189,6 +190,7 @@ Begin BeaconPagedSubview DocumentsComponent
       End
    End
    Begin Timer AutosavePromptTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   2000

@@ -38,7 +38,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   62
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -151,7 +150,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

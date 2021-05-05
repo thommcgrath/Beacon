@@ -46,6 +46,8 @@ Begin Window WhatsNewWindow
       Width           =   660
    End
    Begin URLConnection PreflightSocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

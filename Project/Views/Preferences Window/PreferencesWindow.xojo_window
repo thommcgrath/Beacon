@@ -80,6 +80,7 @@ Begin BeaconWindow PreferencesWindow
          Top             =   56
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   240
@@ -112,6 +113,7 @@ Begin BeaconWindow PreferencesWindow
          Top             =   88
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   240
@@ -144,6 +146,7 @@ Begin BeaconWindow PreferencesWindow
          Top             =   120
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   240
