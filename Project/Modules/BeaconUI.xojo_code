@@ -421,23 +421,36 @@ Protected Module BeaconUI
 		    Win = Nil
 		  End Try
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = Message
-		  Dialog.Explanation = Explanation
-		  
-		  Try
-		    If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
+		  #if TargetWindows
+		    Var Dialog As New TaskDialogMBS
+		    Dialog.Yield = False
+		    Dialog.ExpandFooterArea = False
+		    Dialog.MainInstruction = Message
+		    Dialog.Content = Explanation
+		    Dialog.CommonButtons = TaskDialogMBS.kCommonButtonOK
+		    Dialog.DefaultButton = TaskDialogMBS.kCommonButtonOK
+		    Dialog.Parent = Win
+		    Dialog.PositionRelativeToWindow = True
+		    Call Dialog.ShowDialog
+		  #else
+		    Var Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = Message
+		    Dialog.Explanation = Explanation
+		    
+		    Try
+		      If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
+		        Call Dialog.ShowModal()
+		      Else
+		        Var FocusControl As RectControl = Win.Focus
+		        Win.Focus = Nil
+		        Call Dialog.ShowModalWithin(Win)
+		        Win.Focus = FocusControl
+		      End If
+		    Catch Err As RuntimeException
 		      Call Dialog.ShowModal()
-		    Else
-		      Var FocusControl As RectControl = Win.Focus
-		      Win.Focus = Nil
-		      Call Dialog.ShowModalWithin(Win)
-		      Win.Focus = FocusControl
-		    End If
-		  Catch Err As RuntimeException
-		    Call Dialog.ShowModal()
-		  End Try
+		    End Try
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -504,40 +517,84 @@ Protected Module BeaconUI
 		    Win = Nil
 		  End Try
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = Message
-		  Dialog.Explanation = Explanation
-		  Dialog.ActionButton.Caption = ActionCaption
-		  Dialog.CancelButton.Caption = CancelCaption
-		  Dialog.CancelButton.Visible = True
-		  If AlternateAction.Length > 0 Then
-		    Dialog.AlternateActionButton.Caption = AlternateAction
-		    Dialog.AlternateActionButton.Visible = True
-		  End If
-		  
-		  Var Result As MessageDialogButton
-		  Try
-		    If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
-		      Result = Dialog.ShowModal()
-		    Else
-		      Var FocusControl As RectControl = Win.Focus
-		      Win.Focus = Nil
-		      Result = Dialog.ShowModalWithin(Win)
-		      Win.Focus = FocusControl
+		  #if TargetWindows
+		    Var Dialog As New TaskDialogMBS
+		    Dialog.Yield = False
+		    Dialog.ExpandFooterArea = False
+		    Dialog.MainInstruction = Message
+		    Dialog.Content = Explanation
+		    Dialog.Parent = Win
+		    Dialog.PositionRelativeToWindow = True
+		    
+		    Var ActionButton As New TaskDialogButtonMBS
+		    ActionButton.Text = ActionCaption
+		    ActionButton.ID = 0
+		    ActionButton.Default = True
+		    Dialog.AppendButton(ActionButton)
+		    
+		    If AlternateAction.IsEmpty = False Then
+		      Var AlternateButton As New TaskDialogButtonMBS
+		      AlternateButton.Text = AlternateAction
+		      AlternateButton.ID = 2
+		      AlternateButton.Default = False
+		      Dialog.AppendButton(AlternateButton)
 		    End If
-		  Catch Err As RuntimeException
-		    Result = Dialog.ShowModal()
-		  End Try
-		  
-		  Select Case Result
-		  Case Dialog.ActionButton
-		    Return ConfirmResponses.Action
-		  Case Dialog.CancelButton
-		    Return ConfirmResponses.Cancel
-		  Case Dialog.AlternateActionButton
-		    Return ConfirmResponses.Alternate
-		  End Select
+		    
+		    Var CancelButton As New TaskDialogButtonMBS
+		    CancelButton.Text = CancelCaption
+		    CancelButton.ID = 1
+		    CancelButton.Default = False
+		    Dialog.AppendButton(CancelButton)
+		    
+		    If Dialog.ShowDialog = False Or Dialog.TimedOut Then
+		      Return BeaconUI.ConfirmResponses.Cancel
+		    End If
+		    
+		    Var Choice As Integer = Dialog.SelectedButton
+		    Select Case Choice
+		    Case 0
+		      Return BeaconUI.ConfirmResponses.Action
+		    Case 1
+		      Return BeaconUI.ConfirmResponses.Cancel
+		    Case 2
+		      Return BeaconUI.ConfirmResponses.Alternate
+		    End Select
+		  #else
+		    Var Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = Message
+		    Dialog.Explanation = Explanation
+		    Dialog.ActionButton.Caption = ActionCaption
+		    Dialog.CancelButton.Caption = CancelCaption
+		    Dialog.CancelButton.Visible = True
+		    If AlternateAction.IsEmpty = False Then
+		      Dialog.AlternateActionButton.Caption = AlternateAction
+		      Dialog.AlternateActionButton.Visible = True
+		    End If
+		    
+		    Var Result As MessageDialogButton
+		    Try
+		      If Win = Nil Or Win.Type = Window.Types.Sheet Or TargetWindows Then
+		        Result = Dialog.ShowModal()
+		      Else
+		        Var FocusControl As RectControl = Win.Focus
+		        Win.Focus = Nil
+		        Result = Dialog.ShowModalWithin(Win)
+		        Win.Focus = FocusControl
+		      End If
+		    Catch Err As RuntimeException
+		      Result = Dialog.ShowModal()
+		    End Try
+		    
+		    Select Case Result
+		    Case Dialog.ActionButton
+		      Return ConfirmResponses.Action
+		    Case Dialog.CancelButton
+		      Return ConfirmResponses.Cancel
+		    Case Dialog.AlternateActionButton
+		      Return ConfirmResponses.Alternate
+		    End Select
+		  #endif
 		End Function
 	#tag EndMethod
 

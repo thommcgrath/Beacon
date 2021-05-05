@@ -45,6 +45,12 @@ Begin Window WhatsNewWindow
       Visible         =   True
       Width           =   660
    End
+   Begin URLConnection PreflightSocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -76,7 +82,7 @@ End
 		    Win.TitleVisibility = NSWindowMBS.NSWindowTitleHidden
 		  #endif
 		  
-		  Self.Viewer.LoadURL(Beacon.WebURL("/welcome/?from=" + Preferences.NewestUsedBuild.ToString("0") + "&to=" + App.BuildNumber.ToString))
+		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Preferences.NewestUsedBuild.ToString("0") + "&to=" + App.BuildNumber.ToString))
 		End Sub
 	#tag EndEvent
 
@@ -148,8 +154,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CancelLoad(URL as String) As Boolean
-		  If URL = "beacon://finished" Or URL = "beacon://finished/" Then
+		  If URL.BeginsWith("beacon://finished") Then
 		    Call CallLater.Schedule(1, AddressOf CloseLater)
+		    Return True
+		  ElseIf URL.BeginsWith("res://") Then
 		    Return True
 		  End If
 		  
@@ -161,7 +169,23 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub TitleChanged(newTitle as String)
-		  Self.Title = NewTitle
+		  Self.Title = "What's new in Beacon: " + NewTitle
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PreflightSocket
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.Close
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub HeadersReceived(URL As String, HTTPStatus As Integer)
+		  If HTTPStatus = 200 Then
+		    Self.Viewer.LoadURL(URL)
+		  Else
+		    Self.Close
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -292,7 +292,7 @@ End
 	#tag Method, Flags = &h0
 		Sub ImportFromFile()
 		  Var Dialog As New OpenFileDialog
-		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
+		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile + BeaconFileTypes.JsonFile
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Parent.TrueWindow)
 		  If File Is Nil Then

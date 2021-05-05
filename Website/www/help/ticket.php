@@ -33,6 +33,7 @@ if ($has_expanded_parameters) {
 	$os = trim($_POST['os']);
 	$version = trim($_POST['version']);
 	$build = trim($_POST['build']);
+	$time_submitting = 15; // Just make something up.
 	
 	if (BeaconUser::ValidateEmail($email) === false) {
 		ReplyError('Could not validate email address.', 400);
@@ -42,6 +43,7 @@ if ($has_expanded_parameters) {
 	$min_timestamp = $timestamp + 60;
 	$max_timestamp = $timestamp + 3600;
 	$current_timestamp = time();
+	$time_submitting = $current_timestamp - $timestamp;
 	if ($current_timestamp < $min_timestamp || $current_timestamp > $max_timestamp) {
 		ReplyError('Ticket was submitted too quickly.', 400);
 	}
@@ -156,6 +158,39 @@ if ($has_expanded_parameters) {
 	$user = BeaconUser::GetByEmail($email);
 	if (is_null($user) === false && $user->OmniVersion() >= 1) {
 		$omni_description = "\n\nHas Omni: Yes.";
+		$user_has_omni = true;
+	}
+}
+
+if ($user_has_omni === false) {
+	// Pass to CleanTalk for spam detection
+	$spam = [
+		'method_name' => 'check_message',
+		'auth_key' => BeaconCommon::GetGlobal('CleanTalk Auth Key'),
+		'sender_email' => $email,
+		'sender_nickname' => $name,
+		'sender_ip' => \BeaconCommon::RemoteAddr(),
+		'message' => $body,
+		'js_on' => 1,
+		'submit_time' => $time_submitting,
+		'stoplist_check' => 1
+	];
+	
+	$curl = curl_init('https://moderate.cleantalk.org/api2.0');
+	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($spam));
+	curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+	$spamcheck_body = curl_exec($curl);
+	$spamcheck_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	if ($spamcheck_status === 200) {
+		$spam_status = json_decode($spamcheck_body, TRUE);
+		$allowed = $spam_status['allow'] === 1;
+		if ($allowed === false) {
+			ReplyError('Sorry, this message looks a lot like spam.', 400, $spam_status);
+		}
+	} else {
+		ReplyError('Spam check was not able to complete.', 500, $zendesk_body);
 	}
 }
 

@@ -750,11 +750,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Mod was not registered"
-		  Dialog.Explanation = Response.Message
-		  Call Dialog.ShowModal()
+		  Self.ShowAlert("Mod was not registered", Response.Message)
 		End Sub
 	#tag EndMethod
 

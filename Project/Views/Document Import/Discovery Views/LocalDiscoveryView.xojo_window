@@ -399,27 +399,21 @@ End
 		  End Select
 		  
 		  If ExistingContent.IsEmpty = False Then
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Would you like to replace the existing content, or add this file to it?"
+		    Var Explanation As String
 		    Select Case Type
 		    Case ConfigFileType.GameIni
-		      Dialog.Explanation = "The selected file would replace or become added to your Game.ini content."
+		      Explanation = "The selected file would replace or become added to your Game.ini content."
 		    Case ConfigFileType.GameUserSettingsIni
-		      Dialog.Explanation = "The selected file would replace or become added to your GameUserSettings.ini content."
+		      Explanation = "The selected file would replace or become added to your GameUserSettings.ini content."
 		    End Select
-		    Dialog.ActionButton.Caption = "Replace"
-		    Dialog.CancelButton.Visible = True
-		    Dialog.AlternateActionButton.Caption = "Add To"
-		    Dialog.AlternateActionButton.Visible = True
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Would you like to replace the existing content, or add this file to it?", Explanation, "Replace", "Cancel", "Add To")
 		    
 		    Select Case Choice
-		    Case Dialog.ActionButton
+		    Case BeaconUI.ConfirmResponses.Action
 		      // Do nothing
-		    Case Dialog.CancelButton
+		    Case BeaconUI.ConfirmResponses.Cancel
 		      Return
-		    Case Dialog.AlternateActionButton
+		    Case BeaconUI.ConfirmResponses.Alternate
 		      Content = ExistingContent.Trim + EndOfLine + EndOfLine + Content
 		    End Select
 		  End If

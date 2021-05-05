@@ -109,22 +109,13 @@ Implements ObservationKit.Observable
 		    Callback.Invoke(Self)
 		  End If
 		  
-		  Var Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Do you want to save the changes made to the " + Self.ViewType(False, True) + " """ + Self.ViewTitle + """?"
-		  Dialog.Explanation = "Your changes will be lost if you don't save them."
-		  Dialog.ActionButton.Caption = "Save…"
-		  Dialog.CancelButton.Visible = True
-		  Dialog.AlternateActionButton.Caption = "Don't Save"
-		  Dialog.AlternateActionButton.Visible = True
-		  
-		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Do you want to save the changes made to the " + Self.ViewType(False, True) + " """ + Self.ViewTitle + """?", "Your changes will be lost if you don't save them.", "Save", "Cancel", "Don't Save")
 		  Select Case Choice
-		  Case Dialog.ActionButton
+		  Case BeaconUI.ConfirmResponses.Action
 		    Return RaiseEvent ShouldSave()
-		  Case Dialog.CancelButton
+		  Case BeaconUI.ConfirmResponses.Cancel
 		    Return False
-		  Case Dialog.AlternateActionButton
+		  Case BeaconUI.ConfirmResponses.Alternate
 		    Self.DiscardChanges()
 		    Return True
 		  End Select
