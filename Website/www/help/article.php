@@ -229,7 +229,7 @@ if (count($article_data['pswp_js']) > 0) {
 $last_modified = new DateTime($article_updated);
 
 header('ETag: "' . $cache_key . '"');
-header('Cache-Control: max-age 86400');
+header('Cache-Control: public, max-age=86400');
 header('Last-Modified: ' . $last_modified->format('D, d M Y H:i:s') . ' GMT');
 
 BeaconTemplate::SetTitle($article_data['title']);
