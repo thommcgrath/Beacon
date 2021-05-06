@@ -190,7 +190,7 @@ PSWP;
 		}
 		
 		$parser = new Parsedown();
-		$article_data['html'] = '<h1>' . htmlentities($results->Field('subject')) . '</h1>' . "\n" . $parser->text($markdown);
+		$article_data['html'] = '<h1>' . htmlentities($results->Field('subject')) . '</h1>' . "\n" . str_replace('<table>', '<table class="generic">', $parser->text($markdown));
 		
 		if ($results->Field('affected_keys') != '') {
 			// Want these keys on the page for SEO purposes
