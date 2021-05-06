@@ -81,6 +81,7 @@ let buildDownloadsTable = function() {
 		childButton.classList.add('button');
 		childButton.href = url;
 		childButton.innerText = buttonCaption;
+		childButton.setAttribute('rel', 'nofollow');
 		childDownload.appendChild(childButton);
 		childRow.appendChild(childLabel);
 		childRow.appendChild(childDownload);
