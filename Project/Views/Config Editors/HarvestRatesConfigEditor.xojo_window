@@ -155,7 +155,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   262
       HelpTag         =   ""
       Hierarchical    =   False
@@ -501,6 +501,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -579,18 +580,6 @@ End
 	#tag EndEvent
 
 
-	#tag MenuHandler
-		Function ConvertGlobalHarvestRate() As Boolean Handles ConvertGlobalHarvestRate.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Self.ConvertGlobalHarvestRate()
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.HarvestRates
 		  Static ConfigName As String = BeaconConfigs.NameHarvestRates
@@ -646,6 +635,7 @@ End
 		  Next
 		  Config.HarvestAmountMultiplier = 1.0
 		  Self.SetupUI
+		  Self.List.EnsureSelectionIsVisible
 		End Sub
 	#tag EndMethod
 
