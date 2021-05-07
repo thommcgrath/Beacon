@@ -32,6 +32,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -391,7 +392,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             TabIndex        =   5
             TabPanelIndex   =   1
             TabStop         =   True
-            Text            =   "Enable Dino Decay:"
+            Text            =   "Enable Creature Decay:"
             TextAlignment   =   3
             TextColor       =   &c00000000
             Tooltip         =   "#TooltipDinoDecay"
