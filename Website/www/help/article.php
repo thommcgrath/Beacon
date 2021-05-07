@@ -47,6 +47,7 @@ if ($results->RecordCount() == 0) {
 }
 $article_id = $results->Field('article_id');
 $article_updated = $results->Field('article_updated');
+$last_modified = new DateTime($article_updated);
 $cache_key = md5($article_id . ':' . $article_updated);
 $photoswipe_triggers = array();
 
@@ -190,7 +191,7 @@ PSWP;
 		}
 		
 		$parser = new Parsedown();
-		$article_data['html'] = '<h1>' . htmlentities($results->Field('subject')) . '</h1>' . "\n" . str_replace('<table>', '<table class="generic">', $parser->text($markdown));
+		$article_data['html'] = '<h1>' . htmlentities($results->Field('subject')) . '<br><span class="subtitle text-lighter">Last Updated <time datetime="' . htmlentities($last_modified->format('c')) . '">' . htmlentities($last_modified->format('l F jS, Y \a\t g:i:s A T')) . '</time></span></h1>' . "\n" . str_replace('<table>', '<table class="generic">', $parser->text($markdown));
 		
 		if ($results->Field('affected_keys') != '') {
 			// Want these keys on the page for SEO purposes
@@ -226,7 +227,19 @@ if (count($article_data['pswp_js']) > 0) {
 	BeaconTemplate::FinishScript();
 }
 
-$last_modified = new DateTime($article_updated);
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment.min.js'));
+//BeaconTemplate::AddScript(BeaconCommon::AssetURI('moment-timezone-with-data-10-year-range.min.js'));
+BeaconTemplate::StartScript();
+?><script>
+document.addEventListener('DOMContentLoaded', function() {
+	var times = document.getElementsByTagName('time');
+	for (var idx = 0; idx < times.length; idx++) {
+		var last_updated = moment(times[idx].getAttribute('datetime'));
+		times[idx].innerText = last_updated.fromNow();
+	}
+});
+</script><?php
+BeaconTemplate::FinishScript();
 
 header('ETag: "' . $cache_key . '"');
 header('Cache-Control: public, max-age=86400');
