@@ -194,9 +194,9 @@ BeaconTemplate::FinishStyles();
 
 ?>
 <div id="nitrado_container">
-	<a href="https://nitra.do/beaconapp"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png"></a>
+	<a href="https://nitra.do/beaconapp"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png" alt="Get your server from Nitrado"></a>
 </div>
-<div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png"></div>
+<div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png" alt="Beacon main window"></div>
 <div id="index_body">
 	<div id="index_features">
 		<div class="feature">
