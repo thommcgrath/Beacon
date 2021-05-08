@@ -59,7 +59,7 @@
 .frontpage-left h1,
 .frontpage-right h1 {
 	margin-top: 0px;
-	color: #713a9a;
+	color: #9c0fb0;
 }
 
 .frontpage-left h1,
@@ -75,7 +75,7 @@
 
 .frontpage-left+.frontpage-right,
 .frontpage-right+.frontpage-left {
-	border-top: 1px solid #713a9a;
+	border-top: 1px solid #9c0fb0;
 	padding-top: 30px;
 }
 

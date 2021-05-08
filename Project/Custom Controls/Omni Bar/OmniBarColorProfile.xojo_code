@@ -53,7 +53,7 @@ Protected Class OmniBarColorProfile
 		    Case OmniBar.BackgroundColors.Pink
 		      Self.FillColor = &cc84884
 		    Case OmniBar.BackgroundColors.Purple
-		      Self.FillColor = &c713a9a
+		      Self.FillColor = &c9c0fb0
 		    Case OmniBar.BackgroundColors.Red
 		      Self.FillColor = &cB33531
 		    Case OmniBar.BackgroundColors.Yellow
