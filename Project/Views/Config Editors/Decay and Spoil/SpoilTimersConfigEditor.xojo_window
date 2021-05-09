@@ -141,7 +141,7 @@ Begin ConfigEditor SpoilTimersConfigEditor
             HasHorizontalScrollbar=   False
             HasVerticalScrollbar=   True
             HeadingIndex    =   -1
-            Height          =   213
+            Height          =   185
             Index           =   -2147483648
             InitialParent   =   "DecayPreviewGroup"
             InitialValue    =   "Class	PvE Decay Time	PvE Destroy Time	PvP Decay Time	PvP Destroy Time"
@@ -170,6 +170,74 @@ Begin ConfigEditor SpoilTimersConfigEditor
             Width           =   479
             _ScrollOffset   =   0
             _ScrollWidth    =   -1
+         End
+         Begin Label DestroyWarningLabel
+            AllowAutoDeactivate=   True
+            Bold            =   True
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            FontName        =   "SmallSystem"
+            FontSize        =   0.0
+            FontUnit        =   0
+            Height          =   16
+            Index           =   -2147483648
+            InitialParent   =   "DecayPreviewGroup"
+            Italic          =   False
+            Left            =   478
+            LockBottom      =   True
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   False
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   1
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Your structures will destroy before they finish decaying."
+            TextAlignment   =   0
+            TextColor       =   &c00000000
+            Tooltip         =   ""
+            Top             =   479
+            Transparent     =   False
+            Underline       =   False
+            Visible         =   True
+            Width           =   451
+         End
+         Begin IconCanvas DestroyWarningIcon
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            ContentHeight   =   0
+            DoubleBuffer    =   False
+            Enabled         =   True
+            Height          =   16
+            Icon            =   52676607
+            IconColor       =   9
+            Index           =   -2147483648
+            InitialParent   =   "DecayPreviewGroup"
+            Left            =   450
+            LockBottom      =   True
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   False
+            Scope           =   2
+            ScrollActive    =   False
+            ScrollingEnabled=   False
+            ScrollSpeed     =   20
+            TabIndex        =   2
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   479
+            Transparent     =   True
+            Visible         =   True
+            Width           =   16
          End
       End
       Begin GroupBox DecayGroup
@@ -1871,7 +1939,7 @@ End
 		        PvEDecayString = Beacon.SecondsToString(PvEDecayPeriod)
 		        
 		        If Config.AutoDestroyStructures Then
-		          PvEDestroyPeriod = PvEDecayPeriod * Config.AutoDestroyOldStructuresMultiplier
+		          PvEDestroyPeriod = Entry.Value * Config.AutoDestroyOldStructuresMultiplier
 		          PvEDestroyString = Beacon.SecondsToString(PvEDestroyPeriod)
 		        End If
 		      End If
@@ -1881,7 +1949,7 @@ End
 		        PvPDecayString = Beacon.SecondsToString(PvPDecayPeriod)
 		        
 		        If Config.AutoDestroyStructures Then
-		          PvPDestroyPeriod = PvPDecayPeriod * Config.AutoDestroyOldStructuresMultiplier
+		          PvPDestroyPeriod = Entry.Value * Config.AutoDestroyOldStructuresMultiplier
 		          PvPDestroyString = Beacon.SecondsToString(PvPDestroyPeriod)
 		        End If
 		      End If
@@ -1896,6 +1964,17 @@ End
 		    Self.DecayPreviewList.CellTagAt(RowIdx, 3) = PvPDecayPeriod
 		    Self.DecayPreviewList.CellTagAt(RowIdx, 4) = PvPDestroyPeriod
 		  Next
+		  
+		  Var ShowDestroyWarning As Boolean = Config.AutoDestroyStructures And Config.PvEStructureDecayPeriodMultiplier > Config.AutoDestroyOldStructuresMultiplier
+		  If ShowDestroyWarning = True And Self.DestroyWarningLabel.Visible = False Then
+		    Self.DecayPreviewList.Height = (Self.DestroyWarningLabel.Top - 12) - Self.DecayPreviewList.Top
+		    Self.DestroyWarningLabel.Visible = True
+		    Self.DestroyWarningIcon.Visible = True
+		  ElseIf ShowDestroyWarning = False And Self.DestroyWarningLabel.Visible = True Then
+		    Self.DecayPreviewList.Height = (Self.DestroyWarningLabel.Top + Self.DestroyWarningLabel.Height) - Self.DecayPreviewList.Top
+		    Self.DestroyWarningLabel.Visible = False
+		    Self.DestroyWarningIcon.Visible = False
+		  End If
 		  
 		  Self.DecayPreviewList.Sort
 		  
