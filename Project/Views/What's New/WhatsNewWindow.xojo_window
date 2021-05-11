@@ -82,6 +82,7 @@ End
 		    Win.TitleVisibility = NSWindowMBS.NSWindowTitleHidden
 		  #endif
 		  
+		  PreflightSocket.RequestHeader("User-Agent") = App.UserAgent
 		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Preferences.NewestUsedBuild.ToString("0") + "&to=" + App.BuildNumber.ToString))
 		End Sub
 	#tag EndEvent
@@ -176,6 +177,8 @@ End
 #tag Events PreflightSocket
 	#tag Event
 		Sub Error(e As RuntimeException)
+		  #Pragma Unused e
+		  
 		  Self.Close
 		End Sub
 	#tag EndEvent
