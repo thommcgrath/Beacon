@@ -909,6 +909,15 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin ClipboardWatcher URLWatcher
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   1000
+      RunMode         =   2
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -1202,6 +1211,61 @@ End
 		      Self.DiscoveringMessage.Text = Self.mEngine.Logs(True)
 		    End If
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events URLWatcher
+	#tag Event
+		Sub ClipboardChanged(Content As String)
+		  Var Matcher As New Regex
+		  Matcher.SearchPattern = "^((ftp|ftps|sftp)://)?(([^@:\s]+):([^@:\s]+)@)?([^/:\s]+\.[^/:\s]+)(:(\d{1,5}))?"
+		  
+		  Var Matches As RegexMatch = Matcher.Search(Content)
+		  If Matches Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Protocol As String = If(Matches.SubExpressionCount >= 2, DecodeURLComponent(Matches.SubExpressionString(2)), "")
+		  Var Username As String = If(Matches.SubExpressionCount >= 4, DecodeURLComponent(Matches.SubExpressionString(4)), "")
+		  Var Password As String = If(Matches.SubExpressionCount >= 5, DecodeURLComponent(Matches.SubExpressionString(5)), "")
+		  Var Host As String = If(Matches.SubExpressionCount >= 6, DecodeURLComponent(Matches.SubExpressionString(6)), "")
+		  Var Port As String = If(Matches.SubExpressionCount >= 8, DecodeURLComponent(Matches.SubExpressionString(8)), "")
+		  
+		  Select Case Protocol
+		  Case "ftp"
+		    Self.ServerModeMenu.SelectedRowIndex = 1
+		    If Port.IsEmpty Then
+		      Port = "21"
+		    End If
+		  Case "ftps"
+		    Self.ServerModeMenu.SelectedRowIndex = 2
+		    If Port.IsEmpty Then
+		      Port = "21"
+		    End If
+		  Case "sftp"
+		    Self.ServerModeMenu.SelectedRowIndex = 3
+		    If Port.IsEmpty Then
+		      Port = "22"
+		    End If
+		  Else
+		    Self.ServerModeMenu.SelectedRowIndex = 0
+		  End Select
+		  
+		  If Host.IsEmpty = False Then
+		    Self.ServerHostField.Text = Host
+		  End If
+		  If Port.IsEmpty = False Then
+		    Self.ServerPortField.Text = Port
+		  End If
+		  If Username.IsEmpty = False Then
+		    Self.ServerUserField.Text = Username
+		  End If
+		  If Password.IsEmpty = False Then
+		    Self.ServerPassField.Text = Password
+		  End If
+		  
+		  Exception Err As RuntimeException
+		    Return
 		End Sub
 	#tag EndEvent
 #tag EndEvents

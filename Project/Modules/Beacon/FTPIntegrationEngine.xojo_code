@@ -141,10 +141,8 @@ Inherits Beacon.IntegrationEngine
 		    Path = Transfer.Path + "/" + Transfer.Filename
 		  End If
 		  
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Self.mSocketLock.Enter
-		  Self.mSocket.OptionURL = Path
-		  Self.SetTLSValues()
+		  Var Locked As Boolean = Self.LockEnter
+		  Self.SetURL(Path)
 		  Call Self.mSocket.PerformMT
 		  If Self.mSocket.Lasterror = CURLSMBS.kError_OK Then
 		    Transfer.Content = Self.mSocket.OutputData
@@ -155,10 +153,7 @@ Inherits Beacon.IntegrationEngine
 		  Else
 		    Transfer.SetError("Could not download: " + Self.mSocket.LasterrorMessage + ", code " + Self.mSocket.Lasterror.ToString(Locale.Raw, "0"))
 		  End If
-		  Self.mSocketLock.Leave
-		  If Locked Then
-		    Preferences.ReleaseConnection()
-		  End If
+		  Self.LockLeave(Locked)
 		End Sub
 	#tag EndEvent
 
@@ -177,24 +172,19 @@ Inherits Beacon.IntegrationEngine
 		    Path = Transfer.Path + "/" + Transfer.Filename
 		  End If
 		  
-		  Var Locked As Boolean = Preferences.SignalConnection()
-		  Self.mSocketLock.Enter
-		  Self.mSocket.OptionURL = Path
+		  Var Locked As Boolean = Self.LockEnter()
 		  Self.mSocket.OptionUpload = True
-		  Self.SetTLSValues()
+		  Self.SetURL(Path)
 		  Self.mSocket.SetInputData(Transfer.Content)
 		  Call Self.mSocket.PerformMT
 		  Var ErrorCode As Integer = Self.mSocket.Lasterror
 		  Var ErrorMessage As String = Self.mSocket.LasterrorMessage
 		  Self.mSocket.OptionUpload = False
-		  Self.mSocketLock.Leave
+		  Self.LockLeave(Locked)
 		  If ErrorCode <> CURLSMBS.kError_OK Then
 		    Transfer.SetError(ErrorMessage + ", code " + ErrorCode.ToString(Locale.Raw, "0"))
 		  Else
 		    Transfer.Success = True
-		  End If
-		  If Locked Then
-		    Preferences.ReleaseConnection()
 		  End If
 		End Sub
 	#tag EndEvent
@@ -355,6 +345,23 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function LockEnter() As Boolean
+		  Var Locked As Boolean = Preferences.SignalConnection()
+		  Self.mSocketLock.Enter
+		  Return Locked
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LockLeave(WasLocked As Boolean)
+		  Self.mSocketLock.Leave
+		  If WasLocked Then
+		    Preferences.ReleaseConnection()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function ParseLogFile(Data As Beacon.DiscoveredData, Contents As String) As Boolean
 		  If Contents.Length = 0 Then
 		    Return False
@@ -392,12 +399,11 @@ Inherits Beacon.IntegrationEngine
 		      Path = Path + "/"
 		    End If
 		    
-		    Self.mSocketLock.Enter
-		    Self.mSocket.OptionURL = Path
-		    Self.SetTLSValues()
+		    Var Locked As Boolean = Self.LockEnter
+		    Self.SetURL(Path)
 		    Var Err As Integer = Self.mSocket.Perform
 		    Var Content As String = Self.mSocket.OutputData
-		    Self.mSocketLock.Leave
+		    Self.LockLeave(Locked)
 		    If Err <> CURLSMBS.kError_OK Then
 		      Self.Log("Curl Error " + Err.ToString)
 		      Return Nil
@@ -435,15 +441,14 @@ Inherits Beacon.IntegrationEngine
 		    Path = Path + "/*"
 		  End If
 		  
-		  Self.mSocketLock.Enter
+		  Var Locked As Boolean = Self.LockEnter()
 		  Var Wildcard As Boolean = Self.mSocket.OptionWildcardMatch
 		  Self.mSocket.OptionWildcardMatch = True
-		  Self.mSocket.OptionURL = Path
-		  Self.SetTLSValues()
+		  Self.SetURL(Path)
 		  Var Err As Integer = Self.mSocket.Perform
 		  Self.mSocket.OptionWildcardMatch = Wildcard
 		  Var Infos() As CURLSFileInfoMBS = Self.mSocket.FileInfos
-		  Self.mSocketLock.Leave
+		  Self.LockLeave(Locked)
 		  If Err <> CURLSMBS.kError_OK Then
 		    Self.Log("Curl Error " + Err.ToString)
 		    Return Nil
@@ -464,8 +469,9 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetTLSValues()
-		  If Self.mSocket.OptionURL.BeginsWith("ftps://") Then
+		Private Sub SetURL(URL As String)
+		  Self.mSocket.OptionURL = URL
+		  If URL.BeginsWith("ftps://") Then
 		    Self.mSocket.OptionSSLVerifyHost = 2
 		    Self.mSocket.OptionSSLVerifyPeer = 1
 		  Else

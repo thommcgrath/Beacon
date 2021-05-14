@@ -700,7 +700,7 @@ Implements ObservationKit.Observable
 		      Segments.Add(Self.AccessoryIconSize)
 		    End If
 		  Case OmniBarItem.Types.Title
-		    Segments.Add(Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth))
+		    Segments.Add(Min(Ceiling(G.TextWidth(Self.Caption) + 2), Self.MaxCaptionWidth))
 		  Case OmniBarItem.Types.HorizontalResizer, OmniBarItem.Types.VerticalResizer
 		    Segments.Add(Self.Icon.Width)
 		  End Select

@@ -4,10 +4,12 @@ require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 header('Content-Type: text/plain');
 
+echo "User-agent: *\nDisallow: /download/\n";
+
 if (BeaconCommon::InProduction()) {
-	echo "User-agent: *\nAllow: /";
+	echo 'Allow: /';
 } else {
-	echo "User-agent: *\nDisallow: /";
+	echo 'Disallow: /';
 }
 
 ?>
