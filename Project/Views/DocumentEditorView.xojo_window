@@ -418,7 +418,6 @@ End
 			Return False
 			End If
 			
-			Self.Document.NewIdentifier()
 			Call Self.SaveAs()
 			Return True
 		End Function
@@ -995,6 +994,7 @@ End
 		      Self.Document.Title = Filename
 		    End If
 		    
+		    Self.Document.NewIdentifier()
 		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
 		    Self.ViewTitle = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
