@@ -126,6 +126,12 @@ class ObjectManager {
 					\BeaconAPI::ReplyError('Object is part of a mod owned by another user.', $item);
 				}
 			}
+			if (array_key_exists('min_version', $item) === false || is_int($item['min_version']) === false) {
+				// Find the min version of the mod
+				$item['min_version'] = $mod->MinVersion();
+			} else {
+				$item['min_version'] = max($item['min_version'], $mod->MinVersion());
+			}
 			
 			try {
 				$object->ConsumeJSON($item);

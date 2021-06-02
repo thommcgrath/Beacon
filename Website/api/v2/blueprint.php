@@ -118,6 +118,10 @@ if ($method === 'GET') {
 		$versions[$mod_id] = intval($rows->Field('min_version'));
 		$rows->MoveNext();
 	}
+	if (count($versions) != count($mod_ids)) {
+		// At least one mod is missing
+		BeaconAPI::ReplyError('One or more mod UUIDs are not known to Beacon.', $mod_ids);
+	}
 	
 	$database->BeginTransaction();
 	if (count($engrams) > 0) {
