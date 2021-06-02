@@ -254,6 +254,14 @@ Protected Class BlueprintController
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Var ObjectID As String = Blueprint.ObjectID
 		    
+		    If Blueprint.ModID <> Self.ModID Then
+		      // Need to adjust the mod info to match
+		      Var MutableVersion As Beacon.MutableBlueprint = Blueprint.MutableVersion
+		      MutableVersion.ModID = Self.ModID
+		      MutableVersion.ModName = Self.ModName
+		      Blueprint = MutableVersion.ImmutableVersion
+		    End If
+		    
 		    Self.mBlueprints.Value(ObjectID) = Blueprint
 		    Self.mBlueprintsToSave.Value(ObjectID) = Blueprint
 		    
