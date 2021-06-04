@@ -791,7 +791,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
+			  Value = Max(Value, 0)
 			  If Self.mMaxQuantity = Value Then
 			    Return
 			  End If
@@ -833,12 +833,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Min(Max(Self.mMinQuantity, 1), Self.mMaxQuantity)
+			  Return Min(Max(Self.mMinQuantity, 0), Self.mMaxQuantity)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
+			  Value = Max(Value, 0)
 			  If Self.mMinQuantity = Value Then
 			    Return
 			  End If

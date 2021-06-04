@@ -517,11 +517,11 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Text)
-		  If Value = 0 Then
+		  If IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
+		  Var Value As Integer = Val(Me.Text)
 		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastIndex
 		    Sources(I).MinItemSets = Value
@@ -538,7 +538,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 1
+		  MinValue = 0
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
@@ -558,11 +558,11 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Text)
-		  If Value = 0 Then
+		  If IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
+		  Var Value As Integer = Val(Me.Text)
 		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastIndex
 		    Sources(I).MaxItemSets = Value
@@ -579,7 +579,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 1
+		  MinValue = 0
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
