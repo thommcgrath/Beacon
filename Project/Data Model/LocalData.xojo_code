@@ -1322,6 +1322,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    ForegroundColor = SystemColors.SystemRedColor
 		  Case &c88C8FF00
 		    ForegroundColor = SystemColors.SystemBlueColor
+		  Case &c00FFFF00
+		    ForegroundColor = SystemColors.SystemTealColor
+		  Case &cFFA50000
+		    ForegroundColor = SystemColors.SystemOrangeColor
 		  End Select
 		  
 		  Return IconForLootSource(Source, ForegroundColor, BackgroundColor)
