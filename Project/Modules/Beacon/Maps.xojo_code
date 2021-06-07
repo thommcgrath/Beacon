@@ -13,6 +13,12 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub ClearCache()
+		  mUniversalMask = 0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CrystalIsles() As Beacon.Map
 		  Return Beacon.Data.GetMap("CrystalIsles")
 		End Function
