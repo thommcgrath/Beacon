@@ -94,6 +94,7 @@ BeaconTemplate::StartScript();
 <script>
 var owns_omni = false;
 var is_child = false;
+var email_verified = false;
 
 var stw_quantity_field = null;
 var gift_quantity_field = null;
@@ -171,18 +172,15 @@ var update_checkout_components = function() {
 var lookup_email = function(email) {
 	request.get('/omni/lookup', {'email': email}, function(obj) {
 		owns_omni = obj.omni;
- 		is_child = obj.child;
+		is_child = obj.child;
+		email_verified = obj.verified;
 		update_checkout_components();
 	}, function(status, body) {
 		owns_omni = false;
-		is_child = fase;
+		is_child = false;
+		email_verified = false;
 		update_checkout_components();
 	});
-};
-
-var validate_email = function(email) {
-	const re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-	return re.test(String(email).toLowerCase());
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -230,8 +228,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 	
 	document.getElementById('stripe_checkout_button').addEventListener('click', function(ev) {
-		if (validate_email(document.getElementById('checkout_email_field').value) === false) {
-			dialog.show('Please enter a valid email address.', 'Without a real email address, you would not be able to use your purchase.');
+		if (email_verified === false) {
+			dialog.confirm('Check your email address.', 'We were unable to verify that your email address exists. This is probably due to a typo, but if we are wrong, create an account to skip this check.', 'Ok', 'Create Account').then(function() {
+			}).catch(function() {
+				window.location.href = '/account/login/?return=%2Fomni%2F%23checkout&email=' + encodeURIComponent(document.getElementById('checkout_email_field').value) + '#create';
+			});
 			return;
 		}
 		
@@ -258,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
  		}
  		
  		let checkout_final = function() {
-	 		var items = [];
+			var items = [];
 			if (include_omni) {
 				items.push({sku: <?php echo json_encode($product_details['omni']['sku']); ?>, quantity: 1});
 			}
@@ -297,10 +298,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					dialog.show('Unable to start Stripe checkout', result.error.message);
 				}
 			});
-	 	};
-	 	
-	 	if (slot_quantity > 0) {
-		 	dialog.confirm('Beacon Team licenses are not for resale.', 'Team licenses are intended for your admins to help you run your server or cluster. If you are caught abusing this feature in any way, such as reselling licenses, all your licenses will be terminated and you will not receive a refund.', 'I Agree', 'Cancel').then(checkout_final).catch(update_total);
+		};
+		
+		if (slot_quantity > 0) {
+			dialog.confirm('Beacon Team licenses are not for resale.', 'Team licenses are intended for your admins to help you run your server or cluster. If you are caught abusing this feature in any way, such as reselling licenses, all your licenses will be terminated and you will not receive a refund.', 'I Agree', 'Cancel').then(checkout_final).catch(update_total);
 		} else {
 			checkout_final();
 		}
@@ -311,6 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			lookup_email(this.value);
 		};
 		callback = callback.bind(this);
+		email_verified = false;
 		
 		if (this.timer) {
 			clearTimeout(this.timer);
