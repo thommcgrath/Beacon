@@ -208,6 +208,7 @@ case 'GET':
 	break;
 case 'PUT':
 case 'POST':
+	http_response_code(500); // So that a memory error doesn't report 200
 	BeaconAPI::Authorize();
 	if (BeaconAPI::ContentType() !== 'application/json') {
 		BeaconAPI::ReplyError('Send a JSON payload');
