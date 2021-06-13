@@ -125,6 +125,56 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CloudSaveData(Identity As Beacon.Identity) As Dictionary
+		  // Make sure all values are strings
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("version") = Self.DocumentVersion.ToString(Locale.Raw, "0")
+		  Dict.Value("uuid") = Self.mIdentifier
+		  Dict.Value("map") = Self.mMapCompatibility.ToString(Locale.Raw, "0")
+		  Dict.Value("mods") = Self.Mods.Join(",")
+		  
+		  Var Metadata As BeaconConfigs.Metadata = Self.Metadata(False)
+		  If (Metadata Is Nil) = False Then
+		    Dict.Value("description") = Metadata.Description
+		    Dict.Value("title") = Metadata.Title
+		  Else
+		    Dict.Value("description") = ""
+		    Dict.Value("title") = ""
+		  End If
+		  
+		  Var Difficulty As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.NameDifficulty, Self.BaseConfigSetName, False)
+		  If (Difficulty Is Nil) = False Then
+		    Dict.Value("difficulty") = BeaconConfigs.Difficulty(Difficulty).DifficultyValue.ToString(Locale.Raw, "0.0#######")
+		  Else
+		    Dict.Value("difficulty") = 4.0
+		  End If
+		  
+		  Var Keys() As String
+		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
+		    Keys.Add(Entry.Key.StringValue + ":" + Entry.Value.StringValue)
+		  Next
+		  Dict.Value("keys") = Keys.Join(",")
+		  
+		  Var Editors() As String
+		  For Each Entry As DictionaryEntry In Self.mConfigSets
+		    Var SetName As String = Entry.Key
+		    Var Groups As Dictionary = Entry.Value
+		    For Each GroupEntry As DictionaryEntry In Groups
+		      Var GroupName As String = GroupEntry.Key
+		      If Editors.IndexOf(GroupName) = -1 Then
+		        Editors.Add(GroupName)
+		      End If
+		    Next
+		  Next
+		  Editors.Sort
+		  Dict.Value("editors") = Editors.Join(",")
+		  
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CombinedConfigs(States() As Beacon.ConfigSetState, Identity As Beacon.Identity) As Beacon.ConfigGroup()
 		  Var Names() As String
 		  If States Is Nil Then
