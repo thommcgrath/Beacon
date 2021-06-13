@@ -428,9 +428,15 @@ abstract class BeaconCloudStorage {
 		return true;		
 	}
 	
-	public static function PutFile(string $remote_path, string $file_contents) {
+	public static function PutFile(string $remote_path, $file_contents) {
 		// determine if the file has changed
-		$hash = hash('sha256', $file_contents);
+		$legacy_mode = is_array($file_contents) === false;
+		if ($legacy_mode) {
+			$hash = hash('sha256', $file_contents);
+		} else {
+			$hash = hash_file('sha256', $file_contents['tmp_name']);
+		}
+		
 		$database = BeaconCommon::Database();
 		$file_exists = false;
 		$results = $database->Query('SELECT hash, deleted FROM usercloud WHERE remote_path = $1;', $remote_path);
@@ -438,7 +444,7 @@ abstract class BeaconCloudStorage {
 			$file_exists = true;
 			if ($results->Field('hash') === $hash && $results->Field('deleted') === false) {
 				// nope, same file
-				return true;
+				//return true;
 			}
 		}
 		
@@ -451,7 +457,11 @@ abstract class BeaconCloudStorage {
 		}
 		
 		// make sure the local cache has the required space
-		$filesize = strlen($file_contents);
+		if ($legacy_mode) {
+			$filesize = strlen($file_contents);
+		} else {
+			$filesize = filesize($file_contents['tmp_name']);
+		}
 		static::CleanupLocalCache($filesize);
 		
 		// store the file locally
@@ -465,14 +475,19 @@ abstract class BeaconCloudStorage {
 			unlink($parent);
 			mkdir($parent, 0770, true);
 		}
-		file_put_contents($local_path, $file_contents);
-		chmod($local_path, 0660);
-		
-		// get the header, if the file is encrypted
-		$header_bytes = BeaconEncryption::HeaderBytes($file_contents);
-		if (!is_null($header_bytes)) {
+		if ($legacy_mode) {
+			file_put_contents($local_path, $file_contents);
+			$header_bytes = BeaconEncryption::HeaderBytes($file_contents, false);
+		} else {
+			if (move_uploaded_file($file_contents['tmp_name'], $local_path) === false) {
+				return false;
+			}
+			$header_bytes = BeaconEncryption::HeaderBytes($local_path, true);
+		}
+		if (is_null($header_bytes) === false) {
 			$header_bytes = bin2hex($header_bytes);
 		}
+		chmod($local_path, 0660);
 		
 		// update the database
 		$database->BeginTransaction();

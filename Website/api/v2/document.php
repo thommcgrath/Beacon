@@ -210,24 +210,35 @@ case 'PUT':
 case 'POST':
 	http_response_code(500); // So that a memory error doesn't report 200
 	BeaconAPI::Authorize();
-	if (BeaconAPI::ContentType() !== 'application/json') {
-		BeaconAPI::ReplyError('Send a JSON payload');
-	}
 	
-	/* 2021-03-11: Had to force this to save one file at a time, no longer
-		and it no longer returns the saved document. This was done because
-		php JSON is very memory intensive, and Beacon projects have become
-		complex enough that limits were being hit. */
+	/* 2021-03-11: Had to force this to save one file at a time, and it no
+		longer returns the saved document. This was done because php JSON is
+		very memory intensive, and Beacon projects have become complex enough
+		that limits were being hit. */
 		
 	if (BeaconCommon::IsUUID($document_id) === false) {
 		BeaconAPI::ReplyError('Specify exactly one UUID to save a document.');
 	}
 	
-	$file_content = BeaconAPI::Body();
 	$user = BeaconAPI::User();
-	$reason = '';
-	if (BeaconDocument::SaveFromContent($document_id, $user, $file_content, $reason) === false) {
-		BeaconAPI::ReplyError($reason);
+	$content_type = BeaconAPI::ContentType();
+	switch ($content_type) {
+	case 'application/json':
+		$file_content = BeaconAPI::Body();
+		$reason = '';
+		if (BeaconDocument::SaveFromContent($document_id, $user, $file_content, $reason) === false) {
+			BeaconAPI::ReplyError($reason);
+		}
+		break;
+	case 'multipart/form-data':
+		$reason = '';
+		if (BeaconDocument::SaveFromMultipart($user, $reason) === false) {
+			BeaconAPI::ReplyError($reason);
+		}
+		break;
+	default:
+		BeaconAPI::ReplyError('Content-Type must be application/json or multipart/form-data.');
+		break;
 	}
 	
 	BeaconAPI::ReplySuccess();

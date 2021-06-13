@@ -156,7 +156,14 @@ abstract class BeaconEncryption {
 		return (unpack('C', $data[0])[1] === self::SymmetricMagicByte);
 	}
 	
-	public static function HeaderBytes(string $data) {
+	public static function HeaderBytes(string $data, bool $path_mode = false) {
+		if ($path_mode) {
+			$path = $data;
+			$handle = fopen($path, 'rb');
+			$data = fread($handle, 32);
+			fclose($handle);
+		}
+		
 		$magic_byte = unpack('C', $data[0])[1];
 		if ($magic_byte !== self::SymmetricMagicByte) {
 			return null;

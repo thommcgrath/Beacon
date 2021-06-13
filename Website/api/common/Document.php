@@ -409,6 +409,103 @@ class Document implements \JsonSerializable {
 		return '/' . strtolower($user_id) . '/Documents/' . strtolower($document_id) . '.beacon';
 	}
 	
+	public static function SaveFromMultipart(\BeaconUser $user, string &$reason) {
+		$required_vars = ['description', 'difficulty', 'editors', 'keys', 'map', 'mods', 'title', 'uuid', 'version'];
+		$missing_vars = [];
+		foreach ($required_vars as $var) {
+			if (isset($_POST[$var]) === false || empty($_POST[$var]) === true) {
+				$missing_vars[] = $var;
+			}
+		}
+		if (isset($_FILES['contents']) === false) {
+			$missing_vars[] = 'contents';
+			sort($missing_vars);
+		}
+		if (count($missing_vars) > 0) {
+			$reason = 'The following parameters are missing: `' . implode('`, `', $missing_vars) . '`';
+			return false;
+		}
+		
+		$upload_status = $_FILES['contents']['error'];
+		switch ($upload_status) {
+		case UPLOAD_ERR_OK:
+			break;
+		case UPLOAD_ERR_NO_FILE:
+			$reason = 'No file included.';
+			break;
+		case UPLOAD_ERR_INI_SIZE:
+		case UPLOAD_ERR_FORM_SIZE:
+			$reason = 'Exceeds maximum file size.';
+			break;
+		default:
+			$reason = 'Other error ' . $upload_status . '.';
+			break;
+		}
+		
+		if (\BeaconCommon::IsCompressed($_FILES['contents']['tmp_name'], true) === false) {
+			$source = $_FILES['contents']['tmp_name'];
+			$destination = $source . '.gz';
+			if ($read_handle = fopen($source, 'rb')) {
+				if ($write_handle = gzopen($destination, 'wb9')) {
+					while (!feof($read_handle)) {
+						gzwrite($write_handle, fread($read_handle, 524288));
+					}
+					gzclose($write_handle);
+				} else {
+					fclose($read_handle);
+					$reason = 'Could not create compressed file.';
+					return false;
+				}
+				fclose($read_handle);
+			} else {
+				$reason = 'Could not read uncompressed file.';
+				return false;
+			}
+			unlink($source);
+			rename($destination, $source);
+		}
+		
+		$document = [
+			'Version' => intval($_POST['version']),
+			'Identifier' => $_POST['uuid'],
+			'Title' => $_POST['title'],
+			'Description' => $_POST['description'],
+			'Map' => intval($_POST['map']),
+			'DifficultyValue' => floatval($_POST['difficulty']),
+			'EditorNames' => array_unique(explode(',', $_POST['editors']))
+		];
+		$keys_members = explode(',', $_POST['keys']);
+		$keys = [];
+		foreach ($keys_members as $member) {
+			$pos = strpos($member, ':');
+			if ($pos === false) {
+				$reason = 'Parameter `keys` expects a comma-separated list of key:value pairs.';
+				return false;
+			}
+			$key = substr($member, 0, $pos);
+			if (\BeaconCommon::IsUUID($key) === false) {
+				$reason = 'Key `' . $key . '` is not a v4 UUID.';
+				return false;
+			}
+			$value = substr($member, $pos + 1);
+			$keys[$key] = $value;
+		}
+		$document['EncryptionKeys'] = $keys;
+		$mods_members = explode(',', $_POST['mods']);
+		$mods = [];
+		foreach ($mods_members as $mod_id) {
+			if (\BeaconCommon::IsUUID($mod_id) === false) {
+				$reason = 'Mod UUID `' . $mod_id . '` is not a v4 UUID.';
+				return false;
+			}
+			$mods[$mod_id] = true;
+		}
+		$document['ModSelections'] = $mods;
+		sort($document['EditorNames']);
+		
+		return self::SaveFromArray($document, $user, $_FILES['contents'], $reason);
+	}
+	
 	public static function SaveFromContent(string $document_id, \BeaconUser $user, $file_content, string &$reason) {
 		if (empty($file_content)) {
 			$reason = 'File is empty';
@@ -478,6 +575,7 @@ class Document implements \JsonSerializable {
 				break;
 			case 'LootSources':
 				$document['EditorNames'][] = 'LootDrops';
+				break;
 			}
 		}
 		$document['EditorNames'] = array_unique($document['EditorNames']);
@@ -492,6 +590,15 @@ class Document implements \JsonSerializable {
 			$reason = 'Document UUID of ' . strtolower($document['Identifier']) . ' in content does not match the resource UUID of ' . strtolower($document_id) . '.';
 			return false;
 		}
+		
+		if (is_null($file_content_compressed)) {
+			$file_content_compressed = gzencode($file_content);
+		}
+		
+		return self::SaveFromArray($document, $user, $file_content_compressed, $reason);
+	}
+	
+	protected static function SaveFromArray(array $document, \BeaconUser $user, $contents, string &$reason) {
 		$document_version = intval($document['Version']);
 		if ($document_version < 2) {
 			$reason = 'Version 1 documents are no longer not accepted.';
@@ -500,6 +607,10 @@ class Document implements \JsonSerializable {
 		
 		$database = \BeaconCommon::Database();
 		$document_id = $document['Identifier'];
+		if (\BeaconCommon::IsUUID($document_id) === false) {
+			$reason = 'Document identifier is not a v4 UUID.';
+			return false;
+		}
 		$title = isset($document['Title']) ? $document['Title'] : '';
 		$description = isset($document['Description']) ? $document['Description'] : '';
 		$difficulty = isset($document['DifficultyValue']) ? $document['DifficultyValue'] : 4;
@@ -580,13 +691,18 @@ class Document implements \JsonSerializable {
 			$console_safe = false;
 		}
 		
-		if (is_null($file_content_compressed)) {
-			$file_content_compressed = gzencode($file_content);
-		}
-		
-		if (\BeaconCloudStorage::PutFile(self::GenerateCloudStoragePath($owner_id, $document_id), $file_content_compressed) === false) {
+		if (\BeaconCloudStorage::PutFile(self::GenerateCloudStoragePath($owner_id, $document_id), $contents) === false) {
 			$reason = 'Unable to upload document to cloud storage platform.';
 			return false;
+		}
+		
+		$idx = array_search('Difficulty', $document['EditorNames']);
+		if ($idx !== false) {
+			unset($document['EditorNames'][$idx]);
+		}
+		$idx = array_search('Metadata', $document['EditorNames']);
+		if ($idx !== false) {
+			unset($document['EditorNames'][$idx]);
 		}
 		
 		$mods = '{' . implode(',', $mod_ids) . '}';

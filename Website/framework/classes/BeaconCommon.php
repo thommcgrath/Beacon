@@ -594,8 +594,16 @@ abstract class BeaconCommon {
 		return 'https://releases.' . self::Domain() . $path . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
 	}
 	
-	public static function IsCompressed(string $content) {
-		$arr = unpack('C*', substr($content, 0, 2));
+	public static function IsCompressed(string $content, bool $path_mode = false) {
+		if ($path_mode) {
+			$path = $content;
+			$handle = fopen($path, 'rb');
+			$content = fread($handle, 2);
+			fclose($handle);
+		} else {
+			$content = substr($content, 0, 2);
+		}
+		$arr = unpack('C*', $content);
 		return count($arr) == 2 && $arr[1] == 0x1f && $arr[2] == 0x8b;
 	}
 	
