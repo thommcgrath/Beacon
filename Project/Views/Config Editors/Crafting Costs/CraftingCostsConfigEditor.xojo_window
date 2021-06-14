@@ -370,6 +370,10 @@ End
 		    Self.AdjustCosts()
 		  Case "3db64fe3-9134-4a19-a255-7712c8c70a83"
 		    Self.SetupTransferrableElement()
+		  Case "6600245b-54b4-4b85-8f26-3792084ca2fa"
+		    If AdjustIngredientDialog.Present(Self, Self.Document) Then
+		      Self.SetupUI()
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
