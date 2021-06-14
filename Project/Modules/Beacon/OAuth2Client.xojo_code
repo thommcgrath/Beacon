@@ -198,7 +198,7 @@ Protected Class OAuth2Client
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, HTTPStatus, Content)
+		    App.LogAPIException(Err, CurrentMethodName, URL, HTTPStatus, Content)
 		    RaiseEvent AuthenticationError(Err.Message)
 		  End Try
 		  Self.EndTask()
@@ -270,7 +270,7 @@ Protected Class OAuth2Client
 		      
 		      RaiseEvent Authenticated
 		    Catch Err As RuntimeException
-		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		      App.LogAPIException(Err, CurrentMethodName, URL, Status, Content)
 		      RaiseEvent AuthenticationError(Err.Message)
 		    End Try
 		  End If

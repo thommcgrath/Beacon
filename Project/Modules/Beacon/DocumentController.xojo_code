@@ -304,7 +304,7 @@ Protected Class DocumentController
 		  Var Parts() As String
 		  Parts.Add("Content-Disposition: form-data; name=""contents""; filename=""" + Self.mDocument.DocumentID + ".beacon""" + EOL + "Content-Type: application/octet-stream" + EOL + EOL + Beacon.Compress(Beacon.GenerateJSON(Self.mDocument.ToDictionary(Self.mIdentity), False)))
 		  
-		  Var SaveData As Dictionary = Self.mDocument.CloudSaveData(Self.mIdentity)
+		  Var SaveData As Dictionary = Self.mDocument.CloudSaveData()
 		  For Each Entry As DictionaryEntry In SaveData
 		    Parts.Add("Content-Disposition: form-data; name=""" + Entry.Key.StringValue + """;" + EOL + EOL + Entry.Value.StringValue)
 		  Next

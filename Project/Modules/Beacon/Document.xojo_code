@@ -125,7 +125,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CloudSaveData(Identity As Beacon.Identity) As Dictionary
+		Function CloudSaveData() As Dictionary
 		  // Make sure all values are strings
 		  
 		  Var Dict As New Dictionary
@@ -158,7 +158,6 @@ Implements ObservationKit.Observable
 		  
 		  Var Editors() As String
 		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Var SetName As String = Entry.Key
 		    Var Groups As Dictionary = Entry.Value
 		    For Each GroupEntry As DictionaryEntry In Groups
 		      Var GroupName As String = GroupEntry.Key

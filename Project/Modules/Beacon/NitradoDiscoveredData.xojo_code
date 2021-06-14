@@ -54,7 +54,7 @@ Inherits Beacon.DiscoveredData
 		    Var TokenDict As Dictionary = Data.Value("token")
 		    FetchURL = TokenDict.Value("url")
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, GetURL, Status, Content)
 		    Return ""
 		  End Try
 		  
