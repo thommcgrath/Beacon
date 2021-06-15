@@ -92,6 +92,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BackgroundColor =   ""
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -437,6 +438,9 @@ End
 	#tag Constant, Name = ColumnTotalXP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.experience", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -515,6 +519,126 @@ End
 		  If Me.SelectedRowCount = 1 Then
 		    Self.ShowEditExperience()
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"":""" + Self.kClipboardType + """") > -1)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Overrides() As Dictionary
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Var Levels() As UInt64
+		  Var IndexOffset As Integer
+		  If Self.ViewingPlayerStats Then
+		    Levels = Config.PlayerLevels
+		    IndexOffset = 2
+		  Else
+		    Levels = Config.DinoLevels
+		    IndexOffset = 1
+		  End If
+		  For RowIdx As Integer = 0 To Me.LastRowIndex
+		    If Me.Selected(RowIdx) = False Then
+		      Continue
+		    End If
+		    
+		    Var Level As Integer = RowIdx + IndexOffset
+		    Var TotalXP As UInt64 = Levels(RowIdx)
+		    
+		    Var Override As New Dictionary
+		    Override.Value("Level") = Level
+		    Override.Value("XP") = TotalXP
+		    Overrides.Add(Override)
+		  Next
+		  
+		  Var Wrapper As New Dictionary
+		  Wrapper.Value("Type") = Self.kClipboardType
+		  Wrapper.Value("Levels") = Overrides
+		  
+		  Var JSON As String = Beacon.GenerateJSON(Wrapper, False)
+		  Board.RawData(Self.kClipboardType) = JSON
+		  Board.Text = JSON
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  Var JSON As String
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    JSON = Board.RawData(Self.kClipboardType)
+		  Else
+		    JSON = Board.Text
+		  End If
+		  
+		  Var Parsed As Dictionary
+		  Try
+		    Parsed = Beacon.ParseJSON(JSON)
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Unable to paste.", "The copied data could not be read. The parser said: " + Err.Reason)
+		    Return
+		  End Try
+		  
+		  If Parsed.Lookup("Type", "").StringValue <> Self.kClipboardType Then
+		    Self.ShowAlert("Unable to paste.", "The copied data has the wrong ""Type"" value.")
+		    Return
+		  ElseIf Parsed.HasKey("Levels") = False Then
+		    Self.ShowAlert("Unable to paste.", "The copied is missing the ""Levels"" array.")
+		    Return
+		  End If
+		  
+		  Var Levels() As Variant
+		  Try
+		    Levels = Parsed.Value("Levels")
+		  Catch Err As RuntimeException
+		    Self.ShowAlert("Unable to paste.", "The ""Levels"" value is not an array.")
+		    Return
+		  End Try
+		  
+		  Var Temp As Beacon.ConfigGroup = Self.Config(False).Clone(App.IdentityManager.CurrentIdentity, Self.Document)
+		  Var NewConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Temp)
+		  Var ViewingPlayerStats As Boolean = Self.ViewingPlayerStats
+		  Var WasValid As Boolean = NewConfig.PlayerLevelCap > 1 And NewConfig.Issues(Self.Document, App.IdentityManager.CurrentIdentity).Count = 0
+		  Var IndexOffset As Integer = If(ViewingPlayerStats, 2, 1)
+		  Var AddedLevels() As Integer
+		  For Idx As Integer = Levels.FirstIndex To Levels.LastIndex
+		    Try
+		      Var Dict As Dictionary = Levels(Idx)
+		      Var Level As Integer = Dict.Value("Level").IntegerValue
+		      Var XP As UInt64 = Dict.Value("XP").UInt64Value
+		      
+		      If ViewingPlayerStats Then
+		        NewConfig.PlayerLevelCap = Max(NewConfig.PlayerLevelCap, Level)
+		        NewConfig.PlayerExperience(Level - IndexOffset) = XP
+		      Else
+		        NewConfig.DinoLevelCap = Max(NewConfig.DinoLevelCap, Level)
+		        NewConfig.DinoExperience(Level - IndexOffset) = XP
+		      End If
+		      
+		      AddedLevels.Add(Level)
+		    Catch Err As RuntimeException
+		      Self.ShowAlert("Unable to paste", "Levels member at index " + Idx.ToString(Locale.Raw, "0") + " is either not a structure or is otherwise incorrect.")
+		      Return
+		    End Try
+		  Next
+		  
+		  Var IsValid As Boolean = NewConfig.PlayerLevelCap > 1 And NewConfig.Issues(Self.Document, App.IdentityManager.CurrentIdentity).Count = 0
+		  If WasValid = True And IsValid = False Then
+		    Var Cancel As Boolean = Self.ShowConfirm("Pasting this data will create an invalid experience plan.", "Either at least one of the new levels have experience amounts lower than the previous level, or there aren't enough levels defined. Do you want to paste anyway?", "Paste Anyway", "Cancel") = False
+		    If Cancel Then
+		      Return
+		    End If
+		  End If
+		  
+		  Self.Document.AddConfigGroup(NewConfig)
+		  Self.mConfigRef = New WeakRef(NewConfig)
+		  Self.Changed = NewConfig.Modified
+		  Self.UpdateList(AddedLevels)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
