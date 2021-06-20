@@ -43,7 +43,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -196,7 +195,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   446
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -1334,6 +1332,9 @@ End
 	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = kConfigGroupClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.configgroup", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = LocalMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
 	#tag EndConstant
 
@@ -1560,45 +1561,91 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ContextualClick(MouseX As Integer, MouseY As Integer, ItemIndex As Integer, ItemRect As Rect)
-		  #Pragma Unused MouseX
-		  #Pragma Unused MouseY
-		  
-		  If ItemIndex <= -1 Then
-		    Return
-		  End If
-		  
 		  Const RestoreTag = "b4d7f3d8-17f2-425f-8ab8-9032d558b29d"
+		  Const CopyTag = "a0b7a0ee-518a-4ee8-a33c-5c8e46ba570f"
+		  Const PasteTag = "31f1decc-7706-4baf-af11-f4d4fdde799d"
+		  
+		  Var Item As SourceListItem
+		  Var ConfigName As String
+		  Var Config As Beacon.ConfigGroup
+		  If ItemIndex > -1 Then
+		    Item = Me.Item(ItemIndex)
+		    ConfigName = Item.Tag
+		    Config = Self.Document.ConfigGroup(ConfigName, False)
+		  End If
 		  
 		  Var Base As New MenuItem
-		  Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
-		  Var Item As SourceListItem = Me.Item(ItemIndex)
-		  Var ConfigName As String = Item.Tag
-		  For Each Task As BeaconConfigs.Task In Tasks
-		    If Task.IsRelevantForEditor(ConfigName) Then
-		      Base.AddMenu(New MenuItem(Task.Caption, Task.UUID))
-		    End If
-		  Next
-		  If Base.Count > 0 Then
+		  Var CopyItem As New MenuItem("Copy", CopyTag)
+		  CopyItem.Enabled = (ItemIndex > -1) And (Config Is Nil) = False And Config.IsImplicit = False
+		  Base.AddMenu(CopyItem)
+		  Var Board As New Clipboard
+		  Var PasteItem As New MenuItem("Paste", PasteTag)
+		  PasteItem.Enabled = Board.RawDataAvailable(Self.kConfigGroupClipboardType) And (ItemIndex = -1 Or Board.RawData(Self.kConfigGroupClipboardType).IndexOf("""GroupName"":""" + ConfigName + """") > -1)
+		  Base.AddMenu(PasteItem)
+		  
+		  If ItemIndex > -1 Then
 		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
+		    For Each Task As BeaconConfigs.Task In Tasks
+		      If Task.IsRelevantForEditor(ConfigName) Then
+		        Base.AddMenu(New MenuItem(Task.Caption, Task.UUID))
+		      End If
+		    Next
+		    If Base.Count > 0 Then
+		      Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    End If
+		    Base.AddMenu(New MenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
 		  End If
-		  Base.AddMenu(New MenuItem("Restore """ + Item.Caption + """ to Default", RestoreTag))
 		  
 		  Var Position As Point = Me.Window.GlobalPosition
-		  Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		  Var Choice As MenuItem
+		  If ItemRect Is Nil Then
+		    Choice = Base.PopUp(Position.X + Me.Left + MouseX, Position.Y + Me.Top + MouseY)
+		  Else
+		    Choice = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		  End If
 		  If Choice Is Nil Then
 		    Return
 		  End If
 		  
-		  If Me.SelectedRowIndex <> ItemIndex Then
-		    Me.SelectedRowIndex = ItemIndex
-		  End If
-		  
-		  If Choice.Tag = RestoreTag Then
+		  Select Case Choice.Tag
+		  Case RestoreTag
 		    Self.RestoreEditor(ConfigName)
-		    Return
-		  End If
-		  
-		  Call Self.CurrentPanel.RunTask(Choice.Tag)
+		  Case CopyTag
+		    If (Config Is Nil) = False Then
+		      Var SaveData As New Dictionary
+		      SaveData.Value("GroupName") = ConfigName
+		      SaveData.Value("SaveData") = Config.ToDictionary(Self.Document)
+		      Var JSON As String = Beacon.GenerateJSON(SaveData, False)
+		      Board.RawData(Self.kConfigGroupClipboardType) = JSON
+		    End If
+		  Case PasteTag
+		    Try
+		      Var Parsed As Dictionary = Beacon.ParseJSON(Board.RawData(Self.kConfigGroupClipboardType))
+		      Var NewConfigName As String = Parsed.Value("GroupName")
+		      Var NewConfigData As Dictionary = Parsed.Value("SaveData")
+		      Var NewConfig As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(NewConfigName, NewConfigData, App.IdentityManager.CurrentIdentity, Self.Document)
+		      Self.Document.AddConfigGroup(NewConfig)
+		      Self.UpdateConfigList()
+		      Self.Changed = Self.Document.Modified
+		      
+		      If Me.SelectedRowIndex = ItemIndex Or (ItemIndex = -1 And Me.SelectedRowIndex > -1 And Me.Item(Me.SelectedRowIndex).Tag = NewConfigName) Then
+		        // Refresh
+		        Self.CurrentConfigName = ""
+		        Self.CurrentConfigName = NewConfigName
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Working with pasted data")
+		      App.Log("Pasted data: " + EncodeBase64(Board.RawData(Self.kConfigGroupClipboardType), 0))
+		      Self.ShowAlert("Beacon was unable to complete the paste.", "The error was '" + Err.Message + "'. More data may be available in the log files.")
+		    End Try
+		  Else
+		    If Me.SelectedRowIndex <> ItemIndex Then
+		      Me.SelectedRowIndex = ItemIndex
+		    End If
+		    
+		    Call Self.CurrentPanel.RunTask(Choice.Tag)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
