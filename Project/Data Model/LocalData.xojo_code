@@ -63,7 +63,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Else
 		      If Results.RowCount = 1 Then
 		        Self.SQLExecute("DELETE FROM " + Category + " WHERE object_id = ?1;", Results.Column("object_id").StringValue)
-		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = ?3;", Results.Column("object_id").StringValue, Category)
+		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = ?2;", Results.Column("object_id").StringValue, Category)
 		      End If
 		      
 		      Var ColumnNames(), Placeholders() As String
