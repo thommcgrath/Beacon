@@ -410,12 +410,16 @@ class Document implements \JsonSerializable {
 	}
 	
 	public static function SaveFromMultipart(\BeaconUser $user, string &$reason) {
-		$required_vars = ['description', 'difficulty', 'editors', 'keys', 'map', 'mods', 'title', 'uuid', 'version'];
+		$required_vars = ['difficulty', 'editors', 'keys', 'map', 'mods', 'title', 'uuid', 'version'];
 		$missing_vars = [];
 		foreach ($required_vars as $var) {
 			if (isset($_POST[$var]) === false || empty($_POST[$var]) === true) {
 				$missing_vars[] = $var;
 			}
+		}
+		if (isset($_POST['description']) === false) {
+			// description is allowed to be empty
+			$missing_vars[] = 'description';
 		}
 		if (isset($_FILES['contents']) === false) {
 			$missing_vars[] = 'contents';
