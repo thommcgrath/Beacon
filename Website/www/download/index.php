@@ -258,7 +258,7 @@ function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results
 		$data['engrams_url'] = 'https://updates.usebeacon.app' . $results->Field('path');
 	} else {
 		$last_database_update = BeaconCommon::NewestUpdateTimestamp($build);
-		$data['engrams_url'] = BeaconCommon::AbsoluteURL('/classes?version=' . $build);
+		$data['engrams_url'] = BeaconCommon::AbsoluteURL('/download/classes?version=' . $build);
 	}
 	$data['engrams_date'] = $last_database_update->format('c');
 	$data['engrams_date_display'] = $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC';
