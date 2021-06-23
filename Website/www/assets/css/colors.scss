@@ -537,6 +537,10 @@
 		}
 	}
 	
+	p.help-summary {
+		border-bottom-color: $separator-color;
+	}
+	
 	.notice-warning {
 		border-color: mix($text-red, $background-color, 35%);
 		color: $text-red;

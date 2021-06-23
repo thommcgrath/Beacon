@@ -124,7 +124,7 @@ var dialog = {
 		});
 		
 		if (handler) {
-			prom.then(handler);
+			prom.then(handler).catch(function() {});
 		} else {
 			return prom;
 		}

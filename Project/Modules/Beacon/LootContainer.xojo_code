@@ -223,7 +223,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		Function MaxItemSets() As Integer
 		  // Part of the Beacon.LootSource interface.
 		  
-		  Return Max(Self.mMaxItemSets, 1)
+		  Return Max(Self.mMaxItemSets, 0)
 		End Function
 	#tag EndMethod
 
@@ -244,7 +244,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		Function MinItemSets() As Integer
 		  // Part of the Beacon.LootSource interface.
 		  
-		  Return Max(Self.mMinItemSets, 1)
+		  Return Max(Self.mMinItemSets, 0)
 		End Function
 	#tag EndMethod
 

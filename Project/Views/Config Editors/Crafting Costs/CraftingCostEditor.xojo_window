@@ -193,7 +193,7 @@ End
 		  
 		  Self.List.RemoveAllRows
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Self.mTarget.Quantity(I).ToString(Locale.Raw, "0"))
+		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Self.mTarget.Quantity(I).ToString(Locale.Raw, ",##0"))
 		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Self.mTarget.Resource(I).ObjectID) > -1
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Self.mTarget.Resource(I)

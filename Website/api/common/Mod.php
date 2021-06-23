@@ -42,6 +42,10 @@ class Mod implements \JsonSerializable {
 		return $this->last_pull_hash;
 	}
 	
+	public function MinVersion() {
+		return $this->min_version;
+	}
+	
 	public function AttemptConfirmation() {
 		$workshop_item = \BeaconWorkshopItem::Load($this->workshop_id);
 		if ($workshop_item === null) {

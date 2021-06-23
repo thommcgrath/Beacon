@@ -522,6 +522,7 @@ Folder=Preferences Window;Views/Preferences Window;&h000000006CAE27FF;&h00000000
 Window=PreferencesWindow;Views/Preferences Window/PreferencesWindow.xojo_window;&h000000000E954FFF;&h000000006CAE27FF;false
 Class=IconCanvas;Custom Controls/IconCanvas.xojo_code;&h00000000705827FF;&h0000000030DCFFFF;false
 MultiImage=IconCaution;Icons/IconCaution.xojo_image;&h000000000323C7FF;&h0000000007F977FF;false
+Window=AdjustIngredientDialog;Views/Config Editors/Crafting Costs/AdjustIngredientDialog.xojo_window;&h00000000314F67FF;&h00000000068D0FFF;false
 Window=ListPresetModifiersComponent;Views/Main Window Components/Presets/ListPresetModifiersComponent.xojo_window;&h000000000F78EFFF;&h000000001175E7FF;false
 Class=MutablePresetModifier;Modules/Beacon/MutablePresetModifier.xojo_code;&h000000000F5017FF;&h0000000055ADDFFF;false
 Window=PresetModifierEditorDialog;Views/Main Window Components/Presets/PresetModifierEditorDialog.xojo_window;&h0000000041A84FFF;&h000000001175E7FF;false

@@ -55,7 +55,7 @@ Protected Interface Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LogAPIException(Err As RuntimeException, Location As String, HTTPStatus As Integer, RawContent As MemoryBlock)
+		Sub LogAPIException(Err As RuntimeException, Location As String, URL As String, HTTPStatus As Integer, RawContent As MemoryBlock)
 		  
 		End Sub
 	#tag EndMethod

@@ -1419,6 +1419,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    ForegroundColor = SystemColors.SystemRedColor
 		  Case &c88C8FF00
 		    ForegroundColor = SystemColors.SystemBlueColor
+		  Case &c00FFFF00
+		    ForegroundColor = SystemColors.SystemTealColor
+		  Case &cFFA50000
+		    ForegroundColor = SystemColors.SystemOrangeColor
 		  End Select
 		  
 		  Return IconForLootSource(Source, ForegroundColor, BackgroundColor)
@@ -1959,18 +1963,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		        Values(15) = TagString
 		        
-		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = $1 OR (file = $2 AND header = $3 AND key = $4);", ObjectID.StringValue, File, Header, Key)
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ObjectID.StringValue, File, Header, Key)
 		        If Results.RowCount > 1 Then
-		          Self.SQLExecute("DELETE FROM ini_options WHERE object_id = $1 OR (file = $2 AND header = $3 AND key = $4);", ObjectID.StringValue, File, Header, Key)
+		          Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ObjectID.StringValue, File, Header, Key)
 		        End If
 		        If Results.RowCount = 1 Then
 		          // Update
 		          Var OriginalObjectID As v4UUID = Results.Column("object_id").StringValue
 		          Values.Add(OriginalObjectID.StringValue)
-		          Self.SQLExecute("UPDATE ini_options SET object_id = $1, label = $2, mod_id = $3, native_editor_version = $4, file = $5, header = $6, key = $7, value_type = $8, max_allowed = $9, description = $10, default_value = $11, alternate_label = $12, nitrado_path = $13, nitrado_format = $14, nitrado_deploy_style = $15, tags = $16 WHERE object_id = $17;", Values)
+		          Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, mod_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16 WHERE object_id = ?17;", Values)
 		        Else
 		          // Insert
-		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);", Values)
+		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16);", Values)
 		        End If
 		      Next
 		    End If
@@ -1987,13 +1991,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Var Mask As UInt64 = MapDict.Value("mask")
 		        Var Sort As Integer = MapDict.Value("sort")
 		        
-		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = $1;", MapID)
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = ?1;", MapID)
 		        If Results.RowCount = 1 Then
-		          Self.SQLExecute("UPDATE maps SET mod_id = $2, label = $3, ark_identifier = $4, difficulty_scale = $5, official = $6, mask = $7, sort = $8 WHERE object_id = $1;", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		          Self.SQLExecute("UPDATE maps SET mod_id = ?2, label = ?3, ark_identifier = ?4, difficulty_scale = ?5, official = ?6, mask = ?7, sort = ?8 WHERE object_id = ?1;", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		        Else
-		          Self.SQLExecute("INSERT INTO maps (object_id, mod_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		          Self.SQLExecute("INSERT INTO maps (object_id, mod_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		        End If
 		      Next
+		      Beacon.Maps.ClearCache
 		    End If
 		    
 		    Var ReloadPresets As Boolean

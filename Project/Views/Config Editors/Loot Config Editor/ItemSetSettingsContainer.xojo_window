@@ -701,18 +701,18 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Text)
-		  If Value = 0 Then
+		  If IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
+		  Var Value As Integer = Val(Me.Text)
 		  Self.ItemSet.MinNumItems = Value
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 1
+		  MinValue = 0
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
@@ -732,18 +732,18 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Text)
-		  If Value = 0 Then
+		  If IsNumeric(Me.Text) = False Then
 		    Return
 		  End If
 		  
+		  Var Value As Integer = Val(Me.Text)
 		  Self.ItemSet.MaxNumItems = Value
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 1
+		  MinValue = 0
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent

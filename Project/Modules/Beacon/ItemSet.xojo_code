@@ -671,12 +671,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(Self.mMaxNumItems, 1)
+			  Return Max(Self.mMaxNumItems, 0)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
+			  Value = Max(Value, 0)
 			  If Self.mMaxNumItems = Value Then
 			    Return
 			  End If
@@ -703,12 +703,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(Self.mMinNumItems, 1)
+			  Return Max(Self.mMinNumItems, 0)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
+			  Value = Max(Value, 0)
 			  If Self.mMinNumItems = Value Then
 			    Return
 			  End If

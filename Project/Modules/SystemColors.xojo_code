@@ -121,7 +121,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("controlAccentColor")
 		      End If
 		    #elseif TargetWindows
@@ -197,7 +197,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.13+
-		      If MacIsHighSierra Then
+		      If MacIs1013HighSierra Then
 		        Return New ColorGroupMimic("findHighlightColor")
 		      End If
 		    #endif
@@ -307,8 +307,9 @@ Protected Module SystemColors
 		    Catch Err As RuntimeException
 		    End Try
 		  #elseif TargetMacOS
-		    MacIsMojave = SystemInformationMBS.isMojave(True)
-		    MacIsHighSierra = SystemInformationMBS.isHighSierra(True)
+		    MacIs1013HighSierra = SystemInformationMBS.isHighSierra(True)
+		    MacIs1014Mojave = SystemInformationMBS.isMojave(True)
+		    MacIs1015Catalina = SystemInformationMBS.isCatalina(True)
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -382,7 +383,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("primaryContentBackgroundColor")
 		      End If
 		    #endif
@@ -398,7 +399,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("secondaryContentBackgroundColor")
 		      End If
 		    #endif
@@ -462,7 +463,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("selectedContentBackgroundColor")
 		      End If
 		    #elseif TargetWindows
@@ -552,7 +553,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("separatorColor")
 		      End If
 		    #elseif TargetiOS
@@ -586,7 +587,7 @@ Protected Module SystemColors
 		  
 		  If Not mDetected Then
 		    #if TargetMacOS
-		      mSupportsDualColors = XojoVersion >= 2021.01 Or MacIsMojave
+		      mSupportsDualColors = XojoVersion >= 2021.01 Or MacIs1014Mojave
 		    #else
 		      mSupportsDualColors = True
 		    #endif
@@ -660,6 +661,24 @@ Protected Module SystemColors
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function SystemIndigoColor() As Color
+		  Try
+		    #if TargetMacOS
+		      // 10.15+
+		      If MacIs1015Catalina Then
+		        Return New ColorGroupMimic("systemIndigoColor")
+		      End If
+		    #elseif TargetiOS
+		      Return New ColorGroupMimic("systemIndigo")
+		    #endif
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Return New ColorGroupMimic(&c453BCC00, &c4A40DF00)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function SystemOrangeColor() As Color
 		  Try
 		    #if TargetMacOS
@@ -720,6 +739,22 @@ Protected Module SystemColors
 		  End Try
 		  
 		  Return New ColorGroupMimic(&cFF3B3000, &cFF453A00)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SystemTealColor() As Color
+		  Try
+		    #if TargetMacOS
+		      // 10.12+
+		      Return New ColorGroupMimic("systemTealColor")
+		    #elseif TargetiOS
+		      Return New ColorGroupMimic("systemTeal")
+		    #endif
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Return New ColorGroupMimic(&c47AFEB00, &c4CBBF200)
 		End Function
 	#tag EndMethod
 
@@ -802,7 +837,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("unemphasizedSelectedContentBackgroundColor")
 		      End If
 		    #endif
@@ -818,7 +853,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("unemphasizedSelectedTextBackgroundColor")
 		      End If
 		    #endif
@@ -834,7 +869,7 @@ Protected Module SystemColors
 		  Try
 		    #if TargetMacOS
 		      // 10.14+
-		      If MacIsMojave Then
+		      If MacIs1014Mojave Then
 		        Return New ColorGroupMimic("unemphasizedSelectedTextColor")
 		      End If
 		    #endif
@@ -875,11 +910,15 @@ Protected Module SystemColors
 
 
 	#tag Property, Flags = &h21
-		Private MacIsHighSierra As Boolean
+		Private MacIs1013HighSierra As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private MacIsMojave As Boolean
+		Private MacIs1014Mojave As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private MacIs1015Catalina As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -46,6 +46,11 @@ abstract class BeaconEmail {
 		
 		return true;
 	}
+	
+	// Checks if the address is syntactically valid.
+	public static function IsEmailValid(string $email) {
+		return filter_var($email, FILTER_VALIDATE_EMAIL);
+	}
 }
 
 ?>

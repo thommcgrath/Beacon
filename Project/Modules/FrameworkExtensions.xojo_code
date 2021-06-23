@@ -668,6 +668,7 @@ Protected Module FrameworkExtensions
 		    Lock.Leave
 		    Return True
 		  Catch Err As RuntimeException
+		    App.Log("Unable to write " + File.NativePath + ": " + Err.Reason + " (" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
 		    Lock.Leave
 		    Return False
 		  End Try

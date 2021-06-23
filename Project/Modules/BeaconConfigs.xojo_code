@@ -44,6 +44,7 @@ Protected Module BeaconConfigs
 		  Static Tasks() As BeaconConfigs.Task
 		  If Tasks.LastIndex = -1 Then
 		    Tasks.Add(New BeaconConfigs.Task("Adjust All Crafting Costs", "24376f12-c256-440c-87ca-2c8309a7a754", NameCraftingCosts))
+		    Tasks.Add(New BeaconConfigs.Task("Replace Crafting Ingredient", "6600245b-54b4-4b85-8f26-3792084ca2fa", NameCraftingCosts))
 		    Tasks.Add(New BeaconConfigs.Task("Setup Fibercraft Server", "94eced5b-be7d-441a-a5b3-f4a9bf40a856", NameCraftingCosts))
 		    Tasks.Add(New BeaconConfigs.Task("Setup Transferrable Element", "3db64fe3-9134-4a19-a255-7712c8c70a83", NameCraftingCosts))
 		    Tasks.Add(New BeaconConfigs.Task("Convert Creature Replacements to Spawn Point Additions", "614cfc80-b7aa-437d-b17e-01534f2ab778", NameSpawnPoints, NameDinoAdjustments))

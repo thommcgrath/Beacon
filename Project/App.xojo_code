@@ -902,7 +902,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LogAPIException(Err As RuntimeException, Location As String, HTTPStatus As Integer, RawContent As MemoryBlock)
+		Sub LogAPIException(Err As RuntimeException, Location As String, URL As String, HTTPStatus As Integer, RawContent As MemoryBlock)
 		  If Err = Nil Then
 		    Return
 		  End If
@@ -911,7 +911,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If RawContent <> Nil And RawContent.Size > 0 Then
 		    Base64 = EncodeBase64(RawContent, 0)
 		  End If
-		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " " + Base64)
+		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " from " + URL + "; Base64 Response: " + Base64)
 		End Sub
 	#tag EndMethod
 

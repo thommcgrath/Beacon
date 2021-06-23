@@ -203,7 +203,7 @@ Inherits Beacon.IntegrationEngine
 		        Return False
 		      End If
 		    Catch Err As RuntimeException
-		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		      App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		      Self.SetError(Err)
 		      Return False
 		    End Try
@@ -281,7 +281,7 @@ Inherits Beacon.IntegrationEngine
 		  Try
 		    Parsed = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Parsed, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Parsed, CurrentMethodName, Socket.LastURL, Status, Content)
 		    Self.SetError("There was an exception while retrieving your server list.")
 		    Return Servers
 		  End Try
@@ -409,7 +409,7 @@ Inherits Beacon.IntegrationEngine
 		      
 		      Servers.Add(Server)
 		    Catch Err As RuntimeException
-		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		      App.LogAPIException(Err, CurrentMethodName, Socket.LastURL, Status, Content)
 		      Continue
 		    End Try
 		  Next
@@ -485,7 +485,7 @@ Inherits Beacon.IntegrationEngine
 		    RequiredFileSize = Dictionary(Response.Value("data")).Value("size")
 		  Catch Err As RuntimeException
 		    If FailureMode <> DownloadFailureMode.ErrorsAllowed Then
-		      App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
+		      App.LogAPIException(Err, CurrentMethodName, SizeSocket.LastURL, SizeSocket.LastHTTPStatus, SizeSocket.LastContent)
 		      Transfer.SetError(Err.Message)
 		    End If
 		    Return
@@ -503,7 +503,7 @@ Inherits Beacon.IntegrationEngine
 		    Var TokenDict As Dictionary = Data.Value("token")
 		    FetchURL = TokenDict.Value("url")
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		    Transfer.SetError(Err.Message)
 		    Return
 		  End Try
@@ -683,7 +683,7 @@ Inherits Beacon.IntegrationEngine
 		      Beacon.NitradoServerProfile(Self.Profile).Address = GameServer.Value("ip") + ":" + GameServer.Value("port")
 		    End If
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -715,7 +715,7 @@ Inherits Beacon.IntegrationEngine
 		      #endif
 		    End If
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		    Self.SetError(Err)
 		  End Try 
 		End Sub
@@ -747,7 +747,7 @@ Inherits Beacon.IntegrationEngine
 		      #endif
 		    End If
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		    Self.SetError(Err)
 		  End Try
 		End Sub
@@ -796,7 +796,7 @@ Inherits Beacon.IntegrationEngine
 		    PutURL = TokenDict.Value("url")
 		    PutToken = TokenDict.Value("token")
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		    Transfer.Success = False
 		    Transfer.ErrorMessage = Err.Message
 		    Return
@@ -987,7 +987,7 @@ Inherits Beacon.IntegrationEngine
 		      Self.SetError("Error: Could not backup current settings.")
 		    End If
 		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    App.LogAPIException(Err, CurrentMethodName, Sock.LastURL, Status, Content)
 		    Self.SetError(Err)
 		  End Try
 		End Sub

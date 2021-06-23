@@ -85,6 +85,7 @@ class BeaconBot(discord.Client):
 			await message.channel.send('Sorry, I didn\'t understand which platform you meant. Try saying `PC`, `Xbox`, or `PlayStation`.')
 			return
 		
+		num_members = 0;
 		for guild in client.guilds:
 			remove_roles = []
 			add_roles = []
@@ -96,12 +97,19 @@ class BeaconBot(discord.Client):
 			
 			member = guild.get_member(message.author.id)
 			if member == None:
+				num_numbers += 1
 				continue
 			
 			for role in remove_roles:
 				await member.remove_roles(role)
 			for role in add_roles:
 				await member.add_roles(role)
+		
+		if num_numbers == 0:
+			self.logMessage('Could not find member object for user ' + message.author.name + '.');
+			self.logMessage('User said `' + message.content + '`');
+			await message.channel.send('Sorry, I seem to be having trouble. You should contact the server admin.')
+			return
 		
 		self.logMessage('Assigned user ' + message.author.name + ' the platform ' + desired_platform_name + ' based on message `' + message.content + '`')	
 		await message.channel.send('Ok, I\'ve set your platform to {0}. If I got this wrong, just reply with `PC`, `Xbox`, or `PlayStation` and I\'ll correct it for you.'.format(desired_platform_name))

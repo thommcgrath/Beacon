@@ -290,6 +290,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Self.mController.Document.NewIdentifier
 		  Var NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Document.DocumentID).Middle(8)
 		  Self.mController.Document.Title = Self.TitleField.Text
 		  Self.mController.SaveAs(NewURL)

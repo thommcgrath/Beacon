@@ -742,8 +742,11 @@ End
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.Difficulty(Self.mConfigRef.Value)
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.Difficulty(Document.ConfigGroup(ConfigName))
+		    Self.mConfigRef = New WeakRef(Config)
 		  Else
-		    Config = BeaconConfigs.Difficulty(Document.ConfigGroup(ConfigName, ForWriting))
+		    Config = New BeaconConfigs.Difficulty
 		    Self.mConfigRef = New WeakRef(Config)
 		  End If
 		  

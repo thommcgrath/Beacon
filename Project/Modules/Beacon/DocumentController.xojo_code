@@ -300,18 +300,19 @@ Protected Class DocumentController
 		Private Sub Thread_Upload(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  Var JSON As String = Beacon.GenerateJSON(Self.mDocument.ToDictionary(Self.mIdentity), False)
-		  Var Headers As New Dictionary
-		  Headers.Value("Authorization") = "Session " + Preferences.OnlineToken
+		  Var EOL As String = EndOfLine.Windows
+		  Var Parts() As String
+		  Parts.Add("Content-Disposition: form-data; name=""contents""; filename=""" + Self.mDocument.DocumentID + ".beacon""" + EOL + "Content-Type: application/octet-stream" + EOL + EOL + Beacon.Compress(Beacon.GenerateJSON(Self.mDocument.ToDictionary(Self.mIdentity), False)))
 		  
-		  Var Body As MemoryBlock = Beacon.Compress(JSON)
-		  Headers.Value("Content-Encoding") = "gzip"
-		  
-		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
-		  For Each Entry As DictionaryEntry In Headers
-		    Socket.RequestHeader(Entry.Key) = Entry.Value
+		  Var SaveData As Dictionary = Self.mDocument.CloudSaveData()
+		  For Each Entry As DictionaryEntry In SaveData
+		    Parts.Add("Content-Disposition: form-data; name=""" + Entry.Key.StringValue + """;" + EOL + EOL + Entry.Value.StringValue)
 		  Next
-		  Socket.SetRequestContent(Body, "application/json")
+		  
+		  Var Boundary As String = new v4UUID
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
+		  Socket.SetRequestContent("--" + Boundary + EOL + Parts.Join(EOL + "--" + Boundary + EOL) + EOL + "--" + Boundary + "--", "multipart/form-data; charset=utf-8; boundary=" + Boundary)
 		  Socket.Send("POST", Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Writing))
 		  If Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201 Then
 		    If Self.mClearModifiedOnWrite Then
