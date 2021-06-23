@@ -73,6 +73,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetConfigKey(KeyUUID As String) As Beacon.ConfigKey
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
 		  
 		End Function

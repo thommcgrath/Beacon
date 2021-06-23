@@ -20,9 +20,8 @@ Protected Module BeaconConfigs
 		    Names.Add(NameSpawnPoints)
 		    Names.Add(NameStatLimits)
 		    Names.Add(NameEngramControl)
-		    #if SpoilingEnabled
-		      Names.Add(NameSpoilTimers)
-		    #endif
+		    Names.Add(NameSpoilTimers)
+		    Names.Add(NameOtherSettings)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -109,10 +108,10 @@ Protected Module BeaconConfigs
 		    Return New StatLimits()
 		  Case NameStatMultipliers
 		    Return New StatMultipliers()
-		    #if SpoilingEnabled
 		  Case NameSpoilTimers
 		    Return New SpoilTimers
-		    #endif
+		  Case NameOtherSettings
+		    Return New OtherSettings
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + GroupName + """ is not known."
@@ -156,10 +155,10 @@ Protected Module BeaconConfigs
 		    Return New StatLimits(GroupData, Identity, Document)
 		  Case NameStatMultipliers
 		    Return New StatMultipliers(GroupData, Identity, Document)
-		    #if SpoilingEnabled
 		  Case NameSpoilTimers
 		    Return New SpoilTimers(GroupData, Identity, Document)
-		    #endif
+		  Case NameOtherSettings
+		    Return New OtherSettings(GroupData, Identity, Document)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + GroupName + """ is not known."
@@ -203,10 +202,10 @@ Protected Module BeaconConfigs
 		    Return StatLimits.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
 		  Case NameStatMultipliers
 		    Return StatMultipliers.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
-		    #if SpoilingEnabled
 		  Case NameSpoilTimers
 		    Return SpoilTimers.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
-		    #endif
+		  Case NameOtherSettings
+		    Return OtherSettings.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + GroupName + """ is not known."
@@ -290,6 +289,9 @@ Protected Module BeaconConfigs
 	#tag Constant, Name = NameMetadata, Type = String, Dynamic = False, Default = \"Metadata", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = NameOtherSettings, Type = String, Dynamic = False, Default = \"OtherSettings", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = NameSpawnPoints, Type = String, Dynamic = False, Default = \"SpawnPoints", Scope = Protected
 	#tag EndConstant
 
@@ -303,9 +305,6 @@ Protected Module BeaconConfigs
 	#tag EndConstant
 
 	#tag Constant, Name = NameStatMultipliers, Type = String, Dynamic = False, Default = \"StatMultipliers", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = SpoilingEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
 

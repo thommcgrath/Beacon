@@ -136,6 +136,8 @@ Protected Module Language
 		    Return "Engram Control"
 		  Case BeaconConfigs.NameSpoilTimers
 		    Return "Decay and Spoil"
+		  Case BeaconConfigs.NameOtherSettings
+		    Return "Other Settings"
 		  Case "deployments"
 		    Return "Servers"
 		  Case "accounts"

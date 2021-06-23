@@ -26,7 +26,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -35,6 +35,7 @@ Protected Class ConfigKey
 		  Self.mMaxAllowed = MaxAllowed
 		  Self.mDescription = Description
 		  Self.mDefaultValue = DefaultValue
+		  Self.mNativeEditorVersion = NativeEditorVersion
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -59,6 +60,12 @@ Protected Class ConfigKey
 	#tag Method, Flags = &h0
 		Function File() As String
 		  Return Self.mFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasNativeEditor() As Boolean
+		  Return (Self.mNativeEditorVersion Is Nil) = False And Self.mNativeEditorVersion.IntegerValue >= App.BuildNumber
 		End Function
 	#tag EndMethod
 
@@ -89,6 +96,12 @@ Protected Class ConfigKey
 	#tag Method, Flags = &h0
 		Function MaxAllowed() As NullableDouble
 		  Return Self.mMaxAllowed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NativeEditorVersion() As NullableDouble
+		  Return Self.mNativeEditorVersion
 		End Function
 	#tag EndMethod
 
@@ -206,6 +219,10 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mMaxAllowed As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNativeEditorVersion As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

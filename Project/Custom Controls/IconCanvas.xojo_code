@@ -46,7 +46,7 @@ Inherits ControlCanvas
 		  
 		  If Not Highlighted Then
 		    Var Lum As Double = IconColor.Luminance
-		    IconColor = RGB(255 * Lum, 255 * Lum, 255 * Lum)
+		    IconColor = Color.RGB(255 * Lum, 255 * Lum, 255 * Lum)
 		  End If
 		  
 		  IconColor = BeaconUI.FindContrastingColor(SystemColors.WindowBackgroundColor, IconColor)
@@ -56,6 +56,10 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndEvent
 
+
+	#tag Hook, Flags = &h0
+		Event Action()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Activate()

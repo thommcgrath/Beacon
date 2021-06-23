@@ -528,6 +528,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mDropsLabelCacheDict = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  Self.mBlueprintLabelsCacheDict = New Dictionary
+		  Self.mConfigKeyCache = New Dictionary
 		  
 		  Var AppSupport As FolderItem = App.ApplicationSupport
 		  
@@ -820,6 +821,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigKey(KeyUUID As String) As Beacon.ConfigKey
+		  If Self.mConfigKeyCache.HasKey(KeyUUID) Then
+		    Return Self.mConfigKeyCache.Value(KeyUUID)
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect(Self.ConfigKeySelectSQL + " WHERE object_id = ?1;", KeyUUID)
+		  If Rows.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Var Results() As Beacon.ConfigKey = Self.RowSetToConfigKeys(Rows)
+		  If Results.Count = 1 Then
+		    Return Results(0)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1888,6 +1907,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If ChangeDict.HasKey("ini_options") Then
+		      Self.mConfigKeyCache = New Dictionary
+		      
 		      Var Options() As Variant = ChangeDict.Value("ini_options")
 		      For Each Dict As Dictionary In Options
 		        If Dict.Value("min_version") > BuildNumber Then
@@ -2592,6 +2613,74 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function RowSetToConfigKeys(Results As RowSet) As Beacon.ConfigKey()
+		  Var Keys() As Beacon.ConfigKey
+		  Try
+		    For Each Row As DatabaseRow In Results
+		      Var ObjectID As String = Row.Column("object_id").StringValue
+		      If Self.mConfigKeyCache.HasKey(ObjectID) Then
+		        Keys.Add(Self.mConfigKeyCache.Value(ObjectID))
+		        Continue
+		      End If
+		      
+		      Var Label As String = Row.Column("label").StringValue
+		      Var ConfigFile As String = Row.Column("file").StringValue
+		      Var ConfigHeader As String = Row.Column("header").StringValue
+		      Var ConfigKey As String = Row.Column("key").StringValue
+		      Var ValueType As Beacon.ConfigKey.ValueTypes
+		      Select Case Row.Column("value_type").StringValue
+		      Case "Numeric"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeNumeric
+		      Case "Array"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeArray
+		      Case "Structure"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeStructure
+		      Case "Boolean"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean
+		      Case "Text"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeText
+		      End Select
+		      Var MaxAllowed As NullableDouble
+		      If IsNull(Row.Column("max_allowed").Value) = False Then
+		        MaxAllowed = Row.Column("max_allowed").IntegerValue
+		      End If
+		      Var Description As String = Row.Column("description").StringValue
+		      Var DefaultValue As Variant = Row.Column("default_value").Value
+		      Var NitradoPath As NullableString
+		      Var NitradoFormat As Beacon.ConfigKey.NitradoFormats = Beacon.ConfigKey.NitradoFormats.Unsupported
+		      Var NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles = Beacon.ConfigKey.NitradoDeployStyles.Unsupported
+		      If IsNull(Row.Column("nitrado_format").Value) = False Then
+		        NitradoPath = Row.Column("nitrado_path").StringValue
+		        Select Case Row.Column("nitrado_format").StringValue
+		        Case "Line"
+		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Line
+		        Case "Value"
+		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Value
+		        End Select
+		        Select Case Row.Column("nitrado_deploy_style").StringValue
+		        Case "Guided"
+		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Guided
+		        Case "Expert"
+		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Expert
+		        Case "Both"
+		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Both
+		        End Select
+		      End If
+		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("native_editor_version").Value)
+		      
+		      Var Key As New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion)
+		      Self.mConfigKeyCache.Value(ObjectID) = Key
+		      Keys.Add(Key)
+		    Next
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		    Keys.ResizeTo(-1)
+		  End Try
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
 		  Var Creatures() As Beacon.Creature
 		  While Not Results.AfterLastRow
@@ -3169,7 +3258,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Idx = Idx + 1
 		  End If
 		  
-		  Var SQL As String = "SELECT object_id, label, file, header, key, value_type, max_allowed, description, default_value, nitrado_path, nitrado_format, nitrado_deploy_style FROM ini_options"
+		  Var SQL As String = Self.ConfigKeySelectSQL
 		  If Clauses.Count > 0 Then
 		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
 		  End If
@@ -3177,57 +3266,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Var Results() As Beacon.ConfigKey
 		  Try
-		    Var Rows As RowSet = Self.SQLSelect(SQL, Values)
-		    While Not Rows.AfterLastRow
-		      Var ObjectID As v4UUID = Rows.Column("object_id").StringValue
-		      Var Label As String = Rows.Column("label").StringValue
-		      Var ConfigFile As String = Rows.Column("file").StringValue
-		      Var ConfigHeader As String = Rows.Column("header").StringValue
-		      Var ConfigKey As String = Rows.Column("key").StringValue
-		      Var ValueType As Beacon.ConfigKey.ValueTypes
-		      Select Case Rows.Column("value_type").StringValue
-		      Case "Numeric"
-		        ValueType = Beacon.ConfigKey.ValueTypes.TypeNumeric
-		      Case "Array"
-		        ValueType = Beacon.ConfigKey.ValueTypes.TypeArray
-		      Case "Structure"
-		        ValueType = Beacon.ConfigKey.ValueTypes.TypeStructure
-		      Case "Boolean"
-		        ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean
-		      Case "Text"
-		        ValueType = Beacon.ConfigKey.ValueTypes.TypeText
-		      End Select
-		      Var MaxAllowed As NullableDouble
-		      If IsNull(Rows.Column("max_allowed").Value) = False Then
-		        MaxAllowed = Rows.Column("max_allowed").IntegerValue
-		      End If
-		      Var Description As String = Rows.Column("description").StringValue
-		      Var DefaultValue As Variant = Rows.Column("default_value").Value
-		      Var NitradoPath As NullableString
-		      Var NitradoFormat As Beacon.ConfigKey.NitradoFormats = Beacon.ConfigKey.NitradoFormats.Unsupported
-		      Var NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles = Beacon.ConfigKey.NitradoDeployStyles.Unsupported
-		      If IsNull(Rows.Column("nitrado_format").Value) = False Then
-		        NitradoPath = Rows.Column("nitrado_path").StringValue
-		        Select Case Rows.Column("nitrado_format").StringValue
-		        Case "Line"
-		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Line
-		        Case "Value"
-		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Value
-		        End Select
-		        Select Case Rows.Column("nitrado_deploy_style").StringValue
-		        Case "Guided"
-		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Guided
-		        Case "Expert"
-		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Expert
-		        Case "Both"
-		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Both
-		        End Select
-		      End If
-		      
-		      Results.Add(New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle))
-		      
-		      Rows.MoveToNextRow
-		    Wend
+		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL, Values))
 		  Catch Err As RuntimeException
 		    App.ReportException(Err)
 		  End Try
@@ -3672,6 +3711,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mConfigKeyCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCreatureCache As Dictionary
 	#tag EndProperty
 
@@ -3763,6 +3806,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private mUpdater As URLConnection
 	#tag EndProperty
 
+
+	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version FROM ini_options", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private
 	#tag EndConstant
