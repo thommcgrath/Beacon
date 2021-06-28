@@ -217,7 +217,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 			Var Dialog As New OpenFileDialog
-			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
+			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
 			
 			Var File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
