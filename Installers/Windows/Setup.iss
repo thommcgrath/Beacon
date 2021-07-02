@@ -32,21 +32,18 @@ SolidCompression=no
 MinVersion=6.1.7601
 ChangesAssociations=yes
 #ifdef x64
-  ArchitecturesAllowed=x64
   OutputDir={#MyAppVersion}\x64
 #else
   #ifdef x86
-    ArchitecturesAllowed=x86
     OutputDir={#MyAppVersion}\x86
   #else
-    ArchitecturesAllowed=x86 x64
     OutputDir={#MyAppVersion}\Combo
     #define x64 1
     #define x86 1
   #endif
 #endif
 #ifdef x64
-  ArchitecturesInstallIn64BitMode=x64
+  ArchitecturesInstallIn64BitMode=x64 arm64
 #endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://usebeaon.app$q $f
 WizardStyle=modern
