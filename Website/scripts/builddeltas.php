@@ -23,7 +23,9 @@ $cutoff = new DateTime();
 $cutoff->sub(new DateInterval('PT15M'));
 
 if ($last_database_update >= $cutoff) {
-	echo "Database has changes that will be ready at " . $cutoff->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
+	$ready = clone $last_database_update;
+	$ready->add(new DateInterval('PT15M'));
+	echo "Database has changes that will be ready at " . $ready->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
 	exit;
 }
 
