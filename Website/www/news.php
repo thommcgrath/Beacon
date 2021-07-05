@@ -8,7 +8,7 @@ if (isset($_GET['stage'])) {
 }
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT * FROM news WHERE stage >= $1 ORDER BY moment DESC LIMIT 20;', $stage);
+$results = $database->Query('SELECT * FROM news WHERE stage >= $1 AND moment <= CURRENT_TIMESTAMP ORDER BY moment DESC LIMIT 20;', $stage);
 $news = [];
 while (!$results->EOF()) {
 	$url = $results->Field('url');

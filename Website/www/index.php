@@ -230,7 +230,7 @@ BeaconTemplate::FinishStyles();
 		<ul>
 			<?php
 			
-			$results = $database->Query('SELECT title, detail, url FROM news WHERE stage >= 3 ORDER BY moment DESC LIMIT 4;');
+			$results = $database->Query('SELECT title, detail, url FROM news WHERE stage >= 3 AND moment <= CURRENT_TIMESTAMP ORDER BY moment DESC LIMIT 4;');
 			while (!$results->EOF()) {
 				echo '<li>';
 				echo '<span class="title">' . htmlentities($results->Field('title')) . '</span>';
