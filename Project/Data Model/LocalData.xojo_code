@@ -2327,7 +2327,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  NotificationKit.Post(Self.Notification_ImportStarted, Nil)
 		  
-		  Sender.Sleep(2000)
+		  Sender.Sleep(500)
 		  
 		  Var SyncOriginal As DateTime = Self.LastSync
 		  Var Success As Boolean
