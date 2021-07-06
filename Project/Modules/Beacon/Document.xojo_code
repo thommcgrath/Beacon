@@ -385,7 +385,7 @@ Implements ObservationKit.Observable
 		  Self.mConfigSets = New Dictionary
 		  Self.mActiveConfigSet = Self.BaseConfigSetName
 		  Self.mIdentifier = New v4UUID
-		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
+		  Self.mMapCompatibility = 1
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
@@ -395,10 +395,13 @@ Implements ObservationKit.Observable
 		  Self.mAccounts = New Beacon.ExternalAccountManager
 		  
 		  Self.mMods = New Dictionary
-		  Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
-		  For Each ModInfo As Beacon.ModDetails In AllMods
-		    Self.mMods.Value(ModInfo.ModID) = ModInfo.DefaultEnabled
-		  Next
+		  Var AllMods() As Beacon.ModDetails
+		  If (Beacon.Data Is Nil) = False Then
+		    AllMods = Beacon.Data.AllMods
+		    For Each ModInfo As Beacon.ModDetails In AllMods
+		      Self.mMods.Value(ModInfo.ModID) = ModInfo.DefaultEnabled
+		    Next
+		  End If
 		  Self.mModChangeTimestamp = System.Microseconds
 		End Sub
 	#tag EndMethod

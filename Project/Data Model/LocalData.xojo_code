@@ -2320,14 +2320,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
-		  #Pragma Unused Sender
-		  
 		  If Self.mPendingImports.LastIndex = -1 Then
 		    Self.mImporting = False
 		    Return
 		  End If
 		  
 		  NotificationKit.Post(Self.Notification_ImportStarted, Nil)
+		  
+		  Sender.Sleep(2000)
 		  
 		  Var SyncOriginal As DateTime = Self.LastSync
 		  Var Success As Boolean
