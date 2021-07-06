@@ -156,7 +156,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function AllTags(Category As String = "") As String()
 		  Var Results As RowSet
 		  If Category <> "" Then
-		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = $1 AND tags != '';", Category)
+		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = ?1 AND tags != '';", Category)
 		  Else
 		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
 		  End If
@@ -515,8 +515,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    LegacyFile.Remove
 		  End If
 		  
+		  Const YieldInterval = 100
+		  
 		  Self.mBase = New SQLiteDatabase
 		  Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")
+		  Self.mBase.ThreadYieldInterval = YieldInterval
 		  
 		  If Self.mBase.DatabaseFile.Exists Then
 		    If Not Self.mBase.Connect Then
@@ -582,6 +585,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        
 		        Self.mBase = New SQLiteDatabase
 		        Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")
+		        Self.mBase.ThreadYieldInterval = YieldInterval
 		        Call Self.mBase.Connect
 		        Return
 		      End If
@@ -589,12 +593,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Self.mBase = New SQLiteDatabase
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
+		    Self.mBase.ThreadYieldInterval = YieldInterval
 		    Call Self.mBase.CreateDatabase
 		    Self.BuildSchema()
 		  End If
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
-		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 400;")
+		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 0;")
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
@@ -1049,7 +1054,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetMap(Named As String) As Beacon.Map
-		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = $1 OR ark_identifier = $1 LIMIT 1;", Named)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = ?1 OR ark_identifier = ?1 LIMIT 1;", Named)
 		  If Rows.RowCount <> 1 Then
 		    Return Nil
 		  End If
@@ -1071,7 +1076,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetMaps(Mask As UInt64) As Beacon.Map()
-		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & $1) = mask ORDER BY official DESC, sort;", Mask)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY official DESC, sort;", Mask)
 		  Var Maps() As Beacon.Map
 		  For Each Row As DatabaseRow In Rows
 		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
@@ -2058,8 +2063,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Commit()
 		    
 		    // Force analyze
-		    Self.SQLExecute("VACUUM;")
 		    Self.SQLExecute("ANALYZE;")
+		    Self.SQLExecute("VACUUM;")
 		    
 		    If ReloadPresets Then
 		      Self.LoadPresets()
@@ -2988,11 +2993,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    SQL = SQL + " ORDER BY label;"
 		    
 		    Var Results As RowSet
+		    #if false
+		      Var StartTime As Double = System.Microseconds
+		    #endif
 		    If Values.KeyCount = 0 Then
 		      Results = Self.SQLSelect(SQL)
 		    Else
 		      Results = Self.SQLSelect(SQL, Values)
 		    End If
+		    #if false
+		      Var Duration As Double = System.Microseconds - StartTime
+		      System.DebugLog("Searching for blueprints took " + Duration.ToString(Locale.Raw, "0") + " microseconds")
+		      System.DebugLog("EXPLAIN QUERY PLAN " + SQL)
+		    #endif
 		    
 		    Select Case Category
 		    Case Beacon.CategoryEngrams
@@ -3228,6 +3241,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Results.Column("populated").BooleanValue = False Then
 		      mInstance.mNextSyncImportAll = True
 		      mInstance.ImportLocalClasses()
+		    Else
+		      Var LastUsedVersion As String = mInstance.Variable("Last Used Beacon Version")
+		      If LastUsedVersion.IsEmpty Or Integer.FromString(LastUsedVersion, Locale.Raw) <> App.BuildNumber Then
+		        mInstance.ImportLocalClasses()
+		        mInstance.Variable("Last Used Beacon Version") = App.BuildNumber.ToString(Locale.Raw, "0")
+		      End If
 		    End If
 		    If Preferences.OnlineEnabled Then
 		      mInstance.CheckForEngramUpdates()
@@ -3425,6 +3444,35 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Call UserCloud.Delete("Blueprints.json")
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TestPerformance(AttemptRepair As Boolean) As LocalData.PerformanceResults
+		  Var TestDoc As New Beacon.Document
+		  Var Mods As Beacon.StringList = TestDoc.Mods
+		  Var Tags As String = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
+		  Var StartTime As Double = System.Microseconds
+		  Var Results() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, Tags)
+		  Var InitialDuration As Double = System.Microseconds - StartTime
+		  If InitialDuration <= 250000 Then
+		    Return LocalData.PerformanceResults.NoRepairsNecessary
+		  End If
+		  If AttemptRepair = False Then
+		    Return LocalData.PerformanceResults.RepairsNecessary
+		  End If
+		  
+		  Self.mBase.ExecuteSQL("ANALYZE;")
+		  Self.mBase.ExecuteSQL("VACUUM;")
+		  
+		  StartTime = System.Microseconds
+		  Results = Self.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, Tags)
+		  Var RepairedDuration As Double = System.Microseconds - StartTime
+		  If RepairedDuration <= 250000 Then
+		    Return LocalData.PerformanceResults.Repaired
+		  Else
+		    Return LocalData.PerformanceResults.CouldNotRepair
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -3715,6 +3763,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
+
+
+	#tag Enum, Name = PerformanceResults, Type = Integer, Flags = &h0
+		NoRepairsNecessary
+		  Repaired
+		  CouldNotRepair
+		RepairsNecessary
+	#tag EndEnum
 
 
 	#tag ViewBehavior
