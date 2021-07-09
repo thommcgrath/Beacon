@@ -905,7 +905,7 @@ Begin DiscoveryView FTPDiscoveryView
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
-      RunMode         =   2
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -970,6 +970,7 @@ End
 		Private Sub mEngine_Discovered(Sender As Beacon.FTPIntegrationEngine, Data() As Beacon.DiscoveredData)
 		  #Pragma Unused Sender
 		  
+		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
 		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndMethod
@@ -978,6 +979,7 @@ End
 		Private Sub mEngine_FileListError(Sender As Beacon.FTPIntegrationEngine, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  
+		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
 		  Self.Browser.Enabled = True
 		  Self.BrowseSpinner.Visible = False
 		  
@@ -998,6 +1000,7 @@ End
 		  #Pragma Unused Sender
 		  #Pragma Unused Path
 		  
+		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
 		  Self.Browser.Enabled = True
 		  Self.BrowseSpinner.Visible = False
 		  
@@ -1068,6 +1071,17 @@ End
 
 #tag EndWindowCode
 
+#tag Events ViewPanel
+	#tag Event
+		Sub Change()
+		  If Me.SelectedPanelIndex = Self.PageDiscovering Then
+		    Self.StatusWatcher.RunMode = Timer.RunModes.Multiple
+		  Else
+		    Self.StatusWatcher.RunMode = Timer.RunModes.Off
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ServerModeMenu
 	#tag Event
 		Sub Change()
@@ -1162,6 +1176,8 @@ End
 #tag Events ServerCancelButton
 	#tag Event
 		Sub Action()
+		  Self.StatusWatcher.RunMode = Timer.RunModes.Off
+		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
@@ -1204,6 +1220,8 @@ End
 		Sub Action()
 		  If Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering And Self.mEngine <> Nil Then
 		    If Self.mEngine.Errored And Self.mEngine.Finished Then
+		      Me.RunMode = Timer.RunModes.Off
+		      
 		      Var ErrorMessage As String = Self.mEngine.Logs(True)
 		      Self.ShowAlert("There was a problem connecting to the FTP server", ErrorMessage)
 		      Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
