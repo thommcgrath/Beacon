@@ -118,6 +118,12 @@ Implements Beacon.MutableLootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ModID(Assigns Value As String)
+		  Self.mModID = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Multipliers(Assigns Value As Beacon.Range)
 		  Self.mMultipliers = New Beacon.Range(Value.Min, Value.Max)
 		End Sub

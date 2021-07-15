@@ -246,10 +246,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE INDEX " + Category + "_label_idx ON " + Category + "(label);")
 		  Next
 		  
+		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
+		  
 		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE INDEX loot_sources_label_idx ON loot_sources(label);")
-		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_mod_id_path_idx ON loot_sources(mod_id, path);")
+		  Self.SQLExecute("CREATE INDEX loot_sources_path_idx ON loot_sources(path);")
+		  Self.SQLExecute("CREATE INDEX loot_sources_class_string_idx ON loot_sources(class_string);")
+		  
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
@@ -1345,7 +1349,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Var AccentColor As Color
 		  Var IconID As String
-		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
+		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.mod_id = ?1 AND loot_sources.path = ?2;", Source.ModID, Source.Path)
 		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
@@ -2660,6 +2664,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
+		    Source.ModID = Results.Column("mod_id").StringValue
 		    
 		    If Requirements.HasKey("mandatory_item_sets") Then
 		      Var SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
@@ -3210,7 +3215,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.Add("experimental = 0")
 		    End If
 		    
-		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.LastIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
@@ -3728,7 +3733,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
+	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public
