@@ -1554,6 +1554,7 @@ End
 		    Beacon.CustomLootContainer(Destination).Label = Label
 		    Beacon.CustomLootContainer(Destination).Availability = Mask
 		    Beacon.CustomLootContainer(Destination).Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
+		    Beacon.CustomLootContainer(Destination).ModID = Beacon.UserModID
 		  End If
 		  
 		  Self.mDestinations.ResizeTo(0)

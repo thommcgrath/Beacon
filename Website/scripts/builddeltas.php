@@ -10,12 +10,22 @@ while (ob_get_level() > 0) {
 define('MIN_VERSION', 99999999);
 
 $database = BeaconCommon::Database();
+$database->BeginTransaction();
+$rows = $database->Query('UPDATE mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
+if ($rows->RecordCount() > 0) {
+	$database->Commit();
+} else {
+	$database->Rollback();
+}
+
 $last_database_update = BeaconCommon::NewestUpdateTimestamp();
 $cutoff = new DateTime();
 $cutoff->sub(new DateInterval('PT15M'));
 
 if ($last_database_update >= $cutoff) {
-	echo "Database has changes that will be ready soon.\n";
+	$ready = clone $last_database_update;
+	$ready->add(new DateInterval('PT15M'));
+	echo "Database has changes that will be ready at " . $ready->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
 	exit;
 }
 

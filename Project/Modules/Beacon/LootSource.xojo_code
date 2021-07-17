@@ -98,6 +98,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModID() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Multipliers() As Beacon.Range
 		  
 		End Function

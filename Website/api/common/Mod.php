@@ -129,7 +129,7 @@ class Mod implements \JsonSerializable {
 	}
 	
 	public static function GetLive($since = null) {
-		$sql =  '(SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 AND mods.confirmed = TRUE';
+		$sql =  'mods.confirmed = TRUE AND mods.include_in_deltas = TRUE';
 		
 		$database = \BeaconCommon::Database();
 		if (is_null($since)) {

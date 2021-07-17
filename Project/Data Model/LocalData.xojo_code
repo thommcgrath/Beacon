@@ -159,7 +159,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function AllTags(Category As String = "") As String()
 		  Var Results As RowSet
 		  If Category <> "" Then
-		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = $1 AND tags != '';", Category)
+		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = ?1 AND tags != '';", Category)
 		  Else
 		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
 		  End If
@@ -267,10 +267,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE INDEX " + Category + "_label_idx ON " + Category + "(label);")
 		  Next
 		  
+		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
+		  
 		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE INDEX loot_sources_label_idx ON loot_sources(label);")
-		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_mod_id_path_idx ON loot_sources(mod_id, path);")
+		  Self.SQLExecute("CREATE INDEX loot_sources_path_idx ON loot_sources(path);")
+		  Self.SQLExecute("CREATE INDEX loot_sources_class_string_idx ON loot_sources(class_string);")
+		  
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
@@ -537,8 +541,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    LegacyFile.Remove
 		  End If
 		  
+		  Const YieldInterval = 100
+		  
 		  Self.mBase = New SQLiteDatabase
 		  Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")
+		  Self.mBase.ThreadYieldInterval = YieldInterval
 		  
 		  If Self.mBase.DatabaseFile.Exists Then
 		    If Not Self.mBase.Connect Then
@@ -604,6 +611,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        
 		        Self.mBase = New SQLiteDatabase
 		        Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")
+		        Self.mBase.ThreadYieldInterval = YieldInterval
 		        Call Self.mBase.Connect
 		        Return
 		      End If
@@ -611,12 +619,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Self.mBase = New SQLiteDatabase
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
+		    Self.mBase.ThreadYieldInterval = YieldInterval
 		    Call Self.mBase.CreateDatabase
 		    Self.BuildSchema()
 		  End If
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
-		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 400;")
+		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 0;")
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
@@ -1113,7 +1122,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetMap(Named As String) As Beacon.Map
-		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = $1 OR ark_identifier = $1 LIMIT 1;", Named)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = ?1 OR ark_identifier = ?1 LIMIT 1;", Named)
 		  If Rows.RowCount <> 1 Then
 		    Return Nil
 		  End If
@@ -1135,7 +1144,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetMaps(Mask As UInt64) As Beacon.Map()
-		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & $1) = mask ORDER BY official DESC, sort;", Mask)
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY official DESC, sort;", Mask)
 		  Var Maps() As Beacon.Map
 		  For Each Row As DatabaseRow In Rows
 		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
@@ -1437,7 +1446,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Var AccentColor As Color
 		  Var IconID As String
-		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
+		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.mod_id = ?1 AND loot_sources.path = ?2;", Source.ModID, Source.Path)
 		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
@@ -2138,8 +2147,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Commit()
 		    
 		    // Force analyze
-		    Self.SQLExecute("VACUUM;")
 		    Self.SQLExecute("ANALYZE;")
+		    Self.SQLExecute("VACUUM;")
 		    
 		    If ReloadPresets Then
 		      Self.LoadPresets()
@@ -2394,14 +2403,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
-		  #Pragma Unused Sender
-		  
 		  If Self.mPendingImports.LastIndex = -1 Then
 		    Self.mImporting = False
 		    Return
 		  End If
 		  
 		  NotificationKit.Post(Self.Notification_ImportStarted, Nil)
+		  
+		  Sender.Sleep(500)
 		  
 		  Var SyncOriginal As DateTime = Self.LastSync
 		  Var Success As Boolean
@@ -2851,6 +2860,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
+		    Source.ModID = Results.Column("mod_id").StringValue
 		    
 		    If Requirements.HasKey("mandatory_item_sets") Then
 		      Var SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
@@ -3184,11 +3194,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    SQL = SQL + " ORDER BY label;"
 		    
 		    Var Results As RowSet
+		    #if false
+		      Var StartTime As Double = System.Microseconds
+		    #endif
 		    If Values.KeyCount = 0 Then
 		      Results = Self.SQLSelect(SQL)
 		    Else
 		      Results = Self.SQLSelect(SQL, Values)
 		    End If
+		    #if false
+		      Var Duration As Double = System.Microseconds - StartTime
+		      System.DebugLog("Searching for blueprints took " + Duration.ToString(Locale.Raw, "0") + " microseconds")
+		      System.DebugLog("EXPLAIN QUERY PLAN " + SQL)
+		    #endif
 		    
 		    Select Case Category
 		    Case Beacon.CategoryEngrams
@@ -3343,7 +3361,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.Add("experimental = 0")
 		    End If
 		    
-		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.LastIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
@@ -3374,6 +3392,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Results.Column("populated").BooleanValue = False Then
 		      mInstance.mNextSyncImportAll = True
 		      mInstance.ImportLocalClasses()
+		    Else
+		      Var LastUsedVersion As String = mInstance.Variable("Last Used Beacon Version")
+		      If LastUsedVersion.IsEmpty Or Integer.FromString(LastUsedVersion, Locale.Raw) <> App.BuildNumber Then
+		        mInstance.ImportLocalClasses()
+		        mInstance.Variable("Last Used Beacon Version") = App.BuildNumber.ToString(Locale.Raw, "0")
+		      End If
 		    End If
 		    If Preferences.OnlineEnabled Then
 		      mInstance.CheckForEngramUpdates()
@@ -3571,6 +3595,35 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Call UserCloud.Delete("Blueprints.json")
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TestPerformance(AttemptRepair As Boolean) As LocalData.PerformanceResults
+		  Var TestDoc As New Beacon.Document
+		  Var Mods As Beacon.StringList = TestDoc.Mods
+		  Var Tags As String = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
+		  Var StartTime As Double = System.Microseconds
+		  Var Results() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, Tags)
+		  Var InitialDuration As Double = System.Microseconds - StartTime
+		  If InitialDuration <= 250000 Then
+		    Return LocalData.PerformanceResults.NoRepairsNecessary
+		  End If
+		  If AttemptRepair = False Then
+		    Return LocalData.PerformanceResults.RepairsNecessary
+		  End If
+		  
+		  Self.mBase.ExecuteSQL("ANALYZE;")
+		  Self.mBase.ExecuteSQL("VACUUM;")
+		  
+		  StartTime = System.Microseconds
+		  Results = Self.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, Tags)
+		  Var RepairedDuration As Double = System.Microseconds - StartTime
+		  If RepairedDuration <= 250000 Then
+		    Return LocalData.PerformanceResults.Repaired
+		  Else
+		    Return LocalData.PerformanceResults.CouldNotRepair
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -3833,7 +3886,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
+	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public
@@ -3868,6 +3921,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
+
+
+	#tag Enum, Name = PerformanceResults, Type = Integer, Flags = &h0
+		NoRepairsNecessary
+		  Repaired
+		  CouldNotRepair
+		RepairsNecessary
+	#tag EndEnum
 
 
 	#tag ViewBehavior

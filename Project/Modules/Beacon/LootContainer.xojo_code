@@ -50,6 +50,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Self.mAppendMode = False
 		  Self.mClassString = "Beacon_Loot_" + EncodeHex(Crypto.GenerateRandomBytes(6)).Lowercase + "_C"
 		  Self.mPath = Beacon.UnknownBlueprintPath("LootSources", Self.mClassString)
+		  Self.mModID = Beacon.UserModID
 		End Sub
 	#tag EndMethod
 
@@ -76,6 +77,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Self.mNotes = Source.Notes
 		  Self.mItemSets = New Beacon.ItemSetCollection(Source.ItemSets)
 		  Self.mRequiredItemSets = Source.RequiredItemSetCount
+		  Self.mModID = Source.ModID
 		  
 		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
 		  Self.mMandatoryItemSets.ResizeTo(MandatorySets.LastIndex)
@@ -121,6 +123,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		    MutableSource.RequiredItemSetCount = Dict.Lookup("RequiredItemSets", 1).IntegerValue
 		    MutableSource.Experimental = Dict.Lookup("Experimental", False).BooleanValue
 		    MutableSource.Notes = Dict.Lookup("Notes", "").StringValue
+		    MutableSource.ModID = Beacon.UserModID
 		    LootSource = MutableSource
 		  End If
 		  
@@ -262,6 +265,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModID() As String
+		  Return Self.mModID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mModified Then
 		    Return True
@@ -380,6 +389,10 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 
 	#tag Property, Flags = &h21
 		Private mMinItemSets As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mModID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

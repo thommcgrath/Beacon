@@ -150,7 +150,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, LocalData.Notification_ImportSuccess)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
@@ -1020,6 +1020,19 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    HelpSyncCloudFiles.Enabled = True
 		  Case Preferences.Notification_OnlineStateChanged
 		    UpdatesKit.IsCheckingAutomatically = Preferences.OnlineEnabled
+		  Case LocalData.Notification_ImportSuccess
+		    If Self.mHasTestedDatabase = False Then
+		      Var Result As LocalData.PerformanceResults = LocalData.SharedInstance.TestPerformance(True)
+		      Select Case Result
+		      Case LocalData.PerformanceResults.CouldNotRepair
+		        App.Log("Database is performing poorly and repair did not help.")
+		      Case LocalData.PerformanceResults.Repaired
+		        App.Log("Database was performing poorly but has been repaired.")
+		      Case LocalData.PerformanceResults.RepairsNecessary
+		        App.Log("Database is performing poorly and should be repaired.")
+		      End Select
+		      Self.mHasTestedDatabase = True
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -1260,6 +1273,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mHandoffSocket As IPCSocket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasTestedDatabase As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
