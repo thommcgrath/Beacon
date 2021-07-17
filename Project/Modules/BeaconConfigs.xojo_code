@@ -21,7 +21,7 @@ Protected Module BeaconConfigs
 		    Names.Add(NameStatLimits)
 		    Names.Add(NameEngramControl)
 		    Names.Add(NameSpoilTimers)
-		    Names.Add(NameOtherSettings)
+		    //Names.Add(NameOtherSettings)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
