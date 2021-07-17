@@ -199,7 +199,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Next
 		  
 		  Var Content As String = Beacon.GenerateJSON(Dictionaries, True)
-		  Call UserCloud.Write("/Presets/Modifiers.json", Content)
+		  Call UserCloud.Write("/Modifiers.json", Content)
 		End Sub
 	#tag EndMethod
 
@@ -2569,7 +2569,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM custom_presets;")
 		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Beacon.UserModID)
 		  
-		  Var ModifiersContent As MemoryBlock = UserCloud.Read("/Presets/Modifiers.json")
+		  Var ModifiersContent As MemoryBlock = UserCloud.Read("/Modifiers.json")
 		  If (ModifiersContent Is Nil) = False And ModifiersContent.Size > 0 Then
 		    Try
 		      Var Modifiers() As Beacon.PresetModifier
@@ -2591,7 +2591,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Var PresetsList() As String = UserCloud.List("/Presets/")
 		  For Each RemotePath As String In PresetsList
-		    If RemotePath = "/Presets/Modifiers.json" Then
+		    If RemotePath = "/Modifiers.json" Then
 		      Continue
 		    End If
 		    
