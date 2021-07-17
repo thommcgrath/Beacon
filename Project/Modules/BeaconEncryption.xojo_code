@@ -56,7 +56,7 @@ Protected Module BeaconEncryption
 		  Var Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
 		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.LastIndex).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.LastIndex).IndexOf("END RSA PRIVATE KEY") = -1) Then
 		    Var Err As New CryptoException
-		    Err.Reason = "Text does not appear to be a PEM-encoded private key"
+		    Err.Message = "Text does not appear to be a PEM-encoded private key"
 		    Raise Err
 		  End If
 		  
@@ -85,7 +85,7 @@ Protected Module BeaconEncryption
 		  Var Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
 		  If Lines(0).IndexOf("BEGIN PUBLIC KEY") = -1 Or Lines(Lines.LastIndex).IndexOf("END PUBLIC KEY") = -1 Then
 		    Var Err As New CryptoException
-		    Err.Reason = "Text does not appear to be a PEM-encoded public key"
+		    Err.Message = "Text does not appear to be a PEM-encoded public key"
 		    Raise Err
 		  End If
 		  
@@ -173,7 +173,7 @@ Protected Module BeaconEncryption
 		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header = Nil Then
 		    Var Err As New CryptoException
-		    Err.Reason = "Data is not properly encrypted"
+		    Err.Message = "Data is not properly encrypted"
 		    Raise Err
 		  End If
 		  
@@ -190,7 +190,7 @@ Protected Module BeaconEncryption
 		  
 		  If Not Crypt.DecryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
-		    Err.Reason = "Incorrect key or vector length"
+		    Err.Message = "Incorrect key or vector length"
 		    Raise Err
 		  End If
 		  
@@ -203,7 +203,7 @@ Protected Module BeaconEncryption
 		  Var ComputedChecksum As UInt32 = BeaconEncryption.CRC32(Data)
 		  If ComputedChecksum <> Header.Checksum Then
 		    Var Err As New CryptoException
-		    Err.Reason = "CRC32 checksum failed on decrypted data."
+		    Err.Message = "CRC32 checksum failed on decrypted data."
 		    Raise Err
 		  End If
 		  
@@ -234,7 +234,7 @@ Protected Module BeaconEncryption
 		  
 		  If Not Crypt.EncryptInit(Key, Header.Vector) Then
 		    Var Err As New CryptoException
-		    Err.Reason = "Incorrect key or vector length"
+		    Err.Message = "Incorrect key or vector length"
 		    Raise Err
 		    Return ""
 		  End If

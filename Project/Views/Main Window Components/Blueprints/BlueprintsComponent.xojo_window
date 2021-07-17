@@ -247,11 +247,10 @@ End
 	#tag Event
 		Sub ShowMod(ModInfo As BeaconAPI.WorkshopMod)
 		  If ModInfo.Confirmed = False Then
-		    Var Status As Integer =  RegisterModDialog.Present(Self, ModInfo)
-		    If (Status And RegisterModDialog.FlagShouldRefresh) = RegisterModDialog.FlagShouldRefresh Then
+		    Var ModUUID As String =  RegisterModDialog.Present(Self, ModInfo)
+		    If ModUUID.IsEmpty = False Then
 		      Me.RefreshMods()
-		    End If
-		    If (Status And RegisterModDialog.FlagModIsConfirmed) = 0 Then
+		    Else
 		      Return
 		    End If
 		  End If
@@ -259,11 +258,11 @@ End
 		  Var View As BeaconSubview
 		  Var Idx As Integer = Self.Nav.IndexOf(ModInfo.ModID)
 		  If Idx > -1 Then
-		    View = Self.Page(Idx)
+		    View = Self.Page(Idx - 1) // Don't forget the separator
 		  Else
 		    Var Controller As BlueprintController
-		    If ModInfo.ModID = Beacon.UserModID Then
-		      Controller = New LocalBlueprintController
+		    If ModInfo.IsLocalMod Then
+		      Controller = New LocalBlueprintController(ModInfo.ModID, ModInfo.Name)
 		    Else
 		      Controller = New RemoteBlueprintController(ModInfo.ModID, ModInfo.Name)
 		    End If
@@ -273,6 +272,20 @@ End
 		  End If
 		  Self.ShowView(View)
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CloseModView(ModUUID As String) As Boolean
+		  Var Idx As Integer = Self.Nav.IndexOf(ModUUID)
+		  If Idx = -1 Then
+		    Return True
+		  End If
+		  
+		  Var View As BeaconSubview = Self.Page(Idx - 1) // Don't forget the separator
+		  If View IsA ModEditorView Then
+		    Return Self.CloseView(ModEditorView(View))
+		  End If
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

@@ -705,9 +705,9 @@ End
 		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Beacon is unable to communicate with its server", "Check Beacon's ""System Status"" page to make sure this isn't a problem with Beacon. It Beacon is working normally, check your internet connection.", "System Status", "Cancel", "Help")
 		  Select Case Choice
 		  Case BeaconUI.ConfirmResponses.Action
-		    ShowURL("https://status.usebeacon.app/")
+		    System.GotoURL("https://status.usebeacon.app/")
 		  Case BeaconUI.ConfirmResponses.Alternate
-		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
+		    System.GotoURL(Beacon.WebURL("/help/solving_connection_problems_to"))
 		  End Select
 		  
 		  If (Self.mAuthController Is Nil) = False Then
@@ -725,7 +725,7 @@ End
 		    Return False
 		  End If
 		  
-		  ShowURL(URL)
+		  System.GotoURL(URL)
 		  Return True
 		End Function
 	#tag EndEvent

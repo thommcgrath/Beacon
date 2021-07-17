@@ -83,7 +83,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Var Err As New UnsupportedOperationException
-		  Err.Reason = "Do not instantiate this class, only its subclasses."
+		  Err.Message = "Do not instantiate this class, only its subclasses."
 		  Raise Err
 		End Sub
 	#tag EndMethod
@@ -92,7 +92,7 @@ Protected Class ServerProfile
 		Sub Constructor(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
 		    Var Err As New KeyNotFoundException
-		    Err.Reason = "Incomplete server profile"
+		    Err.Message = "Incomplete server profile"
 		    Raise Err
 		  End If
 		  
@@ -296,7 +296,7 @@ Protected Class ServerProfile
 		  RaiseEvent WriteToDictionary(Dict)
 		  If Not Dict.HasKey("Provider") Then
 		    Var Err As New KeyNotFoundException
-		    Err.Reason = "No provider was set in Beacon.ServerProfile.WriteToDictionary"
+		    Err.Message = "No provider was set in Beacon.ServerProfile.WriteToDictionary"
 		    Raise Err
 		  End If
 		  Dict.Value("Name") = Self.Name

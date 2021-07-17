@@ -568,7 +568,7 @@ End
 #tag Events PrivacyPolicyButton
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/help/about_user_privacy"))
+		  System.GotoURL(Beacon.WebURL("/help/about_user_privacy"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

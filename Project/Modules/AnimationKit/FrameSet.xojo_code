@@ -194,7 +194,7 @@ Implements Iterable
 		Private Shared Function SplitSprites(Sprites As iOSImage, Width As Integer, Height As Integer, Rows As Integer, Columns As Integer) As iOSImage()
 		  If Sprites.Width <> (Rows + 1) * Width Or Sprites.Height <> (Columns + 1) * Height Then
 		    Var Err As New UnsupportedOperationException
-		    Err.Reason = "Sprite sheet dimensions are not correct for the provided cell count."
+		    Err.Message = "Sprite sheet dimensions are not correct for the provided cell count."
 		    Raise Err
 		  End If
 		  
@@ -214,7 +214,7 @@ Implements Iterable
 		Private Shared Function SplitSprites(Sprites As Picture, Width As Integer, Height As Integer, Rows As Integer, Columns As Integer) As Picture()
 		  If Sprites.Width <> (Rows + 1) * Width Or Sprites.Height <> (Columns + 1) * Height Then
 		    Var Err As New UnsupportedOperationException
-		    Err.Reason = "Sprite sheet dimensions are not correct for the provided cell count."
+		    Err.Message = "Sprite sheet dimensions are not correct for the provided cell count."
 		    Raise Err
 		  End If
 		  
@@ -238,7 +238,7 @@ Implements Iterable
 		  
 		  If Frame.Dimensions.Width <> Self.Width Or Frame.Dimensions.Height <> Self.Height Then
 		    Var Err As New UnsupportedOperationException
-		    Err.Reason = "Frame dimensions must match the set dimensions."
+		    Err.Message = "Frame dimensions must match the set dimensions."
 		    Raise Err
 		  End If
 		End Sub

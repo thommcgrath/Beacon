@@ -720,7 +720,7 @@ End
 		      Request.Authenticate(Preferences.OnlineToken)
 		    End If
 		  Catch Err As RuntimeException
-		    Self.ShowAlert("Cannot build the request", Err.Reason)
+		    Self.ShowAlert("Cannot build the request", Err.Message)
 		    Return
 		  End Try
 		  

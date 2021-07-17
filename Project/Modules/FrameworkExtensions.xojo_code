@@ -202,8 +202,8 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Explanation(Extends Err As RuntimeException) As String
-		  If Err.Reason <> "" Then
-		    Return Err.Reason
+		  If Err.Message <> "" Then
+		    Return Err.Message
 		  ElseIf Err.Message <> "" Then
 		    Return Err.Message
 		  Else
@@ -668,7 +668,7 @@ Protected Module FrameworkExtensions
 		    Lock.Leave
 		    Return True
 		  Catch Err As RuntimeException
-		    App.Log("Unable to write " + File.NativePath + ": " + Err.Reason + " (" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
+		    App.Log("Unable to write " + File.NativePath + ": " + Err.Message + " (" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ")")
 		    Lock.Leave
 		    Return False
 		  End Try

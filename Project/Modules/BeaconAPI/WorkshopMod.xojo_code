@@ -36,6 +36,16 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Details As Beacon.ModDetails)
+		  Self.mModID = Details.ModID
+		  Self.mName = Details.Name
+		  Self.mWorkshopID = Details.WorkshopID
+		  Self.mIsLocalMod = Details.IsUserMod
+		  Self.mConfirmed = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
 		  Self.mConfirmationCode = Source.Value("confirmation_code")
 		  Self.mConfirmed = Source.Value("confirmed")
@@ -45,7 +55,7 @@ Protected Class WorkshopMod
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mWorkshopURL = Source.Value("workshop_url")
-		  Self.mWorkshopID = Source.Value("workshop_id")
+		  Self.mWorkshopID = Source.Value("workshop_id").UInt32Value
 		  If Source.Value("pull_url") <> Nil Then
 		    Self.mPullURL = Source.Value("pull_url")
 		  End If
@@ -55,6 +65,12 @@ Protected Class WorkshopMod
 	#tag Method, Flags = &h0
 		Function EngramsURL() As String
 		  Return Self.mEngramsURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsLocalMod() As Boolean
+		  Return Self.mIsLocalMod
 		End Function
 	#tag EndMethod
 
@@ -92,13 +108,13 @@ Protected Class WorkshopMod
 		  ModInfo.mConfirmed = True
 		  ModInfo.mModID = Beacon.UserModID
 		  ModInfo.mName = Beacon.UserModName
-		  ModInfo.mWorkshopID = Beacon.UserModWorkshopID
+		  ModInfo.mWorkshopID = CType(Beacon.UserModWorkshopID, UInt32)
 		  Return ModInfo
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WorkshopID() As Integer
+		Function WorkshopID() As UInt32
 		  Return Self.mWorkshopID
 		End Function
 	#tag EndMethod
@@ -127,6 +143,10 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIsLocalMod As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModID As String
 	#tag EndProperty
 
@@ -143,7 +163,7 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWorkshopID As Integer
+		Private mWorkshopID As UInt32
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

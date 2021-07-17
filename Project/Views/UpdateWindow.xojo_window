@@ -664,7 +664,7 @@ End
 #tag Events ResultsNotesButton
 	#tag Event
 		Sub Action()
-		  ShowURL(Self.mNotesURL)
+		  System.GotoURL(Self.mNotesURL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -684,7 +684,7 @@ End
 		Sub Error(e As RuntimeException)
 		  Me.Disconnect
 		  
-		  Self.ShowAlert("Unable to Download Update", e.Reason)
+		  Self.ShowAlert("Unable to Download Update", e.Message)
 		  
 		  Self.Close
 		End Sub

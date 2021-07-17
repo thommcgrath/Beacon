@@ -41,7 +41,7 @@ Private Class SimpleHTTPSocket
 		  
 		  If Self.Handler <> Nil Then
 		    If Beacon.SafeToInvoke(Self.Handler) Then
-		      Self.Handler.Invoke(Self.mURL, 0, Err.Reason, Self.Tag)
+		      Self.Handler.Invoke(Self.mURL, 0, Err.Message, Self.Tag)
 		    End If
 		    Self.Handler = Nil
 		  Else

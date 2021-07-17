@@ -72,9 +72,9 @@ Inherits AnimationKit.DeltaTask
 		  
 		  Var Err As New UnsupportedOperationException
 		  #if TargetDesktop
-		    Err.Reason = "Item for AnimationKit.MoveTask must be a Window or RectControl."
+		    Err.Message = "Item for AnimationKit.MoveTask must be a Window or RectControl."
 		  #elseif TargetiOS
-		    Err.Reason = "Item for AnimationKit.MoveTask must be an iOSControl."
+		    Err.Message = "Item for AnimationKit.MoveTask must be an iOSControl."
 		  #endif
 		  Raise Err
 		End Sub
@@ -170,9 +170,9 @@ Inherits AnimationKit.DeltaTask
 		  
 		  Var Err As New UnsupportedOperationException
 		  #if TargetDesktop
-		    Err.Reason = "Item for AnimationKit.MoveTask must be a Window or RectControl."
+		    Err.Message = "Item for AnimationKit.MoveTask must be a Window or RectControl."
 		  #elseif TargetiOS
-		    Err.Reason = "Item for AnimationKit.MoveTask must be an iOSControl."
+		    Err.Message = "Item for AnimationKit.MoveTask must be an iOSControl."
 		  #endif
 		  Raise Err
 		End Function

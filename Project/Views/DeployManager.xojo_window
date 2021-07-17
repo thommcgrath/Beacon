@@ -1059,7 +1059,7 @@ End
 		      Controller.Cancelled = True
 		    Case BeaconUI.ConfirmResponses.Alternate
 		      Controller.Cancelled = True
-		      ShowURL(Beacon.WebURL("/help/nitrado_expert_mode"))
+		      System.GotoURL(Beacon.WebURL("/help/nitrado_expert_mode"))
 		    End Select
 		    
 		    Controller.ShouldResume = True
@@ -1499,7 +1499,7 @@ End
 		    Return False
 		  End If
 		  
-		  ShowURL(URL)
+		  System.GotoURL(URL)
 		  Return True
 		End Function
 	#tag EndEvent

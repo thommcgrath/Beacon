@@ -472,7 +472,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  ShowURL(Me.Text)
+		  System.GotoURL(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

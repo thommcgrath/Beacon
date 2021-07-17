@@ -1,12 +1,13 @@
 #tag Class
 Protected Class ModDetails
 	#tag Method, Flags = &h0
-		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean, WorkshopID As Integer)
+		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean, WorkshopID As UInt32, IsUserMod As Boolean)
 		  Self.mModID = ModID
 		  Self.mName = Name
 		  Self.mConsoleSafe = ConsoleSafe
 		  Self.mDefaultEnabled = DefaultEnabled
 		  Self.mWorkshopID = WorkshopID
+		  Self.mIsUserMod = IsUserMod
 		End Sub
 	#tag EndMethod
 
@@ -29,12 +30,25 @@ Protected Class ModDetails
 		DefaultEnabled As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mIsUserMod
+			End Get
+		#tag EndGetter
+		IsUserMod As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mConsoleSafe As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDefaultEnabled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsUserMod As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -55,7 +69,7 @@ Protected Class ModDetails
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mWorkshopID As Integer
+		Private mWorkshopID As UInt32
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -73,7 +87,7 @@ Protected Class ModDetails
 			  Return Self.mWorkshopID
 			End Get
 		#tag EndGetter
-		WorkshopID As Integer
+		WorkshopID As UInt32
 	#tag EndComputedProperty
 
 

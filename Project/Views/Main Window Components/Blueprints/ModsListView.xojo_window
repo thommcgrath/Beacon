@@ -161,8 +161,10 @@ End
 		  Self.FinishJob()
 		  
 		  Var SelectedModID As String
+		  Var ScrollPosition As Integer = -1
 		  If Self.ModsList.SelectedRowIndex > -1 Then
 		    SelectedModID = BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Self.ModsList.SelectedRowIndex)).ModID
+		    ScrollPosition = Self.ModsList.ScrollPosition
 		  End If
 		  
 		  Self.ModsList.RemoveAllRows
@@ -172,26 +174,45 @@ End
 		    For Each Dict As Dictionary In Arr
 		      Var ModInfo As New BeaconAPI.WorkshopMod(Dict)
 		      Self.ModsList.AddRow(ModInfo.Name, If(ModInfo.Confirmed, "Confirmed", "Waiting Confirmation"))
-		      Self.ModsList.RowTagAt(Self.ModsList.LastRowIndex) = ModInfo
+		      Self.ModsList.RowTagAt(Self.ModsList.LastAddedRowIndex) = ModInfo
 		      If SelectedModID = ModInfo.ModID Then
-		        Self.ModsList.SelectedRowIndex = Self.ModsList.LastRowIndex
+		        Self.ModsList.SelectedRowIndex = Self.ModsList.LastAddedRowIndex
 		      End If
 		    Next
 		  End If
 		  
-		  Self.ModsList.AddRowAt(0, Beacon.UserModName)
-		  Self.ModsList.CellValueAt(0, 1) = "Built-In"
-		  Self.ModsList.RowTagAt(0) = BeaconAPI.WorkshopMod.UserBlueprintsMod
-		  If SelectedModID = Beacon.UserModID Then
-		    Self.ModsList.SelectedRowIndex = 0
-		  End If
+		  Var UserMods() As Beacon.ModDetails = LocalData.SharedInstance.GetUserMods
+		  For Each UserMod As Beacon.ModDetails In UserMods
+		    Self.ModsList.AddRow(UserMod.Name, If(UserMod.ModID = Beacon.UserModID, "Built-In", "Custom"))
+		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
+		    Self.ModsList.RowTagAt(Idx) = New BeaconAPI.WorkshopMod(UserMod)
+		    If SelectedModID = UserMod.ModID Then
+		      Self.ModsList.SelectedRowIndex = Idx
+		    End If
+		  Next
 		  Self.ModsList.Sort
 		  
-		  If Self.ModsList.RowCount = 1 And Self.mDidFirstRefresh = False Then
-		    Var Idx As Integer = Self.ModsList.SelectedRowIndex
-		    Self.ModsList.SelectedRowIndex = 0
-		    Self.ModsList.DoEdit
-		    Self.ModsList.SelectedRowIndex = Idx
+		  If ScrollPosition > -1 Then
+		    Self.ModsList.ScrollPosition = ScrollPosition
+		  End If
+		  Self.ModsList.EnsureSelectionIsVisible
+		  
+		  If Self.mOpenModWhenRefreshed.IsEmpty = False Then
+		    For Idx As Integer = 0 To Self.ModsList.LastRowIndex
+		      If BeaconAPI.WorkshopMod(Self.ModsList.RowTagAt(Idx)).ModID = Self.mOpenModWhenRefreshed Then
+		        Self.ModsList.SelectedRowIndex = Idx
+		        Self.ModsList.DoEdit
+		        Exit For Idx
+		      End If
+		    Next Idx
+		    Self.mOpenModWhenRefreshed = ""
+		  Else
+		    If Self.ModsList.RowCount = 1 And Self.mDidFirstRefresh = False Then
+		      Var Idx As Integer = Self.ModsList.SelectedRowIndex
+		      Self.ModsList.SelectedRowIndex = 0
+		      Self.ModsList.DoEdit
+		      Self.ModsList.SelectedRowIndex = Idx
+		    End If
 		  End If
 		  Self.mDidFirstRefresh = True
 		End Sub
@@ -253,6 +274,10 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event CloseModView(ModUUID As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ShowMod(ModInfo As BeaconAPI.WorkshopMod)
 	#tag EndHook
 
@@ -263,6 +288,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mJobCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOpenModWhenRefreshed As String
 	#tag EndProperty
 
 
@@ -285,14 +314,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var WorkshopIDs() As String
+		  Var Mods() As BeaconAPI.WorkshopMod
 		  If Warn Then
 		    Var Names() As String
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
 		      If Me.Selected(Row) And ModInfo.ModID <> Beacon.UserModID Then
 		        Names.Add(ModInfo.Name)
-		        WorkshopIDs.Add(ModInfo.WorkshopID.ToString(Locale.Raw, "0"))
+		        Mods.Add(ModInfo)
 		      End If
 		    Next
 		    
@@ -301,12 +330,40 @@ End
 		    End If
 		  End If
 		  
-		  Self.StartJob()
+		  // Make sure they do not have unsaved changes
+		  Var LocalUUIDs(), WorkshopIDs() As String
+		  For Idx As Integer = Mods.LastIndex DownTo 0
+		    If Not CloseModView(Mods(Idx).ModID) Then
+		      Mods.RemoveRowAt(Idx)
+		    Else
+		      If Mods(Idx).IsLocalMod Then
+		        LocalUUIDs.Add(Mods(Idx).ModID)
+		      Else
+		        WorkshopIDs.Add(Mods(Idx).WorkshopID.ToString(Locale.Raw, "0"))
+		      End If
+		    End If
+		  Next Idx
 		  
-		  Var Body As String = WorkshopIDs.Join(",")
-		  Var Request As New BeaconAPI.Request("/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  BeaconAPI.Send(Request)
+		  If LocalUUIDs.Count > 0 Then
+		    For Each LocalUUID As String In LocalUUIDs
+		      If LocalData.SharedInstance.DeleteMod(LocalUUID) Then
+		        For Row As Integer = Me.LastRowIndex DownTo 0
+		          If BeaconAPI.WorkshopMod(Me.RowTagAt(Row)).ModID = LocalUUID Then
+		            Me.RemoveRowAt(Row)
+		            Exit For Row
+		          End If
+		        Next
+		      End If
+		    Next
+		  End If
+		  If WorkshopIDs.Count > 0 Then
+		    Self.StartJob()
+		    
+		    Var Body As String = WorkshopIDs.Join(",")
+		    Var Request As New BeaconAPI.Request("/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
+		    Request.Authenticate(Preferences.OnlineToken)
+		    BeaconAPI.Send(Request)
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -337,8 +394,9 @@ End
 		  
 		  Select Case Item.Name
 		  Case "RegisterMod"
-		    Var Status As Integer =  RegisterModDialog.Present(Self)
-		    If (Status And RegisterModDialog.FlagShouldRefresh) = RegisterModDialog.FlagShouldRefresh Then
+		    Var ModUUID As String =  RegisterModDialog.Present(Self)
+		    If ModUUID.IsEmpty = False Then
+		      Self.mOpenModWhenRefreshed = ModUUID
 		      Self.RefreshMods()
 		    End If
 		  Case "EditModBlueprints"

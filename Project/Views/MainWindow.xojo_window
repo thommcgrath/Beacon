@@ -853,7 +853,7 @@ End
 		  End If
 		  
 		  If Index = Self.PageHelp And BeaconUI.WebContentSupported = False Then
-		    ShowURL(HelpComponent.HelpURL)
+		    System.GotoURL(HelpComponent.HelpURL)
 		    Return
 		  End If
 		  

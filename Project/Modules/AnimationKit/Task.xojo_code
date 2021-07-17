@@ -17,7 +17,7 @@ Protected Class Task
 		  #Pragma Unused Time
 		  
 		  Var Err As New UnsupportedOperationException
-		  Err.Reason = "Subclasses of AnimationKit.Task must override the Completed method."
+		  Err.Message = "Subclasses of AnimationKit.Task must override the Completed method."
 		  Raise Err
 		End Function
 	#tag EndMethod

@@ -38,10 +38,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Event
 		Sub EnableMenuItems()
-		  FileNew.Enable
-		  FileNewPreset.Enable
-		  FileOpen.Enable
-		  FileImport.Enable
+		  FileNew.Enabled = True
+		  FileNewPreset.Enabled = True
+		  FileOpen.Enabled = True
+		  FileImport.Enabled = True
 		  
 		  If Preferences.OnlineEnabled Then
 		    HelpSyncCloudFiles.Visible = True
@@ -49,7 +49,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    HelpSeparator2.Visible = True
 		    
 		    If UserCloud.IsBusy = False Then
-		      HelpSyncCloudFiles.Enable
+		      HelpSyncCloudFiles.Enabled = True
 		    End If
 		    
 		    If Keyboard.OptionKey Then
@@ -57,7 +57,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Else
 		      HelpUpdateEngrams.Text = "Update Blueprints"
 		    End If
-		    HelpUpdateEngrams.Enable
+		    HelpUpdateEngrams.Enabled = True
 		  Else
 		    HelpSyncCloudFiles.Visible = False
 		    HelpUpdateEngrams.Visible = False
@@ -287,7 +287,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function HelpArkConfigFileReference() As Boolean Handles HelpArkConfigFileReference.Action
-			ShowURL(Beacon.WebURL("/help/ark_config_file_reference"))
+			System.GotoURL(Beacon.WebURL("/help/ark_config_file_reference"))
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -535,7 +535,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "showidentity"
 		      IdentityWindow.Show()
 		    Case "showguide"
-		      ShowURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
+		      System.GotoURL(Beacon.WebURL("/docs/api/v" + BeaconAPI.Version.ToString))
 		    Case "showapibuilder"
 		      APIBuilderWindow.Show()
 		    Case "shownewsletterprompt"
@@ -561,7 +561,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "signin"
 		      UserWelcomeWindow.Present(True)
 		    Case "showaccount"
-		      ShowURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
+		      System.GotoURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
 		    Case "spawncodes"
 		      Self.ShowSpawnCodes()
 		    Case "reportproblem"
@@ -1100,7 +1100,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  For Each Document As Beacon.DocumentURL In Documents
 		    Var Item As New MenuItem(Document.Name)
 		    Item.Tag = Document
-		    Item.Enable
+		    Item.Enabled = True
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
@@ -1108,7 +1108,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Var Item As New MenuItem("Clear Menu")
-		    Item.Enable
+		    Item.Enabled = True
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
 		    FileOpenRecent.AddMenu(Item)
 		  Else
@@ -1149,7 +1149,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
 		  
-		  ShowURL(Beacon.WebURL(Path))
+		  System.GotoURL(Beacon.WebURL(Path))
 		End Sub
 	#tag EndMethod
 
@@ -1189,13 +1189,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
-		  ShowURL(Beacon.WebURL("/history?stage=" + Self.StageCode.ToString(Locale.Raw, "0") + "#build" + Self.BuildNumber.ToString(Locale.Raw, "0")))
+		  System.GotoURL(Beacon.WebURL("/history?stage=" + Self.StageCode.ToString(Locale.Raw, "0") + "#build" + Self.BuildNumber.ToString(Locale.Raw, "0")))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ShowSpawnCodes()
-		  ShowURL(Beacon.WebURL("/spawn/"))
+		  System.GotoURL(Beacon.WebURL("/spawn/"))
 		End Sub
 	#tag EndMethod
 

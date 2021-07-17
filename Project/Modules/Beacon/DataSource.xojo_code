@@ -43,7 +43,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EngramIsCustom(Engram As Beacon.Engram) As Boolean
+		Function EngramIsCustom(Item As Beacon.Blueprint) As Boolean
 		  
 		End Function
 	#tag EndMethod

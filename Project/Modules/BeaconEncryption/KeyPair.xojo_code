@@ -16,7 +16,7 @@ Protected Class KeyPair
 		Sub Constructor(PublicKey As MemoryBlock, PrivateKey As MemoryBlock)
 		  If Not (Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey)) Then
 		    Var Err As New CryptoException
-		    Err.Reason = "Key pair not valid"
+		    Err.Message = "Key pair not valid"
 		    Raise Err
 		  End If
 		  

@@ -47,7 +47,7 @@ Protected Class Request
 		  End If
 		  If Path.Length >= 8 And Path.Left(8) <> "https://" Then
 		    Var Err As New UnsupportedOperationException
-		    Err.Reason = "Only https links are supported"
+		    Err.Message = "Only https links are supported"
 		    Raise Err
 		  End If
 		  

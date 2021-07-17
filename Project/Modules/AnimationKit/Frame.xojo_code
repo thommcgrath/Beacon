@@ -11,14 +11,14 @@ Protected Class Frame
 		Sub Constructor(Image As iOSImage, RetinaImage As iOSImage)
 		  If Image = Nil Then
 		    Var Err As New UnsupportedOperationException
-		    Err.Reason = "Cannot create a frame without an image."
+		    Err.Message = "Cannot create a frame without an image."
 		    Raise Err
 		  End If
 		  
 		  If RetinaImage <> Nil Then
 		    If RetinaImage.Width <> Image.Width * 2 Or RetinaImage.Height <> Image.Height * 2 Then
 		      Var Err As New UnsupportedOperationException
-		      Err.Reason = "Retina image must be exactly twice the dimensions of the standard image."
+		      Err.Message = "Retina image must be exactly twice the dimensions of the standard image."
 		      Raise Err
 		    End If
 		  End If
@@ -33,14 +33,14 @@ Protected Class Frame
 		Sub Constructor(Image As Picture, RetinaImage As Picture)
 		  If Image = Nil Then
 		    Var Err As New UnsupportedOperationException
-		    Err.Reason = "Cannot create a frame without an image."
+		    Err.Message = "Cannot create a frame without an image."
 		    Raise Err
 		  End If
 		  
 		  If RetinaImage <> Nil Then
 		    If RetinaImage.Width <> Image.Width * 2 Or RetinaImage.Height <> Image.Height * 2 Then
 		      Var Err As New UnsupportedOperationException
-		      Err.Reason = "Retina image must be exactly twice the dimensions of the standard image."
+		      Err.Message = "Retina image must be exactly twice the dimensions of the standard image."
 		      Raise Err
 		    End If
 		  End If

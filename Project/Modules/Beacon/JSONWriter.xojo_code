@@ -19,7 +19,7 @@ Inherits Thread
 		      Compress = Self.mSourceDocument.UseCompression
 		    Else
 		      Var Err As New NilObjectException
-		      Err.Reason = "No source dictionary or document."
+		      Err.Message = "No source dictionary or document."
 		      Raise Err
 		    End If
 		    

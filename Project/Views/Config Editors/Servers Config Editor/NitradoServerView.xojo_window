@@ -529,7 +529,7 @@ End
 		    Return False
 		  End If
 		  
-		  ShowURL(URL)
+		  System.GotoURL(URL)
 		  Return True
 		End Function
 	#tag EndEvent

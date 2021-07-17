@@ -60,7 +60,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  
 		  If Source = Nil Then
 		    Var Err As NilObjectException
-		    Err.Reason = "Cannot clone a nil loot source"
+		    Err.Message = "Cannot clone a nil loot source"
 		    Raise Err
 		  End If
 		  

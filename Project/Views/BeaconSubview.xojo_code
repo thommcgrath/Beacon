@@ -136,7 +136,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  If Self.Changed Then
-		    FileSave.Enable
+		    FileSave.Enabled = True
 		  End If
 		  
 		  RaiseEvent EnableMenuItems()

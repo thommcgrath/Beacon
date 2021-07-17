@@ -271,7 +271,7 @@ Protected Module UpdatesKit
 		    mSocket = Nil
 		  End If
 		  
-		  NotificationKit.Post(Notification_Error, Error.Reason)
+		  NotificationKit.Post(Notification_Error, Error.Message)
 		End Sub
 	#tag EndMethod
 

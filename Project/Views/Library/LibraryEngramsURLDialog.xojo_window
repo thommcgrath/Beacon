@@ -275,7 +275,7 @@ End
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
 		  
-		  Self.ShowAlert("Unable to download", e.Reason)
+		  Self.ShowAlert("Unable to download", e.Message)
 		End Sub
 	#tag EndEvent
 	#tag Event

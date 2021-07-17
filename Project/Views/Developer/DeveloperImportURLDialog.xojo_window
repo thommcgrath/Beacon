@@ -300,7 +300,7 @@ End
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
 		  
-		  MessageBox("Error: " + e.Reason)
+		  MessageBox("Error: " + e.Message)
 		End Sub
 	#tag EndEvent
 	#tag Event

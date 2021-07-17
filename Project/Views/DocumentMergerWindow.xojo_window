@@ -512,7 +512,7 @@ End
 		  
 		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Are you sure you want to import Custom Config Content?", "If you intend to continue to configure the server outside of Beacon, it is recommended that you do not import the Custom Config Content.", "Import", "Cancel", "Learn More")
 		  If Choice = BeaconUI.ConfirmResponses.Alternate Then
-		    ShowURL(Beacon.WebURL("/help/using_custom_ini_content_with"))
+		    System.GotoURL(Beacon.WebURL("/help/using_custom_ini_content_with"))
 		  End If
 		  If Choice = BeaconUI.ConfirmResponses.Action Then
 		    Self.mHasWarnedAboutCustomConfig = True

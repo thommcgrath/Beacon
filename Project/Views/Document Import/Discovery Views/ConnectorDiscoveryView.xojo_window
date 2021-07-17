@@ -642,7 +642,7 @@ End
 #tag Events HelpLabel
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/connector"))
+		  System.GotoURL(Beacon.WebURL("/connector"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

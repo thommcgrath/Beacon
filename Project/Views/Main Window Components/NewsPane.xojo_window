@@ -324,7 +324,7 @@ End
 		      If Beacon.IsBeaconURL(URL) Then
 		        Call App.HandleURL(URL, True)
 		      ElseIf URL.BeginsWith("https://") Then
-		        ShowURL(URL)
+		        System.GotoURL(URL)
 		      End If
 		    End If
 		  Catch Err As RuntimeException

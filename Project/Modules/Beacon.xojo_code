@@ -2311,7 +2311,7 @@ Protected Module Beacon
 	#tag Constant, Name = UserModName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = UserModWorkshopID, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
+	#tag Constant, Name = UserModWorkshopID, Type = Double, Dynamic = False, Default = \"3971430332", Scope = Protected
 	#tag EndConstant
 
 

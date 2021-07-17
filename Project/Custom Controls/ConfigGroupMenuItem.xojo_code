@@ -51,7 +51,7 @@ Inherits MenuItem
 		    Self.HasCheckMark = True
 		  End If
 		  
-		  Self.Enable
+		  Self.Enabled = True
 		End Sub
 	#tag EndEvent
 

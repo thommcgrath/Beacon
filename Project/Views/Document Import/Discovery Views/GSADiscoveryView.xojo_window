@@ -821,7 +821,7 @@ End
 #tag Events UserTokenDashboardButton
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/gsatoken"))
+		  System.GotoURL(Beacon.WebURL("/gsatoken"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

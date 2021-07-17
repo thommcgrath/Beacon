@@ -455,7 +455,7 @@ End
 		Sub Action()
 		  Var Title, Body, HelpURL As String
 		  Call LocalData.SharedInstance.GetConfigHelp(BeaconConfigs.NameSpawnPoints, Title, Body, HelpURL)
-		  ShowURL(HelpURL)
+		  System.GotoURL(HelpURL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

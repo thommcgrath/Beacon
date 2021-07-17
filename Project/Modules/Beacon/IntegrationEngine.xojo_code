@@ -570,8 +570,8 @@ Protected Class IntegrationEngine
 		Protected Sub SetError(Err As RuntimeException)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		  Var Reason As String
-		  If Err.Reason <> "" Then
-		    Reason = Err.Reason
+		  If Err.Message <> "" Then
+		    Reason = Err.Message
 		  ElseIf Err.Message <> "" Then
 		    Reason = Err.Message
 		  Else

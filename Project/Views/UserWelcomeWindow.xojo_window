@@ -1919,9 +1919,9 @@ End
 		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "System Status", "Cancel", "Help")
 		  Select Case Choice
 		  Case BeaconUI.ConfirmResponses.Action
-		    ShowURL("https://status.usebeacon.app/")
+		    System.GotoURL("https://status.usebeacon.app/")
 		  Case BeaconUI.ConfirmResponses.Alternate
-		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
+		    System.GotoURL(Beacon.WebURL("/help/solving_connection_problems_to"))
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -2016,7 +2016,7 @@ End
 #tag Events PrivacyPolicyLabel
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/help/about_user_privacy"))
+		  System.GotoURL(Beacon.WebURL("/help/about_user_privacy"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

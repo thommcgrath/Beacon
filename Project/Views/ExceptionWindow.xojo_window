@@ -792,7 +792,7 @@ End
 		  If Stack.LastIndex >= 0 Then
 		    Location = Stack(0).Name
 		  End If
-		  Var Reason As String = Err.Reason
+		  Var Reason As String = Err.Message
 		  If Reason.IsEmpty Then
 		    Reason = Err.Message
 		  End If
@@ -1063,7 +1063,7 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mSolutionURL <> "" Then
-		    ShowURL(Self.mSolutionURL)
+		    System.GotoURL(Self.mSolutionURL)
 		  Else
 		    App.ShowBugReporter(Self.mExceptionHash)
 		  End If

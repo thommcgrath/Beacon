@@ -581,7 +581,7 @@ End
 		  Try
 		    Parsed = Beacon.ParseJSON(JSON)
 		  Catch Err As RuntimeException
-		    Self.ShowAlert("Unable to paste.", "The copied data could not be read. The parser said: " + Err.Reason)
+		    Self.ShowAlert("Unable to paste.", "The copied data could not be read. The parser said: " + Err.Message)
 		    Return
 		  End Try
 		  

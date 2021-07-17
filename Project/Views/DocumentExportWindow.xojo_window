@@ -707,7 +707,7 @@ End
 		    Case BeaconUI.ConfirmResponses.Cancel
 		      Return False
 		    Case BeaconUI.ConfirmResponses.Alternate
-		      ShowURL(Beacon.WebURL("/help/updating_your_server_manually"))
+		      System.GotoURL(Beacon.WebURL("/help/updating_your_server_manually"))
 		      Return False
 		    End Select
 		  End If

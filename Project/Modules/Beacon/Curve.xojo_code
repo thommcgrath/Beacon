@@ -29,7 +29,7 @@ Protected Class Curve
 		    Var Time As Double = I / NumFigures
 		    Var X As Double = Self.XForT(Time)
 		    Var Y As Double = Self.YForT(Time)
-		    Statement.SQLExecute(Time, X, Y)
+		    Statement.ExecuteSQL(Time, X, Y)
 		  Next
 		  Self.Database.ExecuteSQL("COMMIT")
 		End Sub

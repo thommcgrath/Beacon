@@ -311,18 +311,18 @@ End
 
 	#tag Event
 		Sub EnableMenuItems()
-		  FileSaveAs.Enable
+		  FileSaveAs.Enabled = True
 		  
 		  If Self.ReadyToDeploy Then
-		    FileDeploy.Enable
+		    FileDeploy.Enabled = True
 		  End If
 		  
 		  If Self.ReadyToExport Then
-		    FileExport.Enable
+		    FileExport.Enabled = True
 		  End If
 		  
 		  If Self.Document.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
-		    ViewSwitchToBaseConfigSet.Enable
+		    ViewSwitchToBaseConfigSet.Enabled = True
 		  End If
 		  
 		  If Self.CurrentPanel <> Nil Then
@@ -748,13 +748,13 @@ End
 		        Var HelpURL As String = HelpComponent.HelpURL("config_sets")
 		        If App.MainWindow Is Nil Then
 		          // No logical way for this to happen.
-		          ShowURL(HelpURL)
+		          System.GotoURL(HelpURL)
 		          Return
 		        End If
 		        
 		        Var Component As HelpComponent = App.MainWindow.Help(False)
 		        If Component Is Nil Then
-		          ShowURL(HelpURL)
+		          System.GotoURL(HelpURL)
 		          Return
 		        End If
 		        
@@ -1406,7 +1406,7 @@ End
 		  Self.mDrawOmniBannerPressed = False
 		  Self.OmniNoticeBanner.Invalidate
 		  If X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height Then
-		    ShowURL(Beacon.WebURL("/omni"))
+		    System.GotoURL(Beacon.WebURL("/omni"))
 		  End If
 		End Sub
 	#tag EndEvent

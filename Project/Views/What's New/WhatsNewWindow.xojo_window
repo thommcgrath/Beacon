@@ -166,7 +166,7 @@ End
 		  End If
 		  
 		  If URL.BeginsWith(Beacon.WebURL("/welcome")) = False Then
-		    ShowURL(URL)
+		    System.GotoURL(URL)
 		    Return True
 		  End If
 		End Function

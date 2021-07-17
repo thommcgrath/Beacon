@@ -39,7 +39,7 @@ Begin BeaconDialog RegisterModDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   4
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
@@ -48,7 +48,7 @@ Begin BeaconDialog RegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   520
       Begin Label IntroMessageLabel
@@ -677,16 +677,225 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   80
       End
+      Begin Label NameMessageLabel
+         AllowAutoDeactivate=   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Name Your Mod"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   480
+      End
+      Begin Label NameExplanationLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "This is for organization only and will stay synced with your Beacon account."
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   480
+      End
+      Begin TextField NameInputField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   480
+      End
+      Begin UITweaks.ResizedPushButton NameActionButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "OK"
+         Default         =   True
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   420
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   134
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton NameCancelButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   328
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   134
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin CheckBox NameShowInstructionsCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Show me instructions when finished"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   134
+         Transparent     =   False
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         VisualState     =   1
+         Width           =   296
+      End
    End
    Begin BeaconAPI.Socket RegisterSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -714,12 +923,11 @@ End
 		  #Pragma Unused Request
 		  
 		  If Response.Success Then
-		    Self.mModInfo.Constructor(Response.JSON)
+		    Self.mModInfo.Constructor(Dictionary(Response.JSON))
 		    Self.ShowConfirmation()
 		    If Self.mModInfo.Confirmed Then
 		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
-		      Self.ModIsConfirmed = True
-		      Self.ShouldRefresh = True
+		      Self.mModUUID = Self.mModInfo.ModID
 		      Self.Hide
 		      Return
 		    Else
@@ -736,8 +944,6 @@ End
 		  #Pragma Unused Request
 		  
 		  If Response.Success And Response.JSONParsed Then
-		    Self.ShouldRefresh = True
-		    
 		    Try
 		      Var Mods() As Dictionary = Response.JSON.DictionaryArrayValue
 		      If Mods.Count = 1 Then
@@ -765,17 +971,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ModInfo As BeaconAPI.WorkshopMod = Nil) As Integer
+		Shared Function Present(Parent As Window, ModInfo As BeaconAPI.WorkshopMod = Nil) As String
 		  If Parent Is Nil Then
-		    Return 0
+		    Return ""
 		  End If
 		  
 		  Var Win As New RegisterModDialog(ModInfo)
 		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Var Flags As Integer = Win.mResponseFlags
+		  Var ModUUID As String = Win.mModUUID
 		  Win.Close
-		  Return Flags
+		  Return ModUUID
 		End Function
 	#tag EndMethod
 
@@ -797,45 +1003,9 @@ End
 		Private mModInfo As BeaconAPI.WorkshopMod
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return (Self.mResponseFlags And Self.FlagModIsConfirmed) = Self.FlagModIsConfirmed
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value Then
-			    Self.mResponseFlags = Self.mResponseFlags Or Self.FlagModIsConfirmed
-			  Else
-			    Self.mResponseFlags = Self.mResponseFlags And Not Self.FlagModIsConfirmed
-			  End If
-			End Set
-		#tag EndSetter
-		ModIsConfirmed As Boolean
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
-		Private mResponseFlags As Integer
+		Private mModUUID As String
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return (Self.mResponseFlags And Self.FlagShouldRefresh) = Self.FlagShouldRefresh
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value Then
-			    Self.mResponseFlags = Self.mResponseFlags Or Self.FlagShouldRefresh
-			  Else
-			    Self.mResponseFlags = Self.mResponseFlags And Not Self.FlagShouldRefresh
-			  End If
-			End Set
-		#tag EndSetter
-		ShouldRefresh As Boolean
-	#tag EndComputedProperty
 
 
 	#tag Constant, Name = FlagModIsConfirmed, Type = Double, Dynamic = False, Default = \"2", Scope = Public
@@ -853,6 +1023,9 @@ End
 	#tag Constant, Name = HeightIntro, Type = Double, Dynamic = False, Default = \"196", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = HeightName, Type = Double, Dynamic = False, Default = \"174", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageConfirm, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
@@ -860,6 +1033,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageIntro, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageName, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
@@ -874,8 +1050,13 @@ End
 		    TargetHeight = Self.HeightIntro
 		  Case Self.PageDetail
 		    TargetHeight = Self.HeightDetail
+		    Self.DetailModIDField.SetFocus()
 		  Case Self.PageConfirm
 		    TargetHeight = Self.HeightConfirm
+		    Self.ConfirmCodeField.SetFocus()
+		  Case Self.PageName
+		    TargetHeight = Self.HeightName
+		    Self.NameInputField.SetFocus()
 		  End Select
 		  
 		  Self.MinimumHeight = TargetHeight
@@ -890,10 +1071,7 @@ End
 		  If Self.IntroAuthorRadio.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageDetail
 		  ElseIf Self.IntroUserRadio.Value Then
-		    ShowURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
-		    Self.ShouldRefresh = False
-		    Self.ModIsConfirmed = False
-		    Self.Hide
+		    Self.Pages.SelectedPanelIndex = Self.PageName
 		  Else
 		    Self.ShowAlert("Please choose an option", "Choosing one of the two options will get you the information you need.")
 		  End If
@@ -903,8 +1081,7 @@ End
 #tag Events IntroCancelButton
 	#tag Event
 		Sub Action()
-		  Self.ShouldRefresh = False
-		  Self.ModIsConfirmed = False
+		  Self.mModUUID = ""
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -974,6 +1151,27 @@ End
 		  
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NameActionButton
+	#tag Event
+		Sub Action()
+		  Var UserMod As Beacon.ModDetails = LocalData.SharedInstance.CreateUserMod(Self.NameInputField.Text.Trim)
+		  Self.mModUUID = UserMod.ModID
+		  
+		  If Self.NameShowInstructionsCheck.Value Then
+		    System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))
+		  End If
+		  
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NameCancelButton
+	#tag Event
+		Sub Action()
+		  Self.Pages.SelectedPanelIndex = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1242,22 +1440,6 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ShouldRefresh"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ModIsConfirmed"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

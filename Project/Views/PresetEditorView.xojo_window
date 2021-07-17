@@ -730,13 +730,13 @@ End
 	#tag Event
 		Sub EnableMenuItems()
 		  If Self.Changed Then
-		    FileSave.Enable
+		    FileSave.Enabled = True
 		    If Self.mSaveFile <> Nil Then
-		      FileSaveAs.Enable
+		      FileSaveAs.Enabled = True
 		    End If
 		  End If
 		  If Self.mSaveFile = Nil Then
-		    FileExport.Enable
+		    FileExport.Enabled = True
 		  End If
 		End Sub
 	#tag EndEvent

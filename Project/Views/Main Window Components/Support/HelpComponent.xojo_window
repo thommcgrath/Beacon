@@ -77,7 +77,7 @@ End
 	#tag Method, Flags = &h0
 		Sub LoadURL(URL As String)
 		  If BeaconUI.WebContentSupported = False Then
-		    ShowURL(URL)
+		    System.GotoURL(URL)
 		    Return
 		  End If
 		  
@@ -146,7 +146,7 @@ End
 		  End If
 		  Var Matches As RegexMatch = DiscordDetector.Search(URL)
 		  If (Matches Is Nil) = False Then
-		    ShowURL(URL)
+		    System.GotoURL(URL)
 		    Return True
 		  End If
 		End Function

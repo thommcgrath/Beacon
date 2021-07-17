@@ -26,16 +26,16 @@ Inherits Window
 	#tag Event
 		Sub EnableMenuItems()
 		  If Self.HasCloseButton Then
-		    FileClose.Enable
+		    FileClose.Enabled = True
 		  End If
 		  If Self.HasMinimizeButton Then
-		    WindowMinimize.Enable
+		    WindowMinimize.Enabled = True
 		  End If
 		  If Self.Resizeable Then
-		    WindowZoom.Enable
+		    WindowZoom.Enabled = True
 		  End If
 		  If Self.mWindowMenuItem <> Nil Then
-		    Self.mWindowMenuItem.Enable
+		    Self.mWindowMenuItem.Enabled = True
 		  End If
 		  
 		  RaiseEvent EnableMenuItems
@@ -156,7 +156,7 @@ Inherits Window
 		Sub UpdateWindowMenu()
 		  If Self.mWindowMenuItem <> Nil Then
 		    Self.mWindowMenuItem.Text = Self.Title
-		    Self.mWindowMenuItem.Enable
+		    Self.mWindowMenuItem.Enabled = True
 		  End If
 		End Sub
 	#tag EndMethod

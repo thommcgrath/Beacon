@@ -27,7 +27,7 @@ Inherits BlueprintController
 	#tag Event
 		Sub RefreshBlueprints()
 		  Var Mods As New Beacon.StringList(0)
-		  Mods(0) = Beacon.UserModID
+		  Mods(0) = Self.ModID
 		  
 		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints("", Mods, "")
 		  
@@ -35,18 +35,6 @@ Inherits BlueprintController
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Function ModID() As String
-		  Return Beacon.UserModID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModName() As String
-		  Return Beacon.UserModName
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function UseSaveTerminology() As Boolean
