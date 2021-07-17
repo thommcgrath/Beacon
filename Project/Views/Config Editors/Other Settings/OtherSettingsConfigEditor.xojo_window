@@ -11,6 +11,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   432
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -58,7 +59,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   792
+      Width           =   484
    End
    Begin SettingsListContainer List
       AllowAutoDeactivate=   True
@@ -72,6 +73,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   391
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -88,6 +90,66 @@ Begin ConfigEditor OtherSettingsConfigEditor
       Transparent     =   True
       Visible         =   True
       Width           =   792
+   End
+   Begin OmniBarSeparator OmniBarSeparator1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   484
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   308
+   End
+   Begin SearchField SearchField1
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      Enabled         =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   493
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   9
+      Transparent     =   False
+      Visible         =   True
+      Width           =   290
    End
 End
 #tag EndWindow
@@ -142,10 +204,40 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("AddButton", "Add Setting", IconToolbarAdd, "Choose a new setting to add"))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Keys() As Beacon.ConfigKey = Self.Config(False).UnimplementedKeys
+		    Var Base As New MenuItem
+		    For Each Key As Beacon.ConfigKey In Keys
+		      Base.AddMenu(New MenuItem(Key.Label, Key))
+		    Next
+		    
+		    Var Position As Point = Me.Window.GlobalPosition
+		    Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
+		    If Choice Is Nil Then
+		      Return
+		    End If
+		    
+		    Break
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

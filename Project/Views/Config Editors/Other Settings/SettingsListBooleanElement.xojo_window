@@ -11,6 +11,7 @@ Begin SettingsListElement SettingsListBooleanElement
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   88
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
@@ -163,6 +164,14 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.NameLabel.Text = Self.mKey.Label
+		  Self.DescriptionLabel.Text = Self.mKey.Description
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Key As Beacon.ConfigKey, Value As Boolean)
 		  Self.mOriginalValue = Value
@@ -222,6 +231,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
