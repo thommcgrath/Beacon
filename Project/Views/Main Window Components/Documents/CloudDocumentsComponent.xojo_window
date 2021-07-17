@@ -11,6 +11,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   508
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -42,6 +43,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -65,6 +67,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   256
          Transparent     =   False
@@ -120,6 +123,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   62
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   False
@@ -469,6 +473,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1064,6 +1069,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

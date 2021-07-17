@@ -11,6 +11,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    HasBackColor    =   False
    Height          =   460
    HelpTag         =   ""
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -258,6 +259,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -470,6 +472,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

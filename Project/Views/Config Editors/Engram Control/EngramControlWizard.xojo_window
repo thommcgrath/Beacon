@@ -236,6 +236,7 @@ Begin BeaconDialog EngramControlWizard
    End
    Begin Thread WorkThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3

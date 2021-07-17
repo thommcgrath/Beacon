@@ -499,6 +499,7 @@ Begin Window SubscribeDialog
    End
    Begin URLConnection SubscribeSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

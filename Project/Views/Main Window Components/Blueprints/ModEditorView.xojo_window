@@ -11,6 +11,7 @@ Begin BeaconSubview ModEditorView
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   432
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -647,6 +648,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

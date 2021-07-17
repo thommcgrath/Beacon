@@ -11,6 +11,7 @@ Begin ServerViewContainer NitradoServerView
    HasBackColor    =   False
    Height          =   600
    HelpTag         =   ""
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -42,6 +43,7 @@ Begin ServerViewContainer NitradoServerView
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
@@ -211,6 +213,7 @@ Begin ServerViewContainer NitradoServerView
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   496
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -232,6 +235,7 @@ Begin ServerViewContainer NitradoServerView
       End
    End
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -615,6 +619,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

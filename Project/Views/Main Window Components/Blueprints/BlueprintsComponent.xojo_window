@@ -11,6 +11,7 @@ Begin BeaconPagedSubview BlueprintsComponent
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   486
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -77,6 +78,7 @@ Begin BeaconPagedSubview BlueprintsComponent
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
@@ -95,6 +97,7 @@ Begin BeaconPagedSubview BlueprintsComponent
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   448
+         Index           =   -2147483648
          InitialParent   =   "Views"
          IsFrontmost     =   False
          Left            =   0
@@ -273,6 +276,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

@@ -11,6 +11,7 @@ Begin ContainerControl CommonServerSettingsView
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   532
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -252,6 +253,7 @@ Begin ContainerControl CommonServerSettingsView
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   145
+      Index           =   -2147483648
       InitialParent   =   ""
       JSONData        =   ""
       Left            =   168
@@ -1208,6 +1210,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

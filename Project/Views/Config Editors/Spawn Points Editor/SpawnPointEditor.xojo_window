@@ -11,6 +11,7 @@ Begin BeaconContainer SpawnPointEditor
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   664
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -73,6 +74,7 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -91,6 +93,7 @@ Begin BeaconContainer SpawnPointEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   664
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
          LockBottom      =   True
@@ -1228,6 +1231,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

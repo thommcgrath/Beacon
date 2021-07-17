@@ -404,6 +404,7 @@ Begin BeaconDialog AdjustIngredientDialog
       Top             =   267
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   0
       Width           =   387
@@ -473,12 +474,16 @@ Begin BeaconDialog AdjustIngredientDialog
       Width           =   80
    End
    Begin Thread ProcessorThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndWindow

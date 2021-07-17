@@ -302,6 +302,7 @@ Begin Window ExceptionWindow
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   103
       Transparent     =   False
       Value           =   0
@@ -360,6 +361,7 @@ Begin Window ExceptionWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   155
          Transparent     =   False
          Value           =   0.0

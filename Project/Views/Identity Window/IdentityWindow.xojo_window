@@ -36,6 +36,7 @@ Begin BeaconAutopositionWindow IdentityWindow
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   500
+      Index           =   -2147483648
       InitialParent   =   ""
       IsFrontmost     =   False
       Left            =   0

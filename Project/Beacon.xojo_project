@@ -1,7 +1,7 @@
 Type=Desktop
 RBProjectVersion=2021.02
 MinIDEVersion=20150400
-OrigIDEVersion=20210101
+OrigIDEVersion=20210200
 Class=App;App.xojo_code;&h00000000283BFFFF;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h0000000030BBA7FF;&h0000000000000000;false
 MenuBar=DialogMenuBar;DialogMenuBar.xojo_menu;&h000000004981DFFF;&h0000000000000000;false
@@ -497,7 +497,7 @@ Class=OmniBarSeparator;Custom Controls/Omni Bar/OmniBarSeparator.xojo_code;&h000
 MultiImage=IconToolbarComment;Icons/IconToolbarComment.xojo_image;&h000000007CEA57FF;&h0000000007F977FF;false
 MultiImage=IconToolbarUncomment;Icons/IconToolbarUncomment.xojo_image;&h0000000027FBA7FF;&h0000000007F977FF;false
 Module=UpdatesKit;Modules/UpdatesKit.xojo_code;&h000000006EDC6FFF;&h000000001444B7FF;false
-Folder=Sounds;../Sounds;&h0000000041DD7FFF;&h0000000000000000;false
+Folder=Sounds;Sounds;&h0000000041DD7FFF;&h0000000000000000;false
 Sound=SoundUpdateAvailable;../Sounds/UpdateAvailable.wav;&h000000000289F7FF;&h0000000041DD7FFF;false
 Sound=SoundDeployFailed;../Sounds/DeployFailed.wav;&h000000006EC0DFFF;&h0000000041DD7FFF;false
 Sound=SoundDeploySuccess;../Sounds/DeploySuccess.wav;&h00000000071AFFFF;&h0000000041DD7FFF;false

@@ -11,6 +11,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    HasBackColor    =   False
    Height          =   528
    HelpTag         =   ""
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -43,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -195,6 +197,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   446
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -1752,6 +1755,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsFrontmost"
 		Visible=false

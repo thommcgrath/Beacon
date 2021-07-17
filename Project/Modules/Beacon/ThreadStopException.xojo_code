@@ -43,14 +43,6 @@ Inherits RuntimeException
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Reason"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Text"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"

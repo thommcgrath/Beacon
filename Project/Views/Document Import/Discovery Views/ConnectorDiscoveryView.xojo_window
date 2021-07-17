@@ -11,6 +11,7 @@ Begin DiscoveryView ConnectorDiscoveryView
    EraseBackground =   True
    HasBackgroundColor=   False
    Height          =   252
+   Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -395,6 +396,7 @@ Begin DiscoveryView ConnectorDiscoveryView
    End
    Begin Beacon.ConnectorClientSocket TestSocket
       Address         =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -645,6 +647,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
