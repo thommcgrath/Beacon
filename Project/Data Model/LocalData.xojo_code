@@ -1640,6 +1640,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_sort_order_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_label_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_mod_id_path_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_class_string_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS maps_mod_id_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS custom_presets_user_id_object_id_idx;")
