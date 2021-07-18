@@ -173,35 +173,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Var SelectedProfiles() As Beacon.ServerProfile
-		  For I As Integer = 0 To Self.ServerList.RowCount - 1
-		    If Self.ServerList.Selected(I) Then
-		      SelectedProfiles.Add(Self.ServerList.RowTagAt(I))
-		    End If
-		  Next
-		  
-		  Self.ServerList.SelectionChangeBlocked = True
-		  Self.ServerList.RowCount = Self.Document.ServerProfileCount
-		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
-		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
-		    
-		    // Don't use IndexOf as it doesn't utilize Operator_Compare
-		    Var Selected As Boolean
-		    For X As Integer = 0 To SelectedProfiles.LastIndex
-		      If SelectedProfiles(X) = Profile Then
-		        Selected = True
-		        SelectedProfiles.RemoveAt(X)
-		        Exit For X
-		      End If
-		    Next
-		    
-		    Self.ServerList.RowTagAt(I) = Profile
-		    Self.ServerList.CellValueAt(I, 0) = Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
-		    Self.ServerList.Selected(I) = Selected
-		  Next
-		  Self.ServerList.Sort
-		  Self.ServerList.SelectionChangeBlocked = False
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 
@@ -344,7 +316,7 @@ End
 	#tag Method, Flags = &h0
 		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile)
 		  Self.ServerList.SelectionChangeBlocked = True
-		  Self.ServerList.RemoveAllRows
+		  Self.ServerList.RowCount = Self.Document.ServerProfileCount
 		  
 		  Var SelectIDs() As String
 		  For Each Profile As Beacon.ServerProfile In SelectProfiles
@@ -355,14 +327,23 @@ End
 		  Next
 		  
 		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
-		  For Idx As Integer = 0 To Self.Document.ServerProfileCount - 1
+		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
 		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(Idx)
-		    Self.ServerList.AddRow(Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
-		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		    Self.ServerList.Selected(Self.ServerList.LastAddedRowIndex) = SelectIDs.IndexOf(Profile.ProfileID) > -1
+		    Var Name As String = Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
+		    Var Selected As Boolean = SelectIDs.IndexOf(Profile.ProfileID) > -1
+		    
+		    If Self.ServerList.CellValueAt(Idx, 0) <> Name Then
+		      Self.ServerList.CellValueAt(Idx, 0) = Name
+		    End If
+		    If Self.ServerList.RowTagAt(Idx) <> Profile Then
+		      Self.ServerList.RowTagAt(Idx) = Profile
+		    End If
+		    If Self.ServerList.Selected(Idx) <> Selected Then
+		      Self.ServerList.Selected(Idx) = Selected
+		    End If
 		  Next
 		  Self.ServerList.Sort
-		  Self.ServerList.SelectionChangeBlocked = False
+		  Self.ServerList.SelectionChangeBlocked(False) = False
 		End Sub
 	#tag EndMethod
 
@@ -379,18 +360,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
 		  Self.Changed = Sender.Changed
-		  
-		  Self.ServerList.SelectionChangeBlocked = True
-		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
-		  For Idx As Integer = 0 To Self.ServerList.RowCount - 1
-		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
-		    Var Status As String = Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
-		    If Self.ServerList.CellValueAt(Idx, 0) <> Status Then
-		      Self.ServerList.CellValueAt(Idx, 0) = Status
-		    End If
-		  Next
-		  Self.ServerList.Sort()
-		  Self.ServerList.SelectionChangeBlocked = False
+		  Self.UpdateList()
 		End Sub
 	#tag EndMethod
 

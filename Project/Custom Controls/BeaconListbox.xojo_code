@@ -752,6 +752,32 @@ Inherits Listbox
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SelectionChangeBlocked() As Boolean
+		  Return Self.mBlockSelectionChangeCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectionChangeBlocked(FireChangeEvent As Boolean = True, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mBlockSelectionChangeCount = Self.mBlockSelectionChangeCount + 1
+		  Else
+		    Self.mBlockSelectionChangeCount = Self.mBlockSelectionChangeCount - 1
+		  End If
+		  If Self.mBlockSelectionChangeCount < 0 Then
+		    Break
+		  End If
+		  
+		  If Self.mBlockSelectionChangeCount = 0 And Self.mFireChangeWhenUnlocked Then
+		    If FireChangeEvent Then
+		      RaiseEvent Change
+		    End If
+		    Self.mFireChangeWhenUnlocked = False
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event BulkColumnChangeFinished(Column As Integer)
@@ -960,29 +986,6 @@ Inherits Listbox
 	#tag Property, Flags = &h0
 		PreferencesKey As String
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mBlockSelectionChangeCount > 0
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value Then
-			    Self.mBlockSelectionChangeCount = Self.mBlockSelectionChangeCount + 1
-			  Else
-			    Self.mBlockSelectionChangeCount = Self.mBlockSelectionChangeCount - 1
-			  End If
-			  
-			  If Self.mBlockSelectionChangeCount = 0 And Self.mFireChangeWhenUnlocked Then
-			    RaiseEvent Change
-			    Self.mFireChangeWhenUnlocked = False
-			  End If
-			End Set
-		#tag EndSetter
-		SelectionChangeBlocked As Boolean
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		TypeaheadColumn As Integer = 0
@@ -1391,14 +1394,6 @@ Inherits Listbox
 				"0 - Single"
 				"1 - Multiple"
 			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SelectionChangeBlocked"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="VisibleRowCount"
