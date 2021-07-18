@@ -180,8 +180,9 @@ End
 		    End If
 		  Next
 		  
+		  Self.ServerList.SelectionChangeBlocked = True
 		  Self.ServerList.RowCount = Self.Document.ServerProfileCount
-		  
+		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
 		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
 		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
@@ -196,9 +197,11 @@ End
 		    Next
 		    
 		    Self.ServerList.RowTagAt(I) = Profile
-		    Self.ServerList.CellValueAt(I, 0) = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
+		    Self.ServerList.CellValueAt(I, 0) = Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Self.ServerList.Selected(I) = Selected
 		  Next
+		  Self.ServerList.Sort
+		  Self.ServerList.SelectionChangeBlocked = False
 		End Sub
 	#tag EndEvent
 
@@ -270,6 +273,58 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub HandleViewMenu(Item As OmniBarItem, ItemRect As Rect)
+		  Var Base As New MenuItem
+		  
+		  Var ViewFullNames As New MenuItem("View Full Server Names", "usefullnames")
+		  Var ViewDistinctNames As New MenuItem("View Partial Server Names", "usedistinctnames")
+		  ViewFullNames.HasCheckMark = Preferences.ServersListUseFullNames
+		  ViewDistinctNames.HasCheckMark = Not ViewFullNames.HasCheckMark
+		  Base.AddMenu(ViewFullNames)
+		  Base.AddMenu(ViewDistinctNames)
+		  
+		  Var Position As Point = Self.GlobalPosition
+		  Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
+		  If Choice Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Choice
+		  Case ViewFullNames
+		    Preferences.ServersListUseFullNames = True
+		    Self.UpdateList()
+		  Case ViewDistinctNames
+		    Preferences.ServersListUseFullNames = False
+		    Self.UpdateList()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ProfileNames(Filtered As Boolean) As Dictionary
+		  Var Bound As Integer = Self.Document.ServerProfileCount - 1
+		  Var Names() As String
+		  Var Profiles() As Beacon.ServerProfile
+		  Names.ResizeTo(Bound)
+		  Profiles.ResizeTo(Bound)
+		  For Idx As Integer = 0 To Bound
+		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(Idx)
+		    Names(Idx) = Profile.Name
+		    Profiles(Idx) = Profile
+		  Next Idx
+		  If Filtered Then
+		    Names = Language.FilterServerNames(Names)
+		  End If
+		  
+		  Var Lookup As New Dictionary
+		  For Idx As Integer = 0 To Bound
+		    Lookup.Value(Profiles(Idx).ProfileID) = If(Names(Idx).IsEmpty = False, Names(Idx), Profiles(Idx).Name)
+		  Next Idx
+		  Return Lookup
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub UpdateList()
 		  // Updates the list, maintaining the current selection
@@ -299,10 +354,10 @@ End
 		    SelectIDs.Add(Profile.ProfileID)
 		  Next
 		  
-		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
-		    
-		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
+		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
+		  For Idx As Integer = 0 To Self.Document.ServerProfileCount - 1
+		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(Idx)
+		    Self.ServerList.AddRow(Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
 		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
 		    Self.ServerList.Selected(Self.ServerList.LastAddedRowIndex) = SelectIDs.IndexOf(Profile.ProfileID) > -1
 		  Next
@@ -325,13 +380,17 @@ End
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
 		  Self.Changed = Sender.Changed
 		  
-		  For I As Integer = 0 To Self.ServerList.RowCount - 1
-		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
-		    Var Status As String = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
-		    If Self.ServerList.CellValueAt(I, 0) <> Status Then
-		      Self.ServerList.CellValueAt(I, 0) = Status
+		  Self.ServerList.SelectionChangeBlocked = True
+		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
+		  For Idx As Integer = 0 To Self.ServerList.RowCount - 1
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(Idx)
+		    Var Status As String = Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
+		    If Self.ServerList.CellValueAt(Idx, 0) <> Status Then
+		      Self.ServerList.CellValueAt(Idx, 0) = Status
 		    End If
 		  Next
+		  Self.ServerList.Sort()
+		  Self.ServerList.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -557,6 +616,8 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
 		  Me.Append(OmniBarItem.CreateSeparator("ConfigTitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddServerButton", "New Server", IconToolbarAdd, "Add a new simple server."))
+		  Me.Append(OmniBarItem.CreateFlexibleSpace)
+		  Me.Append(OmniBarItem.CreateButton("ViewOptionsButton", "View Options", IconToolbarView, "Change server list view options."))
 		  
 		  Me.Item("ConfigTitle").Priority = 5
 		  Me.Item("ConfigTitleSeparator").Priority = 5
@@ -564,8 +625,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  #Pragma Unused ItemRect
-		  
 		  Select Case Item.Name
 		  Case "AddServerButton"
 		    Var Profile As New Beacon.LocalServerProfile
@@ -573,8 +632,19 @@ End
 		    
 		    Self.Document.AddServerProfile(Profile)
 		    Self.UpdateList(Profile)
+		  Case "ViewOptionsButton"
+		    Self.HandleViewMenu(Item, ItemRect)
 		  End Select
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
+		  Select Case Item.Name
+		  Case "ViewOptionsButton"
+		    Self.HandleViewMenu(Item, ItemRect)
+		    Return True
+		  End Select
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

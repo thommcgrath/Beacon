@@ -609,6 +609,21 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.BooleanValue("Servers List Use Full Names", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.BooleanValue("Servers List Use Full Names") = Value
+			End Set
+		#tag EndSetter
+		Protected ServersListUseFullNames As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Show Experimental Sources", False)
 			End Get
 		#tag EndGetter

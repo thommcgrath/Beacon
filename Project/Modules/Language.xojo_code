@@ -26,6 +26,10 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function FilterServerNames(Names() As String) As String()
+		  If Names.Count < 2 Then
+		    Return Names
+		  End If
+		  
 		  Var Pattern As New Regex
 		  Pattern.SearchPattern = "(\S+)"
 		  
