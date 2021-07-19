@@ -39,7 +39,7 @@ Begin ConfigEditor ServersConfigEditor
       DataSource      =   ""
       DefaultRowHeight=   40
       DefaultSortColumn=   0
-      DefaultSortDirection=   0
+      DefaultSortDirection=   1
       EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
@@ -66,7 +66,6 @@ Begin ConfigEditor ServersConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -249,12 +248,19 @@ End
 		Private Sub HandleViewMenu(Item As OmniBarItem, ItemRect As Rect)
 		  Var Base As New MenuItem
 		  
-		  Var ViewFullNames As New MenuItem("View Full Server Names", "usefullnames")
-		  Var ViewDistinctNames As New MenuItem("View Partial Server Names", "usedistinctnames")
-		  ViewFullNames.HasCheckMark = Preferences.ServersListUseFullNames
-		  ViewDistinctNames.HasCheckMark = Not ViewFullNames.HasCheckMark
+		  Var ViewFullNames As New MenuItem("Use Full Server Names", Self.ListNamesFull)
+		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", Self.ListNamesAbbreviated)
+		  Var SortByName As New MenuItem("Sort By Name", Self.ListSortByName)
+		  Var SortByAddress As New MenuItem("Sort By Address", Self.ListSortByAddress)
+		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = Self.ListNamesFull
+		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = Self.ListNamesAbbreviated
+		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByName
+		  SortByAddress.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByAddress
 		  Base.AddMenu(ViewFullNames)
-		  Base.AddMenu(ViewDistinctNames)
+		  Base.AddMenu(ViewAbbreviatedNames)
+		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  Base.AddMenu(SortByName)
+		  Base.AddMenu(SortByAddress)
 		  
 		  Var Position As Point = Self.GlobalPosition
 		  Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
@@ -263,18 +269,18 @@ End
 		  End If
 		  
 		  Select Case Choice
-		  Case ViewFullNames
-		    Preferences.ServersListUseFullNames = True
+		  Case ViewFullNames, ViewAbbreviatedNames
+		    Preferences.ServersListNameStyle = Choice.Tag.StringValue
 		    Self.UpdateList()
-		  Case ViewDistinctNames
-		    Preferences.ServersListUseFullNames = False
+		  Case SortByName, SortByAddress
+		    Preferences.ServersListSortedValue = Choice.Tag.StringValue
 		    Self.UpdateList()
 		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ProfileNames(Filtered As Boolean) As Dictionary
+		Private Function ProfileNames() As Dictionary
 		  Var Bound As Integer = Self.Document.ServerProfileCount - 1
 		  Var Names() As String
 		  Var Profiles() As Beacon.ServerProfile
@@ -285,7 +291,7 @@ End
 		    Names(Idx) = Profile.Name
 		    Profiles(Idx) = Profile
 		  Next Idx
-		  If Filtered Then
+		  If Preferences.ServersListNameStyle = Self.ListNamesAbbreviated Then
 		    Names = Language.FilterServerNames(Names)
 		  End If
 		  
@@ -326,14 +332,35 @@ End
 		    SelectIDs.Add(Profile.ProfileID)
 		  Next
 		  
-		  Var Names As Dictionary = Self.ProfileNames(Preferences.ServersListUseFullNames = False)
+		  Var SortByAddress As Boolean = (Preferences.ServersListSortedValue = Self.ListSortByAddress)
+		  Var AddressMatcher As New Regex
+		  AddressMatcher.SearchPattern = "^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d{1,5})$"
+		  
+		  Var Names As Dictionary = Self.ProfileNames()
 		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
 		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(Idx)
-		    Var Name As String = Names.Value(Profile.ProfileID) + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
+		    Var SortName As String = Names.Value(Profile.ProfileID)
+		    Var Name As String = SortName + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Var Selected As Boolean = SelectIDs.IndexOf(Profile.ProfileID) > -1
+		    
+		    If SortByAddress Then
+		      SortName = If(Profile.SecondaryName.IsEmpty = False, Profile.SecondaryName, SortName)
+		      Var Matches As RegexMatch = AddressMatcher.Search(SortName)
+		      If (Matches Is Nil) = False Then
+		        Var First As Integer = Matches.SubExpressionString(1).ToInteger
+		        Var Second As Integer = Matches.SubExpressionString(2).ToInteger
+		        Var Third As Integer = Matches.SubExpressionString(3).ToInteger
+		        Var Fourth As Integer = Matches.SubExpressionString(4).ToInteger
+		        Var Port As Integer = Matches.SubExpressionString(5).ToInteger
+		        SortName = First.ToString(Locale.Raw, "000") + "." + Second.ToString(Locale.Raw, "000") + "." + Third.ToString(Locale.Raw, "000") + "." + Fourth.ToString(Locale.Raw, "000") + ":" + Port.ToString(Locale.Raw, "00000")
+		      End If
+		    End If
 		    
 		    If Self.ServerList.CellValueAt(Idx, 0) <> Name Then
 		      Self.ServerList.CellValueAt(Idx, 0) = Name
+		    End If
+		    If Self.ServerList.CellTagAt(Idx, 0) <> SortName Then
+		      Self.ServerList.CellTagAt(Idx, 0) = SortName
 		    End If
 		    If Self.ServerList.RowTagAt(Idx) <> Profile Then
 		      Self.ServerList.RowTagAt(Idx) = Profile
@@ -415,6 +442,19 @@ End
 	#tag Property, Flags = &h21
 		Private mViews As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = ListNamesAbbreviated, Type = String, Dynamic = False, Default = \"abbreviated", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListNamesFull, Type = String, Dynamic = False, Default = \"full", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListSortByAddress, Type = String, Dynamic = False, Default = \"address", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListSortByName, Type = String, Dynamic = False, Default = \"name", Scope = Public
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -569,13 +609,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  #Pragma Unused Column
+		  If Column <> 0 Then
+		    Return False
+		  End If
 		  
-		  Var Profile1 As Beacon.ServerProfile = Me.RowTagAt(Row1)
-		  Var Profile2 As Beacon.ServerProfile = Me.RowTagAt(Row2)
-		  
-		  Result = Profile1.Operator_Compare(Profile2)
-		  
+		  Var Sort1 As String = Me.CellTagAt(Row1, Column)
+		  Var Sort2 As String = Me.CellTagAt(Row2, Column)
+		  Result = Sort1.Compare(Sort2, ComparisonOptions.CaseInsensitive)
 		  Return True
 		End Function
 	#tag EndEvent

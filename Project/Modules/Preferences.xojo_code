@@ -609,15 +609,30 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.BooleanValue("Servers List Use Full Names", True)
+			  Return mManager.StringValue("Servers List Name Style", ServersConfigEditor.ListNamesFull)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mManager.BooleanValue("Servers List Use Full Names") = Value
+			  mManager.StringValue("Servers List Name Style") = Value
 			End Set
 		#tag EndSetter
-		Protected ServersListUseFullNames As Boolean
+		Protected ServersListNameStyle As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.StringValue("Servers List Sorted Value", ServersConfigEditor.ListSortByName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mManager.StringValue("Servers List Sorted Value") = Value
+			End Set
+		#tag EndSetter
+		Protected ServersListSortedValue As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
