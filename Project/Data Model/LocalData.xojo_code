@@ -1349,14 +1349,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Var AccentColor As Color
 		  Var IconID As String
-		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.mod_id = ?1 AND loot_sources.path = ?2;", Source.ModID, Source.Path)
 		  Var SpriteSheet, BadgeSheet As Picture
-		  If Results.RowCount = 1 Then
+		  Var Results As RowSet
+		  Try
+		    Results = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.mod_id = ?1 AND loot_sources.path = ?2 LIMIT 1;", Source.ModID, Source.Path)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "ModID: " + Source.ModID + " Path: " + Source.Path)
+		  End Try
+		  If (Results Is Nil) = False And Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
 		    IconID = Results.Column("icon_id").StringValue
 		  Else
 		    SpriteSheet = App.GenericLootSourceIcon()
-		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
+		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0"
 		  End If
 		  AccentColor = BackgroundColor
 		  
