@@ -237,6 +237,20 @@ CREATE TYPE public.update_file_type AS ENUM (
 ALTER TYPE public.update_file_type OWNER TO thommcgrath;
 
 --
+-- Name: update_urgency; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.update_urgency AS ENUM (
+    'Minor',
+    'Normal',
+    'Important',
+    'Emergency'
+);
+
+
+ALTER TYPE public.update_urgency OWNER TO thommcgrath;
+
+--
 -- Name: video_host; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -359,6 +373,27 @@ $$;
 
 
 ALTER FUNCTION public.generate_username() OWNER TO thommcgrath;
+
+--
+-- Name: generate_uuid_from_text(text); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.generate_uuid_from_text(p_input text) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_md5_raw BYTEA;
+	v_uuid UUID;
+BEGIN
+	v_md5_raw := DECODE(MD5(p_input), 'hex');
+	v_md5_raw := SET_BYTE(v_md5_raw, 6, ((GET_BYTE(v_md5_raw, 6)::bit(8) & B'00001111') | B'01000000')::integer);
+	v_md5_raw := SET_BYTE(v_md5_raw, 8, ((GET_BYTE(v_md5_raw, 8)::bit(8) & B'00111111') | B'10000000')::integer);
+	RETURN ENCODE(v_md5_raw, 'hex');
+END;
+$$;
+
+
+ALTER FUNCTION public.generate_uuid_from_text(p_input text) OWNER TO thommcgrath;
 
 --
 -- Name: generic_update_trigger(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -621,6 +656,54 @@ $$;
 ALTER FUNCTION public.update_blog_article_timestamp() OWNER TO thommcgrath;
 
 --
+-- Name: update_color_last_update(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_color_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		DELETE FROM deletions WHERE object_id = generate_uuid_from_text('color ' || NEW.color_id::text) AND from_table = 'colors';
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		NEW.last_update = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO deletions (object_id, from_table, label, min_version, action_time) VALUES (generate_uuid_from_text('color ' || OLD.color_id::text), 'colors', OLD.color_name, 0, CURRENT_TIMESTAMP);
+		RETURN OLD;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_color_last_update() OWNER TO thommcgrath;
+
+--
+-- Name: update_color_set_last_update(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_color_set_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		DELETE FROM deletions WHERE object_id = NEW.color_set_id AND from_table = 'color_sets';
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		NEW.last_update = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO deletions (object_id, from_table, label, min_version, action_time) VALUES (OLD.color_set_id, 'color_sets', OLD.label, 0, CURRENT_TIMESTAMP);
+		RETURN OLD;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_color_set_last_update() OWNER TO thommcgrath;
+
+--
 -- Name: update_creature_modified(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -675,6 +758,55 @@ END; $$;
 
 
 ALTER FUNCTION public.update_engram_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_event_last_update(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_event_last_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		DELETE FROM deletions WHERE object_id = NEW.event_id AND from_table = 'events';
+		RETURN NEW;
+	ELSIF TG_OP = 'UPDATE' THEN
+		NEW.last_update = CURRENT_TIMESTAMP;
+		RETURN NEW;
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO deletions (object_id, from_table, label, min_version, action_time) VALUES (OLD.event_id, 'events', OLD.event_name, 0, CURRENT_TIMESTAMP);
+		RETURN OLD;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_event_last_update() OWNER TO thommcgrath;
+
+--
+-- Name: update_event_last_update_from_children(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_event_last_update_from_children() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+		UPDATE events SET last_update = CURRENT_TIMESTAMP WHERE event_id = NEW.event_id;
+	END IF;
+	IF TG_OP = 'DELETE' OR (TG_OP = 'UPDATE' AND NEW.event_id != OLD.event_id) THEN
+		UPDATE events SET last_update = CURRENT_TIMESTAMP WHERE event_id = OLD.event_id;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_event_last_update_from_children() OWNER TO thommcgrath;
 
 --
 -- Name: update_last_update_column(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -760,20 +892,60 @@ END; $$;
 ALTER FUNCTION public.update_spawn_point_timestamp() OWNER TO thommcgrath;
 
 --
--- Name: update_support_article_hash(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+-- Name: update_support_article_module_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
-CREATE FUNCTION public.update_support_article_hash() RETURNS trigger
+CREATE FUNCTION public.update_support_article_module_timestamp() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, '') || ARRAY_TO_STRING(NEW.affected_ini_keys, ','));
+	NEW.module_updated := CURRENT_TIMESTAMP;
+	UPDATE support_articles SET article_updated = CURRENT_TIMESTAMP WHERE content_markdown LIKE '%[module:' || NEW.module_name || ']%';
 	RETURN NEW;
 END;
 $$;
 
 
-ALTER FUNCTION public.update_support_article_hash() OWNER TO thommcgrath;
+ALTER FUNCTION public.update_support_article_module_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_support_article_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_support_article_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.article_updated := CURRENT_TIMESTAMP;
+	IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.subject IS DISTINCT FROM OLD.subject) THEN
+		UPDATE support_articles SET article_updated = CURRENT_TIMESTAMP WHERE content_markdown LIKE '%' || NEW.article_id::TEXT || '%';
+		UPDATE support_article_modules SET module_updated = CURRENT_TIMESTAMP WHERE module_markdown LIKE '%' || NEW.article_id::TEXT || '%';
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_support_article_timestamp() OWNER TO thommcgrath;
+
+--
+-- Name: update_support_image_associations(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_support_image_associations() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND (NEW.width_points IS DISTINCT FROM OLD.width_points OR NEW.height_points IS DISTINCT FROM OLD.width_points OR NEW.min_scale IS DISTINCT FROM OLD.min_scale OR NEW.max_scale IS DISTINCT FROM OLD.max_scale OR NEW.extension IS DISTINCT FROM OLD.extension)) THEN
+		UPDATE support_articles SET article_updated = CURRENT_TIMESTAMP WHERE content_markdown LIKE '%' || NEW.image_id || '%';
+		UPDATE support_article_modules SET module_updated = CURRENT_TIMESTAMP WHERE module_markdown LIKE '%' || NEW.image_id || '%';
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_support_image_associations() OWNER TO thommcgrath;
 
 --
 -- Name: uuid_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -1175,6 +1347,34 @@ CREATE TABLE public.client_notices (
 ALTER TABLE public.client_notices OWNER TO thommcgrath;
 
 --
+-- Name: color_sets; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.color_sets (
+    color_set_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.color_sets OWNER TO thommcgrath;
+
+--
+-- Name: colors; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.colors (
+    color_id integer NOT NULL,
+    color_name public.citext NOT NULL,
+    color_code public.hex NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.colors OWNER TO thommcgrath;
+
+--
 -- Name: computed_engram_availabilities; Type: VIEW; Schema: public; Owner: thommcgrath
 --
 
@@ -1315,6 +1515,57 @@ CREATE TABLE public.email_verification (
 ALTER TABLE public.email_verification OWNER TO thommcgrath;
 
 --
+-- Name: event_colors; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.event_colors (
+    event_id uuid NOT NULL,
+    color_id integer NOT NULL
+);
+
+
+ALTER TABLE public.event_colors OWNER TO thommcgrath;
+
+--
+-- Name: event_engrams; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.event_engrams (
+    event_id uuid NOT NULL,
+    object_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.event_engrams OWNER TO thommcgrath;
+
+--
+-- Name: event_rates; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.event_rates (
+    event_id uuid NOT NULL,
+    ini_option uuid NOT NULL,
+    multiplier numeric(8,4) NOT NULL
+);
+
+
+ALTER TABLE public.event_rates OWNER TO thommcgrath;
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.events (
+    event_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    event_name public.citext NOT NULL,
+    event_code public.citext NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.events OWNER TO thommcgrath;
+
+--
 -- Name: exception_comments; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1404,6 +1655,19 @@ CREATE TABLE public.help_topics (
 ALTER TABLE public.help_topics OWNER TO thommcgrath;
 
 --
+-- Name: imported_obelisk_files; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.imported_obelisk_files (
+    path text NOT NULL,
+    version text NOT NULL,
+    last_import_date timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.imported_obelisk_files OWNER TO thommcgrath;
+
+--
 -- Name: ini_options; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1476,7 +1740,13 @@ CREATE TABLE public.mods (
     console_safe boolean DEFAULT false NOT NULL,
     default_enabled boolean DEFAULT false NOT NULL,
     last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    min_version integer NOT NULL
+    min_version integer NOT NULL,
+    include_in_deltas boolean DEFAULT false NOT NULL,
+    tag text,
+    prefix text,
+    map_folder text,
+    is_official boolean DEFAULT false NOT NULL,
+    CONSTRAINT mods_check CHECK (((is_official = true) OR ((tag IS NOT NULL) AND (prefix IS NOT NULL)) OR ((tag IS NULL) AND (prefix IS NULL))))
 );
 
 
@@ -1505,6 +1775,8 @@ CREATE TABLE public.updates (
     min_win_version public.os_version NOT NULL,
     delta_version integer NOT NULL,
     published timestamp with time zone,
+    urgency public.update_urgency DEFAULT 'Normal'::public.update_urgency NOT NULL,
+    lock_versions int4range,
     CONSTRAINT updates_check CHECK (((published IS NOT NULL) OR (build_number < 10500000)))
 );
 
@@ -1724,12 +1996,12 @@ CREATE TABLE public.support_articles (
     preview public.citext NOT NULL,
     published boolean DEFAULT false NOT NULL,
     forward_url text,
-    article_hash public.hex NOT NULL,
     affected_ini_keys public.citext[] DEFAULT '{}'::public.citext[] NOT NULL,
     group_id uuid,
     sort_order integer DEFAULT 0 NOT NULL,
     min_version integer DEFAULT 0 NOT NULL,
     max_version integer DEFAULT 99999999 NOT NULL,
+    article_updated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT support_articles_check CHECK (((content_markdown IS NOT NULL) OR (forward_url IS NOT NULL)))
 );
 
@@ -1965,6 +2237,20 @@ CREATE TABLE public.support_article_groups (
 
 
 ALTER TABLE public.support_article_groups OWNER TO thommcgrath;
+
+--
+-- Name: support_article_modules; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.support_article_modules (
+    module_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    module_name public.citext NOT NULL,
+    module_updated timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    module_markdown text NOT NULL
+);
+
+
+ALTER TABLE public.support_article_modules OWNER TO thommcgrath;
 
 --
 -- Name: support_images; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2436,6 +2722,22 @@ ALTER TABLE ONLY public.client_notices
 
 
 --
+-- Name: color_sets color_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.color_sets
+    ADD CONSTRAINT color_sets_pkey PRIMARY KEY (color_set_id);
+
+
+--
+-- Name: colors colors_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.colors
+    ADD CONSTRAINT colors_pkey PRIMARY KEY (color_id);
+
+
+--
 -- Name: corrupt_files corrupt_files_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2488,7 +2790,7 @@ ALTER TABLE ONLY public.creatures
 --
 
 ALTER TABLE ONLY public.deletions
-    ADD CONSTRAINT deletions_pkey PRIMARY KEY (object_id);
+    ADD CONSTRAINT deletions_pkey PRIMARY KEY (object_id, from_table);
 
 
 --
@@ -2556,6 +2858,38 @@ ALTER TABLE ONLY public.engrams
 
 
 --
+-- Name: event_colors event_colors_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_colors
+    ADD CONSTRAINT event_colors_pkey PRIMARY KEY (event_id, color_id);
+
+
+--
+-- Name: event_rates event_rates_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_rates
+    ADD CONSTRAINT event_rates_pkey PRIMARY KEY (event_id, ini_option);
+
+
+--
+-- Name: events events_event_code_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_event_code_key UNIQUE (event_code);
+
+
+--
+-- Name: events events_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (event_id);
+
+
+--
 -- Name: exception_comments exception_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2604,6 +2938,14 @@ ALTER TABLE ONLY public.help_topics
 
 
 --
+-- Name: imported_obelisk_files imported_obelisk_files_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.imported_obelisk_files
+    ADD CONSTRAINT imported_obelisk_files_pkey PRIMARY KEY (path);
+
+
+--
 -- Name: ini_options ini_options_file_header_key_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2625,14 +2967,6 @@ ALTER TABLE ONLY public.ini_options
 
 ALTER TABLE ONLY public.loot_source_icons
     ADD CONSTRAINT loot_source_icons_pkey PRIMARY KEY (object_id);
-
-
---
--- Name: loot_sources loot_sources_path_key1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.loot_sources
-    ADD CONSTRAINT loot_sources_path_key1 UNIQUE (path);
 
 
 --
@@ -2689,6 +3023,22 @@ ALTER TABLE ONLY public.maps
 
 ALTER TABLE ONLY public.mods
     ADD CONSTRAINT mods_pkey PRIMARY KEY (mod_id);
+
+
+--
+-- Name: mods mods_prefix_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.mods
+    ADD CONSTRAINT mods_prefix_key UNIQUE (prefix);
+
+
+--
+-- Name: mods mods_tag_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.mods
+    ADD CONSTRAINT mods_tag_key UNIQUE (tag);
 
 
 --
@@ -2892,11 +3242,19 @@ ALTER TABLE ONLY public.support_article_groups
 
 
 --
--- Name: support_articles support_articles_article_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: support_article_modules support_article_modules_module_name_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY public.support_articles
-    ADD CONSTRAINT support_articles_article_hash_key UNIQUE (article_hash);
+ALTER TABLE ONLY public.support_article_modules
+    ADD CONSTRAINT support_article_modules_module_name_key UNIQUE (module_name);
+
+
+--
+-- Name: support_article_modules support_article_modules_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_article_modules
+    ADD CONSTRAINT support_article_modules_pkey PRIMARY KEY (module_id);
 
 
 --
@@ -3135,6 +3493,48 @@ CREATE UNIQUE INDEX exception_users_exception_id_user_id_idx ON public.exception
 
 
 --
+-- Name: imported_obelisk_files_path_version_uidx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX imported_obelisk_files_path_version_uidx ON public.imported_obelisk_files USING btree (path, version);
+
+
+--
+-- Name: loot_sources_class_string_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX loot_sources_class_string_idx ON public.loot_sources USING btree (class_string);
+
+
+--
+-- Name: loot_sources_mod_id_class_string_legacy_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_sources_mod_id_class_string_legacy_idx ON public.loot_sources USING btree (mod_id, class_string) WHERE (min_version < 10500000);
+
+
+--
+-- Name: loot_sources_mod_id_path_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_sources_mod_id_path_idx ON public.loot_sources USING btree (mod_id, path);
+
+
+--
+-- Name: loot_sources_path_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX loot_sources_path_idx ON public.loot_sources USING btree (path);
+
+
+--
+-- Name: loot_sources_path_legacy_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_sources_path_legacy_idx ON public.loot_sources USING btree (path) WHERE (min_version < 10500000);
+
+
+--
 -- Name: loot_sources_sort_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -3262,6 +3662,20 @@ CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON p
 
 
 --
+-- Name: color_sets color_sets_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER color_sets_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.color_sets FOR EACH ROW EXECUTE PROCEDURE public.update_color_set_last_update();
+
+
+--
+-- Name: colors colors_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER colors_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.colors FOR EACH ROW EXECUTE PROCEDURE public.update_color_last_update();
+
+
+--
 -- Name: crafting_costs crafting_costs_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -3378,6 +3792,34 @@ CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON public.engrams FOR
 --
 
 CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON public.engrams FOR EACH ROW EXECUTE PROCEDURE public.compute_class_trigger();
+
+
+--
+-- Name: event_colors event_colors_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER event_colors_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_colors FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update_from_children();
+
+
+--
+-- Name: event_engrams event_engrams_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER event_engrams_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_engrams FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update_from_children();
+
+
+--
+-- Name: event_rates event_rates_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER event_rates_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_rates FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update_from_children();
+
+
+--
+-- Name: events events_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER events_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.events FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update();
 
 
 --
@@ -3612,10 +4054,24 @@ CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE INSERT OR UPDATE ON 
 
 
 --
--- Name: support_articles update_support_article_hash_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+-- Name: support_article_modules update_support_article_module_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_support_article_hash_trigger BEFORE INSERT OR UPDATE ON public.support_articles FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_hash();
+CREATE TRIGGER update_support_article_module_timestamp_trigger BEFORE INSERT OR UPDATE ON public.support_article_modules FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_module_timestamp();
+
+
+--
+-- Name: support_articles update_support_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER update_support_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.support_articles FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_timestamp();
+
+
+--
+-- Name: support_images update_support_image_associations_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER update_support_image_associations_trigger BEFORE INSERT OR UPDATE ON public.support_images FOR EACH ROW EXECUTE PROCEDURE public.update_support_image_associations();
 
 
 --
@@ -3728,6 +4184,54 @@ ALTER TABLE ONLY public.email_verification
 
 ALTER TABLE ONLY public.engrams
     ADD CONSTRAINT engrams_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_colors event_colors_color_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_colors
+    ADD CONSTRAINT event_colors_color_id_fkey FOREIGN KEY (color_id) REFERENCES public.colors(color_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: event_colors event_colors_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_colors
+    ADD CONSTRAINT event_colors_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_engrams event_engrams_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_engrams
+    ADD CONSTRAINT event_engrams_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_engrams event_engrams_object_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_engrams
+    ADD CONSTRAINT event_engrams_object_id_fkey FOREIGN KEY (object_id) REFERENCES public.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_rates event_rates_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_rates
+    ADD CONSTRAINT event_rates_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event_rates event_rates_ini_option_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.event_rates
+    ADD CONSTRAINT event_rates_ini_option_fkey FOREIGN KEY (ini_option) REFERENCES public.ini_options(object_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -4129,6 +4633,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.objects TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creatures TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creatures TO beacon_updater;
 
 
 --
@@ -4136,6 +4641,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creatures TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.engrams TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.engrams TO beacon_updater;
 
 
 --
@@ -4143,6 +4649,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.engrams TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.loot_sources TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.loot_sources TO beacon_updater;
 
 
 --
@@ -4150,6 +4657,7 @@ GRANT SELECT ON TABLE public.loot_sources TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_points TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_points TO beacon_updater;
 
 
 --
@@ -4157,6 +4665,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_points TO thezaz_website
 --
 
 GRANT SELECT ON TABLE public.blueprints TO thezaz_website;
+GRANT SELECT ON TABLE public.blueprints TO beacon_updater;
 
 
 --
@@ -4164,6 +4673,20 @@ GRANT SELECT ON TABLE public.blueprints TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.client_notices TO thezaz_website;
+
+
+--
+-- Name: TABLE color_sets; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.color_sets TO thezaz_website;
+
+
+--
+-- Name: TABLE colors; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.colors TO thezaz_website;
 
 
 --
@@ -4185,6 +4708,7 @@ GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.crafting_costs TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.crafting_costs TO beacon_updater;
 
 
 --
@@ -4192,6 +4716,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.crafting_costs TO thezaz_websi
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_engrams TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_engrams TO beacon_updater;
 
 
 --
@@ -4199,6 +4724,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_engrams TO thezaz_web
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_stats TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_stats TO beacon_updater;
 
 
 --
@@ -4206,6 +4732,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_stats TO thezaz_websi
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.deletions TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.deletions TO beacon_updater;
 
 
 --
@@ -4234,6 +4761,34 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_addresses TO thezaz_webs
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification TO thezaz_website;
+
+
+--
+-- Name: TABLE event_colors; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.event_colors TO thezaz_website;
+
+
+--
+-- Name: TABLE event_engrams; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.event_engrams TO thezaz_website;
+
+
+--
+-- Name: TABLE event_rates; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.event_rates TO thezaz_website;
+
+
+--
+-- Name: TABLE events; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.events TO thezaz_website;
 
 
 --
@@ -4279,6 +4834,13 @@ GRANT SELECT ON TABLE public.help_topics TO thezaz_website;
 
 
 --
+-- Name: TABLE imported_obelisk_files; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.imported_obelisk_files TO beacon_updater;
+
+
+--
 -- Name: TABLE ini_options; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -4297,6 +4859,7 @@ GRANT SELECT ON TABLE public.loot_source_icons TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.maps TO thezaz_website;
+GRANT SELECT ON TABLE public.maps TO beacon_updater;
 
 
 --
@@ -4304,6 +4867,7 @@ GRANT SELECT ON TABLE public.maps TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.mods TO thezaz_website;
+GRANT SELECT ON TABLE public.mods TO beacon_updater;
 
 
 --
@@ -4423,6 +4987,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_limits TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_limits TO beacon_updater;
 
 
 --
@@ -4430,6 +4995,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_limits TO thezaz_w
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_entries TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_entries TO beacon_updater;
 
 
 --
@@ -4437,6 +5003,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_entries TO the
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_entry_levels TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_entry_levels TO beacon_updater;
 
 
 --
@@ -4444,6 +5011,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_entry_levels T
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_replacements TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_replacements TO beacon_updater;
 
 
 --
@@ -4451,6 +5019,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_set_replacements T
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_sets TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_sets TO beacon_updater;
 
 
 --
@@ -4472,6 +5041,13 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.stw_purchases TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_article_groups TO thezaz_website;
+
+
+--
+-- Name: TABLE support_article_modules; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.support_article_modules TO thezaz_website;
 
 
 --
