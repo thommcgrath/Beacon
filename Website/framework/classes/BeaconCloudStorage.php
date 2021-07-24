@@ -302,6 +302,12 @@ abstract class BeaconCloudStorage {
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 			switch ($request_method) {
 			case 'PUT':
+				if (file_exists($local_path) === false) {
+					$database->Query('UPDATE usercloud_queue SET http_status = $3, attempts = attempts + 1 WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname, 404);
+					$database->Commit();
+					usleep(10000);
+					break;
+				}
 				curl_setopt($curl, CURLOPT_PUT, true);
 				$reader = fopen($local_path, 'r');
 				curl_setopt($curl, CURLOPT_INFILE, $reader);
