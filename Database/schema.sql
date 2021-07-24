@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.4
--- Dumped by pg_dump version 11.4
+-- Dumped from database version 13.3
+-- Dumped by pg_dump version 13.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: citext; Type: EXTENSION; Schema: -; Owner: 
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
@@ -31,7 +31,7 @@ COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings
 
 
 --
--- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: 
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
@@ -45,7 +45,7 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
--- Name: unaccent; Type: EXTENSION; Schema: -; Owner: 
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
@@ -59,7 +59,7 @@ COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
@@ -1005,7 +1005,7 @@ ALTER FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) O
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: documents; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -3658,420 +3658,420 @@ CREATE OR REPLACE VIEW public.computed_engram_availabilities AS
 -- Name: client_notices client_notices_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON public.client_notices FOR EACH ROW EXECUTE PROCEDURE public.generic_update_trigger();
+CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON public.client_notices FOR EACH ROW EXECUTE FUNCTION public.generic_update_trigger();
 
 
 --
 -- Name: color_sets color_sets_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER color_sets_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.color_sets FOR EACH ROW EXECUTE PROCEDURE public.update_color_set_last_update();
+CREATE TRIGGER color_sets_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.color_sets FOR EACH ROW EXECUTE FUNCTION public.update_color_set_last_update();
 
 
 --
 -- Name: colors colors_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER colors_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.colors FOR EACH ROW EXECUTE PROCEDURE public.update_color_last_update();
+CREATE TRIGGER colors_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.colors FOR EACH ROW EXECUTE FUNCTION public.update_color_last_update();
 
 
 --
 -- Name: crafting_costs crafting_costs_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER crafting_costs_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.crafting_costs FOR EACH ROW EXECUTE PROCEDURE public.update_engram_timestamp();
+CREATE TRIGGER crafting_costs_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.crafting_costs FOR EACH ROW EXECUTE FUNCTION public.update_engram_timestamp();
 
 
 --
 -- Name: blog_articles create_slug_from_article_subject_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER create_slug_from_article_subject_trigger BEFORE INSERT ON public.blog_articles FOR EACH ROW WHEN ((new.article_slug IS NULL)) EXECUTE PROCEDURE public.set_slug_from_article_subject();
+CREATE TRIGGER create_slug_from_article_subject_trigger BEFORE INSERT ON public.blog_articles FOR EACH ROW WHEN ((new.article_slug IS NULL)) EXECUTE FUNCTION public.set_slug_from_article_subject();
 
 
 --
 -- Name: support_articles create_slug_from_article_subject_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER create_slug_from_article_subject_trigger BEFORE INSERT ON public.support_articles FOR EACH ROW WHEN ((new.article_slug IS NULL)) EXECUTE PROCEDURE public.set_slug_from_article_subject();
+CREATE TRIGGER create_slug_from_article_subject_trigger BEFORE INSERT ON public.support_articles FOR EACH ROW WHEN ((new.article_slug IS NULL)) EXECUTE FUNCTION public.set_slug_from_article_subject();
 
 
 --
 -- Name: support_videos create_slug_from_video_title_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER create_slug_from_video_title_trigger BEFORE INSERT ON public.support_videos FOR EACH ROW WHEN ((new.video_slug IS NULL)) EXECUTE PROCEDURE public.set_slug_from_video_title();
+CREATE TRIGGER create_slug_from_video_title_trigger BEFORE INSERT ON public.support_videos FOR EACH ROW WHEN ((new.video_slug IS NULL)) EXECUTE FUNCTION public.set_slug_from_video_title();
 
 
 --
 -- Name: creature_stats creature_stats_update_creature_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER creature_stats_update_creature_trigger AFTER INSERT OR DELETE OR UPDATE ON public.creature_stats FOR EACH ROW EXECUTE PROCEDURE public.update_creature_modified();
+CREATE TRIGGER creature_stats_update_creature_trigger AFTER INSERT OR DELETE OR UPDATE ON public.creature_stats FOR EACH ROW EXECUTE FUNCTION public.update_creature_modified();
 
 
 --
 -- Name: creatures creatures_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER creatures_after_delete_trigger AFTER DELETE ON public.creatures FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER creatures_after_delete_trigger AFTER DELETE ON public.creatures FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: creatures creatures_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER creatures_before_insert_trigger BEFORE INSERT ON public.creatures FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER creatures_before_insert_trigger BEFORE INSERT ON public.creatures FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: creatures creatures_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER creatures_before_update_trigger BEFORE UPDATE ON public.creatures FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER creatures_before_update_trigger BEFORE UPDATE ON public.creatures FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: creatures creatures_compute_class_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER creatures_compute_class_trigger BEFORE INSERT OR UPDATE ON public.creatures FOR EACH ROW EXECUTE PROCEDURE public.compute_class_trigger();
+CREATE TRIGGER creatures_compute_class_trigger BEFORE INSERT OR UPDATE ON public.creatures FOR EACH ROW EXECUTE FUNCTION public.compute_class_trigger();
 
 
 --
 -- Name: diets diets_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER diets_after_delete_trigger AFTER DELETE ON public.diets FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER diets_after_delete_trigger AFTER DELETE ON public.diets FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: diets diets_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER diets_before_insert_trigger BEFORE INSERT ON public.diets FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER diets_before_insert_trigger BEFORE INSERT ON public.diets FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: diets diets_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER diets_before_update_trigger BEFORE UPDATE ON public.diets FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER diets_before_update_trigger BEFORE UPDATE ON public.diets FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: mods enforce_mod_owner; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER enforce_mod_owner BEFORE INSERT OR UPDATE ON public.mods FOR EACH ROW EXECUTE PROCEDURE public.enforce_mod_owner();
+CREATE TRIGGER enforce_mod_owner BEFORE INSERT OR UPDATE ON public.mods FOR EACH ROW EXECUTE FUNCTION public.enforce_mod_owner();
 
 
 --
 -- Name: engrams engrams_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON public.engrams FOR EACH ROW EXECUTE PROCEDURE public.engram_delete_trigger();
+CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON public.engrams FOR EACH ROW EXECUTE FUNCTION public.engram_delete_trigger();
 
 
 --
 -- Name: engrams engrams_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON public.engrams FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON public.engrams FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: engrams engrams_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON public.engrams FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON public.engrams FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: engrams engrams_compute_class_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON public.engrams FOR EACH ROW EXECUTE PROCEDURE public.compute_class_trigger();
+CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON public.engrams FOR EACH ROW EXECUTE FUNCTION public.compute_class_trigger();
 
 
 --
 -- Name: event_colors event_colors_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER event_colors_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_colors FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update_from_children();
+CREATE TRIGGER event_colors_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_colors FOR EACH ROW EXECUTE FUNCTION public.update_event_last_update_from_children();
 
 
 --
 -- Name: event_engrams event_engrams_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER event_engrams_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_engrams FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update_from_children();
+CREATE TRIGGER event_engrams_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_engrams FOR EACH ROW EXECUTE FUNCTION public.update_event_last_update_from_children();
 
 
 --
 -- Name: event_rates event_rates_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER event_rates_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_rates FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update_from_children();
+CREATE TRIGGER event_rates_modified_trigger AFTER INSERT OR DELETE OR UPDATE ON public.event_rates FOR EACH ROW EXECUTE FUNCTION public.update_event_last_update_from_children();
 
 
 --
 -- Name: events events_modified_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER events_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.events FOR EACH ROW EXECUTE PROCEDURE public.update_event_last_update();
+CREATE TRIGGER events_modified_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.events FOR EACH ROW EXECUTE FUNCTION public.update_event_last_update();
 
 
 --
 -- Name: game_variables game_variables_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON public.game_variables FOR EACH ROW EXECUTE PROCEDURE public.generic_update_trigger();
+CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON public.game_variables FOR EACH ROW EXECUTE FUNCTION public.generic_update_trigger();
 
 
 --
 -- Name: help_topics help_topics_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON public.help_topics FOR EACH ROW EXECUTE PROCEDURE public.generic_update_trigger();
+CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON public.help_topics FOR EACH ROW EXECUTE FUNCTION public.generic_update_trigger();
 
 
 --
 -- Name: ini_options ini_options_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER ini_options_after_delete_trigger AFTER DELETE ON public.ini_options FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER ini_options_after_delete_trigger AFTER DELETE ON public.ini_options FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: ini_options ini_options_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER ini_options_before_insert_trigger BEFORE INSERT ON public.ini_options FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER ini_options_before_insert_trigger BEFORE INSERT ON public.ini_options FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: ini_options ini_options_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER ini_options_before_update_trigger BEFORE UPDATE ON public.ini_options FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER ini_options_before_update_trigger BEFORE UPDATE ON public.ini_options FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: loot_source_icons loot_source_icons_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_source_icons_after_delete_trigger AFTER DELETE ON public.loot_source_icons FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER loot_source_icons_after_delete_trigger AFTER DELETE ON public.loot_source_icons FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: loot_source_icons loot_source_icons_after_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_source_icons_after_update_trigger AFTER UPDATE ON public.loot_source_icons FOR EACH ROW EXECUTE PROCEDURE public.loot_source_icons_update_loot_source();
+CREATE TRIGGER loot_source_icons_after_update_trigger AFTER UPDATE ON public.loot_source_icons FOR EACH ROW EXECUTE FUNCTION public.loot_source_icons_update_loot_source();
 
 
 --
 -- Name: loot_source_icons loot_source_icons_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_source_icons_before_insert_trigger BEFORE INSERT ON public.loot_source_icons FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER loot_source_icons_before_insert_trigger BEFORE INSERT ON public.loot_source_icons FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: loot_source_icons loot_source_icons_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_source_icons_before_update_trigger BEFORE UPDATE ON public.loot_source_icons FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER loot_source_icons_before_update_trigger BEFORE UPDATE ON public.loot_source_icons FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: loot_sources loot_sources_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_sources_after_delete_trigger AFTER DELETE ON public.loot_sources FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER loot_sources_after_delete_trigger AFTER DELETE ON public.loot_sources FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: loot_sources loot_sources_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_sources_before_insert_trigger BEFORE INSERT ON public.loot_sources FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER loot_sources_before_insert_trigger BEFORE INSERT ON public.loot_sources FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: loot_sources loot_sources_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER loot_sources_before_update_trigger BEFORE UPDATE ON public.loot_sources FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER loot_sources_before_update_trigger BEFORE UPDATE ON public.loot_sources FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: maps maps_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER maps_before_update_trigger BEFORE INSERT OR UPDATE ON public.maps FOR EACH ROW EXECUTE PROCEDURE public.update_last_update_column();
+CREATE TRIGGER maps_before_update_trigger BEFORE INSERT OR UPDATE ON public.maps FOR EACH ROW EXECUTE FUNCTION public.update_last_update_column();
 
 
 --
 -- Name: mods mods_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER mods_after_delete_trigger AFTER DELETE ON public.mods FOR EACH ROW EXECUTE PROCEDURE public.mods_delete_trigger();
+CREATE TRIGGER mods_after_delete_trigger AFTER DELETE ON public.mods FOR EACH ROW EXECUTE FUNCTION public.mods_delete_trigger();
 
 
 --
 -- Name: mods mods_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER mods_before_update_trigger BEFORE INSERT OR UPDATE ON public.mods FOR EACH ROW EXECUTE PROCEDURE public.generic_update_trigger();
+CREATE TRIGGER mods_before_update_trigger BEFORE INSERT OR UPDATE ON public.mods FOR EACH ROW EXECUTE FUNCTION public.generic_update_trigger();
 
 
 --
 -- Name: preset_modifiers preset_modifiers_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER preset_modifiers_after_delete_trigger AFTER DELETE ON public.preset_modifiers FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER preset_modifiers_after_delete_trigger AFTER DELETE ON public.preset_modifiers FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: preset_modifiers preset_modifiers_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER preset_modifiers_before_insert_trigger BEFORE INSERT ON public.preset_modifiers FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER preset_modifiers_before_insert_trigger BEFORE INSERT ON public.preset_modifiers FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: preset_modifiers preset_modifiers_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER preset_modifiers_before_update_trigger BEFORE UPDATE ON public.preset_modifiers FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER preset_modifiers_before_update_trigger BEFORE UPDATE ON public.preset_modifiers FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: presets presets_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER presets_after_delete_trigger AFTER DELETE ON public.presets FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER presets_after_delete_trigger AFTER DELETE ON public.presets FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: presets presets_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER presets_before_insert_trigger BEFORE INSERT ON public.presets FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER presets_before_insert_trigger BEFORE INSERT ON public.presets FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: presets presets_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON public.presets FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON public.presets FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: presets presets_json_sync_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON public.presets FOR EACH ROW EXECUTE PROCEDURE public.presets_json_sync_function();
+CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON public.presets FOR EACH ROW EXECUTE FUNCTION public.presets_json_sync_function();
 
 
 --
 -- Name: spawn_point_limits spawn_point_limits_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_point_limits_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_limits FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+CREATE TRIGGER spawn_point_limits_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_limits FOR EACH ROW EXECUTE FUNCTION public.update_spawn_point_timestamp();
 
 
 --
 -- Name: spawn_point_set_entries spawn_point_set_entries_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_point_set_entries_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_set_entries FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+CREATE TRIGGER spawn_point_set_entries_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_set_entries FOR EACH ROW EXECUTE FUNCTION public.update_spawn_point_timestamp();
 
 
 --
 -- Name: spawn_point_set_entry_levels spawn_point_set_entry_levels_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_point_set_entry_levels_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_set_entry_levels FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+CREATE TRIGGER spawn_point_set_entry_levels_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_set_entry_levels FOR EACH ROW EXECUTE FUNCTION public.update_spawn_point_timestamp();
 
 
 --
 -- Name: spawn_point_set_replacements spawn_point_set_replacements_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_point_set_replacements_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_set_replacements FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+CREATE TRIGGER spawn_point_set_replacements_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_set_replacements FOR EACH ROW EXECUTE FUNCTION public.update_spawn_point_timestamp();
 
 
 --
 -- Name: spawn_point_sets spawn_point_sets_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_point_sets_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_sets FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+CREATE TRIGGER spawn_point_sets_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_sets FOR EACH ROW EXECUTE FUNCTION public.update_spawn_point_timestamp();
 
 
 --
 -- Name: spawn_points spawn_points_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_points_after_delete_trigger AFTER DELETE ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+CREATE TRIGGER spawn_points_after_delete_trigger AFTER DELETE ON public.spawn_points FOR EACH ROW EXECUTE FUNCTION public.object_delete_trigger();
 
 
 --
 -- Name: spawn_points spawn_points_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_points_before_insert_trigger BEFORE INSERT ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+CREATE TRIGGER spawn_points_before_insert_trigger BEFORE INSERT ON public.spawn_points FOR EACH ROW EXECUTE FUNCTION public.object_insert_trigger();
 
 
 --
 -- Name: spawn_points spawn_points_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_points_before_update_trigger BEFORE UPDATE ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+CREATE TRIGGER spawn_points_before_update_trigger BEFORE UPDATE ON public.spawn_points FOR EACH ROW EXECUTE FUNCTION public.object_update_trigger();
 
 
 --
 -- Name: spawn_points spawn_points_compute_class_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER spawn_points_compute_class_trigger BEFORE INSERT OR UPDATE ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.compute_class_trigger();
+CREATE TRIGGER spawn_points_compute_class_trigger BEFORE INSERT OR UPDATE ON public.spawn_points FOR EACH ROW EXECUTE FUNCTION public.compute_class_trigger();
 
 
 --
 -- Name: blog_articles update_blog_article_hash_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_blog_article_hash_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE PROCEDURE public.update_blog_article_hash();
+CREATE TRIGGER update_blog_article_hash_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE FUNCTION public.update_blog_article_hash();
 
 
 --
 -- Name: blog_articles update_blog_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE PROCEDURE public.update_blog_article_timestamp();
+CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE FUNCTION public.update_blog_article_timestamp();
 
 
 --
 -- Name: support_article_modules update_support_article_module_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_support_article_module_timestamp_trigger BEFORE INSERT OR UPDATE ON public.support_article_modules FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_module_timestamp();
+CREATE TRIGGER update_support_article_module_timestamp_trigger BEFORE INSERT OR UPDATE ON public.support_article_modules FOR EACH ROW EXECUTE FUNCTION public.update_support_article_module_timestamp();
 
 
 --
 -- Name: support_articles update_support_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_support_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.support_articles FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_timestamp();
+CREATE TRIGGER update_support_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.support_articles FOR EACH ROW EXECUTE FUNCTION public.update_support_article_timestamp();
 
 
 --
 -- Name: support_images update_support_image_associations_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
-CREATE TRIGGER update_support_image_associations_trigger BEFORE INSERT OR UPDATE ON public.support_images FOR EACH ROW EXECUTE PROCEDURE public.update_support_image_associations();
+CREATE TRIGGER update_support_image_associations_trigger BEFORE INSERT OR UPDATE ON public.support_images FOR EACH ROW EXECUTE FUNCTION public.update_support_image_associations();
 
 
 --
