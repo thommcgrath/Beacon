@@ -17,7 +17,7 @@ abstract class BeaconCloudStorage {
 	}
 	
 	private static function LocalPath(string $remote_path, $version_id = null) {
-		$local_path = '/var/tmp' . static::ResourcePath($remote_path);
+		$local_path = '/srv' . static::ResourcePath($remote_path);
 		if (is_null($version_id) === false) {
 			$local_path .= '-' . $version_id;
 		}
