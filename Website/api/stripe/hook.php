@@ -47,8 +47,6 @@ switch ($type) {
 case 'checkout.session.completed':
 	$obj = $data['object'];
 	$intent_id = $obj['payment_intent'];
-	print_r($api->GetPaymentIntent($intent_id));
-	exit;
 	$rows = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $intent_id);
 	if ($rows->RecordCount() > 0) {
 		http_response_code(200);
