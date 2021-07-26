@@ -26,6 +26,9 @@ class Generator {
 	
 	public function Generate(string $input = '') {
 		$contents = $this->document->Content(false, true);
+		if (empty($contents)) {
+			return 'There was an error, the project is empty.';
+		}
 		
 		$version = $contents['Version'];
 		if ($version >= 3) {
