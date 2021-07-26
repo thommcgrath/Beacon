@@ -39,6 +39,9 @@ if (isset($_SESSION['store_currency_options']) === false) {
 			}
 		}
 		$default_currency = strtoupper($spec['default_currency']);
+		if (in_array($default_currency, $currency_options) === false) {
+			$default_currency = 'USD';
+		}
 	}
 	$_SESSION['store_currency_options'] = $currency_options;
 	$_SESSION['store_currency'] = $default_currency;
