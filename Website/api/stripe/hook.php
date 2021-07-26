@@ -13,22 +13,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $endpoint_secret = BeaconCommon::GetGlobal('Stripe_Webhook_Secret');
 $api_secret = BeaconCommon::GetGlobal('Stripe_Secret_Key');
 $body = @file_get_contents('php://input');
-$signature = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 
-$signature_parts = explode(',', $signature);
-$signature_values = array();
-foreach ($signature_parts as $part) {
-	list($key, $value) = explode('=', trim($part), 2);
-	$signature_values[$key] = $value;
-}
-$time = $signature_values['t'];
-$expected_signature = $signature_values['v1'];
-
-$signed_payload = $time . '.' . $body;
-$computed_signature = hash_hmac('sha256', $signed_payload, $endpoint_secret);
-if ($computed_signature != $expected_signature) {
-	echo "Invalid signature, expected $expected_signature but computed $computed_signature";
-	exit;
+if (BeaconCommon::InProduction()) {
+	$signature = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+	$signature_parts = explode(',', $signature);
+	$signature_values = array();
+	foreach ($signature_parts as $part) {
+		list($key, $value) = explode('=', trim($part), 2);
+		$signature_values[$key] = $value;
+	}
+	$time = $signature_values['t'];
+	$expected_signature = $signature_values['v1'];
+	
+	$signed_payload = $time . '.' . $body;
+	$computed_signature = hash_hmac('sha256', $signed_payload, $endpoint_secret);
+	if ($computed_signature != $expected_signature) {
+		echo "Invalid signature, expected $expected_signature but computed $computed_signature";
+		exit;
+	}
 }
 
 $json = json_decode($body, true);
@@ -44,19 +46,39 @@ $api = new BeaconStripeAPI($api_secret);
 switch ($type) {
 case 'checkout.session.completed':
 	$obj = $data['object'];
-	$items = $obj['display_items'];
-	$purchased_products = array();
+	$intent_id = $obj['payment_intent'];
+	print_r($api->GetPaymentIntent($intent_id));
+	exit;
+	$rows = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $intent_id);
+	if ($rows->RecordCount() > 0) {
+		http_response_code(200);
+		echo 'Notification already handled.';
+		exit;
+	}
+	
+	$line_items = $api->GetLineItems($obj['id']);
+	if (is_null($line_items)) {
+		echo 'Unable to retrieve items for checkout session';
+		exit;
+	}
+	$items = $line_items['data'];
+	$purchased_products = [];
 	foreach ($items as $item) {
-		if ($item['type'] != 'sku') {
-			continue;
-		}
+		$price_id = $item['price']['id'];
+		$quantity = $item['quantity'];
+		$paid = $item['amount_total'] / 100;
+		$product_price = $item['price']['unit_amount'] / 100;
+		$currency = strtoupper($item['currency']);
 		
-		$sku = $item['sku']['id'];
-		
-		$results = $database->Query('SELECT product_id, retail_price FROM products WHERE stripe_sku = $1;', $sku);
-		if ($results->RecordCount() == 1) {
-			$purchased_products[] = array('product_id' => $results->Field('product_id'), 'quantity' => $item['quantity'], 'price' => $results->Field('retail_price'), 'paid' => $item['amount'] / 100);
-			continue;
+		$rows = $database->Query('SELECT product_id FROM product_prices WHERE price_id = $1;', $price_id);
+		if ($rows->RecordCount() === 1) {
+			$purchased_products[] = [
+				'product_id' => $rows->Field('product_id'),
+				'quantity' => $quantity,
+				'price' => $product_price,
+				'paid' => $paid,
+				'currency' => $currency
+			];
 		}
 	}
 	
@@ -66,14 +88,19 @@ case 'checkout.session.completed':
 		exit;
 	}
 	
-	$intent_id = $obj['payment_intent'];
 	$client_reference_id = $obj['client_reference_id'];
-	$email = $api->EmailForPaymentIntent($intent_id);
-	if (is_null($email)) {
-		echo 'Unable to find email address for this payment intent';
-		exit;
+	if (isset($obj['customer_details']['email'])) {
+		$email = $obj['customer_details']['email'];
+	}
+	if (isset($email) === false) {
+		$email = $api->EmailForPaymentIntent($intent_id);
+		if (is_null($email)) {
+			echo 'Unable to find email address for this payment intent';
+			exit;
+		}
 	}
 	$billing_locality = $api->GetBillingLocality($intent_id);
+	$purchase_currency = strtoupper($obj['currency']);
 	
 	$user = BeaconUser::GetByEmail($email);
 	if (is_null($user)) {
@@ -94,6 +121,7 @@ case 'checkout.session.completed':
 		$discount_per_unit = $full_unit_price - $paid_unit_price;
 		$quantity = $item['quantity'];
 		$line_total = $paid_unit_price * $quantity;
+		$currency = $item['currency'];
 		
 		$purchase_subtotal += ($full_unit_price * $quantity);
 		$purchase_total += $line_total;
@@ -114,9 +142,9 @@ case 'checkout.session.completed':
 			$gift_copies += $quantity;
 		}
 		
-		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total);
+		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total, currency) VALUES ($1, $2, $3, $4, $5, $6, $7);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total, $currency);
 	}
-	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, 0, $purchase_total, $intent_id, $client_reference_id, $billing_locality);
+	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, 0, $purchase_total, $intent_id, $client_reference_id, $billing_locality, $purchase_currency);
 	
 	// Make sure the user's email is removed from the raffle
 	$database->Query('DELETE FROM stw_applicants WHERE email_id = uuid_for_email($1);', $email);

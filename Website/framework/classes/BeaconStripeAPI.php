@@ -7,34 +7,65 @@ class BeaconStripeAPI {
 		$this->api_secret = $api_secret;
 	}
 	
-	public function GetPaymentIntent(string $intent_id) {
-		$pi_json = BeaconCache::Get($intent_id);
-		if (!is_null($pi_json)) {
-			return $pi_json;
+	protected function GetURL(string $url, string $stripe_version = '2017-04-06') {
+		$json = BeaconCache::Get($url);
+		if (is_null($json) === false) {
+			return $json;
 		}
 		
-		$curl = curl_init('https://api.stripe.com/v1/payment_intents/' . $intent_id);
-		$headers = array('Authorization: Bearer ' . $this->api_secret);
+		$curl = curl_init($url);
+		$headers = ['Authorization: Bearer ' . $this->api_secret];
+		if (empty($stripe_version) === false) {
+			$headers[] = 'Stripe-Version: ' . $stripe_version;
+		}
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$pi_body = curl_exec($curl);
-		$pi_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		$body = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 		
-		if ($pi_status != 200) {
+		if ($status != 200) {
 			return null;
 		}
-		$pi_json = json_decode($pi_body, true);
-		if (is_null($pi_json)) {
+		$json = json_decode($body, true);
+		if (is_null($json)) {
 			return null;
 		}
 		
-		BeaconCache::Set($intent_id, $pi_json, 300);
-		return $pi_json;
+		BeaconCache::Set($url, $json, 300);
+		return $json;
+	}
+	
+	public function GetPaymentIntent(string $intent_id) {
+		return $this->GetURL('https://api.stripe.com/v1/payment_intents/' . $intent_id);
+	}
+	
+	public function GetLineItems(string $session_id) {
+		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $session_id . '/line_items', '2020-08-27');
 	}
 	
 	public function GetCustomer(string $customer_id) {
 		$curl = curl_init('https://api.stripe.com/v1/customers/' . $customer_id);
+		$headers = array('Authorization: Bearer ' . $this->api_secret);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$customer_body = curl_exec($curl);
+		$customer_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		if ($customer_status != 200) {
+			return null;
+		}
+		$customer_json = json_decode($customer_body, true);
+		if (is_null($customer_json)) {
+			return null;
+		}
+		
+		return $customer_json;
+	}
+	
+	public function GetCustomersByEmail(string $customer_email) {
+		$curl = curl_init('https://api.stripe.com/v1/customers?email=' . urlencode($customer_email));
 		$headers = array('Authorization: Bearer ' . $this->api_secret);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -156,6 +187,31 @@ class BeaconStripeAPI {
 		
 		BeaconCache::Set($cache_key, $new_email, 3600);
 		return true;
+	}
+	
+	public function CreateCheckoutSession(array $details) {
+		$curl = curl_init('https://api.stripe.com/v1/checkout/sessions');
+		$headers = [
+			'Authorization: Bearer ' . $this->api_secret,
+			'Stripe-Version: 2020-08-27'
+		];
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_POST, 1);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($details));
+		$body = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		
+		if ($status === 200) {
+			return json_decode($body, true);
+		} else {
+			return null;
+		}
+	}
+	
+	public function GetCountrySpec(string $country_code) {
+		return $this->GetURL('https://api.stripe.com/v1/country_specs/' . $country_code, '2020-08-27');
 	}
 }
 

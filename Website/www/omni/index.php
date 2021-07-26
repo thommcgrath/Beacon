@@ -6,12 +6,66 @@ define('GIFT_UUID', '2207d5c1-4411-4854-b26f-bc4b48aa33bf');
 define('SLOT_UUID', '10b653d8-1e17-4b5c-bb01-bca9e86149f9');
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
-BeaconTemplate::AddHeaderLine('<script src="https://js.stripe.com/v3/"></script>');
+
+BeaconCommon::StartSession();
 
 $database = BeaconCommon::Database();
 $stable_version = BeaconCommon::NewestVersionForStage(3);
+if (isset($_SESSION['store_currency_options']) === false) {
+	$api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
+	$spec = $api->GetCountrySpec(BeaconCommon::RemoteCountry());
+	$currency_options = [];
+	$method_options = [];
+	if (is_null($spec)) {
+		$currency_options = ['USD'];
+		$method_options = ['card'];
+		$default_currency = 'USD';
+	} else {
+		foreach ($spec['supported_payment_currencies'] as $currency_code) {
+			$currency_code = strtoupper($currency_code);
+			switch ($currency_code) {
+			case 'USD':
+			case 'EUR':
+				$currency_options[] = $currency_code;
+				break;
+			}
+		}
+		foreach ($spec['supported_payment_methods'] as $method_code) {
+			$method_code = strtolower($method_code);
+			switch ($method_code) {
+			case 'card':
+				$method_options[] = $method_code;
+				break;
+			}
+		}
+		$default_currency = strtoupper($spec['default_currency']);
+	}
+	$_SESSION['store_currency_options'] = $currency_options;
+	$_SESSION['store_currency'] = $default_currency;
+	$_SESSION['store_default_currency'] = $default_currency;
+	$_SESSION['store_allowed_methods'] = $method_options;
+	unset($currency_options, $default_currency, $api, $method_options);
+}
+if (isset($_SESSION['store_currency'])) {
+	$currency = $_SESSION['store_currency'];
+} else {
+	$currency = 'USD';
+}
 
-$results = $database->Query('SELECT product_id, stripe_sku, retail_price FROM products;');
+switch ($currency) {
+case 'USD':
+	$decimal_character = '.';
+	$thousands_character = ',';
+	$currency_symbol = '$';
+	break;
+case 'EUR':
+	$decimal_character = ',';
+	$thousands_character = '.';
+	$currency_symbol = '€';
+	break;
+}
+
+$results = $database->Query('SELECT products.product_id, product_prices.currency, product_prices.price FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
 $product_details = [];
 while (!$results->EOF()) {
 	$key = '';
@@ -35,9 +89,8 @@ while (!$results->EOF()) {
 	}
 	
 	$product_details[$key] = [
-		'price' => $results->Field('retail_price'),
-		'price_formatted' => '$' . number_format($results->Field('retail_price'), 2, '.', ',') . ' USD',
-		'sku' => $results->Field('stripe_sku')
+		'price' => $results->Field('price'),
+		'price_formatted' => $currency_symbol . number_format($results->Field('price'), 2, $decimal_character, $thousands_character) . ' ' . $currency,
 	];
 	
 	$results->MoveNext();
@@ -85,6 +138,75 @@ td.bullet-column {
 	max-width: 400px;
 }
 
+#checkout_methods_cell {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 15px;
+	margin-bottom: 5px;
+	justify-content: center;
+	
+	img {
+		margin: 5px;
+		float: left;
+		display: block;
+		height: 22px;
+	}
+	
+	&.usd {
+		.usd {
+			display: block;
+		}
+		
+		.eur {
+			display: none;
+		}
+	}
+	
+	&.eur {
+		.usd {
+			display: none;
+		}
+		
+		.eur {
+			display: block;
+		}
+	}
+}
+
+#checkout_button_cell {
+	text-align: center;
+}
+
+#checkout_currency_cell {
+	text-align: center;
+	font-size: small;
+	
+	a {
+		display: inline-block;
+		padding: 2px 6px;
+		border-radius: 4px;
+		text-decoration: none;
+		margin-left: 0.2em;
+		margin-right: 0.2em;
+		color: #084FD1;
+		
+		&.chosen {
+			background-color: #084FD1;
+			color: white;
+		}
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	#checkout_currency_cell a {
+		color: #3486FE;
+		
+		&.chosen {
+			background-color: #3486FE;
+		}
+	}
+}
+
 </style>
 <?php
 BeaconTemplate::FinishStyles();
@@ -94,7 +216,6 @@ BeaconTemplate::StartScript();
 <script>
 var owns_omni = false;
 var is_child = false;
-var email_verified = false;
 
 var stw_quantity_field = null;
 var gift_quantity_field = null;
@@ -111,9 +232,6 @@ var update_total = function() {
 		gift_quantity = Math.min(gift_quantity_field.value, 10);
 	}
 	var slot_quantity = 0;
-	 if (is_child === false && slot_quantity_field) {
-		 slot_quantity = Math.min(slot_quantity_field.value, 20);
-	 }
 	
 	if (stw_quantity_field && stw_quantity_field.value != stw_quantity) {
 		stw_quantity_field.value = stw_quantity;
@@ -125,17 +243,27 @@ var update_total = function() {
  		slot_quantity_field.value = slot_quantity
  	}
 	
-	var omni_price = <?php echo json_encode($product_details['omni']['price'] * 100); ?>;
-	var stw_price = <?php echo json_encode($product_details['stw']['price'] * 100); ?>;
-	var gift_price = <?php echo json_encode($product_details['gift']['price'] * 100); ?>;
-	var slot_price = <?php echo $teams_enabled ? json_encode($product_details['slot']['price'] * 100) : 0; ?>;
+	var omni_price = <?php echo json_encode($product_details['omni']['price']); ?>;
+	var stw_price = <?php echo json_encode($product_details['stw']['price']); ?>;
+	var gift_price = <?php echo json_encode($product_details['gift']['price']); ?>;
+	var slot_price = 0;
 	var total = (stw_price * stw_quantity) + (gift_price * gift_quantity) + (slot_price * slot_quantity);
 	if (include_omni) {
 		total += omni_price;
 	}
 	
-	document.getElementById('total_field').innerHTML = '$' + (total / 100).toFixed(2) + ' USD';
-	document.getElementById('stripe_checkout_button').disabled = (total == 0);
+	document.getElementById('total_field').innerHTML = <?php echo json_encode($currency_symbol); ?> + format_currency(total, <?php echo json_encode($decimal_character); ?>, <?php echo json_encode($thousands_character); ?>) + <?php echo json_encode(' ' . $currency); ?>;
+	document.getElementById('stripe_checkout_button').disabled = (total == 0) || validate_email(document.getElementById('checkout_email_field').value) == false;
+};
+
+var format_currency = function(amount, decimal_character, thousands_character) {
+	var adjusted_amount = Math.round(amount * 100).toString();
+	if (adjusted_amount.length < 3) {
+		adjusted_amount = '000'.substr(adjusted_amount.length) + adjusted_amount;
+	}
+	var decimals = adjusted_amount.substr(adjusted_amount.length - 2, 2);
+	var whole = adjusted_amount.substr(0, adjusted_amount.length - 2);
+	return whole + decimal_character + decimals;
 };
 
 var set_view_mode = function() {
@@ -169,18 +297,27 @@ var update_checkout_components = function() {
 	update_total();
 };
 
+var validate_email = function(email) {
+	re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return re.test(String(email).trim().toLowerCase());
+};
+
 var lookup_email = function(email) {
-	request.get('/omni/lookup', {'email': email}, function(obj) {
-		owns_omni = obj.omni;
-		is_child = obj.child;
-		email_verified = obj.verified;
-		update_checkout_components();
-	}, function(status, body) {
+	if (validate_email(email)) {
+		request.get('/omni/lookup', {'email': email}, function(obj) {
+			owns_omni = obj.omni;
+			is_child = obj.child;
+			update_checkout_components();
+		}, function(status, body) {
+			owns_omni = false;
+			is_child = false;
+			update_checkout_components();
+		});
+	} else {
 		owns_omni = false;
 		is_child = false;
-		email_verified = false;
 		update_checkout_components();
-	});
+	}
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -228,14 +365,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 	
 	document.getElementById('stripe_checkout_button').addEventListener('click', function(ev) {
-		if (email_verified === false) {
-			dialog.confirm('Check your email address.', 'We were unable to verify that your email address exists. This is probably due to a typo, but if we are wrong, create an account to skip this check.', 'Ok', 'Create Account').then(function() {
-			}).catch(function() {
-				window.location.href = '/account/login/?return=%2Fomni%2F%23checkout&email=' + encodeURIComponent(document.getElementById('checkout_email_field').value) + '#create';
-			});
-			return;
-		}
-		
 		this.disabled = true;
 		
 		var include_omni = owns_omni === false && is_child === false && document.getElementById('omni_checkbox').checked;
@@ -258,45 +387,38 @@ document.addEventListener('DOMContentLoaded', function() {
  			return;
  		}
  		
- 		let checkout_final = function() {
-			var items = [];
+ 		var checkout_final = function() {
+			var url = '/omni/begin';
+			var formdata = {
+				'email': document.getElementById('checkout_email_field').value,
+			};
 			if (include_omni) {
-				items.push({sku: <?php echo json_encode($product_details['omni']['sku']); ?>, quantity: 1});
+				formdata.omni = true;
 			}
 			if (stw_quantity > 0) {
-				items.push({sku: <?php echo json_encode($product_details['stw']['sku']); ?>, quantity: stw_quantity});
+				formdata.stw = stw_quantity;
 			}
 			if (gift_quantity > 0) {
-				items.push({sku: <?php echo json_encode($product_details['gift']['sku']); ?>, quantity: gift_quantity});
+				formdata.gift = gift_quantity;
 			}
 			if (slot_quantity > 0) {
-	 			items.push({sku: <?php echo $teams_enabled ? json_encode($product_details['slot']['sku']) : 0; ?>, quantity: slot_quantity});
-	 		}
-			
-			var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
-			
-			function uuidv4() {
-				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+				formdata.slot = slot_quantity;
 			}
 			
-			var client_reference_id = uuidv4();
-			if (sessionStorage) {
-				sessionStorage.setItem('client_reference_id', client_reference_id);
-			}
-			
-			var checkout = {
-				items: items,
-				successUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/welcome/')); ?>,
-				cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/#checkout')); ?>,
-				clientReferenceId: client_reference_id,
-				billingAddressCollection: 'required',
-				customerEmail: document.getElementById('checkout_email_field').value
-			};
-			
-			stripe.redirectToCheckout(checkout).then(function (result) {
-				if (result.error) {
-					dialog.show('Unable to start Stripe checkout', result.error.message);
+			request.post(url, formdata, function(obj) {
+				if (sessionStorage) {
+					sessionStorage.setItem('client_reference_id', obj.client_reference_id);
 				}
+				
+				window.location.href = obj.url;
+			}, function(status, body) {
+				var error = JSON.parse(body);
+				var message = body;
+				if (error.message) {
+					message = error.message;
+				}
+				dialog.show('There was an issue starting the checkout process.', message);
+				document.getElementById('stripe_checkout_button').disabled = false;
 			});
 		};
 		
@@ -312,7 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			lookup_email(this.value);
 		};
 		callback = callback.bind(this);
-		email_verified = false;
 		
 		if (this.timer) {
 			clearTimeout(this.timer);
@@ -330,6 +451,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (email) {
 		document.getElementById('checkout_email_field').value = email;
 		lookup_email(email);
+	}
+	
+	var currency_links = document.getElementsByClassName('currency-button');
+	for (var i = 0; i < currency_links.length; i++) {
+		var currency_link = currency_links.item(i);
+		currency_link.addEventListener('click', function(ev) {
+			var currency_code = this.getAttribute('currency');
+			ev.preventDefault();
+			
+			request.get('/omni/currency', {'currency': currency_code}, function(obj)  {
+				location.reload();
+			}, function(status, body) {
+				dialog.show('Sorry, there was a problem setting the currency.', body);
+			});
+			
+			return false;
+		});
 	}
 });
 	
@@ -499,7 +637,48 @@ BeaconTemplate::FinishScript();
 			<td class="price_column" id="total_field"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
 		</tr>
 		<tr>
-			<td colspan="3" class="text-center"><button class="default" id="stripe_checkout_button">Checkout</button></td>
+			<td colspan="3" class="text-center">
+				<div id="checkout_button_cell"><button class="default" id="stripe_checkout_button">Checkout</button></div>
+				<div id="checkout_methods_cell" class="<?php echo strtolower($currency); ?>"><?php
+				
+				$payment_methods = [
+					'universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
+					'usd' => [],
+					'eur' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24']
+				];
+				$payment_labels = [
+					'apple' => 'Apple Pay',
+					'google' => 'Google Pay',
+					'mastercard' => 'Mastercard',
+					'visa' => 'Visa',
+					'amex' => 'American Express',
+					'discover' => 'Discover',
+					'dinersclub' => 'Diner\'s Club',
+					'jcb' => 'JCB',
+					'bancontact' => 'Bancontact',
+					'eps' => 'EPS',
+					'giropay' => 'giropay',
+					'ideal' => 'iDEAL',
+					'p24' => 'Przelewy24'
+				];
+				foreach ($payment_methods as $class => $method_codes) {
+					foreach ($method_codes as $method_code) {
+						echo '<img src="' . BeaconCommon::AssetURI('paymethod_' . $method_code . '.svg') . '" class="' . $class . '" title="' . htmlentities($payment_labels[$method_code]) . '" alt="' . htmlentities($payment_labels[$method_code]) . '">';
+					}
+				}
+				
+				?></div>
+				<?php
+					if (count($_SESSION['store_currency_options']) > 1) {
+						echo '<div id="checkout_currency_cell">';
+						echo 'Currency: ';
+						foreach ($_SESSION['store_currency_options'] as $currency_code) {
+							echo '<a href="/omni/#' . urlencode($currency_code) . '" class="currency-button' . ($currency_code === $currency ? ' chosen' : '') . '" rel="nofollow" currency="' . htmlentities($currency_code) . '">' . htmlentities($currency_code) . '</a>';
+						}
+						echo '</div>';
+					}
+				?>
+			</td>
 		</tr>
 	</table>
 </div>

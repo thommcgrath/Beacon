@@ -649,6 +649,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function TeamsEnabled() {
+		return false;
 		$enabled = self::GetGlobal('Teams Enabled', false);
 		if ($enabled === false) {
 			return false;
