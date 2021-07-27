@@ -451,6 +451,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
+		  Content = Content.GuessEncoding
 		  Var GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
 		  Var SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
 		  

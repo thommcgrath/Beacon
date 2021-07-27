@@ -183,6 +183,7 @@ Inherits Global.Thread
 		  // This is the new master method
 		  
 		  Try
+		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
 		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
 		    
 		    // Get the initial values into an organizer
