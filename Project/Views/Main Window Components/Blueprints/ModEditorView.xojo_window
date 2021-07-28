@@ -71,7 +71,6 @@ Begin BeaconSubview ModEditorView
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -129,6 +128,14 @@ Begin BeaconSubview ModEditorView
       Transparent     =   True
       Visible         =   True
       Width           =   844
+   End
+   Begin Thread ImporterThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
@@ -223,17 +230,161 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Import(Contents As String)
-		  If Not Self.ImportAsJSON(Contents) Then
-		    Self.ImportAsPlain(Contents)
+		  If Self.ImporterThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		    Return
 		  End If
+		  
+		  Self.mProgress = New ProgressWindow("Importing blueprints…", "Getting started…")
+		  Self.mProgress.ShowDelayed(Self.TrueWindow)
+		  
+		  Self.mFoundBlueprints.ResizeTo(-1)
+		  Self.mFoundModNames.ResizeTo(-1)
+		  Self.mContentToImport = Contents.GuessEncoding
+		  Self.ImporterThread.Start
+		  
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ImportAsDataDumper(Contents As String) As Boolean
+		  If Contents.IndexOf("########## Start ") = -1 And Contents.IndexOf(" Data ##########") = -1 Then
+		    Return False
+		  End If
+		  
+		  Contents = Contents.ReplaceLineEndings(EndOfLine)
+		  
+		  // Cleanup an inconsistency
+		  Contents = Contents.ReplaceAll("{END_DINO}", "{END_CREATURE}")
+		  Var OffsetMax As Integer = Contents.Length
+		  
+		  Var ItemDicts(), CreatureDicts(), SpawnDicts() As Dictionary
+		  Var EngramsByClass As New Dictionary
+		  
+		  Self.mProgress.Detail = "Parsing log output…"
+		  Var Offset As Integer
+		  While Offset > -1
+		    If Self.mProgress.CancelPressed Then
+		      Return True
+		    End If
+		    
+		    Self.mProgress.Progress = Offset / OffsetMax
+		    Offset = Contents.IndexOf(Offset, "Dump-")
+		    If Offset = -1 Then
+		      Continue
+		    End If
+		    Offset = Offset + 5
+		    
+		    Var LineStartPos As Integer = Contents.IndexOf(Offset, "{")
+		    If LineStartPos = -1 Then
+		      Continue
+		    End If
+		    Var Type As String = Contents.Middle(Offset, LineStartPos - Offset)
+		    
+		    Var LineEndSequence As String = "{END_" + Type.Uppercase + "}"
+		    Var LineEndPos As Integer = Contents.IndexOf(LineStartPos, LineEndSequence)
+		    Var Line As String = Contents.Middle(LineStartPos, LineEndPos - LineStartPos)
+		    Offset = Max(LineEndPos + LineEndSequence.Length, LineStartPos)
+		    
+		    Var Values As Dictionary = Self.ParseDataDumperLine(Line)
+		    If Values.HasKey("PATH") = False Then
+		      Continue
+		    End If
+		    
+		    Var Path As String = Values.Value("PATH")
+		    If Path.BeginsWith("/Game/Mods/") = False Then
+		      Continue
+		    End If
+		    Var ModName As String = Path.NthField("/", 4)
+		    If Self.mFoundModNames.IndexOf(ModName) = -1 Then
+		      Self.mFoundModNames.Add(ModName)
+		    End If
+		    
+		    Select Case Type
+		    Case "Engram"
+		      Var BlueprintClass As String = Values.Value("BLUEPRINT")
+		      EngramsByClass.Value(BlueprintClass) = Values
+		    Case "Item"
+		      ItemDicts.Add(Values)
+		    Case "Creature"
+		      CreatureDicts.Add(Values)
+		    Case "MapSpawner"
+		      SpawnDicts.Add(Values)
+		    End Select
+		  Wend
+		  Self.mProgress.Progress = Nil
+		  
+		  Self.mProgress.Detail = "Assembling engrams…"
+		  For Each ItemDict As Dictionary In ItemDicts
+		    Var ItemClass As String = ItemDict.Value("CLASS")
+		    Var EngramDict As Dictionary = EngramsByClass.Lookup(ItemClass, Nil)
+		    Var Path As String = ItemDict.Value("PATH")
+		    If Path.EndsWith("_C") Then
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    
+		    Var Engram As New Beacon.MutableEngram(Path, New v4UUID)
+		    Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
+		    Engram.AddTag("blueprintable")
+		    Select Case ItemDict.Value("ITEM_TYPE").StringValue
+		    Case "Resource"
+		      Engram.AddTag("resource")
+		    End Select
+		    
+		    If (EngramDict Is Nil) = False Then
+		      Var UnlockString As String = EngramDict.Value("CLASS")
+		      Engram.EntryString = UnlockString
+		      Var IsTek As Boolean = EngramDict.Value("FORCE_IS_TEK_ENGRAM").BooleanValue Or EngramDict.Value("ENGRAM_GROUP").StringValue = "ARK_TEK"
+		      If IsTek Then
+		        Engram.AddTag("tek")
+		      End If
+		      Var ManualUnlock As Boolean = EngramDict.Value("CAN_BE_MANUAL").BooleanValue
+		      If ManualUnlock Then
+		        Var RequiredLevel As Integer = EngramDict.Value("REQ_LEVEL")
+		        Var RequiredPoints As Integer = EngramDict.Value("REQ_POINTS")
+		        Engram.RequiredPlayerLevel = RequiredLevel
+		        Engram.RequiredUnlockPoints = RequiredPoints
+		      End If
+		    End If
+		    
+		    Self.mFoundBlueprints.Add(Engram.ImmutableVersion)
+		  Next ItemDict
+		  
+		  Self.mProgress.Detail = "Assembling creatures…"
+		  For Each CreatureDict As Dictionary In CreatureDicts
+		    Var Path As String = CreatureDict.Value("PATH")
+		    If Path.EndsWith("_C") Then
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    
+		    Var Creature As New Beacon.MutableCreature(Path, New v4UUID)
+		    Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
+		    Self.mFoundBlueprints.Add(Creature.ImmutableVersion)
+		  Next CreatureDict
+		  
+		  Self.mProgress.Detail = "Assembling spawn points…"
+		  For Each SpawnDict As Dictionary In SpawnDicts
+		    Var Path As String = SpawnDict.Value("PATH")
+		    If Path.EndsWith("_C") Then
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    
+		    Var Point As New Beacon.MutableSpawnPoint(Path, New v4UUID)
+		    Point.Label = SpawnDict.Value("CLASS")
+		    Self.mFoundBlueprints.Add(Point.ImmutableVersion)
+		  Next
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ImportAsJSON(Contents As String) As Boolean
 		  Var Parsed As Variant
 		  Try
+		    #Pragma BreakOnExceptions False
 		    Parsed = Beacon.ParseJSON(Contents)
+		    #Pragma BreakOnExceptions Default
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
@@ -245,37 +396,241 @@ End
 		    Return False
 		  End Try
 		  
-		  Var Blueprints() As Beacon.Blueprint
+		  Self.mProgress.Detail = "Unpacking blueprints…"
 		  For Idx As Integer = 0 To Dictionaries.LastIndex
+		    If Self.mProgress.CancelPressed Then
+		      Return True
+		    End If
+		    
 		    Try
 		      Var Dict As Dictionary = Dictionaries(Idx)
 		      Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Dict)
 		      If (Blueprint Is Nil) = False Then
-		        Blueprints.Add(Blueprint)
+		        Self.mFoundBlueprints.Add(Blueprint)
+		        
+		        Var Path As String = Blueprint.Path
+		        If Path.BeginsWith("/Game/Mods/") Then
+		          Var ModName As String = Path.NthField("/", 4)
+		          If Self.mFoundModNames.IndexOf(ModName) = -1 Then
+		            Self.mFoundModNames.Add(ModName)
+		          End If
+		        End If
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
-		  If Blueprints.Count = 0 Then
-		    Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
-		    Return True // It was still JSON data, even if nothing was found.
-		  End If
-		  
-		  Self.mController.SaveBlueprints(Blueprints)
-		  Self.UpdateList(Blueprints)
-		  Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(Blueprints.Count, "blueprint", "blueprints") + " to import.")
-		  
+		  // No matter what, it was still JSON data, even if nothing was found.
 		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ImportAsPlain(Contents As String)
-		  Var Searcher As New Beacon.EngramSearcherThread
-		  AddHandler Searcher.Started, WeakAddressOf Searcher_Started
-		  AddHandler Searcher.Finished, WeakAddressOf Searcher_Finished
-		  Searcher.Search(Contents)
+		  // First try to parse as a csv
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Var CarriageReturn As String = Encodings.UTF8.Chr(13)
+		    
+		    Var Characters() As String = Contents.Trim.ReplaceLineEndings(CarriageReturn).Split("")
+		    Var Lines() As Variant
+		    Var ColumnBuffer(), Columns() As String
+		    Var Started, InQuotes As Boolean
+		    For Each Character As String In Characters
+		      If Self.mProgress.CancelPressed Then
+		        Return
+		      End If
+		      
+		      If InQuotes Then
+		        Started = True
+		        If Character = """" Then
+		          InQuotes = False
+		        Else
+		          ColumnBuffer.Add(Character)
+		        End If
+		      Else
+		        If Character = """" Then
+		          InQuotes = True
+		          If Started Then
+		            ColumnBuffer.Add(Character)
+		          End If
+		        ElseIf Character = "," Then
+		          Columns.Add(ColumnBuffer.Join(""))
+		          ColumnBuffer.ResizeTo(-1)
+		          Started = False
+		        ElseIf Character = CarriageReturn Then
+		          // Next line
+		          Columns.Add(ColumnBuffer.Join(""))
+		          Lines.Add(Columns)
+		          ColumnBuffer.ResizeTo(-1)
+		          Columns = Array("") // To create a new array
+		          Columns.ResizeTo(-1)
+		          Started = False
+		        Else
+		          ColumnBuffer.Add(Character)
+		        End If
+		      End If
+		    Next
+		    Columns.Add(ColumnBuffer.Join(""))
+		    Lines.Add(Columns)
+		    
+		    Var HeaderColumns() As String
+		    If Lines.LastIndex >= 0 Then
+		      HeaderColumns = Lines(0)
+		      Lines.RemoveAt(0)
+		    End If
+		    Var PathColumnIdx, LabelColumnIdx, MaskColumnIdx, BlueprintColumnIdx, TagsColumnIndx, GroupColumnIdx As Integer
+		    PathColumnIdx = HeaderColumns.IndexOf("Path")
+		    LabelColumnIdx = HeaderColumns.IndexOf("Label")
+		    MaskColumnIdx = HeaderColumns.IndexOf("Availability Mask")
+		    TagsColumnIndx = HeaderColumns.IndexOf("Tags")
+		    GroupColumnIdx = HeaderColumns.IndexOf("Group")
+		    BlueprintColumnIdx = HeaderColumns.IndexOf("Can Blueprint")
+		    
+		    Var AllAvailabilityMask As UInt64 = Beacon.Maps.UniversalMask
+		    
+		    If PathColumnIdx = -1 Or LabelColumnIdx = -1 Then
+		      Var Err As New UnsupportedFormatException
+		      Err.Message = "CSV import requires at least Path and Label columns. Make sure the data includes a header row."
+		      Raise Err
+		    End If
+		    
+		    For Each Columns In Lines
+		      If Self.mProgress.CancelPressed Then
+		        Return
+		      End If
+		      
+		      Var Path As String = Columns(PathColumnIdx)
+		      Var Label As String = Columns(LabelColumnIdx)
+		      Var Availability As UInt64
+		      Var Tags() As String
+		      If MaskColumnIdx > -1 Then
+		        Availability = UInt64.FromString(Columns(MaskColumnIdx))
+		      Else
+		        Availability = AllAvailabilityMask
+		      End If
+		      If TagsColumnIndx > -1 Then
+		        Tags = Columns(TagsColumnIndx).Split(",")
+		      ElseIf BlueprintColumnIdx > -1 Then
+		        Var CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
+		        If CanBlueprint Then
+		          Tags.Add("blueprintable")
+		        End If
+		      End If
+		      
+		      Var Category As String = "engrams"
+		      If GroupColumnIdx > -1 Then
+		        Category = Columns(GroupColumnIdx)
+		      End If
+		      
+		      Var Blueprint As Beacon.MutableBlueprint
+		      Select Case Category
+		      Case Beacon.CategoryEngrams
+		        Blueprint = New Beacon.MutableEngram(Path, New v4UUID)
+		      Case Beacon.CategoryCreatures
+		        Blueprint = New Beacon.MutableCreature(Path, New v4UUID)
+		      Else
+		        Continue
+		      End Select
+		      
+		      Blueprint.Tags = Tags
+		      Blueprint.Availability = Availability
+		      Blueprint.Label = Label
+		      
+		      If Self.mProgress.CancelPressed Then
+		        Return
+		      End If
+		      Self.mFoundBlueprints.Add(Blueprint.Clone)
+		      
+		      If Path.BeginsWith("/Game/Mods/") Then
+		        Var ModName As String = Path.NthField("/", 4)
+		        If Self.mFoundModNames.IndexOf(ModName) = -1 Then
+		          Self.mFoundModNames.Add(ModName)
+		        End If
+		      End If
+		    Next
+		    
+		    Return
+		  Catch Err As RuntimeException
+		    // Probably not a CSV
+		  End Try
+		  #Pragma BreakOnExceptions Default
+		  
+		  Const QuotationCharacters = "'‘’""“”"
+		  
+		  Var Regex As New Regex
+		  Regex.Options.CaseSensitive = False
+		  Regex.SearchPattern = "(giveitem|spawndino)\s+(([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]))"
+		  
+		  Var Match As RegexMatch = Regex.Search(Contents)
+		  Var Paths As New Dictionary
+		  Do
+		    If Self.mProgress.CancelPressed Then
+		      Return
+		    End If
+		    If Match = Nil Then
+		      Continue
+		    End If
+		    
+		    Var Command As String = Match.SubExpressionString(1)
+		    Var Path As String
+		    If Match.SubExpressionCount >= 4 And Match.SubExpressionString(4) <> "" Then
+		      Path = Match.SubExpressionString(4)
+		    ElseIf Match.SubExpressionCount >= 6 And Match.SubExpressionString(6) <> "" Then
+		      Path = Match.SubExpressionString(6)
+		    ElseIf Match.SubExpressionCount >= 8 And Match.SubExpressionString(8) <> "" Then
+		      Path = Match.SubExpressionString(8)
+		    End If
+		    If Path.IsEmpty = False And Command.IsEmpty = False Then
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
+		      End If
+		      Paths.Value(Path) = Command
+		    End If
+		    
+		    Match = Regex.Search
+		  Loop Until Match Is Nil
+		  
+		  If Self.mProgress.CancelPressed Then
+		    Return
+		  End If
+		  
+		  If Paths.KeyCount = 0 Then
+		    Return
+		  End If
+		  
+		  Var Keys() As Variant = Paths.Keys
+		  For Each Key As String In Keys
+		    If Self.mProgress.CancelPressed Then
+		      Return
+		    End If
+		    
+		    Var Command As String = Paths.Value(Key)
+		    Var Path As String = Key
+		    Var Blueprint As Beacon.Blueprint
+		    Select Case Command
+		    Case "giveitem"
+		      Blueprint = Beacon.ResolveEngram("", Path, "", New Beacon.StringList(Beacon.UserModID))
+		    Case "spawndino"
+		      Blueprint = Beacon.ResolveCreature("", Path, "", New Beacon.StringList(Beacon.UserModID))
+		    End Select
+		    
+		    If Blueprint Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Self.mProgress.CancelPressed Then
+		      Return
+		    End If
+		    Self.mFoundBlueprints.Add(Blueprint)
+		    
+		    If Path.BeginsWith("/Game/Mods/") Then
+		      Var ModName As String = Path.NthField("/", 4)
+		      If Self.mFoundModNames.IndexOf(ModName) = -1 Then
+		        Self.mFoundModNames.Add(ModName)
+		      End If
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -379,25 +734,33 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Searcher_Finished(Sender As Beacon.EngramSearcherThread)
-		  Self.Progress = BeaconSubview.ProgressNone
-		  
-		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints(True)
-		  If Blueprints.Count = 0 Then
-		    Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
-		    Return
-		  End If
-		  Self.mController.SaveBlueprints(Blueprints)
-		  Self.UpdateList(Blueprints)
-		  Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(Blueprints.Count, "blueprint", "blueprints") + " to import.")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Searcher_Started(Sender As Beacon.EngramSearcherThread)
-		  #Pragma Unused Sender
-		  Self.Progress = BeaconSubview.ProgressIndeterminate
-		End Sub
+		Private Function ParseDataDumperLine(Line As String) As Dictionary
+		  Var Values As New Dictionary
+		  Var Offset As Integer
+		  While Offset > -1
+		    Var KeyStartPos As Integer = Line.IndexOf(Offset, "{")
+		    If KeyStartPos = -1 Then
+		      Return Values
+		    End If
+		    KeyStartPos = KeyStartPos + 1
+		    
+		    Var KeyEndPos As Integer = Line.IndexOf(KeyStartPos, "}")
+		    Var Key As String = Line.Middle(KeyStartPos, KeyEndPos - KeyStartPos)
+		    
+		    Var ValueStartPos As Integer = KeyEndPos + 1
+		    Var ValueEndPos As Integer = Line.IndexOf(ValueStartPos, "{")
+		    Var Value As String
+		    If ValueEndPos = -1 Then
+		      Value = Line.Middle(ValueStartPos)
+		      Offset = Line.Length
+		    Else
+		      Value = Line.Middle(ValueStartPos, ValueEndPos - ValueStartPos)
+		      Offset = ValueEndPos
+		    End If
+		    
+		    Values.Value(Key) = Value
+		  Wend
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -499,7 +862,23 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mContentToImport As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mController As BlueprintController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFoundBlueprints() As Beacon.Blueprint
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFoundModNames() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProgress As ProgressWindow
 	#tag EndProperty
 
 
@@ -643,6 +1022,66 @@ End
 		  Case "Discard"
 		    Self.mController.DiscardChanges()
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImporterThread
+	#tag Event
+		Sub Run()
+		  If (Self.ImportAsDataDumper(Self.mContentToImport) Or Self.ImportAsJSON(Self.mContentToImport)) = False Then
+		    Self.ImportAsPlain(Self.mContentToImport)
+		  End If
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Action") = "Finished"
+		  Me.AddUserInterfaceUpdate(Dict)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    Var Action As String = Dict.Lookup("Action", "").StringValue
+		    Select Case Action
+		    Case "Finished"
+		      Var Cancelled As Boolean = Self.mProgress.CancelPressed
+		      Self.mProgress.Close
+		      Self.mProgress = Nil
+		      
+		      Self.Progress = BeaconSubview.ProgressNone
+		      
+		      If Cancelled = False Then
+		        If Self.mFoundBlueprints.Count = 0 Then
+		          Self.ShowAlert("Importing Has Finished", "Beacon did not find any blueprints to import.")
+		        ElseIf Self.mFoundModNames.Count = 1 Then
+		          // Just import what was found
+		          Self.mController.SaveBlueprints(Self.mFoundBlueprints)
+		          Self.UpdateList(Self.mFoundBlueprints)
+		          Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(Self.mFoundBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		        Else
+		          // Show a prompt
+		          Var ChosenNames() As String = SelectModPrefixDialog.Present(Self, Self.mFoundModNames)
+		          If ChosenNames.Count > 0 Then
+		            Var ChosenBlueprints() As Beacon.Blueprint
+		            For Each Name As String In ChosenNames
+		              Var Prefix As String = "/Game/Mods/" + Name + "/"
+		              For Each Blueprint As Beacon.Blueprint In Self.mFoundBlueprints
+		                If Blueprint.Path.BeginsWith(Prefix) Then
+		                  ChosenBlueprints.Add(Blueprint)
+		                End If
+		              Next Blueprint
+		            Next Name
+		            
+		            Self.mController.SaveBlueprints(ChosenBlueprints)
+		            Self.UpdateList(ChosenBlueprints)
+		            Self.ShowAlert("Importing Has Finished", "Beacon found " + Language.NounWithQuantity(ChosenBlueprints.Count, "blueprint", "blueprints") + " to import.")
+		          End If
+		        End If
+		      End If
+		      
+		      Self.mFoundBlueprints.ResizeTo(-1)
+		      Self.mFoundModNames.ResizeTo(-1)
+		    End Select
+		  Next Dict
 		End Sub
 	#tag EndEvent
 #tag EndEvents

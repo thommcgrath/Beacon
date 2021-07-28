@@ -22,7 +22,7 @@ Begin BeaconDialog ProgressWindow
    Resizeable      =   False
    Title           =   "Progress"
    Type            =   8
-   Visible         =   True
+   Visible         =   False
    Width           =   500
    Begin Label MessageLabel
       AllowAutoDeactivate=   True
@@ -173,6 +173,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Close()
+		  If Self.mShowLaterKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mShowLaterKey)
+		    Self.mShowLaterKey = ""
+		  End If
+		  
 		  If Thread.Current = Nil Then
 		    Super.Close()
 		  Else
@@ -192,6 +197,40 @@ End
 		  
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDelayed()
+		  Self.mShowLaterKey = CallLater.Schedule(1500, WeakAddressOf ShowNow)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDelayed(Parent As Window)
+		  Self.mShowLaterKey = CallLater.Schedule(1500, WeakAddressOf ShowNowWithin, Parent)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowNow()
+		  If Self.mShowLaterKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mShowLaterKey)
+		    Self.mShowLaterKey = ""
+		  End If
+		  
+		  Self.Show()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowNowWithin(Parent As Variant)
+		  If Self.mShowLaterKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mShowLaterKey)
+		    Self.mShowLaterKey = ""
+		  End If
+		  
+		  Self.ShowWithin(Parent)
 		End Sub
 	#tag EndMethod
 
@@ -299,6 +338,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mShouldClose As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShowLaterKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStartTime As Double
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

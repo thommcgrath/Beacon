@@ -71,7 +71,7 @@ Begin BeaconSubview ModsListView
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
+      SelectionChangeBlocked=   "False"
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -334,7 +334,7 @@ End
 		  Var LocalUUIDs(), WorkshopIDs() As String
 		  For Idx As Integer = Mods.LastIndex DownTo 0
 		    If Not CloseModView(Mods(Idx).ModID) Then
-		      Mods.RemoveRowAt(Idx)
+		      Mods.RemoveAt(Idx)
 		    Else
 		      If Mods(Idx).IsLocalMod Then
 		        LocalUUIDs.Add(Mods(Idx).ModID)

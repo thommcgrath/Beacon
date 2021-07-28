@@ -245,7 +245,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub HandleViewMenu(Item As OmniBarItem, ItemRect As Rect)
+		Private Sub HandleViewMenu(ItemRect As Rect)
 		  Var Base As New MenuItem
 		  
 		  Var ViewFullNames As New MenuItem("Use Full Server Names", Self.ListNamesFull)
@@ -643,7 +643,7 @@ End
 		    Self.Document.AddServerProfile(Profile)
 		    Self.UpdateList(Profile)
 		  Case "ViewOptionsButton"
-		    Self.HandleViewMenu(Item, ItemRect)
+		    Self.HandleViewMenu(ItemRect)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -651,7 +651,7 @@ End
 		Function ItemHeld(Item As OmniBarItem, ItemRect As Rect) As Boolean
 		  Select Case Item.Name
 		  Case "ViewOptionsButton"
-		    Self.HandleViewMenu(Item, ItemRect)
+		    Self.HandleViewMenu(ItemRect)
 		    Return True
 		  End Select
 		End Function
