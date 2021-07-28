@@ -423,16 +423,20 @@ DECLARE
 	v_domain TEXT;
 	v_kvalue TEXT;
 BEGIN
-	v_user := SUBSTRING(p_address, '^([^@]+)@.+$');
-	v_domain := SUBSTRING(p_address, '^[^@]+@(.+)$');
-	
-	IF LENGTH(v_user) <= p_precision THEN
-		v_kvalue := '@' || v_domain;
+	IF p_precision > 5 THEN
+		RETURN SUBSTRING(ENCODE(SHA512(LOWER(TRIM(p_address))::bytea), 'hex'), 1, p_precision);
 	ELSE
-		v_kvalue := SUBSTRING(v_user, 1, p_precision) || '*@' || v_domain;
-	END IF;
+		v_user := SUBSTRING(p_address, '^([^@]+)@.+$');
+		v_domain := SUBSTRING(p_address, '^[^@]+@(.+)$');
+		
+		IF LENGTH(v_user) <= p_precision THEN
+			v_kvalue := '@' || v_domain;
+		ELSE
+			v_kvalue := SUBSTRING(v_user, 1, p_precision) || '*@' || v_domain;
+		END IF;
 	
-	RETURN MD5(LOWER(v_kvalue));
+		RETURN MD5(LOWER(v_kvalue));
+	END IF;
 END;
 $_$;
 
@@ -983,7 +987,7 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) 
 DECLARE
 	v_uuid UUID;
 	v_precision INTEGER;
-	k_target_precision CONSTANT INTEGER := 5;
+	k_target_precision CONSTANT INTEGER := 10;
 BEGIN
 	v_uuid := uuid_for_email(p_address);
 	IF v_uuid IS NULL THEN
@@ -1881,6 +1885,21 @@ INHERITS (public.objects);
 ALTER TABLE public.presets OWNER TO thommcgrath;
 
 --
+-- Name: product_prices; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.product_prices (
+    price_id text NOT NULL,
+    product_id uuid NOT NULL,
+    currency public.citext NOT NULL,
+    price numeric(6,2) NOT NULL,
+    CONSTRAINT product_prices_currency_check CHECK ((length((currency)::text) = 3))
+);
+
+
+ALTER TABLE public.product_prices OWNER TO thommcgrath;
+
+--
 -- Name: products; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1938,7 +1957,9 @@ CREATE TABLE public.purchase_items (
     retail_price numeric(6,2) NOT NULL,
     discount numeric(6,2) NOT NULL,
     quantity numeric(6,0) NOT NULL,
-    line_total numeric(6,2) NOT NULL
+    line_total numeric(6,2) NOT NULL,
+    currency public.citext NOT NULL,
+    CONSTRAINT purchase_items_currency_check CHECK ((length((currency)::text) = 3))
 );
 
 
@@ -1959,7 +1980,9 @@ CREATE TABLE public.purchases (
     merchant_reference public.citext NOT NULL,
     client_reference_id text,
     refunded boolean DEFAULT false NOT NULL,
-    tax_locality text
+    tax_locality text,
+    currency public.citext NOT NULL,
+    CONSTRAINT purchases_currency_check CHECK ((length((currency)::text) = 3))
 );
 
 
@@ -3098,6 +3121,14 @@ ALTER TABLE ONLY public.presets
 
 
 --
+-- Name: product_prices product_prices_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.product_prices
+    ADD CONSTRAINT product_prices_pkey PRIMARY KEY (price_id);
+
+
+--
 -- Name: products products_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3553,6 +3584,13 @@ CREATE UNIQUE INDEX mods_workshop_id_confirmed_uidx ON public.mods USING btree (
 --
 
 CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON public.mods USING btree (abs(workshop_id), user_id);
+
+
+--
+-- Name: product_prices_product_id_currency_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX product_prices_product_id_currency_idx ON public.product_prices USING btree (product_id, currency);
 
 
 --
@@ -4371,6 +4409,14 @@ ALTER TABLE ONLY public.presets
 
 
 --
+-- Name: product_prices product_prices_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.product_prices
+    ADD CONSTRAINT product_prices_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: purchase_code_log purchase_code_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -4910,6 +4956,13 @@ GRANT SELECT ON TABLE public.preset_modifiers TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.presets TO thezaz_website;
+
+
+--
+-- Name: TABLE product_prices; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.product_prices TO thezaz_website;
 
 
 --
