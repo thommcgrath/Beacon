@@ -25,7 +25,7 @@ function EndPage() {
 
 if ($original_version < 1) {
 	StartPage('Welcome to Beacon');
-	echo '<div class="duo duo-left"><div class="duo-image"><a href="/videos/welcome_to_beacon" target="_blank"><img src="beacon15-video-thumb.png" width="298" height="167" alt="Welcome to Beacon Video"></a></div><div class="duo-text"><h1>Welcome to Beacon</h1><p>To help you get started with Beacon, you should watch this introduction video. You\'ll be shown how to navigate a Beacon project, create loot drops, update servers, and use config sets. It will 20 minutes well spent.</p></div></div>';
+	echo '<div class="duo duo-left"><div class="duo-image"><a href="/videos/welcome_to_beacon" target="_blank"><img src="beacon15-video-thumb.png" width="298" height="167" alt="Welcome to Beacon Video"></a></div><div class="duo-text"><h1>Welcome to Beacon</h1><p>To help you get started with Beacon, you should watch this introduction video. You\'ll be shown how to navigate a Beacon project, create loot drops, update servers, and use config sets. It will be 20 minutes well spent.</p></div></div>';
 	EndPage();
 } else {
 	if ($current_version >= 10500000 && $original_version < 10500000) {

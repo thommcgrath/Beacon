@@ -352,6 +352,11 @@ Inherits Beacon.ConfigGroup
 		    Organizer.Add(New Beacon.ConfigValue(File, Header, Key + "=" + Self.EncryptedTag + Value + Self.EncryptedTag))
 		  Next
 		  
+		  // Remove RCON
+		  Organizer.Remove(Beacon.ConfigFileGameUserSettings, "ServerSettings", "RCONEnabled")
+		  Organizer.Remove(Beacon.ConfigFileGameUserSettings, "ServerSettings", "RCONPort")
+		  Organizer.Remove(Beacon.ConfigFileGameUserSettings, "ServerSettings", "RCONServerGameLogBuffer")
+		  
 		  Self.GameUserSettingsIniContent = Organizer.Build(Beacon.ConfigFileGameUserSettings)
 		End Sub
 	#tag EndMethod

@@ -45,15 +45,20 @@ function lookupEmail($email, &$response) {
 	}
 	
 	// Ask CleanTalk to connect to the server and see if the mailbox exists.
+	$cache_key = sha1('CleanTalk Result ' . strtolower($email));
 	$url = 'https://api.cleantalk.org/?method_name=email_check&auth_key=' . urlencode(BeaconCommon::GetGlobal('CleanTalk Email Check Key')) . '&email=' . urlencode($email);
-	$curl = curl_init($url);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	$body = curl_exec($curl);
-	$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	if ($status !== 200) {
-		// This isn't really true, but err on the side of caution
-		$response['verified'] = true;
-		return;
+	$body = BeaconCache::Get($cache_key);
+	if (is_null($body)) {
+		$curl = curl_init($url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$body = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		if ($status !== 200) {
+			// This isn't really true, but err on the side of caution
+			$response['verified'] = true;
+			return;
+		}
+		BeaconCache::Set($cache_key, $body);
 	}
 	
 	$parsed = json_decode($body, TRUE);

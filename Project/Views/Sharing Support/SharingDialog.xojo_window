@@ -712,7 +712,7 @@ End
 		  
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Me.Selected(I) Then
-		      Self.mDocument.RemoveUser(Me.CellValueAt(I, 0))
+		      Self.mDocument.RemoveUser(Me.CellValueAt(I, 1))
 		      Me.RemoveRowAt(I)
 		      Self.mUsersChanged = True
 		    End If

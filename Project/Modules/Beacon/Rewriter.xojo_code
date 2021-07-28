@@ -183,6 +183,7 @@ Inherits Global.Thread
 		  // This is the new master method
 		  
 		  Try
+		    InitialContent = InitialContent.GuessEncoding.SanitizeIni
 		    Var DesiredLineEnding As String = InitialContent.DetectLineEnding
 		    
 		    // Get the initial values into an organizer
@@ -563,10 +564,24 @@ Inherits Global.Thread
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mProfile <> Value Then
-			    Self.mProfile = Value
+			  // Don't just use <> here, it does not compare correctly with Nitrado
+			  
+			  If Value Is Nil Then
+			    If Self.mProfile Is Nil Then
+			      Return
+			    End If
+			    
+			    Self.mProfile = Nil
 			    Self.mRebuildOrganizer = True
+			    Return
 			  End If
+			  
+			  If (Self.mProfile Is Nil) = False And Self.mProfile.Hash = Value.Hash Then
+			    Return
+			  End If
+			  
+			  Self.mProfile = Value
+			  Self.mRebuildOrganizer = True
 			End Set
 		#tag EndSetter
 		Profile As Beacon.ServerProfile

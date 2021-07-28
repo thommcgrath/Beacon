@@ -5,7 +5,6 @@ if (ob_get_level()) {
 }
 
 mb_http_output('UTF-8');
-mb_http_input('UTF-8');
 mb_internal_encoding('UTF-8');
 
 global $api_version;
@@ -43,6 +42,30 @@ spl_autoload_register(function($class_name) {
 		return;
 	}
 });
+
+require(dirname(__FILE__) . '/config.php');
+
+$maintenance_mode = BeaconCommon::GetGlobal('Maintenance Mode');
+if ($maintenance_mode !== true) {
+	try {
+		BeaconCommon::Database()->Connect();
+	} catch (Exception $err) {
+		$maintenance_mode = true;
+	}
+}
+if ($maintenance_mode === true) {
+	http_response_code(503);
+	$message = "Beacon services are offline for just a moment, but we'll be back as soon as possible!";
+	if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'api')) {
+		header('Content-Type: application/json');
+		echo json_encode(array('message' => $message, 'details' => null), JSON_PRETTY_PRINT);
+	} else {
+		BeaconTemplate::SetTemplate('maintenance');
+		BeaconTemplate::Start();
+		echo $message;
+	}
+	exit;
+}
 
 BeaconErrors::SetSecureMode(BeaconCommon::InProduction());
 BeaconErrors::StartWatching();
@@ -119,8 +142,6 @@ BeaconErrors::StartWatching();
 	header('Content-Security-Policy: ' . $policy);
 	header('Cache-Control: no-cache');
 })();
-
-require(dirname(__FILE__) . '/config.php');
 
 BeaconTemplate::Start();
 

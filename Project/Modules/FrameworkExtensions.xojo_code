@@ -498,7 +498,7 @@ Protected Module FrameworkExtensions
 		    End If
 		  End If
 		  
-		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(Offset))
+		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(Offset * 3600))
 		End Sub
 	#tag EndMethod
 
