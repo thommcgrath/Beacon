@@ -74,7 +74,7 @@ Inherits BeaconSubview
 		  
 		  Var Win As New ImporterWindow
 		  Win.Source = Source
-		  Win.ShowWithin(Self.TrueWindow)
+		  Win.ShowDelayed(Self.TrueWindow)
 		  
 		  If Self.mParserWindows = Nil Then
 		    Self.mParserWindows = New Dictionary

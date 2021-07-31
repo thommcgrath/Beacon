@@ -25,7 +25,7 @@ Begin BeaconDialog ImporterWindow
    Resizeable      =   False
    SystemUIVisible =   "True"
    Title           =   "Import From Config"
-   Visible         =   True
+   Visible         =   False
    Width           =   400
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
@@ -119,6 +119,15 @@ Begin BeaconDialog ImporterWindow
       Visible         =   True
       Width           =   360
    End
+   Begin Timer ShowLaterTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   1500
+      RunMode         =   0
+      Scope           =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -126,6 +135,44 @@ End
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub CancelDelegate()
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Sub Close()
+		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Off
+		  Self.mParentWindow = Nil
+		  Self.mCancelAction = Nil
+		  Super.Close()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Show()
+		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Off
+		  Self.mParentWindow = Nil
+		  Super.Show()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDelayed()
+		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Single
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDelayed(Parent as Window)
+		  Self.mParentWindow = Parent
+		  Self.ShowDelayed()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowWithin(ParentWindow As Window, Facing As Integer = -1)
+		  Self.ShowLaterTimer.RunMode = Timer.RunModes.Off
+		  Self.mParentWindow = Nil
+		  Super.ShowWithin(ParentWindow, Facing)
+		End Sub
+	#tag EndMethod
 
 
 	#tag ComputedProperty, Flags = &h0
@@ -145,6 +192,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCancelAction As ImporterWindow.CancelDelegate
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mParentWindow As Window
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -196,6 +247,18 @@ End
 		Sub Action()
 		  If Beacon.SafeToInvoke(Self.mCancelAction) Then
 		    Self.mCancelAction.Invoke()
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ShowLaterTimer
+	#tag Event
+		Sub Action()
+		  If Self.mParentWindow Is Nil Then
+		    Self.Show()
+		  Else
+		    Self.ShowWithin(Self.mParentWindow)
+		    Self.mParentWindow = Nil
 		  End If
 		End Sub
 	#tag EndEvent

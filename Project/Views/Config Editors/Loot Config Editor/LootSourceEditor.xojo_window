@@ -66,7 +66,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
+      SelectionChangeBlocked=   "False"
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
@@ -616,7 +616,7 @@ End
 		  Self.mImportProgress = New ImporterWindow
 		  Self.mImportProgress.Source = Source
 		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
-		  Self.mImportProgress.ShowWithin(Self.TrueWindow)
+		  Self.mImportProgress.ShowDelayed(Self.TrueWindow)
 		  
 		  Var Data As New Beacon.DiscoveredData
 		  Data.GameIniContent = Content

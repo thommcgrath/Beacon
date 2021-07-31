@@ -532,7 +532,6 @@ Inherits Beacon.ConfigGroup
 		    Return False
 		  End If
 		  
-		  
 		  If Source.Type = Variant.TypeString Then
 		    // Could be JSON
 		    Try

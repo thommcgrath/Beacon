@@ -168,7 +168,6 @@ Begin ConfigEditor EngramControlConfigEditor
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
@@ -228,7 +227,6 @@ Begin ConfigEditor EngramControlConfigEditor
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -324,6 +322,25 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document.HasConfigGroup(BeaconConfigs.NameEngramControl) = False Then
+		    Return False
+		  End If
+		  
+		  Var NewGroup As BeaconConfigs.EngramControl = BeaconConfigs.EngramControl(Document.ConfigGroup(BeaconConfigs.NameEngramControl))
+		  Var CurrentGroup As BeaconConfigs.EngramControl = Self.Config(False)
+		  Var OldEngramRows As Dictionary = Self.PrepareEngramComparison()
+		  If CurrentGroup.Merge(NewGroup) Then
+		    Call Self.Config(True)
+		    Self.SetupUI()
+		    Self.Changed = CurrentGroup.Modified
+		    Self.ProcessEngramComparison(OldEngramRows)
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
@@ -385,6 +402,32 @@ End
 		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.NameEngramControl)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function PrepareEngramComparison() As Dictionary
+		  Var OldEngramRows As New Dictionary
+		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
+		    Var Engram As Beacon.Engram = Self.EngramList.RowTagAt(Idx)
+		    OldEngramRows.Value(Engram.ObjectID) = Self.EngramList.CellValueAt(Idx, 1)
+		  Next Idx
+		  Return OldEngramRows
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ProcessEngramComparison(OldEngramRows As Dictionary)
+		  Var SelectEngrams() As Beacon.Engram
+		  For Idx As Integer = 0 To Self.EngramList.LastRowIndex
+		    Var Engram As Beacon.Engram = Self.EngramList.RowTagAt(Idx)
+		    If OldEngramRows.HasKey(Engram.ObjectID) = False Or OldEngramRows.Value(Engram.ObjectID).StringValue <> Self.EngramList.CellValueAt(Idx, 1) Then
+		      SelectEngrams.Add(Engram)
+		    End If
+		  Next Idx
+		  If SelectEngrams.Count > 0 Then
+		    Self.SetupEngramsList(SelectEngrams)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -661,12 +704,24 @@ End
 		    Return True
 		  End If
 		  
-		  If Not Board.TextAvailable Then
+		  If Board.TextAvailable = False Then
 		    Return False
 		  End If
 		  
 		  Var Content As String = Board.Text.Trim
-		  Return (Content.BeginsWith("{") And Content.EndsWith("}")) Or (Content.BeginsWith("[") And Content.EndsWith("]"))
+		  If (Content.BeginsWith("{") And Content.EndsWith("}")) Or (Content.BeginsWith("[") And Content.EndsWith("]")) Then
+		    Return True
+		  End If
+		  
+		  Var Keys() As Beacon.ConfigKey = Self.Config(False).ManagedKeys
+		  For Each Key As Beacon.ConfigKey In Keys
+		    Var SearchFor As String = Key.Key + "="
+		    If Content.IndexOf(SearchFor) > -1 Then
+		      Return True
+		    End If
+		  Next Key
+		  
+		  Return False
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -679,11 +734,15 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
+		  Var OldEngramRows As Dictionary = Self.PrepareEngramComparison()
 		  Var Changed As Boolean = Config.Import(InputString)
 		  If Changed Then
 		    Call Self.Config(True) // Will cause the previous retreival to become permanent since we still have a reference
 		    Self.SetupUI
 		    Self.Changed = Config.Modified
+		    Self.ProcessEngramComparison(OldEngramRows)
+		  Else
+		    Self.Parse(InputString, "clipboard")
 		  End If
 		End Sub
 	#tag EndEvent
