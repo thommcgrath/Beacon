@@ -3538,8 +3538,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mLock.Leave
 		  Catch Err As DatabaseException
 		    Self.mLock.Leave
-		    Var Cloned As New UnsupportedOperationException
-		    Cloned.Message = Err.Message + EndOfLine + SQLString
+		    Var Cloned As New DatabaseException
+		    Cloned.ErrorNumber = Err.ErrorNumber
+		    Cloned.Message = "#" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message + EndOfLine + SQLString
 		    Raise Cloned
 		  End Try
 		End Sub
@@ -3582,8 +3583,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return Results
 		  Catch Err As DatabaseException
 		    Self.mLock.Leave
-		    Var Cloned As New UnsupportedOperationException
-		    Cloned.Message = Err.Message + EndOfLine + SQLString
+		    Var Cloned As New DatabaseException
+		    Cloned.ErrorNumber = Err.ErrorNumber
+		    Cloned.Message = "#" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message + EndOfLine + SQLString
 		    Raise Cloned
 		  End Try
 		End Function
