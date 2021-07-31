@@ -661,6 +661,14 @@ End
 		    Sources(I).AppendMode = Me.Value
 		  Next
 		  
+		  Var Enabled As Boolean = Not Me.Value
+		  Self.MaxItemSetsField.Enabled = Enabled
+		  Self.MaxItemSetsLabel.Enabled = Enabled
+		  Self.MaxItemSetsStepper.Enabled = Enabled
+		  Self.MinItemSetsField.Enabled = Enabled
+		  Self.MinItemSetsLabel.Enabled = Enabled
+		  Self.MinItemSetsStepper.Enabled = Enabled
+		  
 		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
