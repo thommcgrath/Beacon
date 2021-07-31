@@ -426,6 +426,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  
 		  Self.CheckingForEngramUpdates = True
+		  Self.mUpdateCheckTime = DateTime.Now
+		  If Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Off Then
+		    Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Multiple
+		  End If
 		  Var CheckURL As String = Self.ClassesURL(ForceRefresh)
 		  App.Log("Checking for blueprint updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
@@ -533,6 +537,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  Self.mBlueprintLabelsCacheDict = New Dictionary
 		  Self.mConfigKeyCache = New Dictionary
+		  
+		  Self.mUpdateCheckTimer = New Timer
+		  Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Off
+		  Self.mUpdateCheckTimer.Period = 60000
+		  AddHandler mUpdateCheckTimer.Action, WeakAddressOf mUpdateCheckTimer_Action
 		  
 		  Var AppSupport As FolderItem = App.ApplicationSupport
 		  
@@ -2481,6 +2490,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mUpdateCheckTimer_Action(Sender As Timer)
+		  // Check every four hours
+		  If DateTime.Now.SecondsFrom1970 - Self.mUpdateCheckTime.SecondsFrom1970 >= 14400 Then
+		    Self.CheckForEngramUpdates(False)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mUpdater_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
@@ -3909,6 +3927,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mTransactions() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateCheckTime As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateCheckTimer As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

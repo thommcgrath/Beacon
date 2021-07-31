@@ -192,7 +192,8 @@ Protected Module UpdatesKit
 		Private Sub mAutoCheckTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  If (mLastCheckTime Is Nil) Or DateTime.Now.SecondsFrom1970 - mLastCheckTime.SecondsFrom1970 >= 3600 Then
+		  // Check every 24 hours
+		  If (mLastCheckTime Is Nil) Or DateTime.Now.SecondsFrom1970 - mLastCheckTime.SecondsFrom1970 >= 86400 Then
 		    Check()
 		  End If
 		End Sub
