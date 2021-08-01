@@ -876,6 +876,7 @@ Begin BeaconDialog RegisterModDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         State           =   1
          TabIndex        =   5
          TabPanelIndex   =   4
          TabStop         =   True
@@ -885,17 +886,18 @@ Begin BeaconDialog RegisterModDialog
          Underline       =   False
          Value           =   True
          Visible         =   True
-         VisualState     =   1
          Width           =   296
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

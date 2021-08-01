@@ -133,7 +133,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -168,7 +168,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -200,7 +200,7 @@ Begin ContainerControl CommonServerSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -235,7 +235,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   118
+      Top             =   152
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -268,7 +268,7 @@ Begin ContainerControl CommonServerSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   118
+      Top             =   152
       Transparent     =   True
       Visible         =   True
       Width           =   460
@@ -302,7 +302,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   275
+      Top             =   309
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -345,7 +345,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   275
+      Top             =   309
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -381,7 +381,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   275
+      Top             =   309
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -423,7 +423,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   308
+      Top             =   342
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -466,7 +466,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   342
+      Top             =   376
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -509,7 +509,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   376
+      Top             =   410
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -545,7 +545,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   308
+      Top             =   342
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -577,7 +577,7 @@ Begin ContainerControl CommonServerSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   309
+      Top             =   343
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -611,7 +611,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   342
+      Top             =   376
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -646,7 +646,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   376
+      Top             =   410
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -678,7 +678,7 @@ Begin ContainerControl CommonServerSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   343
+      Top             =   377
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -709,7 +709,7 @@ Begin ContainerControl CommonServerSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   377
+      Top             =   411
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -743,7 +743,7 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   120
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -775,7 +775,7 @@ Begin ContainerControl CommonServerSettingsView
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   86
+      Top             =   120
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -810,11 +810,74 @@ Begin ContainerControl CommonServerSettingsView
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   86
+      Top             =   120
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   199
+   End
+   Begin ProfileColorChooser ColorChooser
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   0
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   54
+      Transparent     =   True
+      Visible         =   True
+      Width           =   220
+   End
+   Begin UITweaks.ResizedLabel ColorLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Color:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   136
    End
 End
 #tag EndWindow
@@ -927,6 +990,8 @@ End
 		    OtherGroup.Top = Self.MessageOfTheDayArea.Top + Self.MessageOfTheDayArea.Height + 12
 		    MapGroup.Visible = Self.mShowsMapMenu
 		  End If
+		  
+		  Self.ColorChooser.SelectedColor = Profile.ProfileColor
 		  
 		  Self.UpdateConfigSetUI()
 		  
@@ -1206,6 +1271,20 @@ End
 		  For Each Map As Beacon.Map In Maps
 		    Me.AddRow(Map.Name, Map.Mask)
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ColorChooser
+	#tag Event
+		Sub Change()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Beacon.ServerProfile In Self.mProfiles
+		    Profile.ProfileColor = Me.SelectedColor
+		  Next
+		  Self.Changed = Self.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents

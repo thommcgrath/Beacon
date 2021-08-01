@@ -252,15 +252,18 @@ End
 		  Var ViewAbbreviatedNames As New MenuItem("Use Abbreviated Server Names", Self.ListNamesAbbreviated)
 		  Var SortByName As New MenuItem("Sort By Name", Self.ListSortByName)
 		  Var SortByAddress As New MenuItem("Sort By Address", Self.ListSortByAddress)
+		  Var SortByColor As New MenuItem("Sort By Color", Self.ListSortByColor)
 		  ViewFullNames.HasCheckMark = Preferences.ServersListNameStyle = Self.ListNamesFull
 		  ViewAbbreviatedNames.HasCheckMark = Preferences.ServersListNameStyle = Self.ListNamesAbbreviated
 		  SortByName.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByName
 		  SortByAddress.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByAddress
+		  SortByColor.HasCheckMark = Preferences.ServersListSortedValue = Self.ListSortByColor
 		  Base.AddMenu(ViewFullNames)
 		  Base.AddMenu(ViewAbbreviatedNames)
 		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		  Base.AddMenu(SortByName)
 		  Base.AddMenu(SortByAddress)
+		  Base.AddMenu(SortByColor)
 		  
 		  Var Position As Point = Self.GlobalPosition
 		  Var Choice As MenuItem = Base.PopUp(Position.X + ItemRect.Left, Position.Y + ItemRect.Bottom)
@@ -272,7 +275,7 @@ End
 		  Case ViewFullNames, ViewAbbreviatedNames
 		    Preferences.ServersListNameStyle = Choice.Tag.StringValue
 		    Self.UpdateList()
-		  Case SortByName, SortByAddress
+		  Case SortByName, SortByAddress, SortByColor
 		    Preferences.ServersListSortedValue = Choice.Tag.StringValue
 		    Self.UpdateList()
 		  End Select
@@ -315,12 +318,12 @@ End
 		    
 		    Profiles.Add(Self.ServerList.RowTagAt(Idx))
 		  Next
-		  Self.UpdateList(Profiles)
+		  Self.UpdateList(Profiles, False)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile)
+		Sub UpdateList(SelectProfiles() As Beacon.ServerProfile, WithChangeEvent As Boolean)
 		  Self.ServerList.SelectionChangeBlocked = True
 		  Self.ServerList.RowCount = Self.Document.ServerProfileCount
 		  
@@ -332,7 +335,7 @@ End
 		    SelectIDs.Add(Profile.ProfileID)
 		  Next
 		  
-		  Var SortByAddress As Boolean = (Preferences.ServersListSortedValue = Self.ListSortByAddress)
+		  Var SortBy As String = Preferences.ServersListSortedValue
 		  Var AddressMatcher As New Regex
 		  AddressMatcher.SearchPattern = "^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d{1,5})$"
 		  
@@ -343,7 +346,8 @@ End
 		    Var Name As String = SortName + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Var Selected As Boolean = SelectIDs.IndexOf(Profile.ProfileID) > -1
 		    
-		    If SortByAddress Then
+		    Select Case SortBy
+		    Case Self.ListSortByAddress
 		      SortName = If(Profile.SecondaryName.IsEmpty = False, Profile.SecondaryName, SortName)
 		      Var Matches As RegexMatch = AddressMatcher.Search(SortName)
 		      If (Matches Is Nil) = False Then
@@ -354,7 +358,9 @@ End
 		        Var Port As Integer = Matches.SubExpressionString(5).ToInteger
 		        SortName = First.ToString(Locale.Raw, "000") + "." + Second.ToString(Locale.Raw, "000") + "." + Third.ToString(Locale.Raw, "000") + "." + Fourth.ToString(Locale.Raw, "000") + ":" + Port.ToString(Locale.Raw, "00000")
 		      End If
-		    End If
+		    Case Self.ListSortByColor
+		      SortName = "color" + CType(Profile.ProfileColor, Integer).ToString(Locale.Raw, "00") + ":" + SortName
+		    End Select
 		    
 		    If Self.ServerList.CellValueAt(Idx, 0) <> Name Then
 		      Self.ServerList.CellValueAt(Idx, 0) = Name
@@ -370,17 +376,17 @@ End
 		    End If
 		  Next
 		  Self.ServerList.Sort
-		  Self.ServerList.SelectionChangeBlocked(False) = False
+		  Self.ServerList.SelectionChangeBlocked(WithChangeEvent) = False
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateList(SelectProfile As Beacon.ServerProfile)
+		Sub UpdateList(SelectProfile As Beacon.ServerProfile, WithChangeEvent As Boolean)
 		  // Updates the list, selecting the requested profile
 		  
 		  Var Profiles(0) As Beacon.ServerProfile
 		  Profiles(0) = SelectProfile
-		  Self.UpdateList(Profiles)
+		  Self.UpdateList(Profiles, WithChangeEvent)
 		End Sub
 	#tag EndMethod
 
@@ -451,6 +457,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ListSortByAddress, Type = String, Dynamic = False, Default = \"address", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ListSortByColor, Type = String, Dynamic = False, Default = \"color", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ListSortByName, Type = String, Dynamic = False, Default = \"name", Scope = Public
@@ -619,6 +628,52 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		  #Pragma Unused Column
+		  #Pragma Unused BackgroundColor
+		  
+		  If Row >= Me.RowCount Then
+		    Return
+		  End If
+		  
+		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Row)
+		  If Profile.ProfileColor = Beacon.ServerProfile.Colors.None Then
+		    Return
+		  End If
+		  
+		  Select Case Profile.ProfileColor
+		  Case Beacon.ServerProfile.Colors.Blue
+		    G.DrawingColor = SystemColors.SystemBlueColor
+		  Case Beacon.ServerProfile.Colors.Brown
+		    G.DrawingColor = SystemColors.SystemBrownColor
+		  Case Beacon.ServerProfile.Colors.Green
+		    G.DrawingColor = SystemColors.SystemGreenColor
+		  Case Beacon.ServerProfile.Colors.Grey
+		    G.DrawingColor = SystemColors.SystemGrayColor
+		  Case Beacon.ServerProfile.Colors.Indigo
+		    G.DrawingColor = SystemColors.SystemIndigoColor
+		  Case Beacon.ServerProfile.Colors.Orange
+		    G.DrawingColor = SystemColors.SystemOrangeColor
+		  Case Beacon.ServerProfile.Colors.Pink
+		    G.DrawingColor = SystemColors.SystemPinkColor
+		  Case Beacon.ServerProfile.Colors.Purple
+		    G.DrawingColor = SystemColors.SystemPurpleColor
+		  Case Beacon.ServerProfile.Colors.Red
+		    G.DrawingColor = SystemColors.SystemRedColor
+		  Case Beacon.ServerProfile.Colors.Teal
+		    G.DrawingColor = SystemColors.SystemTealColor
+		  Case Beacon.ServerProfile.Colors.Yellow
+		    G.DrawingColor = SystemColors.SystemYellowColor
+		  End Select
+		  G.FillRectangle(G.Width - 3, 0, 3, G.Height)
+		  
+		  If Me.Selected(Row) And IsHighlighted Then
+		    G.DrawingColor = TextColor
+		    G.DrawLine(G.Width - 4, 0, G.Width - 4, G.Height)
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
@@ -641,7 +696,7 @@ End
 		    Profile.Name = "An Ark Server"
 		    
 		    Self.Document.AddServerProfile(Profile)
-		    Self.UpdateList(Profile)
+		    Self.UpdateList(Profile, True)
 		  Case "ViewOptionsButton"
 		    Self.HandleViewMenu(ItemRect)
 		  End Select

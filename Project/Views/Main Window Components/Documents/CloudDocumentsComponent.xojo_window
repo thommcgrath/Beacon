@@ -189,7 +189,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          RequiresSelection=   False
          RowSelectionType=   1
          Scope           =   2
-         SelectionChangeBlocked=   False
          TabIndex        =   2
          TabPanelIndex   =   4
          TabStop         =   True
@@ -473,7 +472,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

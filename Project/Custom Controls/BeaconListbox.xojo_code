@@ -160,9 +160,10 @@ Inherits Listbox
 		    
 		    Var LineHeight As Double = Clip.CapHeight
 		    Var LinePosition As Integer = Round(DrawTop + LineHeight)
+		    Var LineColor As Color = If(I = 0, TextColor, SecondaryTextColor)
 		    
+		    Clip.DrawingColor = LineColor
 		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
-		      Clip.DrawingColor = If(I = 0, TextColor, SecondaryTextColor)
 		      Clip.DrawText(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    

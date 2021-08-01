@@ -85,5 +85,7 @@ Protected Interface Application
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+	#tag EndViewBehavior
 End Interface
 #tag EndInterface

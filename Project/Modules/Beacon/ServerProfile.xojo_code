@@ -102,6 +102,7 @@ Protected Class ServerProfile
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
 		  Self.mMask = Dict.Lookup("Map", 0)
 		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
+		  Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
 		  
 		  If Dict.HasKey("External Account") Then
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
@@ -305,6 +306,7 @@ Protected Class ServerProfile
 		  Dict.Value("Platform") = Self.mPlatform
 		  Dict.Value("Map") = Self.mMask
 		  Dict.Value("Admin Notes") = Self.mAdminNotes
+		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
 		  If Self.mExternalAccountUUID <> Nil Then
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
@@ -521,6 +523,10 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProfileColor As Beacon.ServerProfile.Colors
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProfileID As String
 	#tag EndProperty
 
@@ -553,6 +559,23 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProfileColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mProfileColor <> Value Then
+			    Self.mProfileColor = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ProfileColor As Beacon.ServerProfile.Colors
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -604,6 +627,22 @@ Protected Class ServerProfile
 
 	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
+
+
+	#tag Enum, Name = Colors, Type = Integer, Flags = &h0
+		None
+		  Blue
+		  Brown
+		  Grey
+		  Green
+		  Indigo
+		  Orange
+		  Pink
+		  Purple
+		  Red
+		  Teal
+		Yellow
+	#tag EndEnum
 
 
 	#tag ViewBehavior
@@ -694,6 +733,28 @@ Protected Class ServerProfile
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ProfileColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Beacon.ServerProfile.Colors"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Blue"
+				"2 - Brown"
+				"3 - Grey"
+				"4 - Green"
+				"5 - Indigo"
+				"6 - Orange"
+				"7 - Pink"
+				"8 - Purple"
+				"9 - Red"
+				"10 - Teal"
+				"11 - Yellow"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -2491,6 +2491,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub mUpdateCheckTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
 		  // Check every four hours
 		  If DateTime.Now.SecondsFrom1970 - Self.mUpdateCheckTime.SecondsFrom1970 >= 14400 Then
 		    Self.CheckForEngramUpdates(False)

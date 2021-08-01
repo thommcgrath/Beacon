@@ -76,6 +76,28 @@ Inherits Beacon.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="ProfileColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Beacon.ServerProfile.Colors"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Blue"
+				"2 - Brown"
+				"3 - Grey"
+				"4 - Green"
+				"5 - Indigo"
+				"6 - Orange"
+				"7 - Pink"
+				"8 - Purple"
+				"9 - Red"
+				"10 - Teal"
+				"11 - Yellow"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

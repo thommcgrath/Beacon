@@ -130,12 +130,16 @@ Begin BeaconSubview ModEditorView
       Width           =   844
    End
    Begin Thread ImporterThread
+      DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   ""
    End
 End
 #tag EndWindow

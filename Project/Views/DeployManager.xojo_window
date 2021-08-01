@@ -69,7 +69,6 @@ Begin BeaconAutopositionWindow DeployManager
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -676,7 +675,6 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1266,6 +1264,51 @@ End
 	#tag Event
 		Sub Open()
 		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		  #Pragma Unused BackgroundColor
+		  
+		  If Row >= Me.RowCount Or Column <> 1 Then
+		    Return
+		  End If
+		  
+		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Row)
+		  If Profile.ProfileColor = Beacon.ServerProfile.Colors.None Then
+		    Return
+		  End If
+		  
+		  Select Case Profile.ProfileColor
+		  Case Beacon.ServerProfile.Colors.Blue
+		    G.DrawingColor = SystemColors.SystemBlueColor
+		  Case Beacon.ServerProfile.Colors.Brown
+		    G.DrawingColor = SystemColors.SystemBrownColor
+		  Case Beacon.ServerProfile.Colors.Green
+		    G.DrawingColor = SystemColors.SystemGreenColor
+		  Case Beacon.ServerProfile.Colors.Grey
+		    G.DrawingColor = SystemColors.SystemGrayColor
+		  Case Beacon.ServerProfile.Colors.Indigo
+		    G.DrawingColor = SystemColors.SystemIndigoColor
+		  Case Beacon.ServerProfile.Colors.Orange
+		    G.DrawingColor = SystemColors.SystemOrangeColor
+		  Case Beacon.ServerProfile.Colors.Pink
+		    G.DrawingColor = SystemColors.SystemPinkColor
+		  Case Beacon.ServerProfile.Colors.Purple
+		    G.DrawingColor = SystemColors.SystemPurpleColor
+		  Case Beacon.ServerProfile.Colors.Red
+		    G.DrawingColor = SystemColors.SystemRedColor
+		  Case Beacon.ServerProfile.Colors.Teal
+		    G.DrawingColor = SystemColors.SystemTealColor
+		  Case Beacon.ServerProfile.Colors.Yellow
+		    G.DrawingColor = SystemColors.SystemYellowColor
+		  End Select
+		  G.FillRectangle(G.Width - 3, 0, 3, G.Height)
+		  
+		  If Me.Selected(Row) And IsHighlighted Then
+		    G.DrawingColor = TextColor
+		    G.DrawLine(G.Width - 4, 0, G.Width - 4, G.Height)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

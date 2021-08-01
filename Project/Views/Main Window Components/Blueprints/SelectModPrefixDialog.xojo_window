@@ -136,6 +136,7 @@ Begin BeaconDialog SelectModPrefixDialog
       LockRight       =   True
       LockTop         =   True
       PreferencesKey  =   ""
+      RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
       TabIndex        =   2
@@ -147,7 +148,9 @@ Begin BeaconDialog SelectModPrefixDialog
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   460
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton ActionButton

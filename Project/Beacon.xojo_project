@@ -533,6 +533,7 @@ Window=SettingsListStringElement;Views/Config Editors/Other Settings/SettingsLis
 Window=SettingsListNumberElement;Views/Config Editors/Other Settings/SettingsListNumberElement.xojo_window;&h000000003CBBCFFF;&h0000000035BE97FF;false
 Window=SettingsListBooleanElement;Views/Config Editors/Other Settings/SettingsListBooleanElement.xojo_window;&h00000000439B0FFF;&h0000000035BE97FF;false
 Window=SelectModPrefixDialog;Views/Main Window Components/Blueprints/SelectModPrefixDialog.xojo_window;&h000000001A8B5FFF;&h00000000472E07FF;false
+Class=ProfileColorChooser;Custom Controls/ProfileColorChooser.xojo_code;&h000000003D2097FF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5
