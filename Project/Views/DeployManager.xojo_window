@@ -731,7 +731,11 @@ End
 		    End If
 		    Self.ServerList.AddRow("", Label)
 		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
-		    Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Profile.Enabled
+		    If Self.PreselectProfileUUIDs.Count = 0 Then
+		      Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Profile.Enabled
+		    Else
+		      Self.ServerList.CellCheckBoxValueAt(Self.ServerList.LastAddedRowIndex, 0) = Self.PreselectProfileUUIDs.IndexOf(Profile.ProfileID) > -1
+		    End If
 		  Next
 		  
 		  Self.ServerList.DefaultRowHeight = BeaconListbox.DoubleLineRowHeight
@@ -927,8 +931,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document)
+		Sub Constructor(Document As Beacon.Document, PreselectServers() As Beacon.ServerProfile)
 		  Self.Document = Document
+		  For Each Profile As Beacon.ServerProfile In PreselectServers
+		    Self.PreselectProfileUUIDs.Add(Profile.ProfileID)
+		  Next Profile
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -1214,6 +1221,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private Engines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private PreselectProfileUUIDs() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

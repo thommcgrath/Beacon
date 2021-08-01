@@ -398,6 +398,11 @@ End
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event ShouldDeployProfiles(SelectedProfiles() As Beacon.ServerProfile)
+	#tag EndHook
+
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -571,26 +576,38 @@ End
 		  CopyProfileMenuItem.Enabled = False
 		  Base.AddMenu(CopyProfileMenuItem)
 		  
-		  Var BackupsRoot As FolderItem = App.BackupsFolder
-		  
-		  Var RowIndex As Integer = Me.RowFromXY(X, Y)
-		  If RowIndex = -1 Then
-		    Base.AddMenu(New MenuItem("Show Config Backups", BackupsRoot))
-		    Return True
+		  Var DeployItem As MenuItem
+		  If Me.SelectedRowCount > 1 Then
+		    DeployItem = New MenuItem("Deploy These Servers…")
+		  Else
+		    DeployItem = New MenuItem("Deploy This Server…")
 		  End If
+		  Var DeployProfiles() As Beacon.ServerProfile
+		  For Idx As Integer = 0 To Me.LastRowIndex
+		    If Me.Selected(Idx) = False Then
+		      Continue
+		    End If
+		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(Idx)
+		    If Profile.DeployCapable Then
+		      DeployProfiles.Add(Profile)
+		    End If
+		  Next Idx
+		  DeployItem.Enabled = DeployProfiles.Count > 0
+		  DeployItem.Tag = DeployProfiles
+		  Base.AddMenu(DeployItem)
 		  
-		  Try
-		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(RowIndex)
+		  Var BackupsItem As New MenuItem("Show Config Backups")
+		  Base.AddMenu(BackupsItem)
+		  
+		  If Me.SelectedRowCount = 1 Then
+		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
 		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
 		    CopyProfileMenuItem.Enabled = True
 		    
-		    Var Folder As FolderItem = BackupsRoot.Child(Profile.BackupFolderName)
-		    Base.AddMenu(New MenuItem("Show Config Backups", Folder))
-		  Catch Err As RuntimeException
-		    Var Item As New MenuItem("Show Config Backups", BackupsRoot)
-		    Item.Enabled = False
-		    Base.AddMenu(Item)
-		  End Try
+		    BackupsItem.Tag = App.BackupsFolder.Child(Profile.BackupFolderName)
+		  Else
+		    BackupsItem.Tag = App.BackupsFolder
+		  End If
 		  
 		  Return True
 		End Function
@@ -611,6 +628,9 @@ End
 		    Var ProfileID As String = HitItem.Tag
 		    Var Board As New Clipboard
 		    Board.Text = ProfileID
+		  Case "Deploy These Servers…", "Deploy This Server…"
+		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
+		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
 		  End Select
 		  
 		  Return True

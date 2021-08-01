@@ -478,8 +478,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
-		  Const UseNewDeploy = True
-		  
+		  Var PreselectServers() As Beacon.ServerProfile
+		  Self.BeginDeploy(PreselectServers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BeginDeploy(PreselectServers() As Beacon.ServerProfile)
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
 		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
@@ -501,17 +506,9 @@ End
 		      Return
 		    End If
 		    
-		    #if UseNewDeploy
-		      Var Win As DeployManager = New DeployManager(Self.Document)
-		      Self.mDeployWindow = New WeakRef(Win)
-		      Win.BringToFront()
-		    #else
-		      Var Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
-		      If Win <> Nil Then
-		        Self.mDeployWindow = New WeakRef(Win)
-		        Win.Show()
-		      End If
-		    #endif
+		    Var Win As DeployManager = New DeployManager(Self.Document, PreselectServers)
+		    Self.mDeployWindow = New WeakRef(Win)
+		    Win.BringToFront()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -691,6 +688,9 @@ End
 		  End If
 		  
 		  Var Panel As ConfigEditor = Self.Panels.Value(CacheKey)
+		  If Panel IsA ServersConfigEditor Then
+		    RemoveHandler ServersConfigEditor(Panel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
+		  End If
 		  RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		  Panel.Close
 		  Self.Panels.Remove(CacheKey)
@@ -1004,6 +1004,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Beacon.ServerProfile)
+		  #Pragma Unused Sender
+		  Self.BeginDeploy(SelectedProfiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowIssues()
 		  ResolveIssuesDialog.Present(Self, Self.Document, AddressOf GoToIssue)
 		  Self.Changed = Self.Document.Modified
@@ -1244,6 +1251,9 @@ End
 			    End If
 			    If Embed Then
 			      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+			      If Self.CurrentPanel IsA ServersConfigEditor Then
+			        AddHandler ServersConfigEditor(Self.CurrentPanel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
+			      End If
 			      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
 			    Else
 			      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
