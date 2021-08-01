@@ -561,7 +561,7 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$versions = [];
-		if (array_key_exists('Version', $xml) === false) {
+		if ($xml->Version->count() === 0) {
 			return $versions;
 		}
 		
