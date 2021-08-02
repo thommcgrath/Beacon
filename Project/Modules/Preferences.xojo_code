@@ -609,6 +609,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.DictionaryValue("Presets Enabled Mods", Nil)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.DictionaryValue("Presets Enabled Mods") = Value
+			End Set
+		#tag EndSetter
+		Protected PresetsEnabledMods As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.StringValue("Servers List Name Style", ServersConfigEditor.ListNamesFull)
 			End Get
 		#tag EndGetter

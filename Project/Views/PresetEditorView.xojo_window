@@ -888,7 +888,7 @@ End
 		    Return
 		  End If
 		  
-		  Var NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList, Entries)
+		  Var NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If
@@ -1029,7 +1029,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
+		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
 		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Return
 		  End If

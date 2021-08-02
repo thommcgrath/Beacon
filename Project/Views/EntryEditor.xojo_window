@@ -115,7 +115,7 @@ Begin BeaconDialog EntryEditor
          Top             =   56
          Transparent     =   False
          Visible         =   True
-         Width           =   340
+         Width           =   263
       End
       Begin BeaconListbox EngramList
          AllowInfiniteScroll=   False
@@ -157,7 +157,6 @@ Begin BeaconDialog EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   2
@@ -209,6 +208,38 @@ Begin BeaconDialog EntryEditor
          UseFocusRing    =   True
          Visible         =   True
          Width           =   340
+      End
+      Begin UITweaks.ResizedPushButton ModsButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Mods"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Italic          =   False
+         Left            =   315
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   57
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   65
       End
    End
    Begin GroupBox SettingsGroup
@@ -370,7 +401,6 @@ Begin BeaconDialog EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   0
@@ -468,6 +498,15 @@ End
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
 		  
+		  If Self.mShowModsButton = False Then
+		    Self.ModsButton.Visible = False
+		    Self.FilterField.Width = Self.EngramsGroup.Width - 40
+		  Else
+		    #if TargetMacOS
+		      Self.ModsButton.Top = Self.FilterField.Top
+		    #endif
+		  End If
+		  
 		  Self.SwapButtons()
 		  Self.mSettingUp = False
 		End Sub
@@ -494,10 +533,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Mods As Beacon.StringList)
+		Private Sub Constructor(Mods As Beacon.StringList, WithModsButton As Boolean)
 		  Self.mSelectedEngrams = New Dictionary
 		  Self.mMods = Mods
 		  Self.mSettingUp = True
+		  Self.mShowModsButton = WithModsButton
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -529,14 +569,62 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mModSelectionController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
+		    Var ModList As New Beacon.StringList
+		    Var PrefsDict As New Dictionary
+		    For Each Details As Beacon.ModDetails In Mods
+		      If Editor.ModEnabled(Details.ModID) Then
+		        ModList.Append(Details.ModID)
+		        PrefsDict.Value(Details.ModID) = True
+		      Else
+		        PrefsDict.Value(Details.ModID) = False
+		      End If
+		    Next
+		    Self.mMods = ModList
+		    Preferences.PresetsEnabledMods = PrefsDict
+		    Self.UpdateFilter
+		  End If
+		  
+		  Self.mModSelectionController = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
+		  Var PresetsModsDict As Dictionary = Preferences.PresetsEnabledMods
+		  If PresetsModsDict Is Nil Then
+		    PresetsModsDict = New Dictionary
+		  End If
+		  Var ModList As New Beacon.StringList
+		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		  For Each Details As Beacon.ModDetails In Mods
+		    If PresetsModsDict.Lookup(Details.ModID, Details.DefaultEnabled).BooleanValue = True Then
+		      ModList.Append(Details.ModID)
+		    End If
+		  Next
+		  
+		  Return Present(Parent, ModList, True, Sources, Prefilter)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
-		  If Sources <> Nil And Sources.LastIndex > 0 Then
+		  Return Present(Parent, Mods, False, Sources, Prefilter)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function Present(Parent As Window, Mods As Beacon.StringList, WithModsButton As Boolean, Sources() As Beacon.SetEntry, Prefilter As String) As Beacon.SetEntry()
+		  If Sources <> Nil And Sources.Count > 1 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
-		  Var Win As New EntryEditor(Mods)
+		  Var Win As New EntryEditor(Mods, WithModsButton)
 		  
 		  If Sources <> Nil And Sources.LastIndex = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
@@ -674,6 +762,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModSelectionController As PopoverController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOriginalEntry As Beacon.SetEntry
 	#tag EndProperty
 
@@ -683,6 +775,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShowModsButton As Boolean
 	#tag EndProperty
 
 
@@ -822,6 +918,24 @@ End
 		  Me.Height = Me.Height + Delta
 		  Self.EngramList.Height = Self.EngramList.Height - Delta
 		  Self.EngramList.Top = Self.EngramList.Top + Delta
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ModsButton
+	#tag Event
+		Sub Action()
+		  If (Self.mModSelectionController Is Nil) = False And Self.mModSelectionController.Visible Then
+		    Self.mModSelectionController.Dismiss(False)
+		    Self.mModSelectionController = Nil
+		    Return
+		  End If
+		  
+		  Var ModPicker As New ModSelectionGrid(Self.mMods)
+		  Var Controller As New PopoverController(ModPicker)
+		  Controller.Show(Me)
+		  
+		  AddHandler Controller.Finished, WeakAddressOf mModSelectionController_Finished
+		  Self.mModSelectionController = Controller
 		End Sub
 	#tag EndEvent
 #tag EndEvents
