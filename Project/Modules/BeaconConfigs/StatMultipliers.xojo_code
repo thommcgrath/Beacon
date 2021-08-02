@@ -59,6 +59,18 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  Next
 		  
+		  For StatIndex As Integer = Self.MutagenTamed.FirstIndex To Self.MutagenTamed.LastIndex
+		    If Self.MutagenTamed(StatIndex) <> Self.DefaultMutagenLevelCount(False, StatIndex) Then
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MutagenLevelBoost[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenTamed(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
+		    End If
+		  Next StatIndex
+		  
+		  For StatIndex As Integer = Self.MutagenBred.FirstIndex To Self.MutagenBred.LastIndex
+		    If Self.MutagenBred(StatIndex) <> Self.DefaultMutagenLevelCount(True, StatIndex) Then
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MutagenLevelBoostBred[" + StatIndex.ToString(Locale.Raw, "0") + "]=" + Self.MutagenBred(StatIndex).ToString(Locale.Raw, "0"), StatIndex))
+		    End If
+		  Next StatIndex
+		  
 		  Return Values
 		End Function
 	#tag EndEvent
@@ -72,8 +84,9 @@ Inherits Beacon.ConfigGroup
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Add"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Affinity"))
 		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoWild"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MutagenLevelBoost"))
+		  Keys.Add(New Beacon.ConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "MutagenLevelBoostBred"))
 		  Return Keys
-		  
 		End Function
 	#tag EndEvent
 
@@ -91,6 +104,18 @@ Inherits Beacon.ConfigGroup
 		  If Dict.HasKey("WildStats") And Dict.Value("WildStats") IsA Dictionary Then
 		    Self.WildStats = Dict.Value("WildStats")
 		  End If
+		  If Dict.HasKey("MutagenTamed") And Dict.Value("MutagenTamed").IsArray Then
+		    Var Values() As Integer = Self.IntegerArray(Dict.Value("MutagenTamed"))
+		    For StatIndex As Integer = 0 To Min(Values.LastIndex, Self.MutagenTamed.LastIndex)
+		      Self.MutagenTamed(StatIndex) = Values(StatIndex)
+		    Next StatIndex
+		  End If
+		  If Dict.HasKey("MutagenBred") And Dict.Value("MutagenBred").IsArray Then
+		    Var Values() As Integer = Self.IntegerArray(Dict.Value("MutagenBred"))
+		    For StatIndex As Integer = 0 To Min(Values.LastIndex, Self.MutagenBred.LastIndex)
+		      Self.MutagenBred(StatIndex) = Values(StatIndex)
+		    Next StatIndex
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -106,6 +131,12 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  If Self.WildStats.KeyCount > 0 Then
 		    Dict.Value("WildStats") = Self.WildStats
+		  End If
+		  If Self.MutagenTamed.Count > 0 Then
+		    Dict.Value("MutagenTamed") = Self.MutagenTamed
+		  End If
+		  If Self.MutagenBred.Count > 0 Then
+		    Dict.Value("MutagenBred") = Self.MutagenBred
 		  End If
 		End Sub
 	#tag EndEvent
@@ -123,7 +154,24 @@ Inherits Beacon.ConfigGroup
 		  Self.PlayerStats = New Dictionary
 		  Self.TamedStats = New Dictionary
 		  Self.WildStats = New Dictionary
+		  
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Self.MutagenTamed.ResizeTo(Stats.LastIndex)
+		  Self.MutagenBred.ResizeTo(Stats.LastIndex)
+		  For Each Stat As Beacon.Stat In Stats
+		    Self.MutagenTamed(Stat.Index) = Self.DefaultMutagenLevelCount(False, Stat.Index)
+		    Self.MutagenBred(Stat.Index) = Self.DefaultMutagenLevelCount(True, Stat.Index)
+		  Next Stat
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function DefaultMutagenLevelCount(Bred As Boolean, StatIndex As Integer) As Integer
+		  Select Case StatIndex
+		  Case 0, 1, 7, 8
+		    Return If(Bred, 1, 5)
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -144,8 +192,10 @@ Inherits Beacon.ConfigGroup
 		    Var TamedAddKey As String = "PerLevelStatsMultiplier_DinoTamed_Add[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    Var TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    Var WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var MutagenTamedKey As String = "MutagenLevelBoost[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
+		    Var MutagenBredKey As String = "MutagenLevelBoostBred[" + Stat.Index.ToString(Locale.Raw, "0") + "]"
 		    
-		    If ParsedData.HasAnyKey(PlayerBaseKey, PlayerPerLevelKey, TamedPerLevelKey, TamedAddKey, TamedAffinityKey, WildPerLevelKey) = False Then
+		    If ParsedData.HasAnyKey(PlayerBaseKey, PlayerPerLevelKey, TamedPerLevelKey, TamedAddKey, TamedAffinityKey, WildPerLevelKey, MutagenTamedKey, MutagenBredKey) = False Then
 		      Continue
 		    ElseIf FoundConfig = False Then
 		      FoundConfig = True
@@ -161,12 +211,73 @@ Inherits Beacon.ConfigGroup
 		    Config.TamedAddMultiplier(Stat) = ParsedData.DoubleValue(TamedAddKey, Stat.TamedAddDefault, True)
 		    Config.TamedAffinityMultiplier(Stat) = ParsedData.DoubleValue(TamedAffinityKey, Stat.TamedAffinityDefault, True)
 		    Config.WildPerLevelMultiplier(Stat) = ParsedData.DoubleValue(WildPerLevelKey, Stat.WildDefault, True)
+		    Config.MutagenTamedLevels(Stat) = Round(ParsedData.DoubleValue(MutagenTamedKey, DefaultMutagenLevelCount(False, Stat.Index), True))
+		    Config.MutagenBredLevels(Stat) = Round(ParsedData.DoubleValue(MutagenBredKey, DefaultMutagenLevelCount(True, Stat.Index), True))
 		  Next
 		  
 		  If FoundConfig Then
 		    Return Config
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function IntegerArray(Value As Variant) As Integer()
+		  Var Values() As Integer
+		  If IsNull(Value) Or Value.IsArray = False Then
+		    Return Values
+		  End If
+		  
+		  If Value.ArrayElementType = Variant.TypeInt64 Or Value.ArrayElementType = Variant.TypeInt32 Then
+		    Values = Value
+		  Else
+		    Var Members() As Variant
+		    Try
+		      Members = Value
+		    Catch Err As TypeMismatchException
+		    End Try
+		    
+		    Values.ResizeTo(Members.LastIndex)
+		    For Idx As Integer = 0 To Members.LastIndex
+		      Try
+		        Values(Idx) = Members(Idx)
+		      Catch Err As TypeMismatchException
+		      End Try
+		    Next Idx
+		  End If
+		  
+		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutagenBredLevels(Stat As Beacon.Stat) As Integer
+		  Return Self.MutagenBred(Stat.Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MutagenBredLevels(Stat As Beacon.Stat, Assigns Value As Integer)
+		  If Self.MutagenBred(Stat.Index) <> Value Then
+		    Self.MutagenBred(Stat.Index) = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutagenTamedLevels(Stat As Beacon.Stat) As Integer
+		  Return Self.MutagenTamed(Stat.Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MutagenTamedLevels(Stat As Beacon.Stat, Assigns Value As Integer)
+		  If Self.MutagenTamed(Stat.Index) <> Value Then
+		    Self.MutagenTamed(Stat.Index) = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -463,6 +574,14 @@ Inherits Beacon.ConfigGroup
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private MutagenBred() As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private MutagenTamed() As Integer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private PlayerStats As Dictionary
