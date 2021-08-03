@@ -631,10 +631,13 @@ abstract class BeaconCommon {
 	}
 	
 	public static function RemoteAddr() {
-		if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) === false) {
-			return $_SERVER['HTTP_X_FORWARDED_FOR'];
-		} elseif (empty($_SERVER['HTTP_CF_CONNECTING_IP']) === false) {
+		if (empty($_SERVER['HTTP_CF_CONNECTING_IP']) === false) {
 			return $_SERVER['HTTP_CF_CONNECTING_IP'];
+		} elseif (empty($_SERVER['HTTP_TRUE_CLIENT_IP']) === false) {
+			return $_SERVER['HTTP_TRUE_CLIENT_IP'];
+		} elseif (empty($_SERVER['HTTP_X_FORWARDED_FOR']) === false) {
+			$arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+			return $arr[0];
 		} else {
 			return $_SERVER['REMOTE_ADDR'];
 		}
