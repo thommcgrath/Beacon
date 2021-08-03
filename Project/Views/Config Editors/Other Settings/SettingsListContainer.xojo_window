@@ -59,6 +59,34 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h0
+		Function Filter() As String
+		  Return Self.mFilter
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Filter(Assigns Value As String)
+		  // Case in-sensitive is fine
+		  If Self.Filter = Value Then
+		    Return
+		  End If
+		  
+		  Self.mFilter = Value
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event ValueChanged(Key As Beacon.ConfigKey, NewValue As Variant)
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mFilter As String
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
 #tag ViewBehavior

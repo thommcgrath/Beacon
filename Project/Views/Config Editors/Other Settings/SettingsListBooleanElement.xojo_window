@@ -57,7 +57,7 @@ Begin SettingsListElement SettingsListBooleanElement
       Visible         =   True
       Width           =   40
    End
-   Begin Label NameLabel
+   Begin Label mNameLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       DataField       =   ""
@@ -92,7 +92,7 @@ Begin SettingsListElement SettingsListBooleanElement
       Visible         =   True
       Width           =   180
    End
-   Begin Label DescriptionLabel
+   Begin Label mDescriptionLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       DataField       =   ""
@@ -127,7 +127,7 @@ Begin SettingsListElement SettingsListBooleanElement
       Visible         =   True
       Width           =   232
    End
-   Begin IconCanvas DismissButton
+   Begin IconCanvas mDismissButton
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
@@ -180,6 +180,24 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function DescriptionLabel() As Label
+		  Return Self.mDescriptionLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DiscardButton() As IconCanvas
+		  Return Self.mDismissButton
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NameLabel() As Label
+		  Return Self.mNameLabel
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function OriginalValue() As Boolean
 		  Return Self.mOriginalValue
@@ -223,7 +241,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DismissButton
+#tag Events mDismissButton
 	#tag Event
 		Sub Action()
 		  Self.Delete()

@@ -26,7 +26,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -36,6 +36,7 @@ Protected Class ConfigKey
 		  Self.mDescription = Description
 		  Self.mDefaultValue = DefaultValue
 		  Self.mNativeEditorVersion = NativeEditorVersion
+		  Self.mUIGroup = UIGroup
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -153,6 +154,12 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function UIGroup() As NullableString
+		  Return Self.mUIGroup
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UUID() As v4UUID
 		  Return Self.mUUID
 		End Function
@@ -235,6 +242,10 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mNitradoPaths() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUIGroup As NullableString
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

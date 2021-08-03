@@ -229,6 +229,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events SearchField1
+	#tag Event
+		Sub TextChanged()
+		  Self.List.Filter = Me.Text
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Index"

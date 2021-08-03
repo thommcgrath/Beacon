@@ -13,9 +13,27 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function DescriptionLabel() As Label
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DiscardButton() As IconCanvas
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Key() As Beacon.ConfigKey
 		  Return Self.mKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NameLabel() As Label
+		  
 		End Function
 	#tag EndMethod
 
