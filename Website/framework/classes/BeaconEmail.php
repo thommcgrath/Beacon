@@ -51,6 +51,42 @@ abstract class BeaconEmail {
 	public static function IsEmailValid(string $email) {
 		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
+	
+	// Checks with CleanTalk if the address is valid
+	public static function QuickVerify(string $email) {
+		$user = \BeaconUser::GetByEmail($email);
+		if (is_null($user) === false) {
+			return true;
+		}
+		
+		$cache_key = sha1('CleanTalk Result ' . strtolower($email));
+		$url = 'https://api.cleantalk.org/?method_name=email_check&auth_key=' . urlencode(BeaconCommon::GetGlobal('CleanTalk Email Check Key')) . '&email=' . urlencode($email);
+		$body = BeaconCache::Get($cache_key);
+		if (is_null($body)) {
+			$curl = curl_init($url);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			$body = curl_exec($curl);
+			$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			if ($status !== 200) {
+				// This isn't really true, but err on the side of caution
+				return true;
+			}
+			BeaconCache::Set($cache_key, $body);
+		}
+		
+		$parsed = json_decode($body, TRUE);
+		$data = $parsed['data'];
+		$result = $data[$email]['result'];
+		switch ($result) {
+		case 'NOT_EXISTS':
+		case 'MX_FAIL':
+		case 'MX_FAIL':
+			// Confirmed failure
+			return false;
+		}
+		
+		return true;
+	}
 }
 
 ?>

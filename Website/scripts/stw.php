@@ -4,6 +4,12 @@
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
+	
+// Clear out old requests
+$database->BeginTransaction();
+$database->Query('DELETE FROM stw_applicants WHERE generated_purchase_id IS NULL AND CURRENT_TIMESTAMP - date_applied > $1::INTERVAL;', '6 months');
+$database->Commit();
+
 $results = $database->Query('SELECT stw_id, original_purchase_id FROM stw_purchases WHERE generated_purchase_id IS NULL LIMIT 1;');
 if ($results->RecordCount() != 1) {
 	echo "No free copies to give away today\n";

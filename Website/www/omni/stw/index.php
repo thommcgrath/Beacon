@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		encrypt.setPublicKey(<?php echo json_encode($public_key); ?>);
 		
 		var encrypted = encrypt.encrypt(document.getElementById('stw_email_field').value);
+		var join_button = document.getElementById('stw_join_button');
+		join_button.disabled = true;
 		
 		var fields = {'email': encrypted};
 		request.post('submit', fields, function (obj) {
@@ -48,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				dialog.show('Unable to submit the email address', 'Sorry, there was a ' + http_status + ' error: ' + response_body);
 				break;
 			}
+			join_button.disabled = false;
 		});
 		
 		ev.preventDefault();
@@ -66,7 +69,7 @@ BeaconTemplate::FinishScript();
 <h3>How to get a free copy of Beacon Omni</h3>
 <p>If you'd like to be a potential recipient of a free Beacon Omni license under the <em>Share The Wealth</em> program, all you need to do is add your email address.</p>
 <div id="stw_container" class="text-center inset-note">
-<form action="#" method="post" id="stw_form"><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"><br><br><input type="submit" value="Join the Program"></form>
+<form action="#" method="post" id="stw_form"><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"><br><br><input type="submit" value="Join the Program" id="stw_join_button"></form>
 </div>
-<p class="smaller">There's no guarantee when or if your address will be chosen at random. Odds of selection depend on number of participants and purchasers. One recipient will be chosen each day at <?php echo $utc->format('g:i A T'); ?> / <?php echo $est->format('g:i A T'); ?> / <?php echo $pst->format('g:i A T'); ?>, as long as there are Beacon Omni licenses waiting in the <em>Share The Wealth</em> program.</p>
+<p class="smaller">There's no guarantee when or if your address will be chosen at random. Odds of selection depend on number of participants and purchasers. One recipient will be chosen each day at <?php echo $utc->format('g:i A T'); ?> / <?php echo $est->format('g:i A T'); ?> / <?php echo $pst->format('g:i A T'); ?>, as long as there are Beacon Omni licenses waiting in the <em>Share The Wealth</em> program. Participants will be removed from the list after six months.</p>
 <p class="smaller">Because Beacon is so interested in privacy, email addresses are normally stored as a one-way hash. However, the <em>Share The Wealth</em> program requires email addresses to be accessible to send out notifications to recipients. Therefore, email addresses entered into the <em>Share The Wealth</em> program will be stored using encryption instead of hashing. If selected, the encrypted email address will be discarded and converted to a high security hashed value.</p>
