@@ -4,6 +4,12 @@
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
+	
+// Clear out old requests
+$database->BeginTransaction();
+$database->Query('DELETE FROM stw_applicants WHERE generated_purchase_id IS NULL AND CURRENT_TIMESTAMP - date_applied > $1::INTERVAL;', '6 months');
+$database->Commit();
+
 $results = $database->Query('SELECT stw_id, original_purchase_id FROM stw_purchases WHERE generated_purchase_id IS NULL LIMIT 1;');
 if ($results->RecordCount() != 1) {
 	echo "No free copies to give away today\n";
@@ -43,8 +49,8 @@ $subtotal = $retail_price;
 $total = 0;
 $generated_purchase_id = BeaconCommon::GenerateUUID();
 $database->BeginTransaction();
-$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $4, $5, $6, $7);', $generated_purchase_id, $email_id, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id);
-$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 1, 0);
+$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, currency) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);', $generated_purchase_id, $email_id, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id, 'USD');
+$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total, currency) VALUES ($1, $2, $3, $4, $5, $6, $7);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 1, 0, 'USD');
 $database->Query('UPDATE stw_applicants SET generated_purchase_id = $2, encrypted_email = NULL WHERE applicant_id = $1;', $applicant_id, $generated_purchase_id);
 $database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE stw_id = $1;', $stw_id, $generated_purchase_id);
 $database->Commit();

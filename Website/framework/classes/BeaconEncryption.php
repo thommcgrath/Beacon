@@ -139,7 +139,6 @@ abstract class BeaconEncryption {
 		openssl_pkey_export($handle, $private_key);
 		$public_key = openssl_pkey_get_details($handle);
 		$public_key = $public_key['key'];
-		openssl_pkey_free($handle);
 	}
 	
 	public static function ExtractPublicKey(string $private_key) {

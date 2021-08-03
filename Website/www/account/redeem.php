@@ -53,8 +53,8 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
 		$database->Query('INSERT INTO purchase_code_log (code, user_id, source_ip, success) VALUES ($1, $2, $3, FALSE);', $code, $user->UserID(), $_SERVER['REMOTE_ADDR']);
 		$database->Commit();
 	} else {
-		$results = $database->Query('SELECT retail_price FROM products WHERE product_id = $1;', OMNI_PRODUCT_ID);
-		$retail_price = $results->Field('retail_price');
+		$results = $database->Query('SELECT price FROM product_prices WHERE product_id = $1 AND currency = $2;', OMNI_PRODUCT_ID, 'USD');
+		$retail_price = $results->Field('price');
 		
 		$results = $database->Query('SELECT code FROM purchase_codes WHERE LOWER(code) = LOWER($1) AND redemption_date IS NULL;', $code);
 		if ($results->RecordCount() == 0) {
@@ -73,8 +73,8 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
 			
 			$database->BeginTransaction();
 			$database->Query('UPDATE purchase_codes SET redemption_date = CURRENT_TIMESTAMP, redemption_purchase_id = $2 WHERE code = $1;', $code, $purchase_id);
-			$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $3, 0, 0, $4);', $purchase_id, $email_id, $retail_price, 'Code ' . $code);
-			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $3, 1, 0);', $purchase_id, OMNI_PRODUCT_ID, $retail_price);
+			$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, currency) VALUES ($1, $2, $3, $3, 0, 0, $4, $5);', $purchase_id, $email_id, $retail_price, 'Code ' . $code, 'USD');
+			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total, currency) VALUES ($1, $2, $3, $3, 1, 0, $4);', $purchase_id, OMNI_PRODUCT_ID, $retail_price, 'USD');
 			$database->Query('INSERT INTO purchase_code_log (code, user_id, source_ip, success) VALUES ($1, $2, $3, TRUE);', $code, $user->UserID(), $_SERVER['REMOTE_ADDR']);
 			$database->Commit();
 			

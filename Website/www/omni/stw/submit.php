@@ -29,6 +29,14 @@ if (!filter_var($decrypted_email, FILTER_VALIDATE_EMAIL)) {
 	exit;
 }
 
+// Do a quick verify of the address
+$verified = BeaconEmail::QuickVerify($decrypted_email);
+if ($verified === false) {
+	http_response_code(400);
+	echo json_encode(array('error' => 'Email address does not appear to be correct. Check the address and try again. If this is an error, create an account first to skip this check.'));
+	exit;
+}
+
 // See if the user already owns Omni, no reason to put them on the list if they do.
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT product_id FROM purchased_products WHERE purchaser_email = uuid_for_email($1) AND product_id IN (\'972f9fc5-ad64-4f9c-940d-47062e705cc5\', \'10393874-7927-4f40-be92-e6cf7e6a3a2c\');', $decrypted_email);
@@ -64,6 +72,9 @@ try {
 	$database->Commit();
 } catch (Exception $e) {
 	http_response_code(400);
+	$database->BeginTransaction();
+	$database->Query('UPDATE stw_applicants SET date_applied = CURRENT_TIMESTAMP WHERE email_id = uuid_for_email($1);', $decrypted_email);
+	$database->Commit();
 	echo json_encode(array('error' => 'Your address is already on the list. Please be patient.'));
 	exit;
 }
