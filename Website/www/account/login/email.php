@@ -42,7 +42,7 @@ if (BeaconLogin::SendVerification($email, $key)) {
 		'verified' => false
 	), JSON_PRETTY_PRINT);
 } else {
-	echo json_encode(array(), JSON_PRETTY_PRINT);
+	echo json_encode(array('message' => 'Unable to deliver to ' . $email . '. The mail server may be rejecting messages. Contact support at help@usebeacon.app once the mailbox is working again.'), JSON_PRETTY_PRINT);
 }
 
 ?>
