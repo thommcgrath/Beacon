@@ -766,10 +766,12 @@ Implements ObservationKit.Observable
 		  Var Version As Integer = 1
 		  Var MinVersion As Integer = DocumentVersion
 		  Var Dict As Dictionary
+		  Var SavedWithVersion As Integer = 10501399 // Max possible version before the value should exist
 		  If Parsed IsA Dictionary Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
 		    MinVersion = Dict.Lookup("MinVersion", MinVersion)
+		    SavedWithVersion = Dict.Lookup("SavedWith", SavedWithVersion)
 		    If Dict.HasKey("Identifier") Then
 		      Doc.mIdentifier = Dict.Value("Identifier")
 		    Else
@@ -963,6 +965,23 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
+		  
+		  // Check for (and perform) migration after setting the modified state so that
+		  // if changes are made, the document will be marked as modified
+		  If SavedWithVersion >= 10502000 And SavedWithVersion < App.BuildNumber Then
+		    // Migrate settings if necessary
+		    Var OriginalSetName As String = Doc.ActiveConfigSet
+		    Var SetNames() As String = Doc.ConfigSetNames
+		    For Each SetName As String In SetNames
+		      // Do this with ActiveConfigSet so migrations stay within the set
+		      Doc.ActiveConfigSet = SetName
+		      Var ImplementedConfigs() As Beacon.ConfigGroup = Doc.ImplementedConfigs()
+		      For Each Config As Beacon.ConfigGroup In ImplementedConfigs
+		        Config.Migrate(SavedWithVersion, Doc)
+		      Next Config
+		    Next SetName
+		    Doc.ActiveConfigSet = OriginalSetName
+		  End If
 		  
 		  Tracker.Log("Took %elapsed% to load a " + Round(Contents.Length / 1024).ToString("###,###,###,##0") + "KB v" + Version.ToString + " project.", True)
 		  Return Doc
@@ -1517,6 +1536,7 @@ Implements ObservationKit.Observable
 		  Var Document As New Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("MinVersion") = 5 // This only changes when the document can't be backwards compatible.
+		  Document.Value("SavedWith") = App.BuildNumber
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("Trust") = Self.TrustKey
 		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords

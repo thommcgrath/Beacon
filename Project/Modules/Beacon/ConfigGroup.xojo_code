@@ -131,6 +131,12 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Migrate(SavedWithVersion As Integer, Doc As Beacon.Document)
+		  RaiseEvent Migrate(SavedWithVersion, Doc)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
 		End Function
@@ -198,6 +204,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event MergeFrom(Other As Beacon.ConfigGroup)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Migrate(SavedWithVersion As Integer, Doc As Beacon.Document)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
