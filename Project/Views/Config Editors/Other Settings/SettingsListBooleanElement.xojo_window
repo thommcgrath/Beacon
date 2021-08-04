@@ -38,7 +38,7 @@ Begin SettingsListElement SettingsListBooleanElement
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   240
+      Left            =   212
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -127,23 +127,53 @@ Begin SettingsListElement SettingsListBooleanElement
       Visible         =   True
       Width           =   260
    End
+   Begin IconCanvas mDismissButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Clickable       =   True
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   16
+      Icon            =   1389395967
+      IconColor       =   8
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   264
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "Restore this setting to the default."
+      Top             =   9
+      Transparent     =   True
+      Visible         =   False
+      Width           =   16
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub KeyChanged(NewKey As Beacon.ConfigKey)
-		  Self.mNameLabel.Text = Self.mKey.Label
-		  Self.mDescriptionLabel.Text = Self.mKey.Description
-		  Self.mNameLabel.Tooltip = Self.mNameLabel.Text
-		  Self.mDescriptionLabel.Tooltip = Self.mDescriptionLabel.Text
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h1
 		Protected Function DescriptionLabel() As Label
 		  Return Self.mDescriptionLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DismissButton() As IconCanvas
+		  Return Self.mDismissButton
 		End Function
 	#tag EndMethod
 
@@ -165,36 +195,34 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OriginalValue() As Boolean
-		  Return Self.mOriginalValue
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Value() As Boolean
-		  Return Self.mValue
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Value(Assigns NewValue As Boolean)
-		  Self.mValue = NewValue
-		  
-		  If Thread.Current Is Nil Then
-		    Self.Switch.Value = NewValue
+		Function Value() As Variant
+		  If Self.IsOverloaded Then
+		    Return Self.Switch.Value
 		  Else
-		    #Pragma Warning "Incomplete"
+		    Return Nil
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Value(Animated As Boolean = False, Assigns NewValue As Variant)
+		  Var BlockChanges As Boolean = Self.mBlockChanges
+		  Self.mBlockChanges = True
+		  
+		  Var BooleanValue As Boolean
+		  Try
+		    BooleanValue = NewValue.BooleanValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.Switch.Value(Animated) = BooleanValue
+		  Self.mBlockChanges = BlockChanges
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mOriginalValue As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mValue As Boolean
+		Private mBlockChanges As Boolean
 	#tag EndProperty
 
 
@@ -203,11 +231,30 @@ End
 #tag Events Switch
 	#tag Event
 		Sub Action()
-		  Self.mValue = Me.Value
+		  If Self.mBlockChanges Then
+		    Return
+		  End If
+		  
+		  Self.UserValueChange(Me.Value)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events mDismissButton
+	#tag Event
+		Sub Action()
+		  Self.Delete()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="IsOverloaded"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true

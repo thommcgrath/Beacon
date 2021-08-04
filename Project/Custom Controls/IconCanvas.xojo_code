@@ -16,6 +16,51 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  If Self.Clickable = False Then
+		    Return False
+		  End If
+		  
+		  If Self.Enabled Then
+		    Self.mPressed = True
+		    Self.Invalidate
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  Var IsInside As Boolean = X >= 0 And Y >= 0 And X <= Self.Width And Y <= Self.Height
+		  If IsInside Then
+		    If Self.mPressed = False Then
+		      Self.mPressed = True
+		      Self.Invalidate
+		    End If
+		  Else
+		    If Self.mPressed Then
+		      Self.mPressed = False
+		      Self.Invalidate
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  Var IsInside As Boolean = X >= 0 And Y >= 0 And X <= Self.Width And Y <= Self.Height
+		  If Self.mPressed Then
+		    Self.mPressed = False
+		    Self.Invalidate
+		  End If
+		  If IsInside Then
+		    RaiseEvent Action
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)
 		  #Pragma Unused Areas
 		  #Pragma Unused SafeArea
@@ -53,6 +98,11 @@ Inherits ControlCanvas
 		  
 		  Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, IconColor, G.ScaleX, G.ScaleX)
 		  G.DrawPicture(Icon, 0, 0)
+		  
+		  If Self.mPressed Then
+		    Var PressOverlay As Picture = BeaconUI.IconWithColor(Self.Icon, &c000000AA, G.ScaleX, G.ScaleX)
+		    G.DrawPicture(PressOverlay, 0, 0)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -69,6 +119,10 @@ Inherits ControlCanvas
 		Event Deactivate()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h0
+		Clickable As Boolean
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -110,6 +164,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mIconColor As IconCanvas.ColorChoice
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPressed As Boolean
 	#tag EndProperty
 
 
@@ -363,6 +421,14 @@ Inherits ControlCanvas
 				"8 - Red"
 				"9 - Yellow"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Clickable"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"

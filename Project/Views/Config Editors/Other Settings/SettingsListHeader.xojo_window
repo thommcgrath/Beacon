@@ -16,7 +16,7 @@ Begin ContainerControl SettingsListHeader
    Left            =   0
    LockBottom      =   False
    LockLeft        =   True
-   LockRight       =   False
+   LockRight       =   True
    LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0

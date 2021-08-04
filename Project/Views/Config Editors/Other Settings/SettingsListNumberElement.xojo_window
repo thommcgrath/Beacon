@@ -96,7 +96,7 @@ Begin SettingsListElement SettingsListNumberElement
       Visible         =   True
       Width           =   168
    End
-   Begin UITweaks.ResizedTextField mValueField
+   Begin DelayedTextField mValueField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
@@ -129,7 +129,7 @@ Begin SettingsListElement SettingsListNumberElement
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   0
+      TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   6
@@ -137,25 +137,55 @@ Begin SettingsListElement SettingsListNumberElement
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   80
+      Width           =   52
+   End
+   Begin IconCanvas mDismissButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Clickable       =   True
+      ContentHeight   =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   16
+      Icon            =   1389395967
+      IconColor       =   8
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   264
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollActive    =   False
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "Restore this setting to the default."
+      Top             =   9
+      Transparent     =   True
+      Visible         =   False
+      Width           =   16
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub KeyChanged(NewKey As Beacon.ConfigKey)
-		  Self.mNameLabel.Text = Self.mKey.Label
-		  Self.mDescriptionLabel.Text = Self.mKey.Description
-		  Self.mNameLabel.Tooltip = Self.mNameLabel.Text
-		  Self.mDescriptionLabel.Tooltip = Self.mDescriptionLabel.Text
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h1
 		Protected Function DescriptionLabel() As Label
 		  Return Self.mDescriptionLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DismissButton() As IconCanvas
+		  Return Self.mDismissButton
 		End Function
 	#tag EndMethod
 
@@ -165,7 +195,7 @@ End
 		  
 		  Self.mNameLabel.Width = KeyNameWidth
 		  Self.mValueField.Left = Self.mNameLabel.Left + Self.mNameLabel.Width + 12
-		  Self.mValueField.Width = Min((Self.Width - 20) - Self.mValueField.Left, 100)
+		  Self.mValueField.Width = Min((Self.mDismissButton.Left - 12) - Self.mValueField.Left, 100)
 		  Self.mDescriptionLabel.Left = Self.mValueField.Left
 		  Self.mDescriptionLabel.Width = (Self.Width - 20) - Self.mDescriptionLabel.Left
 		End Sub
@@ -177,15 +207,84 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Value() As Variant
+		  If Self.IsOverloaded Then
+		    If IsNumeric(Self.mValueField.Text) Then
+		      Return CDbl(Self.mValueField.Text)
+		    Else
+		      Return Nil
+		    End If
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Value(Animated As Boolean = False, Assigns NewValue As Variant)
+		  #Pragma Unused Animated
+		  
+		  Var BlockChanges As Boolean = Self.mBlockChanges
+		  If IsNull(NewValue) = False Then
+		    Var NumericValue As Double
+		    Try
+		      NumericValue = NewValue.DoubleValue
+		      Self.mBlockChanges = True
+		      Self.mValueField.SetImmediately(NumericValue.PrettyText(6, True))
+		      Self.mBlockChanges = BlockChanges
+		      Return
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Self.mBlockChanges = True
+		  Self.mValueField.SetImmediately("")
+		  Self.mBlockChanges = BlockChanges
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
-		Private mOriginalValue As Double
+		Private mBlockChanges As Boolean
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
+#tag Events mValueField
+	#tag Event
+		Sub TextChange()
+		  If Self.mBlockChanges Then
+		    Return
+		  End If
+		  
+		  Var NewValue As Variant
+		  If IsNumeric(Me.Text) = False Then
+		    NewValue = Nil
+		  Else
+		    NewValue = CDbl(Me.Text)
+		  End If
+		  Self.UserValueChange(NewValue)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events mDismissButton
+	#tag Event
+		Sub Action()
+		  Self.Delete()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="IsOverloaded"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Index"
 		Visible=true

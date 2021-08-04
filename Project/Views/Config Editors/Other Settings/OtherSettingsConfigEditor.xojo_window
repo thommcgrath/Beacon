@@ -199,6 +199,18 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SettingChanged(Key As Beacon.ConfigKey, NewValue As Variant)
+		  Var Config As BeaconConfigs.OtherSettings = Self.Config(True)
+		  Config.Value(Key) = NewValue
+		  Self.Changed = Config.Modified
+		End Sub
+	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub SettingChangeDelegate(Key As Beacon.ConfigKey, Value As Variant)
+	#tag EndDelegateDeclaration
+
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
@@ -217,12 +229,18 @@ End
 #tag Events List
 	#tag Event
 		Sub Open()
+		  Me.SettingChangeDelegate = WeakAddressOf SettingChanged
 		  Me.Filter = ""
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function GetDocument() As Beacon.Document
 		  Return Self.Document
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function GetConfig(ForWriting As Boolean) As BeaconConfigs.OtherSettings
+		  Return Self.Config(ForWriting)
 		End Function
 	#tag EndEvent
 #tag EndEvents

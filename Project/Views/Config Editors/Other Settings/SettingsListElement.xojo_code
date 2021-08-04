@@ -2,13 +2,6 @@
 Protected Class SettingsListElement
 Inherits ContainerControl
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open()
-		  RaiseEvent KeyChanged(Self.mKey)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Resized()
 		  RaiseEvent Resize()
 		End Sub
@@ -25,12 +18,16 @@ Inherits ContainerControl
 		Sub Constructor(Key As Beacon.ConfigKey)
 		  Self.mKey = Key
 		  Super.Constructor
+		  Self.NameLabel.Text = Key.Label
+		  Self.DescriptionLabel.Text = Key.Description
+		  Self.DescriptionLabel.Tooltip = Key.Description
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Delete()
-		  RaiseEvent ShouldDelete()
+		  Self.UserValueChange(Nil)
+		  Self.Value(True) = Self.mKey.DefaultValue
 		End Sub
 	#tag EndMethod
 
@@ -40,23 +37,16 @@ Inherits ContainerControl
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Key() As Beacon.ConfigKey
-		  Return Self.mKey
+	#tag Method, Flags = &h1
+		Protected Function DismissButton() As IconCanvas
+		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Key(Assigns NewKey As Beacon.ConfigKey)
-		  If (Self.mKey Is Nil) = False And (NewKey Is Nil) = False And Self.mKey.UUID = NewKey.UUID Then
-		    Return
-		  ElseIf Self.mKey Is Nil And NewKey Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.mKey = NewKey
-		  RaiseEvent KeyChanged(NewKey)
-		End Sub
+		Function Key() As Beacon.ConfigKey
+		  Return Self.mKey
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -77,14 +67,28 @@ Inherits ContainerControl
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub UserValueChange(NewValue As Variant)
+		  Self.IsOverloaded = IsNull(NewValue) = False
+		  
+		  If Beacon.SafeToInvoke(Self.SettingChangeDelegate) Then
+		    Self.SettingChangeDelegate.Invoke(Self.mKey, NewValue)
+		  End If
+		End Sub
+	#tag EndMethod
 
-	#tag Hook, Flags = &h0
-		Event KeyChanged(NewKey As Beacon.ConfigKey)
-	#tag EndHook
+	#tag Method, Flags = &h0
+		Function Value() As Variant
+		  
+		End Function
+	#tag EndMethod
 
-	#tag Hook, Flags = &h0
-		Event Open()
-	#tag EndHook
+	#tag Method, Flags = &h0
+		Sub Value(Animated As Boolean = False, Assigns NewValue As Variant)
+		  
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Resize()
@@ -95,12 +99,41 @@ Inherits ContainerControl
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mOverloaded
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mOverloaded = Value
+			  
+			  If Self.NameLabel.Bold <> Value Then
+			    Self.NameLabel.Bold = Value
+			  End If
+			  If Self.DismissButton.Visible <> Value Then
+			    Self.DismissButton.Visible = Value
+			  End If
+			End Set
+		#tag EndSetter
+		IsOverloaded As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h1
 		Protected mKey As Beacon.ConfigKey
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mKeyNameWidth As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverloaded As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		SettingChangeDelegate As OtherSettingsConfigEditor.SettingChangeDelegate
 	#tag EndProperty
 
 
@@ -326,6 +359,14 @@ Inherits ContainerControl
 			Visible=true
 			Group="Windows Behavior"
 			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsOverloaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

@@ -86,16 +86,39 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h1
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.OtherSettings
+		  Return RaiseEvent GetConfig(ForWriting)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function CreateElement(Key As Beacon.ConfigKey) As SettingsListElement
+		  Var Element As SettingsListElement
+		  
 		  Select Case Key.ValueType
 		  Case Beacon.ConfigKey.ValueTypes.TypeBoolean
-		    Return New SettingsListBooleanElement(Key)
+		    Element = New SettingsListBooleanElement(Key)
 		  Case Beacon.ConfigKey.ValueTypes.TypeNumeric
-		    Return New SettingsListNumberElement(Key)
+		    Element = New SettingsListNumberElement(Key)
 		  Case Beacon.ConfigKey.ValueTypes.TypeText
-		    Return New SettingsListStringElement(Key)
+		    Element = New SettingsListStringElement(Key)
+		  Else
+		    Return Nil
 		  End Select
+		  
+		  Var Config As BeaconConfigs.OtherSettings = Self.Config(False)
+		  Var Value As Variant = Config.Value(Key)
+		  If IsNull(Value) Then
+		    Element.Value(False) = Key.DefaultValue
+		    Element.IsOverloaded = False
+		  Else
+		    Element.Value(False) = Value
+		    Element.IsOverloaded = True
+		  End If
+		  Element.SettingChangeDelegate = Self.SettingChangeDelegate
+		  
+		  Return Element
 		End Function
 	#tag EndMethod
 
@@ -130,6 +153,7 @@ End
 		  Var MeasurePic As New Picture(20, 20)
 		  MeasurePic.Graphics.FontName = "System"
 		  MeasurePic.Graphics.FontSize = 0
+		  MeasurePic.Graphics.Bold = True
 		  Var KeyNameWidth As Integer
 		  
 		  For Each Key As Beacon.ConfigKey In AllKeys
@@ -169,7 +193,7 @@ End
 		    Members.Add(Key)
 		    Groups.Value(GroupName) = Members
 		    
-		    KeyNameWidth = Max(KeyNameWidth, MeasurePic.Graphics.TextWidth(Key.Label))
+		    KeyNameWidth = Max(KeyNameWidth, MeasurePic.Graphics.TextWidth(Key.Label + ":"))
 		    
 		    DesiredBound = DesiredBound + 1
 		  Next Key
@@ -207,73 +231,6 @@ End
 		  
 		  Self.mContentHeight = (Self.mGroupHeaders.Count * Self.HeaderHeight) + (Self.mElements.Count * Self.ElementHeight)
 		  Self.SetVisibilities(True)
-		  
-		  #if false
-		    Var ElementWidth As Integer = Self.Width - Self.Scroller.Width
-		    Var NextTop As Integer = Self.Scroller.Value * -1
-		    Var ElementIdx As Integer
-		    For GroupIdx As Integer = 0 To GroupNames.LastIndex
-		      Var GroupName As String = GroupNames(GroupIdx)
-		      Var CurrentHeader As SettingsListHeader = Self.mGroupHeaders(GroupIdx)
-		      If CurrentHeader Is Nil Then
-		        CurrentHeader = New SettingsListHeader
-		        CurrentHeader.EmbedWithin(Self, 0, NextTop, ElementWidth, Self.HeaderHeight)
-		        Self.mGroupHeaders(GroupIdx) = CurrentHeader
-		      End If
-		      CurrentHeader.Name = GroupName
-		      If CurrentHeader.Top <> NextTop Then
-		        CurrentHeader.Top = NextTop
-		      End If
-		      CurrentHeader.Visible = (CurrentHeader.Top + CurrentHeader.Height) > 0 And (CurrentHeader.Top < Self.Height)
-		      NextTop = NextTop + Self.HeaderHeight
-		      
-		      Var Members() As Beacon.ConfigKey = Groups.Value(GroupName)
-		      For Each Member As Beacon.ConfigKey In Members
-		        Var CurrentElement As SettingsListElement = Self.mElements(ElementIdx)
-		        Var CreateNewElement As Boolean
-		        If (CurrentElement Is Nil) = False Then
-		          Select Case Member.ValueType
-		          Case Beacon.ConfigKey.ValueTypes.TypeBoolean
-		            CreateNewElement = (CurrentElement IsA SettingsListBooleanElement) = False
-		          Case Beacon.ConfigKey.ValueTypes.TypeNumeric
-		            CreateNewElement = (CurrentElement IsA SettingsListNumberElement) = False
-		          Case Beacon.ConfigKey.ValueTypes.TypeText
-		            CreateNewElement = (CurrentElement IsA SettingsListStringElement) = False
-		          End Select
-		          If CreateNewElement Then
-		            CurrentElement.Close
-		            Self.mElements(ElementIdx) = Nil
-		          End If
-		        Else
-		          CreateNewElement = True
-		        End If
-		        
-		        If CreateNewElement Then
-		          Select Case Member.ValueType
-		          Case Beacon.ConfigKey.ValueTypes.TypeBoolean
-		            CurrentElement = New SettingsListBooleanElement(Member)
-		          Case Beacon.ConfigKey.ValueTypes.TypeNumeric
-		            CurrentElement = New SettingsListNumberElement(Member)
-		          Case Beacon.ConfigKey.ValueTypes.TypeText
-		            CurrentElement = New SettingsListStringElement(Member)
-		          End Select
-		          CurrentElement.EmbedWithin(Self, 0, NextTop, ElementWidth, Self.ElementHeight)
-		          Self.mElements(ElementIdx) = CurrentElement
-		        End If
-		        
-		        CurrentElement.Key = Member
-		        If CurrentElement.Top <> NextTop Then
-		          CurrentElement.Top = NextTop
-		        End If
-		        CurrentElement.Visible = (CurrentElement.Top + CurrentElement.Height) > 0 And (CurrentElement.Top < Self.Height)
-		        NextTop = NextTop + Self.ElementHeight
-		        
-		        ElementIdx = ElementIdx + 1
-		      Next Member
-		    Next GroupIdx
-		    
-		    Self.Scroller.MaximumValue = Max(NextTop - Self.Height, 0)
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -287,14 +244,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function IsCorrectElementClass(Element As SettingsListElement, Key As Beacon.ConfigKey) As Boolean
-		  Select Case Key.ValueType
-		  Case Beacon.ConfigKey.ValueTypes.TypeBoolean
-		    Return Element IsA SettingsListBooleanElement
-		  Case Beacon.ConfigKey.ValueTypes.TypeNumeric
-		    Return Element IsA SettingsListNumberElement
-		  Case Beacon.ConfigKey.ValueTypes.TypeText
-		    Return Element IsA SettingsListStringElement
-		  End Select
+		  Return (Element Is Nil) = False And (Key Is Nil) = False And Element.Key = Key
 		End Function
 	#tag EndMethod
 
@@ -400,6 +350,10 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event GetConfig(ForWriting As Boolean) As BeaconConfigs.OtherSettings
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event GetDocument() As Beacon.Document
 	#tag EndHook
 
@@ -446,6 +400,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mVisibleKeys As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		SettingChangeDelegate As OtherSettingsConfigEditor.SettingChangeDelegate
 	#tag EndProperty
 
 

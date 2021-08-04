@@ -6,7 +6,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
@@ -71,7 +71,6 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True

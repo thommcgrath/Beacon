@@ -165,7 +165,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          AllowTabs       =   True
          Backdrop        =   0
          BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
+         DoubleBuffer    =   True
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False

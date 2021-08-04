@@ -5,7 +5,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   DoubleBuffer    =   False
+   DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False

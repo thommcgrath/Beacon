@@ -6,7 +6,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
@@ -136,7 +136,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -152,7 +151,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
