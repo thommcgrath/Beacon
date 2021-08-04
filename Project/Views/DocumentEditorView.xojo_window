@@ -787,6 +787,10 @@ End
 		    Self.Changed = Self.Document.Modified
 		  End If
 		  
+		  If (Self.CurrentPanel Is Nil) = False Then
+		    Self.CurrentPanel.SetupUI()
+		  End If
+		  
 		  Self.OmniBar1.Item("MapsButton").Toggled = False
 		  Self.mMapsPopoverController = Nil
 		End Sub
@@ -863,6 +867,10 @@ End
 		    Next
 		    
 		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  If (Self.CurrentPanel Is Nil) = False Then
+		    Self.CurrentPanel.SetupUI()
 		  End If
 		  
 		  Self.OmniBar1.Item("ModsButton").Toggled = False

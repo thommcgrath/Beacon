@@ -12,7 +12,7 @@ Inherits UITweaks.ResizedSearchField
 	#tag Event
 		Sub TextChanged()
 		  Self.mTimer.Reset
-		  Self.mTimer.Period = 100
+		  Self.mTimer.Period = 250
 		  Self.mTimer.RunMode = Timer.RunModes.Single
 		End Sub
 	#tag EndEvent

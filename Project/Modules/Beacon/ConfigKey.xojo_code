@@ -14,6 +14,8 @@ Protected Class ConfigKey
 		  Self.mNitradoPaths = Source.NitradoPaths // Use this version to make a clone of the array
 		  Self.mNitradoFormat = Source.mNitradoFormat
 		  Self.mNitradoDeployStyle = Source.mNitradoDeployStyle
+		  Self.mUIGroup = Source.mUIGroup
+		  Self.mModID = Source.mModID
 		End Sub
 	#tag EndMethod
 
@@ -26,7 +28,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, ModID As String)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -37,6 +39,7 @@ Protected Class ConfigKey
 		  Self.mDefaultValue = DefaultValue
 		  Self.mNativeEditorVersion = NativeEditorVersion
 		  Self.mUIGroup = UIGroup
+		  Self.mModID = ModID
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -97,6 +100,12 @@ Protected Class ConfigKey
 	#tag Method, Flags = &h0
 		Function MaxAllowed() As NullableDouble
 		  Return Self.mMaxAllowed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModID() As String
+		  Return Self.mModID
 		End Function
 	#tag EndMethod
 
@@ -226,6 +235,10 @@ Protected Class ConfigKey
 
 	#tag Property, Flags = &h21
 		Private mMaxAllowed As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

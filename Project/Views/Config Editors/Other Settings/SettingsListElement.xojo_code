@@ -1,9 +1,30 @@
 #tag Class
 Protected Class SettingsListElement
 Inherits ContainerControl
-	#tag Method, Flags = &h1
-		Protected Sub Constructor(Key As Beacon.ConfigKey)
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open()
+		  RaiseEvent KeyChanged(Self.mKey)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  RaiseEvent Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  RaiseEvent Resize()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Key As Beacon.ConfigKey)
 		  Self.mKey = Key
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
@@ -19,16 +40,35 @@ Inherits ContainerControl
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function DiscardButton() As IconCanvas
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Key() As Beacon.ConfigKey
 		  Return Self.mKey
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Key(Assigns NewKey As Beacon.ConfigKey)
+		  If (Self.mKey Is Nil) = False And (NewKey Is Nil) = False And Self.mKey.UUID = NewKey.UUID Then
+		    Return
+		  ElseIf Self.mKey Is Nil And NewKey Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.mKey = NewKey
+		  RaiseEvent KeyChanged(NewKey)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function KeyNameWidth() As Integer
+		  Return Self.mKeyNameWidth
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub KeyNameWidth(Assigns KeyNameWidth As Integer)
+		  Self.mKeyNameWidth = KeyNameWidth
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -39,12 +79,28 @@ Inherits ContainerControl
 
 
 	#tag Hook, Flags = &h0
+		Event KeyChanged(NewKey As Beacon.ConfigKey)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Resize()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ShouldDelete()
 	#tag EndHook
 
 
 	#tag Property, Flags = &h1
 		Protected mKey As Beacon.ConfigKey
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKeyNameWidth As Integer
 	#tag EndProperty
 
 

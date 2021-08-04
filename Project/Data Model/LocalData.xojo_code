@@ -2034,7 +2034,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          // Update
 		          Var OriginalObjectID As v4UUID = Results.Column("object_id").StringValue
 		          Values.Add(OriginalObjectID.StringValue)
-		          Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, mod_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17 WHERE object_id = ?17;", Values)
+		          Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, mod_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17 WHERE object_id = ?18;", Values)
 		        Else
 		          // Insert
 		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17);", Values)
@@ -2747,8 +2747,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("native_editor_version").Value)
 		      Var UIGroup As NullableString = NullableString.FromVariant(Row.Column("ui_group").Value)
+		      Var ModID As String = Row.Column("mod_id").StringValue
 		      
-		      Var Key As New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup)
+		      Var Key As New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, ModID)
 		      Self.mConfigKeyCache.Value(ObjectID) = Key
 		      Keys.Add(Key)
 		    Next
@@ -3952,7 +3953,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group FROM ini_options", Scope = Private
+	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C mod_id FROM ini_options", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private

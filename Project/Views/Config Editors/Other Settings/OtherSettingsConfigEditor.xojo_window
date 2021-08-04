@@ -6,7 +6,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
@@ -122,7 +122,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
       Visible         =   True
       Width           =   308
    End
-   Begin SearchField SearchField1
+   Begin DelayedSearchField SearchField1
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowRecentItems=   False
@@ -155,6 +155,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub SetupUI()
+		  Self.List.ForceReload
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Function AvailableKeys() As Beacon.ConfigKey()
 		  Return Self.Config(False).UnimplementedKeys
@@ -204,29 +211,19 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
-		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("AddButton", "Add Setting", IconToolbarAdd, "Choose a new setting to add"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Open()
+		  Me.Filter = ""
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Keys() As Beacon.ConfigKey = Self.Config(False).UnimplementedKeys
-		    Var Base As New MenuItem
-		    For Each Key As Beacon.ConfigKey In Keys
-		      Base.AddMenu(New MenuItem(Key.Label, Key))
-		    Next
-		    
-		    Var Position As Point = Me.Window.GlobalPosition
-		    Var Choice As MenuItem = Base.PopUp(Position.X + Me.Left + ItemRect.Left, Position.Y + Me.Top + ItemRect.Bottom)
-		    If Choice Is Nil Then
-		      Return
-		    End If
-		    
-		    Break
-		  End Select
-		End Sub
+		Function GetDocument() As Beacon.Document
+		  Return Self.Document
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events SearchField1

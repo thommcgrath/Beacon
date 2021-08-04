@@ -6,11 +6,11 @@ Begin SettingsListElement SettingsListBooleanElement
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   88
+   Height          =   62
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -38,7 +38,7 @@ Begin SettingsListElement SettingsListBooleanElement
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   212
+      Left            =   240
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -52,7 +52,7 @@ Begin SettingsListElement SettingsListBooleanElement
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   7
       Transparent     =   True
       Visible         =   True
       Width           =   40
@@ -66,7 +66,7 @@ Begin SettingsListElement SettingsListBooleanElement
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   20
+      Height          =   22
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -83,10 +83,10 @@ Begin SettingsListElement SettingsListBooleanElement
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Untitled"
-      TextAlignment   =   0
+      TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   20
+      Top             =   6
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -121,64 +121,25 @@ Begin SettingsListElement SettingsListBooleanElement
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   40
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   232
-   End
-   Begin IconCanvas mDismissButton
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      ContentHeight   =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   16
-      Icon            =   1509214207
-      IconColor       =   8
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   264
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollActive    =   False
-      ScrollingEnabled=   False
-      ScrollSpeed     =   20
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   36
-      Transparent     =   True
-      Visible         =   True
-      Width           =   16
+      Width           =   260
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  Self.NameLabel.Text = Self.mKey.Label
-		  Self.DescriptionLabel.Text = Self.mKey.Description
+		Sub KeyChanged(NewKey As Beacon.ConfigKey)
+		  Self.mNameLabel.Text = Self.mKey.Label
+		  Self.mDescriptionLabel.Text = Self.mKey.Description
+		  Self.mNameLabel.Tooltip = Self.mNameLabel.Text
+		  Self.mDescriptionLabel.Tooltip = Self.mDescriptionLabel.Text
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Key As Beacon.ConfigKey, Value As Boolean)
-		  Self.mOriginalValue = Value
-		  Super.Constructor(Key)
-		  
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function DescriptionLabel() As Label
@@ -186,10 +147,15 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function DiscardButton() As IconCanvas
-		  Return Self.mDismissButton
-		End Function
+	#tag Method, Flags = &h0
+		Sub KeyNameWidth(Assigns KeyNameWidth As Integer)
+		  Super.KeyNameWidth = KeyNameWidth
+		  
+		  Self.mNameLabel.Width = KeyNameWidth
+		  Self.Switch.Left = Self.mNameLabel.Left + Self.mNameLabel.Width + 12
+		  Self.mDescriptionLabel.Left = Self.Switch.Left
+		  Self.mDescriptionLabel.Width = (Self.Width - 20) - Self.mDescriptionLabel.Left
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -238,13 +204,6 @@ End
 	#tag Event
 		Sub Action()
 		  Self.mValue = Me.Value
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events mDismissButton
-	#tag Event
-		Sub Action()
-		  Self.Delete()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

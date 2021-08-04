@@ -6,11 +6,11 @@ Begin SettingsListElement SettingsListNumberElement
    AllowTabs       =   True
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   DoubleBuffer    =   False
+   DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   62
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -26,10 +26,158 @@ Begin SettingsListElement SettingsListNumberElement
    Transparent     =   True
    Visible         =   True
    Width           =   300
+   Begin Label mDescriptionLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   16
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   260
+   End
+   Begin Label mNameLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   6
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   168
+   End
+   Begin UITweaks.ResizedTextField mValueField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   200
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   6
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub KeyChanged(NewKey As Beacon.ConfigKey)
+		  Self.mNameLabel.Text = Self.mKey.Label
+		  Self.mDescriptionLabel.Text = Self.mKey.Description
+		  Self.mNameLabel.Tooltip = Self.mNameLabel.Text
+		  Self.mDescriptionLabel.Tooltip = Self.mDescriptionLabel.Text
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h1
+		Protected Function DescriptionLabel() As Label
+		  Return Self.mDescriptionLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub KeyNameWidth(Assigns KeyNameWidth As Integer)
+		  Super.KeyNameWidth = KeyNameWidth
+		  
+		  Self.mNameLabel.Width = KeyNameWidth
+		  Self.mValueField.Left = Self.mNameLabel.Left + Self.mNameLabel.Width + 12
+		  Self.mValueField.Width = Min((Self.Width - 20) - Self.mValueField.Left, 100)
+		  Self.mDescriptionLabel.Left = Self.mValueField.Left
+		  Self.mDescriptionLabel.Width = (Self.Width - 20) - Self.mDescriptionLabel.Left
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NameLabel() As Label
+		  Return Self.mNameLabel
+		End Function
+	#tag EndMethod
+
+
 	#tag Property, Flags = &h21
 		Private mOriginalValue As Double
 	#tag EndProperty
