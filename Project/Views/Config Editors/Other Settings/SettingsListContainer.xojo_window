@@ -175,7 +175,7 @@ End
 		    End If
 		    
 		    // See if this key matches the search
-		    If Filtered And Key.Label.IndexOf(Value) = -1 And Key.Description.IndexOf(Value) = -1 Then
+		    If Filtered And Key.Label.IndexOf(Value) = -1 And Key.Description.IndexOf(Value) = -1 And Key.Key.IndexOf(Value) = -1 Then
 		      Continue
 		    End If
 		    

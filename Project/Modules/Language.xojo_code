@@ -110,8 +110,6 @@ Protected Module Language
 		    Return "Difficulty"
 		  Case BeaconConfigs.NameLootDrops
 		    Return "Loot Drops"
-		  Case BeaconConfigs.NameLootScale
-		    Return "Loot Quality Scaling"
 		  Case BeaconConfigs.NameMetadata
 		    Return "Project Settings"
 		  Case BeaconConfigs.NameExperienceCurves

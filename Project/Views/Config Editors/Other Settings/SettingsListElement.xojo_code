@@ -18,9 +18,9 @@ Inherits ContainerControl
 		Sub Constructor(Key As Beacon.ConfigKey)
 		  Self.mKey = Key
 		  Super.Constructor
-		  Self.NameLabel.Text = Key.Label
-		  Self.DescriptionLabel.Text = Key.Description
-		  Self.DescriptionLabel.Tooltip = Key.Description
+		  Self.NameLabel.Text = Key.Label.ReplaceAll("&", "&&").Trim + ":"
+		  Self.DescriptionLabel.Text = Key.Description.ReplaceAll("&", "&&").Trim
+		  Self.DescriptionLabel.Tooltip = Key.Description.Trim
 		End Sub
 	#tag EndMethod
 
@@ -85,7 +85,8 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub Value(Animated As Boolean = False, Assigns NewValue As Variant)
-		  
+		  #Pragma Unused Animated
+		  #Pragma Unused NewValue
 		End Sub
 	#tag EndMethod
 

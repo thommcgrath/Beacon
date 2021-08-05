@@ -17,6 +17,9 @@ Inherits ControlCanvas
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  If Self.Clickable = False Then
 		    Return False
 		  End If

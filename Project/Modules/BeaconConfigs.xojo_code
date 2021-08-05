@@ -6,7 +6,6 @@ Protected Module BeaconConfigs
 		  If Names.LastIndex = -1 Then
 		    Names.Add(NameDifficulty)
 		    Names.Add(NameLootDrops)
-		    Names.Add(NameLootScale)
 		    Names.Add(NameMetadata)
 		    Names.Add(NameExperienceCurves)
 		    Names.Add(NameCustomContent)
@@ -21,7 +20,7 @@ Protected Module BeaconConfigs
 		    Names.Add(NameStatLimits)
 		    Names.Add(NameEngramControl)
 		    Names.Add(NameSpoilTimers)
-		    //Names.Add(NameOtherSettings)
+		    Names.Add(NameOtherSettings)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -97,8 +96,6 @@ Protected Module BeaconConfigs
 		    Return New HarvestRates()
 		  Case NameLootDrops
 		    Return New LootDrops()
-		  Case NameLootScale
-		    Return New LootScale()
 		  Case NameMetadata
 		    Return New Metadata()
 		  Case NameSpawnPoints
@@ -144,8 +141,6 @@ Protected Module BeaconConfigs
 		    Return New HarvestRates(GroupData, Identity, Document)
 		  Case NameLootDrops
 		    Return New LootDrops(GroupData, Identity, Document)
-		  Case NameLootScale
-		    Return New LootScale(GroupData, Identity, Document)
 		  Case NameMetadata
 		    Return New Metadata(GroupData, Identity, Document)
 		  Case NameSpawnPoints
@@ -191,8 +186,6 @@ Protected Module BeaconConfigs
 		    Return HarvestRates.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
 		  Case NameLootDrops
 		    Return LootDrops.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
-		  Case NameLootScale
-		    Return LootScale.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
 		  Case NameMetadata
 		    Return Metadata.FromImport(ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty, Document.Mods)
 		  Case NameSpawnPoints
@@ -282,9 +275,6 @@ Protected Module BeaconConfigs
 	#tag EndConstant
 
 	#tag Constant, Name = NameLootDrops, Type = String, Dynamic = False, Default = \"LootDrops", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = NameLootScale, Type = String, Dynamic = False, Default = \"LootScale", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = NameMetadata, Type = String, Dynamic = False, Default = \"Metadata", Scope = Protected

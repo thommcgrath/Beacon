@@ -1196,8 +1196,6 @@ End
 			        NewPanel = New LootConfigEditor(Self.mController)
 			      Case BeaconConfigs.NameDifficulty
 			        NewPanel = New DifficultyConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameLootScale
-			        NewPanel = New LootScaleConfigEditor(Self.mController)
 			      Case BeaconConfigs.NameMetadata
 			        NewPanel = New MetaDataConfigEditor(Self.mController)
 			      Case BeaconConfigs.NameExperienceCurves

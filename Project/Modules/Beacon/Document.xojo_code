@@ -1081,18 +1081,42 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h21
 		Private Shared Function LoadConfigSet(Source As Dictionary, Identity As Beacon.Identity, Doc As Beacon.Document) As Dictionary
 		  Var SetDict As New Dictionary
+		  Var ConvertLootScale As Dictionary
 		  For Each Entry As DictionaryEntry In Source
 		    Try
 		      Var GroupName As String = Entry.Key
 		      Var GroupData As Dictionary = Entry.Value
-		      Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
-		      If Instance <> Nil Then
-		        SetDict.Value(GroupName) = Instance
+		      If GroupName = "LootScale" Then
+		        ConvertLootScale = GroupData
+		      Else
+		        Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
+		        If Instance <> Nil Then
+		          SetDict.Value(GroupName) = Instance
+		        End If
 		      End If
 		    Catch Err As RuntimeException
 		      App.Log("Unable to load config group " + Entry.Key + " from project " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		    End Try
 		  Next
+		  If (ConvertLootScale Is Nil) = False Then
+		    Try
+		      Var OtherSettings As BeaconConfigs.OtherSettings
+		      If SetDict.HasKey(BeaconConfigs.NameOtherSettings) Then
+		        OtherSettings = SetDict.Value(BeaconConfigs.NameOtherSettings)
+		      Else
+		        // Don't add it until we know everything worked
+		        OtherSettings = BeaconConfigs.OtherSettings(BeaconConfigs.CreateInstance(BeaconConfigs.NameOtherSettings))
+		      End If
+		      
+		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
+		      OtherSettings.Value(Beacon.Data.GetConfigKey(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier")) = Multiplier
+		      
+		      If SetDict.HasKey(BeaconConfigs.NameOtherSettings) = False Then
+		        SetDict.Value(BeaconConfigs.NameOtherSettings) = OtherSettings
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
 		  Return SetDict
 		End Function
 	#tag EndMethod
