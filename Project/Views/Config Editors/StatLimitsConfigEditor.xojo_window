@@ -679,7 +679,6 @@ Begin ConfigEditor StatLimitsConfigEditor
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
@@ -976,6 +975,20 @@ End
 		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
+		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
+		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
+		    Self.mPreviewItemStats.Add(Dict)
+		    
+		    Dict = New Dictionary
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("ac748d72-01ff-48b5-a355-142145d5b13f") // Tek Bow
+		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
+		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
+		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
+		    Self.mPreviewItemStats.Add(Dict)
+		    
+		    Dict = New Dictionary
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("39b6d260-a7fb-418c-8112-f554a551238d") // Tek Pistol
+		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.Add(Dict)
