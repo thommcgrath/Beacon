@@ -103,14 +103,16 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As BeaconConfigs.OtherSettings
-		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
-		  #Pragma Unused Mods
 		  
 		  Var Config As New BeaconConfigs.OtherSettings
-		  Var PotentialKeys() As Beacon.ConfigKey = Config.UnimplementedKeys
-		  For Each Key As Beacon.ConfigKey In PotentialKeys
+		  Var AllKeys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
+		  For Each Key As Beacon.ConfigKey In AllKeys
+		    If KeySupported(Key, Mods) = False Then
+		      Continue
+		    End If
+		    
 		    Var TargetDict As Dictionary
 		    If CommandLineOptions.HasKey(Key.Key) Then
 		      TargetDict = CommandLineOptions
@@ -142,21 +144,25 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UnimplementedKeys() As Beacon.ConfigKey()
-		  Var AllKeys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
-		  Var FilteredKeys() As Beacon.ConfigKey
-		  Var ImplementedKeys() As Beacon.ConfigKey = Self.ManagedKeys
-		  Var ImplementedKeyUUIDs() As String
-		  For Each Key As Beacon.ConfigKey In ImplementedKeys
-		    ImplementedKeyUUIDs.Add(Key.UUID)
-		  Next
-		  For Each Key As Beacon.ConfigKey In AllKeys
-		    If ((Key.MaxAllowed Is Nil) = False And Key.MaxAllowed.IntegerValue <> 1) Or Key.HasNativeEditor Or ImplementedKeyUUIDs.IndexOf(Key.UUID) > -1 Or Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeArray Or Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeStructure Then
-		      Continue
-		    End If
-		    FilteredKeys.Add(Key)
-		  Next
-		  Return FilteredKeys
+		Shared Function KeySupported(Key As Beacon.ConfigKey, Mods As Beacon.StringList) As Boolean
+		  If (Key.NativeEditorVersion Is Nil) = False And Key.NativeEditorVersion.IntegerValue <= App.BuildNumber Then
+		    // We have a native editor for this key
+		    Return False
+		  End If
+		  If Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeArray Or Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeStructure Then
+		    // Can't support these types
+		    Return False
+		  End If
+		  If Key.MaxAllowed Is Nil Or Key.MaxAllowed.IntegerValue <> 1 Then
+		    // Only support single value keys
+		    Return False
+		  End If
+		  If Mods.IndexOf(Key.ModID) = -1 Then
+		    // Is this not obvious?
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 

@@ -147,7 +147,6 @@ End
 		  Var AllKeys() As Beacon.ConfigKey = LocalData.SharedInstance.SearchForConfigKey("", "", "")
 		  Var GroupNames() As String
 		  Var Groups As New Dictionary
-		  Var BuildNumber As Integer = App.BuildNumber
 		  Var Filtered As Boolean = Value.IsEmpty = False
 		  Var DesiredBound As Integer = -1
 		  Var Mods As Beacon.StringList = Self.Document.Mods
@@ -158,20 +157,7 @@ End
 		  Var KeyNameWidth As Integer
 		  
 		  For Each Key As Beacon.ConfigKey In AllKeys
-		    If (Key.NativeEditorVersion Is Nil) = False And Key.NativeEditorVersion.IntegerValue <= BuildNumber Then
-		      // We have a native editor for this key
-		      Continue
-		    End If
-		    If Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeArray Or Key.ValueType = Beacon.ConfigKey.ValueTypes.TypeStructure Then
-		      // Can't support these types
-		      Continue
-		    End If
-		    If Key.MaxAllowed Is Nil Or Key.MaxAllowed.IntegerValue <> 1 Then
-		      // Only support single value keys
-		      Continue
-		    End If
-		    If Mods.IndexOf(Key.ModID) = -1 Then
-		      // Is this not obvious?
+		    If BeaconConfigs.OtherSettings.KeySupported(Key, Mods) = False Then
 		      Continue
 		    End If
 		    
@@ -426,14 +412,6 @@ End
 			  If Self.mShowOfficialNames = Value Then
 			    Return
 			  End If
-			  
-			  // For Each Element As SettingsListElement In Self.mElements
-			  // If Element Is Nil Then
-			  // Continue
-			  // End If
-			  // 
-			  // Element.ShowOfficialName = Value
-			  // Next Element
 			  
 			  Self.mShowOfficialNames = Value
 			  Self.ForceReload()

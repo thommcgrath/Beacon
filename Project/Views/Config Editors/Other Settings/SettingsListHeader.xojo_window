@@ -32,6 +32,7 @@ Begin ContainerControl SettingsListHeader
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   30
       Index           =   -2147483648
@@ -65,7 +66,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Name(Assigns NewValue As String)
 		  Self.mName = NewValue
-		  Self.Invalidate
+		  Self.Canvas1.Invalidate
 		End Sub
 	#tag EndMethod
 

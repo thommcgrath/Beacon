@@ -82,6 +82,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ShowOfficialNames=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -162,12 +163,6 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Function AvailableKeys() As Beacon.ConfigKey()
-		  Return Self.Config(False).UnimplementedKeys
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.OtherSettings
 		  Static ConfigName As String = BeaconConfigs.NameOtherSettings
@@ -208,7 +203,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub SettingChangeDelegate(Key As Beacon.ConfigKey, Value As Variant)
+		Delegate Sub SettingChangeDelegate(Key As Beacon . ConfigKey, Value As Variant)
 	#tag EndDelegateDeclaration
 
 
