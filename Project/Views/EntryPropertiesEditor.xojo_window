@@ -808,8 +808,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Entries() As Beacon.SetEntry)
-		  Var MinQuantity As Integer = Val(MinQuantityField.Text)
-		  Var MaxQuantity As Integer = Val(MaxQuantityField.Text)
+		  Var MinQuantity As Integer = Integer.FromString(MinQuantityField.Text.Trim, Locale.Current)
+		  Var MaxQuantity As Integer = Integer.FromString(MaxQuantityField.Text.Trim, Locale.Current)
 		  If MinQuantity > MaxQuantity Then
 		    Var Temp As Integer = MaxQuantity
 		    MaxQuantity = MinQuantity
@@ -987,7 +987,7 @@ End
 #tag Events ChanceField
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = ChanceSlider.Value.ToString(Locale.Raw, "0")
+		  Me.Text = ChanceSlider.Value.ToString(Locale.Current, ",##0")
 		  ChanceSlider.Enabled = True
 		End Sub
 	#tag EndEvent
@@ -999,7 +999,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
-		    ChanceSlider.Value = Max(Min(Val(Me.Text), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
+		    ChanceSlider.Value = Max(Min(Integer.FromString(Me.Text.Trim, Locale.Current), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1008,7 +1008,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  If Self.Focus <> ChanceField Then
-		    ChanceField.Text = Me.Value.ToString(Locale.Raw, "0")
+		    ChanceField.Text = Me.Value.ToString(Locale.Current, ",##0")
 		  End If
 		  
 		  If Not Self.mIgnoreChanges Then

@@ -82,7 +82,6 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Var Caption As String = Self.mName
 		  Var CapHeight As Double = G.CapHeight
 		  Var CaptionLeft As Integer = 20
 		  Var CaptionBaseline As Integer = (G.Height / 2) + (CapHeight / 2)

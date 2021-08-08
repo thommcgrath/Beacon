@@ -83,7 +83,7 @@ Inherits UITweaks.ResizedTextField
 		  Var MinValue, MaxValue As Double
 		  RaiseEvent GetRange(MinValue, MaxValue)
 		  
-		  Var Value As Double = CDbl(Self.Text)
+		  Var Value As Double = Double.FromString(Self.Text.Trim, Locale.Current)
 		  Var Formatted As String
 		  Var Valid As Boolean
 		  If Value < MinValue Then
@@ -131,12 +131,16 @@ Inherits UITweaks.ResizedTextField
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return CDbl(Me.Text.Trim)
+			  Try
+			    Return Double.FromString(Self.Text.Trim, Locale.Current)
+			  Catch Err As RuntimeException
+			    Return 0
+			  End Try
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If CDbl(Self.Text.Trim) <> Value Then
+			  If IsNumeric(Me.Text.Trim) = False Or Double.FromString(Self.Text.Trim, Locale.Current) <> Value Then
 			    Var MinValue, MaxValue As Double
 			    RaiseEvent GetRange(MinValue, MaxValue)
 			    
