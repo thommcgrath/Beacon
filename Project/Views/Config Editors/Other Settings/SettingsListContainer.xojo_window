@@ -326,6 +326,7 @@ End
 		          Element = Self.CreateElement(Member)
 		          Element.EmbedWithin(Self, 0, ElementTop, ElementWidth, Self.ElementHeight)
 		          Element.Visible = True
+		          Element.TabIndex = ElementIdx
 		          Self.mElements(ElementIdx) = Element
 		        Else
 		          If Element.Visible = False Then
