@@ -285,7 +285,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function SelectionIsCommented() As Boolean
 		  Var Content As String = Self.ConfigArea.Text
-		  Var Boundary As String = EndOfLine
+		  Var Boundary As String = Content.DetectLineEnding
 		  
 		  Var Prefix As String = Content.Left(Self.ConfigArea.SelectionStart)
 		  Var LineStartPos As Integer
@@ -328,13 +328,15 @@ End
 		Private Sub ToggleComment()
 		  Var StartPos As Integer = Self.ConfigArea.SelectionStart
 		  Var EndPos As Integer = StartPos + Self.ConfigArea.SelectionLength
-		  Var PreContent As String = Self.ConfigArea.Text.Left(StartPos)
-		  Var PostContent As String = Self.ConfigArea.Text.Middle(EndPos)
-		  Var SelContent As String = Self.ConfigArea.Text.Middle(StartPos, EndPos - StartPos)
+		  Var Content As String = Self.ConfigArea.Text
+		  Var EOL As String = Content.DetectLineEnding
+		  Var PreContent As String = Content.Left(StartPos)
+		  Var PostContent As String = Content.Middle(EndPos)
+		  Var SelContent As String = Content.Middle(StartPos, EndPos - StartPos)
 		  
-		  Var PreLines() As String = PreContent.Split(EndOfLine)
-		  Var SelLines() As String = SelContent.Split(EndOfLine)
-		  Var PostLines() As String = PostContent.Split(EndOfLine)
+		  Var PreLines() As String = PreContent.Split(EOL)
+		  Var SelLines() As String = SelContent.Split(EOL)
+		  Var PostLines() As String = PostContent.Split(EOL)
 		  If SelLines.Count > 0 And PreLines.Count > 0 Then
 		    SelLines(0) = PreLines(PreLines.LastIndex) + SelLines(0)
 		    PreLines.RemoveAt(PreLines.LastIndex)
@@ -371,18 +373,18 @@ End
 		  Next
 		  
 		  If PreLines.Count > 0 Then
-		    PreContent = PreLines.Join(EndOfLine) + EndOfLine
+		    PreContent = PreLines.Join(EOL) + EOL
 		  Else
 		    PreContent = ""
 		  End If
 		  
 		  If PostLines.Count > 0 Then
-		    PostContent = EndOfLine + PostLines.Join(EndOfLine)
+		    PostContent = EOL + PostLines.Join(EOL)
 		  Else
 		    PostContent = ""
 		  End If
 		  
-		  SelContent = SelLines.Join(EndOfLine)
+		  SelContent = SelLines.Join(EOL)
 		  
 		  Self.ConfigArea.Text = PreContent + SelContent + PostContent
 		  Self.ConfigArea.SelectionStart = PreContent.Length
