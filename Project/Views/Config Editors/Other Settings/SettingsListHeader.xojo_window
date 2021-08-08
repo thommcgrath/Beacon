@@ -26,40 +26,31 @@ Begin ContainerControl SettingsListHeader
    Transparent     =   True
    Visible         =   True
    Width           =   300
-   Begin Label NameLabel
+   Begin Canvas Canvas1
       AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
+      Height          =   30
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   5
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Multiline       =   False
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Untitled"
-      TextAlignment   =   0
-      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   5
-      Transparent     =   False
-      Underline       =   False
+      Top             =   0
+      Transparent     =   True
       Visible         =   True
-      Width           =   280
+      Width           =   300
    End
 End
 #tag EndWindow
@@ -67,19 +58,47 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  Return Self.NameLabel.Text
+		  Return Self.mName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Name(Assigns NewValue As String)
-		  Self.NameLabel.Text = NewValue
+		  Self.mName = NewValue
+		  Self.Invalidate
 		End Sub
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mName As String
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events Canvas1
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
+		  Var Caption As String = Self.mName
+		  Var CapHeight As Double = G.CapHeight
+		  Var CaptionLeft As Integer = 20
+		  Var CaptionBaseline As Integer = (G.Height / 2) + (CapHeight / 2)
+		  Var HeaderColor As Color = SystemColors.LabelColor.AtOpacity(0.1)//New ColorGroup(&c00000099, &cFFFFFFCC)
+		  
+		  G.DrawingColor = HeaderColor
+		  G.FillRectangle(0, 0, G.Width, G.Height)
+		  G.DrawingColor = SystemColors.LabelColor
+		  G.Bold = True
+		  If Color.IsDarkMode Then
+		    G.ShadowBrush = New ShadowBrush(0, 1, &c000000AA, 3)
+		  End If
+		  G.DrawText(Self.mName, CaptionLeft, CaptionBaseline)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Name"
