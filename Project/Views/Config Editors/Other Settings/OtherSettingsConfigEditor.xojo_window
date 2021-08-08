@@ -223,6 +223,20 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  Me.Append(OmniBarItem.CreateButton("OfficialNamesButton", "Official Names", IconToolbarView, "Show official names instead of human names"))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  #Pragma Unused ItemRect
+		  
+		  Select Case Item.Name
+		  Case "OfficialNamesButton"
+		    Var ShowOfficialNames As Boolean = Not Item.Toggled
+		    Self.List.ShowOfficialNames = ShowOfficialNames
+		    Item.Toggled = Not Item.Toggled
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

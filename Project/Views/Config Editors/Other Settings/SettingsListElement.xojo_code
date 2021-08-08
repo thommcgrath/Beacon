@@ -19,6 +19,7 @@ Inherits ContainerControl
 		  Self.mKey = Key
 		  Super.Constructor
 		  Self.NameLabel.Text = Key.Label.ReplaceAll("&", "&&").Trim + ":"
+		  Self.NameLabel.Tooltip = Key.Key.Trim
 		  Self.DescriptionLabel.Text = Key.Description.ReplaceAll("&", "&&").Trim
 		  Self.DescriptionLabel.Tooltip = Key.Description.Trim
 		End Sub
@@ -133,9 +134,39 @@ Inherits ContainerControl
 		Private mOverloaded As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mShowOfficialName As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		SettingChangeDelegate As OtherSettingsConfigEditor.SettingChangeDelegate
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mShowOfficialName
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mShowOfficialName = Value Then
+			    Return
+			  End If
+			  
+			  If Value Then
+			    Self.NameLabel.Text = Self.mKey.Key.ReplaceAll("&", "&&").Trim + ":"
+			    Self.NameLabel.Tooltip = Self.mKey.Label
+			  Else
+			    Self.NameLabel.Text = Self.mKey.Label.ReplaceAll("&", "&&").Trim + ":"
+			    Self.NameLabel.Tooltip = Self.mKey.Key
+			  End If
+			  
+			  Self.mShowOfficialName = Value
+			End Set
+		#tag EndSetter
+		ShowOfficialName As Boolean
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -365,6 +396,14 @@ Inherits ContainerControl
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsOverloaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ShowOfficialName"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

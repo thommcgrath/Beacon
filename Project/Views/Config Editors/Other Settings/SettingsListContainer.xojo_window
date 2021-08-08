@@ -106,6 +106,7 @@ End
 		  Else
 		    Return Nil
 		  End Select
+		  Element.ShowOfficialName = Self.ShowOfficialNames
 		  
 		  Var Config As BeaconConfigs.OtherSettings = Self.Config(False)
 		  Var Value As Variant = Config.Value(Key)
@@ -193,7 +194,7 @@ End
 		    Members.Add(Key)
 		    Groups.Value(GroupName) = Members
 		    
-		    KeyNameWidth = Max(KeyNameWidth, MeasurePic.Graphics.TextWidth(Key.Label + ":"))
+		    KeyNameWidth = Max(KeyNameWidth, MeasurePic.Graphics.TextWidth(If(Self.mShowOfficialNames, Key.Key, Key.Label) + ":"))
 		    
 		    DesiredBound = DesiredBound + 1
 		  Next Key
@@ -335,6 +336,9 @@ End
 		          If Element.Top <> ElementTop Then
 		            Element.Top = ElementTop
 		          End If
+		          If Element.ShowOfficialName <> Self.mShowOfficialNames Then
+		            Element.ShowOfficialName = Self.mShowOfficialNames
+		          End If
 		        End If
 		        If Element.KeyNameWidth <> Self.mKeyNameWidth Then
 		          Element.KeyNameWidth = Self.mKeyNameWidth
@@ -396,6 +400,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mShowOfficialNames As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mVisibleGroups() As String
 	#tag EndProperty
 
@@ -406,6 +414,33 @@ End
 	#tag Property, Flags = &h0
 		SettingChangeDelegate As OtherSettingsConfigEditor.SettingChangeDelegate
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mShowOfficialNames
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mShowOfficialNames = Value Then
+			    Return
+			  End If
+			  
+			  // For Each Element As SettingsListElement In Self.mElements
+			  // If Element Is Nil Then
+			  // Continue
+			  // End If
+			  // 
+			  // Element.ShowOfficialName = Value
+			  // Next Element
+			  
+			  Self.mShowOfficialNames = Value
+			  Self.ForceReload()
+			End Set
+		#tag EndSetter
+		ShowOfficialNames As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = ElementHeight, Type = Double, Dynamic = False, Default = \"62", Scope = Private
@@ -658,6 +693,14 @@ End
 		Visible=true
 		Group="Windows Behavior"
 		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ShowOfficialNames"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
