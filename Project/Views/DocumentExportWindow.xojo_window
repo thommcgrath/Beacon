@@ -666,7 +666,6 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter SharedRewriter
       DebugIdentifier =   ""
-      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
@@ -726,7 +725,7 @@ End
 		  Self.ExportToolbar.Item("SmartCopy").Enabled = SmartButtonsEnabled
 		  Self.ExportToolbar.Item("SmartSave").Enabled = SmartButtonsEnabled
 		  
-		  Self.ExportToolbar.Item("LazyCopy").Enabled = Self.ContentArea.Text <> ""
+		  Self.ExportToolbar.Item("LazyCopy").Enabled = Self.CurrentContent.IsEmpty = False
 		  Self.ExportToolbar.Item("LazySave").Enabled = Self.ExportToolbar.Item("LazyCopy").Enabled And Self.CurrentMode <> ""
 		  
 		  Var Rewriting As Boolean = Self.IsRewriting
@@ -739,7 +738,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub DoCopy()
-		  Var Content As String = Self.ContentArea.Text
+		  Var Content As String = Self.CurrentContent
 		  If Not Self.CanCopy(Content, Self.CurrentFilename) Then
 		    Return
 		  End If
@@ -754,7 +753,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub DoSave()
-		  If Not Self.CanCopy(Self.ContentArea.Text, Self.CurrentFilename, "Save") Then
+		  If Not Self.CanCopy(Self.CurrentContent, Self.CurrentFilename, "Save") Then
 		    Return
 		  End If
 		  
@@ -770,7 +769,7 @@ End
 		    Return
 		  End If
 		  
-		  If Not File.Write(Self.ContentArea.Text) Then
+		  If Not File.Write(Self.CurrentContent) Then
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
 		  End If
 		End Sub
@@ -980,8 +979,8 @@ End
 		  Case 3
 		    IntendedContent = Self.mCommandLineContent
 		  End Select
-		  If Self.ContentArea.Text <> IntendedContent Then
-		    Self.ContentArea.Text = IntendedContent
+		  If Self.CurrentContent <> IntendedContent Then
+		    Self.CurrentContent = IntendedContent
 		    Self.ContentArea.ScrollPositionX = 0
 		  End If
 		End Sub
