@@ -821,7 +821,7 @@ End
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
 		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText, "Clipboard")
+		    Self.Parse("", ImportText, "Clipboard")
 		    Return
 		  End If
 		  

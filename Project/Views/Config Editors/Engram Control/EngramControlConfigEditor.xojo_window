@@ -742,7 +742,7 @@ End
 		    Self.Changed = Config.Modified
 		    Self.ProcessEngramComparison(OldEngramRows)
 		  Else
-		    Self.Parse(InputString, "clipboard")
+		    Self.Parse("", InputString, "clipboard")
 		  End If
 		End Sub
 	#tag EndEvent

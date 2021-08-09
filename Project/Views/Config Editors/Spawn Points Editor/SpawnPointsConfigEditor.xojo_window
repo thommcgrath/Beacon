@@ -666,7 +666,7 @@ End
 		    Catch Err As RuntimeException
 		    End Try
 		  ElseIf Board.TextAvailable Then
-		    Self.Parse(Board.Text, "Clipboard")
+		    Self.Parse("", Board.Text, "Clipboard")
 		  End If
 		End Sub
 	#tag EndEvent

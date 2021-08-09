@@ -12,7 +12,25 @@ Inherits Beacon.Thread
 		  // Normalize line endings
 		  Var Content As String
 		  If (Self.mData Is Nil) = False Then
-		    Content = Self.mData.GameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mData.GameIniContent.ReplaceLineEndings(LineEnding)
+		    Var Blocks() As String
+		    
+		    Var GameUserSettingsIniContent As String = Self.mData.GameUserSettingsIniContent.ReplaceLineEndings(LineEnding)
+		    If GameUserSettingsIniContent.IsEmpty = False Then
+		      If GameUserSettingsIniContent.BeginsWith("[") = False Then
+		        GameUserSettingsIniContent = "[" + Beacon.ServerSettingsHeader + "]" + LineEnding + GameUserSettingsIniContent
+		      End If
+		      Blocks.Add(GameUserSettingsIniContent)
+		    End If
+		    
+		    Var GameIniContent As String = Self.mData.GameIniContent.ReplaceLineEndings(LineEnding)
+		    If GameIniContent.IsEmpty = False Then
+		      If GameIniContent.BeginsWith("[") = False Then
+		        GameIniContent = "[" + Beacon.ShooterGameHeader + "]" + LineEnding + GameIniContent
+		      End If
+		      Blocks.Add(GameIniContent)
+		    End If
+		    
+		    Content = Blocks.Join(LineEnding)
 		  End If
 		  
 		  // Fix smart quotes
@@ -24,6 +42,7 @@ Inherits Beacon.Thread
 		  Self.Status = "Parsing config files…"
 		  Self.Invalidate
 		  
+		  Var CurrentHeader As String
 		  Var MessageOfTheDayMode As Boolean = False
 		  Var ParsedData As New Dictionary
 		  Var Lines() As String = Content.Split(LineEnding)
@@ -35,41 +54,40 @@ Inherits Beacon.Thread
 		    
 		    Var CharacterCount As Integer = Line.Length + LineEnding.Length
 		    
-		    If MessageOfTheDayMode Then
-		      If Line.BeginsWith("[") And Line.EndsWith("]") Then
-		        MessageOfTheDayMode = False
-		      Else
-		        Try
-		          If Line.BeginsWith("Duration=") Then
-		            Var Duration As Integer = Integer.FromString(Line.Middle(9))
-		            ParsedData.Value("Duration") = Duration
-		          Else
-		            Var Message As String
-		            If Line.BeginsWith("Message=") Then
-		              Line = Line.Middle(8)
-		            Else
-		              Message = ParsedData.Lookup("Message", "")
-		            End If
-		            If Message.IsEmpty Then
-		              Message = Line
-		            Else
-		              Message = Message + LineEnding + Line
-		            End If
-		            ParsedData.Value("Message") = Message
-		          End If
-		        Catch Err As RuntimeException
-		        End Try
-		        
-		        Self.AddCharactersParsed(CharacterCount)
-		        Continue
-		      End If
+		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      CurrentHeader = Line.Middle(1, Line.Length - 2)
+		      MessageOfTheDayMode = (CurrentHeader = "MessageOfTheDay")
 		    End If
 		    
-		    If Line.IsEmpty Or Line.Left(1) = ";" Then
+		    If MessageOfTheDayMode Then
+		      Try
+		        If Line.BeginsWith("Duration=") Then
+		          Var Duration As Integer = Integer.FromString(Line.Middle(9))
+		          ParsedData.Value("Duration") = Duration
+		          ParsedData.Value("MessageOfTheDay.Duration") = Duration
+		        Else
+		          Var Message As String
+		          If Line.BeginsWith("Message=") Then
+		            Line = Line.Middle(8)
+		          Else
+		            Message = ParsedData.Lookup("MessageOfTheDay.Message", "")
+		          End If
+		          If Message.IsEmpty Then
+		            Message = Line
+		          Else
+		            Message = Message + LineEnding + Line
+		          End If
+		          ParsedData.Value("Message") = Message
+		          ParsedData.Value("MessageOfTheDay.Message") = Message
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		      
 		      Self.AddCharactersParsed(CharacterCount)
 		      Continue
-		    ElseIf Line = "[MessageOfTheDay]" Then
-		      MessageOfTheDayMode = True
+		    End If
+		    
+		    If Line.IsEmpty Or Line.BeginsWith(";") Then
 		      Self.AddCharactersParsed(CharacterCount)
 		      Continue
 		    End If
@@ -84,6 +102,7 @@ Inherits Beacon.Thread
 		      End If
 		      
 		      Var Key As String = Beacon.Pair(Value).Key
+		      Var ExtendedKey As String = CurrentHeader + "." + Key
 		      Value = Beacon.Pair(Value).Value
 		      
 		      If ParsedData.HasKey(Key) Then
@@ -99,6 +118,21 @@ Inherits Beacon.Thread
 		        ParsedData.Value(Key) = ValueArray
 		      Else
 		        ParsedData.Value(Key) = Value
+		      End If
+		      
+		      If ParsedData.HasKey(ExtendedKey) Then
+		        Var ExistingValue As Variant = ParsedData.Value(ExtendedKey)
+		        
+		        Var ValueArray() As Variant
+		        If ExistingValue.IsArray Then
+		          ValueArray = ExistingValue
+		        Else
+		          ValueArray.Add(ExistingValue)
+		        End If
+		        ValueArray.Add(Value)
+		        ParsedData.Value(ExtendedKey) = ValueArray
+		      Else
+		        ParsedData.Value(ExtendedKey) = Value
 		      End If
 		    Catch Stop As Beacon.ThreadStopException
 		      Self.mUpdateTimer.RunMode = Timer.RunModes.Off
@@ -170,6 +204,13 @@ Inherits Beacon.Thread
 		        Document.ModEnabled(ModInfo.ModID) = True
 		      End If
 		    Next
+		  End If
+		  
+		  If (Self.mDestinationDocument Is Nil) = False Then
+		    Var DestinationMods As Beacon.StringList = Self.mDestinationDocument.Mods
+		    For Each ModUUID As String In DestinationMods
+		      Document.ModEnabled(ModUUID) = True
+		    Next ModUUID
 		  End If
 		  
 		  Try

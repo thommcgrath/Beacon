@@ -902,7 +902,7 @@ End
 		  
 		  If Board.TextAvailable Then
 		    Var ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText, "Clipboard")
+		    Self.Parse("", ImportText, "Clipboard")
 		    Return
 		  End If
 		End Sub

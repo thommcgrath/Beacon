@@ -947,7 +947,7 @@ End
 		    Next
 		    Self.AddLootSources(Sources)
 		  ElseIf Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideSupplyCrateItems") > -1 Then
-		    Self.Parse(Board.Text, "Clipboard")
+		    Self.Parse("", Board.Text, "Clipboard")
 		  End If
 		End Sub
 	#tag EndEvent

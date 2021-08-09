@@ -14,6 +14,10 @@ Inherits Beacon.ConfigGroup
 		      Var Value As Variant = Entry.Value
 		      Var StringValue As String
 		      
+		      If SourceDocument.ModEnabled(Key.ModID) = False Then
+		        Continue
+		      End If
+		      
 		      Select Case Key.ValueType
 		      Case Beacon.ConfigKey.ValueTypes.TypeBoolean
 		        StringValue = If(Value.BooleanValue, "True", "False")
@@ -60,7 +64,12 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In BeaconConfigs.OtherSettings(Other).mSettings
+		    If Self.mSettings.HasKey(Entry.Key) Then
+		      Continue
+		    End If
+		    
 		    Self.mSettings.Value(Entry.Key) = Entry.Value
+		    Self.Modified = True
 		  Next
 		End Sub
 	#tag EndEvent
@@ -106,6 +115,12 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		  Var ModsLookup As New Dictionary
+		  For Each ModInfo As Beacon.ModDetails In AllMods
+		    ModsLookup.Value(ModInfo.ModID) = ModInfo
+		  Next ModInfo
+		  
 		  Var Config As New BeaconConfigs.OtherSettings
 		  Var AllKeys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
 		  For Each Key As Beacon.ConfigKey In AllKeys
@@ -113,10 +128,17 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
+		    Var LookupKey As String = Key.Key
+		    Var ModInfo As Beacon.ModDetails = ModsLookup.Lookup(Key.ModID, Nil)
+		    If (ModInfo Is Nil) = False And ModInfo.ConsoleSafe = False Then
+		      LookupKey = Key.Header + "." + Key.Key
+		    End If
+		    
 		    Var TargetDict As Dictionary
 		    If CommandLineOptions.HasKey(Key.Key) Then
 		      TargetDict = CommandLineOptions
-		    ElseIf ParsedData.HasKey(Key.Key) Then
+		      LookupKey = Key.Key
+		    ElseIf ParsedData.HasKey(LookupKey) Then
 		      TargetDict = ParsedData
 		    Else
 		      Continue
@@ -125,17 +147,17 @@ Inherits Beacon.ConfigGroup
 		    Var Value As Variant
 		    Select Case Key.ValueType
 		    Case Beacon.ConfigKey.ValueTypes.TypeNumeric
-		      Value = TargetDict.DoubleValue(Key.Key, Key.DefaultValue.DoubleValue, False)
+		      Value = TargetDict.DoubleValue(LookupKey, Key.DefaultValue.DoubleValue, False)
 		    Case Beacon.ConfigKey.ValueTypes.TypeBoolean
-		      Value = TargetDict.BooleanValue(Key.Key, Key.DefaultValue.BooleanValue, False)
+		      Value = TargetDict.BooleanValue(LookupKey, Key.DefaultValue.BooleanValue, False)
 		    Case Beacon.ConfigKey.ValueTypes.TypeText
-		      Value = TargetDict.StringValue(Key.Key, Key.DefaultValue.StringValue, False)
+		      Value = TargetDict.StringValue(LookupKey, Key.DefaultValue.StringValue, False)
 		    Else
 		      Continue
 		    End Select
 		    
 		    Config.Value(Key) = Value
-		  Next
+		  Next Key
 		  
 		  If Config.mSettings.KeyCount > 0 Then
 		    Return Config
@@ -162,6 +184,12 @@ Inherits Beacon.ConfigGroup
 		    Return False
 		  End If
 		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
 		  Return True
 		End Function
 	#tag EndMethod

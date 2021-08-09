@@ -64,9 +64,10 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Parse(Content As String, Source As String)
+		Protected Sub Parse(GameUserSettingsIniContent As String, GameIniContent As String, Source As String)
 		  Var Data As New Beacon.DiscoveredData
-		  Data.GameIniContent = Content
+		  Data.GameUserSettingsIniContent = GameUserSettingsIniContent
+		  Data.GameIniContent = GameIniContent
 		  
 		  Var Parser As New Beacon.ImportThread(Data, Self.Document)
 		  AddHandler Parser.Finished, AddressOf Parser_Finished

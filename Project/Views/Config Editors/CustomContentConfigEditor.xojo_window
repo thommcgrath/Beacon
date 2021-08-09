@@ -266,8 +266,7 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.CustomContent = Self.Config(False)
-		  Var Combined As String = Config.GameUserSettingsIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Config.GameIniContent
-		  Self.Parse(Combined, "Custom Config Content")
+		  Self.Parse(Config.GameUserSettingsIniContent, Config.GameIniContent, "Custom Config Content")
 		End Sub
 	#tag EndMethod
 
