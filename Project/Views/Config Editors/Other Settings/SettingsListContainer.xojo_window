@@ -55,6 +55,35 @@ Begin ContainerControl SettingsListContainer
       Visible         =   True
       Width           =   15
    End
+   Begin LogoFillCanvas FillCanvas
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Caption         =   "No Results"
+      Enabled         =   True
+      Height          =   376
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   False
+      Width           =   579
+   End
 End
 #tag EndWindow
 
@@ -259,7 +288,14 @@ End
 		  Self.mNoScrollEvents = NoScrollEvents
 		  
 		  If Self.mVisibleKeys Is Nil Or Self.mVisibleKeys.KeyCount = 0 Then
+		    If Not Self.FillCanvas.Visible Then
+		      Self.FillCanvas.Visible = True
+		    End If
 		    Return
+		  End If
+		  
+		  If Self.FillCanvas.Visible Then
+		    Self.FillCanvas.Visible = False
 		  End If
 		  
 		  Var NextTop As Integer = ScrollPosition * -1
