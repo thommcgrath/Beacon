@@ -31,7 +31,7 @@ Begin ContainerControl ModSelectionGrid
       Height          =   24
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   40
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -39,7 +39,7 @@ Begin ContainerControl ModSelectionGrid
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse"
+      Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse\rCustom Mods\n\nFalse"
       SelectionStyle  =   0
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -48,7 +48,7 @@ Begin ContainerControl ModSelectionGrid
       Top             =   10
       Transparent     =   False
       Visible         =   True
-      Width           =   220
+      Width           =   280
    End
    Begin CheckBox ModCheckbox
       AllowAutoDeactivate=   True
@@ -103,8 +103,18 @@ End
 		Private Sub BuildCheckboxes()
 		  Self.mSettingUp = True
 		  
+		  Const PageUniversal = 0
+		  Const PageSteam = 1
+		  Const PageLocal = 2
+		  
 		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
-		  Var ConsoleOnly As Boolean = Self.ViewSelector.SegmentAt(0).Selected
+		  Var RequiredPage As Integer
+		  For Idx As Integer = 0 To Self.ViewSelector.LastSegmentIndex
+		    If Self.ViewSelector.SegmentAt(Idx).Selected Then
+		      RequiredPage = Idx
+		      Exit For Idx
+		    End If
+		  Next Idx
 		  
 		  For Idx As Integer = Self.CheckboxesBound DownTo 1
 		    Self.ModCheckbox(Idx).Close
@@ -114,7 +124,15 @@ End
 		  Var Filtered() As Beacon.ModDetails
 		  Var MaxWidth As Double
 		  For Idx As Integer = 0 To Mods.LastIndex
-		    If (ConsoleOnly <> Mods(Idx).ConsoleSafe) Or Mods(Idx).ModID = Beacon.UserModID Then
+		    Var TargetPage As Integer
+		    If Mods(Idx).IsUserMod Then
+		      TargetPage = PageLocal
+		    ElseIf Mods(Idx).ConsoleSafe Then
+		      TargetPage = PageUniversal
+		    Else
+		      TargetPage = PageSteam
+		    End If
+		    If TargetPage <> RequiredPage Then
 		      Continue
 		    End If
 		    

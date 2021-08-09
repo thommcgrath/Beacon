@@ -646,7 +646,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var WorkshopID As UInt32 = CRC_32OfStrMBS(ModUUID)
 		  Var Details As New Beacon.ModDetails(ModUUID, ModName, False, False, WorkshopID, True)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR IGNORE INTO mods (mod_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ModUUID, ModName, WorkshopID, False, False, True)
+		  Self.SQLExecute("INSERT OR IGNORE INTO mods (mod_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ModUUID, ModName, WorkshopID, True, False, True)
 		  Self.Commit()
 		  Self.SyncUserEngrams()
 		  Return Details
