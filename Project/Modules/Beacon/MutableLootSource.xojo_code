@@ -14,6 +14,12 @@ Implements Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub IsTagged(Tag As String, Assigns Value As Boolean)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Multipliers(Assigns Value As Beacon.Range)
 		  
 		End Sub
@@ -39,6 +45,12 @@ Implements Beacon.LootSource
 
 	#tag Method, Flags = &h0
 		Sub SortValue(Assigns Value As Integer)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Tags(Assigns Tags() As String)
 		  
 		End Sub
 	#tag EndMethod

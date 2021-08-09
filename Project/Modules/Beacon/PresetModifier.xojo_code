@@ -47,6 +47,8 @@ Implements Beacon.NamedItem
 		  Engine.GlobalProperty("ColorPurple") = "E6BAFF00"
 		  Engine.GlobalProperty("ColorYellow") = "FFF02A00"
 		  Engine.GlobalProperty("ColorRed") = "FFBABA00"
+		  Engine.GlobalProperty("ColorCyan") = "00FFFF00"
+		  Engine.GlobalProperty("ColorOrange") = "FFA50000"
 		  
 		  Var Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
@@ -55,8 +57,6 @@ Implements Beacon.NamedItem
 		  
 		  Engine.GlobalProperty("BeaconVersion") = App.BuildNumber
 		  Engine.GlobalProperty("BeaconVersionString") = App.BuildVersion
-		  
-		  Var Tags() As String
 		  
 		  Var Multipliers As New Dictionary
 		  Multipliers.Value("Min") = Source.Multipliers.Min
@@ -69,7 +69,8 @@ Implements Beacon.NamedItem
 		  Obj.Value("Mask") = Source.Availability
 		  Obj.Value("Multipliers") = Multipliers
 		  Obj.Value("IconColor") = Source.UIColor.ToHex.Uppercase
-		  Obj.Value("Tags") = Tags
+		  Obj.Value("Tags") = Source.Tags
+		  Obj.Value("Experimental") = Source.Experimental
 		  Engine.GlobalPropertyJSON("LootSource") = Beacon.GenerateJSON(Obj, False)
 		  
 		  Return Engine

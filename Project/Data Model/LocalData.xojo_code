@@ -312,7 +312,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER NOT NULL UNIQUE, is_user_mod BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
@@ -1878,15 +1878,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Notes As String = Dict.Value("notes")
 		      Var IconID As v4UUID = Dict.Value("icon").StringValue
 		      Var Requirements As String = Dict.Lookup("requirements", "{}")
+		      Var TagString As String = ""
+		      If Dict.HasKey("tags") Then
+		        Var TagArray() As Variant = Dict.Value("tags")
+		        Var Tags() As String
+		        For Each Tag As String In TagArray
+		          Tags.Add(Beacon.NormalizeTag(Tag))
+		        Next
+		        TagString = Tags.Join(",")
+		      End If
 		      
 		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR path = ?2;", ObjectID.StringValue, Path)
 		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14, alternate_label = ?15 WHERE object_id = ?1;", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements, AlternateLabel)
+		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14, alternate_label = ?15, tags = ?16 WHERE object_id = ?1;", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements, AlternateLabel, TagString)
 		      Else
 		        If Results.RowCount = 1 Then
 		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Column("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements, alternate_label) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15);", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements, AlternateLabel)
+		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements, alternate_label, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16);", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements, AlternateLabel, TagString)
 		      End If
 		      EngramsChanged = True
 		    Next
@@ -2928,6 +2937,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
 		    Source.ModID = Results.Column("mod_id").StringValue
+		    Source.TagString = Results.Column("tags").StringValue
 		    
 		    If Requirements.HasKey("mandatory_item_sets") Then
 		      Var SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
@@ -3974,7 +3984,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id", Scope = Private
+	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id\x2C loot_sources.tags", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public

@@ -52,6 +52,19 @@ Implements Beacon.MutableLootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub IsTagged(Tag As String, Assigns Value As Boolean)
+		  Tag = Beacon.NormalizeTag(Tag)
+		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
+		  If Idx > -1 And Value = False Then
+		    Self.mTags.RemoveAt(Idx)
+		  ElseIf Idx = -1 And Value = True Then
+		    Self.mTags.Add(Tag)
+		    Self.mTags.Sort()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
@@ -154,6 +167,18 @@ Implements Beacon.MutableLootSource
 	#tag Method, Flags = &h0
 		Sub SortValue(Assigns Value As Integer)
 		  Self.mSortValue = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Tags(Assigns Tags() As String)
+		  Self.mTags.ResizeTo(-1)
+		  
+		  For Each Tag As String In Tags
+		    Tag = Beacon.NormalizeTag(Tag)
+		    Self.mTags.Add(Tag)
+		  Next
+		  Self.mTags.Sort
 		End Sub
 	#tag EndMethod
 

@@ -2018,6 +2018,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function TagString(Extends Source As Beacon.LootSource) As String
+		  Var Tags() As String = Source.Tags
+		  Return Tags.Join(",")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub TagString(Extends Blueprint As Beacon.MutableBlueprint, Assigns Value As String)
 		  Var Tags() As String = Value.Split(",")
 		  Var Idx As Integer = Tags.IndexOf("object")
@@ -2025,6 +2032,13 @@ Protected Module Beacon
 		    Tags.RemoveAt(Idx)
 		  End If
 		  Blueprint.Tags = Tags
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TagString(Extends Source As Beacon.MutableLootSource, Assigns Value As String)
+		  Var Tags() As String = Value.Split(",")
+		  Source.Tags = Tags
 		End Sub
 	#tag EndMethod
 

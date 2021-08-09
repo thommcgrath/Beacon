@@ -78,6 +78,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 		  Self.mItemSets = New Beacon.ItemSetCollection(Source.ItemSets)
 		  Self.mRequiredItemSets = Source.RequiredItemSetCount
 		  Self.mModID = Source.ModID
+		  Self.mTags = Source.TagString.Split(",")
 		  
 		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
 		  Self.mMandatoryItemSets.ResizeTo(MandatorySets.LastIndex)
@@ -162,6 +163,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag Method, Flags = &h0
 		Function IsOfficial() As Boolean
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTagged(Tag As String) As Boolean
+		  Return Self.mTags.IndexOf(Beacon.NormalizeTag(Tag)) > -1
 		End Function
 	#tag EndMethod
 
@@ -349,6 +356,17 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Tags() As String()
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mTags.LastIndex)
+		  For I As Integer = 0 To Self.mTags.LastIndex
+		    Clone(I) = Self.mTags(I)
+		  Next
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UIColor() As Color
 		  Return Self.mUIColor
 		End Function
@@ -421,6 +439,10 @@ Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 
 	#tag Property, Flags = &h1
 		Protected mSortValue As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mTags() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -50,6 +50,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsTagged(Tag As String) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ItemSets() As Beacon.ItemSetCollection
 		  
 		End Function
@@ -141,6 +147,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function SortValue() As Integer
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Tags() As String()
 		  
 		End Function
 	#tag EndMethod
