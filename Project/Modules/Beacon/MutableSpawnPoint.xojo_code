@@ -160,6 +160,24 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveCreature(Creature As Beacon.Creature)
+		  Self.Limit(Creature) = 0
+		  
+		  For SetIdx As Integer = Self.mSets.LastIndex DownTo 0
+		    Var MutableSet As Beacon.MutableSpawnPointSet = Self.mSets(SetIdx).MutableVersion
+		    For EntryIdx As Integer = MutableSet.LastRowIndex DownTo 0
+		      If MutableSet.Entry(EntryIdx).Creature.ObjectID = Creature.ObjectID Then
+		        MutableSet.Remove(EntryIdx)
+		      End If
+		    Next EntryIdx
+		    If MutableSet.Count = 0 Then
+		      Self.RemoveSet(MutableSet)
+		    End If
+		  Next SetIdx
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveSet(Set As Beacon.SpawnPointSet)
 		  Var Idx As Integer = Self.IndexOf(Set)
 		  If Idx > -1 Then

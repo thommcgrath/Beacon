@@ -411,12 +411,12 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Return 1
 		  End If
 		  
-		  If Self.mID = Other.mID Then
+		  If Self.mID = Other.mID And Self.Hash = Other.Hash Then
 		    Return 0
 		  End If
 		  
-		  Var CompareLeft As String = Self.mLabel + Self.mID
-		  Var CompareRight As String = Other.mLabel + Other.mID
+		  Var CompareLeft As String = Self.mLabel + Self.Hash
+		  Var CompareRight As String = Other.mLabel + Other.Hash
 		  Return CompareLeft.Compare(CompareRight, ComparisonOptions.CaseInsensitive, Locale.Current)
 		End Function
 	#tag EndMethod

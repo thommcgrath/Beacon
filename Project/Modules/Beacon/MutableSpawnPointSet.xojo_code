@@ -90,6 +90,13 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Entry(AtIndex As Integer, Assigns NewEntry As Beacon.SpawnPointSetEntry)
+		  Self.mEntries(AtIndex) = NewEntry
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub GroupOffset(Assigns Offset As Beacon.Point3D)
 		  If Self.mGroupOffset <> Offset Then
 		    If Offset Is Nil Then

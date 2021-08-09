@@ -359,6 +359,12 @@ End
 		    Else
 		      Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures that it was able to convert into spawn point additions. The replaced creatures have been disabled.")
 		    End If
+		  Case "8913bca3-fbae-43bd-a94b-7c3ac06b6ca1"
+		    Var SourceConfig As BeaconConfigs.SpawnPoints = Self.Config(False)
+		    If SpawnBulkEditWindow.Present(Self, SourceConfig, Self.Document.Mods, Self.Document.MapCompatibility, Self.Document.DifficultyValue) Then
+		      Call Self.Config(True) // To retain the config
+		      Self.SetupUI
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
