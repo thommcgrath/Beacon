@@ -39,7 +39,7 @@ Begin ContainerControl ModSelectionGrid
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   2
-      Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse\rCustom Mods\n\nFalse"
+      Segments        =   "Universal\n\nFalse\rSteam Only\n\nFalse\rCustom\n\nFalse"
       SelectionStyle  =   0
       TabIndex        =   0
       TabPanelIndex   =   0
