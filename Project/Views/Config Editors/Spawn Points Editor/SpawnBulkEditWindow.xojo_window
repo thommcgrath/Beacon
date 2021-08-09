@@ -549,6 +549,36 @@ Begin BeaconDialog SpawnBulkEditWindow
          Width           =   60
       End
    End
+   Begin Thread ProcessingThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin ProgressWheel Spinner
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   16
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   414
+      Transparent     =   False
+      Visible         =   False
+      Width           =   16
+   End
 End
 #tag EndWindow
 
@@ -582,9 +612,54 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ProcessSpawnPoint(Creature As Beacon.Creature, Point As Beacon.MutableSpawnPoint)
+		  For SetIdx As Integer = 0 To Point.LastRowIndex
+		    Var MutableSet As Beacon.MutableSpawnPointSet = Point.Set(SetIdx).MutableVersion
+		    Var ChangeThisColorSet As Boolean
+		    
+		    For EntryIdx As Integer = 0 To MutableSet.LastRowIndex
+		      Var Entry As Beacon.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
+		      If Entry.Creature.ObjectID <> Creature.ObjectID Then
+		        Continue
+		      End If
+		      
+		      If Self.mChangeColors Then
+		        ChangeThisColorSet = True
+		      End
+		      
+		      If Self.mChangeLevels Then
+		        Entry.MaxLevelMultiplier = Nil
+		        Entry.MinLevelMultiplier = Nil
+		        Entry.MaxLevelOffset = Nil
+		        Entry.MinLevelOffset = Nil
+		        Entry.Levels = Self.mLevelOverrides
+		        MutableSet.Entry(EntryIdx) = Entry
+		      End If
+		    Next EntryIdx
+		    
+		    If ChangeThisColorSet Then
+		      MutableSet.ColorSetClass = Self.mSelectedColorClass
+		    End If
+		    
+		    Point.Set(SetIdx) = MutableSet
+		  Next SetIdx
+		  
+		  Self.mConfig.Add(Point)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChangeColors As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mChangeLevels As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -592,7 +667,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCreatures() As Beacon.Creature
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDifficultyValue As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLevelOverrides() As Beacon.SpawnPointLevel
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -601,6 +684,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.StringList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedColorClass As String
 	#tag EndProperty
 
 
@@ -685,95 +772,28 @@ End
 		    Return
 		  End If
 		  
-		  Var ChangeColorSets As Boolean = Self.ChangeColorsCheckbox.Value
-		  Var ColorSetClass As String
-		  If ChangeColorSets Then
-		    ColorSetClass = Self.ColorsMenu.RowTagAt(Self.ColorsMenu.SelectedRowIndex)
+		  Self.mCreatures = Creatures
+		  
+		  Self.mChangeColors = Self.ChangeColorsCheckbox.Value
+		  If Self.mChangeColors Then
+		    Self.mSelectedColorClass = Self.ColorsMenu.RowTagAt(Self.ColorsMenu.SelectedRowIndex)
 		  End If
 		  
-		  Var ChangeLevels As Boolean = Self.SetLevelsCheckbox.Value
-		  Var LevelOverrides() As Beacon.SpawnPointLevel
-		  If ChangeLevels Then
+		  Self.mChangeLevels = Self.SetLevelsCheckbox.Value
+		  If Self.mChangeLevels Then
+		    Self.mLevelOverrides.ResizeTo(-1)
 		    Var MinLevel As Integer = Integer.FromString(Self.MinLevelField.Text, Locale.Current)
 		    Var MaxLevel As Integer = Integer.FromString(Self.MaxLevelField.Text, Locale.Current)
 		    If MinLevel >= 1 And MaxLevel >= 1 Then
-		      LevelOverrides.Add(Beacon.SpawnPointLevel.FromUserLevel(MinLevel, MaxLevel, Self.mDifficultyValue))
+		      Self.mLevelOverrides.Add(Beacon.SpawnPointLevel.FromUserLevel(MinLevel, MaxLevel, Self.mDifficultyValue))
 		    End If
 		  End If
 		  
-		  #Pragma Warning "This technique will not handle creatures added to overrides"
-		  For Each Creature As Beacon.Creature In Creatures
-		    Var Points() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(Creature, Self.mMods, "")
-		    For Each Definition As Beacon.SpawnPoint In Points
-		      If Definition.ValidForMask(Self.mMask) = False Then
-		        Continue
-		      End If
-		      
-		      Var Original As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeOverride)
-		      Var Mutable As Beacon.MutableSpawnPoint
-		      If Original Is Nil Then
-		        Mutable = Definition.MutableClone
-		        Mutable.Mode = Beacon.SpawnPoint.ModeOverride
-		        LocalData.SharedInstance.LoadDefaults(Mutable)
-		        
-		        Var Remove As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeRemove)
-		        If (Remove Is Nil) = False Then
-		          For Each Set As Beacon.SpawnPointSet In Remove
-		            For Each Entry As Beacon.SpawnPointSetEntry In Set
-		              Mutable.RemoveCreature(Entry.Creature)
-		            Next Entry
-		          Next Set
-		          Self.mConfig.Remove(Remove)
-		        End If
-		        
-		        Var Append As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeAppend)
-		        If (Append Is Nil) = False Then
-		          For Each Set As Beacon.SpawnPointSet In Append
-		            Mutable.AddSet(Set.Clone)
-		          Next Set
-		          Self.mConfig.Remove(Append)
-		        End If
-		      Else
-		        Mutable = Original.MutableClone
-		      End If
-		      
-		      For SetIdx As Integer = 0 To Mutable.LastRowIndex
-		        Var MutableSet As Beacon.MutableSpawnPointSet = Mutable.Set(SetIdx).MutableVersion
-		        Var ChangeThisColorSet As Boolean
-		        
-		        For EntryIdx As Integer = 0 To MutableSet.LastRowIndex
-		          Var Entry As Beacon.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
-		          If Entry.Creature.ObjectID <> Creature.ObjectID Then
-		            Continue
-		          End If
-		          
-		          If ChangeColorSets Then
-		            ChangeThisColorSet = True
-		          End
-		          
-		          If ChangeLevels Then
-		            Entry.MaxLevelMultiplier = Nil
-		            Entry.MinLevelMultiplier = Nil
-		            Entry.MaxLevelOffset = Nil
-		            Entry.MinLevelOffset = Nil
-		            Entry.Levels = LevelOverrides
-		            MutableSet.Entry(EntryIdx) = Entry
-		          End If
-		        Next EntryIdx
-		        
-		        If ChangeThisColorSet Then
-		          MutableSet.ColorSetClass = ColorSetClass
-		        End If
-		        
-		        Mutable.Set(SetIdx) = MutableSet
-		      Next SetIdx
-		      
-		      Self.mConfig.Add(Mutable)
-		    Next Definition
-		  Next Creature
+		  Self.ActionButton.Enabled = False
+		  Self.CancelButton.Enabled = False
 		  
-		  Self.mCancelled = False
-		  Self.Hide
+		  Self.ProcessingThread.Start
+		  Self.Spinner.Visible = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -812,6 +832,89 @@ End
 		    Me.AddRow(ColorSet.Label)
 		    Me.RowTagAt(Me.LastAddedRowIndex) = ColorSet.ClassString
 		  Next ColorSet
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ProcessingThread
+	#tag Event
+		Sub Run()
+		  Var UntouchedPoints As New Dictionary
+		  For Each Point As Beacon.SpawnPoint In Self.mConfig
+		    UntouchedPoints.Value(Point.UniqueKey) = Point
+		  Next Point
+		  
+		  For Each Creature As Beacon.Creature In Self.mCreatures
+		    Var Points() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(Creature, Self.mMods, "")
+		    For Each Definition As Beacon.SpawnPoint In Points
+		      If Definition.ValidForMask(Self.mMask) = False Then
+		        Continue
+		      End If
+		      
+		      Var Original As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeOverride)
+		      Var Mutable As Beacon.MutableSpawnPoint
+		      If Original Is Nil Then
+		        Mutable = Definition.MutableClone
+		        Mutable.Mode = Beacon.SpawnPoint.ModeOverride
+		        LocalData.SharedInstance.LoadDefaults(Mutable)
+		        
+		        Var Remove As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeRemove)
+		        If (Remove Is Nil) = False Then
+		          For Each Set As Beacon.SpawnPointSet In Remove
+		            For Each Entry As Beacon.SpawnPointSetEntry In Set
+		              Mutable.RemoveCreature(Entry.Creature)
+		            Next Entry
+		          Next Set
+		          If UntouchedPoints.HasKey(Remove.UniqueKey) Then
+		            UntouchedPoints.Remove(Remove.UniqueKey)
+		          End If
+		          Self.mConfig.Remove(Remove)
+		        End If
+		        
+		        Var Append As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeAppend)
+		        If (Append Is Nil) = False Then
+		          For Each Set As Beacon.SpawnPointSet In Append
+		            Mutable.AddSet(Set.Clone)
+		          Next Set
+		          If UntouchedPoints.HasKey(Append.UniqueKey) Then
+		            UntouchedPoints.Remove(Append.UniqueKey)
+		          End If
+		          Self.mConfig.Remove(Append)
+		        End If
+		      Else
+		        Mutable = Original.MutableClone
+		      End If
+		      
+		      Self.ProcessSpawnPoint(Creature, Mutable)
+		      
+		      If UntouchedPoints.HasKey(Mutable.UniqueKey) Then
+		        UntouchedPoints.Remove(Mutable.UniqueKey)
+		      End If
+		    Next Definition
+		  Next Creature
+		  
+		  If UntouchedPoints.KeyCount > 0 Then
+		    For Each Entry As DictionaryEntry In UntouchedPoints
+		      Var Point As Beacon.MutableSpawnPoint = Beacon.SpawnPoint(Entry.Value).MutableClone
+		      For Each Creature As Beacon.Creature In Self.mCreatures
+		        Self.ProcessSpawnPoint(Creature, Point)
+		      Next Creature
+		    Next Entry
+		  End If
+		  
+		  Var UIDict As New Dictionary
+		  UIDict.Value("Finished") = True
+		  Me.AddUserInterfaceUpdate(UIDict)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.Lookup("Finished", False) Then
+		      Self.Spinner.Visible = False
+		      Self.mCancelled = False
+		      Self.Hide
+		    End If
+		  Next Dict
 		End Sub
 	#tag EndEvent
 #tag EndEvents
