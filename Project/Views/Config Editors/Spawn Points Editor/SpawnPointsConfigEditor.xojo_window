@@ -363,6 +363,7 @@ End
 		    Var SourceConfig As BeaconConfigs.SpawnPoints = Self.Config(False)
 		    If SpawnBulkEditWindow.Present(Self, SourceConfig, Self.Document.Mods, Self.Document.MapCompatibility, Self.Document.DifficultyValue) Then
 		      Call Self.Config(True) // To retain the config
+		      Self.Changed = SourceConfig.Modified
 		      Self.SetupUI
 		    End If
 		  End Select

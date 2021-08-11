@@ -201,7 +201,9 @@ Begin BeaconDialog SpawnBulkEditWindow
          TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   274
+         _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton ChooseCreaturesButton
@@ -357,6 +359,7 @@ Begin BeaconDialog SpawnBulkEditWindow
          Top             =   96
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   128
@@ -389,6 +392,7 @@ Begin BeaconDialog SpawnBulkEditWindow
          Top             =   128
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   128
@@ -550,12 +554,15 @@ Begin BeaconDialog SpawnBulkEditWindow
       End
    End
    Begin Thread ProcessingThread
+      DebugIdentifier =   ""
       Index           =   -2147483648
       LockedInPosition=   False
-      Priority        =   5
+      Priority        =   2
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
+      ThreadID        =   0
+      ThreadState     =   0
    End
    Begin ProgressWheel Spinner
       AllowAutoDeactivate=   True
@@ -574,10 +581,45 @@ Begin BeaconDialog SpawnBulkEditWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   414
+      Top             =   412
       Transparent     =   False
       Visible         =   False
       Width           =   16
+   End
+   Begin Label StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   48
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   410
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   448
    End
 End
 #tag EndWindow
@@ -613,14 +655,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ProcessSpawnPoint(Creature As Beacon.Creature, Point As Beacon.MutableSpawnPoint)
+		Private Sub ProcessSpawnPoint(Point As Beacon.MutableSpawnPoint)
 		  For SetIdx As Integer = 0 To Point.LastRowIndex
 		    Var MutableSet As Beacon.MutableSpawnPointSet = Point.Set(SetIdx).MutableVersion
 		    Var ChangeThisColorSet As Boolean
 		    
 		    For EntryIdx As Integer = 0 To MutableSet.LastRowIndex
 		      Var Entry As Beacon.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
-		      If Entry.Creature.ObjectID <> Creature.ObjectID Then
+		      If Self.mCreatures.IndexOf(Entry.Creature) = -1 Then
 		        Continue
 		      End If
 		      
@@ -794,6 +836,8 @@ End
 		  
 		  Self.ProcessingThread.Start
 		  Self.Spinner.Visible = True
+		  Self.StatusLabel.Text = "Starting thread…"
+		  Self.StatusLabel.Visible = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -838,11 +882,11 @@ End
 #tag Events ProcessingThread
 	#tag Event
 		Sub Run()
-		  Var UntouchedPoints As New Dictionary
-		  For Each Point As Beacon.SpawnPoint In Self.mConfig
-		    UntouchedPoints.Value(Point.UniqueKey) = Point
-		  Next Point
-		  
+		  // First, add missing spawn points
+		  Var CreaturesCount As Integer = Self.mCreatures.Count
+		  Var TotalCreaturesText As String = Language.NounWithQuantity(CreaturesCount, "creature", "creatures")
+		  Var CreaturesProcessed As Integer = 0
+		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for 0 of " + TotalCreaturesText + "…"))
 		  For Each Creature As Beacon.Creature In Self.mCreatures
 		    Var Points() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(Creature, Self.mMods, "")
 		    For Each Definition As Beacon.SpawnPoint In Points
@@ -851,59 +895,58 @@ End
 		      End If
 		      
 		      Var Original As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeOverride)
-		      Var Mutable As Beacon.MutableSpawnPoint
-		      If Original Is Nil Then
-		        Mutable = Definition.MutableClone
-		        Mutable.Mode = Beacon.SpawnPoint.ModeOverride
-		        LocalData.SharedInstance.LoadDefaults(Mutable)
-		        
-		        Var Remove As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeRemove)
-		        If (Remove Is Nil) = False Then
-		          For Each Set As Beacon.SpawnPointSet In Remove
-		            For Each Entry As Beacon.SpawnPointSetEntry In Set
-		              Mutable.RemoveCreature(Entry.Creature)
-		            Next Entry
-		          Next Set
-		          If UntouchedPoints.HasKey(Remove.UniqueKey) Then
-		            UntouchedPoints.Remove(Remove.UniqueKey)
-		          End If
-		          Self.mConfig.Remove(Remove)
-		        End If
-		        
-		        Var Append As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeAppend)
-		        If (Append Is Nil) = False Then
-		          For Each Set As Beacon.SpawnPointSet In Append
-		            Mutable.AddSet(Set.Clone)
-		          Next Set
-		          If UntouchedPoints.HasKey(Append.UniqueKey) Then
-		            UntouchedPoints.Remove(Append.UniqueKey)
-		          End If
-		          Self.mConfig.Remove(Append)
-		        End If
-		      Else
-		        Mutable = Original.MutableClone
+		      If (Original Is Nil) = False Then
+		        Continue
 		      End If
 		      
-		      Self.ProcessSpawnPoint(Creature, Mutable)
+		      Var Mutable As Beacon.MutableSpawnPoint = Definition.MutableClone
+		      Mutable.Mode = Beacon.SpawnPoint.ModeOverride
+		      LocalData.SharedInstance.LoadDefaults(Mutable)
 		      
-		      If UntouchedPoints.HasKey(Mutable.UniqueKey) Then
-		        UntouchedPoints.Remove(Mutable.UniqueKey)
+		      Var Remove As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeRemove)
+		      If (Remove Is Nil) = False Then
+		        For Each Set As Beacon.SpawnPointSet In Remove
+		          For Each Entry As Beacon.SpawnPointSetEntry In Set
+		            Mutable.RemoveCreature(Entry.Creature)
+		          Next Entry
+		        Next Set
+		        Self.mConfig.Remove(Remove)
 		      End If
+		      
+		      Var Append As Beacon.SpawnPoint = Self.mConfig.GetSpawnPoint(Definition.ObjectID, Beacon.SpawnPoint.ModeAppend)
+		      If (Append Is Nil) = False Then
+		        For Each Set As Beacon.SpawnPointSet In Append
+		          Mutable.AddSet(Set.Clone)
+		        Next Set
+		        Var Limits As Dictionary = Append.Limits
+		        For Each Entry As DictionaryEntry In Limits
+		          Var LimitCreature As Beacon.Creature = Entry.Key
+		          Var Percent As Double = Entry.Value
+		          Mutable.Limit(LimitCreature) = Percent
+		        Next Entry
+		        Self.mConfig.Remove(Append)
+		      End If
+		      
+		      Self.mConfig.Add(Mutable)
 		    Next Definition
+		    CreaturesProcessed = CreaturesProcessed + 1
+		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Found spawn points for " + CreaturesProcessed.ToString(Locale.Current, ",##0") + " of " + TotalCreaturesText + "…"))
 		  Next Creature
 		  
-		  If UntouchedPoints.KeyCount > 0 Then
-		    For Each Entry As DictionaryEntry In UntouchedPoints
-		      Var Point As Beacon.MutableSpawnPoint = Beacon.SpawnPoint(Entry.Value).MutableClone
-		      For Each Creature As Beacon.Creature In Self.mCreatures
-		        Self.ProcessSpawnPoint(Creature, Point)
-		      Next Creature
-		    Next Entry
-		  End If
+		  // Next, process everything
+		  Var Points() As Beacon.SpawnPoint = Self.mConfig.All
+		  Var PointCount As Integer = Points.Count
+		  Var TotalPointsText As String = Language.NounWithQuantity(PointCount, "spawn point", "spawn points")
+		  Var PointsProcessed As Integer
+		  Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed 0 of " + TotalPointsText + "…"))
+		  For Each Point As Beacon.SpawnPoint In Points
+		    Var Mutable As Beacon.MutableSpawnPoint = Point.MutableVersion
+		    Self.ProcessSpawnPoint(Mutable)
+		    PointsProcessed = PointsProcessed + 1
+		    Me.AddUserInterfaceUpdate(New Dictionary("Status": "Processed " + PointsProcessed.ToString(Locale.Current, ",##0") + " of " + TotalPointsText + "…"))
+		  Next Point
 		  
-		  Var UIDict As New Dictionary
-		  UIDict.Value("Finished") = True
-		  Me.AddUserInterfaceUpdate(UIDict)
+		  Me.AddUserInterfaceUpdate(New Dictionary("Finished": True, "Status": "Finished"))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -913,6 +956,9 @@ End
 		      Self.Spinner.Visible = False
 		      Self.mCancelled = False
 		      Self.Hide
+		    End If
+		    If Dict.HasKey("Status") Then
+		      Self.StatusLabel.Text = Dict.Value("Status")
 		    End If
 		  Next Dict
 		End Sub
