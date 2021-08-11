@@ -610,7 +610,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function GetConfigKey(Extends Source As Beacon.DataSource, File As String, Header As String, Key As String) As Beacon.ConfigKey
-		  Var Results() As Beacon.ConfigKey = Source.SearchForConfigKey(File, Header, Key)
+		  Var Results() As Beacon.ConfigKey = Source.SearchForConfigKey(File, Header, Key, False)
 		  If Results.Count = 1 Then
 		    Return Results(0)
 		  End If

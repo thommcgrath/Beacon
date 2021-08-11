@@ -209,15 +209,22 @@ End
 
 	#tag Method, Flags = &h0
 		Function Value() As Variant
-		  If Self.IsOverloaded Then
-		    If IsNumeric(Self.mValueField.Text) Then
-		      Return CDbl(Self.mValueField.Text)
-		    Else
-		      Return Nil
-		    End If
-		  Else
+		  If IsNumeric(Self.mValueField.Text) = False Then
 		    Return Nil
 		  End If
+		  
+		  Var DoubleValue As Double = Double.FromString(Self.mValueField.Text, Locale.Current)
+		  
+		  Var ShouldLimitMin As Variant = Self.mKey.Constraint("min")
+		  Var ShouldLimitMax As Variant = Self.mKey.Constraint("max")
+		  If IsNull(ShouldLimitMin) = False Then
+		    DoubleValue = Max(DoubleValue, ShouldLimitMin)
+		  End If
+		  If IsNull(ShouldLimitMax) = False Then
+		    DoubleValue = Min(DoubleValue, ShouldLimitMax)
+		  End If
+		  
+		  Return DoubleValue
 		End Function
 	#tag EndMethod
 
@@ -259,13 +266,7 @@ End
 		    Return
 		  End If
 		  
-		  Var NewValue As Variant
-		  If IsNumeric(Me.Text) = False Then
-		    NewValue = Nil
-		  Else
-		    NewValue = CDbl(Me.Text)
-		  End If
-		  Self.UserValueChange(NewValue)
+		  Self.UserValueChange(Self.Value)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -277,6 +278,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ShowOfficialName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsOverloaded"
 		Visible=false

@@ -313,7 +313,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForConfigKey(File As String, Header As String, Key As String) As Beacon.ConfigKey()
+		Function SearchForConfigKey(File As String, Header As String, Key As String, SortHuman As Boolean) As Beacon.ConfigKey()
 		  
 		End Function
 	#tag EndMethod

@@ -1,6 +1,16 @@
 #tag Class
 Protected Class ConfigKey
 	#tag Method, Flags = &h0
+		Function Constraint(Key As String) As Variant
+		  If Self.mConstraints Is Nil Or Self.mConstraints.HasKey(Key) = False Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mConstraints.Value(Key)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.ConfigKey)
 		  Self.mUUID = Source.mUUID
 		  Self.mLabel = Source.mLabel
@@ -28,7 +38,7 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, ModID As String)
+		Sub Constructor(ObjectID As v4UUID, Label As String, File As String, Header As String, Key As String, ValueType As Beacon.ConfigKey.ValueTypes, MaxAllowed As NullableDouble, Description As String, DefaultValue As Variant, NitradoPath As NullableString, NitradoFormat As Beacon.ConfigKey.NitradoFormats, NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles, NativeEditorVersion As NullableDouble, UIGroup As NullableString, CustomSort As NullableString, Constraints As Dictionary, ModID As String)
 		  Self.Constructor(File, Header, Key)
 		  
 		  Self.mUUID = ObjectID
@@ -40,6 +50,8 @@ Protected Class ConfigKey
 		  Self.mNativeEditorVersion = NativeEditorVersion
 		  Self.mUIGroup = UIGroup
 		  Self.mModID = ModID
+		  Self.mCustomSort = CustomSort
+		  Self.mConstraints = Constraints
 		  
 		  If (NitradoPath Is Nil) = False Then
 		    Self.mNitradoPaths = NitradoPath.Split(";")
@@ -47,6 +59,12 @@ Protected Class ConfigKey
 		    Self.mNitradoDeployStyle = NitradoDeployStyle
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CustomSort() As NullableString
+		  Return Self.mCustomSort
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -208,6 +226,14 @@ Protected Class ConfigKey
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mConstraints As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCustomSort As NullableString
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDefaultValue As Variant

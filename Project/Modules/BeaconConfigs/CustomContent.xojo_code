@@ -12,7 +12,7 @@ Inherits Beacon.ConfigGroup
 		  Var PotentialCommandLineValues() As Beacon.ConfigValue = Organizer.FilteredValues(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader)
 		  
 		  For Each ParsedValue As Beacon.ConfigValue In PotentialCommandLineValues
-		    Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("CommandLine", "", ParsedValue.SimplifiedKey)
+		    Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("CommandLine", "", ParsedValue.SimplifiedKey, False)
 		    If Keys.Count <> 1 Then
 		      Continue
 		    End If

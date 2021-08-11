@@ -369,7 +369,7 @@ Inherits Beacon.IntegrationEngine
 		      
 		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
 		        // Build our own ini files from known keys
-		        Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "") // To retrieve all
+		        Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "", False) // To retrieve all
 		        Var GuidedOrganizer As New Beacon.ConfigOrganizer
 		        For Each ConfigKey As Beacon.ConfigKey In AllConfigs
 		          If ConfigKey.HasNitradoEquivalent = False Then

@@ -104,13 +104,13 @@ Protected Module Tests
 		Private Sub TestConfigKeys()
 		  Var LocalData As LocalData = LocalData.SharedInstance
 		  
-		  Var AllConfigKeys() As Beacon.ConfigKey = LocalData.SearchForConfigKey("", "", "")
+		  Var AllConfigKeys() As Beacon.ConfigKey = LocalData.SearchForConfigKey("", "", "", False)
 		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
 		  
 		  Var SpecificConfigKey As Beacon.ConfigKey = LocalData.GetConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "DayTimeSpeedScale")
 		  Call Assert((SpecificConfigKey Is Nil) = False, "Could not find DayTimeSpeedScale key.")
 		  
-		  Var SpeedScales() As Beacon.ConfigKey = LocalData.SearchForConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "*SpeedScale")
+		  Var SpeedScales() As Beacon.ConfigKey = LocalData.SearchForConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "*SpeedScale", False)
 		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
 		End Sub
 	#tag EndMethod

@@ -62,6 +62,8 @@ Begin ContainerControl SettingsListContainer
       AllowTabs       =   False
       Backdrop        =   0
       Caption         =   "No Results"
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   376
       Index           =   -2147483648
@@ -73,6 +75,7 @@ Begin ContainerControl SettingsListContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   1
@@ -122,7 +125,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CreateElement(Key As Beacon.ConfigKey) As SettingsListElement
+		Private Function CreateElement(Key As Beacon.ConfigKey, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As SettingsListElement
 		  Var Element As SettingsListElement
 		  
 		  Select Case Key.ValueType
@@ -135,6 +138,10 @@ End
 		  Else
 		    Return Nil
 		  End Select
+		  
+		  // Get open events to fire now
+		  Element.EmbedWithin(Self, Left, Top, Width, Height)
+		  
 		  Element.ShowOfficialName = Self.ShowOfficialNames
 		  
 		  Var Config As BeaconConfigs.OtherSettings = Self.Config(False)
@@ -173,7 +180,7 @@ End
 		  
 		  Self.mFilter = Value
 		  
-		  Var AllKeys() As Beacon.ConfigKey = LocalData.SharedInstance.SearchForConfigKey("", "", "")
+		  Var AllKeys() As Beacon.ConfigKey = LocalData.SharedInstance.SearchForConfigKey("", "", "", True)
 		  Var GroupNames() As String
 		  Var Groups As New Dictionary
 		  Var Filtered As Boolean = Value.IsEmpty = False
@@ -346,8 +353,7 @@ End
 		          Self.mElements(ElementIdx) = Nil
 		        End If
 		        If Element Is Nil Then
-		          Element = Self.CreateElement(Member)
-		          Element.EmbedWithin(Self, 0, ElementTop, ElementWidth, Self.ElementHeight)
+		          Element = Self.CreateElement(Member, 0, ElementTop, ElementWidth, Self.ElementHeight)
 		          Element.Visible = True
 		          Element.TabIndex = ElementIdx
 		          Self.mElements(ElementIdx) = Element

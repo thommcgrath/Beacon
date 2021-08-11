@@ -21,7 +21,7 @@ Protected Class ConfigValue
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = Self.mSimplifiedKey + ":" + Index.ToString("00000")
 		  
-		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey)
+		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey, False)
 		  Var ConfigKey As Beacon.ConfigKey
 		  If Keys.Count >= 1 Then
 		    ConfigKey = Keys(0)
@@ -38,7 +38,7 @@ Protected Class ConfigValue
 		  Self.ParseCommand(Command)
 		  Self.mSortKey = SortKey
 		  
-		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey)
+		  Var Keys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey(File, Header, Self.mSimplifiedKey, False)
 		  Var ConfigKey As Beacon.ConfigKey
 		  If Keys.Count >= 1 Then
 		    ConfigKey = Keys(0)

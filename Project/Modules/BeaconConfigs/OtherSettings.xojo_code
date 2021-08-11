@@ -122,7 +122,7 @@ Inherits Beacon.ConfigGroup
 		  Next ModInfo
 		  
 		  Var Config As New BeaconConfigs.OtherSettings
-		  Var AllKeys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
+		  Var AllKeys() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "", False)
 		  For Each Key As Beacon.ConfigKey In AllKeys
 		    If KeySupported(Key, Mods) = False Then
 		      Continue

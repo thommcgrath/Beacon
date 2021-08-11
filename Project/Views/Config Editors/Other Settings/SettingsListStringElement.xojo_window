@@ -173,10 +173,135 @@ Begin SettingsListElement SettingsListStringElement
       Visible         =   False
       Width           =   16
    End
+   Begin UITweaks.ResizedPopupMenu mChoiceMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   200
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -167
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   80
+   End
+   Begin DelayedComboBox mInputMenu
+      AllowAutoComplete=   True
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      InitialValue    =   "sock"
+      Italic          =   False
+      Left            =   200
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   -135
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   80
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Const VisibleTop = 6
+		  Const HiddenTop = -30000
+		  
+		  Select Case Self.mMode
+		  Case Self.PlainMode
+		    Self.mChoiceMenu.Visible = False
+		    Self.mChoiceMenu.Top = HiddenTop
+		    Self.mInputMenu.Visible = False
+		    Self.mInputMenu.Top = HiddenTop
+		    Self.mValueField.Visible = True
+		    Self.mValueField.Top = VisibleTop
+		  Case Self.MenuMode
+		    Self.mChoiceMenu.Visible = True
+		    Self.mChoiceMenu.Top = VisibleTop + 1
+		    Self.mInputMenu.Visible = False
+		    Self.mInputMenu.Top = HiddenTop
+		    Self.mValueField.Visible = False
+		    Self.mValueField.Top = HiddenTop
+		    
+		    Var Choices() As Variant = Self.mKey.Constraint("oneof")
+		    For Each Choice As String In Choices
+		      Self.mChoiceMenu.AddRow(Choice)
+		    Next Choice
+		  Case Self.ComboMode
+		    Self.mChoiceMenu.Visible = False
+		    Self.mChoiceMenu.Top = HiddenTop
+		    Self.mInputMenu.Visible = True
+		    Self.mInputMenu.Top = VisibleTop
+		    Self.mValueField.Visible = False
+		    Self.mValueField.Top = HiddenTop
+		    
+		    Var Choices() As Variant = Self.mKey.Constraint("oneof")
+		    For Each Choice As String In Choices
+		      Self.mInputMenu.AddRow(Choice)
+		    Next Choice
+		  End Select
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Key As Beacon.ConfigKey)
+		  If IsNull(Key.Constraint("oneof")) = False Then
+		    Var AllowCustom As Variant = Key.Constraint("allowcustom")
+		    If IsNull(AllowCustom) = False And AllowCustom.BooleanValue = True Then
+		      Self.mMode = Self.ComboMode
+		    Else
+		      Self.mMode = Self.MenuMode
+		    End If
+		  Else
+		    Self.mMode = Self.PlainMode
+		  End If
+		  
+		  Super.Constructor(Key)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function DescriptionLabel() As Label
 		  Return Self.mDescriptionLabel
@@ -193,11 +318,21 @@ End
 		Sub KeyNameWidth(Assigns KeyNameWidth As Integer)
 		  Super.KeyNameWidth = KeyNameWidth
 		  
+		  Var ValueControl As RectControl
+		  Select Case Self.mMode
+		  Case Self.PlainMode
+		    ValueControl = Self.mValueField
+		  Case Self.MenuMode
+		    ValueControl = Self.mChoiceMenu
+		  Case Self.ComboMode
+		    ValueControl = Self.mInputMenu
+		  End Select
+		  
 		  Self.mNameLabel.Width = KeyNameWidth
-		  Self.mValueField.Left = Self.mNameLabel.Left + Self.mNameLabel.Width + 12
-		  Self.mValueField.Width = (Self.mDismissButton.Left - 12) - Self.mValueField.Left
-		  Self.mDescriptionLabel.Left = Self.mValueField.Left
-		  Self.mDescriptionLabel.Width = Self.mValueField.Width
+		  ValueControl.Left = Self.mNameLabel.Left + Self.mNameLabel.Width + 12
+		  ValueControl.Width = (Self.mDismissButton.Left - 12) - ValueControl.Left
+		  Self.mDescriptionLabel.Left = ValueControl.Left
+		  Self.mDescriptionLabel.Width = ValueControl.Width
 		End Sub
 	#tag EndMethod
 
@@ -209,7 +344,28 @@ End
 
 	#tag Method, Flags = &h0
 		Function Value() As Variant
-		  Return Self.mValueField.Text
+		  Var StringValue As String
+		  
+		  Select Case Self.mMode
+		  Case Self.PlainMode
+		    StringValue = Self.mValueField.Text
+		  Case Self.MenuMode
+		    StringValue = Self.mChoiceMenu.SelectedRow
+		  Case Self.ComboMode
+		    StringValue = Self.mInputMenu.Text
+		  End Select
+		  
+		  Var ShouldBeginWith As Variant = Self.mKey.Constraint("beginswith")
+		  Var ShouldEndWith As Variant = Self.mKey.Constraint("endswith")
+		  
+		  If IsNull(ShouldBeginWith) = False And StringValue.BeginsWith(ShouldBeginWith) = False Then
+		    StringValue = ShouldBeginWith + StringValue
+		  End If
+		  If IsNull(ShouldEndWith) = False And StringValue.EndsWith(ShouldEndWith) = False Then
+		    StringValue = StringValue + ShouldEndWith
+		  End If
+		  
+		  Return StringValue
 		End Function
 	#tag EndMethod
 
@@ -226,7 +382,14 @@ End
 		  Catch Err As RuntimeException
 		  End Try
 		  
-		  Self.mValueField.SetImmediately(StringValue)
+		  Select Case Self.mMode
+		  Case Self.PlainMode
+		    Self.mValueField.SetImmediately(StringValue)
+		  Case Self.MenuMode
+		    Self.mChoiceMenu.SelectByCaption(StringValue)
+		  Case Self.ComboMode
+		    Self.mInputMenu.SetImmediately(StringValue)
+		  End Select
 		  Self.mBlockChanges = BlockChanges
 		End Sub
 	#tag EndMethod
@@ -235,6 +398,20 @@ End
 	#tag Property, Flags = &h21
 		Private mBlockChanges As Boolean
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMode As Integer
+	#tag EndProperty
+
+
+	#tag Constant, Name = ComboMode, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MenuMode, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PlainMode, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -246,7 +423,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.UserValueChange(Me.Text)
+		  Self.UserValueChange(Self.Value)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -257,7 +434,37 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events mChoiceMenu
+	#tag Event
+		Sub Change()
+		  If Self.mBlockChanges Then
+		    Return
+		  End If
+		  
+		  Self.UserValueChange(Self.Value)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events mInputMenu
+	#tag Event
+		Sub TextChanged()
+		  If Self.mBlockChanges Then
+		    Return
+		  End If
+		  
+		  Self.UserValueChange(Self.Value)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ShowOfficialName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsOverloaded"
 		Visible=false
