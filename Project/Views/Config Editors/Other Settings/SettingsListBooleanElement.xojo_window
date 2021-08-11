@@ -78,7 +78,7 @@ Begin SettingsListElement SettingsListBooleanElement
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -113,7 +113,7 @@ Begin SettingsListElement SettingsListBooleanElement
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -165,6 +165,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub LockStateChanged()
+		  Self.Switch.Enabled = Self.Unlocked
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h1
 		Protected Function DescriptionLabel() As Label
 		  Return Self.mDescriptionLabel
@@ -247,6 +254,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ShowOfficialName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="IsOverloaded"
 		Visible=false

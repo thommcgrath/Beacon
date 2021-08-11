@@ -68,6 +68,27 @@ Inherits ContainerControl
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Unlocked() As Boolean
+		  Return Self.mUnlocked
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Unlocked(Assigns NewValue As Boolean)
+		  If Self.mUnlocked = NewValue Then
+		    Return
+		  End If
+		  
+		  Self.mUnlocked = NewValue
+		  
+		  Self.NameLabel.Enabled = NewValue
+		  Self.DescriptionLabel.Enabled = NewValue
+		  
+		  RaiseEvent LockStateChanged()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub UserValueChange(NewValue As Variant)
 		  Self.IsOverloaded = IsNull(NewValue) = False
@@ -91,6 +112,10 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event LockStateChanged()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Resize()
@@ -136,6 +161,10 @@ Inherits ContainerControl
 
 	#tag Property, Flags = &h21
 		Private mShowOfficialName As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUnlocked As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

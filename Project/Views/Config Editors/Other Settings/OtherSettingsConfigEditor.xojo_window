@@ -203,7 +203,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub SettingChangeDelegate(Key As Beacon . ConfigKey, Value As Variant)
+		Delegate Sub SettingChangeDelegate(Key As Beacon.ConfigKey, Value As Variant)
 	#tag EndDelegateDeclaration
 
 

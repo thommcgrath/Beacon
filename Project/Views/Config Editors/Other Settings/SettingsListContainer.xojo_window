@@ -153,7 +153,7 @@ End
 		    Element.Value(False) = Value
 		    Element.IsOverloaded = True
 		  End If
-		  Element.SettingChangeDelegate = Self.SettingChangeDelegate
+		  Element.SettingChangeDelegate = WeakAddressOf SettingChanged
 		  
 		  Return Element
 		End Function
@@ -162,6 +162,21 @@ End
 	#tag Method, Flags = &h1
 		Protected Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ElementForKey(Key As Beacon.ConfigKey) As SettingsListElement
+		  For Each Element As SettingsListElement In Self.mElements
+		    If Element Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Element.Key = Key Then
+		      Return Element
+		    End If
+		  Next Element
+		  Return Nil
 		End Function
 	#tag EndMethod
 
@@ -181,6 +196,25 @@ End
 		  Self.mFilter = Value
 		  
 		  Var AllKeys() As Beacon.ConfigKey = LocalData.SharedInstance.SearchForConfigKey("", "", "", True)
+		  If Self.mDependencies Is Nil Then
+		    Self.mDependencies = New Dictionary
+		    For Each Key As Beacon.ConfigKey In AllKeys
+		      Var Other As Variant = Key.Constraint("other")
+		      If IsNull(Other) Or (Other IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var Dict As Dictionary = Other
+		      Var ReliesOnKey As String = Dict.Value("key")
+		      Var RequiredValue As Boolean = Dict.Value("value")
+		      Var Dependents() As Dictionary
+		      If Self.mDependencies.HasKey(ReliesOnKey) Then
+		        Dependents = Self.mDependencies.Value(ReliesOnKey)
+		      End If
+		      Dependents.Add(New Dictionary("Target": Key, "RequiredValue": RequiredValue))
+		      Self.mDependencies.Value(ReliesOnKey) = Dependents
+		    Next Key
+		  End If
 		  Var GroupNames() As String
 		  Var Groups As New Dictionary
 		  Var Filtered As Boolean = Value.IsEmpty = False
@@ -269,6 +303,30 @@ End
 		Private Function IsCorrectElementClass(Element As SettingsListElement, Key As Beacon.ConfigKey) As Boolean
 		  Return (Element Is Nil) = False And (Key Is Nil) = False And Element.Key = Key
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SettingChanged(Key As Beacon.ConfigKey, Value As Variant)
+		  If Beacon.SafeToInvoke(Self.SettingChangeDelegate) Then
+		    Self.SettingChangeDelegate.Invoke(Key, Value)
+		  End If
+		  
+		  Var UUID As String = Key.UUID
+		  If Self.mDependencies Is Nil Or Self.mDependencies.HasKey(UUID) = False Then
+		    Return
+		  End If
+		  
+		  Var Dependents() As Dictionary = Self.mDependencies.Value(UUID)
+		  For Each Dict As Dictionary In Dependents
+		    Var TargetKey As Beacon.ConfigKey = Dict.Value("Target")
+		    Var RequiredValue As Variant = Dict.Value("RequiredValue")
+		    Var ShouldBeEnabled As Boolean = (Value = RequiredValue)
+		    Var Element As SettingsListElement = Self.ElementForKey(TargetKey)
+		    If (Element Is Nil) = False Then
+		      Element.Unlocked = ShouldBeEnabled
+		    End If
+		  Next Dict
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -371,6 +429,7 @@ End
 		        If Element.KeyNameWidth <> Self.mKeyNameWidth Then
 		          Element.KeyNameWidth = Self.mKeyNameWidth
 		        End If
+		        Element.Unlocked = Self.ShouldBeEnabled(Member)
 		      ElseIf (Element Is Nil) = False And Element.Visible = True Then
 		        Element.Visible = False
 		      End If
@@ -379,6 +438,29 @@ End
 		    Next Member
 		  Next GroupIdx
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ShouldBeEnabled(Key As Beacon.ConfigKey) As Boolean
+		  Var Requirements As Variant = Key.Constraint("other")
+		  If IsNull(Requirements) Or (Requirements IsA Dictionary) = False Then
+		    Return True
+		  End If
+		  
+		  Var RequiredKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey(Dictionary(Requirements).Value("key").StringValue)
+		  If RequiredKey Is Nil Then
+		    Return True
+		  End If
+		  
+		  Var RequiredValue As Variant = Dictionary(Requirements).Value("value")
+		  
+		  Var Config As BeaconConfigs.OtherSettings = Self.Config(False)
+		  Var CurrentValue As Variant = Config.Value(RequiredKey)
+		  If IsNull(CurrentValue) Then
+		    CurrentValue = RequiredKey.DefaultValue
+		  End If
+		  Return CurrentValue = RequiredValue
+		End Function
 	#tag EndMethod
 
 
@@ -397,6 +479,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mContentHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDependencies As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

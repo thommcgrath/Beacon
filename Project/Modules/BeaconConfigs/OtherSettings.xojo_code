@@ -18,6 +18,25 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If
 		      
+		      Var Requirements As Variant = Key.Constraint("other")
+		      If IsNull(Requirements) = False Then
+		        Var Dict As Dictionary = Requirements
+		        Var OtherKeyUUID As String = Dict.Value("key")
+		        Var RequiredValue As Boolean = Dict.Value("value")
+		        Var CurrentValue As Variant
+		        If Self.mSettings.HasKey(OtherKeyUUID) Then
+		          CurrentValue = Self.mSettings.Value(OtherKeyUUID)
+		        Else
+		          Var OtherKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey(OtherKeyUUID)
+		          If (OtherKey Is Nil) = False Then
+		            CurrentValue = OtherKey.DefaultValue
+		          End If
+		        End If
+		        If CurrentValue <> RequiredValue Then
+		          Continue
+		        End If
+		      End If
+		      
 		      Select Case Key.ValueType
 		      Case Beacon.ConfigKey.ValueTypes.TypeBoolean
 		        StringValue = If(Value.BooleanValue, "True", "False")
@@ -35,7 +54,6 @@ Inherits Beacon.ConfigGroup
 		    End Try
 		  Next
 		  Return Configs
-		  
 		End Function
 	#tag EndEvent
 
