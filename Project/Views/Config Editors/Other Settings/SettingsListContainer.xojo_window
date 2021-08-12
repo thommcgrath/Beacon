@@ -296,6 +296,24 @@ End
 		  Var Filter As String = Self.Filter
 		  Self.mFilter = Crypto.GenerateRandomBytes(8)
 		  Self.Filter = Filter
+		  
+		  // Update the field values
+		  Var Config As BeaconConfigs.OtherSettings = Self.Config(False)
+		  For Each Element As SettingsListElement In Self.mElements
+		    If Element Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Key As Beacon.ConfigKey = Element.Key
+		    Var Value As Variant = Config.Value(Key)
+		    If IsNull(Value) Then
+		      Element.Value(True) = Key.DefaultValue
+		      Element.IsOverloaded = False
+		    Else
+		      Element.Value(True) = Value
+		      Element.IsOverloaded = True
+		    End If
+		  Next Element
 		End Sub
 	#tag EndMethod
 

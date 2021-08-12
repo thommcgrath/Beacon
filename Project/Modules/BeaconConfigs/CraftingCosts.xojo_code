@@ -35,10 +35,6 @@ Inherits Beacon.ConfigGroup
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Other)
 		  For Each Entry As DictionaryEntry In Source.mCosts
-		    If Self.mCosts.HasKey(Entry.Key) Then
-		      Continue
-		    End If
-		    
 		    Self.mCosts.Value(Entry.Key) = Entry.Value
 		  Next
 		End Sub

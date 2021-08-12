@@ -896,9 +896,9 @@ End
 		      Select Case ConfigItem.Mode
 		      Case Beacon.DocumentMergeItem.ModeReplace
 		        Self.mDestination.AddConfigGroup(ConfigItem.Group)
-		      Case Beacon.DocumentMergeItem.ModeMergeProjectPriority
-		        Call ExistingConfig.Merge(ConfigItem.Group)
 		      Case Beacon.DocumentMergeItem.ModeMergeImportPriority
+		        Call ExistingConfig.Merge(ConfigItem.Group)
+		      Case Beacon.DocumentMergeItem.ModeMergeProjectPriority
 		        If ConfigItem.Group.Merge(ExistingConfig) Then
 		          Self.mDestination.AddConfigGroup(ConfigItem.Group)
 		        End If

@@ -82,10 +82,6 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In BeaconConfigs.OtherSettings(Other).mSettings
-		    If Self.mSettings.HasKey(Entry.Key) Then
-		      Continue
-		    End If
-		    
 		    Self.mSettings.Value(Entry.Key) = Entry.Value
 		    Self.Modified = True
 		  Next
