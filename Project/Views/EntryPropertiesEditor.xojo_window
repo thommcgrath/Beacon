@@ -808,8 +808,15 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Entries() As Beacon.SetEntry)
-		  Var MinQuantity As Integer = Integer.FromString(MinQuantityField.Text.Trim, Locale.Current)
-		  Var MaxQuantity As Integer = Integer.FromString(MaxQuantityField.Text.Trim, Locale.Current)
+		  Var MinQuantity, MaxQuantity As Integer
+		  Try
+		    MinQuantity = Integer.FromString(MinQuantityField.Text.Trim, Locale.Current)
+		  Catch Err As InvalidArgumentException
+		  End Try
+		  Try
+		    MaxQuantity = Integer.FromString(MaxQuantityField.Text.Trim, Locale.Current)
+		  Catch Err As InvalidArgumentException
+		  End Try
 		  If MinQuantity > MaxQuantity Then
 		    Var Temp As Integer = MaxQuantity
 		    MaxQuantity = MinQuantity
@@ -999,7 +1006,12 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
-		    ChanceSlider.Value = Max(Min(Integer.FromString(Me.Text.Trim, Locale.Current), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
+		    Var MyValue As Integer
+		    Try
+		      MyValue = Integer.FromString(Me.Text.Trim, Locale.Current)
+		    Catch Err As InvalidArgumentException
+		    End Try
+		    Self.ChanceSlider.Value = Max(Min(MyValue, ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
 		End Sub
 	#tag EndEvent

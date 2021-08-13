@@ -83,7 +83,11 @@ Inherits UITweaks.ResizedTextField
 		  Var MinValue, MaxValue As Double
 		  RaiseEvent GetRange(MinValue, MaxValue)
 		  
-		  Var Value As Double = Double.FromString(Self.Text.Trim, Locale.Current)
+		  Var Value As Double
+		  Try
+		    Value = Double.FromString(Self.Text.Trim, Locale.Current)
+		  Catch Err As InvalidArgumentException
+		  End Try
 		  Var Formatted As String
 		  Var Valid As Boolean
 		  If Value < MinValue Then

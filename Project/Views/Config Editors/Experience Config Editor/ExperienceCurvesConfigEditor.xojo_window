@@ -150,7 +150,12 @@ End
 		  Var Parts() As String = Tag.Split(":")
 		  Self.ViewingPlayerStats = (Parts(0) = "Player")
 		  
-		  Var Level As Integer = Integer.FromString(Parts(1))
+		  Var Level As Integer
+		  Try
+		    Level = Integer.FromString(Parts(1))
+		  Catch Err As InvalidArgumentException
+		    Return
+		  End Try
 		  Var Levels(0) As Integer
 		  Levels(0) = Level
 		  Self.UpdateList(Levels)

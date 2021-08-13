@@ -824,8 +824,15 @@ End
 		  Self.mChangeLevels = Self.SetLevelsCheckbox.Value
 		  If Self.mChangeLevels Then
 		    Self.mLevelOverrides.ResizeTo(-1)
-		    Var MinLevel As Integer = Integer.FromString(Self.MinLevelField.Text, Locale.Current)
-		    Var MaxLevel As Integer = Integer.FromString(Self.MaxLevelField.Text, Locale.Current)
+		    Var MinLevel, MaxLevel As Integer
+		    Try
+		      MinLevel = Integer.FromString(Self.MinLevelField.Text, Locale.Current)
+		    Catch Err As InvalidArgumentException
+		    End Try
+		    Try
+		      MaxLevel = Integer.FromString(Self.MaxLevelField.Text, Locale.Current)
+		    Catch Err As InvalidArgumentException
+		    End Try
 		    If MinLevel >= 1 And MaxLevel >= 1 Then
 		      Self.mLevelOverrides.Add(Beacon.SpawnPointLevel.FromUserLevel(MinLevel, MaxLevel, Self.mDifficultyValue))
 		    End If

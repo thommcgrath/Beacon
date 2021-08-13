@@ -819,8 +819,11 @@ End
 #tag Events PortField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Port = Integer.FromString(Me.Text)
-		  Self.Changed = Self.mProfile.Modified
+		  Try
+		    Self.mProfile.Port = Integer.FromString(Me.Text)
+		    Self.Changed = Self.mProfile.Modified
+		  Catch Err As InvalidArgumentException
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents

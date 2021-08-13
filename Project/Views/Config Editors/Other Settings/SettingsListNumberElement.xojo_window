@@ -220,7 +220,12 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var DoubleValue As Double = Double.FromString(Self.mValueField.Text, Locale.Current)
+		  Var DoubleValue As Double
+		  Try
+		    DoubleValue = Double.FromString(Self.mValueField.Text, Locale.Current)
+		  Catch Err As InvalidArgumentException
+		    Return Nil
+		  End Try
 		  
 		  Var ShouldLimitMin As Variant = Self.mKey.Constraint("min")
 		  Var ShouldLimitMax As Variant = Self.mKey.Constraint("max")
