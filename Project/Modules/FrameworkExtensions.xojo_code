@@ -152,7 +152,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
-		  #if TargetWin32
+		  #if TargetWindows
 		    If Win = Nil Or Parent = Nil Then
 		      Return
 		    End If

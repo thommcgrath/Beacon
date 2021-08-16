@@ -6,7 +6,7 @@ Inherits TextArea
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  #if TargetWindows
+		  #if Not TargetMacOS
 		    Base.AddMenu(EditCut)
 		    Base.AddMenu(EditCopy)
 		    Base.AddMenu(EditPaste)

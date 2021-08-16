@@ -12,7 +12,7 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest = Request
 		  
-		  #if TargetWin32
+		  #if TargetWindows
 		    // The socket does not reset itself correctly on Windows, so create a new one
 		    Self.Constructor()
 		  #else

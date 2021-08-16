@@ -509,12 +509,6 @@ End
 		      Return
 		    End If
 		    
-		    #if TargetWindows
-		      If Self.ScaleFactor Mod 100 <> 0 Then
-		        Self.List.HasHeader = False
-		      End If
-		    #endif
-		    
 		    App.FrontmostMBS = True
 		    Self.TrueWindow.ActivateWindowMBS
 		    

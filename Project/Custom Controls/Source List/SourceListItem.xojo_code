@@ -46,20 +46,6 @@ Protected Class SourceListItem
 		Private mTag As Variant
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return False
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  // Do nothing
-			End Set
-		#tag EndSetter
-		Attributes( Deprecated ) Unemphasized As Boolean
-	#tag EndComputedProperty
-
 
 	#tag ViewBehavior
 		#tag ViewProperty

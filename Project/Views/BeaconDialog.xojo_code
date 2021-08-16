@@ -3,7 +3,7 @@ Protected Class BeaconDialog
 Inherits Window
 	#tag Event
 		Sub Open()
-		  #if TargetWindows
+		  #if Not TargetMacOS
 		    Self.MenuBar = DialogMenuBar
 		  #endif
 		  RaiseEvent Open

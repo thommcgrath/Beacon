@@ -626,7 +626,7 @@ End
 		    If Not Folder.Exists Then
 		      Folder.CreateFolder
 		    End If
-		    App.ShowFile(Folder)
+		    Folder.Open
 		  Case "Copy Profile ID"
 		    Var ProfileID As String = HitItem.Tag
 		    Var Board As New Clipboard

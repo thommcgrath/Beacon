@@ -8,7 +8,7 @@ Protected Module UITweaks
 		  For I As Integer = 0 To ControlCount - 1
 		    Var Ctl As Control = Win.Control(I)
 		    Var ControlPanelIndex As Integer = Ctl.PanelIndex
-		    #if TargetWin32 And Target64Bit
+		    #if TargetWindows And Target64Bit
 		      // Bug <feedback://showreport?report_id=54283>
 		      #if XojoVersion >= 2018.03 And XojoVersion < 2018.04
 		        If ControlPanelIndex = 4294967295 Then

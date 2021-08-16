@@ -99,12 +99,12 @@ Protected Module UpdatesKit
 
 	#tag Method, Flags = &h21
 		Private Function Is64Bit() As Boolean
-		  #If Target64Bit
+		  #if Target64Bit
 		    // If we're already executing 64-bit code, then we know it's a 64-bit system
 		    Return True
 		  #endif
 		  
-		  #If TargetWin32 Then
+		  #if TargetWin32 Then
 		    Soft Declare Function GetCurrentProcess Lib "kernel32"  As Integer
 		    Var ProcessID As Integer = GetCurrentProcess
 		    
@@ -127,7 +127,10 @@ Protected Module UpdatesKit
 		      
 		      Return Wow64Process
 		    End If
-		  #Endif
+		  #elseif TargetLinux
+		    Var ID As New CPUIDMBS
+		    Return ID.Flags(CPUIDMBS.kFeatureLM)
+		  #endif
 		End Function
 	#tag EndMethod
 

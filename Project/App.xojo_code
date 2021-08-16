@@ -108,7 +108,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Var Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
 		  If Not Lock.TryEnter Then
-		    #If TargetWin32
+		    #if Not TargetMacOS
 		      Var StartTime As Double = System.Microseconds
 		      Var PushSocket As New IPCSocket
 		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
@@ -123,19 +123,19 @@ Implements NotificationKit.Receiver,Beacon.Application
 		        Loop
 		        PushSocket.Close
 		      End If
-		    #EndIf
+		    #endif
 		    
 		    Quit
 		    Return
 		  Else
 		    Self.mMutex = Lock
-		    #If TargetWin32
+		    #if Not TargetMacOS
 		      Self.mHandoffSocket = New IPCSocket
 		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
 		      AddHandler Self.mHandoffSocket.DataAvailable, WeakAddressOf Self.mHandoffSocket_DataReceived
 		      AddHandler Self.mHandoffSocket.Error, WeakAddressOf Self.mHandoffSocket_Error
 		      Self.mHandoffSocket.Listen
-		    #EndIf
+		    #endif
 		  End If
 		  
 		  Var UpdatesFolder As FolderItem = Self.ApplicationSupport.Child("Updates")
@@ -143,9 +143,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Call UpdatesFolder.DeepDelete
 		  End If
 		  
-		  #If TargetMacOS
+		  #if TargetMacOS
 		    UntitledSeparator6.Visible = False
-		  #EndIf
+		  #endif
 		  Self.RebuildRecentMenu
 		  
 		  SystemColors.Init
@@ -181,9 +181,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  Self.NextLaunchQueueTask
 		  
-		  #If TargetWin32
+		  #if Not TargetMacOS
 		    Self.HandleCommandLineData(System.CommandLine, True)
-		  #EndIf
+		  #endif
 		  
 		  Self.AllowAutoQuit = True
 		  
@@ -337,7 +337,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag MenuHandler
 		Function HelpOpenDataFolder() As Boolean Handles HelpOpenDataFolder.Action
-			Self.ShowFile(Self.ApplicationSupport)
+			Self.ApplicationSupport.Open
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -1150,23 +1150,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  System.GotoURL(Beacon.WebURL(Path))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowFile(File As FolderItem)
-		  #if TargetMacOS
-		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
-		    Declare Function GetSharedWorkspace Lib "Cocoa" Selector "sharedWorkspace" (Target As Ptr) As Ptr
-		    Declare Sub SelectFile Lib "Cocoa" Selector "selectFile:inFileViewerRootedAtPath:" (Target As Ptr, Path As CFStringRef, RootPath As CFStringRef)
-		    
-		    Var Workspace As Ptr = GetSharedWorkspace(objc_getClass("NSWorkspace"))
-		    If Workspace <> Nil Then
-		      SelectFile(Workspace, File.NativePath, "")
-		    End If
-		  #else
-		    File.Open
-		  #endif
 		End Sub
 	#tag EndMethod
 
