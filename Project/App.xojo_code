@@ -378,13 +378,30 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
+		  If (Self.mDataFolder Is Nil) = False Then
+		    Return Self.mDataFolder
+		  End If
+		  
+		  Var AppParent As FolderItem
+		  #if TargetMacOS
+		    AppParent = Self.ExecutableFile.Parent.Parent.Parent.Parent
+		  #else
+		    AppParent = Self.ExecutableFile.Parent
+		  #endif
+		  Var PortableFolder As FolderItem = AppParent.Child("Beacon Data")
+		  If (PortableFolder Is Nil) = False And PortableFolder.Exists And PortableFolder.IsFolder And PortableFolder.IsWriteable Then
+		    Self.mDataFolder = PortableFolder
+		    Return Self.mDataFolder
+		  End If
+		  
 		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Call AppSupport.CheckIsFolder
 		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Call CompanyFolder.CheckIsFolder
 		  Var AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
 		  Call AppFolder.CheckIsFolder
-		  Return AppFolder
+		  Self.mDataFolder = AppFolder
+		  Return Self.mDataFolder
 		End Function
 	#tag EndMethod
 
@@ -1256,6 +1273,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mAPISocket As BeaconAPI.Socket
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDataFolder As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

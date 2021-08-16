@@ -254,7 +254,7 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   261
       End
-      Begin PushButton QuitButton
+      Begin UITweaks.ResizedPushButton QuitButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   0
