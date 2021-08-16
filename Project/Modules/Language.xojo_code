@@ -139,7 +139,7 @@ Protected Module Language
 		  Case BeaconConfigs.NameSpoilTimers
 		    Return "Decay and Spoil"
 		  Case BeaconConfigs.NameOtherSettings
-		    Return "Other Settings"
+		    Return "General Settings"
 		  Case "deployments"
 		    Return "Servers"
 		  Case "accounts"
