@@ -160,6 +160,10 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ModID() As String
+		  If Self.mModID Is Nil Then
+		    Return ""
+		  End If
+		  
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
