@@ -32,6 +32,9 @@ class ConfigLine extends \BeaconObject {
 	protected $nitrado_path = null;
 	protected $nitrado_format = null;
 	protected $nitrado_deploy_style = null;
+	protected $ui_group = null;
+	protected $constraints = null;
+	protected $custom_sort = null;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -46,6 +49,9 @@ class ConfigLine extends \BeaconObject {
 		$columns[] = 'nitrado_path';
 		$columns[] = 'nitrado_format';
 		$columns[] = 'nitrado_deploy_style';
+		$columns[] = 'ui_group';
+		$columns[] = 'constraints';
+		$columns[] = 'custom_sort';
 		return $columns;
 	}
 	
@@ -69,6 +75,9 @@ class ConfigLine extends \BeaconObject {
 		$obj->nitrado_path = $row->Field('nitrado_path');
 		$obj->nitrado_format = $row->Field('nitrado_format');
 		$obj->nitrado_deploy_style = $row->Field('nitrado_deploy_style');
+		$obj->ui_group = $row->Field('ui_group');
+		$obj->constraints = is_null($row->Field('constraints')) ? null : json_decode($row->Field('constraints'), true);
+		$obj->custom_sort = $row->Field('custom_sort');
 		return $obj;
 	}
 	
@@ -90,6 +99,9 @@ class ConfigLine extends \BeaconObject {
 				'deploy_style' => $this->nitrado_deploy_style
 			];
 		}
+		$json['ui_group'] = $this->ui_group;
+		$json['custom_sort'] = $this->custom_sort;
+		$json['constraints'] = $this->constraints;
 		return $json;
 	}
 	
@@ -117,6 +129,12 @@ class ConfigLine extends \BeaconObject {
 			return $this->nitrado_format;
 		case 'nitrado_deploy_style':
 			return $this->nitrado_deploy_style;
+		case 'ui_group':
+			return $this->ui_group;
+		case 'constraints':
+			return $this->constraints;
+		case 'custom_sort':
+			return $this->custom_sort;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -161,6 +179,15 @@ class ConfigLine extends \BeaconObject {
 				$this->nitrado_deploy_style = null;
 			}
 		}
+		if (array_key_exists('ui_group', $json)) {
+			$this->ui_group = $json['ui_group'];
+		}
+		if (array_key_exists('constraints', $json)) {
+			$this->constraints = $json['constraints'];
+		}
+		if (array_key_exists('custom_sort', $json)) {
+			$this->custom_sort = $json['custom_sort'];
+		}
 	}
 	
 	public function NativeEditorInVersion() {
@@ -193,6 +220,18 @@ class ConfigLine extends \BeaconObject {
 	
 	public function DefaultValue() {
 		return $this->default_value;
+	}
+	
+	public function UIGroup() {
+		return $this->ui_group;
+	}
+	
+	public function CustomSort() {
+		return $this->custom_sort;
+	}
+	
+	public function Constraints() {
+		return $this->constraints;
 	}
 }
 

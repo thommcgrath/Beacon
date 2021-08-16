@@ -79,7 +79,7 @@ BeaconTemplate::FinishStyles();
 	<div id="img_signin_menu" class="img_signin separator-color">&nbsp;</div>
 	<div class="signin_text">
 		<h4>Open the menu</h4>
-		<p>Use the icon with the 3 dots, shown circled in red here.</p>
+		<p>Click the user icon in the top right corner of Beacon, as shown here.</p>
 	</div>
 	<div class="push">&nbsp;</div>
 </div>
@@ -89,7 +89,7 @@ BeaconTemplate::FinishStyles();
 	<div class="signin_text">
 		<h4>Click the &quot;Sign In&quot; link</h4>
 		<p>If you see &quot;Enable Cloud &amp; Community&quot; instead, click that one.</p>
-		<p>If you see your username instead, you're already signed in! Relaunch Beacon to activate Omni. Or you can click &quot;Sign Out&quot; if you see a different email address.</p>
+		<p>If you see your username, you're already signed in! Relaunch Beacon to activate Omni. Or you can click &quot;Sign Out&quot; if you see a different email address.</p>
 	</div>
 	<div class="push">&nbsp;</div>
 </div>

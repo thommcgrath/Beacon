@@ -145,6 +145,36 @@ class Blueprint extends \BeaconObject {
 	public function RelatedObjectIDs() {
 		return array();
 	}
+	
+	public function FindGFICode(bool &$perfect) {
+		$database = \BeaconCommon::Database();
+		$words = explode('_', $this->class_string);
+		if (count($words) >= 3) {
+			array_pop($words);
+			array_shift($words);
+		}
+		$simple_class_string = strtolower(implode('_', $words));
+		
+		$min_match_len = strlen($simple_class_string);
+		$min_match = '';
+		$found = false;
+		for ($len = 2; $len <= strlen($simple_class_string); $len++) {
+			for ($offset = 0; $offset < strlen($simple_class_string) - ($len - 1); $offset++) {
+				$chunk = substr($simple_class_string, $offset, $len);
+				$rows = $database->Query('SELECT object_id FROM engrams WHERE mod_id IN (SELECT mod_id FROM mods WHERE is_official = TRUE AND confirmed = TRUE) AND class_string LIKE $1 AND class_string != $2;', '%' . $chunk . '%', $this->class_string);
+				if ($rows->RecordCount() === 0) {
+					$perfect = true;
+					return $chunk;
+				} elseif ($rows->RecordCount() < $min_match_len) {
+					$min_match_len = $rows->RecordCount();
+					$min_match = $chunk;
+				}
+			}
+		}
+		
+		$perfect = false;
+		return $min_match;
+	}
 }
 
 ?>
