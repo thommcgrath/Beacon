@@ -1135,7 +1135,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    If Parent.Child("Resources").Exists Then
 		      Return Parent.Child("Resources")
 		    Else
-		      Var Name As String = Self.ExecutableFile.Name.Left(Self.ExecutableFile.Name.Length - 4)
+		      Var ExtensionLength As Integer
+		      #if TargetWindows
+		        ExtensionLength = 4
+		      #endif
+		      Var Name As String = Self.ExecutableFile.Name.Left(Self.ExecutableFile.Name.Length - ExtensionLength)
 		      Return Parent.Child(Name + " Resources")
 		    End If
 		  #endif

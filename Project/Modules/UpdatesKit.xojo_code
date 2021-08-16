@@ -253,7 +253,7 @@ Protected Module UpdatesKit
 		      If Dict.HasKey("lin") Then
 		        Location = Dict.Value("lin")
 		      Else
-		        NotificationKit.Post(Notification_NoUpdates)
+		        NotificationKit.Post(Notification_NoUpdates, Nil)
 		      End If
 		    #endif
 		    mAvailableDownloadURL = Location.Value("url")

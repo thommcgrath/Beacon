@@ -2054,6 +2054,7 @@ End
 		  Self.SetLoginStatus("Logging in…")
 		  
 		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Text.Trim + ":" + Self.LoginPasswordField.Text, 0)
+		  Self.LoginSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session"))
 		End Sub
 	#tag EndEvent
