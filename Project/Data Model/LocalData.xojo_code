@@ -3494,9 +3494,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var LastUsedVersion As String = mInstance.Variable("Last Used Beacon Version")
 		      If LastUsedVersion.IsEmpty Or Integer.FromString(LastUsedVersion, Locale.Raw) <> App.BuildNumber Then
 		        mInstance.ImportLocalClasses()
-		        mInstance.Variable("Last Used Beacon Version") = App.BuildNumber.ToString(Locale.Raw, "0")
 		      End If
 		    End If
+		    mInstance.Variable("Last Used Beacon Version") = App.BuildNumber.ToString(Locale.Raw, "0")
 		    If Preferences.OnlineEnabled Then
 		      mInstance.CheckForEngramUpdates()
 		    End If
