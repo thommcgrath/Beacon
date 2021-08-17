@@ -382,15 +382,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return Self.mDataFolder
 		  End If
 		  
-		  Var AppParent As FolderItem
-		  #if TargetMacOS
-		    AppParent = Self.ExecutableFile.Parent.Parent.Parent.Parent
-		  #else
-		    AppParent = Self.ExecutableFile.Parent
-		  #endif
+		  Var AppParent As FolderItem = Self.ParentFolder
 		  Var PortableFolder As FolderItem = AppParent.Child("Beacon Data")
 		  If (PortableFolder Is Nil) = False And PortableFolder.Exists And PortableFolder.IsFolder And PortableFolder.IsWriteable Then
 		    Self.mDataFolder = PortableFolder
+		    Self.mPortableMode = True
 		    Return Self.mDataFolder
 		  End If
 		  
@@ -720,6 +716,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Self.IdentityManager.CurrentIdentity = Identity
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsPortableMode() As Boolean
+		  Return Self.mPortableMode
+		End Function
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
@@ -1101,6 +1103,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ParentFolder() As FolderItem
+		  #if TargetMacOS
+		    Return Self.ExecutableFile.Parent.Parent.Parent.Parent
+		  #else
+		    Return Self.ExecutableFile.Parent
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub PresentException(Err As Variant)
 		  ExceptionWindow.Present(Err)
@@ -1309,6 +1321,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mPendingURLs() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPortableMode As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

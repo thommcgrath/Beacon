@@ -465,6 +465,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchUpdate()
+		  If App.IsPortableMode Then
+		    // If the app is in portable mode, open the containing folder too
+		    App.ParentFolder.Open
+		  End If
 		  Self.mFile.Open
 		  Self.Close
 		  Quit

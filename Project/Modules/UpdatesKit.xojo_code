@@ -92,6 +92,9 @@ Protected Module UpdatesKit
 		      Params.Value("installer_format") = "rpm"
 		    End Try
 		  #endif
+		  If App.IsPortableMode Then
+		    Params.Value("portable") = "true"
+		  End If
 		  
 		  mSocket.Send("GET", Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)))
 		End Sub
