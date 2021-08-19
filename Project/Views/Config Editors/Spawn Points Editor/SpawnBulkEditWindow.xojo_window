@@ -789,15 +789,33 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Var MinLevel, MaxLevel As Integer
+		  
 		  If Self.ChangeColorsCheckbox.Value = False And Self.SetLevelsCheckbox.Value = False Then
 		    Self.ShowAlert("No Change Selected", "You must choose at least one action to perform.")
 		    Return
 		  ElseIf Self.ChangeColorsCheckbox.Value And Self.ColorsMenu.SelectedRowIndex = -1 Then
 		    Self.ShowAlert("No Color Selected", "You must choose a color set to apply.")
 		    Return
-		  ElseIf Self.SetLevelsCheckbox.Value And (IsNumeric(Self.MinLevelField.Text) = False Or IsNumeric(Self.MaxLevelField.Text) = False) Then
-		    Self.ShowAlert("No Level Range Defined", "You must set a min and max level.")
-		    Return
+		  ElseIf Self.SetLevelsCheckbox.Value Then
+		    If (IsNumeric(Self.MinLevelField.Text) = False Or IsNumeric(Self.MaxLevelField.Text) = False) Then
+		      Self.ShowAlert("No Level Range Defined", "You must set a min and max level.")
+		      Return
+		    End
+		    
+		    Try
+		      MinLevel = Integer.FromString(Self.MinLevelField.Text, Locale.Current)
+		    Catch Err As InvalidArgumentException
+		    End Try
+		    Try
+		      MaxLevel = Integer.FromString(Self.MaxLevelField.Text, Locale.Current)
+		    Catch Err As InvalidArgumentException
+		    End Try
+		    
+		    If MinLevel <= 0 Or MaxLevel < MinLevel Then
+		      Self.ShowAlert("Invalid Level Range Defined", "Minimum level must be greater than zero, and maximum level must not be less than the minimum level.")
+		      Return
+		    End If
 		  End If
 		  
 		  Var Creatures() As Beacon.Creature
@@ -823,19 +841,9 @@ End
 		  
 		  Self.mChangeLevels = Self.SetLevelsCheckbox.Value
 		  If Self.mChangeLevels Then
+		    // Validation already happened above.
 		    Self.mLevelOverrides.ResizeTo(-1)
-		    Var MinLevel, MaxLevel As Integer
-		    Try
-		      MinLevel = Integer.FromString(Self.MinLevelField.Text, Locale.Current)
-		    Catch Err As InvalidArgumentException
-		    End Try
-		    Try
-		      MaxLevel = Integer.FromString(Self.MaxLevelField.Text, Locale.Current)
-		    Catch Err As InvalidArgumentException
-		    End Try
-		    If MinLevel >= 1 And MaxLevel >= 1 Then
-		      Self.mLevelOverrides.Add(Beacon.SpawnPointLevel.FromUserLevel(MinLevel, MaxLevel, Self.mDifficultyValue))
-		    End If
+		    Self.mLevelOverrides.Add(Beacon.SpawnPointLevel.FromUserLevel(MinLevel, MaxLevel, Self.mDifficultyValue))
 		  End If
 		  
 		  Self.ActionButton.Enabled = False
