@@ -303,7 +303,7 @@ End
 		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Beacon.UserModID Then
 		    Return False
 		  Else
-		    Return Me.SelectedRowIndex > 0
+		    Return Me.SelectedRowCount > 0
 		  End If
 		End Function
 	#tag EndEvent
