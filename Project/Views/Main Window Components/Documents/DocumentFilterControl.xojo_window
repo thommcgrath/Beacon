@@ -374,7 +374,7 @@ End
 		  End If
 		  
 		  Var Editor As New MapSelectionGrid
-		  Var Controller As New PopoverController(Editor)
+		  Var Controller As New PopoverController("Select Maps", Editor)
 		  Editor.Mask = Self.mMask
 		  Controller.Show(Me)
 		  

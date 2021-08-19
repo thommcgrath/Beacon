@@ -1480,7 +1480,7 @@ End
 		    End If
 		    
 		    Var Editor As New MapSelectionGrid
-		    Var Controller As New PopoverController(Editor)
+		    Var Controller As New PopoverController("Select Maps", Editor)
 		    Editor.Mask = Self.Document.MapCompatibility
 		    Controller.Show(Me, ItemRect)
 		    
@@ -1497,7 +1497,7 @@ End
 		    End If
 		    
 		    Var Editor As New ModSelectionGrid(Self.Document.Mods)
-		    Var Controller As New PopoverController(Editor)
+		    Var Controller As New PopoverController("Select Mods", Editor)
 		    Controller.Show(Me, ItemRect)
 		    
 		    Item.Toggled = True

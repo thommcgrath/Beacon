@@ -931,7 +931,7 @@ End
 		  End If
 		  
 		  Var ModPicker As New ModSelectionGrid(Self.mMods)
-		  Var Controller As New PopoverController(ModPicker)
+		  Var Controller As New PopoverController("Select Mods", ModPicker)
 		  Controller.Show(Me)
 		  
 		  AddHandler Controller.Finished, WeakAddressOf mModSelectionController_Finished

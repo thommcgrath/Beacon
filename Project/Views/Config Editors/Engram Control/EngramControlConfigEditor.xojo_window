@@ -986,7 +986,7 @@ End
 		    
 		    Var Config As BeaconConfigs.EngramControl = Self.Config(False)
 		    Var SettingsView As New EngramControlSettingsView
-		    Var Controller As New PopoverController(SettingsView)
+		    Var Controller As New PopoverController("Advanced Engram Options", SettingsView)
 		    SettingsView.AutoUnlockEngrams = Config.AutoUnlockAllEngrams
 		    SettingsView.OnlyAllowSpecifiedEngrams = Config.OnlyAllowSpecifiedEngrams
 		    Controller.Show(Me, ItemRect)

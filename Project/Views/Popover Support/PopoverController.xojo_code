@@ -1,7 +1,7 @@
 #tag Class
 Protected Class PopoverController
 	#tag Method, Flags = &h0
-		Sub Constructor(Container As ContainerControl)
+		Sub Constructor(Title As String, Container As ContainerControl)
 		  Self.mContainer = Container
 		  
 		  Var ContainerBound As Integer = Container.ControlCount - 1
@@ -27,6 +27,7 @@ Protected Class PopoverController
 		  
 		  Self.mDialog = New PopoverDialog(Self)
 		  Self.mDialog.Visible = False
+		  Self.mDialog.Title = Title
 		  Var Instance As RectControl = Self.mDialog.Embed(Container, Self.mPaddingX, Self.mPaddingY)
 		  #if Not TargetMacOS
 		    #Pragma Unused Instance
