@@ -397,7 +397,7 @@ Inherits Beacon.IntegrationEngine
 		        Var ExtraGameIniSuccess As Boolean
 		        Var ExtraGameIni As String = Self.GetFile(GameSpecific.Value("path") + "user-settings.ini", DownloadFailureMode.MissingAllowed, Profile, False, ExtraGameIniSuccess)
 		        If ExtraGameIniSuccess = False Or Self.Finished Then
-		          Return Nil
+		          Continue
 		        End If
 		        GuidedOrganizer.Add(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, ExtraGameIni)
 		        
