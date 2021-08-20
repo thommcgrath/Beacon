@@ -27,9 +27,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mMutex.Leave
 		  End If
 		  
-		  If Self.LaunchOnQuit <> Nil And Self.LaunchOnQuit.Exists Then
-		    Self.Log("Launching " + Self.LaunchOnQuit.NativePath)
-		    Self.LaunchOnQuit.Open
+		  If Self.mLaunchOnQuit Then
+		    Self.LaunchUpdate(Self.mUpdateFile)
 		  End If
 		  
 		  Self.Log("Beacon finished gracefully")
@@ -913,6 +912,37 @@ Implements NotificationKit.Receiver,Beacon.Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub LaunchUpdate(File As FolderItem)
+		  Self.Log("Launching " + File.NativePath)
+		  
+		  File.Open
+		  
+		  If Self.IsPortableMode Then
+		    // If the app is in portable mode, open the containing folder too
+		    Self.ParentFolder.Open
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LaunchUpdate(File As FolderItem, OnQuit As Boolean)
+		  If File Is Nil Or File.Exists = False Then
+		    Return
+		  End If
+		  
+		  If OnQuit Then
+		    Self.mLaunchOnQuit = True
+		    Self.mUpdateFile = File
+		    Return
+		  End If
+		  
+		  Self.mLaunchOnQuit = False
+		  Self.LaunchUpdate(File)
+		  Quit
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Log(Err As RuntimeException, Location As String, MoreDetail As String = "")
 		  Self.mLogManager.Log(Err, Location, MoreDetail)
@@ -1284,10 +1314,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h0
-		LaunchOnQuit As FolderItem
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mAPISocket As BeaconAPI.Socket
 	#tag EndProperty
@@ -1306,6 +1332,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mIdentityManager As IdentityManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLaunchOnQuit As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1330,6 +1360,10 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Property, Flags = &h21
 		Private mPortableMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

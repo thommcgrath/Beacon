@@ -464,18 +464,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub LaunchUpdate()
-		  If App.IsPortableMode Then
-		    // If the app is in portable mode, open the containing folder too
-		    App.ParentFolder.Open
-		  End If
-		  Self.mFile.Open
-		  Self.Close
-		  Quit
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
@@ -632,7 +620,7 @@ End
 		  
 		  If Self.mFile.Exists Then
 		    If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
-		      Self.LaunchUpdate()
+		      App.LaunchUpdate(Self.mFile, False)
 		      Return
 		    Else
 		      Self.mFile.Remove
@@ -743,9 +731,10 @@ End
 		    Var Selection As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
 		    Select Case Selection
 		    Case BeaconUI.ConfirmResponses.Action
-		      Self.LaunchUpdate()
+		      App.LaunchUpdate(Self.mFile, False)
+		      Self.Close
 		    Case BeaconUI.ConfirmResponses.Cancel
-		      App.LaunchOnQuit = Self.mFile
+		      App.LaunchUpdate(Self.mFile, True)
 		      Self.Close
 		    Case BeaconUI.ConfirmResponses.Alternate
 		      Self.mFile.Parent.Open
