@@ -571,10 +571,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(CompatibilityMode As Boolean) As Dictionary
 		  Var Children() As Dictionary
 		  For Each Item As Beacon.SetEntryOption In Self.mOptions
-		    Children.Add(Item.SaveData)
+		    Children.Add(Item.SaveData(CompatibilityMode))
 		  Next
 		  
 		  Var Keys As New Dictionary

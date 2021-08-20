@@ -548,7 +548,7 @@ End
 		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.Add(Beacon.SetEntry(Me.RowTagAt(I)).SaveData)
+		      Entries.Add(Beacon.SetEntry(Me.RowTagAt(I)).SaveData(False))
 		    End If
 		  Next
 		  

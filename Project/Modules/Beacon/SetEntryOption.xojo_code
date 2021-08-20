@@ -85,9 +85,14 @@ Protected Class SetEntryOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(CompatibilityMode As Boolean) As Dictionary
 		  Var Keys As New Dictionary
-		  Keys.Value("Blueprint") = Self.mEngram.SaveData
+		  If CompatibilityMode Then
+		    Keys.Value("Path") = Self.mEngram.Path
+		    Keys.Value("Class") = Self.mEngram.ClassString
+		  Else
+		    Keys.Value("Blueprint") = Self.mEngram.SaveData
+		  End If
 		  Keys.Value("Weight") = Self.mWeight
 		  Return Keys
 		End Function

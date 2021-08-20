@@ -161,8 +161,8 @@ Implements Beacon.NamedItem
 		    Return 1
 		  End If
 		  
-		  Var SelfData As String = Beacon.GenerateJSON(Self.ToDictionary, False)
-		  Var OtherData As String = Beacon.GenerateJSON(Other.ToDictionary, False)
+		  Var SelfData As String = Beacon.GenerateJSON(Self.ToDictionary(False), False)
+		  Var OtherData As String = Beacon.GenerateJSON(Other.ToDictionary(False), False)
 		  If SelfData.Compare(OtherData, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return 0
 		  End If
@@ -209,11 +209,13 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
+		Function ToDictionary(CompatibilityMode As Boolean) As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("ModifierID") = Self.mModifierID
 		  Dict.Value("Pattern") = Self.mPattern
-		  Dict.Value("Advanced Pattern") = Self.mAdvancedPattern
+		  If CompatibilityMode = False Then
+		    Dict.Value("Advanced Pattern") = Self.mAdvancedPattern
+		  End If
 		  Dict.Value("Label") = Self.mLabel
 		  Return Dict
 		End Function

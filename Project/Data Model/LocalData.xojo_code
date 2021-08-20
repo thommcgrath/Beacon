@@ -195,7 +195,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Modifiers() As Beacon.PresetModifier = Self.GetPresetModifiers(False, True)
 		  Var Dictionaries() As Dictionary
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
-		    Dictionaries.Add(Modifier.ToDictionary)
+		    Dictionaries.Add(Modifier.ToDictionary(False))
 		  Next
 		  
 		  Var Content As String = Beacon.GenerateJSON(Dictionaries, True)
@@ -2379,7 +2379,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Preset <> Nil Then
 		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Column("object_id").StringValue Then
 		        // To work around https://github.com/thommcgrath/Beacon/issues/64
-		        Var Contents As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
+		        Var Contents As String = Beacon.GenerateJSON(Preset.ToDictionary(Beacon.Preset.SaveFormats.Modern), False)
 		        Self.BeginTransaction()
 		        Self.SQLExecute("UPDATE custom_presets SET object_id = ?3, contents = ?4 WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Results.Column("object_id").StringValue, Preset.PresetID, Contents)
 		        Self.Commit()
@@ -3204,7 +3204,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
-		  Var Content As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
+		  Var Content As String = Beacon.GenerateJSON(Preset.ToDictionary(Beacon.Preset.SaveFormats.Modern), False)
 		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, ?2, ?3, ?4);", Self.UserID, Preset.PresetID, Preset.Label, Content)

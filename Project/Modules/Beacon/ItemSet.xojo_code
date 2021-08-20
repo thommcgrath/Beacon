@@ -499,7 +499,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function SaveData() As Dictionary
 		  Var Children() As Dictionary
 		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    Children.Add(Entry.SaveData)
+		    Children.Add(Entry.SaveData(False))
 		  Next
 		  
 		  Var Keys As New Dictionary

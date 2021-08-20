@@ -148,6 +148,16 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Path() As String
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.Path
+		  Else
+		    Return Self.mSaveData.Value("Path")
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Resolve() As Beacon.Blueprint
 		  If Self.mBlueprint Is Nil Then
 		    Try

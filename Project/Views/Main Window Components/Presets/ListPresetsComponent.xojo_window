@@ -262,7 +262,7 @@ End
 		    
 		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File <> Nil Then
-		      Preset.ToFile(File)
+		      Preset.ToFile(File, Beacon.Preset.SaveFormats.Universal)
 		    End If
 		    
 		    Return
@@ -282,7 +282,7 @@ End
 		    End If
 		    
 		    Var Preset As Beacon.Preset = List.RowTagAt(I)
-		    Preset.ToFile(Folder.Child(Preset.Label + Beacon.FileExtensionPreset))
+		    Preset.ToFile(Folder.Child(Preset.Label + Beacon.FileExtensionPreset), Beacon.Preset.SaveFormats.Universal)
 		  Next
 		  
 		  Folder.Open

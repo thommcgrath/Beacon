@@ -787,7 +787,7 @@ End
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
-			Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, File)
+			Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary(Beacon.Preset.SaveFormats.Universal), File)
 			Writer.Start
 			End If
 			Return True
@@ -1003,7 +1003,7 @@ End
 		    Self.ViewID = Self.mPreset.PresetID
 		  Else
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
+		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary(Beacon.Preset.SaveFormats.Modern), Self.mSaveFile)
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Start
 		  End If

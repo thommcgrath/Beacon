@@ -76,6 +76,19 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Preset
+		  Var Version, MinVersion As Integer
+		  If Dict.HasKey("Version") Then
+		    Version = Dict.Value("Version")
+		  End If
+		  If Dict.HasKey("MinVersion") Then
+		    MinVersion = Dict.Value("MinVersion")
+		  Else
+		    MinVersion = 2
+		  End If
+		  If MinVersion < 2 Or MinVersion > Beacon.Preset.Version Then
+		    Return Nil
+		  End If
+		  
 		  Var Preset As New Beacon.Preset
 		  If Dict.HasKey("ID") Then
 		    // Don't use lookup here to prevent creating the UUID unless necessary
@@ -89,33 +102,30 @@ Implements Beacon.Countable
 		  Preset.mMinItems = Dict.Lookup("Min", Preset.MinItems)
 		  Preset.mMaxItems = Dict.Lookup("Max", Preset.MaxItems)
 		  
-		  If Dict.HasKey("Entries") Then
-		    Var Contents() As Variant = Dict.Value("Entries")
-		    For Each EntryDict As Dictionary In Contents
-		      Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.FromSaveData(EntryDict)
-		      If Entry <> Nil Then
-		        Preset.mContents.Add(Entry)
-		      End If
-		    Next
-		  ElseIf Dict.HasKey("Contents") Then
-		    Var Contents As Dictionary = Dict.Value("Contents")
-		    If Contents <> Nil Then
-		      For Each Set As DictionaryEntry In Contents
-		        Var ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
-		        Var ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
-		        Var Items() As Variant = Set.Value
-		        For Each Item As Dictionary In Items
-		          Var Entry As Beacon.SetEntry = Beacon.SetEntry.FromSaveData(Item)
-		          If Entry <> Nil Then
-		            Var Child As New Beacon.PresetEntry(Entry)
-		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
-		            Child.ValidForMap(Beacon.Maps.ScorchedEarth) = ValidForScorched
-		            Preset.mContents.Add(Child)
-		          End If
-		        Next
-		      Next
+		  // Beacon.PresetEntry.FromSaveData can understand both formats, the different
+		  // keys are just for compatibility
+		  Var Contents() As Variant
+		  If Version >= 3 Then
+		    If Dict.HasKey("ItemSets") = False Then
+		      Return Nil
 		    End If
+		    
+		    Contents = Dict.Value("ItemSets")
+		  ElseIf Version >= 2 Then
+		    If Dict.HasKey("Entries") = False Then
+		      Return Nil
+		    End If
+		    
+		    Contents = Dict.Value("Entries")
+		  Else
+		    Return Nil
 		  End If
+		  For Each EntryDict As Dictionary In Contents
+		    Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.FromSaveData(EntryDict)
+		    If Entry <> Nil Then
+		      Preset.mContents.Add(Entry)
+		    End If
+		  Next
 		  
 		  If Dict.HasKey("Modifiers") Then
 		    Var Modifiers As Dictionary = Dict.Value("Modifiers")
@@ -324,31 +334,80 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
+		Function ToDictionary(Format As Beacon.Preset.SaveFormats) As Dictionary
+		  Var IncludeModern, IncludeLegacy As Boolean
+		  Select Case Format
+		  Case Beacon.Preset.SaveFormats.Modern
+		    IncludeModern = True
+		  Case Beacon.Preset.SaveFormats.Legacy
+		    IncludeLegacy = True
+		  Case Beacon.Preset.SaveFormats.Universal
+		    IncludeModern = True
+		    IncludeLegacy = True
+		  End Select
+		  
 		  Var Hashes() As String
-		  Var Contents() As Dictionary
+		  Var Contents(), LegacyEntries() As Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
 		    Hashes.Add(Entry.Hash)
-		    Contents.Add(Entry.SaveData)
+		    If IncludeModern Then
+		      Contents.Add(Entry.SaveData(False))
+		    End If
+		    If IncludeLegacy Then
+		      LegacyEntries.Add(Entry.SaveData(True))
+		    End If
 		  Next
-		  Hashes.SortWith(Contents)
+		  If IncludeModern And IncludeLegacy Then
+		    Hashes.SortWith(Contents, LegacyEntries)
+		  ElseIf IncludeModern Then
+		    Hashes.SortWith(Contents)
+		  ElseIf IncludeLegacy Then
+		    Hashes.SortWith(LegacyEntries)
+		  End If
 		  
 		  Var Dict As New Dictionary
-		  Dict.Value("Version") = 2
+		  If IncludeModern And IncludeLegacy Then
+		    Dict.Value("Version") = Self.Version
+		    Dict.Value("MinVersion") = 2
+		  ElseIf IncludeModern Then
+		    Dict.Value("Version") = Self.Version
+		    Dict.Value("MinVersion") = Self.Version
+		  ElseIf IncludeLegacy Then
+		    Dict.Value("Version") = 2
+		    Dict.Value("MinVersion") = 2
+		  End If
 		  Dict.Value("ID") = Self.PresetID
 		  Dict.Value("Label") = Self.Label
 		  Dict.Value("Grouping") = Self.Grouping
 		  Dict.Value("Min") = Self.MinItems
 		  Dict.Value("Max") = Self.MaxItems
-		  Dict.Value("Entries") = Contents
+		  If IncludeModern Then
+		    Dict.Value("ItemSets") = Contents
+		  End If
+		  If IncludeLegacy Then
+		    Dict.Value("Entries") = LegacyEntries
+		  End If
 		  Dict.Value("Modifiers") = Self.mModifierValues
+		  
+		  If IncludeLegacy Then
+		    Var Definitions() As Dictionary
+		    For Each Entry As DictionaryEntry In Self.mModifierValues
+		      Var ModifierID As String = Entry.Key
+		      Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		      If (Modifier Is Nil) = False And Modifier.UsesAdvancedPattern = False Then
+		        Definitions.Add(Modifier.ToDictionary(True))
+		      End If
+		    Next Entry
+		    Dict.Value("Modifier Definitions") = Definitions
+		  End If
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ToFile(File As Global.FolderItem)
-		  Call File.Write(Beacon.GenerateJSON(Self.ToDictionary, True))
+		Sub ToFile(File As FolderItem, Format As Beacon.Preset.SaveFormats)
+		  Call File.Write(Beacon.GenerateJSON(Self.ToDictionary(Format), True))
 		End Sub
 	#tag EndMethod
 
@@ -405,6 +464,16 @@ Implements Beacon.Countable
 		Type As Beacon.Preset.Types
 	#tag EndProperty
 
+
+	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+
+	#tag Enum, Name = SaveFormats, Type = Integer, Flags = &h0
+		Modern
+		  Legacy
+		Universal
+	#tag EndEnum
 
 	#tag Enum, Name = Types, Type = Integer, Flags = &h0
 		BuiltIn

@@ -307,7 +307,7 @@ End
 		  Var Dictionaries() As Dictionary
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) Then
-		      Dictionaries.Add(Beacon.PresetModifier(Me.RowTagAt(Idx)).ToDictionary)
+		      Dictionaries.Add(Beacon.PresetModifier(Me.RowTagAt(Idx)).ToDictionary(False))
 		    End If
 		  Next
 		  

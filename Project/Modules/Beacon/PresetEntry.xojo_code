@@ -107,9 +107,9 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData() As Dictionary
+		Function SaveData(CompatibilityMode As Boolean) As Dictionary
 		  // Calling the overridden superclass method.
-		  Var Dict As Dictionary = Super.SaveData
+		  Var Dict As Dictionary = Super.SaveData(CompatibilityMode)
 		  Dict.Value("Availability") = Self.mAvailability
 		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
