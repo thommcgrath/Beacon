@@ -44,7 +44,7 @@ function check_purchase_status(client_reference_id) {
 				document.getElementById('confirmed_text').innerText = 'You will need to create an account with the email address used to purchase to activate Omni in Beacon.';
 				document.getElementById('activate_button').innerText = 'Create Account';
 			} else {
-				document.getElementById('confirmed_text').innerText = 'An email was sent to ' + email + ' to confirm your email address. Follow the included link to finish setting up your account.';
+				document.getElementById('confirmed_text').innerText = 'An email was sent to ' + email + ' to confirm your email address. Follow the included link to finish setting up your account. Be sure to check junk folders. Despite our best efforts, one of the major email providers likes to tag Beacon emails as spam.';
 				document.getElementById('activate_button').className = 'hidden';
 			}
 		} else {
