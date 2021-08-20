@@ -23,7 +23,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={commonpf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
@@ -32,12 +32,12 @@ SolidCompression=no
 MinVersion=6.1.7601
 ChangesAssociations=yes
 #ifdef x64
-  OutputDir={#MyAppVersion}\x64
+  OutputDir=Output\{#MyAppVersion}\x64
 #else
   #ifdef x86
-    OutputDir={#MyAppVersion}\x86
+    OutputDir=Output\{#MyAppVersion}\x86
   #else
-    OutputDir={#MyAppVersion}\Combo
+    OutputDir=Output\{#MyAppVersion}\Combo
     #define x64 1
     #define x86 1
   #endif
@@ -46,31 +46,29 @@ ChangesAssociations=yes
   ArchitecturesInstallIn64BitMode=x64 arm64
 #endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://usebeaon.app$q $f
+SignedUninstaller=yes
 WizardStyle=modern
 SetupIconFile=../../Artwork/App.ico
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-
-[InstallDelete]
-#ifdef x64
-Type: filesandordirs; Name: "{commonpf32}\Beacon"; Check: Is64BitInstallMode;
-#endif
 
 [Files]
 #ifdef x64
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
-Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
+Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: Is64BitInstallMode And IsAdminInstallMode;
+Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitInstallMode And IsAdminInstallMode;
 #endif
 #ifdef x86
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
-Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
+Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: (Not Is64BitInstallMode) And IsAdminInstallMode;
+Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: (Not Is64BitInstallMode) And IsAdminInstallMode;
 #endif
 Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
@@ -83,48 +81,48 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
-Root: HKLM; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
+Root: HKA; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
+Root: HKA; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.3
 
-Root: HKCR; Subkey: ".beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconDocument"; ValueData: "{#MyAppName} Document"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconDocument\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconDocument\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\.beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconDocument"; ValueData: "{#MyAppName} Document"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconDocument\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconDocument\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
-Root: HKCR; Subkey: ".beaconidentity"; ValueData: "BeaconIdentity"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconIdentity"; ValueData: "{#MyAppName} Identity"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconIdentity\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconIdentity.ico,0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconIdentity\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\.beaconidentity"; ValueData: "BeaconIdentity"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconIdentity"; ValueData: "{#MyAppName} Identity"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconIdentity\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconIdentity.ico,0"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconIdentity\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
-Root: HKCR; Subkey: ".beaconpreset"; ValueData: "BeaconPreset"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconPreset"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconPreset\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconPreset\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\.beaconpreset"; ValueData: "BeaconPreset"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconPreset"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconPreset\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconPreset\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
-Root: HKCR; Subkey: ".beaconauth"; ValueData: "BeaconAuth"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconAuth"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconAuth\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconAuth.ico,0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconAuth\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\.beaconauth"; ValueData: "BeaconAuth"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconAuth"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconAuth\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconAuth.ico,0"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconAuth\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
-Root: HKCR; Subkey: ".beacondata"; ValueData: "BeaconData"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconData"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconData\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconData.ico,0"; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconData\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\.beacondata"; ValueData: "BeaconData"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconData"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconData\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconData.ico,0"; ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\BeaconData\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
-Root: HKCR; Subkey: "beacon"; ValueType: "string"; ValueData: "URL:Beacon"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "beacon"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
-Root: HKCR; Subkey: "beacon\DefaultIcon"; ValueType: "string"; ValueData: "{app}\{#MyAppExeName},0"
-Root: HKCR; Subkey: "beacon\shell\open\command"; ValueType: "string"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+Root: HKA; Subkey: "Software\Classes\beacon"; ValueType: "string"; ValueData: "URL:Beacon"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\beacon"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\beacon\DefaultIcon"; ValueType: "string"; ValueData: "{app}\{#MyAppExeName},0"
+Root: HKA; Subkey: "Software\Classes\beacon\shell\open\command"; ValueType: "string"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 #ifdef x64
-Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: Is64BitInstallMode; Flags: waituntilterminated
-Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x64.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: Is64BitInstallMode And IsKBNeeded('KB3140245')
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: Is64BitInstallMode And IsAdminInstallMode; Flags: waituntilterminated
+Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x64.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: Is64BitInstallMode And IsAdminInstallMode And IsKBNeeded('KB3140245')
 #endif
 #ifdef x86
-Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: not Is64BitInstallMode; Flags: waituntilterminated
-Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x86.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: not Is64BitInstallMode And IsKBNeeded('KB3140245')
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: not Is64BitInstallMode And IsAdminInstallMode; Flags: waituntilterminated
+Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x86.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: not Is64BitInstallMode And IsAdminInstallMode And IsKBNeeded('KB3140245')
 #endif
 
 [Code]
