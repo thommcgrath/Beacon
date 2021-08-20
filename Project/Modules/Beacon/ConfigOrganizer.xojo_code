@@ -194,16 +194,17 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h21
 		Private Function DistinctKeys(Rows As RowSet) As Beacon.ConfigKey()
 		  Var Results() As Beacon.ConfigKey
-		  For Each Row As DatabaseRow In Rows
-		    Var File As String = Row.Column("file").StringValue
-		    Var Header As String = Row.Column("header").StringValue
-		    Var SimpleKey As String = Row.Column("simplekey").StringValue
+		  While Rows.AfterLastRow = False
+		    Var File As String = Rows.Column("file").StringValue
+		    Var Header As String = Rows.Column("header").StringValue
+		    Var SimpleKey As String = Rows.Column("simplekey").StringValue
 		    Var Key As Beacon.ConfigKey = Beacon.Data.GetConfigKey(File, Header, SimpleKey)
 		    If Key Is Nil Then
 		      Key = New Beacon.ConfigKey(File, Header, SimpleKey)
 		    End If
 		    Results.Add(Key)
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -238,13 +239,14 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h21
 		Private Function FilteredValues(Rows As RowSet) As Beacon.ConfigValue()
 		  Var Results() As Beacon.ConfigValue
-		  For Each Row As DatabaseRow In Rows
-		    Var Hash As String = Row.Column("hash").StringValue
+		  While Rows.AfterLastRow = False
+		    Var Hash As String = Rows.Column("hash").StringValue
 		    Var Values() As Beacon.ConfigValue = Self.mValues.Value(Hash)
 		    For Each Value As Beacon.ConfigValue In Values
 		      Results.Add(Value)
 		    Next
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -291,9 +293,10 @@ Protected Class ConfigOrganizer
 		Function Headers(ForFile As String) As String()
 		  Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT DISTINCT header FROM keymap WHERE file = ?1 ORDER BY header;", ForFile)
 		  Var Results() As String
-		  For Each Row As DatabaseRow In Rows
-		    Results.Add(Row.Column("header").StringValue)
-		  Next
+		  While Rows.AfterLastRow = False
+		    Results.Add(Rows.Column("header").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -307,9 +310,10 @@ Protected Class ConfigOrganizer
 		    Rows = Self.mIndex.SelectSQL("SELECT DISTINCT simplekey FROM keymap WHERE file = ?1 AND header = ?2 ORDER BY sortkey;", ForFile, ForHeader)
 		  End If
 		  Var Keys() As String
-		  For Each Row As DatabaseRow In Rows
-		    Keys.Add(Row.Column("simplekey").StringValue)
-		  Next
+		  While Rows.AfterLastRow = False
+		    Keys.Add(Rows.Column("simplekey").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -330,11 +334,12 @@ Protected Class ConfigOrganizer
 		  Self.mIndex.BeginTransaction
 		  For Each Key As Beacon.ConfigKey In Keys
 		    Var Rows As RowSet = Self.mIndex.SelectSQL("SELECT hash FROM keymap WHERE file = ?1 AND header = ?2 AND simplekey = ?3;", Key.File, Key.Header, Key.Key)
-		    For Each Row As DatabaseRow In Rows
-		      Var Hash As String = Row.Column("hash").StringValue
+		    While Rows.AfterLastRow = False
+		      Var Hash As String = Rows.Column("hash").StringValue
 		      Self.mValues.Remove(Hash)
 		      Self.mIndex.ExecuteSQL("DELETE FROM keymap WHERE hash = ?1;", Hash)
-		    Next
+		      Rows.MoveToNextRow
+		    Wend
 		  Next
 		  Self.mIndex.CommitTransaction
 		End Sub
@@ -372,11 +377,12 @@ Protected Class ConfigOrganizer
 	#tag Method, Flags = &h21
 		Private Sub Remove(Rows As RowSet)
 		  Self.mIndex.BeginTransaction
-		  For Each Row As DatabaseRow In Rows
-		    Var Hash As String = Row.Column("hash").StringValue
+		  While Rows.AfterLastRow = False
+		    Var Hash As String = Rows.Column("hash").StringValue
 		    Self.mValues.Remove(Hash)
 		    Self.mIndex.ExecuteSQL("DELETE FROM keymap WHERE hash = ?1;", Hash)
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Self.mIndex.CommitTransaction
 		End Sub
 	#tag EndMethod

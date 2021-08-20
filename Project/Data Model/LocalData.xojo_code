@@ -780,11 +780,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return Blueprints
 		  End If
 		  
-		  For Each Result As DatabaseRow In Results
+		  While Results.AfterLastRow = False
 		    Var Blueprint As Beacon.Blueprint
-		    Var ObjectID As String = Result.Column("object_id").StringValue
+		    Var ObjectID As String = Results.Column("object_id").StringValue
 		    
-		    Select Case Result.Column("category").StringValue
+		    Select Case Results.Column("category").StringValue
 		    Case Beacon.CategoryEngrams
 		      Blueprint = Self.GetEngramByID(ObjectID)
 		    Case Beacon.CategoryCreatures
@@ -795,7 +795,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If (Blueprint Is Nil) = False Then
 		      Blueprints.Add(Blueprint)
 		    End If
-		  Next
+		    Results.MoveToNextRow
+		  Wend
 		  
 		  Return Blueprints
 		End Function
@@ -818,11 +819,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return Blueprints
 		  End If
 		  
-		  For Each Result As DatabaseRow In Results
+		  While Results.AfterLastRow = False
 		    Var Blueprint As Beacon.Blueprint
-		    Var ObjectID As String = Result.Column("object_id").StringValue
+		    Var ObjectID As String = Results.Column("object_id").StringValue
 		    
-		    Select Case Result.Column("category").StringValue
+		    Select Case Results.Column("category").StringValue
 		    Case Beacon.CategoryEngrams
 		      Blueprint = Self.GetEngramByID(ObjectID)
 		    Case Beacon.CategoryCreatures
@@ -833,7 +834,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If (Blueprint Is Nil) = False Then
 		      Blueprints.Add(Blueprint)
 		    End If
-		  Next
+		    Results.MoveToNextRow
+		  Wend
 		  
 		  Return Blueprints
 		End Function
@@ -1155,9 +1157,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetMaps() As Beacon.Map()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
 		  Var Maps() As Beacon.Map
-		  For Each Row As DatabaseRow In Rows
-		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
-		  Next
+		  While Rows.AfterLastRow = False
+		    Maps.Add(New Beacon.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue))
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Maps
 		End Function
 	#tag EndMethod
@@ -1166,9 +1169,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetMaps(Mask As UInt64) As Beacon.Map()
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY official DESC, sort;", Mask)
 		  Var Maps() As Beacon.Map
-		  For Each Row As DatabaseRow In Rows
-		    Maps.Add(New Beacon.Map(Row.Column("label").StringValue, Row.Column("ark_identifier").StringValue, Row.Column("mask").Value.UInt64Value, Row.Column("difficulty_scale").DoubleValue, Row.Column("official").BooleanValue, Row.Column("mod_id").StringValue))
-		  Next
+		  While Rows.AfterLastRow = False
+		    Maps.Add(New Beacon.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue))
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Maps
 		End Function
 	#tag EndMethod
@@ -1211,25 +1215,27 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var BuildNumber As Integer = App.BuildNumber
 		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid, title, COALESCE(detail, '') AS detail, COALESCE(url, '') AS url, min_os_version FROM news WHERE (min_version IS NULL OR min_version <= ?1) AND (max_version IS NULL OR max_version >= ?1) ORDER BY moment DESC;", BuildNumber)
 		  Var Items() As NewsItem
-		  For Each Row As DatabaseRow In Rows
-		    If Row.Column("min_os_version").Value.IsNull = False Then
-		      Var MinOSVersionParts() As String = Row.Column("min_os_version").StringValue.Split(".")
+		  While Rows.AfterLastRow = False
+		    If Rows.Column("min_os_version").Value.IsNull = False Then
+		      Var MinOSVersionParts() As String = Rows.Column("min_os_version").StringValue.Split(".")
 		      Var MinOSMajor As Integer = MinOSVersionParts(0).ToInteger
 		      Var MinOSMinor As Integer = MinOSVersionParts(1).ToInteger
 		      Var MinOSBug As Integer = MinOSVersionParts(2).ToInteger
 		      Var Supported As Boolean = OSMajor > MinOSMajor Or (OSMajor = MinOSMajor And OSMinor > MinOSMinor) Or (OSMajor = MinOSMajor And OSMinor = MinOSMinor AND OSBug >= MinOSBug)
 		      If Not Supported Then
+		        Rows.MoveToNextRow
 		        Continue
 		      End If
 		    End If
 		    
 		    Var Item As New NewsItem
-		    Item.UUID = Row.Column("uuid").StringValue
-		    Item.Title = Row.Column("title").StringValue
-		    Item.Detail = Row.Column("detail").StringValue
-		    Item.URL = Row.Column("url").StringValue
+		    Item.UUID = Rows.Column("uuid").StringValue
+		    Item.Title = Rows.Column("title").StringValue
+		    Item.Detail = Rows.Column("detail").StringValue
+		    Item.URL = Rows.Column("url").StringValue
 		    Items.Add(Item)
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Items
 		End Function
 	#tag EndMethod
@@ -1407,11 +1413,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Mods() As Beacon.ModDetails
 		  
 		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id, is_user_mod FROM mods WHERE is_user_mod = 1;")
-		  If Results.RowCount > 0 Then
-		    For Each Row As DatabaseRow In Results
-		      Mods.Add(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").Int64Value, Results.Column("is_user_mod").BooleanValue))
-		    Next Row
-		  End If
+		  While Results.AfterLastRow = False
+		    Mods.Add(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").Int64Value, Results.Column("is_user_mod").BooleanValue))
+		    Results.MoveToNextRow
+		  Wend
 		  
 		  Return Mods
 		End Function
@@ -2711,19 +2716,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Function RowSetToConfigKeys(Results As RowSet) As Beacon.ConfigKey()
 		  Var Keys() As Beacon.ConfigKey
 		  Try
-		    For Each Row As DatabaseRow In Results
-		      Var ObjectID As String = Row.Column("object_id").StringValue
+		    While Results.AfterLastRow = False
+		      Var ObjectID As String = Results.Column("object_id").StringValue
 		      If Self.mConfigKeyCache.HasKey(ObjectID) Then
+		        Results.MoveToNextRow
 		        Keys.Add(Self.mConfigKeyCache.Value(ObjectID))
 		        Continue
 		      End If
 		      
-		      Var Label As String = Row.Column("label").StringValue
-		      Var ConfigFile As String = Row.Column("file").StringValue
-		      Var ConfigHeader As String = Row.Column("header").StringValue
-		      Var ConfigKey As String = Row.Column("key").StringValue
+		      Var Label As String = Results.Column("label").StringValue
+		      Var ConfigFile As String = Results.Column("file").StringValue
+		      Var ConfigHeader As String = Results.Column("header").StringValue
+		      Var ConfigKey As String = Results.Column("key").StringValue
 		      Var ValueType As Beacon.ConfigKey.ValueTypes
-		      Select Case Row.Column("value_type").StringValue
+		      Select Case Results.Column("value_type").StringValue
 		      Case "Numeric"
 		        ValueType = Beacon.ConfigKey.ValueTypes.TypeNumeric
 		      Case "Array"
@@ -2736,23 +2742,23 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        ValueType = Beacon.ConfigKey.ValueTypes.TypeText
 		      End Select
 		      Var MaxAllowed As NullableDouble
-		      If IsNull(Row.Column("max_allowed").Value) = False Then
-		        MaxAllowed = Row.Column("max_allowed").IntegerValue
+		      If IsNull(Results.Column("max_allowed").Value) = False Then
+		        MaxAllowed = Results.Column("max_allowed").IntegerValue
 		      End If
-		      Var Description As String = Row.Column("description").StringValue
-		      Var DefaultValue As Variant = Row.Column("default_value").Value
+		      Var Description As String = Results.Column("description").StringValue
+		      Var DefaultValue As Variant = Results.Column("default_value").Value
 		      Var NitradoPath As NullableString
 		      Var NitradoFormat As Beacon.ConfigKey.NitradoFormats = Beacon.ConfigKey.NitradoFormats.Unsupported
 		      Var NitradoDeployStyle As Beacon.ConfigKey.NitradoDeployStyles = Beacon.ConfigKey.NitradoDeployStyles.Unsupported
-		      If IsNull(Row.Column("nitrado_format").Value) = False Then
-		        NitradoPath = Row.Column("nitrado_path").StringValue
-		        Select Case Row.Column("nitrado_format").StringValue
+		      If IsNull(Results.Column("nitrado_format").Value) = False Then
+		        NitradoPath = Results.Column("nitrado_path").StringValue
+		        Select Case Results.Column("nitrado_format").StringValue
 		        Case "Line"
 		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Line
 		        Case "Value"
 		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Value
 		        End Select
-		        Select Case Row.Column("nitrado_deploy_style").StringValue
+		        Select Case Results.Column("nitrado_deploy_style").StringValue
 		        Case "Guided"
 		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Guided
 		        Case "Expert"
@@ -2761,15 +2767,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          NitradoDeployStyle = Beacon.ConfigKey.NitradoDeployStyles.Both
 		        End Select
 		      End If
-		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Row.Column("native_editor_version").Value)
-		      Var UIGroup As NullableString = NullableString.FromVariant(Row.Column("ui_group").Value)
-		      Var CustomSort As NullableString = NullableString.FromVariant(Row.Column("custom_sort").Value)
-		      Var ModID As String = Row.Column("mod_id").StringValue
+		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Results.Column("native_editor_version").Value)
+		      Var UIGroup As NullableString = NullableString.FromVariant(Results.Column("ui_group").Value)
+		      Var CustomSort As NullableString = NullableString.FromVariant(Results.Column("custom_sort").Value)
+		      Var ModID As String = Results.Column("mod_id").StringValue
 		      
 		      Var Constraints As Dictionary
-		      If IsNull(Row.Column("constraints").Value) = False Then
+		      If IsNull(Results.Column("constraints").Value) = False Then
 		        Try
-		          Var Parsed As Variant = Beacon.ParseJSON(Row.Column("constraints").StringValue)
+		          Var Parsed As Variant = Beacon.ParseJSON(Results.Column("constraints").StringValue)
 		          If IsNull(Parsed) = False And Parsed IsA Dictionary Then
 		            Constraints = Parsed
 		          End If
@@ -2780,7 +2786,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Key As New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ModID)
 		      Self.mConfigKeyCache.Value(ObjectID) = Key
 		      Keys.Add(Key)
-		    Next
+		      Results.MoveToNextRow
+		    Wend
 		  Catch Err As RuntimeException
 		    App.ReportException(Err)
 		    Keys.ResizeTo(-1)
@@ -2833,12 +2840,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function RowSetToCreatureColors(Rows As RowSet) As Beacon.CreatureColor()
 		  Var CreatureColors() As Beacon.CreatureColor
-		  For Each Row As DatabaseRow In Rows
-		    Var Label As String = Row.Column("label").StringValue
-		    Var ID As Integer = Row.Column("color_id").IntegerValue
-		    Var HexValue As String = Row.Column("hex_value").StringValue
+		  While Rows.AfterLastRow = False
+		    Var Label As String = Rows.Column("label").StringValue
+		    Var ID As Integer = Rows.Column("color_id").IntegerValue
+		    Var HexValue As String = Rows.Column("hex_value").StringValue
 		    CreatureColors.Add(New Beacon.CreatureColor(ID, Label, HexValue))
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Return CreatureColors
 		End Function
 	#tag EndMethod
@@ -2846,12 +2854,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function RowSetToCreatureColorSets(Rows As RowSet) As Beacon.CreatureColorSet()
 		  Var Sets() As Beacon.CreatureColorSet
-		  For Each Row As DatabaseRow In Rows
-		    Var Label As String = Row.Column("label").StringValue
-		    Var UUID As String = Row.Column("color_set_id").StringValue
-		    Var ClassString As String = Row.Column("class_string").StringValue
+		  While Rows.AfterLastRow = False
+		    Var Label As String = Rows.Column("label").StringValue
+		    Var UUID As String = Rows.Column("color_set_id").StringValue
+		    Var ClassString As String = Rows.Column("class_string").StringValue
 		    Sets.Add(New Beacon.CreatureColorSet(UUID, Label, ClassString))
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Return Sets
 		End Function
 	#tag EndMethod
@@ -2898,15 +2907,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function RowSetToGameEvents(Rows As RowSet) As Beacon.GameEvent()
 		  Var GameEvents() As Beacon.GameEvent
-		  For Each Row As DatabaseRow In Rows
-		    Var Label As String = Row.Column("label").StringValue
-		    Var EventUUID As String = Row.Column("event_id").StringValue
-		    Var ArkCode As String = Row.Column("ark_code").StringValue
-		    Var ColorsJSON As String = Row.Column("colors").StringValue
-		    Var RatesJSON As String = Row.Column("rates").StringValue
-		    Var EngramsJSON As String = Row.Column("engrams").StringValue
+		  While Rows.AfterLastRow = False
+		    Var Label As String = Rows.Column("label").StringValue
+		    Var EventUUID As String = Rows.Column("event_id").StringValue
+		    Var ArkCode As String = Rows.Column("ark_code").StringValue
+		    Var ColorsJSON As String = Rows.Column("colors").StringValue
+		    Var RatesJSON As String = Rows.Column("rates").StringValue
+		    Var EngramsJSON As String = Rows.Column("engrams").StringValue
 		    GameEvents.Add(New Beacon.GameEvent(EventUUID, Label, ArkCode, ColorsJSON, RatesJSON, EngramsJSON))
-		  Next
+		    Rows.MoveToNextRow
+		  Wend
 		  Return GameEvents
 		End Function
 	#tag EndMethod
@@ -3776,9 +3786,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Changed As Boolean
 		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid FROM news")
 		  Var ItemsToRemove() As String
-		  For Each Row As DatabaseRow In Rows
-		    ItemsToRemove.Add(Row.Column("uuid").StringValue)
-		  Next
+		  While Rows.AfterLastRow = False
+		    ItemsToRemove.Add(Rows.Column("uuid").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
 		  
 		  For Each Item As Dictionary In Items
 		    Try
