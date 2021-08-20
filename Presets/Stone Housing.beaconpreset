@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f0303c17-287c-456d-af0e-717f1baa0220",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneStairs.PrimalItemStructure_StoneStairs",
+                        "UUID": "f0303c17-287c-456d-af0e-717f1baa0220",
                         "Class": "PrimalItemStructure_StoneStairs_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -39,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "db4c4b6c-d39e-44ab-9720-04238c090028",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateLarge.PrimalItemStructure_StoneGateLarge",
+                        "UUID": "db4c4b6c-d39e-44ab-9720-04238c090028",
                         "Class": "PrimalItemStructure_StoneGateLarge_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -66,13 +66,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "99fd99e2-c9c8-411a-882e-078c79061f34",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGate.PrimalItemStructure_StoneGate",
+                        "UUID": "99fd99e2-c9c8-411a-882e-078c79061f34",
                         "Class": "PrimalItemStructure_StoneGate_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -93,13 +93,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ff10c9a8-c1dc-42bb-acde-4f3dbd2024d9",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoor.PrimalItemStructure_StoneCeilingWithTrapdoor",
+                        "UUID": "ff10c9a8-c1dc-42bb-acde-4f3dbd2024d9",
                         "Class": "PrimalItemStructure_StoneCeilingWithTrapdoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -120,13 +120,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6da9ba48-904c-4184-9df7-704678b1e87b",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneRailing.PrimalItemStructure_StoneRailing",
+                        "UUID": "6da9ba48-904c-4184-9df7-704678b1e87b",
                         "Class": "PrimalItemStructure_StoneRailing_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -147,13 +147,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "181f5181-d802-4a74-a005-00f80942c917",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoorGiant.PrimalItemStructure_StoneCeilingWithTrapdoorGiant",
+                        "UUID": "181f5181-d802-4a74-a005-00f80942c917",
                         "Class": "PrimalItemStructure_StoneCeilingWithTrapdoorGiant_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -174,13 +174,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "854fda42-7b58-45a8-afa6-06e67d7aa1be",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWall.PrimalItemStructure_StoneWall",
+                        "UUID": "854fda42-7b58-45a8-afa6-06e67d7aa1be",
                         "Class": "PrimalItemStructure_StoneWall_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -201,13 +201,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "aade8604-8b0f-44f2-beca-d2b2d93da987",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithWindow.PrimalItemStructure_StoneWallWithWindow",
+                        "UUID": "aade8604-8b0f-44f2-beca-d2b2d93da987",
                         "Class": "PrimalItemStructure_StoneWallWithWindow_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -228,265 +228,265 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "db4c4b6c-d39e-44ab-9720-04238c090028",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateLarge.PrimalItemStructure_StoneGateLarge",
+                        "UUID": "db4c4b6c-d39e-44ab-9720-04238c090028",
                         "Class": "PrimalItemStructure_StoneGateLarge_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "589035bc-cd17-4f4b-8606-48b50f3813bb",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe_Large.PrimalItemStructure_StoneGateframe_Large",
+                        "UUID": "589035bc-cd17-4f4b-8606-48b50f3813bb",
                         "Class": "PrimalItemStructure_StoneGateframe_Large_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "fcb86991-d66f-4241-a550-46b6c42a181c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingDoorGiant.PrimalItemStructure_StoneCeilingDoorGiant",
+                        "UUID": "fcb86991-d66f-4241-a550-46b6c42a181c",
                         "Class": "PrimalItemStructure_StoneCeilingDoorGiant_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "181f5181-d802-4a74-a005-00f80942c917",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoorGiant.PrimalItemStructure_StoneCeilingWithTrapdoorGiant",
+                        "UUID": "181f5181-d802-4a74-a005-00f80942c917",
                         "Class": "PrimalItemStructure_StoneCeilingWithTrapdoorGiant_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "99fd99e2-c9c8-411a-882e-078c79061f34",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGate.PrimalItemStructure_StoneGate",
+                        "UUID": "99fd99e2-c9c8-411a-882e-078c79061f34",
                         "Class": "PrimalItemStructure_StoneGate_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "dab87473-29d9-4600-970e-22da5a341740",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneTrapdoor.PrimalItemStructure_StoneTrapdoor",
+                        "UUID": "dab87473-29d9-4600-970e-22da5a341740",
                         "Class": "PrimalItemStructure_StoneTrapdoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "cdcb2185-a282-4686-b1e0-f8795ac0e525",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneWindow.PrimalItemStructure_StoneWindow",
+                        "UUID": "cdcb2185-a282-4686-b1e0-f8795ac0e525",
                         "Class": "PrimalItemStructure_StoneWindow_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "bf68544e-ef4f-4c5f-9c0d-c379d5295252",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneDoor.PrimalItemStructure_StoneDoor",
+                        "UUID": "bf68544e-ef4f-4c5f-9c0d-c379d5295252",
                         "Class": "PrimalItemStructure_StoneDoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c5f5f9ff-38b2-416c-b619-4d3a17104eb4",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneRoof.PrimalItemStructure_StoneRoof",
+                        "UUID": "c5f5f9ff-38b2-416c-b619-4d3a17104eb4",
                         "Class": "PrimalItemStructure_StoneRoof_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ee773e21-5d1e-4912-84e8-4c6a561d9fb3",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Left.PrimalItemStructure_StoneWall_Sloped_Left",
+                        "UUID": "ee773e21-5d1e-4912-84e8-4c6a561d9fb3",
                         "Class": "PrimalItemStructure_StoneWall_Sloped_Left_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "74360400-dd65-46b2-84b5-a291cabbc7d6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Right.PrimalItemStructure_StoneWall_Sloped_Right",
+                        "UUID": "74360400-dd65-46b2-84b5-a291cabbc7d6",
                         "Class": "PrimalItemStructure_StoneWall_Sloped_Right_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f1a2b553-e115-4130-a92b-ec67445e2bfd",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeiling.PrimalItemStructure_StoneCeiling",
+                        "UUID": "f1a2b553-e115-4130-a92b-ec67445e2bfd",
                         "Class": "PrimalItemStructure_StoneCeiling_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a57e44a6-7eed-41ef-a728-41e286cf8ec2",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe.PrimalItemStructure_StoneGateframe",
+                        "UUID": "a57e44a6-7eed-41ef-a728-41e286cf8ec2",
                         "Class": "PrimalItemStructure_StoneGateframe_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a5e47309-2059-463a-b5f1-5c46c1a7db8b",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithDoor.PrimalItemStructure_StoneWallWithDoor",
+                        "UUID": "a5e47309-2059-463a-b5f1-5c46c1a7db8b",
                         "Class": "PrimalItemStructure_StoneWallWithDoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "307a62d7-d4a6-4747-abb8-120dc8307a26",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFenceFoundation.PrimalItemStructure_StoneFenceFoundation",
+                        "UUID": "307a62d7-d4a6-4747-abb8-120dc8307a26",
                         "Class": "PrimalItemStructure_StoneFenceFoundation_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b796626c-5a65-45ae-96f0-09685951c5f1",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFloor.PrimalItemStructure_StoneFloor",
+                        "UUID": "b796626c-5a65-45ae-96f0-09685951c5f1",
                         "Class": "PrimalItemStructure_StoneFloor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ff10c9a8-c1dc-42bb-acde-4f3dbd2024d9",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingWithTrapdoor.PrimalItemStructure_StoneCeilingWithTrapdoor",
+                        "UUID": "ff10c9a8-c1dc-42bb-acde-4f3dbd2024d9",
                         "Class": "PrimalItemStructure_StoneCeilingWithTrapdoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "2b14d932-9748-4978-985a-60f198082d00",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StonePillar.PrimalItemStructure_StonePillar",
+                        "UUID": "2b14d932-9748-4978-985a-60f198082d00",
                         "Class": "PrimalItemStructure_StonePillar_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6da9ba48-904c-4184-9df7-704678b1e87b",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneRailing.PrimalItemStructure_StoneRailing",
+                        "UUID": "6da9ba48-904c-4184-9df7-704678b1e87b",
                         "Class": "PrimalItemStructure_StoneRailing_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f0303c17-287c-456d-af0e-717f1baa0220",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneStairs.PrimalItemStructure_StoneStairs",
+                        "UUID": "f0303c17-287c-456d-af0e-717f1baa0220",
                         "Class": "PrimalItemStructure_StoneStairs_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "854fda42-7b58-45a8-afa6-06e67d7aa1be",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWall.PrimalItemStructure_StoneWall",
+                        "UUID": "854fda42-7b58-45a8-afa6-06e67d7aa1be",
                         "Class": "PrimalItemStructure_StoneWall_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "aade8604-8b0f-44f2-beca-d2b2d93da987",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithWindow.PrimalItemStructure_StoneWallWithWindow",
+                        "UUID": "aade8604-8b0f-44f2-beca-d2b2d93da987",
                         "Class": "PrimalItemStructure_StoneWallWithWindow_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -507,13 +507,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "dab87473-29d9-4600-970e-22da5a341740",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneTrapdoor.PrimalItemStructure_StoneTrapdoor",
+                        "UUID": "dab87473-29d9-4600-970e-22da5a341740",
                         "Class": "PrimalItemStructure_StoneTrapdoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -534,13 +534,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f1a2b553-e115-4130-a92b-ec67445e2bfd",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeiling.PrimalItemStructure_StoneCeiling",
+                        "UUID": "f1a2b553-e115-4130-a92b-ec67445e2bfd",
                         "Class": "PrimalItemStructure_StoneCeiling_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -561,13 +561,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "74360400-dd65-46b2-84b5-a291cabbc7d6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Right.PrimalItemStructure_StoneWall_Sloped_Right",
+                        "UUID": "74360400-dd65-46b2-84b5-a291cabbc7d6",
                         "Class": "PrimalItemStructure_StoneWall_Sloped_Right_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -588,13 +588,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "fcb86991-d66f-4241-a550-46b6c42a181c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneCeilingDoorGiant.PrimalItemStructure_StoneCeilingDoorGiant",
+                        "UUID": "fcb86991-d66f-4241-a550-46b6c42a181c",
                         "Class": "PrimalItemStructure_StoneCeilingDoorGiant_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -615,13 +615,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "2b14d932-9748-4978-985a-60f198082d00",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StonePillar.PrimalItemStructure_StonePillar",
+                        "UUID": "2b14d932-9748-4978-985a-60f198082d00",
                         "Class": "PrimalItemStructure_StonePillar_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -642,13 +642,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "cdcb2185-a282-4686-b1e0-f8795ac0e525",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_StoneWindow.PrimalItemStructure_StoneWindow",
+                        "UUID": "cdcb2185-a282-4686-b1e0-f8795ac0e525",
                         "Class": "PrimalItemStructure_StoneWindow_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -669,13 +669,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a5e47309-2059-463a-b5f1-5c46c1a7db8b",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneWallWithDoor.PrimalItemStructure_StoneWallWithDoor",
+                        "UUID": "a5e47309-2059-463a-b5f1-5c46c1a7db8b",
                         "Class": "PrimalItemStructure_StoneWallWithDoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -696,13 +696,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c5f5f9ff-38b2-416c-b619-4d3a17104eb4",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneRoof.PrimalItemStructure_StoneRoof",
+                        "UUID": "c5f5f9ff-38b2-416c-b619-4d3a17104eb4",
                         "Class": "PrimalItemStructure_StoneRoof_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -723,13 +723,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a57e44a6-7eed-41ef-a728-41e286cf8ec2",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe.PrimalItemStructure_StoneGateframe",
+                        "UUID": "a57e44a6-7eed-41ef-a728-41e286cf8ec2",
                         "Class": "PrimalItemStructure_StoneGateframe_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -750,13 +750,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "589035bc-cd17-4f4b-8606-48b50f3813bb",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneGateframe_Large.PrimalItemStructure_StoneGateframe_Large",
+                        "UUID": "589035bc-cd17-4f4b-8606-48b50f3813bb",
                         "Class": "PrimalItemStructure_StoneGateframe_Large_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -777,13 +777,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "307a62d7-d4a6-4747-abb8-120dc8307a26",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFenceFoundation.PrimalItemStructure_StoneFenceFoundation",
+                        "UUID": "307a62d7-d4a6-4747-abb8-120dc8307a26",
                         "Class": "PrimalItemStructure_StoneFenceFoundation_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -804,13 +804,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ee773e21-5d1e-4912-84e8-4c6a561d9fb3",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Stone/PrimalItemStructure_StoneWall_Sloped_Left.PrimalItemStructure_StoneWall_Sloped_Left",
+                        "UUID": "ee773e21-5d1e-4912-84e8-4c6a561d9fb3",
                         "Class": "PrimalItemStructure_StoneWall_Sloped_Left_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -831,13 +831,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "bf68544e-ef4f-4c5f-9c0d-c379d5295252",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneDoor.PrimalItemStructure_StoneDoor",
+                        "UUID": "bf68544e-ef4f-4c5f-9c0d-c379d5295252",
                         "Class": "PrimalItemStructure_StoneDoor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -858,13 +858,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b796626c-5a65-45ae-96f0-09685951c5f1",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Stone/PrimalItemStructure_StoneFloor.PrimalItemStructure_StoneFloor",
+                        "UUID": "b796626c-5a65-45ae-96f0-09685951c5f1",
                         "Class": "PrimalItemStructure_StoneFloor_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }

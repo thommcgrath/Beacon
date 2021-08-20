@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "684b5ba4-b656-4bcf-9f58-e8c506bc108c",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
+                        "UUID": "684b5ba4-b656-4bcf-9f58-e8c506bc108c",
                         "Class": "PrimalItemArmor_DesertClothShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -39,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "5558e209-2017-4010-8034-2ff6de6e4b08",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
+                        "UUID": "5558e209-2017-4010-8034-2ff6de6e4b08",
                         "Class": "PrimalItemArmor_DesertClothGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -66,61 +66,61 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6233261f-0c7c-45bd-8476-ee278cc66dec",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
+                        "UUID": "6233261f-0c7c-45bd-8476-ee278cc66dec",
                         "Class": "PrimalItemArmor_DesertClothBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "5558e209-2017-4010-8034-2ff6de6e4b08",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
+                        "UUID": "5558e209-2017-4010-8034-2ff6de6e4b08",
                         "Class": "PrimalItemArmor_DesertClothGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f865a5c9-f2a1-449b-ae09-cfde8366b66f",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
+                        "UUID": "f865a5c9-f2a1-449b-ae09-cfde8366b66f",
                         "Class": "PrimalItemArmor_DesertClothPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "684b5ba4-b656-4bcf-9f58-e8c506bc108c",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
+                        "UUID": "684b5ba4-b656-4bcf-9f58-e8c506bc108c",
                         "Class": "PrimalItemArmor_DesertClothShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e547145b-b853-40ee-bb6d-eec4d2171a05",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
+                        "UUID": "e547145b-b853-40ee-bb6d-eec4d2171a05",
                         "Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -141,13 +141,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f865a5c9-f2a1-449b-ae09-cfde8366b66f",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
+                        "UUID": "f865a5c9-f2a1-449b-ae09-cfde8366b66f",
                         "Class": "PrimalItemArmor_DesertClothPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -168,13 +168,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6233261f-0c7c-45bd-8476-ee278cc66dec",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
+                        "UUID": "6233261f-0c7c-45bd-8476-ee278cc66dec",
                         "Class": "PrimalItemArmor_DesertClothBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -195,13 +195,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e547145b-b853-40ee-bb6d-eec4d2171a05",
                         "Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
+                        "UUID": "e547145b-b853-40ee-bb6d-eec4d2171a05",
                         "Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }

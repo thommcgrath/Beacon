@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c41acad5-b4a9-4116-a722-17efe12542fa",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekGloves.PrimalItemArmor_TekGloves",
+                        "UUID": "c41acad5-b4a9-4116-a722-17efe12542fa",
                         "Class": "PrimalItemArmor_TekGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -39,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "58989713-f1d2-4daa-b641-72f786e174f2",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekShirt.PrimalItemArmor_TekShirt",
+                        "UUID": "58989713-f1d2-4daa-b641-72f786e174f2",
                         "Class": "PrimalItemArmor_TekShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -66,13 +66,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ba14eda6-573a-40ed-8923-bfc1666bd4a1",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekPants.PrimalItemArmor_TekPants",
+                        "UUID": "ba14eda6-573a-40ed-8923-bfc1666bd4a1",
                         "Class": "PrimalItemArmor_TekPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -93,13 +93,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "35b0d84d-ff12-4be8-8209-4802d3e9e693",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekBoots.PrimalItemArmor_TekBoots",
+                        "UUID": "35b0d84d-ff12-4be8-8209-4802d3e9e693",
                         "Class": "PrimalItemArmor_TekBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -120,13 +120,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "d8317e07-15c6-4243-bd68-b699abf896af",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekHelmet.PrimalItemArmor_TekHelmet",
+                        "UUID": "d8317e07-15c6-4243-bd68-b699abf896af",
                         "Class": "PrimalItemArmor_TekHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -147,61 +147,61 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "35b0d84d-ff12-4be8-8209-4802d3e9e693",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekBoots.PrimalItemArmor_TekBoots",
+                        "UUID": "35b0d84d-ff12-4be8-8209-4802d3e9e693",
                         "Class": "PrimalItemArmor_TekBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "58989713-f1d2-4daa-b641-72f786e174f2",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekShirt.PrimalItemArmor_TekShirt",
+                        "UUID": "58989713-f1d2-4daa-b641-72f786e174f2",
                         "Class": "PrimalItemArmor_TekShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c41acad5-b4a9-4116-a722-17efe12542fa",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekGloves.PrimalItemArmor_TekGloves",
+                        "UUID": "c41acad5-b4a9-4116-a722-17efe12542fa",
                         "Class": "PrimalItemArmor_TekGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "d8317e07-15c6-4243-bd68-b699abf896af",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekHelmet.PrimalItemArmor_TekHelmet",
+                        "UUID": "d8317e07-15c6-4243-bd68-b699abf896af",
                         "Class": "PrimalItemArmor_TekHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ba14eda6-573a-40ed-8923-bfc1666bd4a1",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekPants.PrimalItemArmor_TekPants",
+                        "UUID": "ba14eda6-573a-40ed-8923-bfc1666bd4a1",
                         "Class": "PrimalItemArmor_TekPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }

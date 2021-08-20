@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "bba4a91a-80e9-499a-9fb9-824c82212d90",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotGloves.PrimalItemArmor_RiotGloves",
+                        "UUID": "bba4a91a-80e9-499a-9fb9-824c82212d90",
                         "Class": "PrimalItemArmor_RiotGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -39,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "0f32bc56-825f-41db-b391-ee2dbf5ceb66",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotBoots.PrimalItemArmor_RiotBoots",
+                        "UUID": "0f32bc56-825f-41db-b391-ee2dbf5ceb66",
                         "Class": "PrimalItemArmor_RiotBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -66,13 +66,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a7009b33-f3b9-41e2-82cc-a82537fef96a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotPants.PrimalItemArmor_RiotPants",
+                        "UUID": "a7009b33-f3b9-41e2-82cc-a82537fef96a",
                         "Class": "PrimalItemArmor_RiotPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -93,13 +93,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "de23cf5e-c8d0-4de6-8f3f-eb05d40ea91d",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotHelmet.PrimalItemArmor_RiotHelmet",
+                        "UUID": "de23cf5e-c8d0-4de6-8f3f-eb05d40ea91d",
                         "Class": "PrimalItemArmor_RiotHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -120,13 +120,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ac1a9096-df5e-4148-9d84-a30f17564f3c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt",
+                        "UUID": "ac1a9096-df5e-4148-9d84-a30f17564f3c",
                         "Class": "PrimalItemArmor_RiotShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -147,73 +147,73 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "0f32bc56-825f-41db-b391-ee2dbf5ceb66",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotBoots.PrimalItemArmor_RiotBoots",
+                        "UUID": "0f32bc56-825f-41db-b391-ee2dbf5ceb66",
                         "Class": "PrimalItemArmor_RiotBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ac1a9096-df5e-4148-9d84-a30f17564f3c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt",
+                        "UUID": "ac1a9096-df5e-4148-9d84-a30f17564f3c",
                         "Class": "PrimalItemArmor_RiotShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "bba4a91a-80e9-499a-9fb9-824c82212d90",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotGloves.PrimalItemArmor_RiotGloves",
+                        "UUID": "bba4a91a-80e9-499a-9fb9-824c82212d90",
                         "Class": "PrimalItemArmor_RiotGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "de23cf5e-c8d0-4de6-8f3f-eb05d40ea91d",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotHelmet.PrimalItemArmor_RiotHelmet",
+                        "UUID": "de23cf5e-c8d0-4de6-8f3f-eb05d40ea91d",
                         "Class": "PrimalItemArmor_RiotHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a7009b33-f3b9-41e2-82cc-a82537fef96a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotPants.PrimalItemArmor_RiotPants",
+                        "UUID": "a7009b33-f3b9-41e2-82cc-a82537fef96a",
                         "Class": "PrimalItemArmor_RiotPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f40512df-c37f-4fcc-af62-bc805cac2736",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield",
+                        "UUID": "f40512df-c37f-4fcc-af62-bc805cac2736",
                         "Class": "PrimalItemArmor_TransparentRiotShield_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -234,13 +234,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f40512df-c37f-4fcc-af62-bc805cac2736",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield",
+                        "UUID": "f40512df-c37f-4fcc-af62-bc805cac2736",
                         "Class": "PrimalItemArmor_TransparentRiotShield_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }

@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Class": "PrimalItem_WeaponStoneHatchet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -39,61 +39,61 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Class": "PrimalItem_WeaponFishingRod_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
+                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Class": "PrimalItem_WeaponLance_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Class": "PrimalItem_WeaponStoneHatchet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
+                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Class": "PrimalItem_WeaponStonePick_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Class": "PrimalItem_WeaponTorch_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -114,13 +114,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a0432b94-5158-44fa-afa7-8b47f3dd16f1",
                         "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponTaxidermyTool.PrimalItem_WeaponTaxidermyTool",
+                        "UUID": "a0432b94-5158-44fa-afa7-8b47f3dd16f1",
                         "Class": "PrimalItem_WeaponTaxidermyTool_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -141,13 +141,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "71b9911f-9c6f-42ee-ade6-b4130ed1a6cc",
                         "Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponSpyglass.PrimalItem_WeaponSpyglass",
+                        "UUID": "71b9911f-9c6f-42ee-ade6-b4130ed1a6cc",
                         "Class": "PrimalItem_WeaponSpyglass_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -168,13 +168,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Class": "PrimalItem_WeaponTorch_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -195,13 +195,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
+                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Class": "PrimalItem_WeaponStonePick_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -222,85 +222,85 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Class": "PrimalItem_WeaponFishingRod_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
+                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Class": "PrimalItem_WeaponLance_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Class": "PrimalItem_WeaponStoneHatchet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
+                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Class": "PrimalItem_WeaponStonePick_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a0432b94-5158-44fa-afa7-8b47f3dd16f1",
                         "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponTaxidermyTool.PrimalItem_WeaponTaxidermyTool",
+                        "UUID": "a0432b94-5158-44fa-afa7-8b47f3dd16f1",
                         "Class": "PrimalItem_WeaponTaxidermyTool_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Class": "PrimalItem_WeaponTorch_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "020b901e-339c-4e7e-aab6-b783bf094ec2",
                         "Path": "/Game/ScorchedEarth/WeaponWhip/PrimalItem_WeaponWhip.PrimalItem_WeaponWhip",
+                        "UUID": "020b901e-339c-4e7e-aab6-b783bf094ec2",
                         "Class": "PrimalItem_WeaponWhip_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -321,13 +321,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b0682f3a-0e6e-4276-9d83-bd9bf018e89f",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_WaterJarRefill.PrimalItemConsumable_WaterJarRefill",
+                        "UUID": "b0682f3a-0e6e-4276-9d83-bd9bf018e89f",
                         "Class": "PrimalItemConsumable_WaterJarRefill_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -348,13 +348,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
+                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Class": "PrimalItem_WeaponLance_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -375,13 +375,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "2b5739f9-722d-4a50-b95f-113a6ed72729",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponScissors.PrimalItem_WeaponScissors",
+                        "UUID": "2b5739f9-722d-4a50-b95f-113a6ed72729",
                         "Class": "PrimalItem_WeaponScissors_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -402,13 +402,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "49b8539f-85aa-4b5f-846b-b86226527f36",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLasso.PrimalItem_WeaponLasso",
+                        "UUID": "49b8539f-85aa-4b5f-846b-b86226527f36",
                         "Class": "PrimalItem_WeaponLasso_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -429,73 +429,73 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Class": "PrimalItem_WeaponFishingRod_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
+                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Class": "PrimalItem_WeaponLance_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Class": "PrimalItem_WeaponStoneHatchet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
+                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Class": "PrimalItem_WeaponStonePick_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Class": "PrimalItem_WeaponTorch_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "020b901e-339c-4e7e-aab6-b783bf094ec2",
                         "Path": "/Game/ScorchedEarth/WeaponWhip/PrimalItem_WeaponWhip.PrimalItem_WeaponWhip",
+                        "UUID": "020b901e-339c-4e7e-aab6-b783bf094ec2",
                         "Class": "PrimalItem_WeaponWhip_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -516,13 +516,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Class": "PrimalItem_WeaponFishingRod_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -543,13 +543,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "632d67bf-54c3-4a07-847f-1a3ab25c3835",
                         "Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponCompass.PrimalItem_WeaponCompass",
+                        "UUID": "632d67bf-54c3-4a07-847f-1a3ab25c3835",
                         "Class": "PrimalItem_WeaponCompass_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -570,73 +570,73 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+                        "UUID": "007a16fd-1a73-4fd1-acd1-ff10cb785820",
                         "Class": "PrimalItem_WeaponFishingRod_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
+                        "UUID": "3e6c930f-aa46-4c7d-9954-24ecde9994bf",
                         "Class": "PrimalItem_WeaponLance_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+                        "UUID": "b4765a61-a2f4-4fcd-b433-cda7d3d11040",
                         "Class": "PrimalItem_WeaponStoneHatchet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
+                        "UUID": "401ac839-b296-41a7-ba32-64f3f2ec3404",
                         "Class": "PrimalItem_WeaponStonePick_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a0432b94-5158-44fa-afa7-8b47f3dd16f1",
                         "Path": "/Game/Extinction/CoreBlueprints/Weapons/PrimalItem_WeaponTaxidermyTool.PrimalItem_WeaponTaxidermyTool",
+                        "UUID": "a0432b94-5158-44fa-afa7-8b47f3dd16f1",
                         "Class": "PrimalItem_WeaponTaxidermyTool_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+                        "UUID": "038af58c-1ec3-4082-a431-2eba767b732a",
                         "Class": "PrimalItem_WeaponTorch_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -657,13 +657,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "020b901e-339c-4e7e-aab6-b783bf094ec2",
                         "Path": "/Game/ScorchedEarth/WeaponWhip/PrimalItem_WeaponWhip.PrimalItem_WeaponWhip",
+                        "UUID": "020b901e-339c-4e7e-aab6-b783bf094ec2",
                         "Class": "PrimalItem_WeaponWhip_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }

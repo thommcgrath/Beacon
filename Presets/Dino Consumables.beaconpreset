@@ -12,40 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "23e65ceb-1ad7-4f76-92e3-7e4473484031",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall.PrimalItemConsumable_Kibble_Base_XSmall",
-                        "Class": "PrimalItemConsumable_Kibble_Base_XSmall_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "90f146d4-b194-423b-b6f0-821d745d9808",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Honey.PrimalItemConsumable_Honey",
+                        "UUID": "90f146d4-b194-423b-b6f0-821d745d9808",
                         "Class": "PrimalItemConsumable_Honey_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -66,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "8c127076-0f9a-4420-9cef-c1d97fc5a432",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Large.PrimalItemConsumable_Kibble_Base_Large",
+                        "UUID": "8c127076-0f9a-4420-9cef-c1d97fc5a432",
                         "Class": "PrimalItemConsumable_Kibble_Base_Large_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -93,13 +66,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "51acb7e0-63c6-4960-a9f2-f144b69f4875",
                         "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small_EX.PrimalItemConsumable_Kibble_Base_Small_EX",
+                        "UUID": "51acb7e0-63c6-4960-a9f2-f144b69f4875",
                         "Class": "PrimalItemConsumable_Kibble_Base_Small_EX_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -120,13 +93,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b0c116c7-373e-4b4f-8aec-4c884dddc74b",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium.PrimalItemConsumable_Kibble_Base_Medium",
-                        "Class": "PrimalItemConsumable_Kibble_Base_Medium_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall.PrimalItemConsumable_Kibble_Base_XSmall",
+                        "UUID": "23e65ceb-1ad7-4f76-92e3-7e4473484031",
+                        "Class": "PrimalItemConsumable_Kibble_Base_XSmall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -147,13 +120,67 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ef0d0186-213e-47d2-ad01-1109e468c03c",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small.PrimalItemConsumable_Kibble_Base_Small",
+                        "UUID": "78399fbb-9b5e-42b1-9935-4b3dcba4eb98",
+                        "Class": "PrimalItemConsumable_Kibble_Base_Small_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 1023,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special.PrimalItemConsumable_Kibble_Base_Special",
+                        "UUID": "10b70033-c0ea-4948-898c-ce929fd638ae",
+                        "Class": "PrimalItemConsumable_Kibble_Base_Special_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 1023,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
                         "Path": "/Game/Genesis2/CoreBlueprints/Environment/Mutagen/PrimalItemConsumable_Mutagen.PrimalItemConsumable_Mutagen",
+                        "UUID": "ef0d0186-213e-47d2-ad01-1109e468c03c",
                         "Class": "PrimalItemConsumable_Mutagen_C",
-                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -174,13 +201,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ac355273-9dbe-4426-b372-bc4aa84eaccb",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_SweetVeggieCake.PrimalItemConsumable_SweetVeggieCake",
+                        "UUID": "ac355273-9dbe-4426-b372-bc4aa84eaccb",
                         "Class": "PrimalItemConsumable_SweetVeggieCake_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -201,13 +228,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "150ff395-25b5-4dc2-83c7-abdd57b320a6",
                         "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Large_EX.PrimalItemConsumable_Kibble_Base_Large_EX",
+                        "UUID": "150ff395-25b5-4dc2-83c7-abdd57b320a6",
                         "Class": "PrimalItemConsumable_Kibble_Base_Large_EX_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -228,13 +255,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "10b70033-c0ea-4948-898c-ce929fd638ae",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special.PrimalItemConsumable_Kibble_Base_Special",
-                        "Class": "PrimalItemConsumable_Kibble_Base_Special_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium.PrimalItemConsumable_Kibble_Base_Medium",
+                        "UUID": "b0c116c7-373e-4b4f-8aec-4c884dddc74b",
+                        "Class": "PrimalItemConsumable_Kibble_Base_Medium_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -255,121 +282,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "78399fbb-9b5e-42b1-9935-4b3dcba4eb98",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small.PrimalItemConsumable_Kibble_Base_Small",
-                        "Class": "PrimalItemConsumable_Kibble_Base_Small_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "14c5e9a0-8eb4-4010-9a97-ad68d4a5f0d8",
-                        "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge_EX.PrimalItemConsumable_Kibble_Base_XLarge_EX",
-                        "Class": "PrimalItemConsumable_Kibble_Base_XLarge_EX_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 32,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "1a21ee89-520d-4d65-977c-233a5f25dbae",
-                        "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall_EX.PrimalItemConsumable_Kibble_Base_XSmall_EX",
-                        "Class": "PrimalItemConsumable_Kibble_Base_XSmall_EX_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 32,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "172c75ea-25c0-4017-aecb-42540b158797",
-                        "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium_EX.PrimalItemConsumable_Kibble_Base_Medium_EX",
-                        "Class": "PrimalItemConsumable_Kibble_Base_Medium_EX_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 32,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "3e2d30f0-46f7-4bf5-aa50-9bc7c7030f0e",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge.PrimalItemConsumable_Kibble_Base_XLarge",
+                        "UUID": "3e2d30f0-46f7-4bf5-aa50-9bc7c7030f0e",
                         "Class": "PrimalItemConsumable_Kibble_Base_XLarge_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -390,13 +309,94 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "af8a5e9c-ea26-4fa1-81f3-dbff3f3d5f10",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge_EX.PrimalItemConsumable_Kibble_Base_XLarge_EX",
+                        "UUID": "14c5e9a0-8eb4-4010-9a97-ad68d4a5f0d8",
+                        "Class": "PrimalItemConsumable_Kibble_Base_XLarge_EX_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall_EX.PrimalItemConsumable_Kibble_Base_XSmall_EX",
+                        "UUID": "1a21ee89-520d-4d65-977c-233a5f25dbae",
+                        "Class": "PrimalItemConsumable_Kibble_Base_XSmall_EX_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium_EX.PrimalItemConsumable_Kibble_Base_Medium_EX",
+                        "UUID": "172c75ea-25c0-4017-aecb-42540b158797",
+                        "Class": "PrimalItemConsumable_Kibble_Base_Medium_EX_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 32,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
                         "Path": "/Game/Extinction/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special_EX.PrimalItemConsumable_Kibble_Base_Special_EX",
+                        "UUID": "af8a5e9c-ea26-4fa1-81f3-dbff3f3d5f10",
                         "Class": "PrimalItemConsumable_Kibble_Base_Special_EX_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -414,26 +414,6 @@
         }
     ],
     "Entries": [
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall.PrimalItemConsumable_Kibble_Base_XSmall",
-                    "Class": "PrimalItemConsumable_Kibble_Base_XSmall_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
         {
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
@@ -498,8 +478,48 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium.PrimalItemConsumable_Kibble_Base_Medium",
-                    "Class": "PrimalItemConsumable_Kibble_Base_Medium_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XSmall.PrimalItemConsumable_Kibble_Base_XSmall",
+                    "Class": "PrimalItemConsumable_Kibble_Base_XSmall_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 1023,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small.PrimalItemConsumable_Kibble_Base_Small",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Small_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 5,
+            "MaxQuantity": 20,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 1023,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special.PrimalItemConsumable_Kibble_Base_Special",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Special_C",
                     "Weight": 0.5
                 }
             ],
@@ -578,8 +598,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Special.PrimalItemConsumable_Kibble_Base_Special",
-                    "Class": "PrimalItemConsumable_Kibble_Base_Special_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Medium.PrimalItemConsumable_Kibble_Base_Medium",
+                    "Class": "PrimalItemConsumable_Kibble_Base_Medium_C",
                     "Weight": 0.5
                 }
             ],
@@ -598,8 +618,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_Small.PrimalItemConsumable_Kibble_Base_Small",
-                    "Class": "PrimalItemConsumable_Kibble_Base_Small_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge.PrimalItemConsumable_Kibble_Base_XLarge",
+                    "Class": "PrimalItemConsumable_Kibble_Base_XLarge_C",
                     "Weight": 0.5
                 }
             ],
@@ -670,26 +690,6 @@
             "Weight": 250.0,
             "EntryWeight": 0.25,
             "Availability": 32,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_Base_XLarge.PrimalItemConsumable_Kibble_Base_XLarge",
-                    "Class": "PrimalItemConsumable_Kibble_Base_XLarge_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 5,
-            "MaxQuantity": 20,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 1023,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true

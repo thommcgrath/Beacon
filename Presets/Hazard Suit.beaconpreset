@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "46a59e8e-c601-4302-a771-296d09ca8f84",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitBoots.PrimalItemArmor_HazardSuitBoots",
+                        "UUID": "46a59e8e-c601-4302-a771-296d09ca8f84",
                         "Class": "PrimalItemArmor_HazardSuitBoots_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -39,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a53c0173-72e6-4243-98fe-be8308f3a8f9",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitPants.PrimalItemArmor_HazardSuitPants",
+                        "UUID": "a53c0173-72e6-4243-98fe-be8308f3a8f9",
                         "Class": "PrimalItemArmor_HazardSuitPants_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -66,13 +66,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "293c9a0e-498c-4ed2-a66a-619672e441f7",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitShirt.PrimalItemArmor_HazardSuitShirt",
+                        "UUID": "293c9a0e-498c-4ed2-a66a-619672e441f7",
                         "Class": "PrimalItemArmor_HazardSuitShirt_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -93,61 +93,61 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "46a59e8e-c601-4302-a771-296d09ca8f84",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitBoots.PrimalItemArmor_HazardSuitBoots",
+                        "UUID": "46a59e8e-c601-4302-a771-296d09ca8f84",
                         "Class": "PrimalItemArmor_HazardSuitBoots_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "bd2e5165-b184-4b84-ab54-d387869bc59f",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitGloves.PrimalItemArmor_HazardSuitGloves",
+                        "UUID": "bd2e5165-b184-4b84-ab54-d387869bc59f",
                         "Class": "PrimalItemArmor_HazardSuitGloves_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "205c0176-a9a7-4593-b344-353a2d403b2f",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitHelmet.PrimalItemArmor_HazardSuitHelmet",
+                        "UUID": "205c0176-a9a7-4593-b344-353a2d403b2f",
                         "Class": "PrimalItemArmor_HazardSuitHelmet_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a53c0173-72e6-4243-98fe-be8308f3a8f9",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitPants.PrimalItemArmor_HazardSuitPants",
+                        "UUID": "a53c0173-72e6-4243-98fe-be8308f3a8f9",
                         "Class": "PrimalItemArmor_HazardSuitPants_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "293c9a0e-498c-4ed2-a66a-619672e441f7",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitShirt.PrimalItemArmor_HazardSuitShirt",
+                        "UUID": "293c9a0e-498c-4ed2-a66a-619672e441f7",
                         "Class": "PrimalItemArmor_HazardSuitShirt_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -168,13 +168,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "205c0176-a9a7-4593-b344-353a2d403b2f",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitHelmet.PrimalItemArmor_HazardSuitHelmet",
+                        "UUID": "205c0176-a9a7-4593-b344-353a2d403b2f",
                         "Class": "PrimalItemArmor_HazardSuitHelmet_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -195,13 +195,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "bd2e5165-b184-4b84-ab54-d387869bc59f",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitGloves.PrimalItemArmor_HazardSuitGloves",
+                        "UUID": "bd2e5165-b184-4b84-ab54-d387869bc59f",
                         "Class": "PrimalItemArmor_HazardSuitGloves_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }

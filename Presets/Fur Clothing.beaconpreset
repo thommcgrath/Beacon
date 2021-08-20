@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "95b9077d-318c-40e2-8ebd-1034ed1afb76",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurPants.PrimalItemArmor_FurPants",
+                        "UUID": "95b9077d-318c-40e2-8ebd-1034ed1afb76",
                         "Class": "PrimalItemArmor_FurPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -39,61 +39,61 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "fe013e1c-446f-4adb-90ba-1f78ff33a9db",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurBoots.PrimalItemArmor_FurBoots",
+                        "UUID": "fe013e1c-446f-4adb-90ba-1f78ff33a9db",
                         "Class": "PrimalItemArmor_FurBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c55c9769-c700-45b9-8900-93a6caf26b6f",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurHelmet.PrimalItemArmor_FurHelmet",
+                        "UUID": "c55c9769-c700-45b9-8900-93a6caf26b6f",
                         "Class": "PrimalItemArmor_FurHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "8bd65538-3798-44be-ae77-cde30ebcad78",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurShirt.PrimalItemArmor_FurShirt",
+                        "UUID": "8bd65538-3798-44be-ae77-cde30ebcad78",
                         "Class": "PrimalItemArmor_FurShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6218ef75-6036-4777-be97-034ec8c645a7",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurGloves.PrimalItemArmor_FurGloves",
+                        "UUID": "6218ef75-6036-4777-be97-034ec8c645a7",
                         "Class": "PrimalItemArmor_FurGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "95b9077d-318c-40e2-8ebd-1034ed1afb76",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurPants.PrimalItemArmor_FurPants",
+                        "UUID": "95b9077d-318c-40e2-8ebd-1034ed1afb76",
                         "Class": "PrimalItemArmor_FurPants_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -114,13 +114,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c55c9769-c700-45b9-8900-93a6caf26b6f",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurHelmet.PrimalItemArmor_FurHelmet",
+                        "UUID": "c55c9769-c700-45b9-8900-93a6caf26b6f",
                         "Class": "PrimalItemArmor_FurHelmet_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -141,13 +141,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "8bd65538-3798-44be-ae77-cde30ebcad78",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurShirt.PrimalItemArmor_FurShirt",
+                        "UUID": "8bd65538-3798-44be-ae77-cde30ebcad78",
                         "Class": "PrimalItemArmor_FurShirt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -168,13 +168,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "fe013e1c-446f-4adb-90ba-1f78ff33a9db",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurBoots.PrimalItemArmor_FurBoots",
+                        "UUID": "fe013e1c-446f-4adb-90ba-1f78ff33a9db",
                         "Class": "PrimalItemArmor_FurBoots_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -195,13 +195,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6218ef75-6036-4777-be97-034ec8c645a7",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurGloves.PrimalItemArmor_FurGloves",
+                        "UUID": "6218ef75-6036-4777-be97-034ec8c645a7",
                         "Class": "PrimalItemArmor_FurGloves_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }

@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -35,80 +35,17 @@
             "RespectBlueprintMultiplier": true
         },
         {
-            "ChanceToBeBlueprintOverride": 1.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
-                        "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
-                    },
-                    "Weight": 1.0
-                },
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
-                        "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
-                    },
-                    "Weight": 1.0
-                },
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
-                        "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
-                    },
-                    "Weight": 1.0
-                },
-                {
-                    "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
-                        "Kind": "Engram",
-                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
-                        "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 128,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": false
-        },
-        {
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
+                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
                         "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -129,73 +66,73 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
+                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
+                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
                         "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
+                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
                         "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_QuetzSaddle_Platform.PrimalItemArmor_QuetzSaddle_Platform",
+                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Class": "PrimalItemArmor_QuetzSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7f14c97e-656a-40a3-abbc-7612b78fbcac",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TitanSaddle_Platform.PrimalItemArmor_TitanSaddle_Platform",
+                        "UUID": "7f14c97e-656a-40a3-abbc-7612b78fbcac",
                         "Class": "PrimalItemArmor_TitanSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -216,13 +153,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
+                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -243,13 +180,40 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
+                        "Path": "/Game/Genesis/Dinos/GiantTurtle/PrimalItemArmor_GiantTurtleSaddle.PrimalItemArmor_GiantTurtleSaddle",
+                        "UUID": "ae53520f-c7e2-4097-b8e4-53586ac83563",
+                        "Class": "PrimalItemArmor_GiantTurtleSaddle_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 128,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
+                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
                         "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -270,25 +234,25 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7f14c97e-656a-40a3-abbc-7612b78fbcac",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TitanSaddle_Platform.PrimalItemArmor_TitanSaddle_Platform",
+                        "UUID": "7f14c97e-656a-40a3-abbc-7612b78fbcac",
                         "Class": "PrimalItemArmor_TitanSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -309,37 +273,37 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
+                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_QuetzSaddle_Platform.PrimalItemArmor_QuetzSaddle_Platform",
+                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Class": "PrimalItemArmor_QuetzSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -360,13 +324,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -383,17 +347,92 @@
             "RespectBlueprintMultiplier": false
         },
         {
+            "ChanceToBeBlueprintOverride": 1.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
+                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
+                        "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                },
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Genesis/Dinos/GiantTurtle/PrimalItemArmor_GiantTurtleSaddle.PrimalItemArmor_GiantTurtleSaddle",
+                        "UUID": "ae53520f-c7e2-4097-b8e4-53586ac83563",
+                        "Class": "PrimalItemArmor_GiantTurtleSaddle_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                },
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
+                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
+                        "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                },
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
+                        "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                },
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
+                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
+                        "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 850.0,
+            "EntryWeight": 0.8499999999999999778,
+            "Availability": 128,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": false
+        },
+        {
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_QuetzSaddle_Platform.PrimalItemArmor_QuetzSaddle_Platform",
+                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Class": "PrimalItemArmor_QuetzSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -414,13 +453,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7f14c97e-656a-40a3-abbc-7612b78fbcac",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TitanSaddle_Platform.PrimalItemArmor_TitanSaddle_Platform",
+                        "UUID": "7f14c97e-656a-40a3-abbc-7612b78fbcac",
                         "Class": "PrimalItemArmor_TitanSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -441,61 +480,61 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
+                        "UUID": "b629c15f-88ee-4354-aaf2-55da8e6547c6",
                         "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
+                        "UUID": "c9a74f23-9ac1-4518-ba91-94575c94cc14",
                         "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                        "UUID": "7e037fe4-7477-48db-83fd-d09e57c4e5ef",
                         "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
+                        "UUID": "1cb2184b-10b5-4c8f-8a4d-8785675b835e",
                         "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 },
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_QuetzSaddle_Platform.PrimalItemArmor_QuetzSaddle_Platform",
+                        "UUID": "e9683a9f-3830-4b48-a216-c9c3c60b225c",
                         "Class": "PrimalItemArmor_QuetzSaddle_Platform_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -534,41 +573,6 @@
             "RespectBlueprintMultiplier": true
         },
         {
-            "ChanceToBeBlueprintOverride": 1.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
-                    "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
-                    "Weight": 1.0
-                },
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
-                    "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
-                    "Weight": 1.0
-                },
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
-                    "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
-                    "Weight": 1.0
-                },
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
-                    "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 128,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": false
-        },
-        {
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
@@ -649,6 +653,26 @@
             "Weight": 1000.0,
             "EntryWeight": 1.0,
             "Availability": 493,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/Genesis/Dinos/GiantTurtle/PrimalItemArmor_GiantTurtleSaddle.PrimalItemArmor_GiantTurtleSaddle",
+                    "Class": "PrimalItemArmor_GiantTurtleSaddle_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "Availability": 128,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -744,6 +768,46 @@
             "Weight": 1000.0,
             "EntryWeight": 1.0,
             "Availability": 528,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": false
+        },
+        {
+            "ChanceToBeBlueprintOverride": 1.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle_Platform.PrimalItemArmor_SauroSaddle_Platform",
+                    "Class": "PrimalItemArmor_SauroSaddle_Platform_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/Genesis/Dinos/GiantTurtle/PrimalItemArmor_GiantTurtleSaddle.PrimalItemArmor_GiantTurtleSaddle",
+                    "Class": "PrimalItemArmor_GiantTurtleSaddle_C",
+                    "Weight": 0.5
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MosaSaddle_Platform.PrimalItemArmor_MosaSaddle_Platform",
+                    "Class": "PrimalItemArmor_MosaSaddle_Platform_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParacerSaddle_Platform.PrimalItemArmor_ParacerSaddle_Platform",
+                    "Class": "PrimalItemArmor_ParacerSaddle_Platform_C",
+                    "Weight": 1.0
+                },
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiSaddle_Platform.PrimalItemArmor_PlesiSaddle_Platform",
+                    "Class": "PrimalItemArmor_PlesiSaddle_Platform_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 850.0,
+            "EntryWeight": 0.8499999999999999778,
+            "Availability": 128,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false

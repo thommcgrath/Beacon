@@ -12,13 +12,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "02157ed2-15d0-4168-9a49-89064d0518fc",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemResource_CommonMushroom.PrimalItemResource_CommonMushroom",
+                        "UUID": "02157ed2-15d0-4168-9a49-89064d0518fc",
                         "Class": "PrimalItemResource_CommonMushroom_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -39,13 +39,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1e1e346f-710b-49ca-9d92-394012b3393d",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Ascerbic.PrimalItemConsumable_Mushroom_Ascerbic",
+                        "UUID": "1e1e346f-710b-49ca-9d92-394012b3393d",
                         "Class": "PrimalItemConsumable_Mushroom_Ascerbic_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -66,13 +66,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "4fe42472-0d66-4700-a2fb-5dd00e71114b",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Oil.PrimalItemResource_Oil",
+                        "UUID": "4fe42472-0d66-4700-a2fb-5dd00e71114b",
                         "Class": "PrimalItemResource_Oil_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -93,13 +93,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ef00249e-adfe-4a87-a4ad-2af3482d81b4",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ScrapMetalIngot.PrimalItemResource_ScrapMetalIngot",
+                        "UUID": "ef00249e-adfe-4a87-a4ad-2af3482d81b4",
                         "Class": "PrimalItemResource_ScrapMetalIngot_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -120,13 +120,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7f2411e5-4bd9-49e8-befb-7d6161e09814",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_JellyVenom.PrimalItemConsumable_JellyVenom",
+                        "UUID": "7f2411e5-4bd9-49e8-befb-7d6161e09814",
                         "Class": "PrimalItemConsumable_JellyVenom_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -147,13 +147,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3cf3c4eb-40e1-4736-94b9-ce3fb9c9df69",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Obsidian.PrimalItemResource_Obsidian",
+                        "UUID": "3cf3c4eb-40e1-4736-94b9-ce3fb9c9df69",
                         "Class": "PrimalItemResource_Obsidian_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -174,13 +174,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3b5f2ff4-7dde-4bee-9c2a-68d55d1826e8",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_CorruptedWood.PrimalItemResource_CorruptedWood",
+                        "UUID": "3b5f2ff4-7dde-4bee-9c2a-68d55d1826e8",
                         "Class": "PrimalItemResource_CorruptedWood_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -201,13 +201,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "2502b20c-d8c6-4e73-bd6f-9b9b9261721f",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_LeechBlood.PrimalItemResource_LeechBlood",
+                        "UUID": "2502b20c-d8c6-4e73-bd6f-9b9b9261721f",
                         "Class": "PrimalItemResource_LeechBlood_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -228,13 +228,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "9e4a71bf-ea25-48a4-a5e8-1d86abb30c46",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_SubstrateAbsorbent.PrimalItemResource_SubstrateAbsorbent",
+                        "UUID": "9e4a71bf-ea25-48a4-a5e8-1d86abb30c46",
                         "Class": "PrimalItemResource_SubstrateAbsorbent_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -255,13 +255,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "87c52dfd-f7c5-4868-baae-62b1597ff65d",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
+                        "UUID": "87c52dfd-f7c5-4868-baae-62b1597ff65d",
                         "Class": "PrimalItemResource_Sparkpowder_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -282,13 +282,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "11d33abc-955f-4b8d-9e13-da61521f83ed",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableMiracleGro.PrimalItemConsumableMiracleGro",
+                        "UUID": "11d33abc-955f-4b8d-9e13-da61521f83ed",
                         "Class": "PrimalItemConsumableMiracleGro_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -309,13 +309,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "fac20414-2566-4376-b38b-43d4e9f5362a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Pelt.PrimalItemResource_Pelt",
+                        "UUID": "fac20414-2566-4376-b38b-43d4e9f5362a",
                         "Class": "PrimalItemResource_Pelt_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -336,13 +336,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1c89e32f-1040-44e3-8937-ac425eca9033",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Gasoline.PrimalItemResource_Gasoline",
+                        "UUID": "1c89e32f-1040-44e3-8937-ac425eca9033",
                         "Class": "PrimalItemResource_Gasoline_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -363,13 +363,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "01b3e872-fbe0-488b-aee7-a487fff5cea5",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Propellant.PrimalItemResource_Propellant",
+                        "UUID": "01b3e872-fbe0-488b-aee7-a487fff5cea5",
                         "Class": "PrimalItemResource_Propellant_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -390,13 +390,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6398ce74-6ada-4b48-ae1f-56a6b80cb957",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_PreservingSalt.PrimalItemResource_PreservingSalt",
+                        "UUID": "6398ce74-6ada-4b48-ae1f-56a6b80cb957",
                         "Class": "PrimalItemResource_PreservingSalt_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -417,13 +417,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "63ae542b-2130-4dc5-8410-df6189a3ffea",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_AmmoniteBlood.PrimalItemResource_AmmoniteBlood",
+                        "UUID": "63ae542b-2130-4dc5-8410-df6189a3ffea",
                         "Class": "PrimalItemResource_AmmoniteBlood_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -444,13 +444,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ec8023ed-b9ec-491b-a252-b3df148ce0d9",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ApexDrop_GasBag.PrimalItemResource_ApexDrop_GasBag",
+                        "UUID": "ec8023ed-b9ec-491b-a252-b3df148ce0d9",
                         "Class": "PrimalItemResource_ApexDrop_GasBag_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -471,13 +471,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "892f3d6d-e308-41fe-84ba-16951328c6f5",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_RedSap.PrimalItemResource_RedSap",
+                        "UUID": "892f3d6d-e308-41fe-84ba-16951328c6f5",
                         "Class": "PrimalItemResource_RedSap_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -498,13 +498,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "684d6580-6960-4c05-9a09-cfc29dc83c87",
                         "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_Element.PrimalItemResource_Gem_Element",
+                        "UUID": "684d6580-6960-4c05-9a09-cfc29dc83c87",
                         "Class": "PrimalItemResource_Gem_Element_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -525,13 +525,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "9bdb9145-cbbe-4424-929e-76339ad52de5",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Narcotic.PrimalItemConsumable_Narcotic",
+                        "UUID": "9bdb9145-cbbe-4424-929e-76339ad52de5",
                         "Class": "PrimalItemConsumable_Narcotic_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -552,13 +552,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "342ea6f2-340d-4cf8-b23e-e8ca5855e8dc",
                         "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_Fertile.PrimalItemResource_Gem_Fertile",
+                        "UUID": "342ea6f2-340d-4cf8-b23e-e8ca5855e8dc",
                         "Class": "PrimalItemResource_Gem_Fertile_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -579,13 +579,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c66163e9-687b-47d1-85ab-32e92986ca86",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_CondensedGas.PrimalItemResource_CondensedGas",
+                        "UUID": "c66163e9-687b-47d1-85ab-32e92986ca86",
                         "Class": "PrimalItemResource_CondensedGas_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -606,13 +606,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "33c7adcf-ce80-49b4-8237-17533e153c67",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Sulfur.PrimalItemResource_Sulfur",
+                        "UUID": "33c7adcf-ce80-49b4-8237-17533e153c67",
                         "Class": "PrimalItemResource_Sulfur_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -633,13 +633,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ef2addaf-4642-4e49-95bb-4843b90cab3e",
                         "Path": "/Game/Genesis/Dinos/SpaceWhale/PrimalItemResource_Ambergris.PrimalItemResource_Ambergris",
+                        "UUID": "ef2addaf-4642-4e49-95bb-4843b90cab3e",
                         "Class": "PrimalItemResource_Ambergris_C",
-                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -660,13 +660,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "90075f3d-c8cb-4306-ad46-9d0a82937818",
                         "Path": "/Game/Extinction/Structures/ItemBalloon/PrimalItemStructure_StorageBox_Balloon.PrimalItemStructure_StorageBox_Balloon",
+                        "UUID": "90075f3d-c8cb-4306-ad46-9d0a82937818",
                         "Class": "PrimalItemStructure_StorageBox_Balloon_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -687,13 +687,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "46835598-5b57-4073-b925-8627955d9378",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Sand.PrimalItemResource_Sand",
+                        "UUID": "46835598-5b57-4073-b925-8627955d9378",
                         "Class": "PrimalItemResource_Sand_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -714,13 +714,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a663da5a-7312-4404-845c-5e00488f2d6e",
                         "Path": "/Game/Genesis/CoreBlueprints/Resources/PrimalItemResource_TurtleShell.PrimalItemResource_TurtleShell",
+                        "UUID": "a663da5a-7312-4404-845c-5e00488f2d6e",
                         "Class": "PrimalItemResource_TurtleShell_C",
-                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "abbc2e33-f7c9-4b31-b906-bfdc8adc3685",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -741,13 +741,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f1e7fe5c-07fb-4933-9bf9-225a598fbe0e",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_RareMushroom.PrimalItemResource_RareMushroom",
+                        "UUID": "f1e7fe5c-07fb-4933-9bf9-225a598fbe0e",
                         "Class": "PrimalItemResource_RareMushroom_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -768,13 +768,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "5a009897-a4cc-4a47-bcd0-1d5cdea3afba",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Charcoal.PrimalItemResource_Charcoal",
+                        "UUID": "5a009897-a4cc-4a47-bcd0-1d5cdea3afba",
                         "Class": "PrimalItemResource_Charcoal_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -795,13 +795,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c1f002db-4be8-4704-bdb6-aa53cb0ded08",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Flint.PrimalItemResource_Flint",
+                        "UUID": "c1f002db-4be8-4704-bdb6-aa53cb0ded08",
                         "Class": "PrimalItemResource_Flint_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -822,13 +822,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "6d73b706-67d2-4032-b604-05170cde80bc",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Silicon.PrimalItemResource_Silicon",
+                        "UUID": "6d73b706-67d2-4032-b604-05170cde80bc",
                         "Class": "PrimalItemResource_Silicon_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -849,13 +849,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "c394cb0c-92c9-4ead-92bb-15a1af97233a",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Keratin.PrimalItemResource_Keratin",
+                        "UUID": "c394cb0c-92c9-4ead-92bb-15a1af97233a",
                         "Class": "PrimalItemResource_Keratin_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -876,13 +876,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "50f56159-aeaf-44d6-983d-255a648e3547",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer.PrimalItemResource_Polymer",
+                        "UUID": "50f56159-aeaf-44d6-983d-255a648e3547",
                         "Class": "PrimalItemResource_Polymer_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -903,13 +903,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "2a77316a-c11a-4be9-bbc7-306a4b01e651",
                         "Path": "/Game/ScorchedEarth/Dinos/Deathworm/PrimalItemResource_KeratinSpike.PrimalItemResource_KeratinSpike",
+                        "UUID": "2a77316a-c11a-4be9-bbc7-306a4b01e651",
                         "Class": "PrimalItemResource_KeratinSpike_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -930,13 +930,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e5024b0d-1012-498e-9435-7296ccf2b9c1",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_BloodPack.PrimalItemConsumable_BloodPack",
+                        "UUID": "e5024b0d-1012-498e-9435-7296ccf2b9c1",
                         "Class": "PrimalItemConsumable_BloodPack_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -957,13 +957,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e29eb757-bae0-413a-a85c-ff576b0110fe",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Silk.PrimalItemResource_Silk",
+                        "UUID": "e29eb757-bae0-413a-a85c-ff576b0110fe",
                         "Class": "PrimalItemResource_Silk_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -984,13 +984,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1feeb85e-8e15-41ab-9aa6-32cc3bd0a723",
                         "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_FungalWood.PrimalItemResource_FungalWood",
+                        "UUID": "1feeb85e-8e15-41ab-9aa6-32cc3bd0a723",
                         "Class": "PrimalItemResource_FungalWood_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1011,13 +1011,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "152c6c09-99e8-4ffe-8f9e-a69f9bad68bc",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Electronics.PrimalItemResource_Electronics",
+                        "UUID": "152c6c09-99e8-4ffe-8f9e-a69f9bad68bc",
                         "Class": "PrimalItemResource_Electronics_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1038,13 +1038,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "adca5e22-87bf-435a-9329-59e3dc30cc0c",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_CorruptedPolymer.PrimalItemResource_CorruptedPolymer",
+                        "UUID": "adca5e22-87bf-435a-9329-59e3dc30cc0c",
                         "Class": "PrimalItemResource_CorruptedPolymer_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1065,13 +1065,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "e236c4fe-1674-4e49-bc2b-0e1048aa33ee",
                         "Path": "/Game/Genesis2/CoreBlueprints/Environment/Mutagen/PrimalItemConsumable_Mutagel.PrimalItemConsumable_Mutagel",
+                        "UUID": "e236c4fe-1674-4e49-bc2b-0e1048aa33ee",
                         "Class": "PrimalItemConsumable_Mutagel_C",
-                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "72d012d5-f9ff-4c20-b8be-118d630aaadc",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1092,13 +1092,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "3669ed66-6e2b-454b-8d86-6e82747a11ce",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Gunpowder.PrimalItemResource_Gunpowder",
+                        "UUID": "3669ed66-6e2b-454b-8d86-6e82747a11ce",
                         "Class": "PrimalItemResource_Gunpowder_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1119,13 +1119,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "5c95b7ac-6a94-4144-b376-2bbb3289f46b",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_RareFlower.PrimalItemResource_RareFlower",
+                        "UUID": "5c95b7ac-6a94-4144-b376-2bbb3289f46b",
                         "Class": "PrimalItemResource_RareFlower_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1146,13 +1146,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "84df5582-6023-4ad2-a234-1684d81bb159",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Stimulant.PrimalItemConsumable_Stimulant",
+                        "UUID": "84df5582-6023-4ad2-a234-1684d81bb159",
                         "Class": "PrimalItemConsumable_Stimulant_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1173,13 +1173,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "cb15422f-913b-403a-a276-9c1af9a7903b",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Aquatic.PrimalItemConsumable_Mushroom_Aquatic",
+                        "UUID": "cb15422f-913b-403a-a276-9c1af9a7903b",
                         "Class": "PrimalItemConsumable_Mushroom_Aquatic_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1200,13 +1200,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "164c77ad-4895-4d3c-8915-fa4eabc78473",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Crystal.PrimalItemResource_Crystal",
+                        "UUID": "164c77ad-4895-4d3c-8915-fa4eabc78473",
                         "Class": "PrimalItemResource_Crystal_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1227,13 +1227,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "95871cc8-f0ba-4a62-93b5-6d815cb303c6",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sap.PrimalItemResource_Sap",
+                        "UUID": "95871cc8-f0ba-4a62-93b5-6d815cb303c6",
                         "Class": "PrimalItemResource_Sap_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1254,13 +1254,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "de44be88-b690-4c74-8c7f-b732dc8a3f74",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Consumables/PrimalItemConsumable_CactusSap.PrimalItemConsumable_CactusSap",
+                        "UUID": "de44be88-b690-4c74-8c7f-b732dc8a3f74",
                         "Class": "PrimalItemConsumable_CactusSap_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1281,13 +1281,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ee5596c4-cb71-4d76-afe6-d956094bcc28",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_BlueSap.PrimalItemResource_BlueSap",
+                        "UUID": "ee5596c4-cb71-4d76-afe6-d956094bcc28",
                         "Class": "PrimalItemResource_BlueSap_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1308,13 +1308,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "2cc238d3-cfbd-4572-bf65-2419874d4a0f",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Hide.PrimalItemResource_Hide",
+                        "UUID": "2cc238d3-cfbd-4572-bf65-2419874d4a0f",
                         "Class": "PrimalItemResource_Hide_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1335,13 +1335,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a6bda539-02d3-4dc9-b651-f61776f5845d",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_MetalIngot.PrimalItemResource_MetalIngot",
+                        "UUID": "a6bda539-02d3-4dc9-b651-f61776f5845d",
                         "Class": "PrimalItemResource_MetalIngot_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1362,13 +1362,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "a6d9622e-2677-48ef-bbd1-f10c069cd088",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Fertilizer_Compost.PrimalItemConsumable_Fertilizer_Compost",
+                        "UUID": "a6d9622e-2677-48ef-bbd1-f10c069cd088",
                         "Class": "PrimalItemConsumable_Fertilizer_Compost_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1389,13 +1389,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "918bfcc8-6150-4bfe-8358-bfe975dfb279",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Horn.PrimalItemResource_Horn",
+                        "UUID": "918bfcc8-6150-4bfe-8358-bfe975dfb279",
                         "Class": "PrimalItemResource_Horn_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1416,13 +1416,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "805fb1af-dd4f-4ad5-accd-69b802b65df1",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ElementDust.PrimalItemResource_ElementDust",
+                        "UUID": "805fb1af-dd4f-4ad5-accd-69b802b65df1",
                         "Class": "PrimalItemResource_ElementDust_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1443,13 +1443,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "5f5acd45-483d-4ac2-88fd-329dd155eb43",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Metal.PrimalItemResource_Metal",
+                        "UUID": "5f5acd45-483d-4ac2-88fd-329dd155eb43",
                         "Class": "PrimalItemResource_Metal_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1470,13 +1470,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "5bd1ecc7-9678-4412-998d-0bd9aa4c61ae",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Clay.PrimalItemResource_Clay",
+                        "UUID": "5bd1ecc7-9678-4412-998d-0bd9aa4c61ae",
                         "Class": "PrimalItemResource_Clay_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1497,13 +1497,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "400b6808-4303-43fd-add9-fcf6e9b4a5fa",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Stone.PrimalItemResource_Stone",
+                        "UUID": "400b6808-4303-43fd-add9-fcf6e9b4a5fa",
                         "Class": "PrimalItemResource_Stone_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1524,13 +1524,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "aeba80a7-e4d4-42d0-80d9-5f6f794056fe",
                         "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gas.PrimalItemResource_Gas",
+                        "UUID": "aeba80a7-e4d4-42d0-80d9-5f6f794056fe",
                         "Class": "PrimalItemResource_Gas_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1551,13 +1551,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "4f32fd2f-37d2-4e5b-baa6-051ae0258727",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_AnglerGel.PrimalItemResource_AnglerGel",
+                        "UUID": "4f32fd2f-37d2-4e5b-baa6-051ae0258727",
                         "Class": "PrimalItemResource_AnglerGel_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1578,13 +1578,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "cb3556a2-be31-4fc5-96ff-d3787a99acd3",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Thatch.PrimalItemResource_Thatch",
+                        "UUID": "cb3556a2-be31-4fc5-96ff-d3787a99acd3",
                         "Class": "PrimalItemResource_Thatch_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1605,13 +1605,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "d5b40c2e-9d88-40d8-89ad-0ff5c437ca57",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ChitinPaste.PrimalItemResource_ChitinPaste",
+                        "UUID": "d5b40c2e-9d88-40d8-89ad-0ff5c437ca57",
                         "Class": "PrimalItemResource_ChitinPaste_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1632,13 +1632,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "b165def2-8085-41b1-89c0-a6f6d0881b40",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_RareDrop_CorruptHeart.PrimalItemResource_RareDrop_CorruptHeart",
+                        "UUID": "b165def2-8085-41b1-89c0-a6f6d0881b40",
                         "Class": "PrimalItemResource_RareDrop_CorruptHeart_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1659,13 +1659,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "55a49e42-7341-4acd-a7fb-dc06ed24be91",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_BlackPearl.PrimalItemResource_BlackPearl",
+                        "UUID": "55a49e42-7341-4acd-a7fb-dc06ed24be91",
                         "Class": "PrimalItemResource_BlackPearl_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1686,13 +1686,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "7c35fd67-55cf-43af-aeeb-7aaffd796ccf",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_FracturedGem.PrimalItemResource_FracturedGem",
+                        "UUID": "7c35fd67-55cf-43af-aeeb-7aaffd796ccf",
                         "Class": "PrimalItemResource_FracturedGem_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1713,13 +1713,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "244bc843-2540-486e-af4a-8824500c0e56",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers",
+                        "UUID": "244bc843-2540-486e-af4a-8824500c0e56",
                         "Class": "PrimalItemResource_Fibers_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1740,13 +1740,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
                         "Path": "/Game/Aberration/WeaponGlowStickCharge/PrimalItem_ChargeBattery.PrimalItem_ChargeBattery",
+                        "UUID": "314097be-2b04-4e75-b85f-5b85d8809bd6",
                         "Class": "PrimalItem_ChargeBattery_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1767,13 +1767,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "381d3e8a-6172-4bde-98c2-39a3e7ab9f5e",
                         "Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Auric.PrimalItemConsumable_Mushroom_Auric",
+                        "UUID": "381d3e8a-6172-4bde-98c2-39a3e7ab9f5e",
                         "Class": "PrimalItemConsumable_Mushroom_Auric_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1794,13 +1794,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "90f7473a-ed5f-4b07-89dc-50ea7c858020",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Chitin.PrimalItemResource_Chitin",
+                        "UUID": "90f7473a-ed5f-4b07-89dc-50ea7c858020",
                         "Class": "PrimalItemResource_Chitin_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1821,13 +1821,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "f5e44c9c-0ba5-461d-8d9a-fb1cd93acce0",
                         "Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_BioLum.PrimalItemResource_Gem_BioLum",
+                        "UUID": "f5e44c9c-0ba5-461d-8d9a-fb1cd93acce0",
                         "Class": "PrimalItemResource_Gem_BioLum_C",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
@@ -1848,13 +1848,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "ba0f31c2-bf95-4b1c-87d8-bc04a7a7a5c2",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Wood.PrimalItemResource_Wood",
+                        "UUID": "ba0f31c2-bf95-4b1c-87d8-bc04a7a7a5c2",
                         "Class": "PrimalItemResource_Wood_C",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1875,13 +1875,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "1c4c8491-5c6e-457d-b3e3-947552a8b274",
                         "Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_RawSalt.PrimalItemResource_RawSalt",
+                        "UUID": "1c4c8491-5c6e-457d-b3e3-947552a8b274",
                         "Class": "PrimalItemResource_RawSalt_C",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
                     },
                     "Weight": 1.0
                 }
@@ -1902,13 +1902,13 @@
             "Items": [
                 {
                     "Blueprint": {
-                        "Schema": "Beacon.BlueprintReference",
-                        "Version": 1,
                         "Kind": "Engram",
-                        "UUID": "42d26114-6514-46a0-9f1e-56862941ddb8",
                         "Path": "/Game/Extinction/CoreBlueprints/Resources/PrimalItemResource_ScrapMetal.PrimalItemResource_ScrapMetal",
+                        "UUID": "42d26114-6514-46a0-9f1e-56862941ddb8",
                         "Class": "PrimalItemResource_ScrapMetal_C",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b"
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
+                        "Version": 1
                     },
                     "Weight": 0.5
                 }
