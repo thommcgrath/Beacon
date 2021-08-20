@@ -218,11 +218,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Function FileImport() As Boolean Handles FileImport.Action
 			Var Dialog As New OpenFileDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconData + BeaconFileTypes.BeaconIdentity
+			Dialog.AllowMultipleSelections = True
 			
 			Var File As FolderItem = Dialog.ShowModal
-			If File <> Nil Then
-			Self.OpenFile(File, True)
+			If File Is Nil Then
+			Return True
 			End If
+			
+			For Each File In Dialog.SelectedFiles
+			Self.OpenFile(File, True)
+			Next File
 			
 			Return True
 		End Function

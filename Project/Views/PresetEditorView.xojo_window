@@ -1505,8 +1505,9 @@ End
 		    Var SelectedMaps() As Beacon.Map = Self.FilteredMaps()
 		    For Each Entry As DictionaryEntry In NewEntries
 		      Var Item As Beacon.PresetEntry = Entry.Value
-		      Item.RespectQualityModifier = False
+		      Item.RespectQualityModifier = True
 		      Item.RespectQuantityMultiplier = False
+		      Item.RespectBlueprintMultiplier = False
 		      Self.PutEntryInRow(Item, -1, SelectedMaps, True)
 		      Self.mPreset.Append(Item)
 		    Next
