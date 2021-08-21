@@ -7,7 +7,28 @@ Protected Class ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Return BeaconConfigs.CreateInstance(Self.ConfigName, Dict, Identity, Document)
+		  #if DebugBuild
+		    Var StartTime As Double = System.Microseconds
+		  #endif
+		  
+		  Try
+		    // To make a proper clone and replicate loading from disk
+		    Dict = Beacon.ParseJSON(Beacon.GenerateJSON(Dict, False))
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
+		  Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(Self.ConfigName, Dict, Identity, Document)
+		  If Instance Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  #if DebugBuild
+		    Var Duration As Double = (System.Microseconds - StartTime) * 0.001
+		    System.DebugLog("Cloned config group " + Self.ConfigName + " in " + Duration.ToString(Locale.Raw, "0") + "ms")
+		  #endif
+		  
+		  Return Instance
 		End Function
 	#tag EndMethod
 

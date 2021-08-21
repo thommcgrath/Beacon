@@ -94,7 +94,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  Try
-		    Self.mSettings = Dictionary(Dict.Value("Settings")).Clone
+		    Self.mSettings = Dict.Value("Settings")
 		  Catch Err As RuntimeException
 		    Self.mSettings = New Dictionary
 		  End Try
@@ -105,7 +105,7 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  Dict.Value("Settings") = Self.mSettings.Clone
+		  Dict.Value("Settings") = Self.mSettings
 		End Sub
 	#tag EndEvent
 
