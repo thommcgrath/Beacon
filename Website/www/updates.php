@@ -24,6 +24,8 @@ if ($current_build >= 10201300 && isset($_GET['arch'])) {
 	switch ($_GET['arch']) {
 	case 'x86_64':
 	case 'arm_64':
+	case 'arm64':
+	case 'x64':
 		$arch_priority = array('64', 'combo');
 		break;
 	case 'x86':
