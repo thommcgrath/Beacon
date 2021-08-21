@@ -249,28 +249,28 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 
-	#tag Constant, Name = AberrationSurfaceBonusCratesID, Type = Text, Dynamic = False, Default = \"b9ea6922-3d19-4333-b2a6-3e518f24d62a", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = AberrationSurfaceBonusCratesID, Type = String, Dynamic = False, Default = \"b9ea6922-3d19-4333-b2a6-3e518f24d62a", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = AberrationSurfaceCratesID, Type = Text, Dynamic = False, Default = \"e3454afa-d47a-4f9f-9cd9-ceb0171317e4", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = AberrationSurfaceCratesID, Type = String, Dynamic = False, Default = \"e3454afa-d47a-4f9f-9cd9-ceb0171317e4", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = ArtifactCratesID, Type = Text, Dynamic = False, Default = \"87a001d7-5f3b-4d0e-8494-e00c4488e077", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = ArtifactCratesID, Type = String, Dynamic = False, Default = \"87a001d7-5f3b-4d0e-8494-e00c4488e077", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = BasicCratesID, Type = Text, Dynamic = False, Default = \"e350c14c-a3a1-493a-bd5c-b34a530e45cb", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = BasicCratesID, Type = String, Dynamic = False, Default = \"e350c14c-a3a1-493a-bd5c-b34a530e45cb", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = BonusCratesID, Type = Text, Dynamic = False, Default = \"13299620-1aaa-43a7-9c44-42fc409ea7a1", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = BonusCratesID, Type = String, Dynamic = False, Default = \"13299620-1aaa-43a7-9c44-42fc409ea7a1", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = BossesID, Type = Text, Dynamic = False, Default = \"4d70fee5-81c7-48f4-8a97-51057f7e6ac2", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = BossesID, Type = String, Dynamic = False, Default = \"4d70fee5-81c7-48f4-8a97-51057f7e6ac2", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = CaveCratesID, Type = Text, Dynamic = False, Default = \"22b6ba8a-dacb-4bda-945a-26b95d0ad0db", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = CaveCratesID, Type = String, Dynamic = False, Default = \"22b6ba8a-dacb-4bda-945a-26b95d0ad0db", Scope = Public, Attributes = \""
 	#tag EndConstant
 
-	#tag Constant, Name = DeepSeaCratesID, Type = Text, Dynamic = False, Default = \"4ae8364b-4890-4a53-9d24-204ab5f00411", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = DeepSeaCratesID, Type = String, Dynamic = False, Default = \"4ae8364b-4890-4a53-9d24-204ab5f00411", Scope = Public, Attributes = \""
 	#tag EndConstant
 
 	#tag Constant, Name = KeyClassString, Type = String, Dynamic = False, Default = \"class_string", Scope = Public
@@ -282,7 +282,7 @@ Implements Beacon.NamedItem
 	#tag Constant, Name = KeyLabel, Type = String, Dynamic = False, Default = \"label", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = OpenDesertCratesID, Type = Text, Dynamic = False, Default = \"3910ae49-41bc-4307-b395-2c1bb44619b6", Scope = Public, Attributes = \"Deprecated"
+	#tag Constant, Name = OpenDesertCratesID, Type = String, Dynamic = False, Default = \"3910ae49-41bc-4307-b395-2c1bb44619b6", Scope = Public, Attributes = \""
 	#tag EndConstant
 
 	#tag Constant, Name = OperatorEquals, Type = String, Dynamic = False, Default = \"\x3D", Scope = Public
