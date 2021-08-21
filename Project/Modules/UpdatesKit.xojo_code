@@ -73,10 +73,20 @@ Protected Module UpdatesKit
 		  Var Params As New Dictionary
 		  Params.Value("build") = App.BuildNumber.ToString
 		  Params.Value("stage") = App.StageCode.ToString
-		  Params.Value("arch") = If(IsARM, "arm", "x86")
-		  If Is64Bit Then
-		    Params.Value("arch") = Params.Value("arch").StringValue + "_64"
+		  If IsARM Then
+		    If Is64Bit Then
+		      Params.Value("arch") = "arm64"
+		    Else
+		      Params.Value("arch") = "arm"
+		    End If
+		  Else
+		    If Is64Bit Then
+		      Params.Value("arch") = "x64"
+		    Else
+		      Params.Value("arch") = "x86"
+		    End If
 		  End If
+		  
 		  Params.Value("osversion") = OSVersion
 		  #if TargetMacOS
 		    Params.Value("platform") = "mac"
@@ -334,6 +344,8 @@ Protected Module UpdatesKit
 		      MinorVersion = Struct.MinorVersion
 		      BugVersion = Struct.BuildNumber
 		    End If
+		  #elseif TargetLinux
+		    #Pragma Error "No implementation yet"
 		  #endif
 		End Sub
 	#tag EndMethod

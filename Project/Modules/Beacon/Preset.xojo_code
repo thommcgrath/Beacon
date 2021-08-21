@@ -312,7 +312,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Attributes( Deprecated ) Protected Shared Function SourceKindToModifierID(Kind As String) As String()
+		Protected Shared Function SourceKindToModifierID(Kind As String) As String()
 		  Var IDs() As String
 		  Select Case Kind
 		  Case "Bonus"
