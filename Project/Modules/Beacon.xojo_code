@@ -1664,18 +1664,11 @@ Protected Module Beacon
 		    // Extension cannot be truncated
 		    Var Parts() As String = Filename.Split(".")
 		    Var Basename, Extension As String
-		    If Parts.Count >= 2 And Parts(Parts.LastIndex).IndexOf(" ") = -1 Then // No spaces in extensions
+		    If Parts.Count >= 2 And (Parts(Parts.LastIndex).Length + 1) < MaxLength And Parts(Parts.LastIndex).IndexOf(" ") = -1 Then // No spaces in extensions
 		      Extension = "." + Parts(Parts.LastIndex)
 		      Parts.RemoveAt(Parts.LastIndex)
 		      Basename = Parts.Join(".")
-		      MaxLength = MaxLength - (Extension.Length)
-		      If MaxLength <= 0 Then
-		        // What do we do? The extension is longer than the max.
-		        MaxLength = (Extension.Length)
-		        Var Err As New UnsupportedOperationException
-		        Err.Message = "Cannot truncate filename `" + Filename + "` because the extension is longer than the requested maximum length of " + MaxLength.ToString + "."
-		        Raise Err
-		      End If
+		      MaxLength = MaxLength - Extension.Length
 		    Else
 		      Basename = Filename
 		    End If
