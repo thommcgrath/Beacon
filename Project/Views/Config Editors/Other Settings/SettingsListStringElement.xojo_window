@@ -273,6 +273,7 @@ End
 		    Self.mValueField.Top = HiddenTop
 		    
 		    Var Choices() As Variant = Self.mKey.Constraint("oneof")
+		    Self.mChoiceMenu.RemoveAllRows
 		    For Each Choice As String In Choices
 		      Self.mChoiceMenu.AddRow(Choice)
 		    Next Choice
@@ -285,6 +286,7 @@ End
 		    Self.mValueField.Top = HiddenTop
 		    
 		    Var Choices() As Variant = Self.mKey.Constraint("oneof")
+		    Self.mInputMenu.RemoveAllRows
 		    For Each Choice As String In Choices
 		      Self.mInputMenu.AddRow(Choice)
 		    Next Choice
