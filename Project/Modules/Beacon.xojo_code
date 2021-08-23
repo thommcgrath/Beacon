@@ -1664,7 +1664,7 @@ Protected Module Beacon
 		    // Extension cannot be truncated
 		    Var Parts() As String = Filename.Split(".")
 		    Var Basename, Extension As String
-		    If Parts.Count >= 2 Then
+		    If Parts.Count >= 2 And Parts(Parts.LastIndex).IndexOf(" ") = -1 Then // No spaces in extensions
 		      Extension = "." + Parts(Parts.LastIndex)
 		      Parts.RemoveAt(Parts.LastIndex)
 		      Basename = Parts.Join(".")

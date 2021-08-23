@@ -203,14 +203,23 @@ Protected Module Tests
 	#tag Method, Flags = &h21
 		Private Sub TestFilenames()
 		  Const Filename = "Frog Blast: The Vent Core.extension"
+		  Const Servername = "Capture the Flag 2.0 by Reptar's Raptors"
 		  
 		  Var Sanitized As String = Beacon.SanitizeFilename(Filename)
 		  Var SanitizedAndShort As String = Beacon.SanitizeFilename(Filename, 20)
 		  Var SanitizedAndVeryShort As String = Beacon.SanitizeFilename(Filename, 11)
 		  
-		  Call Assert(Sanitized = "Frog Blast The Vent Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
-		  Call Assert(SanitizedAndShort = "Frog…Core.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 20 characters correctly. Expected `Frog…Core.extension`, got `" + SanitizedAndShort + "`.")
-		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `Frog Blast: The Vent Core.extension` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
+		  Call Assert(Sanitized = "Frog Blast The Vent Core.extension", "Did not sanitize filename `" + Filename + "` correctly. Expected `Frog Blast- The Vent Core.extension`, got `" + Sanitized + "`.")
+		  Call Assert(SanitizedAndShort = "Frog…Core.extension", "Did not sanitize filename `" + Filename + "` to 20 characters correctly. Expected `Frog…Core.extension`, got `" + SanitizedAndShort + "`.")
+		  Call Assert(SanitizedAndVeryShort = "F.extension", "Did not sanitize filename `" + Filename + "` to 11 characters correctly. Expected `F.extension`, got `" + SanitizedAndVeryShort + "`.")
+		  
+		  Sanitized = Beacon.SanitizeFilename(Servername)
+		  SanitizedAndShort = Beacon.SanitizeFilename(Servername, 20)
+		  SanitizedAndVeryShort = Beacon.SanitizeFilename(Servername, 11)
+		  
+		  Call Assert(Sanitized = "Capture the Flag 2.0 by Reptar's Raptors", "Did not sanitize filename `" + Servername + "` correctly. Expected `Capture the Flag 2.0 by Reptar's Raptors`, got `" + Sanitized + "`.")
+		  Call Assert(SanitizedAndShort = "Capture th…s Raptors", "Did not sanitize filename `" + Servername + "` to 20 characters correctly. Expected `Capture th…s Raptors`, got `" + SanitizedAndShort + "`.")
+		  Call Assert(SanitizedAndVeryShort = "Captu…ptors", "Did not sanitize filename `" + Servername + "` to 11 characters correctly. Expected `Captu…ptors`, got `" + SanitizedAndVeryShort + "`.")
 		End Sub
 	#tag EndMethod
 
