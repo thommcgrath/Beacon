@@ -883,47 +883,51 @@ End
 		  Var OriginalConfigSet As String = Self.mDestination.ActiveConfigSet
 		  
 		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
-		    Var MergeItem As Beacon.DocumentMergeItem = Self.List.RowTagAt(RowIdx)
-		    If MergeItem.IsImported = False Then
-		      Continue
-		    End If
-		    
-		    Select Case MergeItem
-		    Case IsA Beacon.DocumentMergeConfigGroupItem
-		      Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
-		      Self.mDestination.ActiveConfigSet = ConfigItem.DestinationConfigSet
-		      Var ExistingConfig As Beacon.ConfigGroup = Self.mDestination.ConfigGroup(ConfigItem.Group.ConfigName, False)
-		      Select Case ConfigItem.Mode
-		      Case Beacon.DocumentMergeItem.ModeReplace
-		        Self.mDestination.AddConfigGroup(ConfigItem.Group)
-		      Case Beacon.DocumentMergeItem.ModeMergeImportPriority
-		        Call ExistingConfig.Merge(ConfigItem.Group)
-		      Case Beacon.DocumentMergeItem.ModeMergeProjectPriority
-		        If ConfigItem.Group.Merge(ExistingConfig) Then
+		    Try
+		      Var MergeItem As Beacon.DocumentMergeItem = Self.List.RowTagAt(RowIdx)
+		      If MergeItem.IsImported = False Then
+		        Continue
+		      End If
+		      
+		      Select Case MergeItem
+		      Case IsA Beacon.DocumentMergeConfigGroupItem
+		        Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
+		        Self.mDestination.ActiveConfigSet = ConfigItem.DestinationConfigSet
+		        Var ExistingConfig As Beacon.ConfigGroup = Self.mDestination.ConfigGroup(ConfigItem.Group.ConfigName, False)
+		        Select Case ConfigItem.Mode
+		        Case Beacon.DocumentMergeItem.ModeReplace
 		          Self.mDestination.AddConfigGroup(ConfigItem.Group)
+		        Case Beacon.DocumentMergeItem.ModeMergeImportPriority
+		          Call ExistingConfig.Merge(ConfigItem.Group)
+		        Case Beacon.DocumentMergeItem.ModeMergeProjectPriority
+		          If ConfigItem.Group.Merge(ExistingConfig) Then
+		            Self.mDestination.AddConfigGroup(ConfigItem.Group)
+		          End If
+		        End Select
+		      Case IsA Beacon.DocumentMergeMapItem
+		        Var MapItem As Beacon.DocumentMergeMapItem = Beacon.DocumentMergeMapItem(MergeItem)
+		        If MapItem.AddMode Then
+		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or MapItem.Map.Mask
+		        Else
+		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility And Not MapItem.Map.Mask
+		        End If
+		      Case IsA Beacon.DocumentMergeModItem
+		        Var ModItem As Beacon.DocumentMergeModItem = Beacon.DocumentMergeModItem(MergeItem)
+		        Self.mDestination.ModEnabled(ModItem.ModInfo.ModID) = True
+		      Case IsA Beacon.DocumentMergeProfileItem
+		        Var ProfileItem As Beacon.DocumentMergeProfileItem = Beacon.DocumentMergeProfileItem(MergeItem)
+		        Self.mDestination.AddServerProfile(ProfileItem.Profile)
+		        
+		        If ProfileItem.Profile.ExternalAccountUUID <> Nil Then
+		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(ProfileItem.Profile.ExternalAccountUUID)
+		          If (Account Is Nil) = False Then
+		            Self.mDestination.Accounts.Add(Account)
+		          End If
 		        End If
 		      End Select
-		    Case IsA Beacon.DocumentMergeMapItem
-		      Var MapItem As Beacon.DocumentMergeMapItem = Beacon.DocumentMergeMapItem(MergeItem)
-		      If MapItem.AddMode Then
-		        Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or MapItem.Map.Mask
-		      Else
-		        Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility And Not MapItem.Map.Mask
-		      End If
-		    Case IsA Beacon.DocumentMergeModItem
-		      Var ModItem As Beacon.DocumentMergeModItem = Beacon.DocumentMergeModItem(MergeItem)
-		      Self.mDestination.ModEnabled(ModItem.ModInfo.ModID) = True
-		    Case IsA Beacon.DocumentMergeProfileItem
-		      Var ProfileItem As Beacon.DocumentMergeProfileItem = Beacon.DocumentMergeProfileItem(MergeItem)
-		      Self.mDestination.AddServerProfile(ProfileItem.Profile)
-		      
-		      If ProfileItem.Profile.ExternalAccountUUID <> Nil Then
-		        Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(ProfileItem.Profile.ExternalAccountUUID)
-		        If (Account Is Nil) = False Then
-		          Self.mDestination.Accounts.Add(Account)
-		        End If
-		      End If
-		    End Select
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName)
+		    End Try
 		  Next
 		  
 		  Self.mDestination.ActiveConfigSet = OriginalConfigSet
