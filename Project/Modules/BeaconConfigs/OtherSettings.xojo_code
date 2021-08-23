@@ -161,11 +161,11 @@ Inherits Beacon.ConfigGroup
 		    Var Value As Variant
 		    Select Case Key.ValueType
 		    Case Beacon.ConfigKey.ValueTypes.TypeNumeric
-		      Value = TargetDict.DoubleValue(LookupKey, Key.DefaultValue.DoubleValue, False)
+		      Value = TargetDict.DoubleValue(LookupKey, Key.DefaultValue.DoubleValue, True)
 		    Case Beacon.ConfigKey.ValueTypes.TypeBoolean
-		      Value = TargetDict.BooleanValue(LookupKey, Key.DefaultValue.BooleanValue, False)
+		      Value = TargetDict.BooleanValue(LookupKey, Key.DefaultValue.BooleanValue, True)
 		    Case Beacon.ConfigKey.ValueTypes.TypeText
-		      Value = TargetDict.StringValue(LookupKey, Key.DefaultValue.StringValue, False)
+		      Value = TargetDict.StringValue(LookupKey, Key.DefaultValue.StringValue, True)
 		    Else
 		      Continue
 		    End Select
