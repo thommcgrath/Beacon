@@ -67,6 +67,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  Self.mLastSaveTime = Source.mLastSaveTime
+		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
 		  
 		  For I As Integer = 0 To Source.mOptions.LastIndex
 		    Self.mOptions(I) = New Beacon.SetEntryOption(Source.mOptions(I))
@@ -229,6 +230,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		  End If
 		  
+		  Try
+		    If Dict.HasKey("SingleItemQuantity") Then
+		      Entry.SingleItemQuantity = Dict.Value("SingleItemQuantity")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading SingleItemQuantity value")
+		  End Try
+		  
 		  Entry.Modified = False
 		  Return Entry
 		End Function
@@ -287,6 +296,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  If Dict.HasKey("MaxQuantity") Then
 		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
+		  End If
+		  If Dict.HasKey("bApplyQuantityToSingleItem") Then
+		    Entry.SingleItemQuantity = Dict.Value("bApplyQuantityToSingleItem")
 		  End If
 		  
 		  // If bForceBlueprint is not included or explicitly true, then force is true. This
@@ -552,6 +564,32 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Shared Function RunSimulation(MinQuality As Double, MaxQuality As Double, Weights() As Double, WeightSum As Double, WeightLookup As Dictionary, RequiredBlueprintChance As Double) As Beacon.SimulatedSelection
+		  Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
+		  Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
+		  Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (WeightSum * 100000)) - 100000
+		  
+		  For Idx As Integer = 0 To Weights.LastIndex
+		    If Weights(Idx) < ClassDecision Then
+		      Continue For Idx
+		    End If
+		    
+		    Var SelectedWeight As Double = Weights(Idx)
+		    Var SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
+		    If SelectedEntry Is Nil Then
+		      Continue For Idx
+		    End If
+		    
+		    Var Selection As New Beacon.SimulatedSelection
+		    Selection.Engram = SelectedEntry.Engram
+		    Selection.IsBlueprint = BlueprintDecision > RequiredBlueprintChance
+		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
+		    Return Selection
+		  Next Idx
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SafeForMods(Mods As Beacon.StringList) As Boolean
 		  // This method kind of sucks, but yes it is needed for preset generation.
@@ -586,6 +624,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Keys.Value("SingleItemQuantity") = Self.SingleItemQuantity
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -621,28 +660,21 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  Weights.Sort
 		  
-		  For I As Integer = 1 To Quantity
-		    Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
-		    Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
-		    Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (Sum * 100000)) - 100000
-		    Var Selection As New Beacon.SimulatedSelection
-		    
-		    For X As Integer = 0 To Weights.LastIndex
-		      If Weights(X) >= ClassDecision Then
-		        Var SelectedWeight As Double = Weights(X)
-		        Var SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
-		        Selection.Engram = SelectedEntry.Engram
-		        Exit For X
+		  If Self.SingleItemQuantity Then
+		    Var Selection As Beacon.SimulatedSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
+		    If (Selection Is Nil) = False Then
+		      For Idx As Integer = 1 To Quantity
+		        Selections.Add(Selection)
+		      Next Idx
+		    End If
+		  Else
+		    For I As Integer = 1 To Quantity
+		      Var Selection As Beacon.SimulatedSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
+		      If (Selection Is Nil) = False Then
+		        Selections.Add(Selection)
 		      End If
 		    Next
-		    If Selection.Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
-		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
-		    Selections.Add(Selection)
-		  Next
+		  End If
 		  
 		  Return Selections
 		End Function
@@ -702,6 +734,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Add("MaxQuantity=" + Self.MaxQuantity.ToString)
 		  Values.Add("MinQuality=" + MinQuality.PrettyText)
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
+		  Values.Add("bApplyQuantityToSingleItem=" + If(Self.SingleItemQuantity, "true", "false"))
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
 		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
@@ -883,6 +916,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSingleItemQuantity As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUniqueID As String
 	#tag EndProperty
 
@@ -908,6 +945,25 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			End Set
 		#tag EndSetter
 		RawWeight As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSingleItemQuantity Or Self.mOptions.Count <= 1
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSingleItemQuantity = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSingleItemQuantity = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		SingleItemQuantity As Boolean
 	#tag EndComputedProperty
 
 

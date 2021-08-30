@@ -55,7 +55,7 @@ Begin BeaconDialog EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin CheckBox SingleEntryCheck
+      Begin CheckBox SingleEntryCheckbox
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Merge selections into one entry"
@@ -81,7 +81,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   442
+         Top             =   410
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -139,7 +139,7 @@ Begin BeaconDialog EntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   261
+         Height          =   229
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -240,6 +240,38 @@ Begin BeaconDialog EntryEditor
          Underline       =   False
          Visible         =   True
          Width           =   65
+      End
+      Begin CheckBox SingleItemCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Choose only one item"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   "With this option off, the quantity will be distributed between all selected items. When turned on, only one item is selected for the entire quantity."
+         Top             =   442
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -650,11 +682,12 @@ End
 		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
 		      Self.mSelectedEngrams.Value(Option.Engram.ObjectID) = Option
 		    Next
+		    Self.SingleItemCheckbox.Value = Self.mOriginalEntry.SingleItemQuantity
 		  End If
 		  
 		  Self.FilterField.Text = Prefilter
 		  Self.UpdateFilter()
-		  SingleEntryCheck.Value = Self.mSelectedEngrams.KeyCount > 1
+		  Self.SingleEntryCheckbox.Value = Self.mSelectedEngrams.KeyCount > 1
 		  
 		  For I As Integer = 0 To EngramList.RowCount - 1
 		    If EngramList.CellCheckBoxValueAt(I, 0) Then
@@ -696,13 +729,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSelectionUI()
+		  Var ListBottom As Integer = (Self.EngramsGroup.Top + Self.EngramsGroup.Height) - 20
 		  If Self.mSelectedEngrams.KeyCount > 1 And Self.AllowMultipleEntries Then
-		    Self.SingleEntryCheck.Visible = True
-		    Self.EngramList.Height = Self.SingleEntryCheck.Top - (12 + Self.EngramList.Top)
+		    Self.SingleEntryCheckbox.Visible = True
+		    ListBottom = ListBottom - (24 + Self.SingleEntryCheckbox.Height + Self.SingleItemCheckbox.Height)
+		    Self.SingleItemCheckbox.Visible = True
+		    Self.SingleItemCheckbox.Enabled = Self.SingleEntryCheckbox.Value
 		  Else
-		    Self.SingleEntryCheck.Visible = False
-		    Self.EngramList.Height = (Self.SingleEntryCheck.Top + Self.SingleEntryCheck.Height) - Self.EngramList.Top
+		    Self.SingleEntryCheckbox.Visible = False
+		    Self.SingleItemCheckbox.Visible = False
 		  End If
+		  Self.EngramList.Height = ListBottom - Self.EngramList.Top
+		  Self.SingleEntryCheckbox.Top = ListBottom + 12
+		  Self.SingleItemCheckbox.Top = Self.SingleEntryCheckbox.Top + Self.SingleEntryCheckbox.Height + 12
 		  Self.EnableButtons
 		End Sub
 	#tag EndMethod
@@ -715,9 +754,10 @@ End
 		    Return
 		  End If
 		  
-		  Var FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  Var FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheckbox.Value And Self.SingleEntryCheckbox.Visible)
 		  
 		  Var Entry As New Beacon.SetEntry
+		  Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		  For Each Item As DictionaryEntry In Self.mSelectedEngrams
 		    Var Option As Beacon.SetEntryOption = Item.Value
 		    Entry.Append(Option)
@@ -797,9 +837,10 @@ End
 
 #tag EndWindowCode
 
-#tag Events SingleEntryCheck
+#tag Events SingleEntryCheckbox
 	#tag Event
 		Sub Action()
+		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
 		End Sub
 	#tag EndEvent
@@ -939,6 +980,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events SingleItemCheckbox
+	#tag Event
+		Sub Action()
+		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EntryPropertiesEditor1
 	#tag Event
 		Sub Changed()
@@ -972,14 +1020,16 @@ End
 		    For Each Option As Beacon.SetEntryOption In Options
 		      Entry.Append(Option)
 		    Next
+		    Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		    Entries.Add(Entry)
 		  ElseIf Options.LastIndex > 0 Then
-		    If SingleEntryCheck.Value Then
+		    If SingleEntryCheckbox.Value Then
 		      // Merge all into one
 		      Var Entry As New Beacon.SetEntry
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Entry.Append(Option)
 		      Next
+		      Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		      Entries.Add(Entry)
 		    Else
 		      // Multiple entries
