@@ -768,6 +768,9 @@ End
 		  End If
 		  
 		  Var Editors() As DocumentEditorView = App.MainWindow.DocumentEditors
+		  If Editors Is Nil Then
+		    Return
+		  End If
 		  For Each View As BeaconSubview In Editors
 		    Var Document As Beacon.Document = DocumentEditorView(View).Document
 		    If Document Is Nil Then

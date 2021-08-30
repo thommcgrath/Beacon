@@ -579,7 +579,9 @@ End
 
 	#tag Method, Flags = &h0
 		Function DocumentEditors() As DocumentEditorView()
-		  Return Self.DocumentsComponent1.DocumentEditors
+		  If (Self.DocumentsComponent1 Is Nil) = False Then
+		    Return Self.DocumentsComponent1.DocumentEditors
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -595,6 +597,10 @@ End
 
 	#tag Method, Flags = &h0
 		Function FrontmostDocumentView() As DocumentEditorView
+		  If Self.DocumentsComponent1 Is Nil Then
+		    Return Nil
+		  End If
+		  
 		  Var DocumentView As BeaconSubview = Self.DocumentsComponent1.CurrentPage
 		  If (DocumentView Is Nil) = False And DocumentView IsA DocumentEditorView Then
 		    Return DocumentEditorView(DocumentView)
@@ -698,7 +704,9 @@ End
 		  
 		  Select Case Key
 		  Case "ViewTitle", "ViewIcon"
-		    Self.NavBar.Invalidate
+		    If (Self.NavBar Is Nil) = False Then
+		      Self.NavBar.Invalidate
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -715,6 +723,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
+		  If Self.NavBar Is Nil Then
+		    Return
+		  End If
+		  
 		  If UpdatesKit.IsUpdateAvailable Then
 		    Var Preview As String = UpdatesKit.AvailablePreview
 		    If Preview.IsEmpty = False Then
@@ -847,6 +859,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SwitchView(Index As Integer)
+		  If Self.Pages Is Nil Then
+		    Return
+		  End If
+		  
 		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
 		  If CurrentIndex = Index Then
 		    Return
@@ -857,37 +873,49 @@ End
 		    Return
 		  End If
 		  
+		  Var FromView As BeaconSubview
 		  Select Case CurrentIndex
 		  Case Self.PageHome
-		    Self.DashboardPane1.SwitchedFrom()
+		    FromView = Self.DashboardPane1
 		  Case Self.PageDocuments
-		    Self.DocumentsComponent1.SwitchedFrom()
+		    FromView = Self.DocumentsComponent1
 		  Case Self.PageBlueprints
-		    Self.BlueprintsComponent1.SwitchedFrom()
+		    FromView = Self.BlueprintsComponent1
 		  Case Self.PagePresets
-		    Self.PresetsComponent1.SwitchedFrom()
+		    FromView = Self.PresetsComponent1
 		  Case Self.PageHelp
-		    Self.HelpComponent1.SwitchedFrom()
+		    FromView = Self.HelpComponent1
 		  End Select
+		  If (FromView Is Nil) = False Then
+		    FromView.SwitchedFrom()
+		  End If
 		  
 		  Self.Pages.SelectedPanelIndex = Index
 		  
+		  Var ToView As BeaconSubview
 		  Select Case Index
 		  Case Self.PageHome
-		    Self.DashboardPane1.SwitchedTo(Nil)
+		    ToView = Self.DashboardPane1
 		  Case Self.PageDocuments
-		    Self.DocumentsComponent1.SwitchedTo(Nil)
+		    ToView = Self.DocumentsComponent1
 		  Case Self.PageBlueprints
-		    Self.BlueprintsComponent1.SwitchedTo(Nil)
+		    ToView = Self.BlueprintsComponent1
 		  Case Self.PagePresets
-		    Self.PresetsComponent1.SwitchedTo(Nil)
+		    ToView = Self.PresetsComponent1
 		  Case Self.PageHelp
-		    Self.HelpComponent1.SwitchedTo(Nil)
+		    ToView = Self.HelpComponent1
 		  End Select
+		  If (ToView Is Nil) = False Then
+		    ToView.SwitchedTo(Nil)
+		  End If
 		  
-		  For Idx As Integer = 0 To Self.NavBar.LastIndex
-		    Self.NavBar.Item(Idx).Toggled = (Idx = Index)
-		  Next
+		  If (Self.NavBar Is Nil) = False Then
+		    For Idx As Integer = 0 To Self.NavBar.LastIndex
+		      If (Self.NavBar.Item(Idx) Is Nil) = False Then
+		        Self.NavBar.Item(Idx).Toggled = (Idx = Index)
+		      End If
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 

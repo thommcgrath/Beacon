@@ -238,9 +238,11 @@ End
 		  
 		  If ShouldClose Then
 		    Var Editors() As DocumentEditorView = Self.DocumentEditors
-		    For Each Editor As DocumentEditorView In Editors
-		      Editor.DiscardChanges()
-		    Next
+		    If (Editors Is Nil) = False Then
+		      For Each Editor As DocumentEditorView In Editors
+		        Editor.DiscardChanges()
+		      Next
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
