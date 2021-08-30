@@ -269,6 +269,7 @@ Begin BeaconDialog EntryEditor
          Top             =   442
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   340
@@ -560,7 +561,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function AllowMultipleEntries() As Boolean
-		  Return Self.mOriginalEntry = Nil
+		  Return Self.mOriginalEntry Is Nil
 		End Function
 	#tag EndMethod
 
@@ -730,18 +731,24 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateSelectionUI()
 		  Var ListBottom As Integer = (Self.EngramsGroup.Top + Self.EngramsGroup.Height) - 20
-		  If Self.mSelectedEngrams.KeyCount > 1 And Self.AllowMultipleEntries Then
-		    Self.SingleEntryCheckbox.Visible = True
-		    ListBottom = ListBottom - (24 + Self.SingleEntryCheckbox.Height + Self.SingleItemCheckbox.Height)
+		  
+		  If Self.mSelectedEngrams.KeyCount > 1 Then
 		    Self.SingleItemCheckbox.Visible = True
-		    Self.SingleItemCheckbox.Enabled = Self.SingleEntryCheckbox.Value
+		    ListBottom = Self.SingleItemCheckbox.Top - 12
+		    
+		    If Self.AllowMultipleEntries Then
+		      Self.SingleEntryCheckbox.Visible = True
+		      ListBottom = Self.SingleEntryCheckbox.Top - 12
+		      Self.SingleItemCheckbox.Enabled = Self.SingleEntryCheckbox.Value
+		    Else
+		      Self.SingleItemCheckbox.Enabled = True
+		    End If
 		  Else
 		    Self.SingleEntryCheckbox.Visible = False
 		    Self.SingleItemCheckbox.Visible = False
 		  End If
+		  
 		  Self.EngramList.Height = ListBottom - Self.EngramList.Top
-		  Self.SingleEntryCheckbox.Top = ListBottom + 12
-		  Self.SingleItemCheckbox.Top = Self.SingleEntryCheckbox.Top + Self.SingleEntryCheckbox.Height + 12
 		  Self.EnableButtons
 		End Sub
 	#tag EndMethod
