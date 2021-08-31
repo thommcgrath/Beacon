@@ -49,9 +49,9 @@ case 'checkout.session.completed':
 	$intent_id = $obj['payment_intent'];
 	$rows = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $intent_id);
 	if ($rows->RecordCount() > 0) {
-		http_response_code(200);
+		/*http_response_code(200);
 		echo 'Notification already handled.';
-		exit;
+		exit;*/
 	}
 	
 	$line_items = $api->GetLineItems($obj['id']);
@@ -64,17 +64,31 @@ case 'checkout.session.completed':
 	foreach ($items as $item) {
 		$price_id = $item['price']['id'];
 		$quantity = $item['quantity'];
-		$paid = $item['amount_total'] / 100;
-		$product_price = $item['price']['unit_amount'] / 100;
+		$line_total = $item['amount_total'];
+		$product_price = $item['price']['unit_amount'];
 		$currency = strtoupper($item['currency']);
+		$tax_total = 0;
+		foreach ($item['taxes'] as $tax) {
+			$tax_total += $tax['amount'];
+		}
+		$tax_total = $tax_total;
+		$discount_total = 0;
+		foreach ($item['discounts'] as $discount) {
+			$discount_total += $discount['amount'];
+		}
+		$discount_total = $discount_total;
+		$product_price_paid = $line_total - ($discount_total + $tax_total);
 		
 		$rows = $database->Query('SELECT product_id FROM product_prices WHERE price_id = $1;', $price_id);
 		if ($rows->RecordCount() === 1) {
 			$purchased_products[] = [
 				'product_id' => $rows->Field('product_id'),
 				'quantity' => $quantity,
-				'price' => $product_price,
-				'paid' => $paid,
+				'price' => $product_price / 100,
+				'paid' => $product_price_paid / 100,
+				'tax' => $tax_total / 100,
+				'discount' => $discount_total / 100,
+				'total' => $line_total / 100,
 				'currency' => $currency
 			];
 		}
@@ -105,9 +119,10 @@ case 'checkout.session.completed':
 		BeaconLogin::SendVerification($email);
 	}
 	
-	$purchase_subtotal = 0;
-	$purchase_total = 0;
-	$purchase_discount = 0;
+	$purchase_subtotal = $obj['amount_subtotal'] / 100;
+	$purchase_total = $obj['amount_total'] / 100;
+	$purchase_discount = $obj['total_details']['amount_discount'] / 100;
+	$purchase_tax = $obj['total_details']['amount_tax'] / 100;
 	$purchase_id = BeaconCommon::GenerateUUID();
 	$stw_copies = 0;
 	$gift_copies = 0;
@@ -120,10 +135,6 @@ case 'checkout.session.completed':
 		$quantity = $item['quantity'];
 		$line_total = $paid_unit_price * $quantity;
 		$currency = $item['currency'];
-		
-		$purchase_subtotal += ($full_unit_price * $quantity);
-		$purchase_total += $line_total;
-		$purchase_discount += ($discount_per_unit * $quantity);
 		
 		if ($product_id == '972f9fc5-ad64-4f9c-940d-47062e705cc5') {
 			// Check to see if there is already a purchase for this user and convert to giftable
@@ -142,7 +153,7 @@ case 'checkout.session.completed':
 		
 		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total, currency) VALUES ($1, $2, $3, $4, $5, $6, $7);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total, $currency);
 	}
-	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, 0, $purchase_total, $intent_id, $client_reference_id, $billing_locality, $purchase_currency);
+	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality, currency) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9, $10);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, $purchase_tax, $purchase_total, $intent_id, $client_reference_id, $billing_locality, $purchase_currency);
 	
 	// Make sure the user's email is removed from the raffle
 	$database->Query('DELETE FROM stw_applicants WHERE email_id = uuid_for_email($1);', $email);

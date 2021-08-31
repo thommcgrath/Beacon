@@ -62,7 +62,7 @@ class BeaconStripeAPI {
 	}
 	
 	public function GetLineItems(string $session_id) {
-		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $session_id . '/line_items', '2020-08-27');
+		return $this->GetURL('https://api.stripe.com/v1/checkout/sessions/' . $session_id . '/line_items?expand%5B%5D=data.discounts&expand%5B%5D=data.taxes', '2020-08-27');
 	}
 	
 	public function GetCustomer(string $customer_id) {
