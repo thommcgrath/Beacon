@@ -205,7 +205,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub BeginTransaction()
-		  Self.mLock.Enter
+		  Self.ObtainLock()
 		  
 		  If Self.mTransactions.LastIndex = -1 Then
 		    Self.mTransactions.AddAt(0, "")
@@ -511,7 +511,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
 		  
-		  Self.mLock.Leave
+		  Self.ReleaseLock()
 		End Sub
 	#tag EndMethod
 
@@ -1578,6 +1578,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If Self.mImportThread = Nil Then
 		    Self.mImportThread = New Thread
+		    Self.mImportThread.DebugIdentifier = "Import"
 		    Self.mImportThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mImportThread.Run, WeakAddressOf Self.mImportThread_Run
 		  End If
@@ -1714,6 +1715,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End If
 		  
+		  Var StartTime As Double = System.Microseconds
 		  Content = Beacon.Decompress(Content)
 		  
 		  Var BuildNumber As Integer = App.BuildNumber
@@ -2221,12 +2223,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
 		    Self.Commit()
 		    
+		    Var Duration As Double = (System.Microseconds - StartTime) / 1000000
+		    System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms import data")
+		    
 		    // Force analyze
+		    StartTime = System.Microseconds
 		    Self.SQLExecute("ANALYZE;")
 		    Self.SQLExecute("VACUUM;")
+		    Duration = (System.Microseconds - StartTime) / 1000000
+		    System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms to optimize")
 		    
 		    If ReloadPresets Then
+		      StartTime = System.Microseconds
 		      Self.LoadPresets()
+		      Duration = (System.Microseconds - StartTime) / 1000000
+		      System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms to load presets")
 		    End If
 		    
 		    Self.mDropsLabelCacheMask = 0
@@ -2613,6 +2624,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ObtainLock()
+		  // This method exists to provide easy insertion points for debug data
+		  
+		  Self.mLock.Enter
+		  
+		  #if false
+		    Var ThreadName As String
+		    Var CurrentThread As Thread = Thread.Current
+		    If CurrentThread Is Nil Then
+		      ThreadName = "Main"
+		    Else
+		      ThreadName = CurrentThread.DebugIdentifier
+		    End If
+		    
+		    If Not Self.mLock.TryEnter Then
+		      System.DebugLog("Thread " + ThreadName + " is waiting")
+		      Var StartTime As Double = System.Microseconds
+		      Self.mLock.Enter
+		      Var WaitTime As Double = System.Microseconds - StartTime
+		      System.DebugLog("Thread " + ThreadName + " has obtained its lock after waiting " + WaitTime.ToString(Locale.Raw, "0") + " microseconds")
+		    End If
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function OfficialPlayerLevelData() As Beacon.PlayerLevelData
 		  If Self.mOfficialPlayerLevelData = Nil Then
@@ -2630,6 +2667,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Next
 		  Return Results
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ReleaseLock()
+		  // This method exists to provide easy insertion points for debug data
+		  
+		  Self.mLock.Leave
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -2708,7 +2753,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
 		  
-		  Self.mLock.Leave
+		  Self.ReleaseLock()
 		End Sub
 	#tag EndMethod
 
@@ -3554,7 +3599,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
-		  Self.mLock.Enter
+		  Self.ObtainLock()
 		  
 		  If Values.LastIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
@@ -3587,9 +3632,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Try
 		    Self.mBase.ExecuteSQL(SQLString, Values)
-		    Self.mLock.Leave
+		    Self.ReleaseLock()
 		  Catch Err As DatabaseException
-		    Self.mLock.Leave
+		    Self.ReleaseLock()
 		    Var Cloned As New DatabaseException
 		    Cloned.ErrorNumber = Err.ErrorNumber
 		    Cloned.Message = "#" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message + EndOfLine + SQLString
@@ -3600,7 +3645,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function SQLSelect(SQLString As String, ParamArray Values() As Variant) As RowSet
-		  Self.mLock.Enter
+		  Self.ObtainLock()
 		  
 		  If Values.LastIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
@@ -3631,10 +3676,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Try
 		    Var Results As RowSet = Self.mBase.SelectSQL(SQLString, Values)
-		    Self.mLock.Leave
+		    Self.ReleaseLock()
 		    Return Results
 		  Catch Err As DatabaseException
-		    Self.mLock.Leave
+		    Self.ReleaseLock()
 		    Var Cloned As New DatabaseException
 		    Cloned.ErrorNumber = Err.ErrorNumber
 		    Cloned.Message = "#" + Err.ErrorNumber.ToString(Locale.Raw, "0") + ": " + Err.Message + EndOfLine + SQLString
@@ -3751,19 +3796,26 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub UpdateNews()
-		  Var Socket As New URLConnection
-		  AddHandler Socket.ContentReceived, WeakAddressOf UpdateNews_ContentReceived
-		  Socket.RequestHeader("User-Agent") = App.UserAgent
-		  Socket.Send("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
+		  If (Self.mUpdateNewsThread Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  Var Th As New Thread
+		  Th.Priority = Thread.LowestPriority
+		  Th.DebugIdentifier = "News Updater"
+		  AddHandler Th.Run, WeakAddressOf UpdateNewsThread_Run
+		  Th.Start
+		  Self.mUpdateNewsThread = Th
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateNews_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
-		  #Pragma Unused Sender
-		  #Pragma Unused URL
+		Private Sub UpdateNewsThread_Run(Sender As Thread)
+		  Var Socket As New URLConnection
+		  Socket.RequestHeader("User-Agent") = App.UserAgent
+		  Var Content As String = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
 		  
-		  If HTTPStatus <> 200 Then
+		  If Socket.HTTPStatusCode <> 200 Then
 		    Return
 		  End If
 		  
@@ -3829,6 +3881,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Changed Then
 		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
 		  End If
+		  
+		  Self.mUpdateNewsThread = Nil
 		End Sub
 	#tag EndMethod
 
@@ -3990,6 +4044,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mUpdateCheckTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateNewsThread As Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
