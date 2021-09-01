@@ -48,6 +48,7 @@ $payment = [
 	'success_url' => BeaconCommon::AbsoluteURL('/omni/welcome/'),
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni/#checkout'),
 	'billing_address_collection' => 'required',
+	'automatic_tax' => ['enabled' => 'true'],
 	'line_items' => []
 ];
 if ($currency === 'EUR') {

@@ -217,6 +217,7 @@ BeaconTemplate::FinishStyles();
 BeaconTemplate::StartScript();
 ?>
 <script>
+var checking_email = false;
 var owns_omni = false;
 var is_child = false;
 
@@ -306,17 +307,22 @@ var validate_email = function(email) {
 };
 
 var lookup_email = function(email) {
+	checking_email = true;
+	update_checkout_components();
 	if (validate_email(email)) {
 		request.get('/omni/lookup', {'email': email}, function(obj) {
+			checking_email = false;
 			owns_omni = obj.omni;
 			is_child = obj.child;
 			update_checkout_components();
 		}, function(status, body) {
+			checking_email = false;
 			owns_omni = false;
 			is_child = false;
 			update_checkout_components();
 		});
 	} else {
+		checking_email = false;
 		owns_omni = false;
 		is_child = false;
 		update_checkout_components();
@@ -435,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.getElementById('checkout_email_field').addEventListener('input', function() {
 		var callback = function () {
 			lookup_email(this.value);
+			update_total();
 		};
 		callback = callback.bind(this);
 		
@@ -508,13 +515,11 @@ BeaconTemplate::FinishScript();
 				<td class="text-center bullet-column">&check;</td>
 				<td class="text-center bullet-column">&check;</td>
 			</tr>
-			<?php if ($stable_version >= 10501300) { ?>
 			<tr>
-				<td>GameServerApp.com Support<?php if ($stable_version < 10600300) { ?><span class="tag blue mini left-space">New in Beacon 1.5.1</span><?php } ?><br><span class="smaller text-lighter">Import and update GameServerApp.com config templates with only a few clicks.</span></td>
+				<td>GameServerApp.com Support<br><span class="smaller text-lighter">Import and update GameServerApp.com config templates with only a few clicks.</span></td>
 				<td class="text-center bullet-column">&check;</td>
 				<td class="text-center bullet-column">&check;</td>
 			</tr>
-			<?php } ?>
 			<tr>
 				<td>FTP Upload and Download<br><span class="smaller text-lighter">Beacon can use FTP edit your Game.ini and GameUserSettings.ini files right on the server.</span></td>
 				<td class="text-center bullet-column">&check;</td>
@@ -531,7 +536,7 @@ BeaconTemplate::FinishScript();
 				<td class="text-center bullet-column">&check;</td>
 			</tr>
 			<tr>
-				<td>Breeding Multipliers<br><span class="smaller text-lighter">Adjust any of the 8 breeding-related multipliers with realtime display of their effects on Ark's creatures and their imprint times.</span></td>
+				<td>Breeding Multipliers<br><span class="smaller text-lighter">Adjust any of the breeding-related multipliers with realtime display of their effects on Ark's creatures and their imprint times.</span></td>
 				<td class="text-center bullet-column">&check;</td>
 				<td class="text-center bullet-column">&check;</td>
 			</tr>
@@ -540,9 +545,14 @@ BeaconTemplate::FinishScript();
 				<td class="text-center bullet-column">&check;</td>
 				<td class="text-center bullet-column">&check;</td>
 			</tr>
-			<?php if ($stable_version >= 10500300) { ?>
 			<tr>
-				<td>Decay and Spoil<?php if ($stable_version < 10600300) { ?><span class="tag blue mini left-space">New in Beacon 1.5</span><?php } ?><br><span class="smaller text-lighter">Change and preview item decay, decomposition, and spoil times.</span></td>
+				<td>Decay and Spoil<br><span class="smaller text-lighter">Change and preview item decay, decomposition, and spoil times.</span></td>
+				<td class="text-center bullet-column">&check;</td>
+				<td class="text-center bullet-column">&check;</td>
+			</tr>
+			<?php if ($stable_version >= 10502300) { ?>
+			<tr>
+				<td>General Settings<?php if ($stable_version < 10503300) { ?><span class="tag blue mini left-space">New in Beacon 1.5.2</span><?php } ?><br><span class="smaller text-lighter">Beacon has support for nearly every setting available to Ark servers.</span></td>
 				<td class="text-center bullet-column">&check;</td>
 				<td class="text-center bullet-column">&check;</td>
 			</tr>
@@ -645,7 +655,7 @@ BeaconTemplate::FinishScript();
 				<div id="checkout_methods_cell" class="<?php echo strtolower($currency); ?>"><?php
 				
 				$payment_methods = [
-					'universal' => ['apple', 'google', 'mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
+					'universal' => ['mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
 					'usd' => [],
 					'eur' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24']
 				];
