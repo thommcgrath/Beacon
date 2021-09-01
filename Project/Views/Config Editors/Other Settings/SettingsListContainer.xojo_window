@@ -345,6 +345,10 @@ End
 		    Return
 		  End If
 		  
+		  If IsNull(Value) Then
+		    Value = Key.DefaultValue
+		  End If
+		  
 		  Var Dependents() As Dictionary = Self.mDependencies.Value(UUID)
 		  For Each Dict As Dictionary In Dependents
 		    Var TargetKey As Beacon.ConfigKey = Dict.Value("Target")
