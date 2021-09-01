@@ -225,10 +225,21 @@ End
 		  MeasurePic.Graphics.FontSize = 0
 		  MeasurePic.Graphics.Bold = True
 		  Var KeyNameWidth As Integer
+		  Var ConsoleSafe As Boolean = Self.Document.ConsoleMode
 		  
 		  For Each Key As Beacon.ConfigKey In AllKeys
 		    If BeaconConfigs.OtherSettings.KeySupported(Key, Mods) = False Then
 		      Continue
+		    End If
+		    
+		    Var RequiredPlatform As Variant = Key.Constraint("platform")
+		    If IsNull(RequiredPlatform) = False Then
+		      Select Case RequiredPlatform.StringValue
+		      Case "pc", "steam", "epic"
+		        If ConsoleSafe = True Then
+		          Continue
+		        End If
+		      End Select
 		    End If
 		    
 		    // See if this key matches the search
