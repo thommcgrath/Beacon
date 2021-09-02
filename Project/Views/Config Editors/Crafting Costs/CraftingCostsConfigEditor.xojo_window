@@ -887,7 +887,7 @@ End
 		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
-		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
+		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable NOT generic")
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close

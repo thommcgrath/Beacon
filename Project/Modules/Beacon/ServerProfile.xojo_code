@@ -552,6 +552,8 @@ Protected Class ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Value = Value.Trim
+			  
 			  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mName = Value
 			    Self.Modified = True
