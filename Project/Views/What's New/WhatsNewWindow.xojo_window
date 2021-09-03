@@ -42,17 +42,55 @@ Begin Window WhatsNewWindow
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
-      Visible         =   True
+      Visible         =   False
       Width           =   660
    End
    Begin URLConnection PreflightSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin WebView2ControlMBS WinViewer
+      AdditionalBrowserArguments=   ""
+      AllowSingleSignOnUsingOSPrimaryAccount=   False
+      areBrowserAcceleratorKeysEnabled=   False
+      AreDefaultContextMenusEnabled=   False
+      AreDefaultScriptDialogsEnabled=   True
+      AreDevToolsEnabled=   False
+      AreHostObjectsAllowed=   True
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   413
+      Index           =   -2147483648
+      InitialParent   =   ""
+      IsBuiltInErrorPageEnabled=   True
+      IsGeneralAutofillEnabled=   True
+      IsPasswordAutosaveEnabled=   False
+      IsPinchZoomEnabled=   False
+      IsScriptEnabled =   True
+      IsStatusBarEnabled=   False
+      IsWebMessageEnabled=   True
+      IsZoomControlEnabled=   False
+      Language        =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TargetCompatibleBrowserVersion=   ""
+      Tooltip         =   ""
+      Top             =   -457
+      UserAgent       =   ""
+      Visible         =   False
+      Width           =   660
    End
 End
 #tag EndWindow
@@ -86,7 +124,17 @@ End
 		  #endif
 		  
 		  PreflightSocket.RequestHeader("User-Agent") = App.UserAgent
-		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Preferences.NewestUsedBuild.ToString("0") + "&to=" + App.BuildNumber.ToString))
+		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Self.mPreviousVersion.ToString("0") + "&to=" + App.BuildNumber.ToString))
+		  
+		  If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
+		    Self.Viewer.Visible = False
+		    Self.WinViewer.Top = 0
+		    Self.WinViewer.Left = 0
+		    Self.WinViewer.Width = Self.Width
+		    Self.WinViewer.Height = Self.Height
+		    Self.WinViewer.UserAgent = App.UserAgent
+		    Self.WinViewer.Visible = True
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -112,6 +160,22 @@ End
 		  
 		  #Pragma Unused Win
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ShouldCancel(URL As String) As Boolean
+		  If URL.BeginsWith("beacon://finished") Then
+		    Call CallLater.Schedule(1, AddressOf CloseLater)
+		    Return True
+		  ElseIf URL.BeginsWith("res://") Then
+		    Return True
+		  End If
+		  
+		  If URL.BeginsWith(Beacon.WebURL("/welcome")) = False Then
+		    System.GotoURL(URL)
+		    Return True
+		  End If
+		End Function
 	#tag EndMethod
 
 
@@ -158,15 +222,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CancelLoad(URL as String) As Boolean
-		  If URL.BeginsWith("beacon://finished") Then
-		    Call CallLater.Schedule(1, AddressOf CloseLater)
-		    Return True
-		  ElseIf URL.BeginsWith("res://") Then
-		    Return True
-		  End If
-		  
-		  If URL.BeginsWith(Beacon.WebURL("/welcome")) = False Then
-		    System.GotoURL(URL)
+		  If Self.ShouldCancel(URL) Then
 		    Return True
 		  End If
 		End Function
@@ -188,11 +244,51 @@ End
 	#tag Event
 		Sub HeadersReceived(URL As String, HTTPStatus As Integer)
 		  If HTTPStatus = 200 Then
-		    Self.Viewer.LoadURL(URL)
+		    If Self.WinViewer.Visible Then
+		      Self.Visible = True // Has to be visible before loading
+		      Self.WinViewer.LoadURL(URL)
+		    Else
+		      Self.Viewer.LoadURL(URL)
+		    End If
 		  Else
 		    Self.Close
 		  End If
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WinViewer
+	#tag Event
+		Sub NavigationCompleted(isSuccess as Boolean, ErrorStatus as Integer, NavigationID as UInt64)
+		  #Pragma Unused NavigationID
+		  
+		  If isSuccess Then
+		    Self.Visible = True
+		    Self.Show
+		    Me.Refresh
+		    
+		    Preferences.NewestUsedBuild = App.BuildNumber
+		  Else
+		    App.Log("Unable to load welcome content: " + ErrorStatus.ToString("0"))
+		    
+		    Self.Close
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DocumentTitleChanged()
+		  Self.Title = "What's new in Beacon: " + Me.DocumentTitle
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function NavigationStarting(URL as String, IsUserInitiated as Boolean, IsRedirected as Boolean, NavigationID as UInt64) As Boolean
+		  #Pragma Unused IsUserInitiated
+		  #Pragma Unused IsRedirected
+		  #Pragma Unused NavigationID
+		  
+		  If Self.ShouldCancel(URL) Then
+		    Return True
+		  End If
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

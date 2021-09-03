@@ -3811,6 +3811,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateNewsThread_Run(Sender As Thread)
+		  #Pragma Unused Sender
+		  
 		  Var Socket As New URLConnection
 		  Socket.RequestHeader("User-Agent") = App.UserAgent
 		  Var Content As String = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))

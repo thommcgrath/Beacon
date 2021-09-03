@@ -591,7 +591,7 @@ Protected Module BeaconUI
 		  #if TargetMacOS
 		    Return SystemInformationMBS.IsHighSierra(True)
 		  #elseif TargetWindows
-		    Return SystemInformationMBS.IsWindows10(True)
+		    Return WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Or SystemInformationMBS.IsWindows10(True)
 		  #endif
 		End Function
 	#tag EndMethod
