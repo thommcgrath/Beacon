@@ -586,6 +586,8 @@ End
 		    DeployItem = New MenuItem("Deploy This Server…")
 		  End If
 		  Var DeployProfiles() As Beacon.ServerProfile
+		  Var NitradoProfiles() As Beacon.NitradoServerProfile
+		  Var LocalProfiles() As Beacon.LocalServerProfile
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) = False Then
 		      Continue
@@ -594,6 +596,12 @@ End
 		    If Profile.DeployCapable Then
 		      DeployProfiles.Add(Profile)
 		    End If
+		    If Profile IsA Beacon.NitradoServerProfile Then
+		      NitradoProfiles.Add(Beacon.NitradoServerProfile(Profile))
+		    End If
+		    If Profile IsA Beacon.LocalServerProfile Then
+		      LocalProfiles.Add(Beacon.LocalServerProfile(Profile))
+		    End If
 		  Next Idx
 		  DeployItem.Enabled = DeployProfiles.Count > 0
 		  DeployItem.Tag = DeployProfiles
@@ -601,6 +609,17 @@ End
 		  
 		  Var BackupsItem As New MenuItem("Show Config Backups")
 		  Base.AddMenu(BackupsItem)
+		  
+		  If NitradoProfiles.Count > 0 Then
+		    Base.AddMenu(New MenuItem("Open Nitrado Dashboard", NitradoProfiles))
+		  End If
+		  
+		  If LocalProfiles.Count > 0 Then
+		    #if Not TargetMacOS
+		      // Sandbox prevents this from working on macOS
+		      Base.AddMenu(New MenuItem("Show Config Files", LocalProfiles))
+		    #endif
+		  End If
 		  
 		  If Me.SelectedRowCount = 1 Then
 		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
@@ -634,6 +653,22 @@ End
 		  Case "Deploy These Servers…", "Deploy This Server…"
 		    Var SelectedProfiles() As Beacon.ServerProfile = HitItem.Tag
 		    RaiseEvent ShouldDeployProfiles(SelectedProfiles)
+		  Case "Open Nitrado Dashboard"
+		    Var NitradoProfiles() As Beacon.NitradoServerProfile = HitItem.Tag
+		    For Idx As Integer = 0 To NitradoProfiles.LastIndex
+		      System.GotoURL(Beacon.WebURL("/redirect?destination=nitradodash&serviceid=" + NitradoProfiles(Idx).ServiceID.ToString(Locale.Raw, "0")))
+		    Next Idx
+		  Case "Show Config Files"
+		    Var LocalProfiles() As Beacon.LocalServerProfile = HitItem.Tag
+		    For Idx As Integer = 0 To LocalProfiles.LastIndex
+		      Var File As FolderItem = LocalProfiles(Idx).GameIniFile
+		      If File Is Nil Or File.Exists = False Then
+		        File = LocalProfiles(Idx).GameUserSettingsIniFile
+		      End If
+		      If (File Is Nil) = False And File.Exists Then
+		        File.Parent.Open
+		      End If
+		    Next Idx
 		  End Select
 		  
 		  Return True
