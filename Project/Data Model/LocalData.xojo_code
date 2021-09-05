@@ -459,7 +459,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ClassesURL(ForceRefresh As Boolean) As String
-		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Self.EngramsVersion.ToString(Locale.Raw, "0"))
+		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Self.EngramsVersion.ToString(Locale.Raw, "0") + "&game=ark")
 		  
 		  If ForceRefresh = False Then
 		    Var LastSync As String = Self.Variable("sync_time")
