@@ -405,13 +405,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Data() As Beacon.DataSource
+		Protected Function Data() As Beacon.DataSourceLegacy
 		  Return mDataSource
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Data(Assigns Value As Beacon.DataSource)
+		Protected Sub Data(Assigns Value As Beacon.DataSourceLegacy)
 		  If mDataSource <> Value Then
 		    mDataSource = Value
 		    mDataSource.LoadPresets
@@ -595,6 +595,16 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Games() As Beacon.Game()
+		  Static GameList() As Beacon.Game
+		  If GameList.Count = 0 Then
+		    GameList.Add(New Beacon.Game(Ark.Identifier, Ark.FullName))
+		  End If
+		  Return GameList
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
 		  Const UseMBS = False
@@ -609,7 +619,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigKey(Extends Source As Beacon.DataSource, File As String, Header As String, Key As String) As Beacon.ConfigKey
+		Function GetConfigKey(Extends Source As Beacon.DataSourceLegacy, File As String, Header As String, Key As String) As Beacon.ConfigKey
 		  Var Results() As Beacon.ConfigKey = Source.SearchForConfigKey(File, Header, Key, False)
 		  If Results.Count = 1 Then
 		    Return Results(0)
@@ -938,7 +948,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastRowIndex(Extends Target As Beacon.Countable) As Integer
+		Function LastIndex(Extends Target As Beacon.Countable) As Integer
+		  Return Target.Count - 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "LastIndex" )  Function LastRowIndex(Extends Target As Beacon.Countable) As Integer
 		  Return Target.Count - 1
 		End Function
 	#tag EndMethod
@@ -1723,7 +1739,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBlueprints(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Blueprint()
+		Function SearchForBlueprints(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Blueprint()
 		  Var Categories() As String = Beacon.Categories
 		  Var Blueprints() As Beacon.Blueprint
 		  For Each Category As String In Categories
@@ -1737,7 +1753,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Creature()
+		Function SearchForCreatures(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Creature()
 		  If Mods = Nil Then
 		    Mods = New Beacon.StringList
 		  End If
@@ -1753,7 +1769,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Engram()
+		Function SearchForEngrams(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Engram()
 		  If Mods = Nil Then
 		    Mods = New Beacon.StringList
 		  End If
@@ -1769,7 +1785,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForSpawnPoints(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.SpawnPoint()
+		Function SearchForSpawnPoints(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.SpawnPoint()
 		  If Mods = Nil Then
 		    Mods = New Beacon.StringList
 		  End If
@@ -2230,7 +2246,7 @@ Protected Module Beacon
 
 
 	#tag Property, Flags = &h21
-		Private mDataSource As Beacon.DataSource
+		Private mDataSource As Beacon.DataSourceLegacy
 	#tag EndProperty
 
 

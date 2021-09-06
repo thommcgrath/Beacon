@@ -110,15 +110,15 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_NewsUpdated)
+		  NotificationKit.Ignore(Self, Beacon.CommonData.Notification_NewsUpdated)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  NotificationKit.Watch(Self, LocalData.Notification_NewsUpdated)
+		  NotificationKit.Watch(Self, Beacon.CommonData.Notification_NewsUpdated)
 		  Self.RefreshNews()
-		  LocalData.SharedInstance.UpdateNews()
+		  Beacon.CommonData.SharedInstance.UpdateNews()
 		End Sub
 	#tag EndEvent
 
@@ -128,7 +128,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_NewsUpdated
+		  Case Beacon.CommonData.Notification_NewsUpdated
 		    Self.RefreshNews()
 		  End Select
 		End Sub
@@ -210,7 +210,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshNews()
-		  Self.mNews = LocalData.SharedInstance.GetNews
+		  Self.mNews = Beacon.CommonData.SharedInstance.GetNews
 		  Self.mNewsRects.ResizeTo(Self.mNews.LastIndex)
 		  Self.DrawCanvas.Invalidate
 		End Sub
@@ -341,7 +341,7 @@ End
 #tag Events RefreshTimer
 	#tag Event
 		Sub Action()
-		  LocalData.SharedInstance.UpdateNews()
+		  Beacon.CommonData.SharedInstance.UpdateNews()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

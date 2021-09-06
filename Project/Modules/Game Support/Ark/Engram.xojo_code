@@ -1,14 +1,18 @@
 #tag Class
 Protected Class Engram
-Implements Beacon.Blueprint
+Implements Ark.Blueprint
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
+		  // Part of the Ark.Blueprint interface.
+		  
 		  Return Self.mAlternateLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
+		  // Part of the Ark.Blueprint interface.
+		  
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
@@ -21,62 +25,59 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Category() As String
-		  Return Beacon.CategoryEngrams
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return Ark.CategoryEngrams
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  If Self.IsValid Then
-		    Var Components() As String = Self.mPath.Split("/")
-		    Var Tail As String = Components(Components.LastIndex)
-		    Components = Tail.Split(".")
-		    Return Components(Components.LastIndex) + "_C"
-		  Else
-		    If Self.mPath.Length > 2 And Self.mPath.Right(2) = "_C" Then
-		      Return Self.mPath
-		    Else
-		      Return Self.mPath + "_C"
-		    End If
-		  End If
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return Self.mClassString
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Engram
-		  Return New Beacon.Engram(Self)
+		Function Clone() As Ark.Blueprint
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return New Ark.Engram(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.UniversalMask
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.Engram)
+		Sub Constructor(Source As Ark.Engram)
 		  Self.Constructor()
 		  
-		  Self.mObjectID = Source.mObjectID
+		  Self.mAlternateLabel = Source.mAlternateLabel
 		  Self.mAvailability = Source.mAvailability
-		  Self.mPath = Source.mPath
-		  Self.mLabel = Source.mLabel
-		  Self.mIsValid = Source.mIsValid
-		  Self.mModID = Source.mModID
-		  Self.mModName = Source.mModName
 		  Self.mEngramEntryString = Source.mEngramEntryString
+		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
+		  Self.mIsValid = Source.mIsValid
+		  Self.mItemID = Source.mItemID
+		  Self.mLabel = Source.mLabel
+		  Self.mModID = Source.mModID
+		  Self.mModified = Source.mModified
+		  Self.mModName = Source.mModName
+		  Self.mObjectID = Source.mObjectID
+		  Self.mPath = Source.mPath
 		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
 		  Self.mRequiredUnlockPoints = Source.mRequiredUnlockPoints
 		  Self.mStackSize = Source.mStackSize
-		  Self.mItemID = Source.mItemID
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.Add(Tag)
 		  Next
 		  
-		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
 		  Self.mIngredients.ResizeTo(Source.mIngredients.LastIndex)
 		  For Idx As Integer = 0 To Self.mIngredients.LastIndex
 		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
@@ -85,8 +86,8 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Beacon.Engram
-		  Var Engram As New Beacon.Engram
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.Engram
+		  Var Engram As New Ark.Engram
 		  Engram.mModID = Beacon.UserModID
 		  Engram.mModName = Beacon.UserModName
 		  
@@ -123,14 +124,14 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateFromEntryString(EntryString As String) As Beacon.Engram
+		Shared Function CreateFromEntryString(EntryString As String) As Ark.Engram
 		  Var Base As String = EntryString
 		  If Base.BeginsWith("EngramEntry_") Then
 		    Base = Base.Middle(12)
 		  End If
 		  
 		  // Base probably already includes _C, so don't add it again. UnknownBlueprintPath will handle it if missing.
-		  Var Engram As Beacon.Engram = CreateCustom("", "", "PrimalItemMystery_" + Base)
+		  Var Engram As Ark.Engram = CreateCustom("", "", "PrimalItemMystery_" + Base)
 		  Engram.mEngramEntryString = EntryString
 		  Return Engram
 		End Function
@@ -155,20 +156,18 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ImmutableVersion() As Beacon.Engram
+		Function ImmutableVersion() As Ark.Engram
+		  // Part of the Ark.Blueprint interface.
+		  
 		  Return Self
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
+		  // Part of the Ark.Blueprint interface.
+		  
 		  Return Self.mTags.IndexOf(Beacon.NormalizeTag(Tag)) > -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
-		  Return Self.mIsValid
 		End Function
 	#tag EndMethod
 
@@ -180,6 +179,8 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Label() As String
+		  // Part of the Beacon.NamedItem interface.
+		  
 		  If Self.mLabel.IsEmpty Then
 		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		  End If
@@ -190,6 +191,8 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ModID() As String
+		  // Part of the Ark.Blueprint interface.
+		  
 		  If Self.mModID Is Nil Then
 		    Return ""
 		  End If
@@ -199,74 +202,67 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  Return Self.mModified
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ModName() As String
-		  If IsNull(Self.mModID) = False And Self.mModID <> Beacon.UserModID Then
-		    Return Self.mModName
-		  End If
+		  // Part of the Ark.Blueprint interface.
 		  
-		  If Not Self.IsValid Or Self.mPath.Length < 6 Or Self.mPath.Left(6) <> "/Game/" Then
-		    Return ""
-		  End If
-		  
-		  Var Idx As Integer = Self.mPath.IndexOf(6, "/")
-		  If Idx = -1 Then
-		    Return "Unknown"
-		  End If
-		  Var Name As String = Self.mPath.Middle(6, Idx - 6)
-		  Select Case Name
-		  Case "PrimalEarth"
-		    Return "Ark Prime"
-		  Case "ScorchedEarth"
-		    Return "Scorched Earth"
-		  Case "Mods"
-		    Var StartAt As Integer = Idx + 1
-		    Var EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
-		    If EndAt = -1 Then
-		      EndAt = Self.mPath.Length
-		    End If
-		    Return Beacon.MakeHumanReadable(Self.mPath.Middle(StartAt, EndAt - StartAt))
-		  Else
-		    Return Beacon.MakeHumanReadable(Name)
-		  End Select
+		  Return Self.mModName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableClone() As Beacon.MutableEngram
-		  Return New Beacon.MutableEngram(Self)
+		Function MutableClone() As Ark.MutableEngram
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return New Ark.MutableEngram(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableVersion() As Beacon.MutableEngram
-		  Return New Beacon.MutableEngram(Self)
+		Function MutableVersion() As Ark.MutableEngram
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return New Ark.MutableEngram(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ObjectID() As String
+		  // Part of the Ark.Blueprint interface.
+		  
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.Engram) As Integer
+		Function Operator_Compare(Other As Ark.Engram) As Integer
 		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  Var SelfID As String = Self.ObjectID
-		  Var OtherID As String = Other.ObjectID
-		  If SelfID = OtherID Then
+		  If Self.ObjectID = Other.ObjectID Then
 		    Return 0
 		  End If
 		  
-		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseSensitive)
+		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
+		  // Part of the Ark.Blueprint interface.
+		  
 		  If Self.HasUnlockDetails Then
 		    Dict.Value("entry_string") = Self.mEngramEntryString
 		    If Self.mRequiredPlayerLevel Is Nil Then
@@ -298,7 +294,7 @@ Implements Beacon.Blueprint
 		    Dict.Value("recipe") = Nil
 		  Else
 		    Var Ingredients() As Dictionary
-		    For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
+		    For Each Ingredient As Ark.RecipeIngredient In Self.mIngredients
 		      Ingredients.Add(Ingredient.Pack)
 		    Next
 		    Dict.Value("recipe") = Ingredients
@@ -308,24 +304,22 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Path() As String
-		  If Self.IsValid Then
-		    Return Self.mPath
-		  Else
-		    Return ""
-		  End If
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Recipe() As Beacon.RecipeIngredient()
+		Function Recipe() As Ark.RecipeIngredient()
 		  // To prevent recursion, engrams only load ingredients on demand
 		  If Self.mHasLoadedIngredients = False Then
-		    Self.mIngredients = Beacon.Data.LoadIngredientsForEngram(Self)
+		    Self.mIngredients = Ark.DataSource.SharedInstance.LoadIngredientsForEngram(Self)
 		    Self.mHasLoadedIngredients = True
 		  End If
 		  
-		  Var Ingredients() As Beacon.RecipeIngredient
-		  For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
+		  Var Ingredients() As Ark.RecipeIngredient
+		  For Each Ingredient As Ark.RecipeIngredient In Self.mIngredients
 		    Ingredients.Add(Ingredient)
 		  Next
 		  Return Ingredients
@@ -352,6 +346,8 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
+		  // Part of the Ark.Blueprint interface.
+		  
 		  Var Clone() As String
 		  Clone.ResizeTo(Self.mTags.LastIndex)
 		  For I As Integer = 0 To Self.mTags.LastIndex
@@ -371,6 +367,10 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mClassString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mEngramEntryString As String
 	#tag EndProperty
 
@@ -379,7 +379,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIngredients() As Beacon.RecipeIngredient
+		Protected mIngredients() As Ark.RecipeIngredient
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -396,6 +396,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mModID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -429,22 +433,6 @@ Implements Beacon.Blueprint
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -453,11 +441,27 @@ Implements Beacon.Blueprint
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			InitialValue=""
 			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

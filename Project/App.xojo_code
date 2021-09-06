@@ -23,6 +23,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    LocalData.Close
 		  End If
 		  
+		  Var ArkData As Ark.DataSource = Ark.DataSource.SharedInstance(False)
+		  If (ArkData Is Nil) = False Then
+		    ArkData.Close
+		  End If
+		  
+		  Var CommonData As Beacon.CommonData = Beacon.CommonData.SharedInstance(False)
+		  If (CommonData Is Nil) = False Then
+		    CommonData.Close
+		  End If
+		  
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
 		  End If
@@ -817,6 +827,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Sub LaunchQueue_SetupDatabase()
 		  Try
 		    LocalData.Start
+		    Call Ark.DataSource.SharedInstance(True)
+		    Call Beacon.CommonData.SharedInstance(True)
 		  Catch Err As RuntimeException
 		    // There was a problem setting up the database, so let's delete the files (probably corrupt) and try again
 		    Var AppSupport As FolderItem = Self.ApplicationSupport
@@ -941,6 +953,16 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.LaunchUpdate(File)
 		  Quit
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LibrariesFolder(Create As Boolean = True) As FolderItem
+		  Var Folder As FolderItem = Self.ApplicationSupport.Child("Libraries")
+		  If Folder.Exists = False And Create = True Then
+		    Call Folder.CheckIsFolder
+		  End If
+		  Return Folder
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
