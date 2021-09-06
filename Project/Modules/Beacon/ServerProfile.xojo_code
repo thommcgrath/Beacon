@@ -250,13 +250,13 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Platform() As UInteger
+		Function Platform() As Integer
 		  Return Self.mPlatform
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Platform(Assigns Value As UInteger)
+		Protected Sub Platform(Assigns Value As Integer)
 		  If Self.mPlatform <> Value Then
 		    Self.mPlatform = Value
 		    Self.Modified = True
@@ -438,7 +438,7 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mPlatform = CType(Beacon.ServerProfile.PlatformXbox, UInteger) Or Self.mPlatform = CType(Beacon.ServerProfile.PlatformPlayStation, UInteger) Or Self.mPlatform = CType(Beacon.ServerProfile.PlatformSwitch, UInteger)
+			  Return Self.mPlatform = Beacon.ServerProfile.PlatformXbox Or Self.mPlatform = Beacon.ServerProfile.PlatformPlayStation Or Self.mPlatform = Beacon.ServerProfile.PlatformSwitch
 			End Get
 		#tag EndGetter
 		IsConsole As Boolean
@@ -519,7 +519,7 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPlatform As UInteger
+		Private mPlatform As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
