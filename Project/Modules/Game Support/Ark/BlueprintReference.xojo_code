@@ -179,7 +179,7 @@ Protected Class BlueprintReference
 		        Case Self.KindSpawnPoint
 		          Self.mBlueprint = Ark.ResolveSpawnPoint(Self.mSaveData, "UUID", "Path", "", Nil)
 		        Case Self.KindLootContainer
-		          #Pragma Warning "No code for loot container"
+		          Self.mBlueprint = Ark.ResolveLootContainer(Self.mSaveData, "UUID", "Path", "", Nil)
 		        End Select
 		      End Select
 		    Catch Err As RuntimeException

@@ -91,6 +91,36 @@ Implements Ark.Blueprint,Beacon.Countable, Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.LootContainer
+		  Var LootContainer As New Ark.LootContainer
+		  LootContainer.mModID = Beacon.UserModID
+		  LootContainer.mModName = Beacon.UserModName
+		  
+		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
+		    // Seriously?
+		    ClassString = "BeaconLoot_NoData_C"
+		  End If
+		  If Path.IsEmpty Then
+		    If ClassString.IsEmpty Then
+		      ClassString = "BeaconLoot_" + ObjectID + "_C"
+		    End If
+		    Path = Beacon.UnknownBlueprintPath("LootContainers", ClassString)
+		  ElseIf ClassString.IsEmpty Then
+		    ClassString = Beacon.ClassStringFromPath(Path)
+		  End If
+		  If ObjectID.IsEmpty Then
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LootContainer.mModID + ":" + Path.Lowercase)
+		  End If
+		  
+		  LootContainer.mClassString = ClassString
+		  LootContainer.mPath = Path
+		  LootContainer.mObjectID = ObjectID
+		  LootContainer.mLabel = Beacon.LabelFromClassString(ClassString)
+		  Return LootContainer
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Experimental() As Boolean
 		  Return Self.mExperimental
 		End Function

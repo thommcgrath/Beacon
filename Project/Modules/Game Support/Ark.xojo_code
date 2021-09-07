@@ -119,6 +119,62 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ResolveLootContainer(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.LootContainer
+		  Var ObjectID, Path, ClassString As String
+		  
+		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
+		    ObjectID = Dict.Value(ObjectIDKey)
+		  End If
+		  
+		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
+		    Path = Dict.Value(PathKey)
+		  End If
+		  
+		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
+		    ClassString = Dict.Value(ClassKey)
+		  End If
+		  
+		  Return Ark.ResolveLootContainer(ObjectID, Path, ClassString, Mods)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Ark.LootContainer
+		  If ObjectID.IsEmpty = False Then
+		    Try
+		      Var LootContainer As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainerByID(ObjectID)
+		      If (LootContainer Is Nil) = False Then
+		        Return LootContainer
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If Path.IsEmpty = False Then
+		    Try
+		      Var LootContainers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByPath(Path, Mods)
+		      If LootContainers.Count > 0 Then
+		        Return LootContainers(0)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If ClassString.IsEmpty = False Then
+		    Try
+		      Var LootContainers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass(ClassString, Mods)
+		      If LootContainers.Count > 0 Then
+		        Return LootContainers(0)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Return Ark.LootContainer.CreateCustom(ObjectID, Path, ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.SpawnPoint
 		  Var ObjectID, Path, ClassString As String
 		  

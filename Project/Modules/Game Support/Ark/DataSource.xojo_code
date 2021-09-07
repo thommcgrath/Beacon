@@ -150,6 +150,22 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Cache(LootContainers() As Ark.LootContainer)
+		  For Each LootContainer As Ark.LootContainer In LootContainers
+		    Self.mLootContainerCache.Value(LootContainer.ObjectID) = LootContainer
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Cache(LootContainer As Ark.LootContainer)
+		  Var Arr(0) As Ark.LootContainer
+		  Arr(0) = LootContainer
+		  Self.Cache(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Cache(SpawnPoints() As Ark.SpawnPoint)
 		  For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
 		    Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
@@ -170,20 +186,20 @@ Inherits Beacon.DataSource
 		  Self.mEngramCache = New Dictionary
 		  Self.mCreatureCache = New Dictionary
 		  Self.mSpawnPointCache = New Dictionary
+		  Self.mLootContainerCache = New Dictionary
 		  
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByID(CreatureID As v4UUID) As Ark.Creature
-		  Var CreatureUUID As String = CreatureID
-		  If Self.mCreatureCache.HasKey(CreatureUUID) Then
-		    Return Self.mCreatureCache.Value(CreatureUUID)
+		Function GetCreatureByID(CreatureID As String) As Ark.Creature
+		  If Self.mCreatureCache.HasKey(CreatureID) Then
+		    Return Self.mCreatureCache.Value(CreatureID)
 		  End If
 		  
 		  Try
-		    Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureUUID)
+		    Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureID)
 		    If Results.RowCount <> 1 Then
 		      Return Nil
 		    End If
@@ -228,10 +244,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByID(EngramID As v4UUID) As Ark.Engram
-		  If Self.mEngramCache.HasKey(EngramID.StringValue) = False Then
+		Function GetEngramByID(EngramID As String) As Ark.Engram
+		  If Self.mEngramCache.HasKey(EngramID) = False Then
 		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID.StringValue)
+		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
 		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
@@ -242,7 +258,7 @@ Inherits Beacon.DataSource
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mEngramCache.Value(EngramID.StringValue)
+		  Return Self.mEngramCache.Value(EngramID)
 		End Function
 	#tag EndMethod
 
@@ -326,18 +342,51 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainer(ClassString As String) As Ark.LootContainer
-		  Try
-		    Var Results As RowSet = Self.SQLSelect("SELECT " + Self.LootContainerSelectColumns + " FROM loot_containers WHERE class_string = ?1;", ClassString)
-		    If Results.RowCount = 0 Then
+		Function GetLootContainerByID(LootContainerID As String) As Ark.LootContainer
+		  If Self.mLootContainerCache.HasKey(LootContainerID) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectColumns + " WHERE object_id = ?1;", LootContainerID)
+		      If Results.RowCount <> 1 Then
+		        Return Nil
+		      End If
+		      
+		      Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
+		      Self.Cache(LootContainers)
+		    Catch Err As RuntimeException
 		      Return Nil
-		    End If
-		    
-		    Var Sources() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
-		    Return Sources(0)
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mLootContainerCache.Value(LootContainerID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainersByClass(ClassString As String, Mods As Beacon.StringList) As Ark.LootContainer()
+		  Var SQL As String = Self.LootContainerSelectColumns + " WHERE loot_containers.class_string = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND loot_containers.mod_id IN (" + Mods.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, ClassString)
+		  Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Rows)
+		  Self.Cache(LootContainers)
+		  Return LootContainers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainersByPath(Path As String, Mods As Beacon.StringList) As Ark.LootContainer()
+		  Var SQL As String = Self.LootContainerSelectColumns + " WHERE loot_containers.path = ?1"
+		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND loot_containers.mod_id IN (" + Mods.SQLValue + ")"
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL, Path)
+		  Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Rows)
+		  Self.Cache(LootContainers)
+		  Return LootContainers
 		End Function
 	#tag EndMethod
 
@@ -411,10 +460,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Ark.SpawnPoint
-		  If Self.mSpawnPointCache.HasKey(SpawnPointID.StringValue) = False Then
+		Function GetSpawnPointByID(SpawnPointID As String) As Ark.SpawnPoint
+		  If Self.mSpawnPointCache.HasKey(SpawnPointID) = False Then
 		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID.StringValue)
+		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID)
 		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
@@ -425,7 +474,7 @@ Inherits Beacon.DataSource
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mSpawnPointCache.Value(SpawnPointID.StringValue)
+		  Return Self.mSpawnPointCache.Value(SpawnPointID)
 		End Function
 	#tag EndMethod
 
@@ -687,7 +736,7 @@ Inherits Beacon.DataSource
 		    Case Ark.CategorySpawnPoints
 		      SQL = Self.SpawnPointSelectSQL
 		    Case Ark.CategoryLootContainers
-		      #Pragma Warning "No loot container sql"
+		      SQL = Self.LootContainerSelectColumns
 		    Else
 		      Return Blueprints
 		    End Select
@@ -748,21 +797,25 @@ Inherits Beacon.DataSource
 		      Self.Cache(Engrams)
 		      For Each Engram As Ark.Engram In Engrams
 		        Blueprints.Add(Engram)
-		      Next
+		      Next Engram
 		    Case Ark.CategoryCreatures
 		      Var Creatures() As Ark.Creature = Self.RowSetToCreature(Results)
 		      Self.Cache(Creatures)
 		      For Each Creature As Ark.Creature In Creatures
 		        Blueprints.Add(Creature)
-		      Next
+		      Next Creature
 		    Case Ark.CategorySpawnPoints
 		      Var SpawnPoints() As Ark.SpawnPoint = Self.RowSetToSpawnPoint(Results)
 		      Self.Cache(SpawnPoints)
 		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
 		        Blueprints.Add(SpawnPoint)
-		      Next
+		      Next SpawnPoint
 		    Case Ark.CategoryLootContainers
-		      #Pragma Warning "No code for loot containers"
+		      Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
+		      Self.Cache(LootContainers)
+		      For Each LootContainer As Ark.LootContainer In LootContainers
+		        Blueprints.Add(LootContainer)
+		      Next LootContainer
 		    End Select
 		  Catch Err As RuntimeException
 		    
@@ -792,6 +845,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As Ark.DataSource
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLootContainerCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
