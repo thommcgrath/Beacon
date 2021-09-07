@@ -58,7 +58,7 @@ Protected Class LootItemSetEntryOption
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mHash.IsEmpty Then
-		    Self.mHash = Beacon.MD5(Self.mEngram.ObjectID.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000")).Lowercase
+		    Self.mHash = Beacon.Hash(Self.mEngram.ObjectID.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000"))
 		  End If
 		  
 		  Return Self.mHash
@@ -66,7 +66,7 @@ Protected Class LootItemSetEntryOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.SetEntryOption) As Integer
+		Function Operator_Compare(Other As Ark.LootItemSetEntryOption) As Integer
 		  If Other Is Nil Then
 		    Return 1
 		  End If

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootContainer
-Implements Ark.Blueprint,Beacon.Countable
+Implements Ark.Blueprint,Beacon.Countable, Iterable
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the Ark.Blueprint interface.
@@ -62,7 +62,6 @@ Implements Ark.Blueprint,Beacon.Countable
 		  Self.mExperimental = Source.mExperimental
 		  Self.mLabel = Source.mLabel
 		  Self.mMaxItemSets = Source.MaxItemSets
-		  Self.mMinimumItemSetCount = Source.mMinimumItemSetCount
 		  Self.mMinItemSets = Source.mMinItemSets
 		  Self.mModID = Source.mModID
 		  Self.mModified = Source.mModified
@@ -72,6 +71,8 @@ Implements Ark.Blueprint,Beacon.Countable
 		  Self.mObjectID = Source.mObjectID
 		  Self.mPath = Source.mPath
 		  Self.mPreventDuplicates = Source.mPreventDuplicates
+		  Self.mRequiredItemSetCount = Source.mRequiredItemSetCount
+		  Self.mSortValue = Source.mSortValue
 		  Self.mUIColor = Source.mUIColor
 		  
 		  Self.mTags.ResizeTo(-1)
@@ -104,6 +105,17 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IndexOf(ItemSet As Ark.LootItemSet) As Integer
+		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
+		    If Self.mItemSets(Idx) = ItemSet Then
+		      Return Idx
+		    End If
+		  Next Idx
+		  Return -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
 		  // Part of the Ark.Blueprint interface.
 		  
@@ -115,7 +127,12 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function Iterator() As Iterator
 		  // Part of the Iterable interface.
 		  
-		  
+		  Var Sets() As Variant
+		  Sets.ResizeTo(Self.mItemSets.LastIndex)
+		  For I As Integer = 0 To Self.mItemSets.LastIndex
+		    Sets(I) = Self.mItemSets(I)
+		  Next
+		  Return New Beacon.GenericIterator(Sets)
 		End Function
 	#tag EndMethod
 
@@ -136,14 +153,8 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MinimumItemSetCount() As Integer
-		  Return Self.MinimumItemSetCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function MinItemSets() As Integer
-		  Return Self.mMinimumItemSetCount
+		  Return Self.mMinItemSets
 		End Function
 	#tag EndMethod
 
@@ -216,6 +227,12 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Subscript(Idx As Integer) As Ark.LootItemSet
+		  Return Self.mItemSets(Idx)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
 		  // Part of the Ark.Blueprint interface.
 		  
@@ -234,6 +251,18 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function PreventDuplicates() As Boolean
 		  Return Self.mPreventDuplicates
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequiredItemSetCount() As Integer
+		  Return Self.mRequiredItemSetCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SortValue() As Integer
+		  Return Self.mSortValue
 		End Function
 	#tag EndMethod
 
@@ -278,15 +307,15 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mItemSets() As Ark.LootItemSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mMaxItemSets As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mMinimumItemSetCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -323,6 +352,14 @@ Implements Ark.Blueprint,Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mPreventDuplicates As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequiredItemSetCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSortValue As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

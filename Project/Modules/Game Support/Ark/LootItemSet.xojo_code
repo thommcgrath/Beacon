@@ -63,90 +63,6 @@ Implements Beacon.Countable, Iterable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
-		Shared Function FromPreset(Preset As Ark.Preset, ForLootSource As Ark.LootContainer, Mask As UInt64, Mods As Beacon.StringList) As Ark.LootItemSet
-		  Var Set As New Beacon.ItemSet
-		  Set.Label = Preset.Label
-		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
-		  Set.mSourcePresetID = Preset.PresetID
-		  
-		  Var ActiveModifiers() As String = Preset.ActiveModifierIDs
-		  Var QuantityMultipliers() As Double
-		  Var MinQualityModifiers() As Integer
-		  Var MaxQualityModifiers() As Integer
-		  Var BlueprintMultipliers() As Double
-		  For Each ModifierID As String In ActiveModifiers
-		    Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
-		    If Modifier <> Nil And Modifier.Matches(ForLootSource) Then
-		      QuantityMultipliers.Add(Preset.QuantityMultiplier(ModifierID))
-		      MinQualityModifiers.Add(Preset.MinQualityModifier(ModifierID))
-		      MaxQualityModifiers.Add(Preset.MaxQualityModifier(ModifierID))
-		      BlueprintMultipliers.Add(Preset.BlueprintMultiplier(ModifierID))
-		    End If
-		  Next
-		  
-		  Var Qualities() As Beacon.Quality = Beacon.Qualities.All
-		  
-		  For Each PresetEntry As Beacon.PresetEntry In Preset
-		    If PresetEntry.ValidForMask(Mask) = False Or PresetEntry.SafeForMods(Mods) = False Then
-		      Continue
-		    End If
-		    
-		    Var Entry As New Beacon.SetEntry(PresetEntry)
-		    
-		    If PresetEntry.RespectQualityModifier Then
-		      Var MinQualityIndex, MaxQualityIndex As Integer
-		      For I As Integer = 0 To Qualities.LastIndex
-		        If Qualities(I) = Entry.MinQuality Then
-		          MinQualityIndex = I
-		        End If
-		        If Qualities(I) = Entry.MaxQuality Then
-		          MaxQualityIndex = I
-		        End If
-		      Next
-		      
-		      For Each Modifier As Integer In MinQualityModifiers
-		        MinQualityIndex = MinQualityIndex + Modifier
-		      Next
-		      For Each Modifier As Integer In MaxQualityModifiers
-		        MaxQualityIndex = MaxQualityIndex + Modifier
-		      Next
-		      MinQualityIndex = Max(Min(MinQualityIndex, Qualities.LastIndex), 0)
-		      MaxQualityIndex = Max(Min(MaxQualityIndex, Qualities.LastIndex), 0)
-		      Entry.MinQuality = Qualities(MinQualityIndex)
-		      Entry.MaxQuality = Qualities(MaxQualityIndex)
-		    End If
-		    
-		    If PresetEntry.RespectQuantityMultiplier Then
-		      Var MinQuantityRaw As Double = Entry.MinQuantity
-		      Var MaxQuantityRaw As Double = Entry.MaxQuantity
-		      For Each Multiplier As Double In QuantityMultipliers
-		        MinQuantityRaw = MinQuantityRaw * Multiplier
-		        MaxQuantityRaw = MaxQuantityRaw * Multiplier
-		      Next
-		      Entry.MinQuantity = Round(MinQuantityRaw)
-		      Entry.MaxQuantity = Round(MaxQuantityRaw)
-		    End If
-		    
-		    If PresetEntry.CanBeBlueprint And PresetEntry.RespectBlueprintMultiplier Then
-		      Var BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
-		      For Each Multiplier As Double In BlueprintMultipliers
-		        BlueprintChanceRaw = BlueprintChanceRaw * Multiplier
-		      Next
-		      Entry.ChanceToBeBlueprint = Max(Min(BlueprintChanceRaw, 1.0), 0.0)
-		    End If
-		    
-		    Set.Append(Entry)
-		  Next
-		  
-		  Set.MinNumItems = Preset.MinItems
-		  Set.MaxNumItems = Preset.MaxItems
-		  
-		  Set.Modified = False
-		  Return Set
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
@@ -234,6 +150,102 @@ Implements Beacon.Countable, Iterable
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading SourcePresetID value")
 		  End Try
+		  
+		  Set.Modified = False
+		  Return Set
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromTemplate(Template As Ark.LootTemplate, ForLootContainer As Ark.LootContainer, Mask As UInt64, Mods As Beacon.StringList) As Ark.LootItemSet
+		  Var Set As New Ark.MutableLootItemSet
+		  Set.Label = Template.Label
+		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
+		  Set.SourcePresetID = Template.UUID
+		  
+		  Var ActiveModifiers() As String = Template.ActiveSelectorIDs
+		  Var QuantityMultipliers() As Double
+		  Var MinQualityModifiers() As Integer
+		  Var MaxQualityModifiers() As Integer
+		  Var BlueprintMultipliers() As Double
+		  For Each LootSelectorUUID As String In ActiveModifiers
+		    Var LootSelector As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootTemplateSelector(LootSelectorUUID)
+		    If (LootSelector Is Nil) = False And LootSelector.Matches(ForLootContainer) Then
+		      QuantityMultipliers.Add(Template.QuantityMultiplier(LootSelectorUUID))
+		      MinQualityModifiers.Add(Template.MinQualityOffset(LootSelectorUUID))
+		      MaxQualityModifiers.Add(Template.MaxQualityOffset(LootSelectorUUID))
+		      BlueprintMultipliers.Add(Template.BlueprintChanceMultiplier(LootSelectorUUID))
+		    End If
+		  Next
+		  
+		  Var Qualities() As Ark.Quality = Ark.Qualities.All
+		  
+		  For Each TemplateEntry As Ark.LootTemplateEntry In Template
+		    If TemplateEntry.ValidForMask(Mask) = False Or TemplateEntry.SafeForMods(Mods) = False Then
+		      Continue
+		    End If
+		    
+		    Var Entry As New Ark.MutableLootItemSetEntry
+		    Entry.RawWeight = TemplateEntry.RawWeight
+		    For Idx As Integer = 0 To TemplateEntry.LastIndex
+		      Entry.Add(TemplateEntry(Idx))
+		    Next Idx
+		    
+		    If TemplateEntry.RespectQualityOffsets Then
+		      Var MinQualityIndex, MaxQualityIndex As Integer
+		      For I As Integer = 0 To Qualities.LastIndex
+		        If Qualities(I) = Entry.MinQuality Then
+		          MinQualityIndex = I
+		        End If
+		        If Qualities(I) = Entry.MaxQuality Then
+		          MaxQualityIndex = I
+		        End If
+		      Next
+		      
+		      For Each Modifier As Integer In MinQualityModifiers
+		        MinQualityIndex = MinQualityIndex + Modifier
+		      Next
+		      For Each Modifier As Integer In MaxQualityModifiers
+		        MaxQualityIndex = MaxQualityIndex + Modifier
+		      Next
+		      MinQualityIndex = Max(Min(MinQualityIndex, Qualities.LastIndex), 0)
+		      MaxQualityIndex = Max(Min(MaxQualityIndex, Qualities.LastIndex), 0)
+		      Entry.MinQuality = Qualities(MinQualityIndex)
+		      Entry.MaxQuality = Qualities(MaxQualityIndex)
+		    Else
+		      Entry.MinQuality = TemplateEntry.MinQuality
+		      Entry.MaxQuality = TemplateEntry.MaxQuality
+		    End If
+		    
+		    If TemplateEntry.RespectQuantityMultipliers Then
+		      Var MinQuantityRaw As Double = Entry.MinQuantity
+		      Var MaxQuantityRaw As Double = Entry.MaxQuantity
+		      For Each Multiplier As Double In QuantityMultipliers
+		        MinQuantityRaw = MinQuantityRaw * Multiplier
+		        MaxQuantityRaw = MaxQuantityRaw * Multiplier
+		      Next
+		      Entry.MinQuantity = Round(MinQuantityRaw)
+		      Entry.MaxQuantity = Round(MaxQuantityRaw)
+		    Else
+		      Entry.MinQuantity = TemplateEntry.MinQuantity
+		      Entry.MaxQuantity = TemplateEntry.MaxQuantity
+		    End If
+		    
+		    If TemplateEntry.CanBeBlueprint And TemplateEntry.RespectBlueprintChanceMultipliers Then
+		      Var BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
+		      For Each Multiplier As Double In BlueprintMultipliers
+		        BlueprintChanceRaw = BlueprintChanceRaw * Multiplier
+		      Next
+		      Entry.ChanceToBeBlueprint = Max(Min(BlueprintChanceRaw, 1.0), 0.0)
+		    Else
+		      Entry.ChanceToBeBlueprint = TemplateEntry.ChanceToBeBlueprint
+		    End If
+		    
+		    Set.Add(Entry)
+		  Next
+		  
+		  Set.MinNumItems = Template.MinEntriesSelected
+		  Set.MaxNumItems = Template.MaxEntriesSelected
 		  
 		  Set.Modified = False
 		  Return Set

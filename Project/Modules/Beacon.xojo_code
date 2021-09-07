@@ -786,7 +786,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function Hash(Block As MemoryBlock) As String
-		  Return EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8)
+		  Return EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8).Lowercase
 		End Function
 	#tag EndMethod
 

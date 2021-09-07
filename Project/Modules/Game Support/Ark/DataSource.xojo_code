@@ -15,9 +15,9 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
-		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL, advanced_pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE official_loot_templates (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE custom_loot_templates (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
@@ -326,6 +326,91 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetLootContainer(ClassString As String) As Ark.LootContainer
+		  Try
+		    Var Results As RowSet = Self.SQLSelect("SELECT " + Self.LootContainerSelectColumns + " FROM loot_containers WHERE class_string = ?1;", ClassString)
+		    If Results.RowCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Var Sources() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
+		    Return Sources(0)
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootTemplateSelector(SelectorUUID As String) As Ark.LootContainerSelector
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, language, code FROM loot_container_selectors WHERE object_id = ?1;", SelectorUUID)
+		  If Results.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Return New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootTemplateSelectors(IncludeOfficial As Boolean = True, IncludeCustom As Boolean = True) As Ark.LootContainerSelector()
+		  Var Selectors() As Ark.LootContainerSelector
+		  
+		  Var SQL As String = "SELECT object_id, label, language, code FROM loot_container_selectors"
+		  If IncludeOfficial = False And IncludeCustom = True Then
+		    SQL = SQL + " WHERE mod_id = '" + Beacon.UserModID + "'"
+		  ElseIf IncludeOfficial = True And IncludeCustom = False Then
+		    SQL = SQL + " WHERE mod_id != '" + Beacon.UserModID + "'"
+		  ElseIf IncludeOfficial = False And IncludeCustom = False Then
+		    Return Selectors
+		  End If
+		  SQL = SQL + " ORDER BY label;"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL)
+		  While Not Results.AfterLastRow
+		    Selectors.Add(New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue))
+		    Results.MoveToNextRow
+		  Wend
+		  Return Selectors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMap(Named As String) As Ark.Map
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE label = ?1 OR ark_identifier = ?1 LIMIT 1;", Named)
+		  If Rows.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Return New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps() As Ark.Map()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
+		  Var Maps() As Ark.Map
+		  While Rows.AfterLastRow = False
+		    Maps.Add(New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Maps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMaps(Mask As UInt64) As Ark.Map()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY official DESC, sort;", Mask)
+		  Var Maps() As Ark.Map
+		  While Rows.AfterLastRow = False
+		    Maps.Add(New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Maps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Ark.SpawnPoint
 		  If Self.mSpawnPointCache.HasKey(SpawnPointID.StringValue) = False Then
 		    Try
@@ -483,6 +568,65 @@ Inherits Beacon.DataSource
 		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RowSetToLootContainer(Results As RowSet) As Ark.LootContainer()
+		  Var Sources() As Ark.LootContainer
+		  While Not Results.AfterLastRow
+		    Var HexColor As String = Results.Column("uicolor").StringValue
+		    Var RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
+		    If HexColor.Length = 3 Then
+		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
+		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
+		      BlueHex = HexColor.Middle(2, 1) + HexColor.Middle(2, 1)
+		    ElseIf HexColor.Length = 4 Then
+		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
+		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
+		      BlueHex = HexColor.Middle(2, 1) + HexColor.Middle(2, 1)
+		      AlphaHex = HexColor.Middle(3, 1) + HexColor.Middle(3, 1)
+		    ElseIf HexColor.Length = 6 Then
+		      RedHex = HexColor.Middle(0, 2)
+		      GreenHex = HexColor.Middle(2, 2)
+		      BlueHex = HexColor.Middle(4, 2)
+		    ElseIf HexColor.Length = 8 Then
+		      RedHex = HexColor.Middle(0, 2)
+		      GreenHex = HexColor.Middle(2, 2)
+		      BlueHex = HexColor.Middle(4, 2)
+		      AlphaHex = HexColor.Middle(6, 2)
+		    End If
+		    
+		    Var Requirements As Dictionary
+		    #Pragma BreakOnExceptions Off
+		    Try
+		      Requirements = Beacon.ParseJSON(Results.Column("requirements").StringValue)
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
+		    Var Source As New Ark.MutableLootContainer
+		    Source.Label = Results.Column("label").StringValue
+		    Source.Path = Results.Column("path").StringValue
+		    Source.Availability = Results.Column("availability").Value
+		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
+		    Source.UIColor = Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		    Source.SortValue = Results.Column("sort_order").IntegerValue
+		    Source.Experimental = Results.Column("experimental").BooleanValue
+		    Source.Notes = Results.Column("notes").StringValue
+		    Source.ModID = Results.Column("mod_id").StringValue
+		    Source.TagString = Results.Column("tags").StringValue
+		    
+		    If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
+		      Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
+		    End If
+		    
+		    Source.Modified = False
+		    Sources.Add(Source.ImmutableVersion)
+		    Results.MoveToNextRow
+		  Wend
+		  Return Sources
 		End Function
 	#tag EndMethod
 
@@ -659,6 +803,9 @@ Inherits Beacon.DataSource
 	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = LootContainerSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id\x2C loot_sources.tags", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
