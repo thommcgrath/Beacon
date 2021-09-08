@@ -542,9 +542,9 @@ Protected Class ServerProfile
 		#tag Getter
 			Get
 			  If Self.mName.IsEmpty = False Then
-			    Return Self.mName
+			    Return Self.mName.Trim
 			  ElseIf Self.SecondaryName.IsEmpty = False Then
-			    Return Self.SecondaryName
+			    Return Self.SecondaryName.Trim
 			  Else
 			    Return "An Unnamed ARK Server"
 			  End If
