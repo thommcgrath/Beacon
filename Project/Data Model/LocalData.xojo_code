@@ -3814,75 +3814,85 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused Sender
 		  
 		  Var Socket As New URLConnection
-		  Socket.RequestHeader("User-Agent") = App.UserAgent
-		  Var Content As String = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
-		  
-		  If Socket.HTTPStatusCode <> 200 Then
-		    Return
-		  End If
-		  
-		  Var Parsed As Variant
+		  Var OriginalTransactionLevel As Integer = Self.mTransactions.Count
 		  Try
-		    Parsed = Beacon.ParseJSON(Content)
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Var Items() As Dictionary
-		  Try
-		    Items = Parsed.DictionaryArrayValue
-		  Catch Err As RuntimeException
-		    Return
-		  End Try
-		  
-		  Self.BeginTransaction()
-		  
-		  Var Changed As Boolean
-		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid FROM news")
-		  Var ItemsToRemove() As String
-		  While Rows.AfterLastRow = False
-		    ItemsToRemove.Add(Rows.Column("uuid").StringValue)
-		    Rows.MoveToNextRow
-		  Wend
-		  
-		  For Each Item As Dictionary In Items
+		    Socket.RequestHeader("User-Agent") = App.UserAgent
+		    Var Content As String = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
+		    
+		    If Socket.HTTPStatusCode <> 200 Then
+		      Self.mUpdateNewsThread = Nil
+		      Return
+		    End If
+		    
+		    Var Parsed As Variant
 		    Try
-		      Var UUID As String = Item.Value("uuid")
-		      Var Title As String = Item.Value("title")
-		      Var Detail As Variant = Item.Value("detail")
-		      Var ItemURL As Variant = Item.Value("url")
-		      Var MinVersion As Variant = Item.Value("min_version")
-		      Var MaxVersion As Variant = Item.Value("max_version")
-		      Var Moment As String = Item.Value("timestamp")
-		      Var MinOSVersion As Variant
-		      #if TargetMacOS
-		        MinOSVersion = Item.Value("mac_min_os")
-		      #elseif TargetWindows
-		        MinOSVersion = Item.Value("win_min_os")
-		      #endif
-		      
-		      Var Idx As Integer = ItemsToRemove.IndexOf(UUID)
-		      If Idx > -1 Then
-		        ItemsToRemove.RemoveAt(Idx)
-		      Else
-		        Self.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
-		        Changed = True
-		      End If
+		      Parsed = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
 		    Catch Err As RuntimeException
+		      Self.mUpdateNewsThread = Nil
+		      Return
 		    End Try
-		  Next
-		  
-		  Changed = Changed Or ItemsToRemove.Count > 0
-		  
-		  If ItemsToRemove.Count > 0 Then
-		    Self.SQLExecute("DELETE FROM news WHERE uuid IN ('" + ItemsToRemove.Join("','") + "');")
-		  End If
-		  
-		  Self.Commit()
-		  
-		  If Changed Then
-		    NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
-		  End If
+		    
+		    Var Items() As Dictionary
+		    Try
+		      Items = Parsed.DictionaryArrayValue
+		    Catch Err As RuntimeException
+		      Self.mUpdateNewsThread = Nil
+		      Return
+		    End Try
+		    
+		    Self.BeginTransaction()
+		    
+		    Var Changed As Boolean
+		    Var Rows As RowSet = Self.SQLSelect("SELECT uuid FROM news")
+		    Var ItemsToRemove() As String
+		    While Rows.AfterLastRow = False
+		      ItemsToRemove.Add(Rows.Column("uuid").StringValue)
+		      Rows.MoveToNextRow
+		    Wend
+		    
+		    For Each Item As Dictionary In Items
+		      Try
+		        Var UUID As String = Item.Value("uuid")
+		        Var Title As String = Item.Value("title")
+		        Var Detail As Variant = Item.Value("detail")
+		        Var ItemURL As Variant = Item.Value("url")
+		        Var MinVersion As Variant = Item.Value("min_version")
+		        Var MaxVersion As Variant = Item.Value("max_version")
+		        Var Moment As String = Item.Value("timestamp")
+		        Var MinOSVersion As Variant
+		        #if TargetMacOS
+		          MinOSVersion = Item.Value("mac_min_os")
+		        #elseif TargetWindows
+		          MinOSVersion = Item.Value("win_min_os")
+		        #endif
+		        
+		        Var Idx As Integer = ItemsToRemove.IndexOf(UUID)
+		        If Idx > -1 Then
+		          ItemsToRemove.RemoveAt(Idx)
+		        Else
+		          Self.SQLExecute("INSERT INTO news (uuid, title, detail, url, min_version, max_version, moment, min_os_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", UUID, Title, Detail, ItemURL, MinVersion, MaxVersion, Moment, MinOSVersion)
+		          Changed = True
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    Changed = Changed Or ItemsToRemove.Count > 0
+		    
+		    If ItemsToRemove.Count > 0 Then
+		      Self.SQLExecute("DELETE FROM news WHERE uuid IN ('" + ItemsToRemove.Join("','") + "');")
+		    End If
+		    
+		    Self.Commit()
+		    
+		    If Changed Then
+		      NotificationKit.Post(Self.Notification_NewsUpdated, Nil)
+		    End If
+		  Catch Err As RuntimeException
+		    While Self.mTransactions.Count > OriginalTransactionLevel
+		      Self.Rollback()
+		    Wend
+		  End Try
 		  
 		  Self.mUpdateNewsThread = Nil
 		End Sub
