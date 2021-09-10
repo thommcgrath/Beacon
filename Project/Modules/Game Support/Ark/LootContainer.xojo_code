@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootContainer
-Implements Ark.Blueprint,Beacon.Countable, Iterable
+Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the Ark.Blueprint interface.

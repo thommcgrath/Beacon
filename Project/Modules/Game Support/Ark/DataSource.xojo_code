@@ -3,34 +3,34 @@ Protected Class DataSource
 Inherits Beacon.DataSource
 	#tag Event
 		Sub BuildSchema()
-		  Var ModsOnDelete As String
+		  Var ContentPackDeleteBehavior As String
 		  #if DebugBuild
-		    ModsOnDelete = "RESTRICT"
+		    ContentPackDeleteBehavior = "RESTRICT"
 		  #else
-		    ModsOnDelete = "CASCADE"
+		    ContentPackDeleteBehavior = "CASCADE"
 		  #endif
 		  
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER NOT NULL UNIQUE, is_user_mod BOOLEAN NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER UNIQUE, is_local BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
+		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE official_loot_templates (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_loot_templates (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
-		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
+		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE color_sets (color_set_id TEXT COLLATE NOCASE PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
-		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Beacon.UserModID, Beacon.UserModName, True, True, Beacon.UserModWorkshopID, True)
+		  Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5);", Ark.UserContentPackUUID, Ark.UserContentPackName, True, True, True)
 		End Sub
 	#tag EndEvent
 
@@ -47,14 +47,14 @@ Inherits Beacon.DataSource
 		  Var Indexes() As Beacon.DataIndex
 		  Var Categories() As String = Ark.Categories
 		  For Each Category As String In Categories
-		    Indexes.Add(New Beacon.DataIndex(Category, True, "mod_id", "path"))
+		    Indexes.Add(New Beacon.DataIndex(Category, True, "content_pack_id", "path"))
 		    Indexes.Add(New Beacon.DataIndex(Category, False, "path"))
 		    Indexes.Add(New Beacon.DataIndex(Category, False, "class_string"))
-		    Indexes.Add(New Beacon.DataIndex(Category, False, "mod_id"))
+		    Indexes.Add(New Beacon.DataIndex(Category, False, "content_pack_id"))
 		    Indexes.Add(New Beacon.DataIndex(Category, False, "label"))
 		  Next
 		  
-		  Indexes.Add(New Beacon.DataIndex("maps", False, "mod_id"))
+		  Indexes.Add(New Beacon.DataIndex("maps", False, "content_pack_id"))
 		  Indexes.Add(New Beacon.DataIndex("loot_containers", False, "sort_order"))
 		  
 		  Indexes.Add(New Beacon.DataIndex("custom_presets", True, "user_id", "object_id"))
@@ -187,9 +187,44 @@ Inherits Beacon.DataSource
 		  Self.mCreatureCache = New Dictionary
 		  Self.mSpawnPointCache = New Dictionary
 		  Self.mLootContainerCache = New Dictionary
+		  Self.mConfigKeyCache = New Dictionary
 		  
 		  Super.Constructor()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks() As Ark.ContentPack()
+		  Var Packs() As Ark.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs ORDER BY name;")
+		  While Not Results.AfterLastRow
+		    Packs.Add(New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value)))
+		    Results.MoveToNextRow
+		  Wend
+		  Return Packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPackWithUUID(ContentPackUUID As String) As Ark.ContentPack
+		  If v4UUID.IsValid(ContentPackUUID) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE content_pack_id = ?1;", ContentPackUUID)
+		  If Results.RowCount = 1 Then
+		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value))
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPackWithWorkshopID(WorkshopID As Integer) As Ark.ContentPack
+		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs WHERE workshop_id IS NOT NULL AND workshop_id = ?1;", WorkshopID)
+		  If Results.RowCount = 1 Then
+		    Return New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value))
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -541,6 +576,90 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function RowSetToConfigKeys(Results As RowSet) As Ark.ConfigKey()
+		  Var Keys() As Ark.ConfigKey
+		  Try
+		    While Results.AfterLastRow = False
+		      Var ObjectID As String = Results.Column("object_id").StringValue
+		      If Self.mConfigKeyCache.HasKey(ObjectID) Then
+		        Results.MoveToNextRow
+		        Keys.Add(Self.mConfigKeyCache.Value(ObjectID))
+		        Continue
+		      End If
+		      
+		      Var Label As String = Results.Column("label").StringValue
+		      Var ConfigFile As String = Results.Column("file").StringValue
+		      Var ConfigHeader As String = Results.Column("header").StringValue
+		      Var ConfigKey As String = Results.Column("key").StringValue
+		      Var ValueType As Ark.ConfigKey.ValueTypes
+		      Select Case Results.Column("value_type").StringValue
+		      Case "Numeric"
+		        ValueType = Ark.ConfigKey.ValueTypes.TypeNumeric
+		      Case "Array"
+		        ValueType = Ark.ConfigKey.ValueTypes.TypeArray
+		      Case "Structure"
+		        ValueType = Ark.ConfigKey.ValueTypes.TypeStructure
+		      Case "Boolean"
+		        ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean
+		      Case "Text"
+		        ValueType = Ark.ConfigKey.ValueTypes.TypeText
+		      End Select
+		      Var MaxAllowed As NullableDouble
+		      If IsNull(Results.Column("max_allowed").Value) = False Then
+		        MaxAllowed = Results.Column("max_allowed").IntegerValue
+		      End If
+		      Var Description As String = Results.Column("description").StringValue
+		      Var DefaultValue As Variant = Results.Column("default_value").Value
+		      Var NitradoPath As NullableString
+		      Var NitradoFormat As Ark.ConfigKey.NitradoFormats = Ark.ConfigKey.NitradoFormats.Unsupported
+		      Var NitradoDeployStyle As Ark.ConfigKey.NitradoDeployStyles = Ark.ConfigKey.NitradoDeployStyles.Unsupported
+		      If IsNull(Results.Column("nitrado_format").Value) = False Then
+		        NitradoPath = Results.Column("nitrado_path").StringValue
+		        Select Case Results.Column("nitrado_format").StringValue
+		        Case "Line"
+		          NitradoFormat = Ark.ConfigKey.NitradoFormats.Line
+		        Case "Value"
+		          NitradoFormat = Ark.ConfigKey.NitradoFormats.Value
+		        End Select
+		        Select Case Results.Column("nitrado_deploy_style").StringValue
+		        Case "Guided"
+		          NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Guided
+		        Case "Expert"
+		          NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Expert
+		        Case "Both"
+		          NitradoDeployStyle = Ark.ConfigKey.NitradoDeployStyles.Both
+		        End Select
+		      End If
+		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Results.Column("native_editor_version").Value)
+		      Var UIGroup As NullableString = NullableString.FromVariant(Results.Column("ui_group").Value)
+		      Var CustomSort As NullableString = NullableString.FromVariant(Results.Column("custom_sort").Value)
+		      Var ModID As String = Results.Column("mod_id").StringValue
+		      
+		      Var Constraints As Dictionary
+		      If IsNull(Results.Column("constraints").Value) = False Then
+		        Try
+		          Var Parsed As Variant = Beacon.ParseJSON(Results.Column("constraints").StringValue)
+		          If IsNull(Parsed) = False And Parsed IsA Dictionary Then
+		            Constraints = Parsed
+		          End If
+		        Catch JSONErr As JSONException
+		        End Try
+		      End If
+		      
+		      Var Key As New Ark.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ModID)
+		      Self.mConfigKeyCache.Value(ObjectID) = Key
+		      Keys.Add(Key)
+		      Results.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		    Keys.ResizeTo(-1)
+		  End Try
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function RowSetToCreature(Results As RowSet) As Ark.Creature()
 		  Var Creatures() As Ark.Creature
 		  While Not Results.AfterLastRow
@@ -826,6 +945,71 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchForConfigKey(File As String, Header As String, Key As String, SortHuman As Boolean) As Ark.ConfigKey()
+		  Var Clauses() As String
+		  Var Values As New Dictionary
+		  Var Idx As Integer = 1
+		  
+		  If File = Beacon.ConfigFileGameUserSettings Then
+		    If Header.IsEmpty = False Then
+		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
+		      Values.Value(Idx) = Header
+		      Idx = Idx + 1
+		    Else
+		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
+		    End If
+		  Else
+		    If File.IsEmpty = False Then
+		      If File = "CommandLine" Then
+		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
+		      ElseIf File.IndexOf("*") > -1 Then
+		        Values.Value(Idx) = Self.EscapeLikeValue(File).ReplaceAll("*", "%")
+		        Clauses.Add("file LIKE ?" + Idx.ToString + " ESCAPE '\'")
+		        Idx = Idx + 1
+		      Else
+		        Values.Value(Idx) = File
+		        Clauses.Add("file = ?" + Idx.ToString)
+		        Idx = Idx + 1
+		      End If
+		    End If
+		    If Header.IsEmpty = False Then
+		      Values.Value(Idx) = Header
+		      Clauses.Add("header = ?" + Idx.ToString)
+		      Idx = Idx + 1
+		    End If
+		  End If
+		  If Key.IsEmpty = False Then
+		    If Key.IndexOf("*") > -1 Then
+		      Values.Value(Idx) = Self.EscapeLikeValue(Key).ReplaceAll("*", "%")
+		      Clauses.Add("key LIKE ?" + Idx.ToString + " ESCAPE '\'")
+		    Else
+		      Values.Value(Idx) = Key
+		      Clauses.Add("key = ?" + Idx.ToString)
+		    End If
+		    Idx = Idx + 1
+		  End If
+		  
+		  Var SQL As String = Self.ConfigKeySelectSQL
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
+		  End If
+		  If SortHuman Then
+		    SQL = SQL + " ORDER BY COALESCE(custom_sort, label)"
+		  Else
+		    SQL = SQL + " ORDER BY key"
+		  End If
+		  
+		  Var Results() As Ark.ConfigKey
+		  Try
+		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL, Values))
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SharedInstance(Create As Boolean = True) As Ark.DataSource
 		  If mInstance Is Nil And Create = True Then
 		    mInstance = New Ark.DataSource
@@ -834,6 +1018,10 @@ Inherits Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mConfigKeyCache As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCreatureCache As Dictionary
@@ -855,6 +1043,9 @@ Inherits Beacon.DataSource
 		Private mSpawnPointCache As Dictionary
 	#tag EndProperty
 
+
+	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C mod_id FROM ini_options", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C creatures.used_stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant

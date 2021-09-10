@@ -7,6 +7,12 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function OmniPurchased(Identity As Beacon.Identity) As Boolean
+		  Return Identity.IsOmniFlagged(Ark.OmniFlag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.Creature
 		  Var ObjectID, Path, ClassString As String
 		  
@@ -268,6 +274,15 @@ Protected Module Ark
 	#tag EndConstant
 
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"Ark", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UserContentPackUUID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
 	#tag EndConstant
 
 

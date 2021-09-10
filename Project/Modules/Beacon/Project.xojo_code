@@ -455,7 +455,7 @@ Protected Class Project
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SavedDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
+		Event ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
