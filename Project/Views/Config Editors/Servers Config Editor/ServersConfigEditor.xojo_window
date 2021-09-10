@@ -551,7 +551,7 @@ End
 		    End If
 		  End If
 		  
-		  For I As Integer = 0 To Me.LastRowIndex
+		  For I As Integer = Me.LastRowIndex DownTo 0
 		    If Me.Selected(I) Then
 		      Var Profile As Beacon.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
