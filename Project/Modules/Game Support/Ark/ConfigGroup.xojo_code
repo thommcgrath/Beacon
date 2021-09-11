@@ -87,43 +87,6 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Merge(Groups() As Ark.ConfigGroup) As Ark.ConfigGroup
-		  // First, make sure all groups are the same type
-		  
-		  If Groups.Count = 0 Then
-		    Return Nil
-		  End If
-		  
-		  If Groups(0).SupportsMerging = False Then
-		    Return Nil
-		  End If
-		  
-		  Var GroupName As String = Groups(0).InternalName
-		  For Idx As Integer = 1 To Groups.LastIndex
-		    If Groups(Idx) Is Nil Or Groups(Idx).InternalName <> GroupName Or Groups(Idx).SupportsMerging = False Then
-		      Return Nil
-		    End If
-		  Next Idx
-		  
-		  Var NewGroup As Ark.ConfigGroup
-		  For Idx As Integer = 0 To Groups.LastIndex
-		    If NewGroup Is Nil Then
-		      NewGroup = Ark.Configs.CreateInstance(GroupName)
-		    End If
-		    NewGroup.CopyFrom(Groups(Idx))
-		  Next Idx
-		  
-		  Return NewGroup
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Merge(ParamArray Groups() As Ark.ConfigGroup) As Ark.ConfigGroup
-		  Return Merge(Groups)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Migrate(SavedWithVersion As Integer, Project As Ark.Project)
 		  RaiseEvent Migrate(SavedWithVersion, Project)
 		End Sub
@@ -154,10 +117,10 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity, Project As Ark.Project) As Dictionary
+		Function SaveData(Identity As Beacon.Identity) As Dictionary
 		  Var SaveData As New Dictionary
 		  SaveData.Value("Implicit") = Self.mIsImplicit
-		  RaiseEvent WriteSaveData(SaveData, Project)
+		  RaiseEvent WriteSaveData(SaveData)
 		  Return SaveData
 		End Function
 	#tag EndMethod
@@ -196,7 +159,7 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteSaveData(SaveData As Dictionary, Project As Ark.Project)
+		Event WriteSaveData(SaveData As Dictionary)
 	#tag EndHook
 
 

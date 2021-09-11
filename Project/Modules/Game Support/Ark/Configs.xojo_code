@@ -1,6 +1,18 @@
 #tag Module
 Protected Module Configs
 	#tag Method, Flags = &h1
+		Protected Function CloneInstance(Group As Ark.ConfigGroup) As Ark.ConfigGroup
+		  If Group Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var NewInstance As Ark.ConfigGroup = CreateInstance(Group.InternalName)
+		  NewInstance.CopyFrom(Group)
+		  Return NewInstance
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ConfigUnlocked(Config As Ark.ConfigGroup, Identity As Beacon.Identity) As Boolean
 		  Return ConfigUnlocked(Config.InternalName, Identity)
 		End Function
@@ -123,6 +135,53 @@ Protected Module Configs
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function Merge(Groups() As Ark.ConfigGroup, ZeroHasPriority As Boolean) As Ark.ConfigGroup
+		  // First, make sure all groups are the same type
+		  
+		  If Groups.Count = 0 Then
+		    Return Nil
+		  ElseIf Groups.Count = 1 Then
+		    Return CloneInstance(Groups(0))
+		  End If
+		  
+		  Var MergeSupported As Boolean = Groups(0).SupportsMerging
+		  Var GroupName As String = Groups(0).InternalName
+		  For Idx As Integer = 1 To Groups.LastIndex
+		    If Groups(Idx) Is Nil Or Groups(Idx).InternalName <> GroupName Then
+		      Return Nil
+		    End If
+		  Next Idx
+		  
+		  Var NewGroup As Ark.ConfigGroup
+		  If ZeroHasPriority Then
+		    If MergeSupported Then
+		      For Idx As Integer = Groups.LastIndex DownTo 0
+		        If NewGroup Is Nil Then
+		          NewGroup = CreateInstance(GroupName)
+		        End If
+		        NewGroup.CopyFrom(Groups(Idx))
+		      Next Idx
+		    Else
+		      NewGroup = CloneInstance(Groups(0))
+		    End If
+		  Else
+		    If MergeSupported Then
+		      For Idx As Integer = 0 To Groups.LastIndex
+		        If NewGroup Is Nil Then
+		          NewGroup = CreateInstance(GroupName)
+		        End If
+		        NewGroup.CopyFrom(Groups(Idx))
+		      Next Idx
+		    Else
+		      NewGroup = CloneInstance(Groups(Groups.LastIndex))
+		    End If
+		  End If
+		  
+		  Return NewGroup
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mConfigOmniCache As Dictionary
@@ -178,5 +237,47 @@ Protected Module Configs
 	#tag EndConstant
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Module
 #tag EndModule
