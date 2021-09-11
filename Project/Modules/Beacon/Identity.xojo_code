@@ -62,9 +62,9 @@ Protected Class Identity
 		  End Try
 		  
 		  Try
-		    Self.mPurchasedOmniVersion = Dict.Lookup("omni_version", 0)
+		    Self.mOmniFlags = Dict.Lookup("omni_version", 0)
 		  Catch Err As RuntimeException
-		    Self.mPurchasedOmniVersion = 0
+		    Self.mOmniFlags = 0
 		  End Try
 		  
 		  Try
@@ -135,7 +135,7 @@ Protected Class Identity
 		  Dict.Value("Public") = Self.mPublicKey
 		  Dict.Value("Private") = Self.mPrivateKey
 		  Dict.Value("Version") = 2
-		  Dict.Value("Omni Version") = Self.mPurchasedOmniVersion
+		  Dict.Value("Omni Version") = Self.mOmniFlags
 		  Dict.Value("Username") = Self.mUsername
 		  Dict.Value("Banned") = Self.mBanned
 		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
@@ -219,7 +219,7 @@ Protected Class Identity
 		  Var Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
 		  
 		  If Source.HasKey("Omni Version") Then
-		    Identity.mPurchasedOmniVersion = Source.Value("Omni Version")
+		    Identity.mOmniFlags = Source.Value("Omni Version")
 		  End If
 		  
 		  If Source.HasKey("Signature") Then
@@ -273,6 +273,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsOmniFlagged(Value As Integer) As Boolean
+		  Return (Self.mOmniFlags And Value) = Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function IsUserDictionary(Dict As Dictionary) As Boolean
 		  If Dict = Nil Then
 		    Return False
@@ -283,8 +289,8 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OmniVersion() As Integer
-		  Return Self.mPurchasedOmniVersion
+		Function OmniFlags() As Integer
+		  Return Self.mOmniFlags
 		End Function
 	#tag EndMethod
 
@@ -306,9 +312,9 @@ Protected Class Identity
 		  End If
 		  
 		  // Newer sorts after older
-		  If Self.mPurchasedOmniVersion > Other.mPurchasedOmniVersion Then
+		  If Self.mOmniFlags > Other.mOmniFlags Then
 		    Return 1
-		  ElseIf Self.mPurchasedOmniVersion < Other.mPurchasedOmniVersion Then
+		  ElseIf Self.mOmniFlags < Other.mOmniFlags Then
 		    Return -1
 		  End If
 		  
@@ -435,7 +441,7 @@ Protected Class Identity
 		    Var Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
 		    Fields(1) = Self.mIdentifier.Lowercase
-		    Fields(2) = Self.mPurchasedOmniVersion.ToString(Locale.Raw, "#")
+		    Fields(2) = Self.mOmniFlags.ToString(Locale.Raw, "#")
 		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
 		    
 		    If Self.mExpirationString <> "" Then
@@ -456,7 +462,7 @@ Protected Class Identity
 		  End If
 		  
 		  Self.mUsername = ""
-		  Self.mPurchasedOmniVersion = 0
+		  Self.mOmniFlags = 0
 		End Sub
 	#tag EndMethod
 
@@ -496,6 +502,10 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOmniFlags As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mParentAccountID As v4UUID
 	#tag EndProperty
 
@@ -505,10 +515,6 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mPublicKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPurchasedOmniVersion As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

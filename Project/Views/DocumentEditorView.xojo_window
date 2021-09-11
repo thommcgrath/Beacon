@@ -1249,7 +1249,7 @@ End
 			  If Self.CurrentPanel <> Nil Then
 			    Var RequiresPurchase As Boolean
 			    If Value.Length > 0 Then
-			      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Value, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
+			      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Value, If((App.IdentityManager.CurrentIdentity Is Nil) = False, App.IdentityManager.CurrentIdentity.OmniFlags, 0))
 			    End If
 			    Var TopOffset As Integer
 			    If RequiresPurchase Then

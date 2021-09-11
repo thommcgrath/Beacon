@@ -285,7 +285,7 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
-		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
+		  Var Flags As Integer = App.IdentityManager.CurrentIdentity.OmniFlags
 		  Var Configs() As Beacon.ConfigGroup
 		  For Each ConfigName As String In ConfigNames
 		    If ConfigName = BeaconConfigs.NameDifficulty Or ConfigName = BeaconConfigs.NameCustomContent Then
@@ -293,7 +293,7 @@ Inherits Beacon.Thread
 		      Continue For ConfigName
 		    End If
 		    
-		    If BeaconConfigs.ConfigPurchased(ConfigName, PurchasedOmniVersion) = False Then
+		    If BeaconConfigs.ConfigPurchased(ConfigName, Flags) = False Then
 		      // Do not import code for groups that the user has not purchased
 		      Continue For ConfigName
 		    End If

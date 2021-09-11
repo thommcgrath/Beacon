@@ -141,7 +141,7 @@ End
 		      Continue
 		    End If
 		    
-		    If BeaconConfigs.ConfigPurchased(ConfigName, Identity.OmniVersion) = False Then
+		    If BeaconConfigs.ConfigPurchased(ConfigName, Identity.OmniFlags) = False Then
 		      // Do not import code for groups that the user has not purchased
 		      Continue
 		    End If
