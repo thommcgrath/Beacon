@@ -1624,11 +1624,11 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Beacon.ConfigGroup()
-		  Var OmniVersion As Integer = Identity.OmniVersion
+		  Var Flags As Integer = Identity.OmniFlags
 		  Var Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  Var ExcludedConfigs() As Beacon.ConfigGroup
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    If Config.Purchased(OmniVersion) = False Then
+		    If Config.Purchased(Flags) = False Then
 		      ExcludedConfigs.Add(Config)
 		    End If
 		  Next

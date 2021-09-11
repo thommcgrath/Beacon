@@ -454,6 +454,19 @@ End
 		  Self.UserValueChange(Self.Value)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function MouseWheel(X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  #Pragma Unused DeltaX
+		  #Pragma Unused DeltaY
+		  
+		  #if TargetWindows
+		    // Capture the scroll wheel to prevent accidental changing while scrolling the settings list
+		    Return True
+		  #endif
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events mInputMenu
 	#tag Event
@@ -464,6 +477,19 @@ End
 		  
 		  Self.UserValueChange(Self.Value)
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseWheel(X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  #Pragma Unused DeltaX
+		  #Pragma Unused DeltaY
+		  
+		  #if TargetWindows
+		    // Capture the scroll wheel to prevent accidental changing while scrolling the settings list
+		    Return True
+		  #endif
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

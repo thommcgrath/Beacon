@@ -295,12 +295,6 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "OmniFlags" )  Function OmniVersion() As Integer
-		  Return Self.mOmniFlags
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Identity) As Integer
 		  If Other = Nil Then
 		    Return 1

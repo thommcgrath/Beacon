@@ -57,20 +57,20 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ConfigPurchased(Config As Beacon.ConfigGroup, PurchasedVersion As Integer) As Boolean
-		  Return ConfigPurchased(Config.ConfigName, PurchasedVersion)
+		Protected Function ConfigPurchased(Config As Beacon.ConfigGroup, Flags As Integer) As Boolean
+		  Return ConfigPurchased(Config.ConfigName, Flags)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ConfigPurchased(ConfigName As String, PurchasedVersion As Integer) As Boolean
-		  Var RequiredVersion As Integer = 0
+		Protected Function ConfigPurchased(ConfigName As String, Flags As Integer) As Boolean
+		  Var RequiredFlag As Integer = 0
 		  Select Case ConfigName
 		  Case NameCraftingCosts, NameDinoAdjustments, NameEngramControl, NameExperienceCurves, NameHarvestRates, NameSpawnPoints, NameStackSizes
-		    RequiredVersion = 1
+		    RequiredFlag = 1
 		  End Select
 		  
-		  Return PurchasedVersion >= RequiredVersion
+		  Return RequiredFlag = 0 Or (Flags And RequiredFlag) = RequiredFlag
 		End Function
 	#tag EndMethod
 
@@ -210,8 +210,8 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Purchased(Extends Config As Beacon.ConfigGroup, PurchasedVersion As Integer) As Boolean
-		  Return ConfigPurchased(Config.ConfigName, PurchasedVersion)
+		Function Purchased(Extends Config As Beacon.ConfigGroup, Flags As Integer) As Boolean
+		  Return ConfigPurchased(Config.ConfigName, Flags)
 		End Function
 	#tag EndMethod
 

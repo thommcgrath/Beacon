@@ -455,7 +455,7 @@ End
 		  #Pragma Unused SafeArea
 		  
 		  Var TitleIcon As Picture
-		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then
+		  If (App.IdentityManager.CurrentIdentity Is Nil) = False And App.IdentityManager.CurrentIdentity.OmniFlags > 0 Then
 		    TitleIcon = If(Color.IsDarkMode, LogoOmniDark, LogoOmniColor)
 		  Else
 		    TitleIcon = If(Color.IsDarkMode, LogoDark, LogoColor)

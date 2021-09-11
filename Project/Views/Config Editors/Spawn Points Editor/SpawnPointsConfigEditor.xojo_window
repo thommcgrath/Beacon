@@ -623,7 +623,7 @@ End
 		  
 		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(SaveData, False)
 		  
-		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.NameSpawnPoints, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.NameSpawnPoints, App.IdentityManager.CurrentIdentity.OmniFlags) Then
 		    Return
 		  End If
 		  

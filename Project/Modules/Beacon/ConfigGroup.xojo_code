@@ -68,7 +68,7 @@ Protected Class ConfigGroup
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Var Values() As Beacon.ConfigValue
 		  
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniFlags) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
 		    Var Generated() As Beacon.ConfigValue = RaiseEvent GenerateConfigValues(SourceDocument, Profile)
 		    If (Generated Is Nil) = False Then
 		      Values = Generated
@@ -103,7 +103,7 @@ Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function Issues(Document As Beacon.Document, Identity As Beacon.Identity) As Beacon.Issue()
 		  Var Arr() As Beacon.Issue
-		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniFlags) Then
 		    RaiseEvent DetectIssues(Document, Arr)
 		  End If
 		  Return Arr
