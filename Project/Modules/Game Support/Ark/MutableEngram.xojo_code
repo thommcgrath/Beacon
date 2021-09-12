@@ -110,7 +110,7 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Recipe(Assigns Ingredients() As Ark.RecipeIngredient)
+		Sub Recipe(Assigns Ingredients() As Ark.CraftingCostIngredient)
 		  If Ingredients Is Nil Then
 		    Self.mIngredients.ResizeTo(-1)
 		    Self.mHasLoadedIngredients = True
@@ -194,7 +194,7 @@ Implements Ark.MutableBlueprint
 		  End If
 		  
 		  If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
-		    Self.mIngredients = Ark.RecipeIngredient.FromVariant(Dict.Value("recipe"), Nil)
+		    Self.mIngredients = Ark.CraftingCostIngredient.FromVariant(Dict.Value("recipe"), Nil)
 		    Self.mHasLoadedIngredients = True
 		  Else
 		    Self.mIngredients.ResizeTo(-1)

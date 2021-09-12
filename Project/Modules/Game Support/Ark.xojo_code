@@ -306,6 +306,46 @@ Protected Module Ark
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMap(Extends Blueprint As Ark.Blueprint, Map As Ark.Map) As Boolean
+		  Return Map Is Nil Or Blueprint.ValidForMask(Map.Mask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMap(Extends Blueprint As Ark.MutableBlueprint, Map As Ark.Map, Assigns Value As Boolean)
+		  If (Map Is Nil) = False Then
+		    Blueprint.ValidForMask(Map.Mask) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForMask(Extends Blueprint As Ark.Blueprint, Mask As UInt64) As Boolean
+		  Return Mask = CType(0, UInt64) Or (Blueprint.Availability And Mask) > CType(0, UInt64)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMask(Extends Blueprint As Ark.MutableBlueprint, Mask As UInt64, Assigns Value As Boolean)
+		  Var Availability As UInt64 = Blueprint.Availability
+		  If Value Then
+		    Availability = Availability Or Mask
+		  Else
+		    Availability = Availability And Not Mask
+		  End If
+		  If Availability <> Blueprint.Availability Then
+		    Blueprint.Availability = Availability
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForProject(Extends Blueprint As Ark.Blueprint, Project As Ark.Project) As Boolean
+		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ModID)
+		End Function
+	#tag EndMethod
+
 
 	#tag Constant, Name = CategoryCreatures, Type = String, Dynamic = False, Default = \"creatures", Scope = Protected
 	#tag EndConstant

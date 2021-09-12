@@ -590,12 +590,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LoadIngredientsForEngram(Engram As Ark.Engram) As Ark.RecipeIngredient()
-		  Var Ingredients() As Ark.RecipeIngredient
+		Function LoadIngredientsForEngram(Engram As Ark.Engram) As Ark.CraftingCostIngredient()
+		  Var Ingredients() As Ark.CraftingCostIngredient
 		  If (Engram Is Nil) = False Then
 		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID)
 		    If Results.RowCount = 1 Then
-		      Ingredients = Ark.RecipeIngredient.FromVariant(Results.Column("recipe").Value, Nil)
+		      Ingredients = Ark.CraftingCostIngredient.FromVariant(Results.Column("recipe").Value, Nil)
 		    End If
 		  End If
 		  Return Ingredients

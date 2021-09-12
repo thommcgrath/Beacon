@@ -1,5 +1,5 @@
 #tag Class
-Protected Class RecipeIngredient
+Protected Class CraftingCostIngredient
 	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  Return Self.mEngram.ClassString
@@ -33,7 +33,7 @@ Protected Class RecipeIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary, Mods As Beacon.StringList) As Ark.RecipeIngredient
+		Shared Function FromDictionary(Dict As Dictionary, Mods As Beacon.StringList) As Ark.CraftingCostIngredient
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If
@@ -47,7 +47,7 @@ Protected Class RecipeIngredient
 		      Var Quantity As Integer = Dict.Value("Quantity")
 		      Var Exact As Boolean = Dict.Value("Exact")
 		      
-		      Return New Ark.RecipeIngredient(Reference, Quantity, Exact)
+		      Return New Ark.CraftingCostIngredient(Reference, Quantity, Exact)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
@@ -57,7 +57,7 @@ Protected Class RecipeIngredient
 		      Var Quantity As Integer = Dict.Value("quantity")
 		      Var Exact As Boolean = Dict.Value("exact")
 		      
-		      Return New Ark.RecipeIngredient(Engram, Quantity, Exact)
+		      Return New Ark.CraftingCostIngredient(Engram, Quantity, Exact)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
@@ -70,8 +70,8 @@ Protected Class RecipeIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromVariant(Value As Variant, Mods As Beacon.StringList) As Ark.RecipeIngredient()
-		  Var Ingredients() As Ark.RecipeIngredient
+		Shared Function FromVariant(Value As Variant, Mods As Beacon.StringList) As Ark.CraftingCostIngredient()
+		  Var Ingredients() As Ark.CraftingCostIngredient
 		  
 		  If IsNull(Value) Then
 		    Return Ingredients
@@ -79,7 +79,7 @@ Protected Class RecipeIngredient
 		  
 		  If Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
 		    // It's just a dictionary
-		    Var Ingredient As Ark.RecipeIngredient = Ark.RecipeIngredient.FromDictionary(Value, Mods)
+		    Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Value, Mods)
 		    If (Ingredient Is Nil) = False Then
 		      Ingredients.Add(Ingredient)
 		    End If
@@ -88,7 +88,7 @@ Protected Class RecipeIngredient
 		    Try
 		      Var Parsed() As Variant = Beacon.ParseJSON(Value.StringValue)
 		      For Each Dict As Dictionary In Parsed
-		        Var Ingredient As Ark.RecipeIngredient = Ark.RecipeIngredient.FromDictionary(Dict, Mods)
+		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Mods)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.Add(Ingredient)
 		        End If
@@ -113,7 +113,7 @@ Protected Class RecipeIngredient
 		    
 		    For Each Dict As Dictionary In Dicts
 		      Try
-		        Var Ingredient As Ark.RecipeIngredient = Ark.RecipeIngredient.FromDictionary(Dict, Mods)
+		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Mods)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.Add(Ingredient)
 		        End If
@@ -123,6 +123,19 @@ Protected Class RecipeIngredient
 		  End If
 		  
 		  Return Ingredients
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Ark.CraftingCostIngredient) As Integer
+		  If Other Is Nil Then
+		    Return 1
+		  End If
+		  
+		  Var MyKey As String = Self.mEngram.ObjectID + ":" + Self.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Self.mRequireExact, "True", "False")
+		  Var OtherKey As String = Other.mEngram.ObjectID + ":" + Other.mQuantity.ToString(Locale.Raw, "00000000") + ":" + If(Other.mRequireExact, "True", "False")
+		  
+		  Return MyKey.Compare(OtherKey, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -159,9 +172,9 @@ Protected Class RecipeIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ToJSON(Ingredients() As Ark.RecipeIngredient, Pretty As Boolean = False) As String
+		Shared Function ToJSON(Ingredients() As Ark.CraftingCostIngredient, Pretty As Boolean = False) As String
 		  Var Dicts() As Dictionary
-		  For Each Ingredient As Ark.RecipeIngredient In Ingredients
+		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
 		    Dicts.Add(Ingredient.ToDictionary)
 		  Next
 		  Return Beacon.GenerateJSON(Dicts, Pretty)

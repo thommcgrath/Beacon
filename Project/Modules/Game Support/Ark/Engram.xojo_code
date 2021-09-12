@@ -294,7 +294,7 @@ Implements Ark.Blueprint
 		    Dict.Value("recipe") = Nil
 		  Else
 		    Var Ingredients() As Dictionary
-		    For Each Ingredient As Ark.RecipeIngredient In Self.mIngredients
+		    For Each Ingredient As Ark.CraftingCostIngredient In Self.mIngredients
 		      Ingredients.Add(Ingredient.Pack)
 		    Next
 		    Dict.Value("recipe") = Ingredients
@@ -311,15 +311,15 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Recipe() As Ark.RecipeIngredient()
+		Function Recipe() As Ark.CraftingCostIngredient()
 		  // To prevent recursion, engrams only load ingredients on demand
 		  If Self.mHasLoadedIngredients = False Then
 		    Self.mIngredients = Ark.DataSource.SharedInstance.LoadIngredientsForEngram(Self)
 		    Self.mHasLoadedIngredients = True
 		  End If
 		  
-		  Var Ingredients() As Ark.RecipeIngredient
-		  For Each Ingredient As Ark.RecipeIngredient In Self.mIngredients
+		  Var Ingredients() As Ark.CraftingCostIngredient
+		  For Each Ingredient As Ark.CraftingCostIngredient In Self.mIngredients
 		    Ingredients.Add(Ingredient)
 		  Next
 		  Return Ingredients
@@ -379,7 +379,7 @@ Implements Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIngredients() As Ark.RecipeIngredient
+		Protected mIngredients() As Ark.CraftingCostIngredient
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
