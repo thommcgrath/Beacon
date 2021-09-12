@@ -194,6 +194,33 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetConfigKey(KeyUUID As String) As Ark.ConfigKey
+		  If Self.mConfigKeyCache.HasKey(KeyUUID) Then
+		    Return Self.mConfigKeyCache.Value(KeyUUID)
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect(Self.ConfigKeySelectSQL + " WHERE object_id = ?1;", KeyUUID)
+		  If Rows.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Var Results() As Ark.ConfigKey = Self.RowSetToConfigKeys(Rows)
+		  If Results.Count = 1 Then
+		    Return Results(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigKey(File As String, Header As String, Key As String) As Ark.ConfigKey
+		  Var Results() As Ark.ConfigKey = Self.SearchForConfigKey(File, Header, Key, False)
+		  If Results.Count = 1 Then
+		    Return Results(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetContentPacks() As Ark.ContentPack()
 		  Var Packs() As Ark.ContentPack
 		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs ORDER BY name;")

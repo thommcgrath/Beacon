@@ -42,6 +42,23 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GenerateConfigValues(Project As Ark.Project, Identity As Beacon.Identity, Profile As Ark.ServerProfile) As Ark.ConfigValue()
+		  Var Values() As Ark.ConfigValue
+		  
+		  If Ark.Configs.ConfigUnlocked(Self, Identity) And (Identity.IsBanned = False Or Self.RunWhenBanned = True) Then
+		    Var Generated() As Ark.ConfigValue = RaiseEvent GenerateConfigValues(Project, Profile)
+		    If (Generated Is Nil) = False Then
+		      Values = Generated
+		    Else
+		      App.Log("Warning: " + Self.InternalName + " did not generate any configs.")
+		    End If
+		  End If
+		  
+		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  
 		End Function
@@ -117,7 +134,7 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(Identity As Beacon.Identity) As Dictionary
+		Function SaveData() As Dictionary
 		  Var SaveData As New Dictionary
 		  SaveData.Value("Implicit") = Self.mIsImplicit
 		  RaiseEvent WriteSaveData(SaveData)
@@ -140,6 +157,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event CopyFrom(Other As Ark.ConfigGroup)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GenerateConfigValues(Project As Ark.Project, Profile As Ark.ServerProfile) As Ark.ConfigValue()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

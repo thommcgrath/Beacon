@@ -606,6 +606,7 @@ Class=StatMultipliers;Modules/Game Support/Ark/Configs/StatMultipliers.xojo_code
 Class=ConfigSetState;Modules/Game Support/Ark/ConfigSetState.xojo_code;&h0000000021C52FFF;&h0000000016B997FF;false
 Class=ServerProfile;Modules/Game Support/Ark/ServerProfile.xojo_code;&h000000002A2B57FF;&h0000000016B997FF;false
 Class=ArkML;Modules/Game Support/Ark/ArkML.xojo_code;&h00000000210CFFFF;&h0000000016B997FF;false
+Class=ConfigOrganizer;Modules/Game Support/Ark/ConfigOrganizer.xojo_code;&h000000002EF3CFFF;&h0000000016B997FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5

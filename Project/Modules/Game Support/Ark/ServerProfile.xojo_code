@@ -761,7 +761,7 @@ Protected Class ServerProfile
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Beacon.ServerProfile.Colors"
+			Type="Ark.ServerProfile.Colors"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - None"

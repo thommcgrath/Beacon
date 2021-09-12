@@ -237,6 +237,55 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Sort(Extends Values() As Ark.ConfigValue)
+		  If Values.Count <= 1 Then
+		    Return
+		  End If
+		  
+		  Var Sorts() As String
+		  Sorts.ResizeTo(Values.LastIndex)
+		  For Idx As Integer = 0 To Sorts.LastIndex
+		    Sorts(Idx) = Values(Idx).SortKey
+		  Next
+		  Sorts.SortWith(Values)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Sort(Extends Containers() As Ark.LootContainer)
+		  Var Bound As Integer = Containers.LastIndex
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
+		  Var Order() As String
+		  Order.ResizeTo(Bound)
+		  For I As Integer = 0 To Bound
+		    Order(I) = Containers(I).SortValue.ToString(Locale.Raw, "0000") + Containers(I).Label + Containers(I).ClassString
+		  Next
+		  
+		  Order.SortWith(Containers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Sort(Extends Qualities() As Ark.Quality)
+		  Var Bound As Integer = Qualities.LastIndex
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
+		  Var Order() As Double
+		  Order.ResizeTo(Bound)
+		  For I As Integer = 0 To Bound
+		    Order(I) = Qualities(I).BaseValue
+		  Next
+		  
+		  Order.SortWith(Qualities)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function TagString(Extends Blueprint As Ark.Blueprint) As String
 		  Var Tags() As String = Blueprint.Tags
 		  If Tags.IndexOf("object") = -1 Then
@@ -270,7 +319,19 @@ Protected Module Ark
 	#tag Constant, Name = CategorySpawnPoints, Type = String, Dynamic = False, Default = \"spawn_points", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = ConfigFileGame, Type = String, Dynamic = False, Default = \"Game.ini", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ConfigFileGameUserSettings, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = FullName, Type = String, Dynamic = False, Default = \"Ark: Survival Evolved", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderServerSettings, Type = String, Dynamic = False, Default = \"ServerSettings", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = HeaderShooterGame, Type = String, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = Identifier, Type = String, Dynamic = False, Default = \"Ark", Scope = Protected

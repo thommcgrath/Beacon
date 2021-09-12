@@ -131,7 +131,50 @@ Protected Module Configs
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(InternalName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, Project As Ark.Project) As Ark.ConfigGroup
+		  // Why not just pass the project itself to these methods? Because we don't want it to be possible
+		  // for the creation of an instance to modify the project. MapMask and ContentPacks are immutable,
+		  // but the difficulty object is not, so we'll pass the raw value instead.
 		  
+		  Var DifficultyValue As Double = Project.Difficulty.DifficultyValue
+		  
+		  Select Case InternalName
+		  Case Ark.Configs.NameBreedingMultipliers
+		    Return Ark.Configs.BreedingMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameCraftingCosts
+		    // Return Ark.Configs.CraftingCosts.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameCustomContent
+		    Return Nil
+		  Case Ark.Configs.NameDayCycle
+		    Return Ark.Configs.DayCycle.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameDifficulty
+		    Return Nil
+		  Case Ark.Configs.NameDinoAdjustments
+		    // Return Ark.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameEngramControl
+		    // Return Ark.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameExperienceCurves
+		    // Return Ark.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameHarvestRates
+		    // Return Ark.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameLootDrops
+		    // Return Ark.Configs.LootDrops.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameSpawnPoints
+		    // Return Ark.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameStackSizes
+		    // Return Ark.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameStatLimits
+		    // Return Ark.Configs.StatLimits.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameStatMultipliers
+		    // Return Ark.Configs.StatMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameSpoilTimers
+		    // Return Ark.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Case Ark.Configs.NameOtherSettings
+		    // Return Ark.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		  Else
+		    Var Err As New FunctionNotFoundException
+		    Err.Message = "Config group """ + InternalName + """ is not known."
+		    Raise Err
+		  End Select
 		End Function
 	#tag EndMethod
 
