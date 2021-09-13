@@ -1037,6 +1037,22 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchForEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Engram()
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags)
+		  Var Engrams() As Ark.Engram
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.Engram Then
+		      Engrams.Add(Ark.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SharedInstance(Create As Boolean = True) As Ark.DataSource
 		  If mInstance Is Nil And Create = True Then
 		    mInstance = New Ark.DataSource

@@ -161,11 +161,11 @@ Protected Module Configs
 		  Case Ark.Configs.NameSpawnPoints
 		    // Return Ark.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStackSizes
-		    // Return Ark.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStatLimits
 		    Return Ark.Configs.StatLimits.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStatMultipliers
-		    // Return Ark.Configs.StatMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.StatMultipliers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameSpoilTimers
 		    Return Ark.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameOtherSettings
