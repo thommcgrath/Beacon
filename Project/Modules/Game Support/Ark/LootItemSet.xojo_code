@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSet
-Implements Beacon.Countable, Iterable
+Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h21
 		Private Shared Sub ComputeSimulationFigures(Pool() As Ark.LootItemSetEntry, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Dictionary)
 		  Weights.ResizeTo(-1)
@@ -157,7 +157,7 @@ Implements Beacon.Countable, Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromTemplate(Template As Ark.LootTemplate, ForLootContainer As Ark.LootContainer, Mask As UInt64, Mods As Beacon.StringList) As Ark.LootItemSet
+		Shared Function FromTemplate(Template As Ark.LootTemplate, ForLootContainer As Ark.LootContainer, Mask As UInt64, ContentPacks As Beacon.StringList) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  Set.Label = Template.Label
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
@@ -181,7 +181,7 @@ Implements Beacon.Countable, Iterable
 		  Var Qualities() As Ark.Quality = Ark.Qualities.All
 		  
 		  For Each TemplateEntry As Ark.LootTemplateEntry In Template
-		    If TemplateEntry.ValidForMask(Mask) = False Or TemplateEntry.SafeForMods(Mods) = False Then
+		    If TemplateEntry.ValidForMask(Mask) = False Or TemplateEntry.SafeForContentPacks(ContentPacks) = False Then
 		      Continue
 		    End If
 		    

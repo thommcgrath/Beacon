@@ -609,6 +609,7 @@ Class=ArkML;Modules/Game Support/Ark/ArkML.xojo_code;&h00000000210CFFFF;&h000000
 Class=ConfigOrganizer;Modules/Game Support/Ark/ConfigOrganizer.xojo_code;&h000000002EF3CFFF;&h0000000016B997FF;false
 Class=CraftingCost;Modules/Game Support/Ark/CraftingCost.xojo_code;&h000000007F198FFF;&h0000000016B997FF;false
 Class=MutableCraftingCost;Modules/Game Support/Ark/MutableCraftingCost.xojo_code;&h0000000048707FFF;&h0000000016B997FF;false
+Class=PlayerLevelData;Modules/Game Support/Ark/PlayerLevelData.xojo_code;&h0000000037323FFF;&h0000000016B997FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5

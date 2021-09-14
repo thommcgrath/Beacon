@@ -151,9 +151,9 @@ Protected Module Configs
 		  Case Ark.Configs.NameDinoAdjustments
 		    // Return Ark.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameEngramControl
-		    // Return Ark.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameExperienceCurves
-		    // Return Ark.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameHarvestRates
 		    Return Ark.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameLootDrops

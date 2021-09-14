@@ -31,6 +31,24 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentPackName(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mModName = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackUUID(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mModID = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub EntryString(Assigns Value As String)
 		  Self.mEngramEntryString = Value.Trim
 		  Self.Modified = True
@@ -71,24 +89,6 @@ Implements Ark.MutableBlueprint
 		  // Part of the Ark.MutableBlueprint interface.
 		  
 		  Self.mLabel = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mModID = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mModName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

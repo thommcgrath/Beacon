@@ -45,6 +45,24 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentPackName(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mModName = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackUUID(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mModID = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Experimental(Assigns Value As Boolean)
 		  Self.mExperimental = Value
 		  Self.Modified = True
@@ -93,24 +111,6 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub MinItemSets(Assigns Value As Integer)
 		  Self.mMinItemSets = Max(Value, 0)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mModID = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mModName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

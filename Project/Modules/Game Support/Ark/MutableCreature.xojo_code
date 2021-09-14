@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MutableCreature
 Inherits Ark.Creature
-Implements  Ark.MutableBlueprint
+Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub AddStatValue(Values As Ark.CreatureStatValue)
 		  If Values Is Nil Then
@@ -91,6 +91,20 @@ Implements  Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentPackName(Assigns Value As String)
+		  Self.mModName = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackUUID(Assigns Value As String)
+		  Self.mModID = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.Creature
 		  // Part of the Ark.Blueprint interface.
 		  
@@ -147,20 +161,6 @@ Implements  Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub MinMatingInterval(Assigns Value As Double)
 		  Self.mMinMatingInterval = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
-		  Self.mModID = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As String)
-		  Self.mModName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

@@ -1,6 +1,6 @@
 #tag Interface
 Protected Interface MutableBlueprint
-Implements  Ark.Blueprint
+Implements Ark.Blueprint
 	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
 		  
@@ -14,6 +14,18 @@ Implements  Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentPackName(Assigns Value As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackUUID(Assigns Value As String)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  
 		End Sub
@@ -21,18 +33,6 @@ Implements  Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod

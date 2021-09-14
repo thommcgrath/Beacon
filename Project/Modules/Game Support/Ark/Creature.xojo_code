@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Creature
-Implements  Ark.Blueprint
+Implements Ark.Blueprint
 	#tag Method, Flags = &h0
 		Function AllStatValues() As Ark.CreatureStatValue()
 		  Var Values() As Ark.CreatureStatValue
@@ -86,6 +86,22 @@ Implements  Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackName() As String
+		  Return Self.mModName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackUUID() As String
+		  If Self.mModID Is Nil Then
+		    Return ""
+		  End If
+		  
+		  Return Self.mModID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.Creature
 		  Var Creature As New Ark.Creature
 		  Creature.mModID = Beacon.UserModID
@@ -164,16 +180,6 @@ Implements  Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
-		  If Self.mModID Is Nil Then
-		    Return ""
-		  End If
-		  
-		  Return Self.mModID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
 		End Function
@@ -183,12 +189,6 @@ Implements  Ark.Blueprint
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModName() As String
-		  Return Self.mModName
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

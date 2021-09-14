@@ -108,7 +108,7 @@ Protected Class BlueprintReference
 	#tag Method, Flags = &h0
 		Function ModID() As String
 		  If (Self.mBlueprint Is Nil) = False Then
-		    Return Self.mBlueprint.ModID
+		    Return Self.mBlueprint.ContentPackUUID
 		  Else
 		    Return Self.mSaveData.Value("ModUUID")
 		  End If
@@ -209,7 +209,7 @@ Protected Class BlueprintReference
 		    Dict.Value("UUID") = Self.mBlueprint.ObjectID
 		    Dict.Value("Path") = Self.mBlueprint.Path
 		    Dict.Value("Class") = Self.mBlueprint.ClassString
-		    Dict.Value("ModUUID") = Self.mBlueprint.ModID
+		    Dict.Value("ModUUID") = Self.mBlueprint.ContentPackUUID
 		    Self.mSaveData = Dict
 		  End If
 		  Return Self.mSaveData

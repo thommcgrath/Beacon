@@ -42,6 +42,24 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentPackName(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mModName = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ContentPackUUID(Assigns Value As String)
+		  // Part of the Ark.MutableBlueprint interface.
+		  
+		  Self.mModID = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.SpawnPoint
 		  Return New Ark.SpawnPoint(Self)
 		End Function
@@ -122,24 +140,6 @@ Implements Ark.MutableBlueprint
 		    Self.mMode = Value
 		    Self.Modified = True
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mModID = Value
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As String)
-		  // Part of the Ark.MutableBlueprint interface.
-		  
-		  Self.mModName = Value
-		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 

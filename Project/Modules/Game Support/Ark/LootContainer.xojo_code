@@ -83,6 +83,26 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackName() As String
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return Self.mModName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackUUID() As String
+		  // Part of the Ark.Blueprint interface.
+		  
+		  If Self.mModID Is Nil Then
+		    Return ""
+		  End If
+		  
+		  Return Self.mModID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  // Part of the Beacon.Countable interface.
 		  
@@ -189,18 +209,6 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
-		  // Part of the Ark.Blueprint interface.
-		  
-		  If Self.mModID Is Nil Then
-		    Return ""
-		  End If
-		  
-		  Return Self.mModID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
 		End Function
@@ -210,14 +218,6 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModName() As String
-		  // Part of the Ark.Blueprint interface.
-		  
-		  Return Self.mModName
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

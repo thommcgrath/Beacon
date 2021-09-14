@@ -86,7 +86,7 @@ Inherits Beacon.DataSource
 	#tag Event
 		Sub IndexesBuilt()
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
-		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Ark.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Ark.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Ark.CategorySpawnPoints + "' AS category FROM spawn_points UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Ark.CategoryLootContainers + "' AS category FROM loot_containers")
+		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategorySpawnPoints + "' AS category FROM spawn_points UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryLootContainers + "' AS category FROM loot_containers")
 		  Var DeleteStatements() As String
 		  Var Categories() As String = Ark.Categories
 		  For Each Category As String In Categories
@@ -194,6 +194,13 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
+		  Var Value As Variant = Self.GetVariable(Key, Default)
+		  Return Value.BooleanValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetConfigKey(KeyUUID As String) As Ark.ConfigKey
 		  If Self.mConfigKeyCache.HasKey(KeyUUID) Then
 		    Return Self.mConfigKeyCache.Value(KeyUUID)
@@ -276,10 +283,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreaturesByClass(ClassString As String, Mods As Beacon.StringList) As Ark.Creature()
+		Function GetCreaturesByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature()
 		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.class_string = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND creatures.mod_id IN (" + Mods.SQLValue + ")"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND creatures.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -291,10 +298,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreaturesByPath(Path As String, Mods As Beacon.StringList) As Ark.Creature()
+		Function GetCreaturesByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.Creature()
 		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.path = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND creatures.mod_id IN (" + Mods.SQLValue + ")"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND creatures.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -343,10 +350,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramsByClass(ClassString As String, Mods As Beacon.StringList) As Ark.Engram()
+		Function GetEngramsByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram()
 		  Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.class_string = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND engrams.mod_id IN (" + Mods.SQLValue + ")"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND engrams.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -358,7 +365,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramsByEntryString(EntryString As String, Mods As Beacon.StringList) As Ark.Engram()
+		Function GetEngramsByEntryString(EntryString As String, ContentPacks As Beacon.StringList) As Ark.Engram()
 		  If EntryString.Length < 2 Or EntryString.Right(2) <> "_C" Then
 		    EntryString = EntryString + "_C"
 		  End If
@@ -368,8 +375,8 @@ Inherits Beacon.DataSource
 		    Engrams = Self.mEngramCache.Value(EntryString)
 		  Else
 		    Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.entry_string = ?1;"
-		    If (Mods Is Nil) = False Then
-		      SQL = SQL.Left(SQL.Length - 1) + " AND engrams.mod_id IN (" + Mods.SQLValue + ");"
+		    If (ContentPacks Is Nil) = False Then
+		      SQL = SQL.Left(SQL.Length - 1) + " AND engrams.content_pack_id IN (" + ContentPacks.SQLValue + ");"
 		    End If
 		    
 		    Try
@@ -389,10 +396,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramsByPath(Path As String, Mods As Beacon.StringList) As Ark.Engram()
+		Function GetEngramsByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.Engram()
 		  Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.path = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND engrams.mod_id IN (" + Mods.SQLValue + ")"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND engrams.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -404,10 +411,17 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
+		  Var Value As Variant = Self.GetVariable(Key, Default)
+		  Return Value.IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetLootContainerByID(LootContainerID As String) As Ark.LootContainer
 		  If Self.mLootContainerCache.HasKey(LootContainerID) = False Then
 		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectColumns + " WHERE object_id = ?1;", LootContainerID)
+		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootContainerID)
 		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
@@ -423,10 +437,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainersByClass(ClassString As String, Mods As Beacon.StringList) As Ark.LootContainer()
-		  Var SQL As String = Self.LootContainerSelectColumns + " WHERE loot_containers.class_string = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND loot_containers.mod_id IN (" + Mods.SQLValue + ")"
+		Function GetLootContainersByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer()
+		  Var SQL As String = Self.LootContainerSelectSQL + " WHERE loot_containers.class_string = ?1"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND loot_containers.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -438,10 +452,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainersByPath(Path As String, Mods As Beacon.StringList) As Ark.LootContainer()
-		  Var SQL As String = Self.LootContainerSelectColumns + " WHERE loot_containers.path = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND loot_containers.mod_id IN (" + Mods.SQLValue + ")"
+		Function GetLootContainersByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.LootContainer()
+		  Var SQL As String = Self.LootContainerSelectSQL + " WHERE loot_containers.path = ?1"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND loot_containers.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -469,9 +483,9 @@ Inherits Beacon.DataSource
 		  
 		  Var SQL As String = "SELECT object_id, label, language, code FROM loot_container_selectors"
 		  If IncludeOfficial = False And IncludeCustom = True Then
-		    SQL = SQL + " WHERE mod_id = '" + Beacon.UserModID + "'"
+		    SQL = SQL + " WHERE content_pack_id = '" + Ark.UserContentPackUUID + "'"
 		  ElseIf IncludeOfficial = True And IncludeCustom = False Then
-		    SQL = SQL + " WHERE mod_id != '" + Beacon.UserModID + "'"
+		    SQL = SQL + " WHERE content_pack_id != '" + Ark.UserContentPackUUID + "'"
 		  ElseIf IncludeOfficial = False And IncludeCustom = False Then
 		    Return Selectors
 		  End If
@@ -493,7 +507,7 @@ Inherits Beacon.DataSource
 		    Return Nil
 		  End If
 		  
-		  Return New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue)
+		  Return New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue)
 		End Function
 	#tag EndMethod
 
@@ -502,7 +516,7 @@ Inherits Beacon.DataSource
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps ORDER BY official DESC, sort;")
 		  Var Maps() As Ark.Map
 		  While Rows.AfterLastRow = False
-		    Maps.Add(New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue))
+		    Maps.Add(New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue))
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps
@@ -514,7 +528,7 @@ Inherits Beacon.DataSource
 		  Var Rows As RowSet = Self.SQLSelect("SELECT * FROM maps WHERE (mask & ?1) = mask ORDER BY official DESC, sort;", Mask)
 		  Var Maps() As Ark.Map
 		  While Rows.AfterLastRow = False
-		    Maps.Add(New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("mod_id").StringValue))
+		    Maps.Add(New Ark.Map(Rows.Column("label").StringValue, Rows.Column("ark_identifier").StringValue, Rows.Column("mask").Value.UInt64Value, Rows.Column("difficulty_scale").DoubleValue, Rows.Column("official").BooleanValue, Rows.Column("content_pack_id").StringValue))
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps
@@ -541,10 +555,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsByClass(ClassString As String, Mods As Beacon.StringList) As Ark.SpawnPoint()
+		Function GetSpawnPointsByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint()
 		  Var SQL As String = Self.SpawnPointSelectSQL + " WHERE spawn_points.class_string = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND spawn_points.mod_id IN (" + Mods.SQLValue + ")"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND spawn_points.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -556,10 +570,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsByPath(Path As String, Mods As Beacon.StringList) As Ark.SpawnPoint()
+		Function GetSpawnPointsByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint()
 		  Var SQL As String = Self.SpawnPointSelectSQL + " WHERE spawn_points.path = ?1"
-		  If (Mods Is Nil) = False And Mods.Count > CType(0, UInteger) Then
-		    SQL = SQL + " AND spawn_points.mod_id IN (" + Mods.SQLValue + ")"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    SQL = SQL + " AND spawn_points.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
 		  
@@ -571,13 +585,13 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsForCreature(Creature As Ark.Creature, Mods As Beacon.StringList, Tags As String) As Ark.SpawnPoint()
+		Function GetSpawnPointsForCreature(Creature As Ark.Creature, ContentPacks As Beacon.StringList, Tags As String) As Ark.SpawnPoint()
 		  Var Clauses() As String
 		  Var Values() As Variant
 		  Clauses.Add("spawn_points.sets LIKE :placeholder:")
 		  Values.Add("%" + Creature.ObjectID + "%")
 		  
-		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategorySpawnPoints, "", Mods, Tags, Clauses, Values)
+		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategorySpawnPoints, "", ContentPacks, Tags, Clauses, Values)
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    If Blueprint IsA Ark.SpawnPoint Then
@@ -586,6 +600,32 @@ Inherits Beacon.DataSource
 		  Next
 		  
 		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetStringVariable(Key As String, Default As String = "") As String
+		  Var Value As Variant = Self.GetVariable(Key, Default)
+		  Var StringValue As String = Value.StringValue
+		  If StringValue.Encoding = Nil Then
+		    If Encodings.UTF8.IsValidData(StringValue) Then
+		      StringValue = StringValue.DefineEncoding(Encodings.UTF8)
+		    Else
+		      Return Default
+		    End If
+		  End If
+		  Return StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetVariable(Key As String, Default As Variant = Nil) As Variant
+		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
+		  If Results.RowCount = 1 Then
+		    Return Results.Column("value").Value
+		  Else
+		    Return Default
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -599,6 +639,15 @@ Inherits Beacon.DataSource
 		    End If
 		  End If
 		  Return Ingredients
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OfficialPlayerLevelData() As Ark.PlayerLevelData
+		  If Self.mOfficialPlayerLevelData Is Nil Then
+		    Self.mOfficialPlayerLevelData = Ark.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
+		  End If
+		  Return Self.mOfficialPlayerLevelData
 		End Function
 	#tag EndMethod
 
@@ -660,7 +709,7 @@ Inherits Beacon.DataSource
 		      Var NativeEditorVersion As NullableDouble = NullableDouble.FromVariant(Results.Column("native_editor_version").Value)
 		      Var UIGroup As NullableString = NullableString.FromVariant(Results.Column("ui_group").Value)
 		      Var CustomSort As NullableString = NullableString.FromVariant(Results.Column("custom_sort").Value)
-		      Var ModID As String = Results.Column("mod_id").StringValue
+		      Var ContentPackUUIDID As String = Results.Column("content_pack_id").StringValue
 		      
 		      Var Constraints As Dictionary
 		      If IsNull(Results.Column("constraints").Value) = False Then
@@ -673,7 +722,7 @@ Inherits Beacon.DataSource
 		        End Try
 		      End If
 		      
-		      Var Key As New Ark.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ModID)
+		      Var Key As New Ark.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat, NitradoDeployStyle, NativeEditorVersion, UIGroup, CustomSort, Constraints, ContentPackUUIDID)
 		      Self.mConfigKeyCache.Value(ObjectID) = Key
 		      Keys.Add(Key)
 		      Results.MoveToNextRow
@@ -699,8 +748,8 @@ Inherits Beacon.DataSource
 		      End If
 		      Creature.Availability = Results.Column("availability").Value
 		      Creature.TagString = Results.Column("tags").StringValue
-		      Creature.ModID = Results.Column("mod_id").StringValue
-		      Creature.ModName = Results.Column("mod_name").StringValue
+		      Creature.ContentPackUUID = Results.Column("content_pack_id").StringValue
+		      Creature.ContentPackName = Results.Column("content_pack_name").StringValue
 		      If Results.Column("stats").Value <> Nil And Results.Column("used_stats").Value <> Nil Then
 		        Creature.ConsumeStats(Results.Column("stats").StringValue)
 		        Creature.StatsMask = Results.Column("used_stats").Value
@@ -740,8 +789,8 @@ Inherits Beacon.DataSource
 		      End If
 		      Engram.Availability = Results.Column("availability").Value
 		      Engram.TagString = Results.Column("tags").StringValue
-		      Engram.ModID = Results.Column("mod_id").StringValue
-		      Engram.ModName = Results.Column("mod_name").StringValue
+		      Engram.ContentPackUUID = Results.Column("content_pack_id").StringValue
+		      Engram.ContentPackName = Results.Column("content_pack_name").StringValue
 		      If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
 		        Engram.EntryString = Results.Column("entry_string").StringValue
 		        
@@ -810,7 +859,8 @@ Inherits Beacon.DataSource
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
-		    Source.ModID = Results.Column("mod_id").StringValue
+		    Source.ContentPackUUID = Results.Column("content_pack_id").StringValue
+		    Source.ContentPackName = Results.Column("content_pack_name").StringValue
 		    Source.TagString = Results.Column("tags").StringValue
 		    
 		    If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
@@ -838,8 +888,8 @@ Inherits Beacon.DataSource
 		      End If
 		      Point.Availability = Results.Column("availability").Value
 		      Point.TagString = Results.Column("tags").StringValue
-		      Point.ModID = Results.Column("mod_id").StringValue
-		      Point.ModName = Results.Column("mod_name").StringValue
+		      Point.ContentPackUUID = Results.Column("content_pack_id").StringValue
+		      Point.ContentPackName = Results.Column("content_pack_name").StringValue
 		      Point.Modified = False
 		      Self.mSpawnPointCache.Value(PointID) = Point.ImmutableVersion
 		    End If
@@ -852,15 +902,15 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String) As Ark.Blueprint()
+		Function SearchForBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Blueprint()
 		  Var ExtraClauses() As String
 		  Var ExtraValues() As Variant
-		  Return Self.SearchForBlueprints(Category, SearchText, Mods, Tags, ExtraClauses, ExtraValues)
+		  Return Self.SearchForBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Ark.Blueprint()
+		Private Function SearchForBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Ark.Blueprint()
 		  Var Blueprints() As Ark.Blueprint
 		  
 		  Try
@@ -882,22 +932,22 @@ Inherits Beacon.DataSource
 		    Case Ark.CategorySpawnPoints
 		      SQL = Self.SpawnPointSelectSQL
 		    Case Ark.CategoryLootContainers
-		      SQL = Self.LootContainerSelectColumns
+		      SQL = Self.LootContainerSelectSQL
 		    Else
 		      Return Blueprints
 		    End Select
 		    
-		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
+		    If ContentPacks <> Nil And ContentPacks.LastRowIndex > -1 Then
 		      Var Placeholders() As String
-		      For Each ModID As String In Mods
+		      For Each ContentPackUUIDID As String In ContentPacks
 		        Placeholders.Add("?" + NextPlaceholder.ToString)
-		        Values.Value(NextPlaceholder) = ModID
+		        Values.Value(NextPlaceholder) = ContentPackUUIDID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If Tags <> "" Then
-		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
+		      SQL = SQL.Replace(Category + " INNER JOIN content_packs", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN content_packs")
 		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
 		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
@@ -1083,23 +1133,27 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOfficialPlayerLevelData As Ark.PlayerLevelData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSpawnPointCache As Dictionary
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C mod_id FROM ini_options", Scope = Private
+	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C creatures.used_stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C creatures.used_stats\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM creatures INNER JOIN content_packs ON (creatures.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM engrams INNER JOIN content_packs ON (engrams.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootContainerSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements\x2C loot_sources.mod_id\x2C loot_sources.tags", Scope = Private
+	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.requirements\x2C loot_containers.content_pack_id\x2C loot_containers.tags FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM spawn_points INNER JOIN content_packs ON (spawn_points.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
 

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPoint
-Implements Ark.Blueprint, Beacon.Countable
+Implements Ark.Blueprint,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  Return Self.mAlternateLabel
@@ -71,6 +71,26 @@ Implements Ark.Blueprint, Beacon.Countable
 		    Self.mTags.Add(Tag)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackName() As String
+		  // Part of the Ark.Blueprint interface.
+		  
+		  Return Self.mModName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackUUID() As String
+		  // Part of the Ark.Blueprint interface.
+		  
+		  If Self.mModID Is Nil Then
+		    Return ""
+		  End If
+		  
+		  Return Self.mModID
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -247,18 +267,6 @@ Implements Ark.Blueprint, Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
-		  // Part of the Ark.Blueprint interface.
-		  
-		  If Self.mModID Is Nil Then
-		    Return ""
-		  End If
-		  
-		  Return Self.mModID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mModified Then
 		    Return True
@@ -282,14 +290,6 @@ Implements Ark.Blueprint, Beacon.Countable
 		    Next
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModName() As String
-		  // Part of the Ark.Blueprint interface.
-		  
-		  Return Self.mModName
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

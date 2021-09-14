@@ -32,6 +32,18 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackName() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ContentPackUUID() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.Blueprint
 		  
 		End Function
@@ -39,18 +51,6 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModID() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModName() As String
 		  
 		End Function
 	#tag EndMethod

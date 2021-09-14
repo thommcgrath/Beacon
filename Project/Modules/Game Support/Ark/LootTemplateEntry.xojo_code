@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootTemplateEntry
-Implements Beacon.Countable, Iterable
+Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  Return Self.mAvailability
@@ -322,15 +322,15 @@ Implements Beacon.Countable, Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SafeForMods(Mods As Beacon.StringList) As Boolean
+		Function SafeForContentPacks(ContentPacks As Beacon.StringList) As Boolean
 		  // This method kind of sucks, but yes it is needed for preset generation.
 		  
-		  If Mods.Count = CType(0, UInteger) Then
+		  If ContentPacks.Count = CType(0, UInteger) Then
 		    Return True
 		  End If
 		  
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
-		    If Mods.IndexOf(Option.Engram.ModID) = -1 Then
+		    If ContentPacks.IndexOf(Option.Engram.ContentPackUUID) = -1 Then
 		      Return False
 		    End If
 		  Next
@@ -468,14 +468,6 @@ Implements Beacon.Countable, Iterable
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mOptions()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

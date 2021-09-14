@@ -342,7 +342,7 @@ Protected Module Ark
 
 	#tag Method, Flags = &h0
 		Function ValidForProject(Extends Blueprint As Ark.Blueprint, Project As Ark.Project) As Boolean
-		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ModID)
+		  Return (Project Is Nil) = False And Project.ContentPackEnabled(Blueprint.ContentPackUUID)
 		End Function
 	#tag EndMethod
 
