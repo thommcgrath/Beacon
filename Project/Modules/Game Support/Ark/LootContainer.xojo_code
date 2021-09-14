@@ -63,9 +63,9 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		  Self.mLabel = Source.mLabel
 		  Self.mMaxItemSets = Source.MaxItemSets
 		  Self.mMinItemSets = Source.mMinItemSets
-		  Self.mModID = Source.mModID
+		  Self.mContentPackUUID = Source.mContentPackUUID
 		  Self.mModified = Source.mModified
-		  Self.mModName = Source.mModName
+		  Self.mContentPackName = Source.mContentPackName
 		  Self.mMultipliers = Source.mMultipliers
 		  Self.mNotes = Source.mNotes
 		  Self.mObjectID = Source.mObjectID
@@ -86,7 +86,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		Function ContentPackName() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mModName
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
@@ -94,11 +94,11 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		Function ContentPackUUID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  If Self.mModID Is Nil Then
+		  If Self.mContentPackUUID Is Nil Then
 		    Return ""
 		  End If
 		  
-		  Return Self.mModID
+		  Return Self.mContentPackUUID
 		End Function
 	#tag EndMethod
 
@@ -113,8 +113,8 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.LootContainer
 		  Var LootContainer As New Ark.LootContainer
-		  LootContainer.mModID = Beacon.UserModID
-		  LootContainer.mModName = Beacon.UserModName
+		  LootContainer.mContentPackUUID = Ark.UserContentPackUUID
+		  LootContainer.mContentPackName = Ark.UserContentPackName
 		  
 		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
@@ -129,7 +129,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
 		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LootContainer.mModID + ":" + Path.Lowercase)
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, LootContainer.mContentPackUUID + ":" + Path.Lowercase)
 		  End If
 		  
 		  LootContainer.mClassString = ClassString
@@ -333,6 +333,14 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mContentPackUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mExperimental As Boolean
 	#tag EndProperty
 
@@ -352,16 +360,8 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		Protected mMinItemSets As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mModID As v4UUID
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

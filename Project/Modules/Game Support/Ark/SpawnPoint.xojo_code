@@ -55,8 +55,8 @@ Implements Ark.Blueprint,Beacon.Countable
 		  Self.mPath = Source.mPath
 		  Self.mClassString = Source.mClassString
 		  Self.mLabel = Source.mLabel
-		  Self.mModID = Source.mModID
-		  Self.mModName = Source.mModName
+		  Self.mContentPackUUID = Source.mContentPackUUID
+		  Self.mContentPackName = Source.mContentPackName
 		  Self.mModified = Source.mModified
 		  Self.mLimits = Source.mLimits.Clone
 		  Self.mMode = Source.mMode
@@ -77,7 +77,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function ContentPackName() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mModName
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
@@ -85,11 +85,11 @@ Implements Ark.Blueprint,Beacon.Countable
 		Function ContentPackUUID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  If Self.mModID Is Nil Then
+		  If Self.mContentPackUUID Is Nil Then
 		    Return ""
 		  End If
 		  
-		  Return Self.mModID
+		  Return Self.mContentPackUUID
 		End Function
 	#tag EndMethod
 
@@ -102,8 +102,8 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag Method, Flags = &h0
 		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.SpawnPoint
 		  Var SpawnPoint As New Ark.SpawnPoint
-		  SpawnPoint.mModID = Beacon.UserModID
-		  SpawnPoint.mModName = Beacon.UserModName
+		  SpawnPoint.mContentPackUUID = Ark.UserContentPackUUID
+		  SpawnPoint.mContentPackName = Ark.UserContentPackName
 		  
 		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
@@ -118,7 +118,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
 		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SpawnPoint.mModID + ":" + Path.Lowercase)
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SpawnPoint.mContentPackUUID + ":" + Path.Lowercase)
 		  End If
 		  
 		  SpawnPoint.mClassString = ClassString
@@ -435,6 +435,14 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mContentPackUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mLabel As String
 	#tag EndProperty
 
@@ -447,15 +455,7 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModID As v4UUID
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mModified As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

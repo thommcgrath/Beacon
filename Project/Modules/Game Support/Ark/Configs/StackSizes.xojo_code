@@ -136,7 +136,7 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, Mods As Beacon.StringList) As Ark.Configs.StackSizes
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.Configs.StackSizes
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
@@ -172,7 +172,7 @@ Inherits Ark.ConfigGroup
 		      Var StackSize As UInt64 = Quantity.Lookup("MaxItemQuantity", CType(0, UInt64))
 		      
 		      If ClassString.IsEmpty = False And ClassString.EndsWith("_C") And StackSize > CType(0, UInt64) Then
-		        Var Engram As Ark.Engram = Ark.ResolveEngram("", "", ClassString, Mods)
+		        Var Engram As Ark.Engram = Ark.ResolveEngram("", "", ClassString, ContentPacks)
 		        Overrides.Value(Engram, "Stack Size") = StackSize
 		      End If
 		    Next

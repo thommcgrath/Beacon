@@ -37,18 +37,18 @@ Inherits Beacon.Project
 		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
 		    
 		    Var AllPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks()
-		    Var SelectedMods As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
-		    Var SelectedModCount As Integer = CType(SelectedMods.Count, Integer)
+		    Var SelectedContentPacks As Beacon.StringList = Beacon.StringList.FromVariant(PlainData.Value("Mods"))
+		    Var SelectedPackCount As Integer = CType(SelectedContentPacks.Count, Integer)
 		    Var ConsoleMode As Boolean = Self.ConsoleSafe
 		    Var Selections As New Dictionary
 		    For Each Pack As Ark.ContentPack In AllPacks
-		      Selections.Value(Pack.UUID) = (Pack.ConsoleSafe Or ConsoleMode = False) And (SelectedModCount = 0 Or SelectedMods.IndexOf(Pack.UUID) > -1)
+		      Selections.Value(Pack.UUID) = (Pack.ConsoleSafe Or ConsoleMode = False) And (SelectedPackCount = 0 Or SelectedContentPacks.IndexOf(Pack.UUID) > -1)
 		    Next
 		    
 		    Self.mContentPacks = Selections
 		  ElseIf PlainData.HasKey("ConsoleModsOnly") Then
-		    Var ConsoleModsOnly As Boolean = PlainData.Value("ConsoleModsOnly")
-		    If ConsoleModsOnly Then
+		    Var ConsolePacksOnly As Boolean = PlainData.Value("ConsoleModsOnly")
+		    If ConsolePacksOnly Then
 		      Var Selections As New Dictionary
 		      Var AllPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks()
 		      For Each Pack As Ark.ContentPack In AllPacks

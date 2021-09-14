@@ -92,14 +92,14 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ContentPackName(Assigns Value As String)
-		  Self.mModName = Value
+		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ContentPackUUID(Assigns Value As String)
-		  Self.mModID = Value
+		  Self.mContentPackUUID = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

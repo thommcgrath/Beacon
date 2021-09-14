@@ -33,7 +33,7 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary, Mods As Beacon.StringList) As Ark.CraftingCostIngredient
+		Shared Function FromDictionary(Dict As Dictionary, ContentPacks As Beacon.StringList) As Ark.CraftingCostIngredient
 		  If Dict Is Nil Then
 		    Return Nil
 		  End If
@@ -53,7 +53,7 @@ Protected Class CraftingCostIngredient
 		    End Try
 		  ElseIf (Dict.HasKey("object_id") Or Dict.HasKey("path")) And Dict.HasKey("quantity") And Dict.HasKey("exact") Then
 		    Try
-		      Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "object_id", "path", "", Mods)
+		      Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "object_id", "path", "", ContentPacks)
 		      Var Quantity As Integer = Dict.Value("quantity")
 		      Var Exact As Boolean = Dict.Value("exact")
 		      
@@ -70,7 +70,7 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromVariant(Value As Variant, Mods As Beacon.StringList) As Ark.CraftingCostIngredient()
+		Shared Function FromVariant(Value As Variant, ContentPacks As Beacon.StringList) As Ark.CraftingCostIngredient()
 		  Var Ingredients() As Ark.CraftingCostIngredient
 		  
 		  If IsNull(Value) Then
@@ -79,7 +79,7 @@ Protected Class CraftingCostIngredient
 		  
 		  If Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
 		    // It's just a dictionary
-		    Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Value, Mods)
+		    Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Value, ContentPacks)
 		    If (Ingredient Is Nil) = False Then
 		      Ingredients.Add(Ingredient)
 		    End If
@@ -88,7 +88,7 @@ Protected Class CraftingCostIngredient
 		    Try
 		      Var Parsed() As Variant = Beacon.ParseJSON(Value.StringValue)
 		      For Each Dict As Dictionary In Parsed
-		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Mods)
+		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, ContentPacks)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.Add(Ingredient)
 		        End If
@@ -113,7 +113,7 @@ Protected Class CraftingCostIngredient
 		    
 		    For Each Dict As Dictionary In Dicts
 		      Try
-		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, Mods)
+		        Var Ingredient As Ark.CraftingCostIngredient = Ark.CraftingCostIngredient.FromDictionary(Dict, ContentPacks)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.Add(Ingredient)
 		        End If

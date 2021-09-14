@@ -13,7 +13,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.Creature
+		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Creature
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -28,12 +28,12 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveCreature(ObjectID, Path, ClassString, Mods)
+		  Return Ark.ResolveCreature(ObjectID, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Ark.Creature
+		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
 		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var Creature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByID(ObjectID)
@@ -46,7 +46,7 @@ Protected Module Ark
 		  
 		  If Path.IsEmpty = False Then
 		    Try
-		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreaturesByPath(Path, Mods)
+		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreaturesByPath(Path, ContentPacks)
 		      If Creatures.Count > 0 Then
 		        Return Creatures(0)
 		      End If
@@ -56,7 +56,7 @@ Protected Module Ark
 		  
 		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreaturesByClass(ClassString, Mods)
+		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreaturesByClass(ClassString, ContentPacks)
 		      If Creatures.Count > 0 Then
 		        Return Creatures(0)
 		      End If
@@ -69,7 +69,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.Engram
+		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.Engram
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -84,12 +84,12 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveEngram(ObjectID, Path, ClassString, Mods)
+		  Return Ark.ResolveEngram(ObjectID, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Ark.Engram
+		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
 		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID(ObjectID)
@@ -102,7 +102,7 @@ Protected Module Ark
 		  
 		  If Path.IsEmpty = False Then
 		    Try
-		      Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramsByPath(Path, Mods)
+		      Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramsByPath(Path, ContentPacks)
 		      If Engrams.Count > 0 Then
 		        Return Engrams(0)
 		      End If
@@ -112,7 +112,7 @@ Protected Module Ark
 		  
 		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramsByClass(ClassString, Mods)
+		      Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramsByClass(ClassString, ContentPacks)
 		      If Engrams.Count > 0 Then
 		        Return Engrams(0)
 		      End If
@@ -125,7 +125,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.LootContainer
+		Protected Function ResolveLootContainer(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -140,12 +140,12 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveLootContainer(ObjectID, Path, ClassString, Mods)
+		  Return Ark.ResolveLootContainer(ObjectID, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Ark.LootContainer
+		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
 		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var LootContainer As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainerByID(ObjectID)
@@ -158,7 +158,7 @@ Protected Module Ark
 		  
 		  If Path.IsEmpty = False Then
 		    Try
-		      Var LootContainers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByPath(Path, Mods)
+		      Var LootContainers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByPath(Path, ContentPacks)
 		      If LootContainers.Count > 0 Then
 		        Return LootContainers(0)
 		      End If
@@ -168,7 +168,7 @@ Protected Module Ark
 		  
 		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var LootContainers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass(ClassString, Mods)
+		      Var LootContainers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass(ClassString, ContentPacks)
 		      If LootContainers.Count > 0 Then
 		        Return LootContainers(0)
 		      End If
@@ -181,7 +181,7 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Ark.SpawnPoint
+		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
 		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
@@ -196,12 +196,12 @@ Protected Module Ark
 		    ClassString = Dict.Value(ClassKey)
 		  End If
 		  
-		  Return Ark.ResolveSpawnPoint(ObjectID, Path, ClassString, Mods)
+		  Return Ark.ResolveSpawnPoint(ObjectID, Path, ClassString, ContentPacks)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Ark.SpawnPoint
+		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
 		  If ObjectID.IsEmpty = False Then
 		    Try
 		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointByID(ObjectID)
@@ -214,7 +214,7 @@ Protected Module Ark
 		  
 		  If Path.IsEmpty = False Then
 		    Try
-		      Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsByPath(Path, Mods)
+		      Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsByPath(Path, ContentPacks)
 		      If SpawnPoints.Count > 0 Then
 		        Return SpawnPoints(0)
 		      End If
@@ -224,7 +224,7 @@ Protected Module Ark
 		  
 		  If ClassString.IsEmpty = False Then
 		    Try
-		      Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsByClass(ClassString, Mods)
+		      Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsByClass(ClassString, ContentPacks)
 		      If SpawnPoints.Count > 0 Then
 		        Return SpawnPoints(0)
 		      End If

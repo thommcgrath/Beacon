@@ -285,7 +285,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Ark.LootItemSetEntry
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, ContentPacks As Beacon.StringList) As Ark.LootItemSetEntry
 		  Var Entry As New Ark.MutableLootItemSetEntry
 		  Entry.RawWeight = Dict.Lookup("EntryWeight", 1.0)
 		  
@@ -329,7 +329,7 @@ Implements Beacon.Countable,Iterable
 		  If Dict.HasKey("ItemClassStrings") Then
 		    Var ClassStrings() As Variant = Dict.Value("ItemClassStrings")
 		    For Each ClassString As String In ClassStrings
-		      Engrams.Add(Ark.ResolveEngram("", "", ClassString, Mods))
+		      Engrams.Add(Ark.ResolveEngram("", "", ClassString, ContentPacks))
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
 		    Var Paths() As Variant = Dict.Value("Items")
@@ -345,7 +345,7 @@ Implements Beacon.Countable,Iterable
 		        Continue
 		      End If
 		      
-		      Engrams.Add(Ark.ResolveEngram("", Path, "", Mods))
+		      Engrams.Add(Ark.ResolveEngram("", Path, "", ContentPacks))
 		    Next
 		  End If
 		  

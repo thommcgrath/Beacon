@@ -64,9 +64,9 @@ Implements Ark.Blueprint
 		  Self.mIsValid = Source.mIsValid
 		  Self.mItemID = Source.mItemID
 		  Self.mLabel = Source.mLabel
-		  Self.mModID = Source.mModID
+		  Self.mContentPackUUID = Source.mContentPackUUID
 		  Self.mModified = Source.mModified
-		  Self.mModName = Source.mModName
+		  Self.mContentPackName = Source.mContentPackName
 		  Self.mObjectID = Source.mObjectID
 		  Self.mPath = Source.mPath
 		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
@@ -89,7 +89,7 @@ Implements Ark.Blueprint
 		Function ContentPackName() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  Return Self.mModName
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
@@ -97,19 +97,19 @@ Implements Ark.Blueprint
 		Function ContentPackUUID() As String
 		  // Part of the Ark.Blueprint interface.
 		  
-		  If Self.mModID Is Nil Then
+		  If Self.mContentPackUUID Is Nil Then
 		    Return ""
 		  End If
 		  
-		  Return Self.mModID
+		  Return Self.mContentPackUUID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.Engram
 		  Var Engram As New Ark.Engram
-		  Engram.mModID = Beacon.UserModID
-		  Engram.mModName = Beacon.UserModName
+		  Engram.mContentPackUUID = Ark.UserContentPackUUID
+		  Engram.mContentPackName = Ark.UserContentPackName
 		  
 		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
@@ -124,7 +124,7 @@ Implements Ark.Blueprint
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
 		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Engram.mModID + ":" + Path.Lowercase)
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Engram.mContentPackUUID + ":" + Path.Lowercase)
 		  End If
 		  
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
@@ -371,6 +371,14 @@ Implements Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mContentPackUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mEngramEntryString As String
 	#tag EndProperty
 
@@ -394,16 +402,8 @@ Implements Ark.Blueprint
 		Protected mLabel As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mModID As v4UUID
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

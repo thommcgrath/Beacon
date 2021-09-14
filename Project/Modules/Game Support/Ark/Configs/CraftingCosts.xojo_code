@@ -149,7 +149,7 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, Mods As Beacon.StringList) As Ark.Configs.CraftingCosts
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.Configs.CraftingCosts
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
@@ -171,7 +171,7 @@ Inherits Ark.ConfigGroup
 		  
 		  Var Config As New Ark.Configs.CraftingCosts
 		  For Each Dict As Dictionary In Overrides
-		    Var Cost As Ark.CraftingCost = Ark.CraftingCost.ImportFromConfig(Dict, Mods)
+		    Var Cost As Ark.CraftingCost = Ark.CraftingCost.ImportFromConfig(Dict, ContentPacks)
 		    If Cost <> Nil Then
 		      Config.Add(Cost)
 		    End If

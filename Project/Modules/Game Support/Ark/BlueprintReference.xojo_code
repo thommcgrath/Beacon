@@ -23,6 +23,16 @@ Protected Class BlueprintReference
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentPackUUID() As String
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Return Self.mBlueprint.ContentPackUUID
+		  Else
+		    Return Self.mSaveData.Value("ModUUID")
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateSaveData(Blueprint As Ark.Blueprint) As Dictionary
 		  Var Ref As New Ark.BlueprintReference(Blueprint)
 		  Return Ref.SaveData
@@ -102,16 +112,6 @@ Protected Class BlueprintReference
 		  Case IsA Beacon.SpawnPoint
 		    Return Self.KindSpawnPoint
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModID() As String
-		  If (Self.mBlueprint Is Nil) = False Then
-		    Return Self.mBlueprint.ContentPackUUID
-		  Else
-		    Return Self.mSaveData.Value("ModUUID")
-		  End If
 		End Function
 	#tag EndMethod
 

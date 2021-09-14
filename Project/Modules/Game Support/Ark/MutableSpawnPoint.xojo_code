@@ -45,7 +45,7 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  Self.mModName = Value
+		  Self.mContentPackName = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -54,7 +54,7 @@ Implements Ark.MutableBlueprint
 		Sub ContentPackUUID(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
-		  Self.mModID = Value
+		  Self.mContentPackUUID = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

@@ -70,9 +70,9 @@ Implements Ark.Blueprint
 		  Self.mMatureTime = Source.mMatureTime
 		  Self.mMaxMatingInterval = Source.mMaxMatingInterval
 		  Self.mMinMatingInterval = Source.mMinMatingInterval
-		  Self.mModID = Source.mModID
+		  Self.mContentPackUUID = Source.mContentPackUUID
 		  Self.mModified = Source.mModified
-		  Self.mModName = Source.mModName
+		  Self.mContentPackName = Source.mContentPackName
 		  Self.mObjectID = Source.mObjectID
 		  Self.mPath = Source.mPath
 		  Self.mStats = Source.mStats.Clone
@@ -87,25 +87,25 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ContentPackName() As String
-		  Return Self.mModName
+		  Return Self.mContentPackName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ContentPackUUID() As String
-		  If Self.mModID Is Nil Then
+		  If Self.mContentPackUUID Is Nil Then
 		    Return ""
 		  End If
 		  
-		  Return Self.mModID
+		  Return Self.mContentPackUUID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function CreateCustom(ObjectID As String, Path As String, ClassString As String) As Ark.Creature
 		  Var Creature As New Ark.Creature
-		  Creature.mModID = Beacon.UserModID
-		  Creature.mModName = Beacon.UserModName
+		  Creature.mContentPackUUID = Ark.UserContentPackUUID
+		  Creature.mContentPackName = Ark.UserContentPackName
 		  
 		  If ObjectID.IsEmpty And Path.IsEmpty And ClassString.IsEmpty Then
 		    // Seriously?
@@ -120,7 +120,7 @@ Implements Ark.Blueprint
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
 		  If ObjectID.IsEmpty Then
-		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mModID + ":" + Path.Lowercase)
+		    ObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Creature.mContentPackUUID + ":" + Path.Lowercase)
 		  End If
 		  
 		  Creature.mClassString = ClassString
@@ -387,6 +387,14 @@ Implements Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mContentPackName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mContentPackUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mIncubationTime As Double
 	#tag EndProperty
 
@@ -406,16 +414,8 @@ Implements Ark.Blueprint
 		Protected mMinMatingInterval As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mModID As v4UUID
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

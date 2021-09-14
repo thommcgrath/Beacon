@@ -145,10 +145,10 @@ Inherits Ark.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, Mods As Beacon.StringList) As Ark.Configs.SpoilTimers
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.Configs.SpoilTimers
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
-		  #Pragma Unused Mods
+		  #Pragma Unused ContentPacks
 		  
 		  Var Spoil As New Ark.Configs.SpoilTimers
 		  

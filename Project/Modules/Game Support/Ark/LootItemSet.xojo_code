@@ -311,7 +311,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, Mods As Beacon.StringList) As Ark.LootItemSet
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, ContentPacks As Beacon.StringList) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
@@ -331,7 +331,7 @@ Implements Beacon.Countable,Iterable
 		    Children = Dict.Value("ItemEntries")
 		  End If
 		  For Each Child As Dictionary In Children
-		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.ImportFromConfig(Child, Multipliers, Difficulty, Mods)
+		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.ImportFromConfig(Child, Multipliers, Difficulty, ContentPacks)
 		    If Entry <> Nil Then
 		      Set.Add(Entry)
 		    End If

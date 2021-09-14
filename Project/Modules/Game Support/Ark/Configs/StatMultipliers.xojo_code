@@ -191,11 +191,11 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, Mods As Beacon.StringList) As Ark.Configs.StatMultipliers
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.Configs.StatMultipliers
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
-		  #Pragma Unused Mods
+		  #Pragma Unused ContentPacks
 		  
 		  Var Config As New Ark.Configs.StatMultipliers
 		  Var Stats() As Ark.Stat = Ark.Stats.All
