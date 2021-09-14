@@ -1414,7 +1414,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Constant, Name = MBSKey, Type = String, Dynamic = False, Default = \"Nice try", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
+	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
 	#tag EndConstant
 
 

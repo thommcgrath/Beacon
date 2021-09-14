@@ -42,7 +42,7 @@ Protected Class BlueprintAttributeManager
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Ark.BlueprintAttributeManager)
-		  // The references dictionary does not need to create new reference objects
+		  // The referenced dictionary does not need to create new reference objects
 		  // because they are immutable. A new dictionary is required though. Be aware
 		  // however that objects inside the attribute values will not be cloned.
 		  

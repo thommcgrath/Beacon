@@ -155,7 +155,7 @@ Protected Module Configs
 		  Case Ark.Configs.NameExperienceCurves
 		    // Return Ark.Configs.ExperienceCurves.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameHarvestRates
-		    // Return Ark.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.HarvestRates.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameLootDrops
 		    // Return Ark.Configs.LootDrops.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameSpawnPoints
@@ -169,7 +169,7 @@ Protected Module Configs
 		  Case Ark.Configs.NameSpoilTimers
 		    Return Ark.Configs.SpoilTimers.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameOtherSettings
-		    // Return Ark.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.OtherSettings.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."
