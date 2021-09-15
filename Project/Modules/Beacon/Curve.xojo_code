@@ -14,24 +14,6 @@ Protected Class Curve
 		  Self.C1 = New Point(Max(Min(P1.X, 1), 0), Max(Min(P1.Y, 1), 0))
 		  Self.C2 = New Point(Max(Min(P2.X, 1), 0), Max(Min(P2.Y, 1), 0))
 		  Self.C3 = New Point(1, 1)
-		  
-		  Const NumFigures = 1000
-		  
-		  Self.Database = New SQLiteDatabase
-		  Call Self.Database.Connect
-		  Self.Database.ExecuteSQL("BEGIN TRANSACTION")
-		  Self.Database.ExecuteSQL("CREATE TABLE precomputed (time REAL, x REAL, y REAL)")
-		  Var Statement As SQLitePreparedStatement = Self.Database.Prepare("INSERT INTO precomputed (time, x, y) VALUES (?1, ?2, ?3)")
-		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_DOUBLE)
-		  Statement.BindType(1, SQLitePreparedStatement.SQLITE_DOUBLE)
-		  Statement.BindType(2, SQLitePreparedStatement.SQLITE_DOUBLE)
-		  For I As Integer = 0 To NumFigures
-		    Var Time As Double = I / NumFigures
-		    Var X As Double = Self.XForT(Time)
-		    Var Y As Double = Self.YForT(Time)
-		    Statement.ExecuteSQL(Time, X, Y)
-		  Next
-		  Self.Database.ExecuteSQL("COMMIT")
 		End Sub
 	#tag EndMethod
 
@@ -39,29 +21,6 @@ Protected Class Curve
 		Sub Constructor(P1X As Single, P1Y As Single, P2X As Single, P2Y As Single)
 		  Self.Constructor(New Point(P1X, P1Y), New Point(P2X, P2Y))
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Evaluate(XValue As Double, RangeBeginValue As Double, RangeEndValue As Double) As Double
-		  If RangeBeginValue = RangeEndValue Then
-		    Return RangeBeginValue
-		  End If
-		  
-		  Var YValue As Double = Self.YForX(XValue)
-		  Return RangeBeginValue + ((RangeEndValue - RangeBeginValue) * YValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Evaluate(Time As Double, Rect As Rect) As Point
-		  Var X As Double = Self.XForT(Time)
-		  Var Y As Double = Self.YForT(Time)
-		  
-		  X = Rect.Left + (Rect.Width * X)
-		  Y = Rect.Top + (Rect.Height * Y)
-		  
-		  Return New Point(X, Y)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -120,31 +79,20 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Solve(Factor As Double, A As Double, B As Double, C As Double, D As Double) As Double
+		Protected Shared Function Solve(Factor As Double, A As Double, B As Double, C As Double, D As Double) As Double
 		  Return (1-Factor)^3 * A + 3*(1-Factor)^2 * Factor * B + 3*(1-Factor) * Factor^2 * C + Factor^3 * D
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function XForT(T As Double) As Double
+	#tag Method, Flags = &h0
+		Function XForT(T As Double) As Double
 		  Return Self.Solve(T, Self.C0.X, Self.C1.X, Self.C2.X, Self.C3.X)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function YForT(T As Double) As Double
+	#tag Method, Flags = &h0
+		Function YForT(T As Double) As Double
 		  Return Self.Solve(T, Self.C0.Y, Self.C1.Y, Self.C2.Y, Self.C3.Y)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function YForX(X As Double) As Double
-		  Var Results As RowSet = Self.Database.SelectSQL("SELECT y FROM precomputed ORDER BY ABS(x - ?1) LIMIT 1;", X)
-		  If Results <> Nil Then
-		    Return Results.Column("y").DoubleValue
-		  Else
-		    Return 0
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -163,10 +111,6 @@ Protected Class Curve
 
 	#tag Property, Flags = &h21
 		Private C3 As Point
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Database As SQLiteDatabase
 	#tag EndProperty
 
 

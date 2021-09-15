@@ -107,7 +107,7 @@ Inherits ControlCanvas
 		  Var Viewport As Rect = Self.Viewport
 		  
 		  Var YLegend As New TextShape
-		  YLegend.Value = "Level"
+		  YLegend.Value = "Experience"
 		  YLegend.Rotation = -1.5708
 		  YLegend.X = Viewport.Left - 6
 		  YLegend.Y = Viewport.Top + (Viewport.Height / 2)
@@ -117,7 +117,7 @@ Inherits ControlCanvas
 		  G.DrawObject(YLegend)
 		  
 		  Var XLegend As New TextShape
-		  XLegend.Value = "Experience"
+		  XLegend.Value = "Level"
 		  XLegend.X = Viewport.Left + (Viewport.Width / 2)
 		  XLegend.Y = Viewport.Bottom + 6 + G.CapHeight
 		  XLegend.FontName = G.FontName
