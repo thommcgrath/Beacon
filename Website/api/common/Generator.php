@@ -138,7 +138,7 @@ class Generator {
 	protected function SumOfItemSetWeights(array $sets) {
 		$sum = 0;
 		foreach ($sets as $set) {
-			$sum = $sum + floatval($set['SetWeight']);
+			$sum = $sum + max(floatval($set['SetWeight']), 0.0001);
 		}
 		return $sum;
 	}
@@ -146,7 +146,7 @@ class Generator {
 	protected function SumOfEntryWeights(array $entries) {
 		$sum = 0;
 		foreach ($entries as $entry) {
-			$sum = $sum + floatval($entry['EntryWeight']);
+			$sum = $sum + max(floatval($entry['EntryWeight']), 0.0001);
 		}
 		return $sum;
 	}
@@ -195,7 +195,7 @@ class Generator {
 		$entries = $set['ItemEntries'];
 		$min_entries = min(max(intval($set['MinNumItems']), 1), count($entries));
 		$max_entries = min(max(intval($set['MaxNumItems']), $min_entries), count($entries));
-		$local_weight = floatval($set['SetWeight']);
+		$local_weight = max(floatval($set['SetWeight']), 0.0001);
 		$relative_weight = round(($local_weight / $weight_total) * 1000);
 		
 		$entries_weight_sum = $this->SumOfEntryWeights($entries);
@@ -219,7 +219,7 @@ class Generator {
 	
 	protected function RenderEntry(\BeaconLootSource $source, array $entry, float $weight_total) {
 		$blueprint_chance = floatval($entry['ChanceToBeBlueprintOverride']);
-		$local_weight = floatval($entry['EntryWeight']);
+		$local_weight = max(floatval($entry['EntryWeight']), 0.0001);
 		$relative_weight = round(($local_weight / $weight_total) * 1000);
 		$items = $entry['Items'];
 		$max_quality_tag = $entry['MaxQuality'];
@@ -231,11 +231,11 @@ class Generator {
 		$relative_weights = array();
 		$options_weight_sum = 0;
 		foreach ($items as $item) {
-			$options_weight_sum = $options_weight_sum + floatval($item['Weight']);
+			$options_weight_sum = $options_weight_sum + max(floatval($item['Weight']), 0.0001);
 		}
 		foreach ($items as $item) {
 			$classes[] = sprintf('"%s"', $item['Class']);
-			$relative_weights[] = sprintf('%u', round((floatval($item['Weight']) / $options_weight_sum) * 1000));
+			$relative_weights[] = sprintf('%u', round((max(floatval($item['Weight']), 0.0001) / $options_weight_sum) * 1000));
 		}
 		
 		$keys = array(

@@ -464,7 +464,6 @@ Begin BeaconDialog ExperienceWizard
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   11
@@ -720,40 +719,71 @@ Begin BeaconDialog ExperienceWizard
       Visible         =   True
       Width           =   59
    End
-   Begin Label WarningLabel
-      AutoDeactivate  =   True
+   Begin Timer ComputeDelayTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   1000
+      RunMode         =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin ProgressWheel ComputeSpinner
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   16
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   472
+      Transparent     =   False
+      Visible         =   False
+      Width           =   16
+   End
+   Begin Label ComputeMessage
+      AllowAutoDeactivate=   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
-      LockBottom      =   False
+      Left            =   48
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   18
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Resulting XP total is more than Ark supports!"
-      TextAlign       =   0
+      Text            =   "Calculating levels…"
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
+      Tooltip         =   ""
       Top             =   470
       Transparent     =   False
       Underline       =   False
       Visible         =   False
-      Width           =   427
+      Width           =   399
    End
 End
 #tag EndWindow
@@ -769,12 +799,82 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub CancelComputeThread()
+		  If Self.mComputeThread Is Nil Then
+		    Return
+		  End If
+		  
+		  If Self.mComputeThread.ThreadState = Thread.ThreadStates.Running Then
+		    Self.mComputeThread.Stop
+		  End If
+		  
+		  RemoveHandler mComputeThread.Run, WeakAddressOf mComputeThread_Run
+		  RemoveHandler mComputeThread.UserInterfaceUpdate, WeakAddressOf mComputeThread_UIUpdate
+		  
+		  Self.mComputeThread = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor(StartingLevel As Integer, StartingXP As UInt64)
 		  Self.mSettingUp = True
 		  Self.mStartingLevel = StartingLevel
 		  Self.mStartingXP = StartingXP
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mComputeThread_Run(Sender As Thread)
+		  Var AdditionalLevels As Integer = Self.mDesiredLevels
+		  Var AdditionalXP As UInt64 = Self.mDesiredXP
+		  Var Curve As Beacon.Curve = Self.mDesiredCurve
+		  Var XTimes As Dictionary = BeaconConfigs.ExperienceCurves.PrecomputeCurveX(Curve, AdditionalLevels, 0.00001)
+		  
+		  Sender.AddUserInterfaceUpdate(New Dictionary("XTimes": XTimes, "Action": "Finished", "AdditionalLevels": AdditionalLevels, "AdditionalXP": AdditionalXP, "Curve": Curve))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mComputeThread_UIUpdate(Sender As Thread, Dictionaries() As Dictionary)
+		  #Pragma Unused Sender
+		  
+		  For Idx As Integer = 0 To Dictionaries.LastIndex
+		    Var Dict As Dictionary = Dictionaries(Idx)
+		    Select Case Dict.Value("Action").StringValue
+		    Case "Finished"
+		      Self.ActionButton.Enabled = True
+		      Self.ComputeSpinner.Visible = False
+		      Self.ComputeMessage.Visible = False
+		      
+		      Var AdditionalLevels As Integer = Dict.Value("AdditionalLevels")
+		      Var AdditionalXP As UInt64 = Dict.Value("AdditionalXP")
+		      Var Curve As Beacon.Curve = Dict.Value("Curve")
+		      
+		      Var XTimes As Dictionary = Dict.Value("XTimes")
+		      Var LastXP As UInt64 = Self.mStartingXP
+		      Var EndingXP As UInt64 = Self.mStartingXP + AdditionalXP
+		      Var EndingLevel As Integer = (Self.mStartingLevel + AdditionalLevels) - 1
+		      Self.List.RemoveAllRows
+		      For Level As Integer = 1 To AdditionalLevels
+		        Try
+		          Var Time As Double = XTimes.Value(Level)
+		          Var Y As Double = Curve.YForT(Time)
+		          Var TotalXP As UInt64 = Self.mStartingXP + Round((EndingXP - Self.mStartingXP) * Y)
+		          Var LevelXP As UInt64 = TotalXP - LastXP
+		          LastXP = TotalXP
+		          
+		          Var DisplayLevel As Integer = (Level - 1) + Self.mStartingLevel
+		          Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
+		          Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
+		        Catch Err As RuntimeException
+		        End Try
+		      Next
+		      Self.List.ScrollPosition = Self.mLastScrollPosition
+		      Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
+		    End Select
+		  Next Idx
 		End Sub
 	#tag EndMethod
 
@@ -797,40 +897,83 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Curve As Beacon.Curve = Self.Designer.Curve
-		  Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Text), 1)
-		  Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Text), 0)
-		  Var StartingLevel As Integer = Self.mStartingLevel
-		  Var StartingXP As UInt64 = Self.mStartingXP
-		  Var EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
-		  Var EndingXP As UInt64 = StartingXP + AdditionalXP
-		  Var ScrollPosition As Integer = Self.List.ScrollPosition
-		  Var Allowed As Boolean = EndingXP <= CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64)
+		  Self.ComputeDelayTimer.Reset
+		  Self.ComputeDelayTimer.Period = 250
+		  Self.ComputeDelayTimer.RunMode = Timer.RunModes.Single
 		  
-		  Self.List.RemoveAllRows()
-		  Var LastXP As UInt64 = StartingXP
-		  For Level As Integer = 1 To AdditionalLevels
-		    Var Progress As Double = Level / AdditionalLevels
-		    Var TotalXP As UInt64 = Round(Curve.Evaluate(Progress, StartingXP, EndingXP))
-		    Var LevelXP As UInt64 = TotalXP - LastXP
-		    LastXP = TotalXP
+		  Self.mDesiredLevels = Max(CDbl(Self.LevelCountField.Text), 1)
+		  Self.mDesiredXP = Max(CDbl(Self.XPField.Text), 0)
+		  Self.mDesiredCurve = Self.Designer.Curve
+		  Self.mValidXPAmount = (Self.mStartingXP + Self.mDesiredXP) < CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64)
+		  
+		  Self.ComputeSpinner.Visible = True
+		  Self.ComputeMessage.Visible = True
+		  Self.ActionButton.Enabled = False
+		  
+		  If Self.List.RowCount > 0 Then
+		    Self.mLastScrollPosition = Self.List.ScrollPosition
+		    Self.List.RemoveAllRows
+		  End If
+		  
+		  #if false
+		    Var Curve As Beacon.Curve = Self.Designer.Curve
+		    Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Text), 1)
+		    Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Text), 0)
+		    Var StartingLevel As Integer = Self.mStartingLevel
+		    Var StartingXP As UInt64 = Self.mStartingXP
+		    Var EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
+		    Var EndingXP As UInt64 = StartingXP + AdditionalXP
+		    Var ScrollPosition As Integer = Self.List.ScrollPosition
+		    Var Allowed As Boolean = EndingXP <= CType(BeaconConfigs.ExperienceCurves.MaxSupportedXP, UInt64)
 		    
-		    Var DisplayLevel As Integer = (Level - 1) + StartingLevel
-		    Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
-		  Next
-		  Self.List.ScrollPosition = ScrollPosition
-		  
-		  Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
-		  Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, ",##0")
-		  Self.ActionButton.Enabled = Allowed
-		  Self.WarningLabel.Visible = Not Allowed
+		    Self.List.RemoveAllRows()
+		    
+		    Var XTimes As Dictionary = Curve.PrecomputeX(AdditionalLevels, 0.00001)
+		    Var LastXP As UInt64 = StartingXP
+		    For Level As Integer = 1 To AdditionalLevels
+		      Var Time As Double = XTimes.Value(Level)
+		      Var Y As Double = Curve.YForT(Time)
+		      Var TotalXP As UInt64 = StartingXP + Round((EndingXP - StartingXP) * Y)
+		      Var LevelXP As UInt64 = TotalXP - LastXP
+		      LastXP = TotalXP
+		      
+		      Var DisplayLevel As Integer = (Level - 1) + StartingLevel
+		      Self.List.AddRow(DisplayLevel.ToString(Locale.Current, ",##0"), LevelXP.ToString(Locale.Current, ",##0"), TotalXP.ToString(Locale.Current, ",##0"))
+		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
+		    Next
+		    Self.List.ScrollPosition = ScrollPosition
+		    
+		    Self.FinalLevelField.Text = EndingLevel.ToString(Locale.Current, ",##0")
+		    Self.NextLevelField.Text = StartingLevel.ToString(Locale.Current, ",##0")
+		    Self.ActionButton.Enabled = Allowed
+		    Self.WarningLabel.Visible = Not Allowed
+		  #endif
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mComputeThread As Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredCurve As Beacon.Curve
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredLevels As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredXP As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastScrollPosition As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -843,6 +986,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mStartingXP As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidXPAmount As Boolean
 	#tag EndProperty
 
 
@@ -901,6 +1048,12 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  If Not Self.mValidXPAmount Then
+		    Self.ShowAlert("XP total is too high", "Ark has a limit of " + BeaconConfigs.ExperienceCurves.MaxSupportedXP.ToString(Locale.Current, ",##0") + " total experience.")
+		    Return
+		  End If
+		  
+		  Self.CancelComputeThread()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
@@ -909,6 +1062,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
+		  Self.CancelComputeThread()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
@@ -923,6 +1077,19 @@ End
 		  
 		  Var Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Text), CDbl(Self.PointFields(1).Text), CDbl(Self.PointFields(2).Text), CDbl(Self.PointFields(3).Text))
 		  Self.Designer.Curve = Curve
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ComputeDelayTimer
+	#tag Event
+		Sub Action()
+		  Self.CancelComputeThread()
+		  
+		  Self.mComputeThread = New Thread
+		  Self.mComputeThread.DebugIdentifier = "Experience Calculator"
+		  AddHandler mComputeThread.Run, WeakAddressOf mComputeThread_Run
+		  AddHandler mComputeThread.UserInterfaceUpdate, WeakAddressOf mComputeThread_UIUpdate
+		  Self.mComputeThread.Start
 		End Sub
 	#tag EndEvent
 #tag EndEvents
