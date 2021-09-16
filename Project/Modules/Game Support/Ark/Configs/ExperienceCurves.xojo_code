@@ -341,10 +341,13 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Shared Function LegacyCurveImport(Curve As Beacon.Curve, MaxLevel As Integer, MaxXP As UInt64) As UInt64()
+		  Var XTimes As Dictionary = PrecomputeCurveX(Curve, MaxLevel, 0.0001)
 		  Var Levels() As UInt64
 		  For Index As Integer = 0 To MaxLevel - 2
 		    Var Level As Integer = Index + 2
-		    Var XP As UInt64 = Round(Curve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
+		    Var T As Double = XTimes.Value(Level)
+		    Var Y As Double = Curve.YForT(T)
+		    Var XP As UInt64 = Round(MaxXP * Y)
 		    Levels.Add(XP)
 		  Next
 		  Return Levels
@@ -381,6 +384,44 @@ Inherits Ark.ConfigGroup
 		    Levels(I) = Self.mPlayerLevels(I)
 		  Next
 		  Return Levels
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function PrecomputeCurveX(Curve As Beacon.Curve, NumValues As Integer, Precision As Double) As Dictionary
+		  If Precision > 1 Then
+		    Precision = 1 / Precision
+		  End If
+		  
+		  NumValues = Max(NumValues, 1)
+		  
+		  Var XTimes As New Dictionary
+		  XTimes.Value(0) = 0
+		  XTimes.Value(NumValues) = 1
+		  
+		  If NumValues = 1 Then
+		    Return XTimes
+		  End If
+		  
+		  Var XDeltas As New Dictionary
+		  XDeltas.Value(0) = 0
+		  XDeltas.Value(NumValues) = 0
+		  
+		  For Time As Double = 0 To 1 Step Precision
+		    Try
+		      Var X As Double = Curve.XForT(Time)
+		      Var ValueRaw As Double = X * NumValues
+		      Var Value As Integer = Round(ValueRaw)
+		      Var Delta As Double = Abs(ValueRaw - Value)
+		      If XDeltas.HasKey(Value) = False Or XDeltas.Value(Value).DoubleValue > Delta Then
+		        XTimes.Value(Value) = Time
+		        XDeltas.Value(Value) = Delta
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next Time
+		  
+		  Return XTimes
 		End Function
 	#tag EndMethod
 
@@ -477,6 +518,10 @@ Inherits Ark.ConfigGroup
 	#tag EndComputedProperty
 
 
+	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"2147483647", Scope = Public
+	#tag EndConstant
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Name"
@@ -515,6 +560,46 @@ Inherits Ark.ConfigGroup
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoLevelCap"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoMaxExperience"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="UInt64"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerLevelCap"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerMaxExperience"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="UInt64"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerSoftLevelCap"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
