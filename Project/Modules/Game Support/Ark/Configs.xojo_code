@@ -149,7 +149,7 @@ Protected Module Configs
 		  Case Ark.Configs.NameDifficulty
 		    Return Nil
 		  Case Ark.Configs.NameDinoAdjustments
-		    // Return Ark.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.DinoAdjustments.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameEngramControl
 		    Return Ark.Configs.EngramControl.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameExperienceCurves
@@ -159,7 +159,7 @@ Protected Module Configs
 		  Case Ark.Configs.NameLootDrops
 		    // Return Ark.Configs.LootDrops.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameSpawnPoints
-		    // Return Ark.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
+		    Return Ark.Configs.SpawnPoints.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStackSizes
 		    Return Ark.Configs.StackSizes.FromImport(ParsedData, CommandLineOptions, Project.MapMask, DifficultyValue, Project.ContentPacks)
 		  Case Ark.Configs.NameStatLimits
