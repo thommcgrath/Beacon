@@ -306,6 +306,19 @@ Protected Module Ark
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function UnknownBlueprintPath(FolderName As String, ClassString As String) As String
+		  Var ClassName As String
+		  If ClassString.EndsWith("_C") Then
+		    ClassName = ClassString.Left(ClassString.Length - 2)
+		  Else
+		    ClassName = ClassString
+		  End If
+		  
+		  Return Ark.UnknownBlueprintPrefix + FolderName + "/" + ClassName + "." + ClassName
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ValidForMap(Extends Blueprint As Ark.Blueprint, Map As Ark.Map) As Boolean
 		  Return Map Is Nil Or Blueprint.ValidForMask(Map.Mask)
@@ -378,6 +391,9 @@ Protected Module Ark
 	#tag EndConstant
 
 	#tag Constant, Name = OmniFlag, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = UserContentPackName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected

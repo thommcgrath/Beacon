@@ -47,10 +47,23 @@ Inherits Ark.ConfigGroup
 
 
 	#tag Method, Flags = &h0
+		Shared Function BaseArbitraryQuality(DifficultyValue As Double) As Double
+		  Var DifficultyOffset As Double = DifficultyOffset(DifficultyValue)
+		  Return 0.75 + (DifficultyOffset * 1.75)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(DifficultyValue As Double)
 		  Self.DifficultyValue = DifficultyValue
 		  Self.Modified = False
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function DifficultyOffset(DifficultyValue As Double) As Double
+		  Return (DifficultyValue - 0.5) / 4.5
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -79,7 +92,7 @@ Inherits Ark.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return 0.75 + (Self.DifficultyOffset * 1.75)
+			  Return Self.BaseArbitraryQuality(Self.DifficultyValue)
 			End Get
 		#tag EndGetter
 		BaseArbitraryQuality As Double
@@ -88,7 +101,7 @@ Inherits Ark.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return (Self.DifficultyValue - 0.5) / 4.5
+			  Return Self.DifficultyOffset(Self.DifficultyValue)
 			End Get
 		#tag EndGetter
 		DifficultyOffset As Double

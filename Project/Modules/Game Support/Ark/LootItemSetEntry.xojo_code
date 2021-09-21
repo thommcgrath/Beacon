@@ -285,15 +285,17 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, ContentPacks As Beacon.StringList) As Ark.LootItemSetEntry
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.LootItemSetEntry
 		  Var Entry As New Ark.MutableLootItemSetEntry
 		  Entry.RawWeight = Dict.Lookup("EntryWeight", 1.0)
 		  
+		  Var BaseArbitraryQuality As Double = Ark.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
+		  
 		  If Dict.HasKey("MinQuality") Then
-		    Entry.MinQuality = Ark.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, Difficulty)
+		    Entry.MinQuality = Ark.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, BaseArbitraryQuality)
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
-		    Entry.MaxQuality = Ark.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, Difficulty)
+		    Entry.MaxQuality = Ark.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, BaseArbitraryQuality)
 		  End If
 		  If Dict.HasKey("MinQuantity") Then
 		    Entry.MinQuantity = Dict.Value("MinQuantity")
@@ -399,7 +401,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Entries() As Ark.LootItemSetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		Shared Function Join(Entries() As Ark.LootItemSetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Values() As String
 		  For Each Entry As Ark.LootItemSetEntry In Entries
 		    Values.Add(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
@@ -697,7 +699,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Paths(), Weights(), Classes() As String
 		  Paths.ResizeTo(Self.mOptions.LastIndex)
 		  Weights.ResizeTo(Self.mOptions.LastIndex)
@@ -708,8 +710,9 @@ Implements Beacon.Countable,Iterable
 		    Weights(I) = Beacon.PrettyText(Self.mOptions(I).Weight * 100)
 		  Next
 		  
-		  Var MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, Difficulty)
-		  Var MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, Difficulty)
+		  Var BaseArbitraryQuality As Double = Ark.Configs.Difficulty.BaseArbitraryQuality(Difficulty)
+		  Var MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, BaseArbitraryQuality)
+		  Var MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, BaseArbitraryQuality)
 		  If MinQuality > MaxQuality Then
 		    // This probably isn't a good thing. Use the min for both values.
 		    MaxQuality = MinQuality

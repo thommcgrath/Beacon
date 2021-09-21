@@ -311,7 +311,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty, ContentPacks As Beacon.StringList) As Ark.LootItemSet
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
@@ -384,7 +384,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Ark.LootItemSet, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		Shared Function Join(Sets() As Ark.LootItemSet, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Values() As String
 		  For Each Set As Ark.LootItemSet In Sets
 		    Values.Add(Set.StringValue(Multipliers, UseBlueprints, Difficulty))
@@ -607,7 +607,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As Double) As String
 		  Var Values() As String
 		  Values.Add("SetName=""" + Self.Label + """")
 		  Values.Add("MinNumItems=" + Self.MinNumItems.ToString)

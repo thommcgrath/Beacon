@@ -147,10 +147,193 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromSaveData(SaveData As Dictionary) As Ark.LootContainer
+		  If SaveData Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var LegacyMode As Boolean
+		  Var PreventDuplicatesKey As String = "PreventDuplicates"
+		  Var AppendModeKey As String = "AppendMode"
+		  Var SourceContainer As Ark.LootContainer
+		  If SaveData.HasKey("Reference") Then
+		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(SaveData.Value("Reference"))
+		    If Reference Is Nil Then
+		      Return Nil
+		    End If
+		    SourceContainer = Ark.LootContainer(Reference.Resolve)
+		  Else
+		    SourceContainer = Ark.ResolveLootContainer(SaveData, "", "", "SupplyCrateClassString", Nil)
+		    LegacyMode = True
+		    PreventDuplicatesKey = "bSetsRandomWithoutReplacement"
+		    AppendModeKey = "bAppendMode"
+		  End If
+		  
+		  If SourceContainer Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Container As New Ark.MutableLootContainer(SourceContainer)
+		  
+		  Try
+		    Container.MinItemSets = SaveData.Lookup("MinItemSets", 1).IntegerValue
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MinItemSets value")
+		  End Try
+		  
+		  Try
+		    Container.MaxItemSets = SaveData.Lookup("MaxItemSets", 1).IntegerValue
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MaxItemSets value")
+		  End Try
+		  
+		  Try
+		    Container.PreventDuplicates = SaveData.Lookup(PreventDuplicatesKey, True).BooleanValue
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading " + PreventDuplicatesKey + " value")
+		  End Try
+		  
+		  Try
+		    Container.AppendMode = SaveData.Lookup(AppendModeKey, False).BooleanValue
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading " + AppendModeKey + " value")
+		  End Try
+		  
+		  If SaveData.HasKey("ItemSets") Then
+		    Try
+		      Var SetDicts() As Variant = SaveData.Value("ItemSets")
+		      For Idx As Integer = 0 To SetDicts.LastIndex
+		        Try
+		          Var SetDict As Variant = SetDicts(Idx)
+		          If IsNull(SetDict) Or SetDict.IsArray = True Or SetDict.Type <> Variant.TypeObject Or (SetDict.ObjectValue IsA Dictionary) = False Then
+		            Continue
+		          End If
+		          
+		          Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(Dictionary(SetDict))
+		          If (Set Is Nil) = False Then
+		            Container.Add(Set)
+		          End If
+		        Catch IdxErr As RuntimeException
+		          App.Log(IdxErr, CurrentMethodName, "Reading item set member")
+		        End Try
+		      Next Idx
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading ItemSets value")
+		    End Try
+		  End If
+		  
+		  If LegacyMode And Container.ContentPackUUID = Ark.UserContentPackUUID Then
+		    // Load the extra data
+		    Try
+		      Container.Availability = SaveData.Lookup("Availability", Beacon.Maps.UniversalMask).UInt64Value
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Container.Multipliers = New Beacon.Range(SaveData.Lookup("Multiplier_Min", 1.0).DoubleValue, SaveData.Lookup("Multiplier_Max", 1.0).DoubleValue)
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Container.SortValue = SaveData.Lookup("SortValue", 999).IntegerValue
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Container.Label = SaveData.Lookup("Label", Container.ClassString).StringValue
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Container.RequiredItemSetCount = SaveData.Lookup("RequiredItemSets", 1).IntegerValue
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Container.Experimental = SaveData.Lookup("Experimental", False).BooleanValue
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Container.Notes = SaveData.Lookup("Notes", "").StringValue
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Try
+		      Var UIColor As String = SaveData.Lookup("UIColor", "FFFFFF00")
+		      Container.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  Container.Modified = True
+		  Return Container
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.LootContainer
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ImportFromConfig(Dict As Dictionary, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.LootContainer
+		  Var ClassString As String
+		  If Dict.HasKey("SupplyCrateClassString") Then
+		    ClassString = Dict.Value("SupplyCrateClassString")
+		  End If
+		  
+		  Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass(ClassString, ContentPacks)
+		  Var Container As Ark.MutableLootContainer
+		  If Containers.Count > 0 Then
+		    Container = New Ark.MutableLootContainer(Containers(0))
+		  Else
+		    Var UIColor As String = Dict.Lookup("UIColor", "FFFFFF00")
+		    Container = New Ark.MutableLootContainer()
+		    Container.Path = Ark.UnknownBlueprintPath("LootContainers", ClassString)
+		    Container.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
+		    Container.Availability = Ark.Maps.UniversalMask
+		    Container.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
+		    Container.SortValue = Dict.Lookup("SortValue", 999).IntegerValue
+		    Container.Label = Dict.Lookup("Label", ClassString).StringValue
+		    Container.RequiredItemSetCount = Dict.Lookup("RequiredItemSets", 1).IntegerValue
+		    Container.Experimental = Dict.Lookup("Experimental", False).BooleanValue
+		    Container.Notes = Dict.Lookup("Notes", "").StringValue
+		    Container.ContentPackUUID = Ark.UserContentPackUUID
+		  End If
+		  
+		  Var Children() As Dictionary
+		  If Dict.HasKey("ItemSets") Then
+		    Children = Dict.Value("ItemSets").DictionaryArrayValue
+		  End If
+		  Var AddedHashes As New Dictionary
+		  For Each Child As Dictionary In Children
+		    Var Set As Ark.LootItemSet = Ark.LootItemSet.ImportFromConfig(Child, Container.Multipliers, Difficulty, ContentPacks)
+		    Var Hash As String = Set.Hash
+		    If (Set Is Nil) = False And AddedHashes.HasKey(Hash) = False Then
+		      Call Container.Add(Set)
+		      AddedHashes.Value(Hash) = True
+		    End If
+		  Next
+		  
+		  If Dict.HasKey("MaxItemSets") Then
+		    Container.MaxItemSets = Dict.Value("MaxItemSets")
+		  End If
+		  If Dict.HasKey("MinItemSets") Then
+		    Container.MinItemSets = Dict.Value("MinItemSets")
+		  End If
+		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
+		    Container.PreventDuplicates = Dict.Value("bSetsRandomWithoutReplacement")
+		  End If
+		  If Dict.HasKey("bAppendItemSets") Then
+		    Container.AppendMode = Dict.Value("bAppendItemSets")
+		  End If
+		  
+		  Container.Modified = False
+		  Return Container
 		End Function
 	#tag EndMethod
 
@@ -287,6 +470,26 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function RequiredItemSetCount() As Integer
 		  Return Self.mRequiredItemSetCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  Var Children() As Variant
+		  For Each Set As Ark.LootItemSet In Self.mItemSets
+		    Children.Add(Set.SaveData)
+		  Next
+		  
+		  Var Keys As New Dictionary
+		  Keys.Value("Reference") = Ark.BlueprintReference.CreateSaveData(Self)
+		  Keys.Value("MinItemSets") = Self.mMinItemSets
+		  Keys.Value("MaxItemSets") = Self.mMaxItemSets
+		  Keys.Value("PreventDuplicates") = Self.mPreventDuplicates
+		  Keys.Value("AppendMode") = Self.mAppendMode
+		  If Children.LastIndex > -1 Then
+		    Keys.Value("ItemSets") = Children
+		  End If
+		  Return Keys
 		End Function
 	#tag EndMethod
 

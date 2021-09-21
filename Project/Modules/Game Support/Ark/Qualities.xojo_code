@@ -46,9 +46,9 @@ Protected Module Qualities
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ForValue(Value As Double, CrateQualityMultiplier As Double, Difficulty As BeaconConfigs.Difficulty) As Ark.Quality
+		Protected Function ForValue(Value As Double, CrateQualityMultiplier As Double, BaseArbitraryQuality As Double) As Ark.Quality
 		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Var Multiplier As Double = CrateArbitraryQuality * Difficulty.BaseArbitraryQuality
+		  Var Multiplier As Double = CrateArbitraryQuality * BaseArbitraryQuality
 		  Var Quality As Double = Value * Multiplier
 		  
 		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.

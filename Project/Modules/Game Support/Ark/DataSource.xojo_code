@@ -1103,6 +1103,57 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchForLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As Ark.LootContainer()
+		  #Pragma Unused Tags
+		  #Pragma Warning "Tags could be used here"
+		  
+		  Var Containers() As Ark.LootContainer
+		  
+		  Try
+		    Var Clauses() As String
+		    Var Values As New Dictionary
+		    Var NextPlaceholder As Integer = 1
+		    If (ContentPacks Is Nil) = False And CType(ContentPacks.Count, Integer) > 0 Then
+		      Var Placeholders() As String
+		      For Each ContentPackUUID As String In ContentPacks
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		        Values.Value(NextPlaceholder) = ContentPackUUID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
+		    End If
+		    If SearchText.IsEmpty = False Then
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    If IncludeExperimental = False Then
+		      Clauses.Add("experimental = 0")
+		    End If
+		    
+		    Var SQL As String = Self.LootContainerSelectSQL
+		    If Clauses.LastIndex > -1 Then
+		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
+		    End If
+		    SQL = SQL + " ORDER BY loot_containers.sort_order, loot_containers.label;"
+		    
+		    Var Results As RowSet
+		    If Values.KeyCount > 0 Then
+		      Results = Self.SQLSelect(SQL, Values)
+		    Else
+		      Results = Self.SQLSelect(SQL)
+		    End If
+		    
+		    Containers = Self.RowSetToLootContainer(Results)
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
+		  Return Containers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SharedInstance(Create As Boolean = True) As Ark.DataSource
 		  If mInstance Is Nil And Create = True Then
 		    mInstance = New Ark.DataSource

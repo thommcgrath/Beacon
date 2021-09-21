@@ -313,15 +313,15 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Ark.Configs.Difficulty, Mods As Beacon.StringList) As Ark.Configs.SpawnPoints
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As Double, ContentPacks As Beacon.StringList) As Ark.Configs.SpawnPoints
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
 		  Var SpawnPoints As New Ark.Configs.SpawnPoints
-		  HandleConfig(SpawnPoints, ParsedData, "ConfigOverrideNPCSpawnEntriesContainer", Mods)
-		  HandleConfig(SpawnPoints, ParsedData, "ConfigAddNPCSpawnEntriesContainer", Mods)
-		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer", Mods)
+		  HandleConfig(SpawnPoints, ParsedData, "ConfigOverrideNPCSpawnEntriesContainer", ContentPacks)
+		  HandleConfig(SpawnPoints, ParsedData, "ConfigAddNPCSpawnEntriesContainer", ContentPacks)
+		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer", ContentPacks)
 		  If SpawnPoints.Count > 0 Then
 		    Return SpawnPoints
 		  End If
@@ -346,7 +346,7 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub HandleConfig(SpawnPoints As Ark.Configs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String, Mods As Beacon.StringList)
+		Private Shared Sub HandleConfig(SpawnPoints As Ark.Configs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String, ContentPacks As Beacon.StringList)
 		  If Not ParsedData.HasKey(ConfigKey) Then
 		    Return
 		  End If
@@ -387,7 +387,7 @@ Inherits Ark.ConfigGroup
 		      If SpawnClasses.HasKey(ClassString) Then
 		        SpawnPoint = SpawnPoints.mSpawnPoints.Value(SpawnClasses.Value(ClassString))
 		      Else
-		        SpawnPoint = Ark.ResolveSpawnPoint("", "", ClassString, Mods)
+		        SpawnPoint = Ark.ResolveSpawnPoint("", "", ClassString, ContentPacks)
 		        
 		        Var Mutable As Ark.MutableSpawnPoint = SpawnPoint.MutableVersion
 		        Mutable.Mode = Mode
@@ -453,7 +453,7 @@ Inherits Ark.ConfigGroup
 		            Set.ColorSetClass = Entry.Lookup("ColorSets", "")
 		            
 		            For I As Integer = 0 To Classes.LastIndex
-		              Var Creature As Ark.Creature = Ark.ResolveCreature("", "", Classes(I), Mods)
+		              Var Creature As Ark.Creature = Ark.ResolveCreature("", "", Classes(I), ContentPacks)
 		              
 		              Var SetEntry As New Ark.MutableSpawnPointSetEntry(Creature)
 		              If LevelMembers.LastIndex >= I Then
@@ -532,13 +532,13 @@ Inherits Ark.ConfigGroup
 		                End If
 		                
 		                Var FromClassValue As String = Replacement.Value("FromClass")
-		                Var FromCreature As Ark.Creature = Ark.ResolveCreature("", "", FromClassValue, Mods)
+		                Var FromCreature As Ark.Creature = Ark.ResolveCreature("", "", FromClassValue, ContentPacks)
 		                
 		                Var ToWeights() As Variant = Replacement.Value("Weights")
 		                Var ToClassValues() As Variant = Replacement.Value("ToClasses")
 		                For I As Integer = 0 To ToClassValues.LastIndex
 		                  Var ToWeight As Double = If(I <= ToWeights.LastIndex, ToWeights(I), 1.0)
-		                  Var ToCreature As Ark.Creature = Ark.ResolveCreature("", "", ToClassValues(I), Mods)
+		                  Var ToCreature As Ark.Creature = Ark.ResolveCreature("", "", ToClassValues(I), ContentPacks)
 		                  
 		                  Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
 		                Next
@@ -561,7 +561,7 @@ Inherits Ark.ConfigGroup
 		            Continue
 		          End If
 		          
-		          Var Creature As Ark.Creature = Ark.ResolveCreature(Limit, "", "", "NPCClassString", Mods)
+		          Var Creature As Ark.Creature = Ark.ResolveCreature(Limit, "", "", "NPCClassString", ContentPacks)
 		          If (Creature Is Nil) = False Then
 		            Clone.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
 		          End If
