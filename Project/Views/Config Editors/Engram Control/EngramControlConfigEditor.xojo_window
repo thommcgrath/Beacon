@@ -133,14 +133,14 @@ Begin ConfigEditor EngramControlConfigEditor
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   2
-      ColumnWidths    =   ""
+      ColumnCount     =   3
+      ColumnWidths    =   "2*,2*,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
       DefaultSortColumn=   0
       DefaultSortDirection=   0
-      DropIndicatorVisible=   False
+      DropIndicatorVisible=   True
       EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
@@ -156,7 +156,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Height          =   610
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Engram	Behaviors"
+      InitialValue    =   "Engram	Behaviors	Mod"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -173,7 +173,7 @@ Begin ConfigEditor EngramControlConfigEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   41
-      Transparent     =   False
+      Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
@@ -478,6 +478,7 @@ End
 		    Else
 		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label
 		    End If
+		    Self.EngramList.CellValueAt(Idx, 2) = Engram.ModName
 		    
 		    Var Behaviors() As String
 		    

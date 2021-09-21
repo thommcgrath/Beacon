@@ -290,6 +290,11 @@ End
 		  End If
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub Configure()
+		  Me.UserDataFolder = App.ApplicationSupport.Child("BrowserData").NativePath
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
