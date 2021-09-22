@@ -923,7 +923,7 @@ End
 			  
 			  Self.mCurrentConfigName = Value
 			  
-			  Var NewPanel As ConfigEditor
+			  Var NewPanel As ArkConfigEditor
 			  Var Embed As Boolean
 			  If Value.IsEmpty = False Then
 			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
@@ -951,43 +951,43 @@ End
 			    Else
 			      Select Case Value
 			      Case "deployments"
-			        NewPanel = New ServersConfigEditor(Self.mController)
+			        NewPanel = New ServersConfigEditor(Self.Project)
 			      Case "accounts"
-			        NewPanel = New AccountsConfigEditor(Self.mController)
+			        NewPanel = New AccountsConfigEditor(Self.Project)
 			      Case "metadata"
-			        NewPanel = New MetadataConfigEditor(Self.mController)
+			        NewPanel = New ArkProjectSettingsEditor(Self.Project)
 			      Case Ark.Configs.NameLootDrops
-			        NewPanel = New LootConfigEditor(Self.mController)
+			        NewPanel = New LootConfigEditor(Self.Project)
 			      Case Ark.Configs.NameDifficulty
-			        NewPanel = New DifficultyConfigEditor(Self.mController)
+			        NewPanel = New ArkDifficultyEditor(Self.Project)
 			      Case Ark.Configs.NameExperienceCurves
-			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
+			        NewPanel = New ArkExperienceEditor(Self.Project)
 			      Case Ark.Configs.NameCustomContent
-			        NewPanel = New CustomContentConfigEditor(Self.mController)
+			        NewPanel = New ArkCustomConfigEditor(Self.Project)
 			      Case Ark.Configs.NameCraftingCosts
-			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
+			        NewPanel = New CraftingCostsConfigEditor(Self.Project)
 			      Case Ark.Configs.NameStackSizes
-			        NewPanel = New StackSizesConfigEditor(Self.mController)
+			        NewPanel = New StackSizesConfigEditor(Self.Project)
 			      Case Ark.Configs.NameBreedingMultipliers
-			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
+			        NewPanel = New BreedingMultipliersConfigEditor(Self.Project)
 			      Case Ark.Configs.NameHarvestRates
-			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
+			        NewPanel = New HarvestRatesConfigEditor(Self.Project)
 			      Case Ark.Configs.NameDinoAdjustments
-			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
+			        NewPanel = New DinoAdjustmentsConfigEditor(Self.Project)
 			      Case Ark.Configs.NameStatMultipliers
-			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
+			        NewPanel = New StatMultipliersConfigEditor(Self.Project)
 			      Case Ark.Configs.NameDayCycle
-			        NewPanel = New DayCycleConfigEditor(Self.mController)
+			        NewPanel = New DayCycleConfigEditor(Self.Project)
 			      Case Ark.Configs.NameSpawnPoints
-			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
+			        NewPanel = New SpawnPointsConfigEditor(Self.Project)
 			      Case Ark.Configs.NameStatLimits
-			        NewPanel = New StatLimitsConfigEditor(Self.mController)
+			        NewPanel = New StatLimitsConfigEditor(Self.Project)
 			      Case Ark.Configs.NameEngramControl
-			        NewPanel = New EngramControlConfigEditor(Self.mController)
+			        NewPanel = New EngramControlConfigEditor(Self.Project)
 			      Case Ark.Configs.NameSpoilTimers
-			        NewPanel = New SpoilTimersConfigEditor(Self.mController)
+			        NewPanel = New SpoilTimersConfigEditor(Self.Project)
 			      Case Ark.Configs.NameOtherSettings
-			        NewPanel = New OtherSettingsConfigEditor(Self.mController)
+			        NewPanel = New OtherSettingsConfigEditor(Self.Project)
 			      End Select
 			      If NewPanel <> Nil Then
 			        Self.Panels.Value(CacheKey) = NewPanel
@@ -1000,7 +1000,7 @@ End
 			    Return
 			  End If
 			  
-			  If Self.CurrentPanel <> Nil Then
+			  If (Self.CurrentPanel Is Nil) = False Then
 			    Self.CurrentPanel.SwitchedFrom()
 			    Self.CurrentPanel.Visible = False
 			    Self.CurrentPanel = Nil
@@ -1008,7 +1008,7 @@ End
 			  
 			  Self.CurrentPanel = NewPanel
 			  
-			  If Self.CurrentPanel <> Nil Then
+			  If (Self.CurrentPanel Is Nil) = False Then
 			    Var RequiresPurchase As Boolean
 			    If Value.Length > 0 Then
 			      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Value, If((App.IdentityManager.CurrentIdentity Is Nil) = False, App.IdentityManager.CurrentIdentity.OmniFlags, 0))
@@ -1044,7 +1044,7 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private CurrentPanel As ConfigEditor
+		Private CurrentPanel As ArkConfigEditor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

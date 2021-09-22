@@ -80,6 +80,12 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GameID() As String
+		  Return Self.mProjectURL.GameID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Load()
 		  If Self.Loaded Then
 		    RaiseEvent Loaded(Self.mProject)

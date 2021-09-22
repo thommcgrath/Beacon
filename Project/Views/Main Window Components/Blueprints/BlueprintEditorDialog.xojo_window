@@ -1324,7 +1324,7 @@ Begin BeaconDialog BlueprintEditorDialog
          RequiresSelection=   False
          RowSelectionType=   1
          Scope           =   2
-         SelectionChangeBlocked=   False
+         SelectionChangeBlocked=   "False"
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
@@ -1384,7 +1384,7 @@ Begin BeaconDialog BlueprintEditorDialog
          RequiresSelection=   False
          RowSelectionType=   1
          Scope           =   2
-         SelectionChangeBlocked=   False
+         SelectionChangeBlocked=   "False"
          TabIndex        =   8
          TabPanelIndex   =   3
          TabStop         =   True
@@ -2258,7 +2258,7 @@ End
 		  Next
 		  
 		  Var Mods As New Beacon.StringList
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
+		  Var NewEngrams() As Beacon.Engram = ArkBlueprintSelectorDialog.Present(Self, "Resources", Engrams, Mods, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If

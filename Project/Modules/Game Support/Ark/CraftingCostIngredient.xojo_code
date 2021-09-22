@@ -156,6 +156,12 @@ Protected Class CraftingCostIngredient
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Reference() As Ark.BlueprintReference
+		  Return Self.mEngram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RequireExact() As Boolean
 		  Return Self.mRequireExact
 		End Function
