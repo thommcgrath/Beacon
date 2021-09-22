@@ -17,14 +17,8 @@ Protected Class ProjectController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(WithIdentity As Beacon.Identity)
-		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + v4UUID.Create, WithIdentity)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Project As Beacon.Project, WithIdentity As Beacon.Identity)
-		  Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.UUID + "?name=" + EncodeURLComponent(Project.Title)
+		  Self.mProjectURL = Beacon.ProjectURL.TypeTransient + "://" + Project.UUID + "?name=" + EncodeURLComponent(Project.Title) + "&game=" + EncodeURLComponent(Project.GameID.Lowercase)
 		  Self.mLoaded = True
 		  Self.mProject = Project
 		  Self.mIdentity = WithIdentity
@@ -35,6 +29,12 @@ Protected Class ProjectController
 		Sub Constructor(URL As Beacon.ProjectURL, WithIdentity As Beacon.Identity)
 		  Self.mProjectURL = URL
 		  Self.mIdentity = WithIdentity
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(GameID As String, WithIdentity As Beacon.Identity)
+		  Self.Constructor(Beacon.ProjectURL.TypeTransient + "://" + v4UUID.Create + "?game=" + EncodeURLComponent(GameID.Lowercase), WithIdentity)
 		End Sub
 	#tag EndMethod
 
@@ -258,7 +258,7 @@ Protected Class ProjectController
 		      Return
 		    End If
 		  Case Beacon.ProjectURL.TypeTransient
-		    Var Temp As New Beacon.Project
+		    Var Temp As Beacon.Project = Beacon.Project.CreateForGameID(Self.mProjectURL.GameID)
 		    FileContent = Beacon.GenerateJSON(Temp.SaveData(Self.mIdentity), False)
 		  Else
 		    Return

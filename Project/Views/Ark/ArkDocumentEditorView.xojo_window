@@ -1,16 +1,16 @@
 #tag Window
-Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,NotificationKit.Receiver
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+Begin DocumentEditorView ArkDocumentEditorView
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    DoubleBuffer    =   True
    Enabled         =   True
    EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   528
-   HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   0
@@ -21,9 +21,9 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   858
    Begin PagePanel PagePanel1
@@ -109,15 +109,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Visible         =   True
          Width           =   627
       End
-   End
-   Begin Timer AutosaveTimer
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Mode            =   2
-      Period          =   60000
-      Scope           =   2
-      TabPanelIndex   =   0
    End
    Begin FadedSeparator SourceSeparator
       AllowAutoDeactivate=   True
@@ -284,24 +275,12 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Activate()
-		  Self.Changed = Self.Document.Modified
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub CleanupDiscardedChanges()
-		  Self.CleanupAutosave()
+		  Self.Changed = Self.Project.Modified
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged, Self.Notification_SwitchEditors)
-		  
-		  If Self.mController.Document <> Nil Then
-		    Self.mController.Document.RemoveObserver(Self, "Title")
-		  End If
-		  
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
 		    Self.mImportWindowRef = Nil
@@ -311,8 +290,6 @@ End
 
 	#tag Event
 		Sub EnableMenuItems()
-		  FileSaveAs.Enabled = True
-		  
 		  If Self.ReadyToDeploy Then
 		    FileDeploy.Enabled = True
 		  End If
@@ -321,7 +298,7 @@ End
 		    FileExport.Enabled = True
 		  End If
 		  
-		  If Self.Document.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
+		  If Self.Project.ActiveConfigSet <> Ark.Project.BaseConfigSetName Then
 		    ViewSwitchToBaseConfigSet.Enabled = True
 		  End If
 		  
@@ -341,23 +318,28 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub IdentityChanged()
+		  // Simply toggle the menu to force a redraw
+		  Var CurrentConfig As String = Self.CurrentConfigName
+		  Self.CurrentConfigName = ""
+		  Self.CurrentConfigName = CurrentConfig
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
-		  If Self.mController.Document <> Nil Then
-		    Var DocumentID As String = Self.mController.Document.DocumentID
-		    Var LastConfig As String = Preferences.LastUsedConfigName(DocumentID)
+		  If (Self.Project Is Nil) = False Then
+		    Var UUID As String = Self.Project.UUID
+		    Var LastConfig As String = Preferences.LastUsedConfigName(UUID)
 		    If LastConfig.IsEmpty Then
-		      If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeWeb Then
-		        LastConfig = BeaconConfigs.NameMetadata
+		      If Self.URL.Scheme = Beacon.ProjectURL.TypeWeb Then
+		        LastConfig = "metadata"
 		      Else
-		        LastConfig = BeaconConfigs.NameLootDrops
+		        LastConfig = Ark.Configs.NameLootDrops
 		      End If
 		    End If
 		    Self.CurrentConfigName = LastConfig
-		    
-		    Self.mController.Document.AddObserver(Self, "Title")
 		  End If
-		  
-		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, Self.Notification_SwitchEditors)
 		End Sub
 	#tag EndEvent
 
@@ -368,14 +350,6 @@ End
 		    Self.mUpdateUITag = ""
 		    Self.UpdateUI()
 		  End If
-		  
-		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then  
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		    Self.mController.Save()
-		  Else
-		    Self.SaveAs()
-		  End If
-		  Return True
 		End Function
 	#tag EndEvent
 
@@ -385,6 +359,12 @@ End
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedTo(UserData)
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SwitchToEditor(EditorName As String)
+		  Self.CurrentConfigName = EditorName
 		End Sub
 	#tag EndEvent
 
@@ -414,17 +394,6 @@ End
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
-			If Self.IsFrontmost = False Then
-			Return False
-			End If
-			
-			Call Self.SaveAs()
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function ViewSwitchToBaseConfigSet() As Boolean Handles ViewSwitchToBaseConfigSet.Action
 			If Self.IsFrontmost = False Then
 			Return False
@@ -435,46 +404,6 @@ End
 		End Function
 	#tag EndMenuHandler
 
-
-	#tag Method, Flags = &h21
-		Private Sub Autosave()
-		  If Not Self.Document.Modified Then
-		    Return
-		  End If
-		  
-		  Var File As BookmarkedFolderItem = Self.AutosaveFile(True)
-		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File)) <> Nil Then
-		    Self.AutosaveTimer.Reset
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function AutosaveFile(CreateFolder As Boolean = False) As BookmarkedFolderItem
-		  If Self.Document = Nil Then
-		    Return Nil
-		  End If
-		  
-		  If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
-		    If (Self.mController.AutosaveURL Is Nil) = False Then
-		      Try
-		        Self.mAutosaveFile = Self.mController.AutosaveURL.File
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    
-		    If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
-		      Var Folder As FolderItem = App.AutosaveFolder(CreateFolder)
-		      If Folder = Nil Then
-		        Return Nil
-		      End If
-		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + Beacon.FileExtensionProject))
-		    End If
-		  End If
-		  
-		  Return Self.mAutosaveFile
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
@@ -501,12 +430,12 @@ End
 		      Return
 		    End If
 		    
-		    If Self.Document.IsValid(App.IdentityManager.CurrentIdentity) = False Then
+		    If Self.Project.IsValid(App.IdentityManager.CurrentIdentity) = False Then
 		      Self.ShowIssues()
 		      Return
 		    End If
 		    
-		    Var Win As DeployManager = New DeployManager(Self.Document, PreselectServers)
+		    Var Win As DeployManager = New DeployManager(Self.Project, PreselectServers)
 		    Self.mDeployWindow = New WeakRef(Win)
 		    Win.BringToFront()
 		  End If
@@ -521,12 +450,12 @@ End
 		    Return
 		  End If
 		  
-		  If Self.Document.IsValid(App.IdentityManager.CurrentIdentity) = False Then
+		  If Self.Project.IsValid(App.IdentityManager.CurrentIdentity) = False Then
 		    Self.ShowIssues()
 		    Return
 		  End If
 		  
-		  DocumentExportWindow.Present(Self, Self.Document)
+		  DocumentExportWindow.Present(Self, Self.Project)
 		End Sub
 	#tag EndMethod
 
@@ -535,46 +464,22 @@ End
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Show()
 		  Else
-		    Var OtherDocuments() As Beacon.Document
+		    Var OtherProjects() As Beacon.Project
 		    For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
 		      Var Key As Variant = Self.mEditorRefs.Key(I)
 		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
-		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
-		        OtherDocuments.Add(DocumentEditorView(Ref.Value).Document)
+		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Project.UUID <> Self.Project.UUID Then
+		        OtherProjects.Add(DocumentEditorView(Ref.Value).Project)
 		      End If
 		    Next
 		    
 		    Var Ref As DocumentImportWindow
 		    If ForDeployment Then
-		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Document, OtherDocuments)
+		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Project, OtherProjects)
 		    Else
-		      Ref = DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments)
+		      Ref = DocumentImportWindow.Present(AddressOf ImportCallback, Self.Project, OtherProjects)
 		    End If
 		    Self.mImportWindowRef = New WeakRef(Ref)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CleanupAutosave()
-		  Var AutosaveFile As FolderItem = Self.AutosaveFile()
-		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
-		    Try
-		      AutosaveFile.Remove
-		    Catch Err As IOException
-		      App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
-		      Try
-		        Var Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
-		        If Not Destination.Exists Then
-		          Destination.CreateFolder
-		        End If
-		        Destination = Destination.Child(v4UUID.Create + ".beacon")
-		        AutosaveFile.MoveTo(Destination)
-		      Catch DeeperError As RuntimeException
-		        App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString + ")")
-		      End Try
-		    End Try
-		    Self.mAutosaveFile = Nil
 		  End If
 		End Sub
 	#tag EndMethod
@@ -595,33 +500,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As Beacon.DocumentController)
+		Sub Constructor(Controller As Beacon.ProjectController)
 		  If Self.mEditorRefs = Nil Then
 		    Self.mEditorRefs = New Dictionary
 		  End If
-		  Self.mEditorRefs.Value(Controller.Document.DocumentID) = New WeakRef(Self)
-		  
-		  Self.mController = Controller
-		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
-		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  Self.ViewTitle = Controller.Name
-		  Self.UpdateViewIcon
-		  
-		  Self.ViewID = Controller.URL.Hash
+		  Self.mEditorRefs.Value(Controller.Project.UUID) = New WeakRef(Self)
 		  
 		  Self.Panels = New Dictionary
+		  
+		  Super.Constructor(Controller)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
-		  Var ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
+		  Var ExcludedConfigs() As Ark.ConfigGroup = Self.Project.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
 		  If ExcludedConfigs.LastIndex = -1 Then
 		    Return True
 		  End If
 		  
 		  Var HumanNames() As String
-		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
+		  For Each Config As Ark.ConfigGroup In ExcludedConfigs
 		    HumanNames.Add("""" + Language.LabelForConfig(Config) + """")
 		  Next
 		  HumanNames.Sort
@@ -643,26 +542,21 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocuments(SourceDocuments As Variant)
 		  Var Documents() As Beacon.Document = SourceDocuments
-		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
+		  DocumentMergerWindow.Present(Self, Documents, Self.Project, WeakAddressOf MergeCallback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocumentsAndDeploy(SourceDocuments As Variant)
 		  Var Documents() As Beacon.Document = SourceDocuments
-		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeAndDeployCallback)
+		  DocumentMergerWindow.Present(Self, Documents, Self.Project, WeakAddressOf MergeAndDeployCallback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  If Self.mController <> Nil Then
-		    RemoveHandler Self.mController.WriteSuccess, WeakAddressOf mController_WriteSuccess
-		    RemoveHandler Self.mController.WriteError, WeakAddressOf mController_WriteError
-		  End If
-		  
-		  If Self.mEditorRefs <> Nil And Self.mEditorRefs.HasKey(Self.mController.Document.DocumentID) Then
-		    Self.mEditorRefs.Remove(Self.mController.Document.DocumentID)
+		  If (Self.mEditorRefs Is Nil) = False And Self.mEditorRefs.HasKey(Self.Project.UUID) Then
+		    Self.mEditorRefs.Remove(Self.Project.UUID)
 		  End If
 		  
 		  If (Self.mMapsPopoverController Is Nil) = False Then
@@ -676,6 +570,8 @@ End
 		    Self.mModsPopoverController.Dismiss(True)
 		    Self.mModsPopoverController = Nil
 		  End If
+		  
+		  Super.Destructor()
 		End Sub
 	#tag EndMethod
 
@@ -697,12 +593,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Document() As Beacon.Document
-		  Return Self.mController.Document
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub GoToIssue(Issue As Beacon.Issue)
 		  If Issue = Nil Then
@@ -720,7 +610,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleConfigPickerClick()
-		  Var SetNames() As String = Self.Document.ConfigSetNames
+		  Var SetNames() As String = Self.Project.ConfigSetNames
 		  SetNames.Sort
 		  
 		  Var Menu As New MenuItem
@@ -741,7 +631,7 @@ End
 		      Var Tag As String = Choice.Tag.StringValue.Middle(7)
 		      Select Case Tag
 		      Case "manage"
-		        If ConfigSetManagerWindow.Present(Self, Self.Document) Then
+		        If ConfigSetManagerWindow.Present(Self, Self.Project) Then
 		          Self.ActiveConfigSet = Self.ActiveConfigSet
 		        End If
 		      Case "help"
@@ -783,8 +673,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
-		    Self.Document.MapCompatibility = MapSelectionGrid(Sender.Container).Mask
-		    Self.Changed = Self.Document.Modified
+		    Self.Project.MapMask = MapSelectionGrid(Sender.Container).Mask
+		    Self.Changed = Self.Project.Modified
 		  End If
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
@@ -793,44 +683,6 @@ End
 		  
 		  Self.OmniBar1.Item("MapsButton").Toggled = False
 		  Self.mMapsPopoverController = Nil
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As String)
-		  If Not Self.Closed Then
-		    Self.Progress = BeaconSubview.ProgressNone
-		  End If
-		  
-		  If Reason.Encoding = Nil Then
-		    Reason = Reason.GuessEncoding
-		  End If
-		  
-		  // This has been made thread safe
-		  Self.ShowAlert("Uh oh, the project " + Sender.Name + " did not save!", Reason)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
-		  If Not Self.Closed Then
-		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
-		    Self.ViewTitle = Sender.Name
-		    Self.Progress = BeaconSubview.ProgressNone
-		    If (Self.LinkedOmniBarItem Is Nil) = False And (Self.LinkedOmniBarItem.Name <> Self.mController.URL.Hash) Then
-		      Self.LinkedOmniBarItem.Name = Self.mController.URL.Hash
-		    End If
-		    Self.UpdateViewIcon()
-		  End If
-		  
-		  Preferences.AddToRecentDocuments(Sender.URL)
-		  
-		  Self.ViewID = Sender.URL.Hash
-		  
-		  If Self.Document = Nil Or Sender.Document.Modified = False Then
-		    // Safe to cleanup the autosave
-		    Self.CleanupAutosave()
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -861,12 +713,12 @@ End
 		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
 		  If Not Cancelled Then
 		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
-		    Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
-		    For Each Details As Beacon.ModDetails In Mods
-		      Self.Document.ModEnabled(Details.ModID) = Editor.ModEnabled(Details.ModID)
+		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		    For Each Pack As Ark.ContentPack In ContentPacks
+		      Self.Project.ContentPackEnabled(Pack.UUID) = Editor.ModEnabled(Pack.UUID)
 		    Next
 		    
-		    Self.Changed = Self.Document.Modified
+		    Self.Changed = Self.Project.Modified
 		  End If
 		  
 		  If (Self.CurrentPanel Is Nil) = False Then
@@ -879,38 +731,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
-		  // Part of the NotificationKit.Receiver interface.
-		  
-		  Select Case Notification.Name
-		  Case IdentityManager.Notification_IdentityChanged
-		    // Simply toggle the menu to force a redraw
-		    Var CurrentConfig As String = Self.CurrentConfigName
-		    Self.CurrentConfigName = ""
-		    Self.CurrentConfigName = CurrentConfig
-		  Case Self.Notification_SwitchEditors
-		    Var UserData As Dictionary = Notification.UserData
-		    If Self.Document.DocumentID = UserData.Value("DocumentID").StringValue Then
-		      Self.CurrentConfigName = UserData.Value("ConfigName").StringValue
-		    End If
-		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
-		  
-		  #Pragma Unused Source
-		  #Pragma Unused OldValue
-		  #Pragma Unused NewValue
 		  
 		  Select Case Key
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
-		  Case "Title"
-		    Self.ViewTitle = Self.mController.Name
-		    Self.Changed = True
+		  Else
+		    Super.ObservedValueChanged(Source, Key, OldValue, NewValue)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -919,8 +747,8 @@ End
 		Private Sub Panel_ContentsChanged(Sender As ConfigEditor)
 		  #Pragma Unused Sender
 		  
-		  If Self.Changed <> Self.Document.Modified Then
-		    Self.Changed = Self.Document.Modified
+		  If Self.Changed <> Self.Project.Modified Then
+		    Self.Changed = Self.Project.Modified
 		  End If
 		  
 		  If Self.mUpdateUITag <> "" Then
@@ -932,15 +760,21 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Project() As Ark.Project
+		  Return Ark.Project(Super.Project())
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
-		  If Self.Document = Nil Or Self.Document.ServerProfileCount = 0 Then
+		  If Self.Project Is Nil Or Self.Project.ServerProfileCount = 0 Then
 		    Return False
 		  End If
 		  
-		  Var Bound As Integer = Self.Document.ServerProfileCount - 1
+		  Var Bound As Integer = Self.Project.ServerProfileCount - 1
 		  For I As Integer = 0 To Bound
-		    If Self.Document.ServerProfile(I) <> Nil And Self.Document.ServerProfile(I).DeployCapable Then
+		    If Self.Project.ServerProfile(I) <> Nil And Self.Project.ServerProfile(I).DeployCapable Then
 		      Return True
 		    End If
 		  Next
@@ -949,7 +783,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToExport() As Boolean
-		  Return Self.Document <> Nil
+		  Return Self.Project <> Nil
 		End Function
 	#tag EndMethod
 
@@ -963,7 +797,7 @@ End
 		      Self.CurrentConfigName = ""
 		    End If
 		    
-		    Self.Document.RemoveConfigGroup(ConfigName)
+		    Self.Project.RemoveConfigGroup(ConfigName)
 		    
 		    Var CacheKey As String = Self.ActiveConfigSet + ":" + ConfigName
 		    Self.DiscardConfigPanel(CacheKey)
@@ -979,39 +813,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SaveAs()
-		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
-		  Case DocumentSaveToCloudWindow.StateSaved
-		    Self.ViewTitle = Self.mController.Name
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		  Case DocumentSaveToCloudWindow.StateSaveLocal
-		    Var Dialog As New SaveFileDialog
-		    Dialog.SuggestedFileName = Self.mController.Name + Beacon.FileExtensionProject
-		    Dialog.Filter = BeaconFileTypes.BeaconDocument
-		    
-		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		    If File = Nil Then
-		      Return
-		    End If
-		    
-		    If Self.Document.Title.BeginsWith("Untitled Project") Then
-		      Var Filename As String = File.Name
-		      Var Extension As String = Beacon.FileExtensionProject
-		      If Filename.EndsWith(Extension) Then
-		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
-		      End If
-		      Self.Document.Title = Filename
-		    End If
-		    
-		    Self.Document.NewIdentifier()
-		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
-		    Self.ViewTitle = Self.mController.Name
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Beacon.ServerProfile)
 		  #Pragma Unused Sender
 		  Self.BeginDeploy(SelectedProfiles)
@@ -1020,18 +821,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowIssues()
-		  ResolveIssuesDialog.Present(Self, Self.Document, AddressOf GoToIssue)
-		  Self.Changed = Self.Document.Modified
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Sub SwitchToEditor(Document As Beacon.Document, ConfigName As String)
-		  Var UserData As New Dictionary
-		  UserData.Value("DocumentID") = Document.DocumentID
-		  UserData.Value("ConfigName") = ConfigName
-		  
-		  NotificationKit.Post(Notification_SwitchEditors, UserData)
+		  ResolveIssuesDialog.Present(Self, Self.Project, AddressOf GoToIssue)
+		  Self.Changed = Self.Project.Modified
 		End Sub
 	#tag EndMethod
 
@@ -1066,7 +857,7 @@ End
 		    If IsBase = False And SupportsConfigSets = False Then
 		      Continue
 		    End If
-		    Item.CanDismiss = SupportsConfigSets And Self.Document.HasConfigGroup(Tags(I)) = True And Self.Document.ConfigGroup(Tags(I)).IsImplicit = False
+		    Item.CanDismiss = SupportsConfigSets And Self.Project.HasConfigGroup(Tags(I)) = True And Self.Project.ConfigGroup(Tags(I)).IsImplicit = False
 		    SourceItems.Add(Item)
 		  Next
 		  
@@ -1083,57 +874,28 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  Self.ViewTitle = Self.mController.Name
+		  Self.ViewTitle = Self.Controller.Name
 		  Self.UpdateConfigList()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateViewIcon()
-		  Select Case Self.mController.URL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
-		    Self.ViewIcon = IconCloudDocument
-		  Case Beacon.DocumentURL.TypeWeb
-		    Self.ViewIcon = IconCommunityDocument
-		  Else
-		    Self.ViewIcon = Nil
-		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function URL() As Beacon.DocumentURL
-		  Return Self.mController.URL
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
-		  If Plural Then
-		    Return If(Lowercase, "projects", "Projects")
-		  Else
-		    Return If(Lowercase, "project", "Project")
-		  End If
-		End Function
 	#tag EndMethod
 
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.Document.ActiveConfigSet
+			  Return Self.Project.ActiveConfigSet
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Var ConfigName As String = Self.CurrentConfigName
-			  If Value <> Beacon.Document.BaseConfigSetName And BeaconConfigs.SupportsConfigSets(ConfigName) = False Then
+			  If Value <> Ark.Project.BaseConfigSetName And Ark.Configs.SupportsConfigSets(ConfigName) = False Then
 			    // If switching from base and on an editor that won't exist in the desired set, switch to something else
-			    ConfigName = BeaconConfigs.NameLootDrops
+			    ConfigName = Ark.Configs.NameLootDrops
 			  End If
 			  Self.CurrentConfigName = "" // To unload the current version
 			  
-			  Self.Document.ActiveConfigSet = Value
+			  Self.Project.ActiveConfigSet = Value
 			  Self.ConfigSetPicker.Invalidate
 			  Self.UpdateConfigList
 			  
@@ -1155,7 +917,7 @@ End
 			    Return
 			  End If
 			  
-			  If (Value = "accounts" Or Value = "deployments") And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
+			  If (Value = "accounts" Or Value = "deployments" Or Value = "metadata") And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
 			    Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
 			  End If
 			  
@@ -1166,8 +928,8 @@ End
 			  If Value.IsEmpty = False Then
 			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
 			    
-			    If Self.mController.Document <> Nil Then
-			      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Value
+			    If (Self.Project Is Nil) = False Then
+			      Preferences.LastUsedConfigName(Self.Project.UUID) = Value
 			    End If
 			    
 			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
@@ -1192,39 +954,39 @@ End
 			        NewPanel = New ServersConfigEditor(Self.mController)
 			      Case "accounts"
 			        NewPanel = New AccountsConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameLootDrops
+			      Case "metadata"
+			        NewPanel = New MetadataConfigEditor(Self.mController)
+			      Case Ark.Configs.NameLootDrops
 			        NewPanel = New LootConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameDifficulty
+			      Case Ark.Configs.NameDifficulty
 			        NewPanel = New DifficultyConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameMetadata
-			        NewPanel = New MetaDataConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameExperienceCurves
+			      Case Ark.Configs.NameExperienceCurves
 			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameCustomContent
+			      Case Ark.Configs.NameCustomContent
 			        NewPanel = New CustomContentConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameCraftingCosts
+			      Case Ark.Configs.NameCraftingCosts
 			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameStackSizes
+			      Case Ark.Configs.NameStackSizes
 			        NewPanel = New StackSizesConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameBreedingMultipliers
+			      Case Ark.Configs.NameBreedingMultipliers
 			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameHarvestRates
+			      Case Ark.Configs.NameHarvestRates
 			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameDinoAdjustments
+			      Case Ark.Configs.NameDinoAdjustments
 			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameStatMultipliers
+			      Case Ark.Configs.NameStatMultipliers
 			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameDayCycle
+			      Case Ark.Configs.NameDayCycle
 			        NewPanel = New DayCycleConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameSpawnPoints
+			      Case Ark.Configs.NameSpawnPoints
 			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameStatLimits
+			      Case Ark.Configs.NameStatLimits
 			        NewPanel = New StatLimitsConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameEngramControl
+			      Case Ark.Configs.NameEngramControl
 			        NewPanel = New EngramControlConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameSpoilTimers
+			      Case Ark.Configs.NameSpoilTimers
 			        NewPanel = New SpoilTimersConfigEditor(Self.mController)
-			      Case BeaconConfigs.NameOtherSettings
+			      Case Ark.Configs.NameOtherSettings
 			        NewPanel = New OtherSettingsConfigEditor(Self.mController)
 			      End Select
 			      If NewPanel <> Nil Then
@@ -1286,10 +1048,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAutosaveFile As BookmarkedFolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mConfigPickerMenuOrigin As Point
 	#tag EndProperty
 
@@ -1299,10 +1057,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigPickerMouseHover As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mController As Beacon.DocumentController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1360,9 +1114,6 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_SwitchEditors, Type = String, Dynamic = False, Default = \"Switch Editors", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = OmniWarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private
@@ -1427,13 +1178,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AutosaveTimer
-	#tag Event
-		Sub Action()
-		  Self.Autosave()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events OmniBar1
 	#tag Event
 		Sub Open()
@@ -1462,9 +1206,9 @@ End
 		  Case "ExportButton"
 		    Self.BeginExport()
 		  Case "ShareButton"
-		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
-		      SharingDialog.Present(Self, Self.Document)
-		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
+		    If Self.URL.Scheme = Beacon.ProjectURL.TypeCloud Then
+		      SharingDialog.Present(Self, Self.Project)
+		    ElseIf Self.URL.Scheme = Beacon.ProjectURL.TypeLocal Then
 		      Self.ShowAlert("Project sharing is only available to cloud projects", "Use ""Save As…"" under the file menu to save a new copy of this project to the cloud if you would like to use Beacon's sharing features.")
 		    Else
 		      Self.ShowAlert("Project sharing is only available to cloud projects", "If you would like to use Beacon's sharing features, first save your project using ""Save"" under the file menu.")
@@ -1481,7 +1225,7 @@ End
 		    
 		    Var Editor As New MapSelectionGrid
 		    Var Controller As New PopoverController("Select Maps", Editor)
-		    Editor.Mask = Self.Document.MapCompatibility
+		    Editor.Mask = Self.Project.MapMask
 		    Controller.Show(Me, ItemRect)
 		    
 		    Item.Toggled = True
@@ -1496,7 +1240,7 @@ End
 		      Return
 		    End If
 		    
-		    Var Editor As New ModSelectionGrid(Self.Document.Mods)
+		    Var Editor As New ModSelectionGrid(Self.Project.ContentPacks)
 		    Var Controller As New PopoverController("Select Mods", Editor)
 		    Controller.Show(Me, ItemRect)
 		    
@@ -1564,7 +1308,7 @@ End
 		  If (CurrentItem Is Nil) = False Then
 		    Try
 		      Var GroupName As String = CurrentItem.Tag
-		      CurrentItem.CanDismiss = Self.Document.HasConfigGroup(GroupName) = True And Self.Document.ConfigGroup(GroupName).IsImplicit = False
+		      CurrentItem.CanDismiss = Self.Project.HasConfigGroup(GroupName) = True And Self.Project.ConfigGroup(GroupName).IsImplicit = False
 		    Catch Err As RuntimeException
 		    End Try
 		  End If
@@ -1588,11 +1332,11 @@ End
 		  
 		  Var Item As SourceListItem
 		  Var ConfigName As String
-		  Var Config As Beacon.ConfigGroup
+		  Var Config As Ark.ConfigGroup
 		  If ItemIndex > -1 Then
 		    Item = Me.Item(ItemIndex)
 		    ConfigName = Item.Tag
-		    Config = Self.Document.ConfigGroup(ConfigName, False)
+		    Config = Self.Project.ConfigGroup(ConfigName, False)
 		  End If
 		  
 		  Var Base As New MenuItem
@@ -1636,7 +1380,7 @@ End
 		    If (Config Is Nil) = False Then
 		      Var SaveData As New Dictionary
 		      SaveData.Value("GroupName") = ConfigName
-		      SaveData.Value("SaveData") = Config.ToDictionary(Self.Document)
+		      SaveData.Value("SaveData") = Config.SaveData()
 		      Var JSON As String = Beacon.GenerateJSON(SaveData, False)
 		      Board.RawData(Self.kConfigGroupClipboardType) = JSON
 		    End If
@@ -1645,10 +1389,10 @@ End
 		      Var Parsed As Dictionary = Beacon.ParseJSON(Board.RawData(Self.kConfigGroupClipboardType))
 		      Var NewConfigName As String = Parsed.Value("GroupName")
 		      Var NewConfigData As Dictionary = Parsed.Value("SaveData")
-		      Var NewConfig As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(NewConfigName, NewConfigData, App.IdentityManager.CurrentIdentity, Self.Document)
-		      Self.Document.AddConfigGroup(NewConfig)
+		      Var NewConfig As Ark.ConfigGroup = Ark.Configs.CreateInstance(NewConfigName, NewConfigData, Nil)
+		      Self.Project.AddConfigGroup(NewConfig)
 		      Self.UpdateConfigList()
-		      Self.Changed = Self.Document.Modified
+		      Self.Changed = Self.Project.Modified
 		      
 		      If Me.SelectedRowIndex = ItemIndex Or (ItemIndex = -1 And Me.SelectedRowIndex > -1 And Me.Item(Me.SelectedRowIndex).Tag = NewConfigName) Then
 		        // Refresh

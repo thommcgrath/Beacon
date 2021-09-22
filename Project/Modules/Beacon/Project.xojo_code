@@ -1,9 +1,40 @@
 #tag Class
 Protected Class Project
+Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Accounts() As Beacon.ExternalAccountManager
 		  Return Self.mAccounts
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers Is Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveAt(I)
+		      Continue
+		    End If
+		    
+		    If Refs(I).Value = Observer Then
+		      // Already being watched
+		      Return
+		    End If
+		  Next
+		  
+		  Refs.Add(New WeakRef(Observer))
+		  Self.mObservers.Value(Key) = Refs
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -35,13 +66,24 @@ Protected Class Project
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor()
+	#tag Method, Flags = &h1
+		Protected Sub Constructor()
+		  // This class should only be created as a subclass
+		  
 		  Self.mAccounts = New Beacon.ExternalAccountManager
 		  Self.mEncryptedPasswords = New Dictionary
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mUUID = New v4UUID
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateForGameID(GameID As String) As Beacon.Project
+		  // At the moment, only Ark is supported.
+		  
+		  #Pragma Unused GameID 
+		  Return New Ark.Project
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -59,8 +101,10 @@ Protected Class Project
 	#tag Method, Flags = &h0
 		Sub Description(Assigns Value As String)
 		  If Self.mDescription.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Var OldValue As String = Self.mDescription
 		    Self.mDescription = Value
 		    Self.Modified = True
+		    Self.NotifyObservers("Description", OldValue, Value)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -251,6 +295,38 @@ Protected Class Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NewIdentifier()
+		  Self.mUUID = New v4UUID
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotifyObservers(Key As String, OldValue As Variant, NewValue As Variant)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveAt(I)
+		      Continue
+		    End If
+		    
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Observer.ObservedValueChanged(Self, Key, OldValue, NewValue)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Project) As Integer
 		  If Other Is Nil Then
 		    Return 1
@@ -325,6 +401,31 @@ Protected Class Project
 		    Return False
 		  End Try
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastIndex DownTo 0
+		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
+		      Refs.RemoveAt(I)
+		      Continue
+		    End If
+		  Next
+		  
+		  Self.mObservers.Value(Key) = Refs
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -414,8 +515,10 @@ Protected Class Project
 	#tag Method, Flags = &h0
 		Sub Title(Assigns Value As String)
 		  If Self.mTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Var OldValue As String = Self.mTitle
 		    Self.mTitle = Value
 		    Self.Modified = True
+		    Self.NotifyObservers("Title", OldValue, Value)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -485,6 +588,10 @@ Protected Class Project
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mObservers As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

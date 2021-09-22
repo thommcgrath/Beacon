@@ -74,10 +74,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
-		  #Pragma Unused Identity
-		  #Pragma Unused Project
-		  
+		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  If SaveData.HasKey("Player Levels") Then
 		    Var Value As Variant = SaveData.Value("Player Levels")
 		    If Value.IsNull = False Then
@@ -121,7 +118,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary)
+		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  SaveData.Value("Player Levels") = Self.mPlayerLevels
 		  SaveData.Value("Dino Levels") = Self.mDinoLevels
 		End Sub

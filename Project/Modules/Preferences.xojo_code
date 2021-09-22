@@ -1,12 +1,12 @@
 #tag Module
 Protected Module Preferences
 	#tag Method, Flags = &h1
-		Protected Sub AddToRecentDocuments(URL As Beacon.DocumentURL)
-		  If URL.Scheme = Beacon.DocumentURL.TypeTransient Then
+		Protected Sub AddToRecentDocuments(URL As Beacon.ProjectURL)
+		  If URL.Scheme = Beacon.ProjectURL.TypeTransient Then
 		    Return
 		  End If
 		  
-		  Var Recents() As Beacon.DocumentURL = RecentDocuments
+		  Var Recents() As Beacon.ProjectURL = RecentDocuments
 		  For I As Integer = Recents.LastIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.RemoveAt(I)
@@ -116,7 +116,7 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function RecentDocuments() As Beacon.DocumentURL()
+		Protected Function RecentDocuments() As Beacon.ProjectURL()
 		  Init
 		  
 		  // When used with a freshly parsed file, the return type will be Auto()
@@ -147,10 +147,10 @@ Protected Module Preferences
 		    End If
 		  End If
 		  
-		  Var Values() As Beacon.DocumentURL
+		  Var Values() As Beacon.ProjectURL
 		  For Each Value As String In StoredData
 		    Try
-		      Values.Add(New Beacon.DocumentURL(Value))
+		      Values.Add(New Beacon.ProjectURL(Value))
 		    Catch Err As RuntimeException
 		      
 		    End Try
@@ -160,11 +160,11 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
+		Protected Sub RecentDocuments(Assigns Values() As Beacon.ProjectURL)
 		  Var URLs() As String
 		  URLs.ResizeTo(Values.LastIndex)
 		  For I As Integer = 0 To Values.LastIndex
-		    URLs(I) = Values(I).URL(Beacon.DocumentURL.URLTypes.Storage)
+		    URLs(I) = Values(I).URL(Beacon.ProjectURL.URLTypes.Storage)
 		  Next
 		  
 		  Init

@@ -596,15 +596,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FrontmostDocumentView() As DocumentEditorView
+		Function FrontmostDocumentView(GameID As String) As DocumentEditorView
 		  If Self.DocumentsComponent1 Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var DocumentView As BeaconSubview = Self.DocumentsComponent1.CurrentPage
-		  If (DocumentView Is Nil) = False And DocumentView IsA DocumentEditorView Then
-		    Return DocumentEditorView(DocumentView)
-		  End If
+		  Return Self.DocumentsComponent1.FrontmostDocumentEditor(GameID)
 		End Function
 	#tag EndMethod
 

@@ -29,10 +29,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
-		  #Pragma Unused Identity
-		  #Pragma Unused Project
-		  
+		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  If SaveData.HasKey("MaxDinoLevel") Then
 		    Self.mMaxDinoLevel = SaveData.Value("MaxDinoLevel")
 		  End If
@@ -40,7 +37,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary)
+		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  SaveData.Value("MaxDinoLevel") = Self.mMaxDinoLevel
 		End Sub
 	#tag EndEvent

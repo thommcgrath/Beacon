@@ -98,6 +98,12 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function LabelForConfig(Config As Ark.ConfigGroup) As String
+		  Return Language.LabelForConfig(Config.InternalName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As String
 		  Return Language.LabelForConfig(Config.ConfigName)
 		End Function
@@ -106,44 +112,44 @@ Protected Module Language
 	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
-		  Case BeaconConfigs.NameDifficulty
+		  Case Ark.Configs.NameDifficulty
 		    Return "Difficulty"
-		  Case BeaconConfigs.NameLootDrops
+		  Case Ark.Configs.NameLootDrops
 		    Return "Loot Drops"
-		  Case BeaconConfigs.NameMetadata
-		    Return "Project Settings"
-		  Case BeaconConfigs.NameExperienceCurves
+		  Case Ark.Configs.NameExperienceCurves
 		    Return "Levels and XP"
-		  Case BeaconConfigs.NameCustomContent
+		  Case Ark.Configs.NameCustomContent
 		    Return "Custom Config"
-		  Case BeaconConfigs.NameCraftingCosts
+		  Case Ark.Configs.NameCraftingCosts
 		    Return "Crafting Costs"
-		  Case BeaconConfigs.NameStackSizes
+		  Case Ark.Configs.NameStackSizes
 		    Return "Stack Sizes"
-		  Case BeaconConfigs.NameBreedingMultipliers
+		  Case Ark.Configs.NameBreedingMultipliers
 		    Return "Breeding Multipliers"
-		  Case BeaconConfigs.NameHarvestRates
+		  Case Ark.Configs.NameHarvestRates
 		    Return "Harvest Rates"
-		  Case BeaconConfigs.NameDinoAdjustments
+		  Case Ark.Configs.NameDinoAdjustments
 		    Return "Creature Adjustments"
-		  Case BeaconConfigs.NameStatMultipliers
+		  Case Ark.Configs.NameStatMultipliers
 		    Return "Stat Multipliers"
-		  Case BeaconConfigs.NameDayCycle
+		  Case Ark.Configs.NameDayCycle
 		    Return "Day and Night Cycle"
-		  Case BeaconConfigs.NameSpawnPoints
+		  Case Ark.Configs.NameSpawnPoints
 		    Return "Creature Spawns"
-		  Case BeaconConfigs.NameStatLimits
+		  Case Ark.Configs.NameStatLimits
 		    Return "Item Stat Limits"
-		  Case BeaconConfigs.NameEngramControl
+		  Case Ark.Configs.NameEngramControl
 		    Return "Engram Control"
-		  Case BeaconConfigs.NameSpoilTimers
+		  Case Ark.Configs.NameSpoilTimers
 		    Return "Decay and Spoil"
-		  Case BeaconConfigs.NameOtherSettings
+		  Case Ark.Configs.NameOtherSettings
 		    Return "General Settings"
 		  Case "deployments"
 		    Return "Servers"
 		  Case "accounts"
 		    Return "Accounts"
+		  Case "metadata"
+		    Return "Project Settings"
 		  End Select
 		End Function
 	#tag EndMethod

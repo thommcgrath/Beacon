@@ -189,12 +189,12 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub UpdateList()
-		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  Var Recents() As Beacon.ProjectURL = Preferences.RecentDocuments
 		  
 		  Var SelectedURLs() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(I) Then
-		      Var URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
+		      Var URL As Beacon.ProjectURL = Self.List.RowTagAt(I)
 		      SelectedURLs.Add(URL)
 		    End If
 		  Next
@@ -204,14 +204,14 @@ End
 		    Self.List.RowCount = Recents.Count
 		    
 		    For Idx As Integer = 0 To Recents.LastIndex
-		      Var URL As Beacon.DocumentURL = Recents(Idx)
+		      Var URL As Beacon.ProjectURL = Recents(Idx)
 		      Self.List.CellValueAt(Idx, Self.ColumnName) = URL.Name
 		      Self.List.RowTagAt(Idx) = URL
 		      Self.List.Selected(Idx) = SelectedURLs.IndexOf(URL) > -1
 		    Next
 		  Else
 		    Self.List.RowCount = 0
-		    For Each URL As Beacon.DocumentURL In Recents
+		    For Each URL As Beacon.ProjectURL In Recents
 		      If URL.Name.IndexOf(Filter) = -1 Then
 		        Continue
 		      End If
@@ -248,7 +248,7 @@ End
 		    Return
 		  End If
 		  
-		  Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
+		  Var URL As Beacon.ProjectURL = Me.RowTagAt(Row)
 		  If URL = Nil Then
 		    Return
 		  End If
@@ -256,9 +256,9 @@ End
 		  Var IconColor As Color = TextColor.AtOpacity(0.5)
 		  Var Icon As Picture
 		  Select Case URL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
+		  Case Beacon.ProjectURL.TypeCloud
 		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
-		  Case Beacon.DocumentURL.TypeWeb
+		  Case Beacon.ProjectURL.TypeWeb
 		    Icon = BeaconUI.IconWithColor(IconCommunityDocument, IconColor)
 		  End Select
 		  
@@ -291,8 +291,8 @@ End
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
-		    Var Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
-		    Var Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
+		    Var Row1URL As Beacon.ProjectURL = Me.RowTagAt(Row1)
+		    Var Row2URL As Beacon.ProjectURL = Me.RowTagAt(Row2)
 		    
 		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
 		    
@@ -310,14 +310,14 @@ End
 		  #Pragma Unused Warn
 		  
 		  // Not deleting something, just removing from the list
-		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  Var Recents() As Beacon.ProjectURL = Preferences.RecentDocuments
 		  Var Changed As Boolean
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Not Me.Selected(I) Then
 		      Continue For I
 		    End If
 		    
-		    Var SelectedURL As Beacon.DocumentURL = Me.RowTagAt(I)
+		    Var SelectedURL As Beacon.ProjectURL = Me.RowTagAt(I)
 		    For X As Integer = Recents.LastIndex DownTo 0
 		      If Recents(X) = SelectedURL Then
 		        Changed = True
@@ -340,7 +340,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
+		    Var URL As Beacon.ProjectURL = Me.RowTagAt(Row)
 		    Self.OpenDocument(URL)
 		  Next
 		End Sub

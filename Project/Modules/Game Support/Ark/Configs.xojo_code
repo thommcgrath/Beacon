@@ -87,40 +87,49 @@ Protected Module Configs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, Project As Ark.Project, Identity As Beacon.Identity) As Ark.ConfigGroup
+		Protected Function CreateInstance(InternalName As String, SaveData As Dictionary, EncryptedData As Dictionary) As Ark.ConfigGroup
+		  If EncryptedData Is Nil Then
+		    If SaveData.HasAllKeys("Plain", "Encrypted") Then
+		      EncryptedData = SaveData.Value("Encrypted")
+		      SaveData = SaveData.Value("Plain")
+		    Else
+		      EncryptedData = New Dictionary
+		    End If
+		  End If
+		  
 		  Select Case InternalName
 		  Case NameBreedingMultipliers
-		    Return New Ark.Configs.BreedingMultipliers(SaveData, Identity, Project)
+		    Return New Ark.Configs.BreedingMultipliers(SaveData, EncryptedData)
 		  Case NameCraftingCosts
-		    Return New Ark.Configs.CraftingCosts(SaveData, Identity, Project)
+		    Return New Ark.Configs.CraftingCosts(SaveData, EncryptedData)
 		  Case NameCustomContent
-		    Return New Ark.Configs.CustomContent(SaveData, Identity, Project)
+		    Return New Ark.Configs.CustomContent(SaveData, EncryptedData)
 		  Case NameDayCycle
-		    Return New Ark.Configs.DayCycle(SaveData, Identity, Project)
+		    Return New Ark.Configs.DayCycle(SaveData, EncryptedData)
 		  Case NameDifficulty
-		    Return New Ark.Configs.Difficulty(SaveData, Identity, Project)
+		    Return New Ark.Configs.Difficulty(SaveData, EncryptedData)
 		  Case NameDinoAdjustments
-		    Return New Ark.Configs.DinoAdjustments(SaveData, Identity, Project)
+		    Return New Ark.Configs.DinoAdjustments(SaveData, EncryptedData)
 		  Case NameEngramControl
-		    Return New Ark.Configs.EngramControl(SaveData, Identity, Project)
+		    Return New Ark.Configs.EngramControl(SaveData, EncryptedData)
 		  Case NameExperienceCurves
-		    Return New Ark.Configs.ExperienceCurves(SaveData, Identity, Project)
+		    Return New Ark.Configs.ExperienceCurves(SaveData, EncryptedData)
 		  Case NameHarvestRates
-		    Return New Ark.Configs.HarvestRates(SaveData, Identity, Project)
+		    Return New Ark.Configs.HarvestRates(SaveData, EncryptedData)
 		  Case NameLootDrops
-		    Return New Ark.Configs.LootDrops(SaveData, Identity, Project)
+		    Return New Ark.Configs.LootDrops(SaveData, EncryptedData)
 		  Case NameSpawnPoints
-		    Return New Ark.Configs.SpawnPoints(SaveData, Identity, Project)
+		    Return New Ark.Configs.SpawnPoints(SaveData, EncryptedData)
 		  Case NameStackSizes
-		    Return New Ark.Configs.StackSizes(SaveData, Identity, Project)
+		    Return New Ark.Configs.StackSizes(SaveData, EncryptedData)
 		  Case NameStatLimits
-		    Return New Ark.Configs.StatLimits(SaveData, Identity, Project)
+		    Return New Ark.Configs.StatLimits(SaveData, EncryptedData)
 		  Case NameStatMultipliers
-		    Return New Ark.Configs.StatMultipliers(SaveData, Identity, Project)
+		    Return New Ark.Configs.StatMultipliers(SaveData, EncryptedData)
 		  Case NameSpoilTimers
-		    Return New Ark.Configs.SpoilTimers(SaveData, Identity, Project)
+		    Return New Ark.Configs.SpoilTimers(SaveData, EncryptedData)
 		  Case NameOtherSettings
-		    Return New Ark.Configs.OtherSettings(SaveData, Identity, Project)
+		    Return New Ark.Configs.OtherSettings(SaveData, EncryptedData)
 		  Else
 		    Var Err As New FunctionNotFoundException
 		    Err.Message = "Config group """ + InternalName + """ is not known."

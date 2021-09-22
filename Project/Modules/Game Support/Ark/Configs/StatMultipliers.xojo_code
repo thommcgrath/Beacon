@@ -115,10 +115,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
-		  #Pragma Unused Identity
-		  #Pragma Unused Project
-		  
+		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  If SaveData.HasKey("PlayerStats") And SaveData.Value("PlayerStats") IsA Dictionary Then
 		    Self.PlayerStats = SaveData.Value("PlayerStats")
 		  End If
@@ -144,7 +141,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary)
+		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  If Self.PlayerStats.KeyCount > 0 Then
 		    SaveData.Value("PlayerStats") = Self.PlayerStats
 		  End If

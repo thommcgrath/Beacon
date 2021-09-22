@@ -2,7 +2,7 @@
 Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.ServerProfile
-		  Return Ark.ServerProfile.FromDictionary(Self.ToDictionary())
+		  Return Ark.ServerProfile.FromSaveData(Self.SaveData())
 		End Function
 	#tag EndMethod
 
@@ -136,7 +136,7 @@ Protected Class ServerProfile
 		    Catch Err As RuntimeException
 		    End Try
 		    For Each Set As Dictionary In Sets
-		      Var State As Ark.ConfigSetState = Ark.ConfigSetState.FromDictionary(Set)
+		      Var State As Ark.ConfigSetState = Ark.ConfigSetState.FromSaveData(Set)
 		      If (State Is Nil) = False Then
 		        Self.mConfigSetStates.Add(State)
 		      End If
@@ -168,7 +168,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Ark.ServerProfile
+		Shared Function FromSaveData(Dict As Dictionary) As Ark.ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
 		  
@@ -216,7 +216,7 @@ Protected Class ServerProfile
 		Function Hash() As String
 		  Var Raw As String
 		  Try
-		    Raw = Beacon.GenerateJSON(Self.ToDictionary, False)
+		    Raw = Beacon.GenerateJSON(Self.SaveData, False)
 		  Catch Err As RuntimeException
 		    Raw = Self.Name + "    " + Self.ProfileID
 		  End Try
@@ -294,25 +294,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SecondaryName() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsCustomStopMessage() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsRestart() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
+		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
 		  If Not Dict.HasKey("Provider") Then
@@ -337,7 +319,7 @@ Protected Class ServerProfile
 		  If Self.mConfigSetStates.Count > 0 Then
 		    Var Priorities() As Dictionary
 		    For Each State As Ark.ConfigSetState In Self.mConfigSetStates
-		      Priorities.Add(State.ToDictionary)
+		      Priorities.Add(State.SaveData)
 		    Next
 		    Dict.Value("Config Sets") = Priorities
 		  End If
@@ -351,6 +333,24 @@ Protected Class ServerProfile
 		    Dict.Value("Spectator Password") = Self.mSpectatorPassword.StringValue
 		  End If
 		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SecondaryName() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsCustomStopMessage() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsRestart() As Boolean
+		  Return False
 		End Function
 	#tag EndMethod
 

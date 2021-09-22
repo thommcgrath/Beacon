@@ -85,6 +85,43 @@ Protected Class ProjectURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GameID() As String
+		  Var Value As String
+		  
+		  If Self.HasParam("game") Then
+		    Value = Self.Param("game").Lowercase
+		  End If
+		  
+		  If Value = "" Then
+		    // Assume Ark
+		    Value = Ark.Identifier.Lowercase
+		  End If
+		  
+		  Return DecodeURLComponent(Value.ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GameID(Assigns Value As String)
+		  If Value.IsEmpty Then
+		    Self.mQueryParams.Value("name") = Ark.Identifier.Lowercase
+		  Else
+		    Self.mQueryParams.Value("name") = Value.Lowercase
+		  End If
+		  
+		  Self.mQueryString = SimpleHTTP.BuildFormData(Self.mQueryParams)
+		  
+		  Var Pos As Integer = Self.mOriginalURL.IndexOf("?")
+		  If Pos > -1 Then
+		    Self.mOriginalURL = Self.mOriginalURL.Left(Pos)
+		  End If
+		  If Self.mQueryString <> "" Then
+		    Self.mOriginalURL = Self.mOriginalURL + "?" + Self.mQueryString
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Hash() As String
 		  Return Self.mHash
 		End Function

@@ -757,7 +757,7 @@ End
 		Private Sub RefreshDocumentMenu()
 		  Var SelectedDocumentID As String
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
-		    SelectedDocumentID = Beacon.Document(Self.DocumentMenu.SelectedRowTag).DocumentID
+		    SelectedDocumentID = Beacon.Project(Self.DocumentMenu.SelectedRowTag).UUID
 		  End If
 		  
 		  Self.DocumentMenu.RemoveAllRows
@@ -772,13 +772,13 @@ End
 		    Return
 		  End If
 		  For Each View As BeaconSubview In Editors
-		    Var Document As Beacon.Document = DocumentEditorView(View).Document
-		    If Document Is Nil Then
+		    Var Project As Beacon.Project = DocumentEditorView(View).Project
+		    If Project Is Nil Then
 		      Continue
 		    End If
 		    
-		    Self.DocumentMenu.AddRow(Document.Title, Document)
-		    If Document.DocumentID = SelectedDocumentID Then
+		    Self.DocumentMenu.AddRow(Project.Title, Project)
+		    If Project.UUID = SelectedDocumentID Then
 		      Self.DocumentMenu.SelectedRowIndex = Self.DocumentMenu.LastAddedRowIndex
 		    End If
 		  Next

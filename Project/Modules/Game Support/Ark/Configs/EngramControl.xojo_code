@@ -162,10 +162,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
-		  #Pragma Unused Identity
-		  #Pragma Unused Project
-		  
+		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  If SaveData.HasKey("Whitelist Mode") Then
 		    Self.mOnlyAllowSpecifiedEngrams = SaveData.Value("Whitelist Mode").BooleanValue
 		  End If
@@ -193,12 +190,11 @@ Inherits Ark.ConfigGroup
 		    End If
 		  ElseIf SaveData.HasKey("Engrams") Then
 		    Var Behaviors As Dictionary = SaveData.Value("Engrams")
-		    Var ContentPacks As Beacon.StringList = Project.ContentPacks
 		    For Each Entry As DictionaryEntry In Behaviors
 		      Var Path As String = Entry.Key
 		      Var BehaviorDict As Dictionary = Entry.Value
 		      
-		      Var Engram As Ark.Engram = Ark.ResolveEngram("", Path, "", ContentPacks)
+		      Var Engram As Ark.Engram = Ark.ResolveEngram("", Path, "", Nil)
 		      For Each BehaviorEntry As DictionaryEntry In BehaviorDict
 		        Self.mOverrides.Value(Engram, BehaviorEntry.Key) = BehaviorEntry.Value
 		      Next
@@ -208,7 +204,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary)
+		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  If Self.mOverrides.Count > 0 Then
 		    SaveData.Value("Overrides") = Self.mOverrides.SaveData
 		  End If

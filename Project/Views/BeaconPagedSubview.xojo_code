@@ -175,6 +175,21 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FrontmostPage(Offset As Integer = 0) As BeaconSubview
+		  If Offset < Self.mPageHistory.FirstIndex Or Offset > Self.mPageHistory.LastIndex Then
+		    Return Nil
+		  End If
+		  
+		  Var ViewID As String = Self.mPageHistory(Offset)
+		  For Each Page As BeaconSubview In Self.mPages
+		    If Page.ViewID = ViewID Then
+		      Return Page
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasModifications() As Boolean
 		  If Super.HasModifications Then
 		    Return True

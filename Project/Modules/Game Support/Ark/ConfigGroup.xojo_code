@@ -14,10 +14,10 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
+		Sub Constructor(SaveData As Dictionary, EncryptedData As Dictionary)
 		  Self.Constructor()
 		  Try
-		    RaiseEvent ReadSaveData(SaveData, Identity, Project)
+		    RaiseEvent ReadSaveData(SaveData, EncryptedData)
 		    Self.mIsImplicit = SaveData.Lookup("Implicit", False)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Creating config group from source dictionary")
@@ -136,8 +136,15 @@ Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var SaveData As New Dictionary
+		  Var EncryptedData As New Dictionary
 		  SaveData.Value("Implicit") = Self.mIsImplicit
-		  RaiseEvent WriteSaveData(SaveData)
+		  RaiseEvent WriteSaveData(SaveData, EncryptedData)
+		  If EncryptedData.KeyCount > 0 Then
+		    Var Temp As New Dictionary
+		    Temp.Value("Plain") = SaveData
+		    Temp.Value("Encrypted") = EncryptedData
+		    SaveData = Temp
+		  End If
 		  Return SaveData
 		End Function
 	#tag EndMethod
@@ -176,11 +183,11 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadSaveData(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
+		Event ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteSaveData(SaveData As Dictionary)
+		Event WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 	#tag EndHook
 
 

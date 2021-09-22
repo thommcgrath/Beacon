@@ -540,10 +540,10 @@ End
 		Private Sub APICallback_DeleteDocument(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success Then
 		    // Remove from recents
-		    Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		    Var Recents() As Beacon.ProjectURL = Preferences.RecentDocuments
 		    Var Changed As Boolean
 		    For Idx As Integer = Recents.LastIndex DownTo 0
-		      If Recents(Idx).URL(Beacon.DocumentURL.URLTypes.Writing) = Request.URL Then
+		      If Recents(Idx).URL(Beacon.ProjectURL.URLTypes.Writing) = Request.URL Then
 		        Recents.RemoveAt(Idx)
 		        Changed = True
 		      End If
@@ -560,7 +560,7 @@ End
 		    Message = "An unknown error occurred."
 		  End If
 		  
-		  Self.ShowAlert("A document was not deleted.", Message)
+		  Self.ShowAlert("A project was not deleted.", Message)
 		End Sub
 	#tag EndMethod
 
@@ -772,8 +772,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function URLForDocument(Document As BeaconAPI.Document) As Beacon.DocumentURL
-		  Return Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
+		Private Shared Function URLForDocument(Document As BeaconAPI.Document) As Beacon.ProjectURL
+		  Return Beacon.ProjectURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
 		End Function
 	#tag EndMethod
 
@@ -939,7 +939,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var URLs() As Beacon.DocumentURL
+		  Var URLs() As Beacon.ProjectURL
 		  For Row As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Row) = False Then
 		      Continue
@@ -955,7 +955,7 @@ End
 		  
 		  If Warn Then
 		    Var Names() As String
-		    For Each URL As Beacon.DocumentURL In URLs
+		    For Each URL As Beacon.ProjectURL In URLs
 		      Names.Add(URL.Name)
 		    Next
 		    
@@ -966,12 +966,12 @@ End
 		  
 		  Var ShouldRefresh As Boolean
 		  Var Token As String = Preferences.OnlineToken
-		  For Each URL As Beacon.DocumentURL In URLs
+		  For Each URL As Beacon.ProjectURL In URLs
 		    If Self.CloseDocument(URL) = False Then
 		      Continue
 		    End If
 		    
-		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.DocumentURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteDocument)
+		    Var Request As New BeaconAPI.Request(URL.URL(Beacon.ProjectURL.URLTypes.Writing), "DELETE", AddressOf APICallback_DeleteDocument)
 		    Request.Authenticate(Token)
 		    Self.APISocket.Start(Request)
 		    ShouldRefresh = True

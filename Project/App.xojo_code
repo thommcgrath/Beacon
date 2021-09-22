@@ -635,20 +635,22 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      ConfigName = ConfigName.Left(PathPos)
 		    End If
 		    
-		    Var UserData As New Dictionary
-		    UserData.Value("ConfigName") = ConfigName
-		    UserData.Value("Path") = Path
-		    UserData.Value("Parameters") = Parameters
+		    // Something could be done with the query and path
+		    Var GameID As String = Ark.Identifier
+		    If Parameters.HasKey("game") Then
+		      Try
+		        GameID = Parameters.Value("game").StringValue
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
 		    
-		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView
+		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView(GameID)
 		    If FrontmostView Is Nil Then
-		      Self.mMainWindow.Documents.NewDocument
-		      FrontmostView = Self.mMainWindow.FrontmostDocumentView
+		      Self.mMainWindow.Documents.NewDocument(GameID)
+		      FrontmostView = Self.mMainWindow.FrontmostDocumentView(GameID)
 		    End If
 		    If (FrontmostView Is Nil) = False Then
-		      UserData.Value("DocumentID") = FrontmostView.Document.DocumentID
-		      
-		      NotificationKit.Post(DocumentEditorView.Notification_SwitchEditors, UserData)
+		      FrontmostView.SwitchToEditor(ConfigName)
 		    End If
 		  Else
 		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
@@ -1050,8 +1052,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Private Function mOpenRecent_ClearMenu(Sender As MenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
-		  Var Documents() As Beacon.DocumentURL
-		  Preferences.RecentDocuments = Documents
+		  Var Projects() As Beacon.ProjectURL
+		  Preferences.RecentDocuments = Projects
 		  Return True
 		End Function
 	#tag EndMethod
@@ -1182,15 +1184,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    FileOpenRecent.RemoveMenuAt(0)
 		  Wend
 		  
-		  Var Documents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		  For Each Document As Beacon.DocumentURL In Documents
-		    Var Item As New MenuItem(Document.Name)
-		    Item.Tag = Document
+		  Var Projects() As Beacon.ProjectURL = Preferences.RecentDocuments
+		  For Each Project As Beacon.ProjectURL In Projects
+		    Var Item As New MenuItem(Project.Name)
+		    Item.Tag = Project
 		    Item.Enabled = True
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
-		  If Documents.LastIndex > -1 Then
+		  If Projects.LastIndex > -1 Then
 		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Var Item As New MenuItem("Clear Menu")

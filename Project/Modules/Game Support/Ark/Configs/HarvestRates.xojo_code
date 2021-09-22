@@ -60,10 +60,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadSaveData(SaveData As Dictionary, Identity As Beacon.Identity, Project As Ark.Project)
-		  #Pragma Unused Identity
-		  #Pragma Unused Project
-		  
+		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  // There is a slight performance impact here, since DoubleValue will check HasKey too,
 		  // but this way is safe.
 		  If SaveData.HasKey("Harvest Amount Multiplier") Then
@@ -106,7 +103,7 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteSaveData(SaveData As Dictionary)
+		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  SaveData.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
 		  SaveData.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier
 		  SaveData.Value("Multipliers") = Self.mOverrides.SaveData
