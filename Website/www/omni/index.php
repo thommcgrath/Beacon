@@ -92,7 +92,7 @@ while (!$results->EOF()) {
 	}
 	
 	$product_details[$key] = [
-		'price' => $results->Field('price'),
+		'price' => floatval($results->Field('price')),
 		'price_formatted' => $currency_symbol . number_format($results->Field('price'), 2, $decimal_character, $thousands_character) . ' ' . $currency,
 	];
 	
