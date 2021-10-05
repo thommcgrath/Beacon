@@ -49,7 +49,7 @@ $payment = [
 	'cancel_url' => BeaconCommon::AbsoluteURL('/omni/#checkout'),
 	'billing_address_collection' => 'required',
 	'automatic_tax' => ['enabled' => 'true'],
-	'line_items' => []
+	'line_items' => [],
 ];
 if ($currency === 'EUR') {
 	$payment['payment_method_types'][] = 'ideal';
@@ -109,6 +109,7 @@ try {
 	if (is_null($customers) === false && is_array($customers) && array_key_exists('data', $customers) && count($customers['data']) >= 1) {
 		$customer = $customers['data'][0];
 		$payment['customer'] = $customer['id'];
+		$payment['customer_update'] = ['address' => 'auto', 'name' => 'auto'];
 		unset($payment['customer_email']);
 	}
 } catch (Exception $err) {
