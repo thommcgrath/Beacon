@@ -133,7 +133,6 @@ Begin BeaconDialog ConfigSetManagerWindow
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -319,20 +318,20 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document)
+		Private Sub Constructor(Project As Beacon.Project)
 		  // Calling the overridden superclass constructor.
-		  Self.mDocument = Document
+		  Self.mProject = Project
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document) As Boolean
+		Shared Function Present(Parent As Window, Project As Beacon.Project) As Boolean
 		  If Parent Is Nil Then
 		    Return False
 		  End If
 		  
-		  Var Win As New ConfigSetManagerWindow(Document)
+		  Var Win As New ConfigSetManagerWindow(Project)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
@@ -350,7 +349,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
+		Private mProject As Beacon.Project
 	#tag EndProperty
 
 
@@ -363,7 +362,7 @@ End
 		  
 		  // Delete sets here
 		  For Each SetName As String In Self.mDeletedSetNames
-		    Self.mDocument.RemoveConfigSet(SetName)
+		    Self.mProject.RemoveConfigSet(SetName)
 		  Next
 		  
 		  // Rename or add sets
@@ -375,11 +374,11 @@ End
 		      // Possible rename
 		      If OriginalName.Compare(SetName, ComparisonOptions.CaseSensitive) <> 0 Then
 		        // Rename
-		        Self.mDocument.RenameConfigSet(OriginalName, SetName)
+		        Self.mProject.RenameConfigSet(OriginalName, SetName)
 		      End If
 		    Else
 		      // New set
-		      Self.mDocument.AddConfigSet(SetName)
+		      Self.mProject.AddConfigSet(SetName)
 		    End If
 		  Next
 		  
@@ -405,12 +404,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Document.BaseConfigSetName
+		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Document.BaseConfigSetName
+		  Return Me.SelectedRowCount = 1 And Me.CellValueAt(Me.SelectedRowIndex, 0) <> Beacon.Project.BaseConfigSetName
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -442,12 +441,12 @@ End
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
 		  
 		  Var Counts As New Dictionary
-		  Var ProfileBound As Integer = Self.mDocument.ServerProfileCount - 1
+		  Var ProfileBound As Integer = Self.mProject.ServerProfileCount - 1
 		  For Idx As Integer = 0 To ProfileBound
-		    Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(Idx)
+		    Var Profile As Beacon.ServerProfile = Self.mProject.ServerProfile(Idx)
 		    Var States() As Beacon.ConfigSetState = Profile.ConfigSetStates
 		    If States Is Nil Or States.Count = 0 Then
-		      Counts.Value(Beacon.Document.BaseConfigSetName) = Counts.Lookup(Beacon.Document.BaseConfigSetName, 0).IntegerValue + 1
+		      Counts.Value(Beacon.Project.BaseConfigSetName) = Counts.Lookup(Beacon.Project.BaseConfigSetName, 0).IntegerValue + 1
 		      Continue
 		    End If
 		    For Each State As Beacon.ConfigSetState In States
@@ -457,12 +456,12 @@ End
 		    Next
 		  Next
 		  
-		  Var SetNames() As String = Self.mDocument.ConfigSetNames
+		  Var SetNames() As String = Self.mProject.ConfigSetNames
 		  For Each SetName As String In SetNames
 		    Me.AddRow(SetName, Language.NounWithQuantity(Counts.Lookup(SetName, 0).IntegerValue, "Server", "Servers"))
 		    Me.RowTagAt(Me.LastAddedRowIndex) = SetName
 		    
-		    If SetName = Beacon.Document.BaseConfigSetName Then
+		    If SetName = Beacon.Project.BaseConfigSetName Then
 		      Me.CellTypeAt(Me.LastAddedRowIndex, 0) = Listbox.CellTypes.Normal
 		    End If
 		  Next

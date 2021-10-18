@@ -38,9 +38,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Ark.Blueprint
-		  // Part of the Ark.Blueprint interface.
-		  
+		Function Clone() As Ark.LootContainer
 		  Return New Ark.LootContainer(Self)
 		End Function
 	#tag EndMethod
@@ -490,6 +488,86 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		    Keys.Value("ItemSets") = Children
 		  End If
 		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Simulate() As Ark.LootSimulatorSelection()
+		  Var Selections() As Ark.LootSimulatorSelection
+		  Var NumSets As Integer = Self.mItemSets.Count
+		  If NumSets = 0 Then
+		    Return Selections
+		  End If
+		  
+		  Var MinSets As Integer = Min(Self.MinItemSets, Self.MaxItemSets)
+		  Var MaxSets As Integer = Max(Self.MaxItemSets, Self.MinItemSets)
+		  
+		  Var SelectedSets() As Ark.LootItemSet
+		  If NumSets = MinSets And MinSets = MaxSets And Self.PreventDuplicates Then
+		    // All
+		    For Each Set As Ark.LootItemSet In Self.mItemSets
+		      SelectedSets.Add(Set)
+		    Next
+		  Else
+		    Const WeightScale = 100000
+		    Var ItemSetPool() As Ark.LootItemSet
+		    For Each Set As Ark.LootItemSet In Self.mItemSets
+		      ItemSetPool.Add(Set)
+		    Next
+		    
+		    Var RecomputeFigures As Boolean = True
+		    Var ChooseSets As Integer = System.Random.InRange(MinSets, MaxSets)
+		    Var WeightSum, Weights() As Double
+		    Var WeightLookup As Dictionary
+		    For I As Integer = 1 To ChooseSets
+		      If ItemSetPool.LastIndex = -1 Then
+		        Exit For I
+		      End If
+		      
+		      If RecomputeFigures Then
+		        Ark.LootSimulatorSelection.ComputeSimulatorFigures(ItemSetPool, WeightScale, WeightSum, Weights, WeightLookup)
+		        RecomputeFigures = False
+		      End If
+		      
+		      Do
+		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
+		        Var SelectedSet As Ark.LootItemSet
+		        
+		        For X As Integer = 0 To Weights.LastIndex
+		          If Weights(X) >= Decision Then
+		            Var SelectedWeight As Double = Weights(X)
+		            SelectedSet = WeightLookup.Value(SelectedWeight)
+		            Exit For X
+		          End If
+		        Next
+		        
+		        If SelectedSet Is Nil Then
+		          Continue
+		        End If
+		        
+		        SelectedSets.Add(SelectedSet)
+		        If Self.PreventDuplicates Then
+		          For X As Integer = 0 To ItemSetPool.LastIndex
+		            If ItemSetPool(X) = SelectedSet Then
+		              ItemSetPool.RemoveAt(X)
+		              Exit For X
+		            End If
+		          Next
+		          RecomputeFigures = True
+		        End If
+		        
+		        Exit
+		      Loop
+		    Next
+		  End If
+		  
+		  For Each Set As Ark.LootItemSet In SelectedSets
+		    Var SetSelections() As Ark.LootSimulatorSelection = Set.Simulate
+		    For Each Selection As Ark.LootSimulatorSelection In SetSelections
+		      Selections.Add(Selection)
+		    Next
+		  Next
+		  Return Selections
 		End Function
 	#tag EndMethod
 

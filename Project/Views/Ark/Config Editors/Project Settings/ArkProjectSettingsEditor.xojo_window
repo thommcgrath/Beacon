@@ -420,7 +420,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Project.ConsoleMode = Me.Value
+		  Self.Project.ConsoleSafe = Me.Value
 		  
 		  If Me.Value Then
 		    Var ContentPacks() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks

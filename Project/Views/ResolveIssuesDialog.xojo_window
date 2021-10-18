@@ -134,7 +134,7 @@ Begin BeaconDialog ResolveIssuesDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
+      SelectionChangeBlocked=   "False"
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1

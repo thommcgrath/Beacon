@@ -205,6 +205,16 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CurrentUserID() As String
+		  If Self.mCurrentIdentity Is Nil Then
+		    Return v4UUID.CreateNull
+		  Else
+		    Return Self.mCurrentIdentity.UserID
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FindMergedIdentity(UserID As v4UUID) As Beacon.Identity
 		  Var Folder As FolderItem = App.ApplicationSupport.Child("Merged Identities")
 		  If Folder = Nil Or Folder.CheckIsFolder(False) = False Then

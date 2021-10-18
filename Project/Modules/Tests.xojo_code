@@ -425,39 +425,40 @@ Protected Module Tests
 	#tag Method, Flags = &h21
 		Private Sub TestQualities()
 		  #if DebugBuild
-		    Var Quality As Beacon.Quality = Beacon.Qualities.Tier4
-		    Var StandardDifficulty As New BeaconConfigs.Difficulty(5)
-		    Var HighDifficulty As New BeaconConfigs.Difficulty(15)
-		    Var ExtremeDifficulty As New BeaconConfigs.Difficulty(100)
-		    Var Source As Beacon.LootSource = LocalData.SharedInstance.GetLootSource("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C")
-		    If Source Is Nil Then
+		    Var Quality As Ark.Quality = Ark.Qualities.Tier4
+		    Var StandardDifficulty As New Ark.Configs.Difficulty(5)
+		    Var HighDifficulty As New Ark.Configs.Difficulty(15)
+		    Var ExtremeDifficulty As New Ark.Configs.Difficulty(100)
+		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", New Beacon.StringList)
+		    If Assert(Containers.Count = 0, "Wrong number of containers returned for SupplyCrate_Cave_QualityTier3_ScorchedEarth_C") Then
 		      Return
 		    End If
+		    Var Container As Ark.LootContainer = Containers(0)
 		    
-		    Var QualityStandardMin As Double = Quality.Value(Source.Multipliers.Min, StandardDifficulty)
-		    Var QualityStandardMax As Double = Quality.Value(Source.Multipliers.Max, StandardDifficulty)
-		    Var QualityHighMin As Double = Quality.Value(Source.Multipliers.Min, HighDifficulty)
-		    Var QualityHighMax As Double = Quality.Value(Source.Multipliers.Max, HighDifficulty)
-		    Var QualityExtremeMin As Double = Quality.Value(Source.Multipliers.Min, ExtremeDifficulty)
-		    Var QualityExtremeMax As Double = Quality.Value(Source.Multipliers.Max, ExtremeDifficulty)
+		    Var QualityStandardMin As Double = Quality.Value(Container.Multipliers.Min, StandardDifficulty.BaseArbitraryQuality)
+		    Var QualityStandardMax As Double = Quality.Value(Container.Multipliers.Max, StandardDifficulty.BaseArbitraryQuality)
+		    Var QualityHighMin As Double = Quality.Value(Container.Multipliers.Min, HighDifficulty.BaseArbitraryQuality)
+		    Var QualityHighMax As Double = Quality.Value(Container.Multipliers.Max, HighDifficulty.BaseArbitraryQuality)
+		    Var QualityExtremeMin As Double = Quality.Value(Container.Multipliers.Min, ExtremeDifficulty.BaseArbitraryQuality)
+		    Var QualityExtremeMax As Double = Quality.Value(Container.Multipliers.Max, ExtremeDifficulty.BaseArbitraryQuality)
 		    
 		    // Compare backwards because we expect lower values for higher difficulties
 		    Call Assert(QualityExtremeMin < QualityHighMin And QualityHighMin < QualityStandardMin And QualityExtremeMax < QualityHighMax And QualityHighMax < QualityStandardMax, "Qualities are equal regardless of difficulty")
 		    
-		    Var StandardQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMin, Source.Multipliers.Min, StandardDifficulty)
-		    Var StandardQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMax, Source.Multipliers.Max, StandardDifficulty)
-		    Var HighQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityHighMin, Source.Multipliers.Min, HighDifficulty)
-		    Var HighQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityHighMax, Source.Multipliers.Max, HighDifficulty)
-		    Var ExtremeQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMin, Source.Multipliers.Min, ExtremeDifficulty)
-		    Var ExtremeQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMax, Source.Multipliers.Max, ExtremeDifficulty)
+		    Var StandardQualityMin As Ark.Quality = Ark.Qualities.ForValue(QualityStandardMin, Container.Multipliers.Min, StandardDifficulty.BaseArbitraryQuality)
+		    Var StandardQualityMax As Ark.Quality = Ark.Qualities.ForValue(QualityStandardMax, Container.Multipliers.Max, StandardDifficulty.BaseArbitraryQuality)
+		    Var HighQualityMin As Ark.Quality = Ark.Qualities.ForValue(QualityHighMin, Container.Multipliers.Min, HighDifficulty.BaseArbitraryQuality)
+		    Var HighQualityMax As Ark.Quality = Ark.Qualities.ForValue(QualityHighMax, Container.Multipliers.Max, HighDifficulty.BaseArbitraryQuality)
+		    Var ExtremeQualityMin As Ark.Quality = Ark.Qualities.ForValue(QualityExtremeMin, Container.Multipliers.Min, ExtremeDifficulty.BaseArbitraryQuality)
+		    Var ExtremeQualityMax As Ark.Quality = Ark.Qualities.ForValue(QualityExtremeMax, Container.Multipliers.Max, ExtremeDifficulty.BaseArbitraryQuality)
 		    
 		    Const Formatter = "0.0000"
-		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + StandardQualityMin.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
-		    Call Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMax) + "(" + StandardQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
-		    Call Assert(HighQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMin) + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
-		    Call Assert(HighQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMax) + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
-		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
-		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
+		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + StandardQualityMin.Label + "(" + StandardQualityMin.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
+		    Call Assert(StandardQualityMax = Quality, "Expected quality max " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + StandardQualityMax.Label + "(" + StandardQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 5")
+		    Call Assert(HighQualityMin = Quality, "Expected quality min " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + HighQualityMin.Label + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
+		    Call Assert(HighQualityMax = Quality, "Expected quality max " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + HighQualityMax.Label + "(" + HighQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 15")
+		    Call Assert(ExtremeQualityMin = Quality, "Expected quality min " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + ExtremeQualityMin.Label + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
+		    Call Assert(ExtremeQualityMin = Quality, "Expected quality max " + Quality.Label + "(" + Quality.BaseValue.ToString(Locale.Raw, Formatter) + ") but got " + ExtremeQualityMax.Label + "(" + ExtremeQualityMax.BaseValue.ToString(Locale.Raw, Formatter) + ") for difficulty 100")
 		  #endif
 		End Sub
 	#tag EndMethod

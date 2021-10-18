@@ -225,12 +225,22 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ExtensionMatches(Extends File As FolderItem, DesiredExtension As String) As Boolean
-		  If DesiredExtension.BeginsWith(".") = False Then
-		    DesiredExtension = "." + DesiredExtension
-		  End If
-		  
-		  Return File.Extension = DesiredExtension
+		Function ExtensionMatches(Extends File As FolderItem, ParamArray PossibleExtensions() As String) As Boolean
+		  Return File.ExtensionMatches(PossibleExtensions)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExtensionMatches(Extends File As FolderItem, PossibleExtensions() As String) As Boolean
+		  For Each Extension As String In PossibleExtensions
+		    If Extension.BeginsWith(".") = False Then
+		      Extension = "." + Extension
+		    End If
+		    
+		    If File.Extension = Extension Then
+		      Return True
+		    End If
+		  Next Extension
 		End Function
 	#tag EndMethod
 

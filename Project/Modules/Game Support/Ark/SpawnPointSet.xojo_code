@@ -88,8 +88,8 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreatureID As String, ToCreatureID As String) As NullableDouble
-		  Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByID(FromCreatureID)
-		  Var ToCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByID(ToCreatureID)
+		  Var FromCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(FromCreatureID)
+		  Var ToCreature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(ToCreatureID)
 		  Return Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		End Function
 	#tag EndMethod

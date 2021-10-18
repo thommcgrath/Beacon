@@ -27,74 +27,83 @@ Begin Window DocumentImportWindow
    Title           =   "Import"
    Visible         =   True
    Width           =   600
-   Begin DocumentImportView DocumentImportView1
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
-      Height          =   400
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      QuickCancel     =   False
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   600
-   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  AddHandler mImportView.ProjectsImported, WeakAddressOf mImportView_ProjectsImported
+		  AddHandler mImportView.ShouldDismiss, WeakAddressOf mImportView_ShouldDismiss
+		  AddHandler mImportView.ShouldResize, WeakAddressOf mImportView_ShouldResize
+		  
+		  Self.mImportView.EmbedWithin(Self, 0, 0, Self.Width, Self.Height)
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  Self.DocumentImportView1.Reset
+		  Self.mImportView.Reset
 		  Self.Close
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Callback As ImportFinishedDelegate)
+		Sub Constructor(ImportView As DocumentImportView, Callback As ImportFinishedDelegate)
 		  Self.mImportCallback = Callback
+		  Self.mImportView = ImportView
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ImportFinishedDelegate(Documents() As Beacon . Document)
+		Delegate Sub ImportFinishedDelegate(Projects() As Beacon.Project)
 	#tag EndDelegateDeclaration
 
+	#tag Method, Flags = &h21
+		Private Sub mImportView_ProjectsImported(Sender As DocumentImportView, Projects() As Beacon.Project)
+		  #Pragma Unused Sender
+		  
+		  If Beacon.SafeToInvoke(Self.mImportCallback) Then
+		    Self.mImportCallback.Invoke(Projects)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImportView_ShouldDismiss(Sender As DocumentImportView)
+		  #Pragma Unused Sender
+		  
+		  Self.Close
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImportView_ShouldResize(Sender As DocumentImportView, Height As Integer)
+		  #Pragma Unused Sender
+		  
+		  If Self.Height <> Height Then
+		    Self.Height = Height
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, OtherDocuments() As Beacon.Document) As DocumentImportWindow
-		  Var Win As New DocumentImportWindow(ImportCallback)
-		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a chance to get stuff like oauth keys
-		  Win.DocumentImportView1.SetOtherDocuments(OtherDocuments)
+		Shared Function Present(ImportView As DocumentImportView, ImportCallback As ImportFinishedDelegate, DestinationProject As Beacon.Project, OtherProjects() As Beacon.Project) As DocumentImportWindow
+		  Var Win As New DocumentImportWindow(ImportView, ImportCallback)
+		  ImportView.PullValuesFromProject(DestinationProject) // Give discovery views a chance to get stuff like oauth keys
+		  ImportView.SetOtherProjects(OtherProjects)
 		  Win.Show
 		  Return Win
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, File As FolderItem) As DocumentImportWindow
-		  Var Win As New DocumentImportWindow(ImportCallback)
-		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a chance to get stuff like oauth keys
-		  Win.DocumentImportView1.Import(File)
+		Shared Function Present(ImportView As DocumentImportView, ImportCallback As ImportFinishedDelegate, DestinationProject As Beacon.Project, File As FolderItem) As DocumentImportWindow
+		  Var Win As New DocumentImportWindow(ImportView, ImportCallback)
+		  ImportView.PullValuesFromProject(DestinationProject) // Give discovery views a chance to get stuff like oauth keys
+		  ImportView.Import(File)
 		  Win.Show
 		  Return Win
 		End Function
@@ -105,30 +114,13 @@ End
 		Private mImportCallback As ImportFinishedDelegate
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mImportView As DocumentImportView
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
-#tag Events DocumentImportView1
-	#tag Event
-		Sub ShouldDismiss()
-		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(Height As Integer)
-		  If Self.Height <> Height Then
-		    Self.Height = Height
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DocumentsImported(Documents() As Beacon.Document)
-		  If Beacon.SafeToInvoke(Self.mImportCallback) Then
-		    Self.mImportCallback.Invoke(Documents)
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Resizeable"

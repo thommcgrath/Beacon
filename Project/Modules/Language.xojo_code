@@ -237,28 +237,28 @@ Protected Module Language
 	#tag EndMethod
 
 
-	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = False, Default = \"Continue", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ExperimentalWarningCancelCaption, Type = String, Dynamic = True, Default = \"Cancel", Scope = Protected
+	#tag Constant, Name = ExperimentalWarningCancelCaption, Type = String, Dynamic = False, Default = \"Cancel", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ExperimentalWarningExplanation, Type = String, Dynamic = True, Default = \"The \"\?1\" loot source is only partially supported by Beacon. Its behavior may be unpredictable\x2C both in terms of item quality and quantity. Are you sure you want to continue\?", Scope = Protected
+	#tag Constant, Name = ExperimentalWarningExplanation, Type = String, Dynamic = False, Default = \"The \"\?1\" loot source is only partially supported by Beacon. Its behavior may be unpredictable\x2C both in terms of item quality and quantity. Are you sure you want to continue\?", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ExperimentalWarningMessage, Type = String, Dynamic = True, Default = \"You are adding an experimental loot source.", Scope = Protected
+	#tag Constant, Name = ExperimentalWarningMessage, Type = String, Dynamic = False, Default = \"You are adding an experimental loot source.", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourceKindBonus, Type = String, Dynamic = True, Default = \"Bonus Beacon", Scope = Protected
+	#tag Constant, Name = LootSourceKindBonus, Type = String, Dynamic = False, Default = \"Bonus Beacon", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourceKindCave, Type = String, Dynamic = True, Default = \"Cave", Scope = Protected
+	#tag Constant, Name = LootSourceKindCave, Type = String, Dynamic = False, Default = \"Cave", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourceKindSea, Type = String, Dynamic = True, Default = \"Deep Sea && Open Desert", Scope = Protected
+	#tag Constant, Name = LootSourceKindSea, Type = String, Dynamic = False, Default = \"Deep Sea && Open Desert", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourceKindStandard, Type = String, Dynamic = True, Default = \"Standard Beacon", Scope = Protected
+	#tag Constant, Name = LootSourceKindStandard, Type = String, Dynamic = False, Default = \"Standard Beacon", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityTier1, Type = String, Dynamic = False, Default = \"Primitive", Scope = Protected

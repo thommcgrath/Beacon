@@ -59,7 +59,7 @@ Inherits ControlCanvas
 		    Cell = -1
 		  End If
 		  If Cell > -1 Then
-		    Self.mSelectedColor = CType(Cell, Beacon.ServerProfile.Colors)
+		    Self.mSelectedColor = CType(Cell, Ark.ServerProfile.Colors)
 		    RaiseEvent Change()
 		  End If
 		  Self.mPressedCell = -1
@@ -81,7 +81,7 @@ Inherits ControlCanvas
 		  G.FillRoundRectangle(0, 0, ControlWidth, ControlHeight, ControlHeight, ControlHeight)
 		  
 		  For Idx As Integer = Self.mCellRects.FirstIndex To Self.mCellRects.LastIndex
-		    Var ProfileColor As Beacon.ServerProfile.Colors = CType(Idx, Beacon.ServerProfile.Colors)
+		    Var ProfileColor As Ark.ServerProfile.Colors = CType(Idx, Ark.ServerProfile.Colors)
 		    Var Style As Integer
 		    If Self.mSelectedColor = ProfileColor Then
 		      Style = Self.DrawSelected
@@ -118,7 +118,7 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawCell(G As Graphics, Location As Xojo.Rect, ProfileColor As Beacon.ServerProfile.Colors, Style As Integer)
+		Private Sub DrawCell(G As Graphics, Location As Xojo.Rect, ProfileColor As Ark.ServerProfile.Colors, Style As Integer)
 		  If Style = Self.DrawHover Then
 		    Location = New Xojo.Rect(Location.Left - 1, Location.Top - 1, Location.Width + 2, Location.Height + 2)
 		  ElseIf Style = Self.DrawSelected Then
@@ -126,29 +126,29 @@ Inherits ControlCanvas
 		  End If
 		  
 		  Select Case ProfileColor
-		  Case Beacon.ServerProfile.Colors.None
+		  Case Ark.ServerProfile.Colors.None
 		    G.DrawingColor = SystemColors.ControlColor
-		  Case Beacon.ServerProfile.Colors.Blue
+		  Case Ark.ServerProfile.Colors.Blue
 		    G.DrawingColor = SystemColors.SystemBlueColor
-		  Case Beacon.ServerProfile.Colors.Brown
+		  Case Ark.ServerProfile.Colors.Brown
 		    G.DrawingColor = SystemColors.SystemBrownColor
-		  Case Beacon.ServerProfile.Colors.Green
+		  Case Ark.ServerProfile.Colors.Green
 		    G.DrawingColor = SystemColors.SystemGreenColor
-		  Case Beacon.ServerProfile.Colors.Grey
+		  Case Ark.ServerProfile.Colors.Grey
 		    G.DrawingColor = SystemColors.SystemGrayColor
-		  Case Beacon.ServerProfile.Colors.Indigo
+		  Case Ark.ServerProfile.Colors.Indigo
 		    G.DrawingColor = SystemColors.SystemIndigoColor
-		  Case Beacon.ServerProfile.Colors.Orange
+		  Case Ark.ServerProfile.Colors.Orange
 		    G.DrawingColor = SystemColors.SystemOrangeColor
-		  Case Beacon.ServerProfile.Colors.Pink
+		  Case Ark.ServerProfile.Colors.Pink
 		    G.DrawingColor = SystemColors.SystemPinkColor
-		  Case Beacon.ServerProfile.Colors.Purple
+		  Case Ark.ServerProfile.Colors.Purple
 		    G.DrawingColor = SystemColors.SystemPurpleColor
-		  Case Beacon.ServerProfile.Colors.Red
+		  Case Ark.ServerProfile.Colors.Red
 		    G.DrawingColor = SystemColors.SystemRedColor
-		  Case Beacon.ServerProfile.Colors.Teal
+		  Case Ark.ServerProfile.Colors.Teal
 		    G.DrawingColor = SystemColors.SystemTealColor
-		  Case Beacon.ServerProfile.Colors.Yellow
+		  Case Ark.ServerProfile.Colors.Yellow
 		    G.DrawingColor = SystemColors.SystemYellowColor
 		  End Select
 		  
@@ -163,7 +163,7 @@ Inherits ControlCanvas
 		  G.DrawingColor = New ColorGroup(&c000000A0, &cFFFFFFA0)
 		  G.DrawOval(Location.Left, Location.Top, Location.Width, Location.Height)
 		  
-		  If ProfileColor = Beacon.ServerProfile.Colors.None Then
+		  If ProfileColor = Ark.ServerProfile.Colors.None Then
 		    Var Center As New Xojo.Point(Location.Left + ((Location.Width - 1) / 2), Location.Top + ((Location.Height - 1) / 2))
 		    G.DrawLine(Center.X - 1.5, Center.Y - 1.5, Center.X + 1.5, Center.Y + 1.5)
 		    G.DrawLine(Center.X - 1.5, Center.Y + 1.5, Center.X + 1.5, Center.Y - 1.5)
@@ -211,7 +211,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedColor As Beacon.ServerProfile.Colors
+		Private mSelectedColor As Ark.ServerProfile.Colors
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -228,7 +228,7 @@ Inherits ControlCanvas
 			  End If
 			End Set
 		#tag EndSetter
-		SelectedColor As Beacon.ServerProfile.Colors
+		SelectedColor As Ark.ServerProfile.Colors
 	#tag EndComputedProperty
 
 
@@ -483,28 +483,6 @@ Inherits ControlCanvas
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SelectedColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Beacon.ServerProfile.Colors"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Blue"
-				"2 - Brown"
-				"3 - Grey"
-				"4 - Green"
-				"5 - Indigo"
-				"6 - Orange"
-				"7 - Pink"
-				"8 - Purple"
-				"9 - Red"
-				"10 - Teal"
-				"11 - Yellow"
-			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

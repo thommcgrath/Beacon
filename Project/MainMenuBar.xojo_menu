@@ -298,10 +298,10 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem ViewPresets
+      Begin MenuItem ViewTemplates
          SpecialMenu = 0
          Index = -2147483648
-         Text = "Presets"
+         Text = "Templates"
          ShortcutKey = "3"
          Shortcut = "Cmd+3"
          MenuModifier = True

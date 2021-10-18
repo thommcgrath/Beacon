@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSetEntry
-Implements Beacon.Countable,Iterable
+Implements Beacon.Countable,Iterable, Ark.Weighted
 	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
@@ -46,6 +46,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mChanceToBeBlueprint = 0.25
 		  Self.mWeight = 250
 		  Self.mUniqueID = ""
+		  Self.mSingleItemMode = False
 		End Sub
 	#tag EndMethod
 
@@ -66,6 +67,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  Self.mLastSaveTime = Source.mLastSaveTime
+		  Self.mSingleItemMode = Source.mSingleItemMode
 		  
 		  For I As Integer = 0 To Source.mOptions.LastIndex
 		    Self.mOptions(I) = New Ark.LootItemSetEntryOption(Source.mOptions(I))
@@ -137,7 +139,7 @@ Implements Beacon.Countable,Iterable
 		    Next
 		    Var AverageWeight As Double = WeightSum / Count
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID(UUID)
+		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(UUID)
 		    If Engram Is Nil Then
 		      Continue
 		    End If
@@ -229,6 +231,16 @@ Implements Beacon.Countable,Iterable
 		      End Try
 		    Next
 		  End If
+		  
+		  Try
+		    If Dict.HasKey("SingleItemMode") Then
+		      Entry.SingleItemMode = Dict.Value("SingleItemMode")
+		    Else
+		      Entry.SingleItemMode = (Entry.Count = 1)
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading SingleItemMode value")
+		  End Try
 		  
 		  Entry.Modified = False
 		  Return Entry
@@ -563,6 +575,10 @@ Implements Beacon.Countable,Iterable
 		    Return 1
 		  End If
 		  
+		  If Self.mUniqueID.IsEmpty = False And Self.mUniqueID = Other.mUniqueID Then
+		    Return 0
+		  End If
+		  
 		  Var SelfHash As String = Self.Hash
 		  Var OtherHash As String = Other.Hash
 		  
@@ -579,6 +595,32 @@ Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function RawWeight() As Double
 		  Return Self.mWeight
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function RunSimulation(MinQuality As Double, MaxQuality As Double, Weights() As Double, WeightSum As Double, WeightLookup As Dictionary, RequiredBlueprintChance As Double) As Ark.LootSimulatorSelection
+		  Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
+		  Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
+		  Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (WeightSum * 100000)) - 100000
+		  
+		  For Idx As Integer = 0 To Weights.LastIndex
+		    If Weights(Idx) < ClassDecision Then
+		      Continue For Idx
+		    End If
+		    
+		    Var SelectedWeight As Double = Weights(Idx)
+		    Var SelectedEntry As Ark.LootItemSetEntryOption = WeightLookup.Value(SelectedWeight)
+		    If SelectedEntry Is Nil Then
+		      Continue For Idx
+		    End If
+		    
+		    Var Selection As New Ark.LootSimulatorSelection
+		    Selection.Engram = SelectedEntry.Engram
+		    Selection.IsBlueprint = BlueprintDecision > RequiredBlueprintChance
+		    Selection.Quality = Ark.Qualities.ForBaseValue(QualityValue)
+		    Return Selection
+		  Next Idx
 		End Function
 	#tag EndMethod
 
@@ -601,10 +643,10 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(CompatibilityMode As Boolean) As Dictionary
+		Function SaveData() As Dictionary
 		  Var Children() As Dictionary
 		  For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
-		    Children.Add(Item.SaveData(CompatibilityMode))
+		    Children.Add(Item.SaveData)
 		  Next
 		  
 		  Var Keys As New Dictionary
@@ -616,12 +658,13 @@ Implements Beacon.Countable,Iterable
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Keys.Value("SingleItemMode") = Self.SingleItemMode(True)
 		  Return Keys
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Simulate() As Ark.SimulatedSelection()
+		Function Simulate() As Ark.LootSimulatorSelection()
 		  Var Quantity As Integer
 		  If Self.mMaxQuantity < Self.mMinQuantity Then
 		    Quantity = System.Random.InRange(Self.mMaxQuantity, Self.mMinQuantity)
@@ -630,7 +673,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  Var MinQuality As Double = Self.mMinQuality.BaseValue
 		  Var MaxQuality As Double = Self.mMaxQuality.BaseValue
-		  Var Selections() As Ark.SimulatedSelection
+		  Var Selections() As Ark.LootSimulatorSelection
 		  Var RequiredChance As Integer = (1 - Self.mChanceToBeBlueprint) * 100
 		  
 		  If MaxQuality < MinQuality Then
@@ -651,30 +694,35 @@ Implements Beacon.Countable,Iterable
 		  Next
 		  Weights.Sort
 		  
-		  For I As Integer = 1 To Quantity
-		    Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
-		    Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
-		    Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (Sum * 100000)) - 100000
-		    Var Selection As New Ark.SimulatedSelection
-		    
-		    For X As Integer = 0 To Weights.LastIndex
-		      If Weights(X) >= ClassDecision Then
-		        Var SelectedWeight As Double = Weights(X)
-		        Var SelectedEntry As Ark.LootItemSetEntryOption = WeightLookup.Value(SelectedWeight)
-		        Selection.Engram = SelectedEntry.Engram
-		        Exit For X
-		      End If
-		    Next
-		    If Selection.Engram = Nil Then
-		      Continue
+		  If Self.SingleItemMode Then
+		    Var Selection As Ark.LootSimulatorSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
+		    If (Selection Is Nil) = False Then
+		      For I As Integer = 1 To Quantity
+		        Selections.Add(Selection)
+		      Next I
 		    End If
-		    
-		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
-		    Selection.Quality = Ark.Qualities.ForBaseValue(QualityValue)
-		    Selections.Add(Selection)
-		  Next
+		  Else
+		    For I As Integer = 1 To Quantity
+		      Var Selection As Ark.LootSimulatorSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
+		      If (Selection Is Nil) = False Then
+		        Selections.Add(Selection)
+		      End If
+		    Next I
+		  End If
 		  
 		  Return Selections
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SingleItemMode(Actual As Boolean = False) As Boolean
+		  // If Actual is true, the caller is looking for the true state of the setting and not the effective state
+		  
+		  If Actual Then
+		    Return Self.mSingleItemMode
+		  Else
+		    Return Self.mSingleItemMode Or Self.mOptions.Count = 1
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -733,6 +781,9 @@ Implements Beacon.Countable,Iterable
 		  Values.Add("MaxQuantity=" + Self.MaxQuantity.ToString)
 		  Values.Add("MinQuality=" + MinQuality.PrettyText)
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
+		  If Self.SingleItemMode Then
+		    Values.Add("bApplyQuantityToSingleItem=true")
+		  End If
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
 		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
@@ -804,6 +855,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mOptions() As Ark.LootItemSetEntryOption
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSingleItemMode As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

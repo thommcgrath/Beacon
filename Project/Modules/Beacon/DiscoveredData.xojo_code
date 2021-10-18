@@ -1,48 +1,6 @@
 #tag Class
 Protected Class DiscoveredData
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As Dictionary
-		  Return Self.mCommandLineOptions
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub CommandLineOptions(Assigns Value As Dictionary)
-		  Self.mCommandLineOptions = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameIniContent() As String
-		  Return Self.mGameIniContent
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GameIniContent(Assigns Value As String)
-		  Self.mGameIniContent = Value.GuessEncoding
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As String
-		  Return Self.mGameUserSettingsIniContent
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GameUserSettingsIniContent(Assigns Value As String)
-		  Self.mGameUserSettingsIniContent = Value.GuessEncoding
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsPrimitivePlus() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
 		  Return Self.mProfile
 		End Function
@@ -60,18 +18,6 @@ Protected Class DiscoveredData
 		
 	#tag EndNote
 
-
-	#tag Property, Flags = &h21
-		Private mCommandLineOptions As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameIniContent As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.ServerProfile

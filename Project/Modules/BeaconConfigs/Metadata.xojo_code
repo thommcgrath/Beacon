@@ -6,73 +6,75 @@ Implements ObservationKit.Observable
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
-		  Var Values() As Beacon.ConfigValue
-		  
-		  If (Profile Is Nil Or Profile IsA Beacon.GenericServerProfile Or Profile.Name.IsEmpty) = False Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
-		  End If
-		  
-		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Var Messages() As String
-		    Messages.Add("My dog has no nose.\nHow does he smell?\nBad.")
-		    Messages.Add("Pet the damn Thylacoleo!")
-		    Messages.Add("You are not in the sudoers file.\nThis incident will be reported.")
-		    Messages.Add("All our horses are 100% horse-fed for that double-horse juiced-in goodness.")
-		    Messages.Add("The intent is to provide players with a sense of pride and accomplishment.")
-		    Messages.Add("Dog lips. That is all.")
-		    Messages.Add("Maybe question how the server owner pays for this server.")
-		    Messages.Add("You're stuck with this message for 5 minutes.")
-		    Messages.Add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!")
-		    Messages.Add("Bonus round! Until further notice, there are no rules! Admin password is 'peanuts' so have fun!")
-		    Messages.Add("It's ""Boy in the Bubble"" day! Even a sneeze could kill you! Good luck!")
-		    Messages.Add("Children of Men! Dinos won't respawn! Good luck!")
-		    Messages.Add("What happens when an Ark spins out of control?")
+		  #if false
+		    Var Values() As Beacon.ConfigValue
 		    
-		    Var Rand As Random = System.Random
-		    Rand.RandomizeSeed
-		    Var Index As Integer = Rand.InRange(0, Messages.LastIndex)
-		    
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Messages(Index)))
-		    
-		    If Index = 9 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerAdminPassword=peanuts"))
-		    ElseIf Index = 10 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "PlayerResistanceMultiplier=9999"))
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "MaxFallSpeedMultiplier=0.01"))
-		    ElseIf Index = 11 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DinoCountMultiplier=0"))
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DinoResistanceMultiplier=9999"))
-		    ElseIf Index = 12 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale=300"))
+		    If (Profile Is Nil Or Profile IsA Beacon.GenericServerProfile Or Profile.Name.IsEmpty) = False Then
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
 		    End If
 		    
-		    If Index = 7 Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=360"))
-		    Else
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=30"))
+		    If App.IdentityManager.CurrentIdentity.IsBanned Then
+		      Var Messages() As String
+		      Messages.Add("My dog has no nose.\nHow does he smell?\nBad.")
+		      Messages.Add("Pet the damn Thylacoleo!")
+		      Messages.Add("You are not in the sudoers file.\nThis incident will be reported.")
+		      Messages.Add("All our horses are 100% horse-fed for that double-horse juiced-in goodness.")
+		      Messages.Add("The intent is to provide players with a sense of pride and accomplishment.")
+		      Messages.Add("Dog lips. That is all.")
+		      Messages.Add("Maybe question how the server owner pays for this server.")
+		      Messages.Add("You're stuck with this message for 5 minutes.")
+		      Messages.Add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!")
+		      Messages.Add("Bonus round! Until further notice, there are no rules! Admin password is 'peanuts' so have fun!")
+		      Messages.Add("It's ""Boy in the Bubble"" day! Even a sneeze could kill you! Good luck!")
+		      Messages.Add("Children of Men! Dinos won't respawn! Good luck!")
+		      Messages.Add("What happens when an Ark spins out of control?")
+		      
+		      Var Rand As Random = System.Random
+		      Rand.RandomizeSeed
+		      Var Index As Integer = Rand.InRange(0, Messages.LastIndex)
+		      
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Messages(Index)))
+		      
+		      If Index = 9 Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerAdminPassword=peanuts"))
+		      ElseIf Index = 10 Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "PlayerResistanceMultiplier=9999"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "MaxFallSpeedMultiplier=0.01"))
+		      ElseIf Index = 11 Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DinoCountMultiplier=0"))
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DinoResistanceMultiplier=9999"))
+		      ElseIf Index = 12 Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "DayCycleSpeedScale=300"))
+		      End If
+		      
+		      If Index = 7 Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=360"))
+		      Else
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=30"))
+		      End If
+		      
+		      Return Values
+		    End If
+		    
+		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
+		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=" + Profile.MessageDuration.ToString))
+		    End If
+		    
+		    If (Profile Is Nil) = False Then
+		      If (Profile.AdminPassword Is Nil) = False Then
+		        Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ServerAdminPassword=" + Profile.AdminPassword.StringValue))
+		      End If
+		      If (Profile.SpectatorPassword Is Nil) = False Then
+		        Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "SpectatorPassword=" + Profile.SpectatorPassword.StringValue))
+		      End If
+		      If (Profile.ServerPassword Is Nil) = False Then
+		        Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerPassword=" + Profile.ServerPassword.StringValue))
+		      End If
 		    End If
 		    
 		    Return Values
-		  End If
-		  
-		  If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
-		    Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=" + Profile.MessageDuration.ToString))
-		  End If
-		  
-		  If (Profile Is Nil) = False Then
-		    If (Profile.AdminPassword Is Nil) = False Then
-		      Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "ServerAdminPassword=" + Profile.AdminPassword.StringValue))
-		    End If
-		    If (Profile.SpectatorPassword Is Nil) = False Then
-		      Values.Add(New Beacon.ConfigValue("CommandLineOption", "?", "SpectatorPassword=" + Profile.SpectatorPassword.StringValue))
-		    End If
-		    If (Profile.ServerPassword Is Nil) = False Then
-		      Values.Add(New Beacon.ConfigValue(Beacon.ConfigFileGameUserSettings, Beacon.ServerSettingsHeader, "ServerPassword=" + Profile.ServerPassword.StringValue))
-		    End If
-		  End If
-		  
-		  Return Values
+		  #endif
 		End Function
 	#tag EndEvent
 

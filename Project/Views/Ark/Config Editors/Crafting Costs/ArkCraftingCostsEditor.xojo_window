@@ -270,6 +270,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread FibercraftBuilderThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -281,6 +282,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -529,7 +531,7 @@ End
 		  
 		  Var NewCosts() As Ark.CraftingCost
 		  For Each Engram As Ark.Engram In NewEngrams
-		    Var Cost As New Ark.CraftingCost(SourceCost)
+		    Var Cost As New Ark.MutableCraftingCost(SourceCost)
 		    Cost.Engram = Engram
 		    Config.Add(Cost)
 		    NewCosts.Add(Cost)
@@ -617,7 +619,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingcost", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.craftingcost", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ListDefaultWidth, Type = Double, Dynamic = False, Default = \"315", Scope = Public
@@ -804,7 +806,7 @@ End
 #tag Events FibercraftBuilderThread
 	#tag Event
 		Sub Run()
-		  Var Fiber As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID("244bc843-2540-486e-af4a-8824500c0e56")
+		  Var Fiber As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("244bc843-2540-486e-af4a-8824500c0e56")
 		  
 		  Var Config As Ark.Configs.CraftingCosts = Self.Config(False)
 		  Var Engrams() As Ark.Engram = Config.Engrams
@@ -890,13 +892,13 @@ End
 		    Filter.Value(Engram.ObjectID) = True
 		  Next
 		  
-		  Var ObjectIDs() As String = Ark.DataSource.SharedInstance.GetObjectIDsWithCraftingCosts(Self.Project.ContentPacks, Self.Project.MapCompatibility)
+		  Var ObjectIDs() As String = Ark.DataSource.SharedInstance.GetEngramUUIDsThatHaveCraftingCosts(Self.Project.ContentPacks, Self.Project.MapMask)
 		  For Each ObjectID As String In ObjectIDs
 		    If Filter.HasKey(ObjectID) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID(ObjectID)
+		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(ObjectID)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If

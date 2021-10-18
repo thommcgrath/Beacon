@@ -475,6 +475,7 @@ Begin BeaconDialog ArkAdjustIngredientDialog
    End
    Begin Thread ProcessorThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -623,13 +624,13 @@ End
 		    Filter.Value(Engram.ObjectID) = True
 		  Next
 		  
-		  Var ObjectIDs() As String = Ark.DataSource.SharedInstance.GetObjectIDsWithCraftingCosts(Self.mProject.ContentPacks, Ark.Maps.UniversalMask)
+		  Var ObjectIDs() As String = Ark.DataSource.SharedInstance.GetEngramUUIDsThatHaveCraftingCosts(Self.mProject.ContentPacks, Ark.Maps.UniversalMask)
 		  For Each ObjectID As String In ObjectIDs
 		    If Filter.HasKey(ObjectID) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID(ObjectID)
+		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(ObjectID)
 		    If (Engram Is Nil) = False Then
 		      Engrams.Add(Engram)
 		    End If
@@ -651,21 +652,25 @@ End
 		      Return
 		    End If
 		    
-		    Var Cost As Ark.CraftingCost = WorkingConfig.Cost(Engram)
-		    If Cost Is Nil Then
-		      Cost = New Ark.CraftingCost(Engram, True)
+		    Var Temp As Ark.CraftingCost = WorkingConfig.Cost(Engram)
+		    Var Cost As Ark.MutableCraftingCost
+		    If Temp Is Nil Then
+		      Cost = New Ark.MutableCraftingCost(Temp)
+		    Else
+		      Cost = New Ark.MutableCraftingCost(Engram, True)
 		    End If
-		    If Cost Is Nil Or Cost.Count = 0 Then
+		    If Cost.Count = 0 Then
 		      Continue
 		    End If
 		    
 		    Var Changed As Boolean
-		    For IngredientIdx As Integer = Cost.LastRowIndex DownTo 0
-		      If Cost.Resource(IngredientIdx) <> Self.mTarget Then
+		    For IngredientIdx As Integer = Cost.LastIndex DownTo 0
+		      Var Ingredient As Ark.CraftingCostIngredient = Cost.Ingredient(IngredientIdx)
+		      If Ingredient.Engram <> Self.mTarget Then
 		        Continue
 		      End If
 		      
-		      Var OriginalQuantity As Integer = Cost.Quantity(IngredientIdx)
+		      Var OriginalQuantity As Integer = Ingredient.Quantity
 		      Var Quantity As Integer = OriginalQuantity
 		      Quantity = Max(Round(Quantity * Self.mMultiplier), Self.mMinimumQuantity)
 		      If OriginalQuantity = Quantity And IngredientIsChanging = False Then
@@ -674,8 +679,7 @@ End
 		      If Quantity = 0 Then
 		        Cost.Remove(IngredientIdx)
 		      Else
-		        Cost.Quantity(IngredientIdx) = Quantity
-		        Cost.Resource(IngredientIdx) = Self.mReplacement
+		        Cost.Ingredient(IngredientIdx) = New Ark.CraftingCostIngredient(Self.mReplacement, Quantity, Ingredient.RequireExact)
 		      End If
 		      
 		      Changed = True

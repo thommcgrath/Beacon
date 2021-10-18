@@ -438,6 +438,26 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function DetectGame(File As FolderItem) As String
+		  Try
+		    Var Content As String = File.Read
+		    Return DetectGame(Content)
+		  Catch Err As RuntimeException
+		    Return ""
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DetectGame(Content As String) As String
+		  // At the moment there is only one game supported, so the logic is really simple
+		  
+		  #Pragma Unused Content
+		  Return Ark.Identifier
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function DetectLineEnding(Extends Source As String) As String
 		  Const CR = &u0D
@@ -1061,6 +1081,23 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As MemoryBlock) As String
 		  Return EncodeHex(Crypto.MD5(Value))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Merge(Array1() As Ark.Engram, Array2() As Ark.Engram) As Ark.Engram()
+		  Var Unique As New Dictionary
+		  For Each Engram As Ark.Engram In Array1
+		    Unique.Value(Engram.ObjectID) = Engram
+		  Next
+		  For Each Engram As Ark.Engram In Array2
+		    Unique.Value(Engram.ObjectID) = Engram
+		  Next
+		  Var Merged() As Ark.Engram
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.Add(Entry.Value)
+		  Next
+		  Return Merged
 		End Function
 	#tag EndMethod
 
@@ -1873,8 +1910,8 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Simulate(Extends Source As Beacon.LootSource) As Beacon.SimulatedSelection()
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
+		Attributes( Deprecated )  Function Simulate(Extends Source As Beacon.LootSource) As Beacon.SimulatedSelection()
 		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
 		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
 		  Var Selections() As Beacon.SimulatedSelection
@@ -2140,27 +2177,14 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
-		  Var MissingHeaders() As String
-		  For Each RequiredHeader As String In RequiredHeaders
-		    If Content.IndexOf(RequiredHeader) = -1 Then
-		      MissingHeaders.Add(RequiredHeader)
-		    End If
-		  Next
-		  MissingHeaders.Sort
-		  Return MissingHeaders
+		Attributes( Deprecated = "Ark.ValidateIniContent" ) Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
+		  Return Ark.ValidateIniContent(Content, RequiredHeaders)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ValidateIniContent(Content As String, Filename As String) As String()
-		  Var RequiredHeaders() As String
-		  If Filename = Beacon.ConfigFileGame Then
-		    RequiredHeaders = Array("[/script/shootergame.shootergamemode]")
-		  ElseIf Filename = Beacon.ConfigFileGameUserSettings Then
-		    RequiredHeaders = Array("[SessionSettings]", "[ServerSettings]", "[/Script/ShooterGame.ShooterGameUserSettings]")
-		  End If
-		  Return Beacon.ValidateIniContent(Content, RequiredHeaders)
+		Attributes( Deprecated = "Ark.ValidateIniContent" ) Protected Function ValidateIniContent(Content As String, Filename As String) As String()
+		  Return Ark.ValidateIniContent(Content, Filename)
 		End Function
 	#tag EndMethod
 
@@ -2296,6 +2320,9 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = FileExtensionProject, Type = String, Dynamic = False, Default = \".beacon", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = FileExtensionTemplate, Type = String, Dynamic = False, Default = \".beacontemplate", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected

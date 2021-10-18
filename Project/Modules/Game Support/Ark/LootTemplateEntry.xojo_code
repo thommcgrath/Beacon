@@ -340,11 +340,11 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(CompatibilityMode As Boolean) As Dictionary
+		Function SaveData() As Dictionary
 		  // Calling the overridden superclass method.
 		  Var Children() As Dictionary
 		  For Each Item As Ark.LootItemSetEntryOption In Self.mOptions
-		    Children.Add(Item.SaveData(CompatibilityMode))
+		    Children.Add(Item.SaveData)
 		  Next
 		  
 		  Var Dict As New Dictionary

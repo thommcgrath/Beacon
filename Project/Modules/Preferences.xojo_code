@@ -254,6 +254,38 @@ Protected Module Preferences
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", ArkSpawnPointEditor.LimitsListDefaultHeight)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Spawn Point Editor Limits Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSpawnPointEditorLimitsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", ArkSpawnPointEditor.SetsListDefaultWidth)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Spawn Point Editor Sets Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected ArkSpawnPointEditorSetsSplitterPosition As Integer
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
@@ -373,7 +405,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Item Sets Splitter Position", LootSourceEditor.ListDefaultWidth)
+			  Return mManager.IntegerValue("Item Sets Splitter Position", ArkLootDropEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -706,7 +738,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Sources Splitter Position", LootConfigEditor.ListDefaultWidth)
+			  Return mManager.IntegerValue("Sources Splitter Position", ArkLootDropsEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -722,39 +754,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", SpawnPointEditor.LimitsListDefaultHeight)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Spawn Point Editor Limits Splitter Position") = Value
-			End Set
-		#tag EndSetter
-		Protected SpawnPointEditorLimitsSplitterPosition As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", SpawnPointEditor.SetsListDefaultWidth)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Spawn Point Editor Sets Splitter Position") = Value
-			End Set
-		#tag EndSetter
-		Protected SpawnPointEditorSetsSplitterPosition As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.IntegerValue("Spawn Points Splitter Position", SpawnPointsConfigEditor.ListDefaultWidth)
+			  Return mManager.IntegerValue("Spawn Points Splitter Position", ArkCreatureSpawnsEditor.ListDefaultWidth)
 			End Get
 		#tag EndGetter
 		#tag Setter

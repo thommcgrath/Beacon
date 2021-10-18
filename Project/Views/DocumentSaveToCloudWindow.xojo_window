@@ -248,7 +248,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Controller As Beacon.DocumentController) As Integer
+		Shared Function Present(Parent As Window, Controller As Beacon.ProjectController) As Integer
 		  If Not Preferences.OnlineEnabled Then
 		    Return StateSaveLocal
 		  End If
@@ -267,7 +267,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mController As Beacon.DocumentController
+		Private mController As Beacon.ProjectController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -290,9 +290,9 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.mController.Document.NewIdentifier
-		  Var NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Document.DocumentID).Middle(8)
-		  Self.mController.Document.Title = Self.TitleField.Text
+		  Self.mController.Project.NewIdentifier
+		  Var NewURL As String = Beacon.ProjectURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Project.UUID).Middle(8)
+		  Self.mController.Project.Title = Self.TitleField.Text
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved
 		  Self.Hide

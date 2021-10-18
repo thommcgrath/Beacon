@@ -1,24 +1,6 @@
 #tag Class
 Protected Class LootItemSet
-Implements Beacon.Countable,Iterable
-	#tag Method, Flags = &h21
-		Private Shared Sub ComputeSimulationFigures(Pool() As Ark.LootItemSetEntry, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Dictionary)
-		  Weights.ResizeTo(-1)
-		  WeightLookup = New Dictionary
-		  WeightSum = 0
-		  
-		  For Each Entry As Ark.LootItemSetEntry In Pool
-		    If Entry.RawWeight = 0 Then
-		      Continue
-		    End If
-		    WeightSum = WeightSum + Entry.RawWeight
-		    Weights.Add(WeightSum * WeightScale)
-		    WeightLookup.Value(WeightSum * WeightScale) = Entry
-		  Next
-		  Weights.Sort
-		End Sub
-	#tag EndMethod
-
+Implements Beacon.Countable,Iterable, Ark.Weighted
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mMinNumItems = 1
@@ -27,7 +9,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mSetWeight = 500
 		  Self.mItemsRandomWithoutReplacement = True
 		  Self.mLabel = "Untitled Item Set"
-		  Self.mUniqueID = New v4UUID
+		  Self.mUUID = New v4UUID
 		End Sub
 	#tag EndMethod
 
@@ -45,8 +27,8 @@ Implements Beacon.Countable,Iterable
 		  Self.mMinNumItems = Source.mMinNumItems
 		  Self.mNumItemsPower = Source.mNumItemsPower
 		  Self.mSetWeight = Source.mSetWeight
-		  Self.mSourcePresetID = Source.mSourcePresetID
-		  Self.mUniqueID = Source.mUniqueID
+		  Self.mTemplateUUID = Source.mTemplateUUID
+		  Self.mUUID = Source.mUUID
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastIndex)
 		  For I As Integer = 0 To Source.mEntries.LastIndex
@@ -145,7 +127,7 @@ Implements Beacon.Countable,Iterable
 		  
 		  Try
 		    If Dict.HasKey("SourcePresetID") Then
-		      Set.SourcePresetID = Dict.Value("SourcePresetID")
+		      Set.TemplateUUID = Dict.Value("SourcePresetID")
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading SourcePresetID value")
@@ -161,7 +143,7 @@ Implements Beacon.Countable,Iterable
 		  Var Set As New Ark.MutableLootItemSet
 		  Set.Label = Template.Label
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
-		  Set.SourcePresetID = Template.UUID
+		  Set.TemplateUUID = Template.UUID
 		  
 		  Var ActiveModifiers() As String = Template.ActiveSelectorIDs
 		  Var QuantityMultipliers() As Double
@@ -345,7 +327,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  If Dict.HasKey("SourcePresetID") Then
-		    Set.SourcePresetID = Dict.Value("SourcePresetID")
+		    Set.TemplateUUID = Dict.Value("SourcePresetID")
 		  End If
 		  
 		  Set.Modified = False
@@ -354,7 +336,7 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Entry As Beacon.SetEntry) As Integer
+		Function IndexOf(Entry As Ark.LootItemSetEntry) As Integer
 		  For I As Integer = 0 To Self.mEntries.LastIndex
 		    If Self.mEntries(I) = Entry Then
 		      Return I
@@ -467,13 +449,13 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  // If they have the same ID, they are the same. End of story.
-		  If Self.mUniqueID = Other.mUniqueID Then
+		  If Self.mUUID = Other.mUUID Then
 		    Return 0
 		  End If
 		  
 		  // If the do not have the same ID, we must sort them alphabetically but without equating two sets with the same label
-		  Var SelfComparison As String = Self.mLabel + " " + Self.mUniqueID
-		  Var OtherComparison As String = Other.mLabel + " " + Other.mUniqueID
+		  Var SelfComparison As String = Self.mLabel + " " + Self.mUUID
+		  Var OtherComparison As String = Other.mLabel + " " + Other.mUUID
 		  Return SelfComparison.Compare(OtherComparison, ComparisonOptions.CaseInsensitive, Locale.Current)
 		End Function
 	#tag EndMethod
@@ -487,6 +469,31 @@ Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function RawWeight() As Double
 		  Return Self.mSetWeight
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Rebuild(ForContainer As Ark.LootContainer, Mask As UInt64, ContentPacks As Beacon.StringList) As Ark.LootItemSet
+		  If Self.mTemplateUUID.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Template As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Self.TemplateUUID)
+		  If Template Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Clone As Ark.LootItemSet = Self.FromTemplate(Template, ForContainer, Mask, ContentPacks)
+		  If Self.Hash(True) = Clone.Hash(True) Then
+		    // No change
+		    Return Nil
+		  End If
+		  
+		  Var Mutable As New Ark.MutableLootItemSet(Clone)
+		  Mutable.RawWeight = Self.RawWeight
+		  Mutable.ItemsRandomWithoutReplacement = Self.ItemsRandomWithoutReplacement
+		  Mutable.NumItemsPower = Self.NumItemsPower
+		  Return New Ark.LootItemSet(Mutable)
 		End Function
 	#tag EndMethod
 
@@ -512,16 +519,16 @@ Implements Beacon.Countable,Iterable
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("SetWeight") = Self.RawWeight / 1000
-		  If Self.SourcePresetID.IsEmpty = False Then
-		    Keys.Value("SourcePresetID") = Self.SourcePresetID
+		  If Self.TemplateUUID.IsEmpty = False Then
+		    Keys.Value("SourcePresetID") = Self.TemplateUUID
 		  End If
 		  Return Keys
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Simulate() As Ark.SimulatedSelection()
-		  Var Selections() As Ark.SimulatedSelection
+		Function Simulate() As Ark.LootSimulatorSelection()
+		  Var Selections() As Ark.LootSimulatorSelection
 		  If Self.mEntries.LastIndex = -1 Then
 		    Return Selections
 		  End If
@@ -554,7 +561,7 @@ Implements Beacon.Countable,Iterable
 		      End If
 		      
 		      If RecomputeFigures Then
-		        Self.ComputeSimulationFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
+		        Ark.LootSimulatorSelection.ComputeSimulatorFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
 		        RecomputeFigures = False
 		      End If
 		      
@@ -591,18 +598,12 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  For Each Entry As Ark.LootItemSetEntry In SelectedEntries
-		    Var EntrySelections() As Ark.SimulatedSelection = Entry.Simulate()
-		    For Each Selection As Ark.SimulatedSelection In EntrySelections
+		    Var EntrySelections() As Ark.LootSimulatorSelection = Entry.Simulate()
+		    For Each Selection As Ark.LootSimulatorSelection In EntrySelections
 		      Selections.Add(Selection)
 		    Next
 		  Next
 		  Return Selections
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SourcePresetID() As String
-		  Return Self.mSourcePresetID
 		End Function
 	#tag EndMethod
 
@@ -621,6 +622,12 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function TemplateUUID() As String
+		  Return Self.mTemplateUUID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function TotalWeight() As Double
 		  Var Value As Double
 		  For Each Entry As Ark.LootItemSetEntry In Self.mEntries
@@ -631,8 +638,8 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UniqueID() As v4UUID
-		  Return Self.mUniqueID
+		Function UUID() As String
+		  Return Self.mUUID
 		End Function
 	#tag EndMethod
 
@@ -682,11 +689,11 @@ Implements Beacon.Countable,Iterable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mSourcePresetID As String
+		Protected mTemplateUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUniqueID As v4UUID
+		Private mUUID As String
 	#tag EndProperty
 
 

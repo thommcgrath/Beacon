@@ -14,7 +14,7 @@ Protected Class ConfigSetState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.ConfigSetState
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.ConfigSetState
 		  Try
 		    Var Name As String = Dict.Value("Name")
 		    Var Enabled As Boolean = Dict.Value("Enabled")
@@ -52,7 +52,7 @@ Protected Class ConfigSetState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
+		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("Name") = Self.mName
 		  Dict.Value("Enabled") = Self.mEnabled

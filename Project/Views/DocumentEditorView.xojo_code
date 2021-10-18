@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DocumentEditorView
 Inherits BeaconSubview
-Implements NotificationKit.Receiver, ObservationKit.Observer
+Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Event
 		Sub CleanupDiscardedChanges()
 		  Self.CleanupAutosave()
@@ -46,7 +46,7 @@ Implements NotificationKit.Receiver, ObservationKit.Observer
 		Function ShouldSave() As Boolean
 		  Call RaiseEvent ShouldSave
 		  
-		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then  
+		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then  
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Self.mController.Save()
 		  Else

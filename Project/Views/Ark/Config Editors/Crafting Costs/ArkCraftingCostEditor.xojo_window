@@ -160,7 +160,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowAddResources()
 		  Var Engrams() As Ark.Engram
-		  For I As Integer = 0 To Self.mTarget.LastRowIndex
+		  For I As Integer = 0 To Self.mTarget.LastIndex
 		    Engrams.Add(Self.mTarget.Resource(I))
 		  Next
 		  
@@ -184,19 +184,20 @@ End
 		Private Sub UpdateList()
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Var Selected() As String
-		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.Selected(I) Then
-		      Var Resource As Ark.Engram = Self.List.RowTagAt(I)
-		      Selected.Add(Resource.ObjectID)
+		  For Idx As Integer = 0 To Self.List.RowCount - 1
+		    If Self.List.Selected(Idx) Then
+		      Var Ingredient As Ark.CraftingCostIngredient = Self.List.RowTagAt(Idx)
+		      Selected.Add(Ingredient.Reference.ObjectID)
 		    End If
 		  Next
 		  
 		  Self.List.RemoveAllRows
-		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Self.mTarget.Quantity(I).ToString(Locale.Raw, ",##0"))
-		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Self.mTarget.Resource(I).ObjectID) > -1
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Self.mTarget.Resource(I)
+		  For Idx As Integer = 0 To Self.mTarget.LastIndex
+		    Var Ingredient As Ark.CraftingCostIngredient = Self.mTarget.Ingredient(Idx)
+		    Self.List.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Raw, ",##0"))
+		    Self.List.CellCheckBoxValueAt(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Ingredient.RequireExact
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selected.IndexOf(Ingredient.Reference.ObjectID) > -1
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Ingredient
 		  Next
 		  Self.List.Sort
 		  Self.List.ScrollPosition = ScrollPosition
@@ -266,7 +267,7 @@ End
 	#tag Constant, Name = ColumnResource, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.craftingresource", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.craftingingredient", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"495", Scope = Public
@@ -300,22 +301,25 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var EngramsToDelete() As Ark.Engram
+		  Var RowsToDelete() As Ark.CraftingCostIngredient
+		  Var Names() As String
 		  Var Bound As Integer = Me.RowCount - 1
-		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
+		  For Idx As Integer = 0 To Bound
+		    If Me.Selected(Idx) = False Then
 		      Continue
 		    End If
 		    
-		    EngramsToDelete.Add(Me.RowTagAt(I))
+		    Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Idx)
+		    Names.Add(Ingredient.Engram.Label)
+		    RowsToDelete.Add(Ingredient)
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(EngramsToDelete, "ingredient", "ingredients") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(Names, "ingredient", "ingredients") = False Then
 		    Return
 		  End If
 		  
-		  For Each Engram As Ark.Engram In EngramsToDelete
-		    Self.mTarget.Remove(Engram)
+		  For Each Ingredient As Ark.CraftingCostIngredient In RowsToDelete
+		    Self.mTarget.Remove(Ingredient)
 		    Self.Changed = True
 		  Next
 		  Self.UpdateList()
@@ -324,19 +328,17 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Var Dicts() As Dictionary
-		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		  For Idx As Integer = 0 To Me.RowCount - 1
+		    If Not Me.Selected(Idx) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Ark.Engram = Me.RowTagAt(I)
-		    Var Idx As Integer = Self.mTarget.IndexOf(Engram)
-		    
+		    Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Idx)
 		    Var Dict As New Dictionary
-		    Dict.Value("UUID") = Engram.ObjectID
-		    Dict.Value("Class") = Engram.ClassString
-		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
-		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
+		    Dict.Value("UUID") = Ingredient.Reference.ObjectID
+		    Dict.Value("Class") = Ingredient.Reference.ClassString
+		    Dict.Value("Quantity") = Ingredient.Quantity
+		    Dict.Value("Exact") = Ingredient.RequireExact
 		    Dicts.Add(Dict)
 		  Next
 		  
@@ -358,7 +360,7 @@ End
 		      Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "UUID", "Class", "", Nil)
 		      Var Quantity As Integer = Dict.Value("Quantity")
 		      Var Exact As Boolean = Dict.Value("Exact")
-		      Self.mTarget.Append(Engram, Quantity, Exact)
+		      Self.mTarget.Add(Engram, Quantity, Exact)
 		    Next
 		    
 		    Self.UpdateList()
@@ -375,16 +377,19 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Var Engram As Ark.Engram = Me.RowTagAt(Row)
-		  Var Idx As Integer = Self.mTarget.IndexOf(Engram)
+		  Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		  Select Case Column
 		  Case Self.ColumnQuantity
-		    Self.mTarget.Quantity(Idx) = Val(Me.CellValueAt(Row, Column))
-		    Self.Changed = True
+		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Val(Me.CellValueAt(Row, Column)), Ingredient.RequireExact)
 		  Case Self.ColumnRequireExact
-		    Self.mTarget.RequireExactResource(Idx) = Me.CellCheckBoxValueAt(Row, Column)
-		    Self.Changed = True
+		    Ingredient = New Ark.CraftingCostIngredient(Ingredient.Reference, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
+		  Else
+		    Return
 		  End Select
+		  
+		  Self.Changed = True
+		  Self.mTarget.Add(Ingredient)
+		  Me.RowTagAt(Row) = Ingredient
 		End Sub
 	#tag EndEvent
 #tag EndEvents

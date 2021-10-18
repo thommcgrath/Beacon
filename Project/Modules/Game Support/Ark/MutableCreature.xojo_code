@@ -44,6 +44,12 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone() As Ark.MutableCreature
+		  Return New Ark.MutableCreature(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Path As String, ObjectID As v4UUID)
 		  Super.Constructor()
 		  

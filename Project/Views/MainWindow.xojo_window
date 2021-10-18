@@ -83,7 +83,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   1420
       Begin DashboardPane DashboardPane1
@@ -297,7 +297,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Visible         =   True
          Width           =   1420
       End
-      Begin PresetsComponent PresetsComponent1
+      Begin TemplatesComponent TemplatesComponent1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -329,7 +329,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
          Top             =   38
          Transparent     =   True
          ViewIcon        =   0
-         ViewTitle       =   "Presets"
+         ViewTitle       =   "Templates"
          Visible         =   True
          Width           =   1420
       End
@@ -351,7 +351,7 @@ End
 		    Return BlockClose
 		  End If
 		  
-		  If Self.PresetsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		  If Self.TemplatesComponent1.ConfirmClose(AddressOf ShowView) = False Then
 		    Return BlockClose
 		  End If
 		  
@@ -506,8 +506,8 @@ End
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function ViewPresets() As Boolean Handles ViewPresets.Action
-			Self.ShowPresets()
+		Function ViewTemplates() As Boolean Handles ViewTemplates.Action
+			Self.ShowTemplates()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -527,7 +527,7 @@ End
 		    Return True
 		  End If
 		  
-		  If (Self.PresetsComponent1 Is Nil) = False And Self.PresetsComponent1.Busy Then
+		  If (Self.TemplatesComponent1 Is Nil) = False And Self.TemplatesComponent1.Busy Then
 		    Return True
 		  End If
 		  
@@ -569,8 +569,8 @@ End
 		    Return Self.DocumentsComponent1
 		  Case Self.PageBlueprints
 		    Return Self.BlueprintsComponent1
-		  Case Self.PagePresets
-		    Return Self.PresetsComponent1
+		  Case Self.PageTemplates
+		    Return Self.TemplatesComponent1
 		  Case Self.PageHelp
 		    Return Self.HelpComponent1
 		  End Select
@@ -619,7 +619,7 @@ End
 		    Return True
 		  End If
 		  
-		  If (Self.PresetsComponent1 Is Nil) = False And Self.PresetsComponent1.HasModifications Then
+		  If (Self.TemplatesComponent1 Is Nil) = False And Self.TemplatesComponent1.HasModifications Then
 		    Return True
 		  End If
 		End Function
@@ -709,12 +709,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Presets(SwitchTo As Boolean = True) As PresetsComponent
+		Attributes( Deprecated = "Templates" )  Function Presets(SwitchTo As Boolean = True) As TemplatesComponent
 		  If SwitchTo Then
-		    Self.SwitchView(Self.PagePresets)
+		    Self.SwitchView(Self.PageTemplates)
 		  End If
 		  
-		  Return Self.PresetsComponent1
+		  Return Self.TemplatesComponent1
 		End Function
 	#tag EndMethod
 
@@ -800,8 +800,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowPresets()
-		  Self.SwitchView(Self.PagePresets)
+		Attributes( Deprecated = "ShowTemplates" )  Sub ShowPresets()
+		  Self.SwitchView(Self.PageTemplates)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowTemplates()
+		  Self.SwitchView(Self.PageTemplates)
 		End Sub
 	#tag EndMethod
 
@@ -878,8 +884,8 @@ End
 		    FromView = Self.DocumentsComponent1
 		  Case Self.PageBlueprints
 		    FromView = Self.BlueprintsComponent1
-		  Case Self.PagePresets
-		    FromView = Self.PresetsComponent1
+		  Case Self.PageTemplates
+		    FromView = Self.TemplatesComponent1
 		  Case Self.PageHelp
 		    FromView = Self.HelpComponent1
 		  End Select
@@ -897,8 +903,8 @@ End
 		    ToView = Self.DocumentsComponent1
 		  Case Self.PageBlueprints
 		    ToView = Self.BlueprintsComponent1
-		  Case Self.PagePresets
-		    ToView = Self.PresetsComponent1
+		  Case Self.PageTemplates
+		    ToView = Self.TemplatesComponent1
 		  Case Self.PageHelp
 		    ToView = Self.HelpComponent1
 		  End Select
@@ -914,6 +920,16 @@ End
 		    Next
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Templates(SwitchTo As Boolean = True) As TemplatesComponent
+		  If SwitchTo Then
+		    Self.SwitchView(Self.PageTemplates)
+		  End If
+		  
+		  Return Self.TemplatesComponent1
+		End Function
 	#tag EndMethod
 
 
@@ -957,7 +973,7 @@ End
 	#tag Constant, Name = PageHome, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PagePresets, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = PageTemplates, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
@@ -976,15 +992,15 @@ End
 		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Blueprints")
 		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
 		  
-		  Var Presets As OmniBarItem = OmniBarItem.CreateTab("NavPresets", "Presets")
-		  Self.PresetsComponent1.LinkedOmniBarItem = Presets
+		  Var Templates As OmniBarItem = OmniBarItem.CreateTab("NavTemplates", "Templates")
+		  Self.TemplatesComponent1.LinkedOmniBarItem = Templates
 		  
 		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Support")
 		  Self.HelpComponent1.LinkedOmniBarItem = Help
 		  
 		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
 		  
-		  Me.Append(Home, Documents, Blueprints, Presets, Help, OmniBarItem.CreateFlexibleSpace, User)
+		  Me.Append(Home, Documents, Blueprints, Templates, Help, OmniBarItem.CreateFlexibleSpace, User)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -995,8 +1011,8 @@ End
 		    NewIndex = Self.PageDocuments
 		  Case "NavBlueprints"
 		    NewIndex = Self.PageBlueprints
-		  Case "NavPresets"
-		    NewIndex = Self.PagePresets
+		  Case "NavTemplates"
+		    NewIndex = Self.PageTemplates
 		  Case "NavHelp"
 		    NewIndex = Self.PageHelp
 		  Case "NavHome"
@@ -1056,10 +1072,10 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PresetsComponent1
+#tag Events TemplatesComponent1
 	#tag Event
 		Sub WantsFrontmost()
-		  Self.SwitchView(Self.PagePresets)
+		  Self.SwitchView(Self.PageTemplates)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

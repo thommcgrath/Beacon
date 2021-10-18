@@ -712,15 +712,15 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.Title = "Deploy: " + Self.Document.Title
+		  Self.Title = "Deploy: " + Self.Project.Title
 		  
 		  Self.CreateBackupCheckbox.Value = Preferences.DeployCreateBackup
 		  Self.ReviewChangesCheckbox.Value = Preferences.DeployReviewChanges
 		  Self.RunAdvisorCheckbox.Value = Preferences.DeployRunAdvisor
 		  
-		  Var ProfileBound As Integer = Self.Document.ServerProfileCount - 1
+		  Var ProfileBound As Integer = Self.Project.ServerProfileCount - 1
 		  For Idx As Integer = 0 To ProfileBound
-		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(Idx)
+		    Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
 		    If Profile.DeployCapable = False Then
 		      Continue
 		    End If
@@ -829,16 +829,16 @@ End
 		    
 		    Var Engine As Beacon.IntegrationEngine
 		    Select Case Profile
-		    Case IsA Beacon.NitradoServerProfile
-		      Engine = New Beacon.NitradoIntegrationEngine(Profile)
-		    Case IsA Beacon.FTPServerProfile
-		      Engine = New Beacon.FTPIntegrationEngine(Profile)
-		    Case IsA Beacon.ConnectorServerProfile
+		    Case IsA Ark.NitradoServerProfile
+		      Engine = New Ark.NitradoIntegrationEngine(Profile)
+		    Case IsA Ark.FTPServerProfile
+		      Engine = New Ark.FTPIntegrationEngine(Profile)
+		    Case IsA Ark.ConnectorServerProfile
 		      //DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
-		    Case IsA Beacon.LocalServerProfile
-		      Engine = New Beacon.LocalIntegrationEngine(Profile)
-		    Case IsA Beacon.GSAServerProfile
-		      Engine = New Beacon.GSAIntegrationEngine(Profile)
+		    Case IsA Ark.LocalServerProfile
+		      Engine = New Ark.LocalIntegrationEngine(Profile)
+		    Case IsA Ark.GSAServerProfile
+		      Engine = New Ark.GSAIntegrationEngine(Profile)
 		    End Select
 		    If Engine Is Nil Then
 		      Var ProfileInfo As Introspection.TypeInfo = Introspection.GetType(Profile)
@@ -909,7 +909,7 @@ End
 		  End If
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
-		    Engine.BeginDeploy(Self.DeployLabel, Self.Document, App.IdentityManager.CurrentIdentity, StopMessage, Options)
+		    Engine.BeginDeploy(Self.DeployLabel, Self.Project, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -931,8 +931,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document, PreselectServers() As Beacon.ServerProfile)
-		  Self.Document = Document
+		Sub Constructor(Project As Beacon.Project, PreselectServers() As Beacon.ServerProfile)
+		  Self.Project = Project
 		  For Each Profile As Beacon.ServerProfile In PreselectServers
 		    Self.PreselectProfileUUIDs.Add(Profile.ProfileID)
 		  Next Profile
@@ -1035,7 +1035,7 @@ End
 		  Case "Needs Expert Mode"
 		    Var Message As String = Sender.Name + " must be converted into expert mode"
 		    Var Explanation As String
-		    #if Beacon.NitradoIntegrationEngine.GuidedModeSupportEnabled
+		    #if Ark.NitradoIntegrationEngine.GuidedModeSupportEnabled
 		      Var UserData As Dictionary = Controller.UserData
 		      Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
 		      Var ContentLength As Integer = UserData.Lookup("ContentLength", 0)
@@ -1216,15 +1216,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Document As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Engines As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private PreselectProfileUUIDs() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Project As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1559,7 +1559,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AccountUUIDChanged(OldUUID As v4UUID)
-		  Self.Document.ReplaceAccount(OldUUID, Me.Account)
+		  Self.Project.ReplaceAccount(OldUUID, Me.Account)
 		  
 		  Var AccountUUID As String = Me.Account.UUID
 		  For Each Entry As DictionaryEntry In Self.Engines

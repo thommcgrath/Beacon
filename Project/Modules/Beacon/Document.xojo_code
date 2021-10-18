@@ -601,151 +601,153 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h21
 		Private Shared Function FromLegacy(Parsed As Variant, Identity As Beacon.Identity) As Beacon.Document
-		  Var Doc As new Beacon.Document
-		  Var LootSources() As Variant
-		  Var Version As Integer
-		  
-		  If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
-		    Var Dict As Dictionary = Parsed
-		    Try
-		      If Dict.HasKey("LootSources") Then
-		        LootSources = Dict.Value("LootSources")
-		      Else
-		        LootSources = Dict.Value("Beacons")
-		      End If
-		      
-		      Doc.mIdentifier = Dict.Value("Identifier")
-		      Doc.mUseCompression = True
-		      Version = Dict.Lookup("Version", 0)
-		      
-		      If Dict.HasKey("Title") Then
-		        Doc.Title = Dict.Value("Title")
-		      End If
-		      If Dict.HasKey("Description") Then
-		        Doc.Description = Dict.Value("Description")
-		      End If
-		      If Dict.HasKey("Map") Then
-		        Doc.mMapCompatibility = Dict.Value("Map")
-		      ElseIf Dict.HasKey("MapPreference") Then
-		        Doc.mMapCompatibility = Dict.Value("MapPreference")
-		      Else
-		        Doc.mMapCompatibility = 0
-		      End If
-		      Var DifficultyConfig As New BeaconConfigs.Difficulty
-		      If Dict.HasKey("DifficultyValue") Then
-		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
-		      End If
-		      Doc.AddConfigGroup(DifficultyConfig)
-		      If Dict.HasKey("ConsoleModsOnly") Then
-		        Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
-		        If ConsoleModsOnly Then
-		          Var Selections As New Dictionary
-		          Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
-		          For Each ModInfo As Beacon.ModDetails In AllMods
-		            Selections.Value(ModInfo.ModID) = ModInfo.DefaultEnabled And ModInfo.ConsoleSafe
-		          Next
-		          
-		          Doc.mConsoleMode = True
-		          Doc.mMods = Selections
-		          Doc.mModChangeTimestamp = System.Microseconds
+		  #if false
+		    Var Doc As new Beacon.Document
+		    Var LootSources() As Variant
+		    Var Version As Integer
+		    
+		    If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
+		      Var Dict As Dictionary = Parsed
+		      Try
+		        If Dict.HasKey("LootSources") Then
+		          LootSources = Dict.Value("LootSources")
+		        Else
+		          LootSources = Dict.Value("Beacons")
 		        End If
-		      End If
-		      
-		      If Dict.HasKey("Secure") Then
-		        Var SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
-		        If SecureDict <> Nil Then
-		          If SecureDict.HasKey("OAuth") Then
-		            Var AccountManager As Beacon.ExternalAccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
-		            If IsNull(AccountManager) = False Then
-		              Doc.mAccounts = AccountManager
-		            End If
-		          End If
-		          
-		          Var ServerDicts() As Variant = SecureDict.Value("Servers")
-		          LoadServerProfiles(Doc, ServerDicts)
+		        
+		        Doc.mIdentifier = Dict.Value("Identifier")
+		        Doc.mUseCompression = True
+		        Version = Dict.Lookup("Version", 0)
+		        
+		        If Dict.HasKey("Title") Then
+		          Doc.Title = Dict.Value("Title")
 		        End If
-		      ElseIf Dict.HasKey("FTPServers") Then
-		        Var ServerDicts() As Variant = Dict.Value("FTPServers")
-		        For Each ServerDict As Dictionary In ServerDicts
-		          Var FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
-		          If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
-		            Var Profile As New Beacon.FTPServerProfile
-		            Profile.Name = FTPInfo.Value("Description")
-		            Profile.Host = FTPInfo.Value("Host")
-		            Profile.Port = FTPInfo.Value("Port")
-		            Profile.Username = FTPInfo.Value("User")
-		            Profile.Password = FTPInfo.Value("Pass")
-		            
-		            Var Path As String = FTPInfo.Value("Path")
-		            Var Components() As String = Path.Split("/")
-		            If Components.LastIndex > -1 Then
-		              Var LastComponent As String = Components(Components.LastIndex)
-		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
-		                Components.RemoveAt(Components.LastIndex)
-		              End If
-		            End If
-		            Components.Add(Beacon.ConfigFileGame)
-		            Profile.GameIniPath = Components.Join("/")
-		            
-		            Components(Components.LastIndex) = Beacon.ConfigFileGameUserSettings
-		            Profile.GameUserSettingsIniPath = Components.Join("/")
-		            
-		            Doc.mServerProfiles.Add(Profile)
-		          End If
-		        Next
-		      End If
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  ElseIf Parsed.IsArray And Parsed.ArrayElementType = Variant.TypeObject Then
-		    LootSources = Parsed
-		  Else
-		    Return Nil
-		  End If
-		  
-		  Var Presets() As Beacon.Preset
-		  If Version < 2 Then
-		    // Will need this in a few lines
-		    Presets = Beacon.Data.Presets
-		  End If
-		  If LootSources.LastIndex > -1 Then
-		    Var Drops As New BeaconConfigs.LootDrops
-		    For Each LootSource As Dictionary In LootSources
-		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(LootSource)
-		      If Source <> Nil Then
-		        If Version < 2 Then
-		          // Match item set names to presets
-		          For Each Set As Beacon.ItemSet In Source.ItemSets
-		            For Each Preset As Beacon.Preset In Presets
-		              If Set.Label = Preset.Label Then
-		                // Here's a hack to make assigning a preset possible: save current entries
-		                Var Entries() As Beacon.SetEntry
-		                For Each Entry As Beacon.SetEntry In Set
-		                  Entries.Add(New Beacon.SetEntry(Entry))
-		                Next
-		                
-		                // Reconfigure
-		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
-		                
-		                // Now "deconfigure" it
-		                Set.ResizeTo(Entries.LastIndex)
-		                For I As Integer = 0 To Entries.LastIndex
-		                  Set(I) = Entries(I)
-		                Next
-		                Continue For Set
-		              End If
+		        If Dict.HasKey("Description") Then
+		          Doc.Description = Dict.Value("Description")
+		        End If
+		        If Dict.HasKey("Map") Then
+		          Doc.mMapCompatibility = Dict.Value("Map")
+		        ElseIf Dict.HasKey("MapPreference") Then
+		          Doc.mMapCompatibility = Dict.Value("MapPreference")
+		        Else
+		          Doc.mMapCompatibility = 0
+		        End If
+		        Var DifficultyConfig As New BeaconConfigs.Difficulty
+		        If Dict.HasKey("DifficultyValue") Then
+		          DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
+		        End If
+		        Doc.AddConfigGroup(DifficultyConfig)
+		        If Dict.HasKey("ConsoleModsOnly") Then
+		          Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		          If ConsoleModsOnly Then
+		            Var Selections As New Dictionary
+		            Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		            For Each ModInfo As Beacon.ModDetails In AllMods
+		              Selections.Value(ModInfo.ModID) = ModInfo.DefaultEnabled And ModInfo.ConsoleSafe
 		            Next
+		            
+		            Doc.mConsoleMode = True
+		            Doc.mMods = Selections
+		            Doc.mModChangeTimestamp = System.Microseconds
+		          End If
+		        End If
+		        
+		        If Dict.HasKey("Secure") Then
+		          Var SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		          If SecureDict <> Nil Then
+		            If SecureDict.HasKey("OAuth") Then
+		              Var AccountManager As Beacon.ExternalAccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
+		              If IsNull(AccountManager) = False Then
+		                Doc.mAccounts = AccountManager
+		              End If
+		            End If
+		            
+		            Var ServerDicts() As Variant = SecureDict.Value("Servers")
+		            LoadServerProfiles(Doc, ServerDicts)
+		          End If
+		        ElseIf Dict.HasKey("FTPServers") Then
+		          Var ServerDicts() As Variant = Dict.Value("FTPServers")
+		          For Each ServerDict As Dictionary In ServerDicts
+		            Var FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
+		            If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
+		              Var Profile As New Beacon.FTPServerProfile
+		              Profile.Name = FTPInfo.Value("Description")
+		              Profile.Host = FTPInfo.Value("Host")
+		              Profile.Port = FTPInfo.Value("Port")
+		              Profile.Username = FTPInfo.Value("User")
+		              Profile.Password = FTPInfo.Value("Pass")
+		              
+		              Var Path As String = FTPInfo.Value("Path")
+		              Var Components() As String = Path.Split("/")
+		              If Components.LastIndex > -1 Then
+		                Var LastComponent As String = Components(Components.LastIndex)
+		                If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
+		                  Components.RemoveAt(Components.LastIndex)
+		                End If
+		              End If
+		              Components.Add(Beacon.ConfigFileGame)
+		              Profile.GameIniPath = Components.Join("/")
+		              
+		              Components(Components.LastIndex) = Beacon.ConfigFileGameUserSettings
+		              Profile.GameUserSettingsIniPath = Components.Join("/")
+		              
+		              Doc.mServerProfiles.Add(Profile)
+		            End If
 		          Next
 		        End If
-		        Drops.Append(Source)
-		      End If
-		    Next
-		    Doc.AddConfigGroup(Drops)
-		  End If
-		  
-		  Doc.mModified = Version < Beacon.Document.DocumentVersion
-		  
-		  Return Doc
+		      Catch Err As RuntimeException
+		        Return Nil
+		      End Try
+		    ElseIf Parsed.IsArray And Parsed.ArrayElementType = Variant.TypeObject Then
+		      LootSources = Parsed
+		    Else
+		      Return Nil
+		    End If
+		    
+		    Var Presets() As Beacon.Preset
+		    If Version < 2 Then
+		      // Will need this in a few lines
+		      Presets = Beacon.Data.Presets
+		    End If
+		    If LootSources.LastIndex > -1 Then
+		      Var Drops As New BeaconConfigs.LootDrops
+		      For Each LootSource As Dictionary In LootSources
+		        Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(LootSource)
+		        If Source <> Nil Then
+		          If Version < 2 Then
+		            // Match item set names to presets
+		            For Each Set As Beacon.ItemSet In Source.ItemSets
+		              For Each Preset As Beacon.Preset In Presets
+		                If Set.Label = Preset.Label Then
+		                  // Here's a hack to make assigning a preset possible: save current entries
+		                  Var Entries() As Beacon.SetEntry
+		                  For Each Entry As Beacon.SetEntry In Set
+		                    Entries.Add(New Beacon.SetEntry(Entry))
+		                  Next
+		                  
+		                  // Reconfigure
+		                  Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
+		                  
+		                  // Now "deconfigure" it
+		                  Set.ResizeTo(Entries.LastIndex)
+		                  For I As Integer = 0 To Entries.LastIndex
+		                    Set(I) = Entries(I)
+		                  Next
+		                  Continue For Set
+		                End If
+		              Next
+		            Next
+		          End If
+		          Drops.Append(Source)
+		        End If
+		      Next
+		      Doc.AddConfigGroup(Drops)
+		    End If
+		    
+		    Doc.mModified = Version < Beacon.Document.DocumentVersion
+		    
+		    Return Doc
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -845,7 +847,9 @@ Implements ObservationKit.Observable
 		      Try
 		        Var States() As Variant = Dict.Value("Config Set Priorities")
 		        For Each State As Dictionary In States
-		          Doc.mConfigSetStates.Add(Beacon.ConfigSetState.FromDictionary(State))
+		          #if false
+		            Doc.mConfigSetStates.Add(Beacon.ConfigSetState.FromDictionary(State))
+		          #endif
 		        Next
 		      Catch Err As RuntimeException
 		      End Try
@@ -1123,25 +1127,27 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h21
 		Private Shared Sub LoadServerProfiles(Document As Beacon.Document, ServerDicts() As Variant)
-		  Var NitradoAccount As Beacon.ExternalAccount
-		  For Each ServerDict As Dictionary In ServerDicts
-		    Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		    If Profile <> Nil Then
-		      If Profile IsA Beacon.NitradoServerProfile And Profile.ExternalAccountUUID = Nil Then
-		        If IsNull(NitradoAccount) Then
-		          Var NitradoAccounts() As Beacon.ExternalAccount = Document.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
-		          If NitradoAccounts.Count = 1 Then
-		            NitradoAccount = NitradoAccounts(0)
+		  #if false
+		    Var NitradoAccount As Beacon.ExternalAccount
+		    For Each ServerDict As Dictionary In ServerDicts
+		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		      If Profile <> Nil Then
+		        If Profile IsA Beacon.NitradoServerProfile And Profile.ExternalAccountUUID = Nil Then
+		          If IsNull(NitradoAccount) Then
+		            Var NitradoAccounts() As Beacon.ExternalAccount = Document.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
+		            If NitradoAccounts.Count = 1 Then
+		              NitradoAccount = NitradoAccounts(0)
+		            End If
+		          End If
+		          If IsNull(NitradoAccount) = False Then
+		            Profile.ExternalAccountUUID = NitradoAccount.UUID
 		          End If
 		        End If
-		        If IsNull(NitradoAccount) = False Then
-		          Profile.ExternalAccountUUID = NitradoAccount.UUID
-		        End If
+		        
+		        Document.mServerProfiles.Add(Profile)
 		      End If
-		      
-		      Document.mServerProfiles.Add(Profile)
-		    End If
-		  Next
+		    Next
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -1592,7 +1598,7 @@ Implements ObservationKit.Observable
 		  
 		  Var States() As Dictionary
 		  For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		    States.Add(State.ToDictionary)
+		    States.Add(State.SaveData)
 		  Next
 		  Document.Value("Config Set Priorities") = States
 		  
@@ -1603,7 +1609,7 @@ Implements ObservationKit.Observable
 		  Var EncryptedData As New Dictionary
 		  Var Profiles() As Dictionary
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
-		    Profiles.Add(Profile.ToDictionary)
+		    Profiles.Add(Profile.SaveData)
 		  Next
 		  EncryptedData.Value("Servers") = Profiles
 		  If Self.mAccounts.Count > 0 Then

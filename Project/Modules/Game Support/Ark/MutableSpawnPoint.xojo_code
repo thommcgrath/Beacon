@@ -32,6 +32,12 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone() As Ark.MutableSpawnPoint
+		  Return New Ark.MutableSpawnPoint(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Path As String, ObjectID As v4UUID)
 		  Super.Constructor()
 		  Self.mObjectID = ObjectID

@@ -26,7 +26,7 @@ Implements Iterable
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
 		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.SearchForLootContainers()
-		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID("1b4d42f4-86ab-4277-a73e-dd688635b324")
+		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("1b4d42f4-86ab-4277-a73e-dd688635b324")
 		    
 		    Var Entry As New Ark.MutableLootItemSetEntry
 		    Entry.Add(New Ark.LootItemSetEntryOption(Engram, 1.0))

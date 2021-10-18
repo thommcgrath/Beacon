@@ -2,55 +2,78 @@
 Protected Class Project
 Inherits Beacon.Project
 	#tag Event
+		Sub AddingProfile(Profile As Beacon.ServerProfile)
+		  If Profile.IsConsole Then
+		    Self.ConsoleSafe = True
+		    
+		    For Each Entry As DictionaryEntry In Self.mContentPacks
+		      Var Pack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithUUID(Entry.Key.StringValue)
+		      If (Pack Is Nil Or Pack.ConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
+		        Self.mContentPacks.Value(Entry.Key) = False
+		      End If
+		    Next
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub AddSaveData(PlainData As Dictionary, EncryptedData As Dictionary)
 		  PlainData.Value("AllowUCS") = Self.AllowUCS2
 		  PlainData.Value("IsConsole") = Self.ConsoleSafe
 		  PlainData.Value("Map") = Self.MapMask
 		  PlainData.Value("ModSelections") = Self.mContentPacks
-		  
-		  Var Profiles() As Dictionary
-		  For Each Profile As Ark.ServerProfile In Self.mServerProfiles
-		    Profiles.Add(Profile.SaveData)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
+		  Var SetDict As New Dictionary
+		  Var ConvertLootScale As Dictionary
+		  For Each Entry As DictionaryEntry In PlainData
+		    Try
+		      Var InternalName As String = Entry.Key
+		      Var GroupData As Dictionary = Entry.Value
+		      If InternalName = "LootScale" Then
+		        ConvertLootScale = GroupData
+		      Else
+		        Var EncryptedGroupData As Dictionary
+		        If EncryptedData.HasKey(InternalName) Then
+		          Try
+		            EncryptedGroupData = EncryptedData.Value(InternalName)
+		          Catch EncGroupDataErr As RuntimeException
+		          End Try
+		        End If
+		        
+		        Var Instance As Ark.ConfigGroup = Ark.Configs.CreateInstance(InternalName, GroupData, EncryptedGroupData)
+		        If (Instance Is Nil) = False Then
+		          SetDict.Value(InternalName) = Instance
+		        End If
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.UUID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
+		    End Try
 		  Next
-		  EncryptedData.Value("Servers") = Profiles
-		  
-		  Var Sets As New Dictionary
-		  Var EncryptedSets As New Dictionary
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Var SetName As String = Entry.Key
-		    Var SetDict As Dictionary = Entry.Value
-		    Var Groups As New Dictionary
-		    Var EncryptedGroups As New Dictionary
-		    For Each GroupEntry As DictionaryEntry In SetDict
-		      Var Group As Ark.ConfigGroup = GroupEntry.Value
-		      Var GroupData As Dictionary = Group.SaveData()
-		      If GroupData Is Nil Then
-		        GroupData = New Dictionary
+		  If (ConvertLootScale Is Nil) = False Then
+		    Try
+		      Var OtherSettings As Ark.Configs.OtherSettings
+		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) Then
+		        OtherSettings = SetDict.Value(Ark.Configs.NameOtherSettings)
+		      Else
+		        // Don't add it until we know everything worked
+		        OtherSettings = Ark.Configs.OtherSettings(Ark.Configs.CreateInstance(Ark.Configs.NameOtherSettings))
 		      End If
 		      
-		      If GroupData.HasAllKeys("Plain", "Encrypted") Then
-		        Groups.Value(Group.InternalName) = GroupData.Value("Plain")
-		        EncryptedGroups.Value(Group.InternalName) = GroupData.Value("Encrypted")
-		      Else
-		        Groups.Value(Group.InternalName) = GroupData
+		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
+		      OtherSettings.Value(Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
+		      
+		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) = False Then
+		        SetDict.Value(Ark.Configs.NameOtherSettings) = OtherSettings
 		      End If
-		    Next
-		    Sets.Value(SetName) = Groups
-		    If EncryptedGroups.KeyCount > 0 Then
-		      EncryptedSets.Value(SetName) = EncryptedGroups
-		    End If
-		  Next
-		  PlainData.Value("Config Sets") = Sets
-		  If EncryptedSets.KeyCount > 0 Then
-		    EncryptedData.Value("Config Sets") = EncryptedSets
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
-		  
-		  Var States() As Dictionary
-		  For Each State As Ark.ConfigSetState In Self.mConfigSetStates
-		    States.Add(State.SaveData)
-		  Next
-		  PlainData.Value("Config Set Priorities") = States
-		End Sub
+		  Return SetDict
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -103,88 +126,30 @@ Inherits Beacon.Project
 		    End If
 		  End If
 		  
-		  If PlainData.HasKey("Config Sets") Then
-		    Var Sets As Dictionary = PlainData.Value("Config Sets")
-		    Var EncryptedSets As Dictionary
-		    If EncryptedData.HasKey("Config Sets") Then
-		      Try
-		        EncryptedSets = EncryptedData.Value("Config Sets")
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		    If EncryptedSets Is Nil Then
-		      EncryptedSets = New Dictionary
-		    End If
-		    
-		    For Each Entry As DictionaryEntry In Sets
-		      Var SetName As String = Entry.Key
-		      
-		      If Entry.Value IsA Dictionary Then
-		        Var EncryptedSetData As Dictionary
-		        If EncryptedSets.HasKey(SetName) Then
-		          Try
-		            EncryptedSetData = EncryptedSets.Value(SetName)
-		          Catch Err As RuntimeException
-		          End Try
-		        End If
-		        
-		        Self.ConfigSet(SetName) = Self.LoadConfigSet(Dictionary(Entry.Value), EncryptedSetData)
-		      Else
-		        Self.ConfigSet(SetName) = New Dictionary
-		      End If
-		    Next
-		    
-		    // Doc.ConfigSet will add the states. We don't need them.
-		    Self.mConfigSetStates.ResizeTo(-1)
-		    If PlainData.HasKey("Config Set Priorities") Then
-		      Try
-		        Var States() As Variant = PlainData.Value("Config Set Priorities")
-		        For Each State As Dictionary In States
-		          Self.mConfigSetStates.Add(Ark.ConfigSetState.FromSaveData(State))
-		        Next
-		      Catch Err As RuntimeException
-		      End Try
-		    End If
-		  ElseIf PlainData.HasKey("Configs") Then
-		    Self.ConfigSet(Self.BaseConfigSetName) = Self.LoadConfigSet(PlainData.Value("Configs"), Nil)
-		  End If
-		  
-		  If EncryptedData.HasKey("Servers") And EncryptedData.Value("Servers").IsArray Then
-		    Var ServerDicts() As Variant = EncryptedData.Value("Servers")
-		    For Each ServerDict As Variant In ServerDicts
-		      Try
-		        Var Dict As Dictionary = ServerDict
-		        Var Profile As Ark.ServerProfile = Ark.ServerProfile.FromSaveData(Dict)
-		        If Profile Is Nil Then
-		          Continue
-		        End If
-		        
-		        // Something about migrating the nitrado account?
-		        
-		        Self.mServerProfiles.Add(Profile)
-		      Catch Err As RuntimeException
-		      End Try
-		    Next ServerDict
-		  End If
+		  #Pragma Warning "Attach an account uuid to profiles that are missing them"
 		End Function
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Function ActiveConfigSet() As String
-		  Return Self.mActiveConfigSet
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ActiveConfigSet(Assigns SetName As String)
-		  If Self.mConfigSets.HasKey(SetName) Then
-		    Self.mActiveConfigSet = SetName
-		  Else
-		    Self.mActiveConfigSet = Self.BaseConfigSetName
-		  End If
+	#tag Event
+		Sub SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+		  For Each Entry As DictionaryEntry In SetDict
+		    Var Group As Ark.ConfigGroup = Entry.Value
+		    
+		    Var GroupData As Dictionary = Group.SaveData()
+		    If GroupData Is Nil Then
+		      Continue
+		    End If
+		    
+		    If GroupData.HasAllKeys("Plain", "Encrypted") Then
+		      PlainData.Value(Group.InternalName) = GroupData.Value("Plain")
+		      EncryptedData.Value(Group.InternalName) = GroupData.Value("Encrypted")
+		    Else
+		      PlainData.Value(Group.InternalName) = GroupData
+		    End If
+		  Next
 		End Sub
-	#tag EndMethod
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub AddConfigGroup(Group As Ark.ConfigGroup)
@@ -204,46 +169,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddConfigSet(SetName As String)
-		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Self.mConfigSets.Value(SetName) = New Dictionary
-		    Self.mConfigSetStates.Add(New Ark.ConfigSetState(SetName, False))
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddServerProfile(Profile As Ark.ServerProfile)
-		  If Profile Is Nil Then
-		    Return
-		  End If
-		  
-		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
-		    If Self.mServerProfiles(Idx) = Profile Then
-		      Self.mServerProfiles(Idx) = Profile.Clone
-		      Self.Modified = True
-		      Return
-		    End If
-		  Next
-		  
-		  If Profile.IsConsole Then
-		    Self.ConsoleSafe = True
-		    
-		    For Each Entry As DictionaryEntry In Self.mContentPacks
-		      Var Pack As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPackWithUUID(Entry.Key.StringValue)
-		      If (Pack Is Nil Or Pack.ConsoleSafe = False) And Self.mContentPacks.Value(Entry.Key).BooleanValue = True Then
-		        Self.mContentPacks.Value(Entry.Key) = False
-		      End If
-		    Next
-		  End If
-		  
-		  Self.mServerProfiles.Add(Profile.Clone)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function AllowUCS2() As Boolean
 		  Return Self.mAllowUCS2
 		End Function
@@ -259,12 +184,18 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CombinedConfigs(States() As Ark.ConfigSetState) As Ark.ConfigGroup()
+		Function Clone(Identity As Beacon.Identity) As Ark.Project
+		  Return Ark.Project(Super.Clone(Identity))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CombinedConfigs(States() As Beacon.ConfigSetState) As Ark.ConfigGroup()
 		  Var Names() As String
 		  If States Is Nil Then
 		    Names.Add(Self.BaseConfigSetName)
 		  Else
-		    For Each State As Ark.ConfigSetState In States
+		    For Each State As Beacon.ConfigSetState In States
 		      If State.Enabled Then
 		        Names.Add(State.Name)
 		      End If
@@ -345,129 +276,6 @@ Inherits Beacon.Project
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ConfigSet(SetName As String) As Dictionary
-		  If SetName.IsEmpty Then
-		    SetName = Self.ActiveConfigSet
-		  End If
-		  
-		  If Self.mConfigSets.HasKey(SetName) Then
-		    Return Self.mConfigSets.Value(SetName)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub ConfigSet(SetName As String, Assigns Dict As Dictionary)
-		  If SetName.IsEmpty Then
-		    SetName = Self.ActiveConfigSet
-		  End If
-		  
-		  // Empty sets are valid
-		  If Dict Is Nil Then
-		    If Self.mConfigSets.HasKey(SetName) Then
-		      Self.mConfigSets.Remove(SetName)
-		      For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
-		        If Self.mConfigSetStates(Idx).Name = SetName Then
-		          Self.mConfigSetStates.RemoveAt(Idx)
-		        End If
-		      Next
-		      Self.Modified = True
-		    End If
-		    Return
-		  End If
-		  
-		  If Self.mConfigSets.HasKey(SetName) = False Then
-		    Var Add As Boolean = True
-		    For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		      If Self.mConfigSetStates(Idx).Name = SetName Then
-		        Add = False
-		        Exit
-		      End If
-		    Next
-		    If Add Then
-		      Self.mConfigSetStates.Add(New Ark.ConfigSetState(SetName, False))
-		    End If
-		  End If
-		  Self.mConfigSets.Value(SetName) = Dict
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ConfigSetCount() As Integer
-		  Return Self.mConfigSets.KeyCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ConfigSetNames() As String()
-		  Var Names() As String
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    Names.Add(Entry.Key)
-		  Next
-		  Return Names
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ConfigSetStates() As Ark.ConfigSetState()
-		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
-		  Var Clone() As Ark.ConfigSetState
-		  Var Names() As String
-		  For Each State As Ark.ConfigSetState In Self.mConfigSetStates
-		    // Do not include any states for sets that don't exist. Should be zero, but just to be sure.
-		    If Self.mConfigSets.HasKey(State.Name) = False Then
-		      Continue
-		    End If
-		    
-		    Clone.Add(State)
-		    Names.Add(State.Name)
-		  Next
-		  
-		  // Make sure any new sets have a state
-		  For Each Entry As DictionaryEntry In Self.mConfigSets
-		    If Names.IndexOf(Entry.Key.StringValue) = -1 Then
-		      Clone.Add(New Ark.ConfigSetState(Entry.Key.StringValue, False))
-		    End If
-		  Next
-		  
-		  // First should always be an enabled base
-		  Clone(0) = New Ark.ConfigSetState(Self.BaseConfigSetName, True)
-		  
-		  Return Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConfigSetStates(Assigns States() As Ark.ConfigSetState)
-		  // First decide if the States() array is different from the mConfigSetStates() array. Then, 
-		  // update mConfigSetStates() to match. Do not need to clone the members since they are immutable.
-		  
-		  Var Different As Boolean
-		  If Self.mConfigSetStates.Count <> States.Count Then
-		    Different = True
-		  Else
-		    For Idx As Integer = 0 To States.LastIndex
-		      If Self.mConfigSetStates(Idx) <> States(Idx) Then
-		        Different = True
-		        Exit
-		      End If
-		    Next
-		  End If
-		  
-		  If Not Different Then
-		    Return
-		  End If
-		  
-		  Self.mConfigSetStates.ResizeTo(States.LastIndex)
-		  For Idx As Integer = 0 To States.LastIndex
-		    Self.mConfigSetStates(Idx) = States(Idx)
-		  Next
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function ConsoleSafe() As Boolean
 		  Return Self.mConsoleSafe
@@ -487,7 +295,6 @@ Inherits Beacon.Project
 		Sub Constructor()
 		  Self.mContentPacks = New Dictionary
 		  Self.mMapMask = 1 // Play it safe, do not bother calling Ark.Maps here in case database access is fubar
-		  Self.mConfigSets = New Dictionary
 		  
 		  Super.Constructor
 		End Sub
@@ -539,6 +346,10 @@ Inherits Beacon.Project
 	#tag Method, Flags = &h0
 		Function CreateConfigOrganizer(Identity As Beacon.Identity, Profile As Ark.ServerProfile) As Ark.ConfigOrganizer
 		  Try
+		    If Identity.IsBanned Then
+		      Return Self.CreateTrollConfigOrganizer()
+		    End If
+		    
 		    Var Organizer As New Ark.ConfigOrganizer
 		    Var Groups() As Ark.ConfigGroup = Self.CombinedConfigs(Profile.ConfigSetStates)
 		    
@@ -572,6 +383,16 @@ Inherits Beacon.Project
 		    App.Log(Err, CurrentMethodName, "Generating a config organizer")
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateTrollConfigOrganizer() As Ark.ConfigOrganizer
+		  #if DebugBuild
+		    #Pragma Warning "Fill with stuff from BeaconConfigs.Metadata here"
+		  #else
+		    #Pragma Error "Fill with stuff from BeaconConfigs.Metadata here"
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -633,61 +454,6 @@ Inherits Beacon.Project
 		    Next
 		  End If
 		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function LoadConfigSet(PlainData As Dictionary, EncryptedData As Dictionary) As Dictionary
-		  If EncryptedData Is Nil Then
-		    EncryptedData = New Dictionary
-		  End If
-		  
-		  Var SetDict As New Dictionary
-		  Var ConvertLootScale As Dictionary
-		  For Each Entry As DictionaryEntry In PlainData
-		    Try
-		      Var InternalName As String = Entry.Key
-		      Var GroupData As Dictionary = Entry.Value
-		      If InternalName = "LootScale" Then
-		        ConvertLootScale = GroupData
-		      Else
-		        Var EncryptedGroupData As Dictionary
-		        If EncryptedData.HasKey(InternalName) Then
-		          Try
-		            EncryptedGroupData = EncryptedData.Value(InternalName)
-		          Catch EncGroupDataErr As RuntimeException
-		          End Try
-		        End If
-		        
-		        Var Instance As Ark.ConfigGroup = Ark.Configs.CreateInstance(InternalName, GroupData, EncryptedGroupData)
-		        If (Instance Is Nil) = False Then
-		          SetDict.Value(InternalName) = Instance
-		        End If
-		      End If
-		    Catch Err As RuntimeException
-		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.UUID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
-		    End Try
-		  Next
-		  If (ConvertLootScale Is Nil) = False Then
-		    Try
-		      Var OtherSettings As Ark.Configs.OtherSettings
-		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) Then
-		        OtherSettings = SetDict.Value(Ark.Configs.NameOtherSettings)
-		      Else
-		        // Don't add it until we know everything worked
-		        OtherSettings = Ark.Configs.OtherSettings(Ark.Configs.CreateInstance(Ark.Configs.NameOtherSettings))
-		      End If
-		      
-		      Var Multiplier As Double = ConvertLootScale.Value("Multiplier")
-		      OtherSettings.Value(Ark.DataSource.SharedInstance.GetConfigKey(Ark.ConfigFileGame, Ark.HeaderShooterGame, "SupplyCrateLootQualityMultiplier")) = Multiplier
-		      
-		      If SetDict.HasKey(Ark.Configs.NameOtherSettings) = False Then
-		        SetDict.Value(Ark.Configs.NameOtherSettings) = OtherSettings
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  Return SetDict
 		End Function
 	#tag EndMethod
 
@@ -758,85 +524,6 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigSet(SetName As String)
-		  If SetName.IsEmpty Or SetName = Self.BaseConfigSetName Then
-		    Return
-		  End If
-		  
-		  For Idx As Integer = Self.mConfigSetStates.LastIndex DownTo 1
-		    If Self.mConfigSetStates(Idx).Name = SetName Then
-		      Self.mConfigSetStates.RemoveAt(Idx)
-		      Self.Modified = True
-		    End If
-		  Next
-		  
-		  Self.ConfigSet(SetName) = Nil
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RemoveServerProfile(Profile As Ark.ServerProfile)
-		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
-		    If Self.mServerProfiles(Idx) = Profile Then
-		      Self.mServerProfiles.RemoveAt(Idx)
-		      Self.Modified = True
-		      Return
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RenameConfigSet(OldName As String, NewName As String)
-		  If Self.mConfigSets.HasKey(OldName) = False Then
-		    Return
-		  End If
-		  
-		  For Idx As Integer = 1 To Self.mConfigSetStates.LastIndex
-		    If Self.mConfigSetStates(Idx).Name = OldName Then
-		      Self.mConfigSetStates(Idx) = New Ark.ConfigSetState(NewName, Self.mConfigSetStates(Idx).Enabled)
-		    End If
-		  Next
-		  
-		  Var OldSet As Dictionary = Self.mConfigSets.Value(OldName)
-		  Self.ConfigSet(OldName) = Nil
-		  Self.ConfigSet(NewName) = OldSet
-		  
-		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
-		    Var Profile As Ark.ServerProfile = Self.mServerProfiles(Idx)
-		    Var ConfigSets() As Ark.ConfigSetState = Profile.ConfigSetStates
-		    For SetIdx As Integer = 0 To ConfigSets.LastIndex
-		      If ConfigSets(SetIdx).Name = OldName Then
-		        ConfigSets(SetIdx) = New Ark.ConfigSetState(NewName, ConfigSets(SetIdx).Enabled)
-		      End If
-		    Next
-		    Profile.ConfigSetStates = ConfigSets
-		  Next
-		  
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ServerProfile(Idx As Integer) As Ark.ServerProfile
-		  Return Self.mServerProfiles(Idx).Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ServerProfile(Idx As Integer, Assigns Profile As Ark.ServerProfile)
-		  Self.mServerProfiles(Idx) = Profile.Clone
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ServerProfileCount() As Integer
-		  Return Self.mServerProfiles.Count
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SupportsMap(Map As Ark.Map) As Boolean
 		  Return (Self.MapMask And Map.Mask) = Map.Mask
 		End Function
@@ -867,19 +554,7 @@ Inherits Beacon.Project
 
 
 	#tag Property, Flags = &h1
-		Protected mActiveConfigSet As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mAllowUCS2 As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mConfigSets As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mConfigSetStates() As Ark.ConfigSetState
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -892,10 +567,6 @@ Inherits Beacon.Project
 
 	#tag Property, Flags = &h1
 		Protected mMapMask As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mServerProfiles() As Ark.ServerProfile
 	#tag EndProperty
 
 

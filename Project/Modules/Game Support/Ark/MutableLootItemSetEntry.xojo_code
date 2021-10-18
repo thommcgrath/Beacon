@@ -90,6 +90,13 @@ Inherits Ark.LootItemSetEntry
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub SingleItemMode(Assigns Value As Boolean)
+		  Self.mSingleItemMode = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
 
 End Class
 #tag EndClass

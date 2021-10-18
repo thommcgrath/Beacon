@@ -38,6 +38,12 @@ Inherits Ark.LootTemplate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Label(Assigns Value As String)
+		  Self.mLabel = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub MaxEntriesSelected(Assigns Value As Integer)
 		  Self.mMaxEntriesSelected = Value
 		End Sub

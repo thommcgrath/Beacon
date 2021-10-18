@@ -182,7 +182,6 @@ Begin BeaconDialog SharingDialog
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   2
@@ -542,7 +541,6 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -553,19 +551,19 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document)
-		  Self.mDocument = Document
+		Private Sub Constructor(Project As Beacon.Project)
+		  Self.mProject = Project
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Document As Beacon.Document)
+		Shared Sub Present(Parent As Window, Project As Beacon.Project)
 		  If Parent = Nil Then
 		    Return
 		  End If
 		  
-		  Var Win As New SharingDialog(Document)
+		  Var Win As New SharingDialog(Project)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mUsersChanged Then
@@ -658,7 +656,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
+		Private mProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -673,13 +671,13 @@ End
 		Sub Action()
 		  Var UserID, Username, PublicKey As String
 		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
-		    If Self.mDocument.HasUser(UserID) = False Then
+		    If Self.mProject.HasUser(UserID) = False Then
 		      Self.UserList.AddRow(Username, UserID)
 		      Self.UserList.Sort
 		    End If
 		    
 		    // Even if the user is already on the document, call AddUser in case the public key has changed
-		    Self.mDocument.AddUser(UserID, PublicKey)
+		    Self.mProject.AddUser(UserID, PublicKey)
 		    Self.mUsersChanged = True
 		  End If
 		End Sub
@@ -688,7 +686,7 @@ End
 #tag Events UserList
 	#tag Event
 		Sub Open()
-		  Var Users() As String = Self.mDocument.GetUsers()
+		  Var Users() As String = Self.mProject.GetUsers()
 		  Users.Sort
 		  
 		  For Each UserID As String In Users
@@ -712,7 +710,7 @@ End
 		  
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Me.Selected(I) Then
-		      Self.mDocument.RemoveUser(Me.CellValueAt(I, 1))
+		      Self.mProject.RemoveUser(Me.CellValueAt(I, 1))
 		      Me.RemoveRowAt(I)
 		      Self.mUsersChanged = True
 		    End If
@@ -735,7 +733,7 @@ End
 #tag Events DownloadLinkLabel
 	#tag Event
 		Sub Open()
-		  Me.Text = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
+		  Me.Text = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -755,15 +753,15 @@ End
 		Sub Action()
 		  Var DesiredStatus As String
 		  If Me.Caption = "Share" Then
-		    Var Description As String = Self.mDocument.Description.Trim
+		    Var Description As String = Self.mProject.Description.Trim
 		    If Description.IsEmpty Then
 		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
-		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.NameMetadata)
+		      DocumentEditorView.SwitchToEditor(Self.mProject, BeaconConfigs.NameMetadata)
 		      Self.Hide()
 		      Return
 		    End If
 		    
-		    If Self.mDocument.Modified Then
+		    If Self.mProject.Modified Then
 		      Var ShouldCancel As Boolean = Self.ShowConfirm("Your project should be saved first.", "Your publish request will be based on the last time your saved your project. You have made changes since your last save, so you should save before requesting the project be published.", "Cancel", "Request Anyway")
 		      If ShouldCancel Then
 		        Return
@@ -778,7 +776,7 @@ End
 		  Var Payload As New Dictionary
 		  Payload.Value("status") = DesiredStatus
 		  
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mDocument.DocumentID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mProject.UUID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  APISocket.Start(Request)
 		  
@@ -790,10 +788,10 @@ End
 #tag Events StatusCheckTimer
 	#tag Event
 		Sub Action()
-		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mDocument.DocumentID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mProject.UUID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
 		  APISocket.Start(Request)
 		  
-		  Var Users() As String = Self.mDocument.GetUsers
+		  Var Users() As String = Self.mProject.GetUsers
 		  If Users.LastIndex > -1 Then
 		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("/user/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
 		    APISocket.Start(UsersLookup)

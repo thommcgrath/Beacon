@@ -1,6 +1,43 @@
 #tag Module
 Protected Module Configs
 	#tag Method, Flags = &h1
+		Protected Function AllNames(Human As Boolean = False) As String()
+		  Static Names() As String
+		  If Names.LastIndex = -1 Then
+		    Names.Add(NameBreedingMultipliers)
+		    Names.Add(NameCraftingCosts)
+		    Names.Add(NameCustomContent)
+		    Names.Add(NameDayCycle)
+		    Names.Add(NameDifficulty)
+		    Names.Add(NameDinoAdjustments)
+		    Names.Add(NameEngramControl)
+		    Names.Add(NameExperienceCurves)
+		    Names.Add(NameHarvestRates)
+		    Names.Add(NameLootDrops)
+		    Names.Add(NameOtherSettings)
+		    Names.Add(NameSpawnPoints)
+		    Names.Add(NameSpoilTimers)
+		    Names.Add(NameStackSizes)
+		    Names.Add(NameStatLimits)
+		    Names.Add(NameStatMultipliers)
+		  End If
+		  If Human = True Then
+		    Static HumanNames() As String
+		    If HumanNames.LastIndex = -1 Then
+		      HumanNames.ResizeTo(Names.LastIndex)
+		      For I As Integer = 0 To Names.LastIndex
+		        HumanNames(I) = Language.LabelForConfig(Names(I))
+		      Next
+		      HumanNames.Sort
+		    End If
+		    Return HumanNames
+		  Else
+		    Return Names
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CloneInstance(Group As Ark.ConfigGroup) As Ark.ConfigGroup
 		  If Group Is Nil Then
 		    Return Nil
@@ -234,9 +271,77 @@ Protected Module Configs
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function Merge(ZeroHasPriority As Boolean, ParamArray Groups() As Ark.ConfigGroup) As Ark.ConfigGroup
+		  Return Merge(Groups, ZeroHasPriority)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SupportsConfigSets(InternalName As String) As Boolean
+		  If mConfigSetSupportCache Is Nil Then
+		    mConfigSetSupportCache = New Dictionary
+		  End If
+		  
+		  If mConfigSetSupportCache.HasKey(InternalName) = False Then
+		    Var Instance As Ark.ConfigGroup
+		    
+		    #Pragma BreakOnExceptions False
+		    Try
+		      Instance = CreateInstance(InternalName)
+		    Catch Err As RuntimeException
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
+		    If Instance Is Nil Then
+		      mConfigSetSupportCache.Value(InternalName) = False
+		    Else
+		      mConfigSetSupportCache.Value(InternalName) = Instance.SupportsConfigSets
+		    End If
+		  End If
+		  
+		  Return mConfigSetSupportCache.Value(InternalName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SupportsMerging(InternalName As String) As Boolean
+		  If mMergingSupportCache Is Nil Then
+		    mMergingSupportCache = New Dictionary
+		  End If
+		  
+		  If mMergingSupportCache.HasKey(InternalName) = False Then
+		    Var Instance As Ark.ConfigGroup
+		    
+		    #Pragma BreakOnExceptions False
+		    Try
+		      Instance = CreateInstance(InternalName)
+		    Catch Err As RuntimeException
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
+		    If Instance Is Nil Then
+		      mMergingSupportCache.Value(InternalName) = False
+		    Else
+		      mMergingSupportCache.Value(InternalName) = Instance.SupportsMerging
+		    End If
+		  End If
+		  
+		  Return mMergingSupportCache.Value(InternalName)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mConfigOmniCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfigSetSupportCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMergingSupportCache As Dictionary
 	#tag EndProperty
 
 

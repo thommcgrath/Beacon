@@ -52,11 +52,11 @@
 	#tag FileType
 		CodeName=BeaconPreset
 		DocIcon=Beacon.xojo_resources;&h154B058
-		Extension=.beaconpreset
+		Extension=.beacontemplate;.beaconpreset
 		Flags=&h5
 		MacCreator=
 		MacType=
-		Name=Beacon Preset
+		Name=Beacon Template
 		UTI=com.thezaz.beacon.preset
 		UTIConformsTo=public.text, public.data
 		Description=

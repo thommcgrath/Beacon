@@ -264,6 +264,32 @@ Protected Class DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function TestPerformance(AttemptRepair As Boolean, ThresholdMicroseconds As Double = 250000) As Beacon.DataSource.PerformanceResults
+		  Var StartTime As Double = System.Microseconds
+		  RaiseEvent TestPerformance()
+		  Var InitialDuration As Double = System.Microseconds - StartTime
+		  If InitialDuration <= ThresholdMicroseconds Then
+		    Return PerformanceResults.NoRepairsNecessary
+		  End If
+		  If AttemptRepair = False Then
+		    Return PerformanceResults.RepairsNecessary
+		  End If
+		  
+		  Self.mDatabase.ExecuteSQL("ANALYZE;")
+		  Self.mDatabase.ExecuteSQL("VACUUM;")
+		  
+		  StartTime = System.Microseconds
+		  RaiseEvent TestPerformance()
+		  Var RepairedDuration As Double = System.Microseconds - StartTime
+		  If RepairedDuration <= ThresholdMicroseconds Then
+		    Return PerformanceResults.Repaired
+		  Else
+		    Return PerformanceResults.CouldNotRepair
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event BuildSchema()
@@ -293,6 +319,10 @@ Protected Class DataSource
 		Event Open()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event TestPerformance()
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mDatabase As SQLiteDatabase
@@ -313,6 +343,14 @@ Protected Class DataSource
 	#tag Property, Flags = &h21
 		Private mTransactions() As String
 	#tag EndProperty
+
+
+	#tag Enum, Name = PerformanceResults, Flags = &h0
+		NoRepairsNecessary
+		  Repaired
+		  CouldNotRepair
+		RepairsNecessary
+	#tag EndEnum
 
 
 	#tag ViewBehavior

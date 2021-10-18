@@ -21,6 +21,12 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone() As Ark.MutableEngram
+		  Return New Ark.MutableEngram(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Path As String, ObjectID As v4UUID)
 		  Super.Constructor()
 		  

@@ -13,9 +13,9 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BeginDeploy(Label As String, Document As Beacon.Document, Identity As Beacon.Identity, StopMessage As String, Options As UInt64)
+		Sub BeginDeploy(Label As String, Project As Beacon.Project, Identity As Beacon.Identity, StopMessage As String, Options As UInt64)
 		  Self.mLabel = Label
-		  Self.mDocument = Document
+		  Self.mProject = Project
 		  Self.mIdentity = Identity
 		  Self.mStopMessage = StopMessage
 		  Self.mOptions = Options
@@ -31,7 +31,6 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h0
 		Sub BeginDiscovery()
 		  Self.mMode = Self.ModeDiscover
-		  Self.mDocument = New Beacon.Document
 		  Self.mRunThread = New Thread
 		  Self.mRunThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mRunThread.Run, WeakAddressOf RunDiscover
@@ -78,12 +77,6 @@ Protected Class IntegrationEngine
 		Sub Destructor()
 		  Self.CleanupCallbacks()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Document() As Beacon.Document
-		  Return Self.mDocument
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -253,6 +246,12 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function Project() As Beacon.Project
+		  Return Self.mProject
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function PutFile(Contents As String, Filename As String, TriesRemaining As Integer = 2) As Boolean
 		  Var Transfer As New Beacon.IntegrationTransfer(Filename, Contents)
 		  Var DesiredHash As String = Transfer.SHA256
@@ -375,140 +374,9 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Var InitialServerState As Integer = Self.State
-		  Var Organizer As Beacon.ConfigOrganizer = Self.Document.CreateConfigOrganizer(Self.mIdentity, Self.mProfile)
 		  
-		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
-		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(Organizer)
-		    If Self.Finished Then
-		      Return
-		    End If
-		    
-		    If GuidedSuccess Then
-		      // Restart the server if it is running
-		      If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
-		        Self.StopServer()
-		        Self.StartServer()
-		      End If
-		      
-		      Self.Log("Finished")
-		      Self.Finished = True
-		      
-		      RaiseEvent Finished
-		      Return
-		    Else
-		      Self.mDoGuidedDeploy = False
-		    End If
-		  End If
-		  
-		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
-		  // Download the ini files
-		  Var DownloadSuccess As Boolean
-		  GameIniOriginal = Self.GetFile(Beacon.ConfigFileGame, DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
-		  If Self.Finished Or DownloadSuccess = False Then
-		    Self.Finished = True
-		    Return
-		  End If
-		  GameUserSettingsIniOriginal = Self.GetFile(Beacon.ConfigFileGameUserSettings, DownloadFailureMode.MissingAllowed, False, DownloadSuccess)
-		  If Self.Finished Or DownloadSuccess = False Then
-		    Self.Finished = True
-		    Return
-		  End If
-		  
-		  // Build the new ini files
-		  Self.Log("Generating new ini files…")
-		  
-		  Var Format As Beacon.Rewriter.EncodingFormat
-		  If Self.Document.AllowUCS Then
-		    Format = Beacon.Rewriter.EncodingFormat.UCS2AndASCII
-		  Else
-		    Format = Beacon.Rewriter.EncodingFormat.ASCII
-		  End If
-		  
-		  Var RewriteError As RuntimeException
-		  
-		  Var GameIniRewritten As String = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, GameIniOriginal, Beacon.ShooterGameHeader, Beacon.ConfigFileGame, Organizer, Self.Document.TrustKey, Format, RewriteError)
-		  If (RewriteError Is Nil) = False Then
-		    Self.SetError(RewriteError)
-		    Return
-		  End If
-		  
-		  Var GameUserSettingsIniRewritten As String = Beacon.Rewriter.Rewrite(Beacon.Rewriter.Sources.Deploy, GameUserSettingsIniOriginal, Beacon.ServerSettingsHeader, Beacon.ConfigFileGameUserSettings, Organizer, Self.Document.TrustKey, Format, RewriteError)
-		  If (RewriteError Is Nil) = False Then
-		    Self.SetError(RewriteError)
-		    Return
-		  End If
-		  
-		  // Verify content looks acceptable
-		  If Not Self.ValidateContent(GameUserSettingsIniRewritten, Beacon.ConfigFileGameUserSettings) Then
-		    Return
-		  End If
-		  If Not Self.ValidateContent(GameIniRewritten, Beacon.ConfigFileGame) Then
-		    Return
-		  End If
-		  
-		  // Allow the user to review the new files if requested
-		  If Self.ReviewEnabled And App.IdentityManager.CurrentIdentity.IsBanned = False Then
-		    If Self.AnalyzeEnabled Then
-		      // Analyzer would go here
-		    End If
-		    
-		    Var Dict As New Dictionary
-		    Dict.Value(Beacon.ConfigFileGame) = GameIniRewritten
-		    Dict.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
-		    Dict.Value("Advice") = Nil // The results would go here
-		    
-		    Var Controller As New Beacon.TaskWaitController("Review Files", Dict)
-		    
-		    Self.Log("Waiting for user review")
-		    Self.Wait(Controller)
-		    If Controller.Cancelled Then
-		      Return
-		    End If
-		  End If
-		  
-		  // Run the backup if requested
-		  If Self.BackupEnabled Then
-		    Var OldFiles As New Dictionary
-		    OldFiles.Value(Beacon.ConfigFileGame) = GameIniOriginal
-		    OldFiles.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniOriginal
-		    
-		    Var NewFiles As New Dictionary
-		    NewFiles.Value(Beacon.ConfigFileGame) = GameIniRewritten
-		    NewFiles.Value(Beacon.ConfigFileGameUserSettings) = GameUserSettingsIniRewritten
-		    
-		    Self.RunBackup(OldFiles, NewFiles)
-		    
-		    If Self.Finished Then
-		      Return
-		    End If
-		  End If
-		  
-		  // Stop the server
-		  If Self.SupportsRestarting Then
-		    Self.StopServer()
-		  End If
-		  
-		  // Let the implementor do any final work
-		  RaiseEvent ReadyToUpload()
-		  
-		  // Put the new files on the server
-		  If Self.PutFile(GameIniRewritten, Beacon.ConfigFileGame) = False Or Self.Finished Then
-		    Self.Finished = True
-		    Return
-		  End If 
-		  If Self.PutFile(GameUserSettingsIniRewritten, Beacon.ConfigFileGameUserSettings) = False Or Self.Finished Then
-		    Self.Finished = True
-		    Return
-		  End If
-		  
-		  // Make command line changes
-		  If Self.SupportsWideSettings Then
-		    Self.Log("Updating other settings…")
-		    Call RaiseEvent ApplySettings(Organizer)
-		    If Self.Finished Then
-		      Return
-		    End If
-		  End If
+		  // Let the game-specific engine do its work
+		  RaiseEvent Deploy(InitialServerState)
 		  
 		  // And start the server if it was already running
 		  If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
@@ -804,36 +672,6 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function ValidateContent(Content As String, Filename As String) As Boolean
-		  Var MissingHeaders() As String = Beacon.ValidateIniContent(Content, Filename)
-		  
-		  If MissingHeaders.Count = 0 Then
-		    Return True
-		  End If
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("File") = Filename
-		  Dict.Value("Groups") = MissingHeaders
-		  If MissingHeaders.Count > 1 Then
-		    Dict.Value("Message") = Filename + " is not valid because it is missing the following groups: " + MissingHeaders.EnglishOxfordList + "."
-		  Else
-		    Dict.Value("Message") = Filename + " is not valid because it is missing its " + MissingHeaders(0) + " group."
-		  End If
-		  
-		  Var Controller As New Beacon.TaskWaitController("ValidationFailed", Dict)
-		  
-		  Self.Log("Content validation failed!")
-		  Self.Wait(Controller)
-		  If Controller.Cancelled Then
-		    Self.SetError(Dict.Value("Message").StringValue)
-		    Return False
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Controller As Beacon.TaskWaitController)
 		  If Thread.Current = Nil Then
@@ -872,15 +710,15 @@ Protected Class IntegrationEngine
 
 
 	#tag Hook, Flags = &h0
-		Event ApplySettings(Organizer As Beacon.ConfigOrganizer) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event Begin()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event CreateCheckpoint()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Deploy(InitialServerState As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -897,10 +735,6 @@ Protected Class IntegrationEngine
 
 	#tag Hook, Flags = &h0
 		Event Finished()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ReadyToUpload()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -949,10 +783,6 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h1
 		Protected mCheckpointCreated As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -1005,6 +835,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.ServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProject As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

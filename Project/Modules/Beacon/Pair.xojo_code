@@ -1,5 +1,5 @@
 #tag Class
-Private Class Pair
+Protected Class Pair
 	#tag Method, Flags = &h0
 		Sub Constructor(Key As String, Value As Variant)
 		  Self.mKey = Key

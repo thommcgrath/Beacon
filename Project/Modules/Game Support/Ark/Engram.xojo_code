@@ -40,7 +40,7 @@ Implements Ark.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Ark.Blueprint
+		Function Clone() As Ark.Engram
 		  // Part of the Ark.Blueprint interface.
 		  
 		  Return New Ark.Engram(Self)

@@ -38,6 +38,12 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone() As Ark.MutableLootContainer
+		  Return New Ark.MutableLootContainer(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
 		  
@@ -157,6 +163,23 @@ Implements Ark.MutableBlueprint
 		  Self.mPreventDuplicates = Value
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReconfigureTemplates(Mask As UInt64, ContentPacks As Beacon.StringList) As Integer
+		  Var NumChanged As Integer
+		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
+		    Var Clone As Ark.LootItemSet = Self.mItemSets(Idx).Rebuild(Self, Mask, ContentPacks)
+		    If Clone Is Nil Then
+		      Continue
+		    End If
+		    
+		    NumChanged = NumChanged + 1
+		    Self.mItemSets(Idx) = Clone.ImmutableVersion
+		    Self.Modified = True
+		  Next
+		  Return NumChanged
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

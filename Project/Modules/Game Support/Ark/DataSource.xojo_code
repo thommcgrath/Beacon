@@ -15,8 +15,6 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
-		  Self.SQLExecute("CREATE TABLE official_loot_templates (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE custom_loot_templates (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
@@ -57,7 +55,6 @@ Inherits Beacon.DataSource
 		  Indexes.Add(New Beacon.DataIndex("maps", False, "content_pack_id"))
 		  Indexes.Add(New Beacon.DataIndex("loot_containers", False, "sort_order"))
 		  
-		  Indexes.Add(New Beacon.DataIndex("custom_presets", True, "user_id", "object_id"))
 		  Indexes.Add(New Beacon.DataIndex("engrams", False, "entry_string"))
 		  Indexes.Add(New Beacon.DataIndex("ini_options", True, "file", "header", "key"))
 		  Indexes.Add(New Beacon.DataIndex("events", True, "ark_code"))
@@ -93,9 +90,32 @@ Inherits Beacon.DataSource
 		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + String.FromArray(DeleteStatements, " ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
+		  
+		  Self.SQLExecute("DROP VIEW IF EXISTS loot_templates;")
+		  Self.SQLExecute("CREATE VIEW loot_templates AS SELECT * FROM custom_loot_templates UNION SELECT * FROM official_loot_templates WHERE object_id NOT IN (SELECT object_id FROM custom_loot_templates);")
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub TestPerformance()
+		  Var TestDoc As New Ark.Project
+		  Var Packs As Beacon.StringList = TestDoc.ContentPacks
+		  Var Tags As String = Preferences.SelectedTag(Ark.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
+		  Call Self.SearchForBlueprints(Ark.CategoryEngrams, "", Packs, Tags)
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function BlueprintIsCustom(Item As Ark.Blueprint) As Boolean
+		  If Item Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT is_local FROM content_packs WHERE content_pack_id = ?1;", Item.ContentPackUUID)
+		  Return Rows.RowCount = 1 And Rows.Column("is_local").BooleanValue
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Cache(Creatures() As Ark.Creature)
@@ -188,6 +208,11 @@ Inherits Beacon.DataSource
 		  Self.mSpawnPointCache = New Dictionary
 		  Self.mLootContainerCache = New Dictionary
 		  Self.mConfigKeyCache = New Dictionary
+		  Self.mSpawnLabelCacheDict = New Dictionary
+		  Self.mLootTemplateCache = New Dictionary
+		  Self.mIconCache = New Dictionary
+		  Self.mContainerLabelsCacheDict = New Dictionary
+		  Self.mContainerLabelsCacheMask = 0
 		  
 		  Super.Constructor()
 		End Sub
@@ -197,6 +222,26 @@ Inherits Beacon.DataSource
 		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
 		  Var Value As Variant = Self.GetVariable(Key, Default)
 		  Return Value.BooleanValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
+		  Try
+		    Var Results As RowSet
+		    Results = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName)
+		    If Results.RowCount <> 1 Then
+		      Return False
+		    End If
+		    
+		    Title = Results.Column("title").StringValue
+		    Body = Results.Column("body").StringValue
+		    DetailURL = If(Results.Column("detail_url").Value <> Nil, Results.Column("detail_url").StringValue, "")
+		    
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -262,7 +307,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByID(CreatureID As String) As Ark.Creature
+		Function GetCreatureByUUID(CreatureID As String) As Ark.Creature
 		  If Self.mCreatureCache.HasKey(CreatureID) Then
 		    Return Self.mCreatureCache.Value(CreatureID)
 		  End If
@@ -279,6 +324,50 @@ Inherits Beacon.DataSource
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorByUUID(ID As Integer) As Ark.CreatureColor
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE color_id = ?1;", ID)
+		  Var Colors() As Ark.CreatureColor = Self.RowSetToCreatureColors(Rows)
+		  If Colors.Count = 1 Then
+		    Return Colors(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColors(Label As String = "") As Ark.CreatureColor()
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
+		  Return Self.RowSetToCreatureColors(Rows)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorSetByClass(ClassString As String) As Ark.CreatureColorSet
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE class_string = ?1;", ClassString)
+		  Var Sets() As Ark.CreatureColorSet = Self.RowSetToCreatureColorSets(Rows)
+		  If Sets.Count = 1 Then
+		    Return Sets(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorSetByUUID(UUID As String) As Ark.CreatureColorSet
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE color_set_id = ?1;", UUID)
+		  Var Sets() As Ark.CreatureColorSet = Self.RowSetToCreatureColorSets(Rows)
+		  If Sets.Count = 1 Then
+		    Return Sets(0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureColorSets(Label As String = "") As Ark.CreatureColorSet()
+		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
+		  Return Self.RowSetToCreatureColorSets(Rows)
 		End Function
 	#tag EndMethod
 
@@ -313,21 +402,9 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByID(EngramID As String) As Ark.Engram
-		  If Self.mEngramCache.HasKey(EngramID) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
-		      If Results.RowCount <> 1 Then
-		        Return Nil
-		      End If
-		      
-		      Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results)
-		      Self.Cache(Engrams)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  Return Self.mEngramCache.Value(EngramID)
+		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
+		  Var Value As Variant = Self.GetVariable(Key, Default)
+		  Return Value.DoubleValue
 		End Function
 	#tag EndMethod
 
@@ -346,6 +423,40 @@ Inherits Beacon.DataSource
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByUUID(EngramID As String) As Ark.Engram
+		  If Self.mEngramCache.HasKey(EngramID) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID)
+		      If Results.RowCount <> 1 Then
+		        Return Nil
+		      End If
+		      
+		      Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results)
+		      Self.Cache(Engrams)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  End If
+		  Return Self.mEngramCache.Value(EngramID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Engram()
+		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
+		  Var ExtraValues(0) As Variant
+		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		  Var Engrams() As Ark.Engram
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.Engram Then
+		      Engrams.Add(Ark.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -411,6 +522,174 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetEngramUUIDsThatHaveCraftingCosts(ContentPacks As Beacon.StringList, Mask As UInt64) As String()
+		  // I hate the name of this method
+		  
+		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		    Var List() As String
+		    For Each ContentPackUUID As String In ContentPacks
+		      List.Add("'" + ContentPackUUID + "'")
+		    Next
+		    SQL = SQL + " AND content_pack_id IN (" + List.Join(",") + ")"
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL)
+		  Var Results() As String
+		  While Not Rows.AfterLastRow
+		    Results.Add(Rows.Column("object_id").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetGameEventByArkCode(ArkCode As String) As Ark.GameEvent
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE ark_code = ?1;", ArkCode)
+		  Var GameEvents() As Ark.GameEvent = Self.RowSetToGameEvents(Rows)
+		  If GameEvents.Count = 1 Then
+		    Return GameEvents(0)
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetGameEventByUUID(EventUUID As String) As Ark.GameEvent
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE event_id = ?1;", EventUUID)
+		  Var GameEvents() As Ark.GameEvent = Self.RowSetToGameEvents(Rows)
+		  If GameEvents.Count = 1 Then
+		    Return GameEvents(0)
+		  Else
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetGameEvents(Label As String = "") As Ark.GameEvent()
+		  Var Rows As RowSet = Self.SQLSelect(Self.GameEventSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
+		  Return Self.RowSetToGameEvents(Rows)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetIconForLootContainer(Container As Ark.LootContainer, BackgroundColor As Color) As Picture
+		  Var ForegroundColor As Color = Container.UIColor
+		  Select Case ForegroundColor
+		  Case &cFFF02A00
+		    ForegroundColor = SystemColors.SystemYellowColor
+		  Case &cE6BAFF00
+		    ForegroundColor = SystemColors.SystemPurpleColor
+		  Case &c00FF0000
+		    ForegroundColor = SystemColors.SystemGreenColor
+		  Case &cFFBABA00
+		    ForegroundColor = SystemColors.SystemRedColor
+		  Case &c88C8FF00
+		    ForegroundColor = SystemColors.SystemBlueColor
+		  Case &c00FFFF00
+		    ForegroundColor = SystemColors.SystemTealColor
+		  Case &cFFA50000
+		    ForegroundColor = SystemColors.SystemOrangeColor
+		  End Select
+		  
+		  Return Self.GetIconForLootContainer(Container, ForegroundColor, BackgroundColor)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetIconForLootContainer(Container As Ark.LootContainer, ForegroundColor As Color, BackgroundColor As Color) As Picture
+		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
+		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
+		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
+		  
+		  Var AccentColor As Color
+		  Var IconID As String
+		  Var SpriteSheet, BadgeSheet As Picture
+		  Var Results As RowSet
+		  Try
+		    Results = Self.SQLSelect("SELECT loot_container_icons.icon_id, loot_container_icons.icon_data, loot_containers.experimental FROM loot_containers INNER JOIN loot_container_icons ON (loot_containers.icon = loot_container_icons.icon_id) WHERE loot_containers.content_pack_id = ?1 AND loot_conatiners.path = ?2 LIMIT 1;", Container.ContentPackUUID, Container.Path)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "ContentPackUUID: " + Container.ContentPackUUID + " Path: " + Container.Path)
+		  End Try
+		  If (Results Is Nil) = False And Results.RowCount = 1 Then
+		    SpriteSheet = Results.Column("icon_data").PictureValue
+		    IconID = Results.Column("icon_id").StringValue
+		  Else
+		    SpriteSheet = App.GenericLootSourceIcon()
+		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0"
+		  End If
+		  AccentColor = BackgroundColor
+		  
+		  IconID = IconID + ForegroundColor.ToHex + BackgroundColor.ToHex
+		  If Self.mIconCache.HasKey(IconID) Then
+		    Return Self.mIconCache.Value(IconID)
+		  End If
+		  
+		  ForegroundColor = BeaconUI.FindContrastingColor(BackgroundColor, ForegroundColor)
+		  
+		  Var Height As Integer = (SpriteSheet.Height / 2) / 3
+		  Var Width As Integer = (SpriteSheet.Width / 2) / 3
+		  
+		  If BadgeSheet <> Nil Then
+		    Var BadgesMask As New Picture(BadgeSheet.Width, BadgeSheet.Height)
+		    BadgesMask.Graphics.DrawingColor = &cFFFFFF
+		    BadgesMask.Graphics.FillRectangle(0, 0, BadgesMask.Width, BadgesMask.Height)
+		    BadgesMask.Graphics.DrawPicture(BadgeSheet, 0, 0)
+		    
+		    Var Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height)
+		    Badges.Graphics.DrawingColor = &cFFFFFF
+		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
+		    Badges.ApplyMask(BadgesMask)
+		    
+		    Var Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height)
+		    Sprites.Graphics.DrawPicture(SpriteSheet, 0, 0)
+		    Sprites.Graphics.DrawPicture(Badges.Piece(0, 0, Width, Height), 0, Height)
+		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)
+		    Sprites.Graphics.DrawPicture(Badges.Piece(Width * 3, 0, Width * 3, Height * 3), Width * 3, Height * 3)
+		    Badges.Graphics.DrawingColor = &c000000
+		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
+		    Sprites.Graphics.DrawPicture(Badges, 0, 0)
+		    
+		    SpriteSheet = Sprites
+		  End If
+		  
+		  Var Highlight1x As Picture = SpriteSheet.Piece(0, 0, Width, Height)
+		  Var Highlight2x As Picture = SpriteSheet.Piece(Width, 0, Width * 2, Height * 2)
+		  Var Highlight3x As Picture = SpriteSheet.Piece(Width * 3, 0, Width * 3, Height * 3)
+		  Var HighlightMask As New Picture(Width, Height, Array(Highlight1x, Highlight2x, Highlight3x))
+		  
+		  Var Color1x As Picture = SpriteSheet.Piece(0, Height, Width, Height)
+		  Var Color2x As Picture = SpriteSheet.Piece(Width, Height * 2, Width * 2, Height * 2)
+		  Var Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
+		  Var ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
+		  
+		  Var Highlight As Picture = HighlightMask.WithColor(ForegroundColor)
+		  Var Fill As Picture = ColorMask.WithColor(AccentColor)
+		  
+		  Var Bitmaps() As Picture
+		  For Factor As Integer = 1 To 3
+		    Var HighlightRep As Picture = Highlight.BestRepresentation(Width, Height, Factor)
+		    Var ColorRep As Picture = Fill.BestRepresentation(Width, Height, Factor)
+		    
+		    Var Combined As New Picture(Width * Factor, Width * Factor)
+		    Combined.VerticalResolution = 72 * Factor
+		    Combined.HorizontalResolution = 72 * Factor
+		    Combined.Graphics.DrawPicture(HighlightRep, 0, 0, Combined.Width, Combined.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
+		    Combined.Graphics.DrawPicture(ColorRep, 0, 0, Combined.Width, Combined.Height, 0, 0, ColorRep.Width, ColorRep.Height)
+		    
+		    Bitmaps.Add(Combined)
+		  Next
+		  
+		  Var Icon As New Picture(Width, Height, Bitmaps)
+		  Self.mIconCache.Value(IconID) = Icon
+		  Return Icon
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
 		  Var Value As Variant = Self.GetVariable(Key, Default)
 		  Return Value.IntegerValue
@@ -418,10 +697,10 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootContainerByID(LootContainerID As String) As Ark.LootContainer
-		  If Self.mLootContainerCache.HasKey(LootContainerID) = False Then
+		Function GetLootContainerByUUID(LootContainerUUID As String) As Ark.LootContainer
+		  If Self.mLootContainerCache.HasKey(LootContainerUUID) = False Then
 		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootContainerID)
+		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootContainerUUID)
 		      If Results.RowCount <> 1 Then
 		        Return Nil
 		      End If
@@ -432,7 +711,7 @@ Inherits Beacon.DataSource
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mLootContainerCache.Value(LootContainerID)
+		  Return Self.mLootContainerCache.Value(LootContainerUUID)
 		End Function
 	#tag EndMethod
 
@@ -463,6 +742,41 @@ Inherits Beacon.DataSource
 		  Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Rows)
 		  Self.Cache(LootContainers)
 		  Return LootContainers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootTemplateByUUID(UUID As String) As Ark.LootTemplate
+		  If Self.mLootTemplateCache.HasKey(UUID) Then
+		    Return Self.mLootTemplateCache.Value(UUID)
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT contents FROM custom_loot_templates WHERE object_id = ?1;", UUID)
+		  If Rows.RowCount = 0 Then
+		    Rows = Self.SQLSelect("SELECT contents FROM official_loot_templates WHERE object_id = ?1;", UUID)
+		    If Rows.RowCount = 0 Then
+		      Return Nil
+		    End If
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootTemplates(Filter As String = "") As Ark.LootTemplate()
+		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, contents FROM loot_templates WHERE label LIKE ?1 ESCAPE '\';", Self.EscapeLikeValue(Filter))
+		  Var Templates() As Ark.LootTemplate
+		  While Rows.AfterLastRow = False
+		    Var UUID As String = Rows.Column("object_id").StringValue
+		    If Self.mLootTemplateCache.HasKey(UUID) Then
+		      Templates.Add(Self.mLootTemplateCache.Value(UUID))
+		      Rows.MoveToNextRow
+		      Continue
+		    End If
+		    
+		    
+		    
+		    Rows.MoveToNextRow
+		  Wend
 		End Function
 	#tag EndMethod
 
@@ -536,7 +850,7 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointByID(SpawnPointID As String) As Ark.SpawnPoint
+		Function GetSpawnPointByUUID(SpawnPointID As String) As Ark.SpawnPoint
 		  If Self.mSpawnPointCache.HasKey(SpawnPointID) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID)
@@ -551,6 +865,59 @@ Inherits Beacon.DataSource
 		    End Try
 		  End If
 		  Return Self.mSpawnPointCache.Value(SpawnPointID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointLabels(Availability As UInt64) As Dictionary
+		  If Self.mSpawnLabelCacheMask <> Availability Then
+		    Var Points() As Ark.SpawnPoint = Self.GetSpawnPoints()
+		    Var Labels() As String
+		    Var Dict As New Dictionary
+		    Labels.ResizeTo(Points.LastIndex)
+		    
+		    For I As Integer = 0 To Points.LastIndex
+		      If Points(I).ValidForMask(Availability) = False Then
+		        Continue
+		      End If
+		      
+		      Var Label As String = Points(I).Label
+		      Var Idx As Integer = Labels.IndexOf(Label)
+		      Labels(I) = Label
+		      If Idx > -1 Then
+		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
+		        Var Maps() As Ark.Map = Self.GetMaps(Filtered)
+		        Dict.Value(Points(Idx).ObjectID) = Points(Idx).Label.Disambiguate(Maps.Label)
+		        
+		        Filtered = Points(I).Availability And Availability
+		        Maps = Self.GetMaps(Filtered)
+		        Label = Label.Disambiguate(Maps.Label)
+		      End If
+		      
+		      Dict.Value(Points(I).ObjectID) = Label
+		    Next
+		    
+		    Self.mSpawnLabelCacheDict = Dict
+		    Self.mSpawnLabelCacheMask = Availability
+		  End If
+		  
+		  Return Self.mSpawnLabelCacheDict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.SpawnPoint()
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategorySpawnPoints, SearchText, ContentPacks, Tags)
+		  Var Points() As Ark.SpawnPoint
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.SpawnPoint Then
+		      Points.Add(Ark.SpawnPoint(Blueprint))
+		    End If
+		  Next
+		  Return Points
 		End Function
 	#tag EndMethod
 
@@ -619,6 +986,36 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetTags(Category As String = "") As String()
+		  Var Results As RowSet
+		  If Category <> "" Then
+		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = ?1 AND tags != '';", Category)
+		  Else
+		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
+		  End If
+		  Var Dict As New Dictionary
+		  While Not Results.AfterLastRow
+		    Var Tags() As String = Results.Column("tags").StringValue.Split(",")
+		    For Each Tag As String In Tags
+		      If Tag <> "object" Then
+		        Dict.Value(Tag) = True
+		      End If
+		    Next
+		    Results.MoveToNextRow
+		  Wend
+		  
+		  Var Keys() As Variant = Dict.Keys
+		  Var Tags() As String
+		  For Each Key As String In Keys
+		    Tags.Add(Key)
+		  Next
+		  Tags.Sort
+		  
+		  Return Tags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetVariable(Key As String, Default As Variant = Nil) As Variant
 		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
@@ -627,6 +1024,54 @@ Inherits Beacon.DataSource
 		    Return Default
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasExperimentalLootContainers(ContentPacks As Beacon.StringList) As Boolean
+		  Try
+		    Var Clauses(0) As String
+		    Clauses(0) = "experimental = 1"
+		    
+		    Var Values As New Dictionary
+		    Var NextPlaceholder As Integer = 1
+		    If ContentPacks.LastRowIndex > -1 Then
+		      Var Placeholders() As String
+		      For Each PackUUID As String In ContentPacks
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		        Values.Value(NextPlaceholder) = PackUUID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
+		    End If
+		    
+		    Var SQL As String = "SELECT COUNT(loot_containers.object_id) FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id = content_packs.content_pack_id) WHERE (" + Clauses.Join(") AND (") + ");"
+		    Var Results As RowSet
+		    If Values.KeyCount > 0 Then
+		      Results = Self.SQLSelect(SQL, Values)
+		    Else
+		      Results = Self.SQLSelect(SQL)
+		    End If
+		    Return Results.ColumnAt(0).IntegerValue > 0
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadDefaults(SpawnPoint As Ark.MutableSpawnPoint)
+		  If SpawnPoint Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID)
+		  If Rows.RowCount = 0 Then
+		    Return
+		  End If
+		  
+		  SpawnPoint.SetsString = Rows.Column("sets").StringValue
+		  SpawnPoint.LimitsString = Rows.Column("limits").StringValue
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -777,6 +1222,34 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function RowSetToCreatureColors(Rows As RowSet) As Ark.CreatureColor()
+		  Var CreatureColors() As Ark.CreatureColor
+		  While Rows.AfterLastRow = False
+		    Var Label As String = Rows.Column("label").StringValue
+		    Var ID As Integer = Rows.Column("color_id").IntegerValue
+		    Var HexValue As String = Rows.Column("hex_value").StringValue
+		    CreatureColors.Add(New Ark.CreatureColor(ID, Label, HexValue))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return CreatureColors
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RowSetToCreatureColorSets(Rows As RowSet) As Ark.CreatureColorSet()
+		  Var Sets() As Ark.CreatureColorSet
+		  While Rows.AfterLastRow = False
+		    Var Label As String = Rows.Column("label").StringValue
+		    Var UUID As String = Rows.Column("color_set_id").StringValue
+		    Var ClassString As String = Rows.Column("class_string").StringValue
+		    Sets.Add(New Ark.CreatureColorSet(UUID, Label, ClassString))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Sets
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function RowSetToEngram(Results As RowSet) As Ark.Engram()
 		  Var Engrams() As Ark.Engram
 		  While Not Results.AfterLastRow
@@ -812,6 +1285,23 @@ Inherits Beacon.DataSource
 		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RowSetToGameEvents(Rows As RowSet) As Ark.GameEvent()
+		  Var GameEvents() As Ark.GameEvent
+		  While Rows.AfterLastRow = False
+		    Var Label As String = Rows.Column("label").StringValue
+		    Var EventUUID As String = Rows.Column("event_id").StringValue
+		    Var ArkCode As String = Rows.Column("ark_code").StringValue
+		    Var ColorsJSON As String = Rows.Column("colors").StringValue
+		    Var RatesJSON As String = Rows.Column("rates").StringValue
+		    Var EngramsJSON As String = Rows.Column("engrams").StringValue
+		    GameEvents.Add(New Ark.GameEvent(EventUUID, Label, ArkCode, ColorsJSON, RatesJSON, EngramsJSON))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return GameEvents
 		End Function
 	#tag EndMethod
 
@@ -1087,6 +1577,22 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchForCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Creature()
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategoryCreatures, SearchText, ContentPacks, Tags)
+		  Var Creatures() As Ark.Creature
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.Creature Then
+		      Creatures.Add(Ark.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SearchForEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Engram()
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
@@ -1168,11 +1674,23 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mContainerLabelsCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContainerLabelsCacheMask As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCreatureCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mEngramCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIconCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1184,7 +1702,19 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLootTemplateCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOfficialPlayerLevelData As Ark.PlayerLevelData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSpawnLabelCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSpawnLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1195,10 +1725,19 @@ Inherits Beacon.DataSource
 	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = CreatureColorSelectSQL, Type = String, Dynamic = False, Default = \"SELECT colors.color_id\x2C colors.label\x2C colors.hex_value FROM colors", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureColorSetSelectSQL, Type = String, Dynamic = False, Default = \"SELECT color_sets.color_set_id\x2C color_sets.label\x2C color_sets.class_string FROM color_sets", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C creatures.used_stats\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM creatures INNER JOIN content_packs ON (creatures.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM engrams INNER JOIN content_packs ON (engrams.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.requirements\x2C loot_containers.content_pack_id\x2C loot_containers.tags FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private

@@ -203,7 +203,7 @@ Begin BeaconDialog DocumentVersionListWindow
       RequiresSelection=   False
       RowSelectionType=   0
       Scope           =   2
-      SelectionChangeBlocked=   False
+      SelectionChangeBlocked=   "False"
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -297,7 +297,7 @@ End
 	#tag Event
 		Sub PerformEdit()
 		  Var DocumentURL As String = Me.RowTagAt(Me.SelectedRowIndex)
-		  App.MainWindow.Documents.OpenDocument(DocumentURL.Replace("https://", Beacon.DocumentURL.TypeCloud + "://"), False)
+		  App.MainWindow.Documents.OpenDocument(DocumentURL.Replace("https://", Beacon.ProjectURL.TypeCloud + "://"), False)
 		  Self.Close
 		End Sub
 	#tag EndEvent

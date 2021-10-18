@@ -170,7 +170,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocumentURL As Beacon.DocumentURL
+		Private mDocumentURL As Beacon.ProjectURL
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -220,18 +220,18 @@ End
 			  
 			  Self.mDocumentURL = Value
 			  
-			  Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Reading)
+			  Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.ProjectURL.URLTypes.Reading)
 			  
 			  Select Case Self.mDocumentURL.Scheme
-			  Case Beacon.DocumentURL.TypeLocal
+			  Case Beacon.ProjectURL.TypeLocal
 			    Try
-			      Var File As New FolderItem(Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Unmodified), FolderItem.PathModes.URL)
+			      Var File As New FolderItem(Self.mDocumentURL.URL(Beacon.ProjectURL.URLTypes.Unmodified), FolderItem.PathModes.URL)
 			      Self.URLLabel.Text = File.NativePath
 			    Catch Err As RuntimeException
-			      Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.DocumentURL.URLTypes.Reading)
+			      Self.URLLabel.Text = Self.mDocumentURL.URL(Beacon.ProjectURL.URLTypes.Reading)
 			    End Try
 			    Self.MessageLabel.Text = "Loading " + Self.mDocumentURL.Name + "…"
-			  Case Beacon.DocumentURL.TypeWeb
+			  Case Beacon.ProjectURL.TypeWeb
 			    Self.URLLabel.Text = Self.mDocumentURL.Path
 			    Self.MessageLabel.Text = "Downloading " + Self.mDocumentURL.Name + "…"
 			  Else
@@ -240,7 +240,7 @@ End
 			  End Select
 			End Set
 		#tag EndSetter
-		URL As Beacon.DocumentURL
+		URL As Beacon.ProjectURL
 	#tag EndComputedProperty
 
 

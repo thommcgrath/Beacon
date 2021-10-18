@@ -183,6 +183,21 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GlobalMultiplier() As Double
+		  Return Self.mGlobalMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GlobalMultiplier(Assigns Value As Double)
+		  If Self.mGlobalMultiplier <> Value Then
+		    Self.mGlobalMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return Ark.Configs.NameStackSizes
 		End Function

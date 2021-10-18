@@ -2,7 +2,7 @@
 Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ServerProfile
-		  Return Beacon.ServerProfile.FromDictionary(Self.ToDictionary())
+		  Return Beacon.ServerProfile.FromSaveData(Self.SaveData())
 		End Function
 	#tag EndMethod
 
@@ -47,15 +47,15 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigSetStates(ForDocument As Beacon.Document) As Beacon.ConfigSetState()
+		Function ConfigSetStates(ForProject As Beacon.Project) As Beacon.ConfigSetState()
 		  // Make sure to return a clone of the array. Do not need to clone the members since they are immutable.
 		  Var States(0) As Beacon.ConfigSetState
-		  States(0) = New Beacon.ConfigSetState(Beacon.Document.BaseConfigSetName, True)
+		  States(0) = New Beacon.ConfigSetState(Beacon.Project.BaseConfigSetName, True)
 		  
-		  Var Names() As String = ForDocument.ConfigSetNames
+		  Var Names() As String = ForProject.ConfigSetNames
 		  Var Filter As New Dictionary
 		  For Each Name As String In Names
-		    If Name = Beacon.Document.BaseConfigSetName Then
+		    If Name = Beacon.Project.BaseConfigSetName Then
 		      Continue
 		    End If
 		    
@@ -100,33 +100,11 @@ Protected Class ServerProfile
 		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
-		  Self.mMask = Dict.Lookup("Map", 0)
 		  Self.mAdminNotes = Dict.Lookup("Admin Notes", "")
 		  Self.mProfileColor = CType(Dict.Lookup("Color", 0).IntegerValue, Beacon.ServerProfile.Colors)
 		  
 		  If Dict.HasKey("External Account") Then
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
-		  End If
-		  
-		  If Dict.HasKey("Message of the Day") Then
-		    Var MOTD As Variant = Dict.Value("Message of the Day")
-		    If MOTD.Type = Variant.TypeString Then
-		      #if Not TargetiOS
-		        Self.mMessageOfTheDay = Beacon.ArkML.FromRTF(MOTD)
-		      #endif
-		    Else
-		      Var Info As Introspection.TypeInfo = Introspection.GetType(MOTD)
-		      If Info.FullName = "Dictionary()" Then
-		        Self.mMessageOfTheDay = Beacon.ArkML.FromArray(MOTD)
-		      ElseIf Info.FullName = "Object()" Then
-		        Self.mMessageOfTheDay = Beacon.ArkML.FromObjects(MOTD)
-		      End If
-		    End If
-		    Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
-		  End If
-		  
-		  If Self.mMessageOfTheDay Is Nil Then
-		    Self.mMessageOfTheDay = New Beacon.ArkML
 		  End If
 		  
 		  If Dict.HasKey("Config Sets") Then
@@ -136,23 +114,11 @@ Protected Class ServerProfile
 		    Catch Err As RuntimeException
 		    End Try
 		    For Each Set As Dictionary In Sets
-		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromDictionary(Set)
+		      Var State As Beacon.ConfigSetState = Beacon.ConfigSetState.FromSaveData(Set)
 		      If (State Is Nil) = False Then
 		        Self.mConfigSetStates.Add(State)
 		      End If
 		    Next
-		  End If
-		  
-		  If Dict.HasKey("Admin Password") Then
-		    Self.mAdminPassword = Dict.Value("Admin Password").StringValue
-		  End If
-		  
-		  If Dict.HasKey("Server Password") Then
-		    Self.mServerPassword = Dict.Value("Server Password").StringValue
-		  End If
-		  
-		  If Dict.HasKey("Spectator Password") Then
-		    Self.mSpectatorPassword = Dict.Value("Spectator Password").StringValue
 		  End If
 		  
 		  RaiseEvent ReadFromDictionary(Dict)
@@ -168,7 +134,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.ServerProfile
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
 		  
@@ -177,17 +143,21 @@ Protected Class ServerProfile
 		  End If
 		  
 		  Var Provider As String = Dict.Value("Provider")
-		  Select Case Provider
-		  Case "Nitrado"
-		    Return New Beacon.NitradoServerProfile(Dict)
-		  Case "FTP"
-		    Return New Beacon.FTPServerProfile(Dict)
-		  Case "Connector"
-		    Return New Beacon.ConnectorServerProfile(Dict)
-		  Case "Local", "Simple"
-		    Return New Beacon.LocalServerProfile(Dict)
-		  Case "GameServerApp"
-		    Return New Beacon.GSAServerProfile(Dict)
+		  Var GameID As String = Dict.Lookup("Game", Ark.Identifier)
+		  Select Case GameID
+		  Case Ark.Identifier
+		    Select Case Provider
+		    Case "Nitrado"
+		      Return New Ark.NitradoServerProfile(Dict)
+		    Case "FTP"
+		      Return New Ark.FTPServerProfile(Dict)
+		    Case "Connector"
+		      Return New Ark.ConnectorServerProfile(Dict)
+		    Case "Local", "Simple"
+		      Return New Ark.LocalServerProfile(Dict)
+		    Case "GameServerApp"
+		      Return New Ark.GSAServerProfile(Dict)
+		    End Select
 		  End Select
 		End Function
 	#tag EndMethod
@@ -196,7 +166,7 @@ Protected Class ServerProfile
 		Function Hash() As String
 		  Var Raw As String
 		  Try
-		    Raw = Beacon.GenerateJSON(Self.ToDictionary, False)
+		    Raw = Beacon.GenerateJSON(Self.SaveData, False)
 		  Catch Err As RuntimeException
 		    Raw = Self.Name + "    " + Self.ProfileID
 		  End Try
@@ -208,25 +178,6 @@ Protected Class ServerProfile
 		Function LinkPrefix() As String
 		  Return "Server"
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Mask() As UInt64
-		  If Self.mMask = CType(0, UInt64) Then
-		    Return Beacon.Maps.UniversalMask
-		  Else
-		    Return Self.mMask
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Mask(Assigns Value As UInt64)
-		  If Self.mMask <> Value Then
-		    Self.mMask = Value
-		    Self.Modified = True
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -274,6 +225,35 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SaveData() As Dictionary
+		  Var Dict As New Dictionary
+		  RaiseEvent WriteToDictionary(Dict)
+		  If Dict.HasAllKeys("Provider", "Game") Then
+		    Var Err As New KeyNotFoundException
+		    Err.Message = "No provider and/or game was set in ServerProfile.WriteToDictionary"
+		    Raise Err
+		  End If
+		  Dict.Value("Name") = Self.Name
+		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
+		  Dict.Value("Enabled") = Self.Enabled
+		  Dict.Value("Platform") = Self.mPlatform
+		  Dict.Value("Admin Notes") = Self.mAdminNotes
+		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
+		  If Self.mExternalAccountUUID <> Nil Then
+		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
+		  End If
+		  If Self.mConfigSetStates.Count > 0 Then
+		    Var Priorities() As Dictionary
+		    For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
+		      Priorities.Add(State.SaveData)
+		    Next
+		    Dict.Value("Config Sets") = Priorities
+		  End If
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SecondaryName() As String
 		  
 		End Function
@@ -288,49 +268,6 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function SupportsRestart() As Boolean
 		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
-		  Var Dict As New Dictionary
-		  RaiseEvent WriteToDictionary(Dict)
-		  If Not Dict.HasKey("Provider") Then
-		    Var Err As New KeyNotFoundException
-		    Err.Message = "No provider was set in Beacon.ServerProfile.WriteToDictionary"
-		    Raise Err
-		  End If
-		  Dict.Value("Name") = Self.Name
-		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
-		  Dict.Value("Enabled") = Self.Enabled
-		  Dict.Value("Platform") = Self.mPlatform
-		  Dict.Value("Map") = Self.mMask
-		  Dict.Value("Admin Notes") = Self.mAdminNotes
-		  Dict.Value("Color") = CType(Self.mProfileColor, Integer)
-		  If Self.mExternalAccountUUID <> Nil Then
-		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
-		  End If
-		  If (Self.mMessageOfTheDay Is Nil) = False And Self.mMessageOfTheDay.IsEmpty = False Then
-		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay.ArrayValue
-		    Dict.Value("Message Duration") = Self.mMessageDuration
-		  End If
-		  If Self.mConfigSetStates.Count > 0 Then
-		    Var Priorities() As Dictionary
-		    For Each State As Beacon.ConfigSetState In Self.mConfigSetStates
-		      Priorities.Add(State.ToDictionary)
-		    Next
-		    Dict.Value("Config Sets") = Priorities
-		  End If
-		  If (Self.mAdminPassword Is Nil) = False Then
-		    Dict.Value("Admin Password") = Self.mAdminPassword.StringValue
-		  End If
-		  If (Self.mServerPassword Is Nil) = False Then
-		    Dict.Value("Server Password") = Self.mServerPassword.StringValue
-		  End If
-		  If (Self.mSpectatorPassword Is Nil) = False Then
-		    Dict.Value("Spectator Password") = Self.mSpectatorPassword.StringValue
-		  End If
-		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -373,23 +310,6 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		AdminNotes As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mAdminPassword
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mAdminPassword <> Value Then
-			    Self.mAdminPassword = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		AdminPassword As NullableString
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -449,10 +369,6 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAdminPassword As NullableString
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mConfigSetStates() As Beacon.ConfigSetState
 	#tag EndProperty
 
@@ -460,54 +376,8 @@ Protected Class ServerProfile
 		Private mEnabled As Boolean
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mMessageDuration
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mMessageDuration <> Value Then
-			    Self.mMessageDuration = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		MessageDuration As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mMessageOfTheDay
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mMessageOfTheDay <> Value Then
-			    Self.mMessageOfTheDay = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		MessageOfTheDay As Beacon.ArkML
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mExternalAccountUUID As v4UUID
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMask As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMessageDuration As Integer = 30
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMessageOfTheDay As Beacon.ArkML
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -528,14 +398,6 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mProfileID As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mServerPassword As NullableString
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSpectatorPassword As NullableString
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -578,40 +440,6 @@ Protected Class ServerProfile
 			End Set
 		#tag EndSetter
 		ProfileColor As Beacon.ServerProfile.Colors
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mServerPassword
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mServerPassword <> Value Then
-			    Self.mServerPassword = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		ServerPassword As NullableString
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mSpectatorPassword
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mSpectatorPassword <> Value Then
-			    Self.mSpectatorPassword = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		SpectatorPassword As NullableString
 	#tag EndComputedProperty
 
 
@@ -710,14 +538,6 @@ Protected Class ServerProfile
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MessageDuration"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

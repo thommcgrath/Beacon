@@ -77,6 +77,15 @@ Inherits Ark.LootItemSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Remove(Entry As Ark.LootItemSetEntry)
+		  Var Idx As Integer = Self.IndexOf(Entry)
+		  If Idx > -1 Then
+		    Self.RemoveAt(Idx)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveAt(Index As Integer)
 		  Self.mEntries.RemoveAt(Index)
 		  Self.Modified = True
@@ -91,8 +100,8 @@ Inherits Ark.LootItemSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SourcePresetID(Assigns Value As String)
-		  Self.mSourcePresetID = Value
+		Sub TemplateUUID(Assigns Value As String)
+		  Self.mTemplateUUID = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

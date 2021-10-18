@@ -6,9 +6,176 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Creatures() As Ark.Creature, EnabledMaps As UInt64) As Dictionary
+		  Return Disambiguate(CategoryCreatures, Creatures, EnabledMaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Engrams() As Ark.Engram, EnabledMaps As UInt64) As Dictionary
+		  Return Disambiguate(CategoryEngrams, Engrams, EnabledMaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Disambiguate(Extends Containers() As Ark.LootContainer, EnabledMaps As UInt64) As Dictionary
+		  Return Disambiguate(CategoryLootContainers, Containers, EnabledMaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Disambiguate(Extends SpawnPoints() As Ark.SpawnPoint, EnabledMaps As UInt64) As Dictionary
+		  Return Disambiguate(CategorySpawnPoints, SpawnPoints, EnabledMaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Disambiguate(Category As String, Blueprints() As Ark.Blueprint, EnabledMaps As UInt64) As Dictionary
+		  // Items in Blueprints() are always included, regardless of maps.
+		  
+		  Var Results As New Dictionary
+		  For Idx As Integer = 0 To Blueprints.LastIndex
+		    Results.Value(Blueprints(Idx).ObjectID) = Blueprints(Idx).Label
+		  Next Idx
+		  
+		  Var All() As Ark.Blueprint = Ark.DataSource.SharedInstance.SearchForBlueprints(Category, "", New Beacon.StringList, "")
+		  Var Labels As New Dictionary
+		  For Idx As Integer = 0 To All.LastIndex
+		    If All(Idx).ValidForMask(EnabledMaps) = False And Results.HasKey(All(Idx).ObjectID) = False Then
+		      Continue For Idx
+		    End If
+		    
+		    Var Siblings() As Ark.Blueprint
+		    If Labels.HasKey(All(Idx).Label) Then
+		      Siblings = Labels.Value(All(Idx).Label)
+		    End If
+		    Siblings.Add(All(Idx))
+		    Labels.Value(All(Idx).Label) = Siblings
+		  Next Idx
+		  
+		  For Each Entry As DictionaryEntry In Labels
+		    Var Siblings() As Ark.Blueprint = Entry.Value
+		    
+		    If Siblings.Count = 1 Then
+		      Continue For Entry
+		    End If
+		    
+		    Var Specifiers() As String
+		    Var UseClassStrings As Boolean
+		    For Idx As Integer = 0 To Siblings.LastIndex
+		      If Specifiers.IndexOf(Siblings(Idx).ContentPackName) > -1 Then
+		        UseClassStrings = True
+		        Exit For Idx
+		      Else
+		        Specifiers.Add(Siblings(Idx).ContentPackName)
+		      End If
+		    Next Idx
+		    
+		    For Idx As Integer = 0 To Siblings.LastIndex
+		      Results.Value(Siblings(Idx).ObjectID) = Siblings(Idx).Label.Disambiguate(If(UseClassStrings, Siblings(Idx).ClassString, Siblings(Idx).ContentPackName))
+		    Next Idx
+		  Next Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label(Extends Maps() As Ark.Map) As String
+		  Var Names() As String
+		  Names.ResizeTo(Maps.LastIndex)
+		  For Idx As Integer = 0 To Names.LastIndex
+		    Names(Idx) = Maps(Idx).Name
+		  Next Idx
+		  
+		  If Names.Count = 0 Then
+		    Return "No Maps"
+		  ElseIf Names.Count = 1 Then
+		    Return Names(0)
+		  ElseIf Names.Count = 2 Then
+		    Return Names(0) + " & " + Names(1)
+		  Else
+		    Var Tail As String = Names(Names.LastIndex)
+		    Names.RemoveAt(Names.LastIndex)
+		    Return Names.Join(", ") + ", & " + Tail
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function OmniPurchased(Identity As Beacon.Identity) As Boolean
 		  Return Identity.IsOmniFlagged(Ark.OmniFlag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
+		  // This shouldn't take long, but still, probably best to only use this on a thread
+		  
+		  Var InQuotes As Boolean
+		  Var Characters() As String = CommandLine.Split("")
+		  Var Buffer, Params() As String
+		  For Each Char As String In Characters
+		    If Char = """" Then
+		      If InQuotes Then
+		        Params.Add(Buffer)
+		        Buffer = ""
+		        InQuotes = False
+		      Else
+		        InQuotes = True
+		      End If
+		    ElseIf Char = " " Then
+		      If InQuotes = False And Buffer.Length > 0 Then
+		        Params.Add(Buffer)
+		        Buffer = ""
+		      End If
+		    ElseIf Char = "-" And Buffer.Length = 0 Then
+		      Continue
+		    Else
+		      Buffer = Buffer + Char
+		    End If
+		  Next
+		  If Buffer.Length > 0 Then
+		    Params.Add(Buffer)
+		    Buffer = ""
+		  End If
+		  
+		  Var StartupParams() As String = Params.Shift.Split("?")
+		  Var Map As String = StartupParams.Shift
+		  Call StartupParams.Shift // The listen statement
+		  If PreserveSyntax Then
+		    For Idx As Integer = 0 To Params.LastIndex
+		      Params(Idx) = "-" + Params(Idx)
+		    Next
+		    For Idx As Integer = 0 To StartupParams.LastIndex
+		      StartupParams(Idx) = "?" + StartupParams(Idx)
+		    Next
+		  End If
+		  StartupParams.Merge(Params)
+		  
+		  Var CommandLineOptions As New Dictionary
+		  For Each Parameter As String In StartupParams
+		    Var KeyPos As Integer = Parameter.IndexOf("=")
+		    Var Key As String
+		    Var Value As Variant
+		    If KeyPos = -1 Then
+		      Key = Parameter
+		      Value = True
+		    Else
+		      Key = Parameter.Left(KeyPos)
+		      Value = Parameter.Middle(KeyPos + 1)
+		    End If
+		    If PreserveSyntax Then
+		      Value = Parameter
+		    End If
+		    CommandLineOptions.Value(Key) = Value
+		  Next
+		  
+		  If PreserveSyntax Then
+		    CommandLineOptions.Value("?Map") = Map
+		  Else
+		    CommandLineOptions.Value("Map") = Map
+		  End If
+		  Return CommandLineOptions
 		End Function
 	#tag EndMethod
 
@@ -36,7 +203,7 @@ Protected Module Ark
 		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var Creature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByID(ObjectID)
+		      Var Creature As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatureByUUID(ObjectID)
 		      If (Creature Is Nil) = False Then
 		        Return Creature
 		      End If
@@ -92,7 +259,7 @@ Protected Module Ark
 		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByID(ObjectID)
+		      Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID(ObjectID)
 		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
@@ -148,7 +315,7 @@ Protected Module Ark
 		Protected Function ResolveLootContainer(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var LootContainer As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainerByID(ObjectID)
+		      Var LootContainer As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainerByUUID(ObjectID)
 		      If (LootContainer Is Nil) = False Then
 		        Return LootContainer
 		      End If
@@ -204,7 +371,7 @@ Protected Module Ark
 		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint
 		  If ObjectID.IsEmpty = False Then
 		    Try
-		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointByID(ObjectID)
+		      Var SpawnPoint As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointByUUID(ObjectID)
 		      If (SpawnPoint Is Nil) = False Then
 		        Return SpawnPoint
 		      End If
@@ -316,6 +483,31 @@ Protected Module Ark
 		  End If
 		  
 		  Return Ark.UnknownBlueprintPrefix + FolderName + "/" + ClassName + "." + ClassName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
+		  Var MissingHeaders() As String
+		  For Each RequiredHeader As String In RequiredHeaders
+		    If Content.IndexOf(RequiredHeader) = -1 Then
+		      MissingHeaders.Add(RequiredHeader)
+		    End If
+		  Next
+		  MissingHeaders.Sort
+		  Return MissingHeaders
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ValidateIniContent(Content As String, Filename As String) As String()
+		  Var RequiredHeaders() As String
+		  If Filename = Ark.ConfigFileGame Then
+		    RequiredHeaders = Array("[" + Ark.HeaderShooterGame + "]")
+		  ElseIf Filename = Ark.ConfigFileGameUserSettings Then
+		    RequiredHeaders = Array("[SessionSettings]", "[" + Ark.HeaderServerSettings + "]", "[/Script/ShooterGame.ShooterGameUserSettings]")
+		  End If
+		  Return Ark.ValidateIniContent(Content, RequiredHeaders)
 		End Function
 	#tag EndMethod
 

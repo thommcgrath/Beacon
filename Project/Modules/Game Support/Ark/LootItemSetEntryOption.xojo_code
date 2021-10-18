@@ -85,14 +85,9 @@ Protected Class LootItemSetEntryOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveData(CompatibilityMode As Boolean) As Dictionary
+		Function SaveData() As Dictionary
 		  Var Keys As New Dictionary
-		  If CompatibilityMode Then
-		    Keys.Value("Path") = Self.mEngram.Path
-		    Keys.Value("Class") = Self.mEngram.ClassString
-		  Else
-		    Keys.Value("Blueprint") = Self.mEngram.SaveData
-		  End If
+		  Keys.Value("Blueprint") = Self.mEngram.SaveData
 		  Keys.Value("Weight") = Self.mWeight
 		  Return Keys
 		End Function

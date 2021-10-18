@@ -403,7 +403,17 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Call DocumentImportWindow.Present(WeakAddressOf LoadImportedDocuments, New Beacon.Document, File)
+		  Var GameID As String = Beacon.DetectGame(File)
+		  If GameID.IsEmpty Then
+		    // Show a game selection prompt later
+		    Return
+		  End If
+		  
+		  Select Case GameID
+		  Case Ark.Identifier
+		    Var ImportView As New ArkImportView
+		    Call DocumentImportWindow.Present(ImportView, WeakAddressOf LoadImportedDocuments, New Ark.Project, File)
+		  End Select
 		End Sub
 	#tag EndMethod
 

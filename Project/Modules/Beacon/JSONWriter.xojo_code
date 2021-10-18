@@ -17,9 +17,6 @@ Inherits Thread
 		    ElseIf (Self.mSourceProject Is Nil) = False And (Self.mSourceIdentity Is Nil) = False Then
 		      Source = Self.mSourceProject.SaveData(Self.mSourceIdentity)
 		      Compress = Self.mSourceProject.UseCompression
-		    ElseIf Self.mSourceDocument <> Nil And Self.mSourceIdentity <> Nil Then
-		      Source = Self.mSourceDocument.ToDictionary(Self.mSourceIdentity)
-		      Compress = Self.mSourceDocument.UseCompression
 		    Else
 		      Var Err As New NilObjectException
 		      Err.Message = "No source dictionary or document."
@@ -49,15 +46,6 @@ Inherits Thread
 		  #if Not TargetiOS
 		    Self.mLock = New CriticalSection
 		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "New JSONWriter(Project, Identity, FolderItem)" )  Sub Constructor(Document As Beacon.Document, Identity As Beacon.Identity, Destination As FolderItem)
-		  Self.Constructor()
-		  Self.mSourceDocument = Document
-		  Self.mSourceIdentity = Identity
-		  Self.mDestination = Destination
 		End Sub
 	#tag EndMethod
 
@@ -152,10 +140,6 @@ Inherits Thread
 
 	#tag Property, Flags = &h21
 		Private mSource As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSourceDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

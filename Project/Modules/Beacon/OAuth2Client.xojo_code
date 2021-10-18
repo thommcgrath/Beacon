@@ -138,6 +138,16 @@ Protected Class OAuth2Client
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Sub Lock()
+		  If AuthLock Is Nil Then
+		    AuthLock = New CriticalSection
+		  End If
+		  
+		  AuthLock.Enter
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mCheckSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
@@ -319,6 +329,14 @@ Protected Class OAuth2Client
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Sub Unlock()
+		  If (AuthLock Is Nil) = False Then
+		    AuthLock.Leave
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event AccountUUIDChanged(OldUUID As v4UUID)
@@ -356,6 +374,10 @@ Protected Class OAuth2Client
 		Event UserCancelled()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private Shared AuthLock As CriticalSection
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAccount As Beacon.ExternalAccount

@@ -1,5 +1,6 @@
 #tag Class
 Protected Class SpawnPointSetEntry
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Clone() As Ark.SpawnPointSetEntry
 		  Var Clone As New Ark.SpawnPointSetEntry(Self)
@@ -195,7 +196,7 @@ Protected Class SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		Return Self.Creature.Label
+		  Return Self.Creature.Label
 		End Function
 	#tag EndMethod
 
@@ -369,13 +370,13 @@ Protected Class SpawnPointSetEntry
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-			Return Self.mModified
+		  Return Self.mModified
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-			Self.mModified = Value
+		  Self.mModified = Value
 		End Sub
 	#tag EndMethod
 

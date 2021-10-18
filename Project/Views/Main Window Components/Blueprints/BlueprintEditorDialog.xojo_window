@@ -45,7 +45,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -1324,7 +1324,6 @@ Begin BeaconDialog BlueprintEditorDialog
          RequiresSelection=   False
          RowSelectionType=   1
          Scope           =   2
-         SelectionChangeBlocked=   "False"
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
@@ -1384,7 +1383,6 @@ Begin BeaconDialog BlueprintEditorDialog
          RequiresSelection=   False
          RowSelectionType=   1
          Scope           =   2
-         SelectionChangeBlocked=   "False"
          TabIndex        =   8
          TabPanelIndex   =   3
          TabStop         =   True
@@ -1399,7 +1397,7 @@ Begin BeaconDialog BlueprintEditorDialog
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin SpawnPointEditor SpawnPointEditor1
+      Begin ArkSpawnPointEditor SpawnPointEditor1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
          AllowFocusRing  =   False
@@ -2049,7 +2047,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function UpdateSpawnPoint(Point As Beacon.MutableSpawnPoint) As Boolean
-		  Var Points() As Beacon.SpawnPoint = Self.SpawnPointEditor1.SpawnPoints
+		  Var Points() As Ark.SpawnPoint = Self.SpawnPointEditor1.SpawnPoints
 		  If Points.Count <> 1 Then
 		    Return False
 		  End If
@@ -2072,7 +2070,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModifiedBlueprint As Beacon.Blueprint
+		Private mModifiedBlueprint As Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2084,7 +2082,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOriginalBlueprint As Beacon.Blueprint
+		Private mOriginalBlueprint As Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2092,7 +2090,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSampleDocument As Beacon.Document
+		Private mSampleProject As Ark.Project
 	#tag EndProperty
 
 
@@ -2187,7 +2185,7 @@ End
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageCreature", "Advanced"))
 		  Case Self.IndexSpawnPoint
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageSpawn", "Advanced"))
-		    TargetWidth = SpawnPointEditor.MinEditorWidth
+		    TargetWidth = ArkSpawnPointEditor.MinEditorWidth
 		    MinHeight = Max(640, Self.AbsoluteMinimumHeight)
 		  End Select
 		  
@@ -2530,11 +2528,11 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetDocument() As Beacon.Document
-		  If Self.mSampleDocument Is Nil Then
-		    Self.mSampleDocument = New Beacon.Document
+		Function GetProject() As Ark.Project
+		  If Self.mSampleProject Is Nil Then
+		    Self.mSampleProject = New Ark.Project
 		  End If
-		  Return Self.mSampleDocument
+		  Return Self.mSampleProject
 		End Function
 	#tag EndEvent
 	#tag Event

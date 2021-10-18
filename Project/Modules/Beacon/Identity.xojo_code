@@ -218,7 +218,23 @@ Protected Class Identity
 		  
 		  Var Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
 		  
-		  If Source.HasKey("Omni Version") Then
+		  If Source.HasKey("Purchases") Then
+		    Var Purchases() As Variant = Source.Value("Purchases")
+		    Var Now As DateTime
+		    For Each Purchase As Dictionary In Purchases
+		      Var Flags As Integer = Purchase.Value("Flags")
+		      Var Expiration As DateTime
+		      If Purchase.HasKey("Expiration") Then
+		        Expiration = NewDateFromSQLDateTime(Purchase.Value("Expiration"))
+		        If Now Is Nil Then
+		          Now = DateTime.Now
+		        End If
+		      End If
+		      If Expiration Is Nil Or Expiration.SecondsFrom1970 > Now.SecondsFrom1970 Then
+		        Identity.mOmniFlags = Identity.mOmniFlags Or Flags
+		      End If
+		    Next Purchase
+		  ElseIf Source.HasKey("Omni Version") Then
 		    Identity.mOmniFlags = Source.Value("Omni Version")
 		  End If
 		  
@@ -437,6 +453,8 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Sub Validate()
+		  #Pragma Warning "Bump signature version to support expiring purchases"
+		  
 		  If Self.mSignature <> Nil Then
 		    Var Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
@@ -444,7 +462,7 @@ Protected Class Identity
 		    Fields(2) = Self.mOmniFlags.ToString(Locale.Raw, "#")
 		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
 		    
-		    If Self.mExpirationString <> "" Then
+		    If Self.mExpirationString.IsEmpty = False Then
 		      Var Expires As DateTime = NewDateFromSQLDateTime(Self.mExpirationString)
 		      Var Now As DateTime = DateTime.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then

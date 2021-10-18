@@ -94,11 +94,11 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Sub Parse(GameUserSettingsIniContent As String, GameIniContent As String, Source As String)
-		  Var Data As New Beacon.DiscoveredData
+		  Var Data As New Ark.DiscoveredData
 		  Data.GameUserSettingsIniContent = GameUserSettingsIniContent
 		  Data.GameIniContent = GameIniContent
 		  
-		  Var Parser As New Beacon.ImportThread(Data, Self.mProject)
+		  Var Parser As New Ark.ImportThread(Data, Self.mProject)
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
@@ -127,7 +127,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Parser_Finished(Sender As Beacon.ImportThread, Project As Ark.Project)
+		Private Sub Parser_Finished(Sender As Ark.ImportThread, Project As Ark.Project)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
 		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
@@ -135,13 +135,13 @@ Inherits BeaconSubview
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)
 		  
-		  If Document Is Nil Then
+		  If Project Is Nil Then
 		    Return
 		  End If
 		  
 		  Var Imported As Boolean
 		  Try
-		    Imported = RaiseEvent ParsingFinished(Document)
+		    Imported = RaiseEvent ParsingFinished(Project)
 		  Catch Err As RuntimeException
 		    ExceptionWindow.Report(Err)
 		  End Try
@@ -157,7 +157,7 @@ Inherits BeaconSubview
 		  
 		  Var NewGroup As Ark.ConfigGroup = Project.ConfigGroup(InternalName)
 		  
-		  If Self.Project.HasConfigGroup(InternalName) And Ark.Configs.SupportsMerging(InternalName) Then
+		  If Self.Project.HasConfigGroup(InternalName) And Self.Project.ConfigGroup(InternalName).SupportsMerging Then
 		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("How would you like to merge " + Self.ConfigLabel() + " into your existing editor?", "In the case of overlapping content, which should take priority?", "New Content", "Cancel", "Existing Content")
 		    If Choice = BeaconUI.ConfirmResponses.Cancel Then
 		      Return
@@ -180,7 +180,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Parser_UpdateUI(Sender As Beacon.ImportThread)
+		Private Sub Parser_UpdateUI(Sender As Ark.ImportThread)
 		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
 		  Win.Progress = Sender.Progress
 		End Sub

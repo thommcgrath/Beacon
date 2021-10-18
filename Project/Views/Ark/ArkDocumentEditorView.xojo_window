@@ -310,7 +310,7 @@ End
 
 	#tag Event
 		Sub Hidden()
-		  Var Panel As ConfigEditor = Self.CurrentPanel
+		  Var Panel As ArkConfigEditor = Self.CurrentPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedFrom()
 		  End If
@@ -355,7 +355,7 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
-		  Var Panel As ConfigEditor = Self.CurrentPanel
+		  Var Panel As ArkConfigEditor = Self.CurrentPanel
 		  If (Panel Is Nil) = False Then
 		    Panel.SwitchedTo(UserData)
 		  End If
@@ -407,7 +407,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
-		  Var PreselectServers() As Beacon.ServerProfile
+		  Var PreselectServers() As Ark.ServerProfile
 		  Self.BeginDeploy(PreselectServers)
 		End Sub
 	#tag EndMethod
@@ -455,7 +455,7 @@ End
 		    Return
 		  End If
 		  
-		  DocumentExportWindow.Present(Self, Self.Project)
+		  ArkExportWindow.Present(Self, Self.Project)
 		End Sub
 	#tag EndMethod
 
@@ -473,11 +473,12 @@ End
 		      End If
 		    Next
 		    
+		    Var ImportView As New ArkImportView
 		    Var Ref As DocumentImportWindow
 		    If ForDeployment Then
-		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Project, OtherProjects)
+		      Ref = DocumentImportWindow.Present(ImportView, AddressOf ImportAndDeployCallback, Self.Project, OtherProjects)
 		    Else
-		      Ref = DocumentImportWindow.Present(AddressOf ImportCallback, Self.Project, OtherProjects)
+		      Ref = DocumentImportWindow.Present(ImportView, AddressOf ImportCallback, Self.Project, OtherProjects)
 		    End If
 		    Self.mImportWindowRef = New WeakRef(Ref)
 		  End If
@@ -540,16 +541,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyFromDocuments(SourceDocuments As Variant)
-		  Var Documents() As Beacon.Document = SourceDocuments
-		  DocumentMergerWindow.Present(Self, Documents, Self.Project, WeakAddressOf MergeCallback)
+		Private Sub CopyFromDocuments(SourceProjects As Variant)
+		  Var Projects() As Beacon.Project
+		  Try
+		    Projects = SourceProjects
+		  Catch Err As RuntimeException
+		  End Try
+		  DocumentMergerWindow.Present(Self, Projects, Self.Project, WeakAddressOf MergeCallback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyFromDocumentsAndDeploy(SourceDocuments As Variant)
-		  Var Documents() As Beacon.Document = SourceDocuments
-		  DocumentMergerWindow.Present(Self, Documents, Self.Project, WeakAddressOf MergeAndDeployCallback)
+		Private Sub CopyFromDocumentsAndDeploy(SourceProjects As Variant)
+		  Var Projects() As Beacon.Project
+		  Try
+		    Projects = SourceProjects
+		  Catch Err As RuntimeException
+		  End Try
+		  DocumentMergerWindow.Present(Self, Projects, Self.Project, WeakAddressOf MergeAndDeployCallback)
 		End Sub
 	#tag EndMethod
 
@@ -583,7 +592,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Panel As ConfigEditor = Self.Panels.Value(CacheKey)
+		  Var Panel As ArkConfigEditor = Self.Panels.Value(CacheKey)
 		  If Panel IsA ServersConfigEditor Then
 		    RemoveHandler ServersConfigEditor(Panel).ShouldDeployProfiles, WeakAddressOf ServersEditor_ShouldDeployProfiles
 		  End If
@@ -601,7 +610,7 @@ End
 		  
 		  Self.CurrentConfigName = Issue.ConfigName
 		  
-		  Var View As ConfigEditor = Self.CurrentPanel
+		  Var View As ArkConfigEditor = Self.CurrentPanel
 		  If View <> Nil Then
 		    View.GoToIssue(Issue)
 		  End If
@@ -659,14 +668,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportAndDeployCallback(Documents() As Beacon.Document)
-		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Documents)
+		Private Sub ImportAndDeployCallback(Projects() As Beacon.Project)
+		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Projects)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportCallback(Documents() As Beacon.Document)
-		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Documents)
+		Private Sub ImportCallback(Projects() As Beacon.Project)
+		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Projects)
 		End Sub
 	#tag EndMethod
 
@@ -697,7 +706,7 @@ End
 		Private Sub MergeCallback()
 		  Var Keys() As Variant = Self.Panels.Keys
 		  For Each Key As Variant In Keys
-		    Var Panel As ConfigEditor = Self.Panels.Value(Key)
+		    Var Panel As ArkConfigEditor = Self.Panels.Value(Key)
 		    If Panel <> Nil Then
 		      Panel.ImportFinished()
 		    End If
@@ -744,7 +753,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Panel_ContentsChanged(Sender As ConfigEditor)
+		Private Sub Panel_ContentsChanged(Sender As ArkConfigEditor)
 		  #Pragma Unused Sender
 		  
 		  If Self.Changed <> Self.Project.Modified Then
@@ -813,7 +822,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Beacon.ServerProfile)
+		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Ark.ServerProfile)
 		  #Pragma Unused Sender
 		  Self.BeginDeploy(SelectedProfiles)
 		End Sub
@@ -853,7 +862,7 @@ End
 		  Var SourceItems() As SourceListItem
 		  For I As Integer = 0 To Labels.LastIndex
 		    Var Item As New SourceListItem(Labels(I), Tags(I))
-		    Var SupportsConfigSets As Boolean = BeaconConfigs.SupportsConfigSets(Tags(I))
+		    Var SupportsConfigSets As Boolean = Ark.Configs.SupportsConfigSets(Tags(I))
 		    If IsBase = False And SupportsConfigSets = False Then
 		      Continue
 		    End If
@@ -953,11 +962,11 @@ End
 			      Case "deployments"
 			        NewPanel = New ServersConfigEditor(Self.Project)
 			      Case "accounts"
-			        NewPanel = New AccountsConfigEditor(Self.Project)
+			        NewPanel = New ArkAccountsEditor(Self.Project)
 			      Case "metadata"
 			        NewPanel = New ArkProjectSettingsEditor(Self.Project)
 			      Case Ark.Configs.NameLootDrops
-			        NewPanel = New LootConfigEditor(Self.Project)
+			        NewPanel = New ArkLootDropsEditor(Self.Project)
 			      Case Ark.Configs.NameDifficulty
 			        NewPanel = New ArkDifficultyEditor(Self.Project)
 			      Case Ark.Configs.NameExperienceCurves
@@ -965,29 +974,29 @@ End
 			      Case Ark.Configs.NameCustomContent
 			        NewPanel = New ArkCustomConfigEditor(Self.Project)
 			      Case Ark.Configs.NameCraftingCosts
-			        NewPanel = New CraftingCostsConfigEditor(Self.Project)
+			        NewPanel = New ArkCraftingCostsEditor(Self.Project)
 			      Case Ark.Configs.NameStackSizes
-			        NewPanel = New StackSizesConfigEditor(Self.Project)
+			        NewPanel = New ArkStackSizesEditor(Self.Project)
 			      Case Ark.Configs.NameBreedingMultipliers
-			        NewPanel = New BreedingMultipliersConfigEditor(Self.Project)
+			        NewPanel = New ArkBreedingMultipliersEditor(Self.Project)
 			      Case Ark.Configs.NameHarvestRates
-			        NewPanel = New HarvestRatesConfigEditor(Self.Project)
+			        NewPanel = New ArkHarvestRatesEditor(Self.Project)
 			      Case Ark.Configs.NameDinoAdjustments
-			        NewPanel = New DinoAdjustmentsConfigEditor(Self.Project)
+			        NewPanel = New ArkDinoAdjustmentsEditor(Self.Project)
 			      Case Ark.Configs.NameStatMultipliers
-			        NewPanel = New StatMultipliersConfigEditor(Self.Project)
+			        NewPanel = New ArkStatMultipliersEditor(Self.Project)
 			      Case Ark.Configs.NameDayCycle
-			        NewPanel = New DayCycleConfigEditor(Self.Project)
+			        NewPanel = New ArkDayCycleEditor(Self.Project)
 			      Case Ark.Configs.NameSpawnPoints
-			        NewPanel = New SpawnPointsConfigEditor(Self.Project)
+			        NewPanel = New ArkCreatureSpawnsEditor(Self.Project)
 			      Case Ark.Configs.NameStatLimits
-			        NewPanel = New StatLimitsConfigEditor(Self.Project)
+			        NewPanel = New ArkStatLimitsEditor(Self.Project)
 			      Case Ark.Configs.NameEngramControl
-			        NewPanel = New EngramControlConfigEditor(Self.Project)
+			        NewPanel = New ArkEngramControlEditor(Self.Project)
 			      Case Ark.Configs.NameSpoilTimers
-			        NewPanel = New SpoilTimersConfigEditor(Self.Project)
+			        NewPanel = New ArkSpoilTimersEditor(Self.Project)
 			      Case Ark.Configs.NameOtherSettings
-			        NewPanel = New OtherSettingsConfigEditor(Self.Project)
+			        NewPanel = New ArkGeneralSettingsEditor(Self.Project)
 			      End Select
 			      If NewPanel <> Nil Then
 			        Self.Panels.Value(CacheKey) = NewPanel
@@ -1107,7 +1116,7 @@ End
 	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kConfigGroupClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.configgroup", Scope = Private
+	#tag Constant, Name = kConfigGroupClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.configgroup", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LocalMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private

@@ -1,7 +1,29 @@
 #tag Class
 Protected Class LootTemplate
-Inherits Beacon.Template
-Implements Beacon.Countable, Iterable
+Inherits Ark.Template
+Implements Beacon.Countable,Iterable
+	#tag Event
+		Sub Save(SaveData As Dictionary)
+		  Var Hashes() As String
+		  Var Contents() As Dictionary
+		  For Each Entry As Ark.LootTemplateEntry In Self.mEntries
+		    Hashes.Add(Entry.Hash)
+		    Contents.Add(Entry.SaveData)
+		  Next
+		  Hashes.SortWith(Contents)
+		  SaveData.Value("Version") = Self.Version
+		  SaveData.Value("MinVersion") = 3
+		  
+		  SaveData.Value("Label") = Self.Label
+		  SaveData.Value("Grouping") = Self.Grouping
+		  SaveData.Value("Min") = Self.MinItems
+		  SaveData.Value("Max") = Self.MaxItems
+		  SaveData.Value("ItemSets") = Contents
+		  SaveData.Value("Modifiers") = Self.mModifierValues
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Function ActiveSelectorIDs() As String()
 		  Var IDs() As String
@@ -35,8 +57,8 @@ Implements Beacon.Countable, Iterable
 		  Self.mGrouping = "Miscellaneous"
 		  Self.mMinEntriesSelected = 1
 		  Self.mMaxEntriesSelected = 3
-		  Self.mUUID = New v4UUID
 		  Self.mModifierValues = New Dictionary
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -66,6 +88,25 @@ Implements Beacon.Countable, Iterable
 		  // Part of the Beacon.Countable interface.
 		  
 		  Return Self.mEntries.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Template
+		  If Dict Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Kind As String = Dict.Lookup("Kind", "LootTemplate")
+		  If Kind <> "LootTemplate" Then
+		    Return Beacon.Template.FromSaveData(Dict)
+		  End If
+		  
+		  #if DebugBuild
+		    #Pragma Warning "Fill in loot template loading"
+		  #else
+		    #Pragma Error "Fill in loot template loading"
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -108,6 +149,12 @@ Implements Beacon.Countable, Iterable
 		    Entries(Idx) = Self.mEntries(Idx)
 		  Next Idx
 		  Return New Beacon.GenericIterator(Entries)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Kind() As String
+		  Return "LootTemplate"
 		End Function
 	#tag EndMethod
 
@@ -265,9 +312,9 @@ Implements Beacon.Countable, Iterable
 		Protected mModifierValues As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUUID As String
-	#tag EndProperty
+
+	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -308,14 +355,6 @@ Implements Beacon.Countable, Iterable
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mEntries()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

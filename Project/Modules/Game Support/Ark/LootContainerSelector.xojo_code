@@ -237,7 +237,7 @@ Protected Class LootContainerSelector
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		  Case Self.LanguageJavaScript
-		    Var Engine As JavaScriptEngineMBS = Self.CreateEngine(Ark.DataSource.SharedInstance.GetLootContainerByID("b537ea4d-e0a8-4c92-9763-24d3df5e1562"))
+		    Var Engine As JavaScriptEngineMBS = Self.CreateEngine(Ark.DataSource.SharedInstance.GetLootContainerByUUID("b537ea4d-e0a8-4c92-9763-24d3df5e1562"))
 		    Try
 		      Call Engine.Evaluate("function execute() {" + EndOfLine + Self.mCode + EndOfLine + "}")
 		      Call Engine.CallFunction("execute")

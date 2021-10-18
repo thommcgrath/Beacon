@@ -254,7 +254,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
 			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.Presets.NewPreset
+			Self.mMainWindow.Templates.NewTemplate
 			End If
 			Return True
 		End Function
@@ -1061,8 +1061,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
-		    Var Document As Beacon.DocumentURL = Sender.Tag
-		    Self.mMainWindow.Documents.OpenDocument(Document)
+		    Var Project As Beacon.ProjectURL = Sender.Tag
+		    Self.mMainWindow.Documents.OpenDocument(Project)
 		    Return True
 		  End If
 		End Function
