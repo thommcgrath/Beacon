@@ -96,12 +96,13 @@ class BeaconLogin {
 		return BeaconCommon::AbsoluteURL($path);
 	}
 	
-	public static function SendVerification(string $email, $key = null, string $subject = 'Please Verify Your E-Mail Address') {
+	public static function SendVerification(string $email, $key = null, string $subject = 'Enter code $code in Beacon to verify your email address') {
 		$code = static::GenerateVerificationCode($email, $key);
 		if (is_null($code)) {
 			return false;
 		}
 		
+		$subject = str_replace('$code', $code, $subject);
 		$code_spaced = implode(' ', str_split($code));
 		$url = BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key)));
 		$plain = "You recently started the process of creating a new Beacon account or recovery of an existing Beacon account. In order to complete the process, please enter the code below.\n\n$code\n\nAlternatively, you may use the following link to continue the process automatically:\n\n$url\n\nIf you need help, simply reply to this email." . (empty(BeaconCommon::RemoteAddr() === false) ? ' This process was started from a device at the following ip address: ' . BeaconCommon::RemoteAddr() : '');
