@@ -25,8 +25,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 $download_links = [
-	'current' => BuildLinksForStage($database, 3),
-	'legacy' => BuildLinksForVersion($database, 10408304)
+	'current' => BuildLinksForStage($database, 3)
 ];
 $prerelease_stage = $database->Query('SELECT stage FROM updates WHERE build_number > $1 AND stage < 3 ORDER BY build_number DESC LIMIT 1;', $download_links['current']['build_number']);
 if ($prerelease_stage->RecordCount() === 1) {
