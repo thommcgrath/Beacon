@@ -213,6 +213,9 @@ function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
+	if ($min_mac_version <= 101700) {
+		$mac_versions[] = '12 Monterey';
+	}
 	if ($min_mac_version <= 101600) {
 		$mac_versions[] = '11 Big Sur';
 	}
