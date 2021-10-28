@@ -390,6 +390,9 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      Return Rects
 		    End If
 		  Next
+		  
+		  Var Rects() As Rect
+		  Return Rects
 		End Function
 	#tag EndMethod
 
@@ -475,7 +478,8 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		      // Even at min size, this isn't fitting
 		      If AllowOverflow = False Then
 		        // Since WithOverflow is false, this will be tried again at a lower priority, so there's really no reason to continue.
-		        Return Nil
+		        Var Rects() As Rect
+		        Return Rects
 		      End If
 		      
 		      RequiresOverflow = True
@@ -518,60 +522,7 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 		    If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
 		      NextPos = Rects(Idx).Right
 		    End If
-		    
-		    #if false
-		      If Item.IsFlexible Then
-		        FlexItemIndexes.Add(Idx)
-		      End If
-		      
-		      If Item.Type = OmniBarItem.Types.FlexSpace Then
-		        FlexSpaceIndexes.Add(Idx)
-		        Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
-		      ElseIf Item.Priority < MinPriority Then
-		        Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
-		      Else
-		        Var IdealItemWidth As Integer = Item.Width(G)
-		        Var Previousitem As OmniBarItem
-		        For PreviousIdx As Integer = Idx - 1 DownTo 0
-		          If Rects(PreviousIdx).Width > 0 Then
-		            PreviousItem = Self.mItems(PreviousIdx)
-		            Exit For PreviousIdx
-		          End If
-		        Next
-		        
-		        Var LeftMargin As Integer
-		        If PreviousItem Is Nil Then
-		          LeftMargin = If(Self.LeftPadding = -1, Self.DefaultEdgePadding, Self.LeftPadding)
-		        Else
-		          LeftMargin = Max(PreviousItem.Margin(Item), Item.Margin(PreviousItem))
-		        End If
-		        
-		        Rects(Idx) = New Rect(NextPos + LeftMargin, 0, ItemWidth, G.Height)
-		        If ItemWidth > 0 And Idx < Self.mItems.LastIndex Then
-		          NextPos = Rects(Idx).Right
-		        End If
-		      End If
-		    #endif
 		  Next
-		  
-		  #if false
-		    Var MinX, MaxX As Integer
-		    Var First As Boolean = True
-		    For Idx As Integer = 0 To Rects.LastIndex
-		      If Rects(Idx).Width = 0 Then
-		        Continue
-		      End If
-		      If First Then
-		        MinX = Rects(Idx).Left
-		        MaxX = Rects(Idx).Right
-		        First = False
-		      Else
-		        MinX = Min(MinX, Rects(Idx).Left)
-		        MaxX = Max(MaxX, Rects(Idx).Right)
-		      End If
-		    Next
-		  #endif
-		  
 		  
 		  G.Bold = False
 		  Return Rects
