@@ -204,7 +204,7 @@
 			border-color: $separator-color;
 		}
 		
-		thead {
+		thead, tbody tr.header {
 			background-color: $accent-color;
 			color: $accent-text-color;
 			
@@ -596,7 +596,7 @@
 				background-color: white;
 			}
 			
-			thead {
+			thead, tr.header {
 				background-color: white;
 				color: black;
 				

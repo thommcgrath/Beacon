@@ -30,10 +30,12 @@ if (empty($_POST['email'])) {
 $email = strtolower(trim($_POST['email']));
 $currency = strtoupper($_SESSION['store_currency']);
 
-$omni_qty = (isset($_POST['omni']) && boolval($_POST['omni']) === true) ? 1 : 0;
+$ark_qty = (isset($_POST['ark']) && boolval($_POST['ark']) === true) ? 1 : 0;
+$ark_gift_qty = isset($_POST['ark_gift']) ? min(intval($_POST['ark_gift']), 10) : 0;
+$ark2_qty = (isset($_POST['ark2']) && boolval($_POST['ark2']) === true) ? 1 : 0;
+$ark2_gift_qty = isset($_POST['ark2_gift']) ? min(intval($_POST['ark2_gift']), 10) : 0;
 $stw_qty = isset($_POST['stw']) ? min(intval($_POST['stw']), 10) : 0;
-$gift_qty = isset($_POST['gift']) ? min(intval($_POST['gift']), 10) : 0;
-if ($omni_qty + $stw_qty + $gift_qty === 0) {
+if ($ark_qty + $ark_gift_qty + $ark2_qty + $ark2_gift_qty + $stw_qty === 0) {
 	http_response_code(400);
 	echo json_encode(['error' => true, 'message' => 'Did not choose anything to purchase.'], JSON_PRETTY_PRINT);
 	exit;
@@ -65,14 +67,15 @@ try {
 	if (is_null($user) === false) {
 		$payment['metadata']['Beacon User UUID'] = $user->UserID();
 		
-		if ($user->OmniVersion() >= 1) {
-			if ($omni_qty > 0 && $stw_qty == 0 && $gift_qty == 0 && $user->OmniVersion() >= 1) {
-				http_response_code(400);
-				echo json_encode(['error' => true, 'message' => 'User already owns Omni.'], JSON_PRETTY_PRINT);
-				exit;
+		if ($ark_qty > 0) {
+			$ark_license = $user->LicenseInfo(BeaconShop::ARK_PRODUCT_ID);
+			if (is_null($ark_license) === false) {
+				if ($ark_gift_qty === 0 && $ark2_qty === 0 && $ark2_gift_qty === 0 && $stw_qty === 0) {
+					echo json_encode(['error' => true, 'message' => 'User already owns Omni.'], JSON_PRETTY_PRINT);
+					exit;
+				}
+				$ark_qty = 0;
 			}
-			
-			$omni_qty = 0;
 		}
 	}
 } catch (Exception $err) {
@@ -116,9 +119,11 @@ try {
 }
 
 $items = [
-	'972f9fc5-ad64-4f9c-940d-47062e705cc5' => $omni_qty,
-	'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015' => $stw_qty,
-	'2207d5c1-4411-4854-b26f-bc4b48aa33bf' => $gift_qty
+	BeaconShop::ARK_PRODUCT_ID => $ark_qty,
+	BeaconShop::ARK_GIFT_ID => $ark_gift_qty,
+	BeaconShop::ARK2_PRODUCT_ID => $ark2_qty,
+	BeaconShop::ARK2_GIFT_ID => $ark2_gift_qty,
+	BeaconShop::STW_ID => $stw_qty
 ];
 foreach ($items as $uuid => $quantity) {
 	$line_item = createLineItem($uuid, $currency, $quantity);

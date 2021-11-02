@@ -1,9 +1,10 @@
 <?php
 	
-define('OMNI_UUID', '972f9fc5-ad64-4f9c-940d-47062e705cc5');
-define('STW_UUID', 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015');
-define('GIFT_UUID', '2207d5c1-4411-4854-b26f-bc4b48aa33bf');
-define('SLOT_UUID', '10b653d8-1e17-4b5c-bb01-bca9e86149f9');
+define('KEY_ARK', 'ark');
+define('KEY_ARK_GIFT', 'ark_gift');
+define('KEY_ARK2', 'ark2');
+define('KEY_ARK2_GIFT', 'ark2_gift');
+define('KEY_STW', 'stw');
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
@@ -73,18 +74,21 @@ $product_details = [];
 while (!$results->EOF()) {
 	$key = '';
 	switch ($results->Field('product_id')) {
-	case OMNI_UUID:
-		$key = 'omni';
+	case BeaconShop::ARK_PRODUCT_ID:
+		$key = KEY_ARK;
 		break;
-	case STW_UUID:
-		$key = 'stw';
+	case BeaconShop::ARK_GIFT_ID:
+		$key = KEY_ARK_GIFT;
 		break;
-	case GIFT_UUID:
-		$key = 'gift';
+	case BeaconShop::ARK2_PRODUCT_ID:
+		$key = KEY_ARK2;
 		break;
-	case SLOT_UUID:
- 		$key = 'slot';
- 		break;
+	case BeaconShop::ARK2_GIFT_ID:
+		$key = KEY_ARK2_GIFT;
+		break;
+	case BeaconShop::STW_ID:
+		$key = KEY_STW;
+		break;
 	}
 	if (empty($key)) {
 		$results->MoveNext();
@@ -99,12 +103,12 @@ while (!$results->EOF()) {
 	$results->MoveNext();
 }
 
-if (isset($product_details['omni']) === false) {
+if (isset($product_details[KEY_ARK]) === false) {
 	throw new Exception('Unable to find Omni product');
 	exit;
 }
 
-$teams_enabled = BeaconCommon::TeamsEnabled();
+$ark2_enabled = isset($product_details[KEY_ARK2]);
 
 BeaconTemplate::StartStyles(); ?>
 <style type="text/css">
@@ -217,60 +221,75 @@ BeaconTemplate::FinishStyles();
 BeaconTemplate::StartScript();
 ?>
 <script>
+"use strict";
+
 var checking_email = false;
-var owns_omni = false;
-var is_child = false;
+var owns_ark = false;
 
+var ark_checkbox = null;
 var stw_quantity_field = null;
-var gift_quantity_field = null;
-var slot_quantity_field = null;
+var ark_gift_quantity_field = null;
 
-var update_total = function() {
-	var include_omni = owns_omni === false && is_child === false && document.getElementById('omni_checkbox').checked;
-	var stw_quantity = 0;
+<?php if ($ark2_enabled) { ?>var ark2_checkbox = null;
+var owns_ark2 = false;
+var ark2_gift_quantity_field = null;<?php } ?>
+
+let update_total = function() {
+	let include_ark = owns_ark === false && ark_checkbox && ark_checkbox.checked;
+	let stw_quantity = 0;
 	if (stw_quantity_field) {
 		stw_quantity = Math.min(stw_quantity_field.value, 10);
 	}
-	var gift_quantity = 0;
-	if (gift_quantity_field) {
-		gift_quantity = Math.min(gift_quantity_field.value, 10);
+	let ark_gift_quantity = 0;
+	if (ark_gift_quantity_field) {
+		ark_gift_quantity = Math.min(ark_gift_quantity_field.value, 10);
 	}
-	var slot_quantity = 0;
 	
 	if (stw_quantity_field && stw_quantity_field.value != stw_quantity) {
 		stw_quantity_field.value = stw_quantity;
 	}
-	if (gift_quantity_field && gift_quantity_field.value != gift_quantity) {
-		gift_quantity_field.value = gift_quantity;
+	if (ark_gift_quantity_field && ark_gift_quantity_field.value != ark_gift_quantity) {
+		ark_gift_quantity_field.value = ark_gift_quantity;
 	}
-	if (slot_quantity_field && slot_quantity_field.value != slot_quantity) {
- 		slot_quantity_field.value = slot_quantity
- 	}
 	
-	var omni_price = <?php echo json_encode($product_details['omni']['price']); ?>;
-	var stw_price = <?php echo json_encode($product_details['stw']['price']); ?>;
-	var gift_price = <?php echo json_encode($product_details['gift']['price']); ?>;
-	var slot_price = 0;
-	var total = (stw_price * stw_quantity) + (gift_price * gift_quantity) + (slot_price * slot_quantity);
-	if (include_omni) {
-		total += omni_price;
+	let ark_price = <?php echo json_encode($product_details[KEY_ARK]['price']); ?>;
+	let ark_gift_price = <?php echo json_encode($product_details[KEY_ARK_GIFT]['price']); ?>;
+	let stw_price = <?php echo json_encode($product_details[KEY_STW]['price']); ?>;
+	let total = (stw_price * stw_quantity) + (ark_gift_price * ark_gift_quantity);
+	if (include_ark) {
+		total += ark_price;
 	}
+	
+	<?php if ($ark2_enabled) { ?>let ark2_gift_quantity = 0;
+	let include_ark2 = ark2_checkbox && ark2_checkbox.checked;
+	if (ark2_gift_quantity_field) {
+		ark2_gift_quantity = Math.min(ark2_gift_quantity_field.value, 10);
+	}
+	if (ark2_gift_quantity_field && ark2_gift_quantity_field.value != ark2_gift_quantity) {
+		ark2_gift_quantity_field.value = ark2_gift_quantity;
+	}
+	let ark2_price = <?php echo json_encode($product_details[KEY_ARK2]['price']); ?>;
+	let ark2_gift_price = <?php echo json_encode($product_details[KEY_ARK2_GIFT]['price']); ?>;
+	total += (ark2_gift_price * ark2_gift_quantity);
+	if (include_ark2) {
+		total += ark2_price;
+	}<?php } ?>
 	
 	document.getElementById('total_field').innerHTML = <?php echo json_encode($currency_symbol); ?> + format_currency(total, <?php echo json_encode($decimal_character); ?>, <?php echo json_encode($thousands_character); ?>) + <?php echo json_encode(' ' . $currency); ?>;
 	document.getElementById('stripe_checkout_button').disabled = (total == 0) || validate_email(document.getElementById('checkout_email_field').value) == false;
 };
 
-var format_currency = function(amount, decimal_character, thousands_character) {
-	var adjusted_amount = Math.round(amount * 100).toString();
+let format_currency = function(amount, decimal_character, thousands_character) {
+	let adjusted_amount = Math.round(amount * 100).toString();
 	if (adjusted_amount.length < 3) {
 		adjusted_amount = '000'.substr(adjusted_amount.length) + adjusted_amount;
 	}
-	var decimals = adjusted_amount.substr(adjusted_amount.length - 2, 2);
-	var whole = adjusted_amount.substr(0, adjusted_amount.length - 2);
+	let decimals = adjusted_amount.substr(adjusted_amount.length - 2, 2);
+	let whole = adjusted_amount.substr(0, adjusted_amount.length - 2);
 	return whole + decimal_character + decimals;
 };
 
-var set_view_mode = function() {
+let set_view_mode = function() {
 	window.scrollTo(window.scrollX, 0);
 	if (window.location.hash === '#checkout') {
 		document.getElementById('page_landing').className = 'hidden';
@@ -281,72 +300,80 @@ var set_view_mode = function() {
 	}
 };
 
-var update_checkout_components = function() {
-	if (slot_quantity_field) {
-		if (is_child) {
-			document.getElementById('slot_quantity_field').className = 'hidden';
-			document.getElementById('slot_quantity_prohibited').className = 'text-lighter';
-		} else {
-			document.getElementById('slot_quantity_field').className = 'text-center';
-			document.getElementById('slot_quantity_prohibited').className = 'hidden';
-		}
-	}
-	if (is_child || owns_omni) {
-		document.getElementById('omni_checkbox_frame').className = 'hidden';
-		document.getElementById('omni_owned_caption').className = 'text-lighter';
+let update_checkout_components = function() {
+	if (owns_ark) {
+		document.getElementById('ark_checkbox_frame').className = 'hidden';
+		document.getElementById('ark_owned_caption').className = 'text-lighter';
 	} else {
-		document.getElementById('omni_checkbox_frame').className = '';
-		document.getElementById('omni_owned_caption').className = 'hidden';
-	}
+		document.getElementById('ark_checkbox_frame').className = '';
+		document.getElementById('ark_owned_caption').className = 'hidden';
+	}<?php if ($ark2_enabled) { ?>
+	if (owns_ark2) {
+		document.getElementById('ark2-activelicense').className = '';
+	} else {
+		document.getElementById('ark2-activelicense').className = 'hidden';
+	}<?php } ?>
 	update_total();
 };
 
-var validate_email = function(email) {
-	re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let validate_email = function(email) {
+	let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(String(email).trim().toLowerCase());
 };
 
-var lookup_email = function(email) {
+let lookup_email = function(email) {
+	let process_purchases = function(purchases) {
+		owns_ark = false;
+		<?php if ($ark2_enabled) { ?>owns_ark2 = false;<?php } ?>
+		for (let idx = 0; idx < purchases.length; idx++) {
+			switch (purchases[idx].product_id) {
+			case <?php echo json_encode(BeaconShop::ARK_PRODUCT_ID); ?>:
+				owns_ark = true;
+				break;
+			<?php if ($ark2_enabled) { ?>case <?php echo json_encode(BeaconShop::ARK2_PRODUCT_ID); ?>:
+				owns_ark2 = true;
+				break;<?php } ?>
+			}
+		}
+		update_checkout_components();
+	};
+	
 	checking_email = true;
 	update_checkout_components();
 	if (validate_email(email)) {
 		request.get('/omni/lookup', {'email': email}, function(obj) {
 			checking_email = false;
-			owns_omni = obj.omni;
-			is_child = obj.child;
-			update_checkout_components();
+			process_purchases(obj.purchases);
 		}, function(status, body) {
 			checking_email = false;
-			owns_omni = false;
-			is_child = false;
-			update_checkout_components();
+			process_purchases([]);
 		});
 	} else {
 		checking_email = false;
-		owns_omni = false;
-		is_child = false;
-		update_checkout_components();
+		process_purchases([]);
 	}
 };
 
 document.addEventListener('DOMContentLoaded', function() {
 	stw_quantity_field = document.getElementById('stw_quantity_field');
-	slot_quantity_field = document.getElementById('slot_quantity_field');
-	gift_quantity_field = document.getElementById('gift_quantity_field');
+	ark_gift_quantity_field = document.getElementById('ark_gift_quantity_field');
+	ark_checkbox = document.getElementById('ark_checkbox');
+	<?php if ($ark2_enabled) { ?>ark2_checkbox = document.getElementById('ark2_checkbox');
+	ark2_gift_quantity_field = document.getElementById('ark2_gift_quantity_field');<?php } ?>
 	
 	update_checkout_components();
 	set_view_mode();
 	
 	document.getElementById('buy-button').addEventListener('click', function(ev) {
 		history.pushState({}, '', '/omni/#checkout');
-		var popStateEvent = new PopStateEvent('popstate', {});
+		let popStateEvent = new PopStateEvent('popstate', {});
 		dispatchEvent(popStateEvent);
 		ev.preventDefault();
 	});
 	
 	document.getElementById('cart_back_button').addEventListener('click', function(ev) {
 		history.pushState({}, '', '/omni/');
-		var popStateEvent = new PopStateEvent('popstate', {});
+		let popStateEvent = new PopStateEvent('popstate', {});
 		dispatchEvent(popStateEvent);
 		ev.preventDefault();
 	});
@@ -357,61 +384,66 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 	
-	if (gift_quantity_field) {
-		gift_quantity_field.addEventListener('input', function(ev) {
+	if (ark_gift_quantity_field) {
+		ark_gift_quantity_field.addEventListener('input', function(ev) {
 			update_total();
 		});
 	}
 	
-	if (slot_quantity_field) {
-		slot_quantity_field.addEventListener('input', function(ev) {
+	if (ark_checkbox) {
+		ark_checkbox.addEventListener('change', function(ev) {
 			update_total();
 		});
 	}
 	
-	document.getElementById('omni_checkbox').addEventListener('change', function(ev) {
-		update_total();
-	});
+	<?php if ($ark2_enabled) { ?>if (ark2_gift_quantity_field) {
+		ark2_gift_quantity_field.addEventListener('input', function(ev) {
+			update_total();
+		});
+	}
+	if (ark2_checkbox) {
+		ark2_checkbox.addEventListener('change', function(ev) {
+			update_total();
+		});
+	}<?php } ?>
 	
 	document.getElementById('stripe_checkout_button').addEventListener('click', function(ev) {
 		this.disabled = true;
 		
-		var include_omni = owns_omni === false && is_child === false && document.getElementById('omni_checkbox').checked;
-		var stw_quantity = 0;
+		let include_ark = owns_ark === false && ark_checkbox && ark_checkbox.checked;
+		let stw_quantity = 0;
 		if (stw_quantity_field) {
 			stw_quantity = Math.min(stw_quantity_field.value, 10);
 		}
-		var gift_quantity = 0;
-		if (gift_quantity_field) {
-			gift_quantity = Math.min(gift_quantity_field.value, 10);
+		let ark_gift_quantity = 0;
+		if (ark_gift_quantity_field) {
+			ark_gift_quantity = Math.min(ark_gift_quantity_field.value, 10);
 		}
-		var slot_quantity = 0;
- 		if (is_child === false && slot_quantity_field) {
- 			slot_quantity = Math.min(slot_quantity_field.value, 20);
- 		}
+		<?php if ($ark2_enabled) { ?>let include_ark2 = ark2_checkbox && ark2_checkbox.checked;
+		let ark2_gift_quantity = 0;
+		if (ark2_gift_quantity_field) {
+			ark2_gift_quantity = Math.min(ark2_gift_quantity_field.value, 10);
+		}<?php } ?>
  		
- 		if (owns_omni === false && include_omni === false && slot_quantity > 0) {
- 			this.disabled = false;
- 			dialog.show('You must own Beacon Omni to purchase team licenses.', 'Team members inherit their license from your account. You must own Beacon Omni to add members to your team.');
- 			return;
- 		}
- 		
- 		var checkout_final = function() {
-			var url = '/omni/begin';
-			var formdata = {
+ 		let checkout_final = function() {
+			let url = '/omni/begin';
+			let formdata = {
 				'email': document.getElementById('checkout_email_field').value,
 			};
-			if (include_omni) {
-				formdata.omni = true;
+			if (include_ark) {
+				formdata.ark = true;
 			}
+			if (ark_gift_quantity > 0) {
+				formdata.ark_gift = ark_gift_quantity;
+			}
+			<?php if ($ark2_enabled) { ?>if (include_ark2) {
+				formdata.ark2 = true;
+			}
+			if (ark2_gift_quantity > 0) {
+				formdata.ark2_gift = ark2_gift_quantity;
+			}<?php } ?>
 			if (stw_quantity > 0) {
 				formdata.stw = stw_quantity;
-			}
-			if (gift_quantity > 0) {
-				formdata.gift = gift_quantity;
-			}
-			if (slot_quantity > 0) {
-				formdata.slot = slot_quantity;
 			}
 			
 			request.post(url, formdata, function(obj) {
@@ -421,8 +453,8 @@ document.addEventListener('DOMContentLoaded', function() {
 				
 				window.location.href = obj.url;
 			}, function(status, body) {
-				var error = JSON.parse(body);
-				var message = body;
+				let error = JSON.parse(body);
+				let message = body;
 				if (error.message) {
 					message = error.message;
 				}
@@ -431,15 +463,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 		};
 		
-		if (slot_quantity > 0) {
-			dialog.confirm('Beacon Team licenses are not for resale.', 'Team licenses are intended for your admins to help you run your server or cluster. If you are caught abusing this feature in any way, such as reselling licenses, all your licenses will be terminated and you will not receive a refund.', 'I Agree', 'Cancel').then(checkout_final).catch(update_total);
-		} else {
-			checkout_final();
-		}
+		checkout_final();
 	});
 	
 	document.getElementById('checkout_email_field').addEventListener('input', function() {
-		var callback = function () {
+		let callback = function () {
 			lookup_email(this.value);
 			update_total();
 		};
@@ -451,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.timer = setTimeout(callback, 250);
 	});
 	
-	var email = null;
+	let email = null;
 	if (sessionStorage) {
 		email = sessionStorage.getItem('email');
 	}
@@ -463,11 +491,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		lookup_email(email);
 	}
 	
-	var currency_links = document.getElementsByClassName('currency-button');
-	for (var i = 0; i < currency_links.length; i++) {
-		var currency_link = currency_links.item(i);
+	let currency_links = document.getElementsByClassName('currency-button');
+	for (let i = 0; i < currency_links.length; i++) {
+		let currency_link = currency_links.item(i);
 		currency_link.addEventListener('click', function(ev) {
-			var currency_code = this.getAttribute('currency');
+			let currency_code = this.getAttribute('currency');
 			ev.preventDefault();
 			
 			request.get('/omni/currency', {'currency': currency_code}, function(obj)  {
@@ -625,29 +653,43 @@ BeaconTemplate::FinishScript();
 				<p class="text-lighter smaller">If you do not already have an account, you will be required to verify this email address before you can use your purchase.</p>
 			</td>
 		</tr>
-		<tr>
-			<td>Beacon Omni<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for yourself.</span></td>
-			<td class="quantity_column"><div id="omni_checkbox_frame"><label class="checkbox"><input type="checkbox" name="omni" id="omni_checkbox" checked><span></span></label></div><span id="omni_owned_caption" class="hidden">Owned</span></td>
-			<td class="price_column"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
-		</tr>
-		<?php if ($teams_enabled) { ?><tr id="slots_row">
- 			<td><span class="tag red">Beta</span> Team Member Account<br><span class="smaller text-lighter">Need to purchase Beacon Omni for another admin on your team? Additional team member licenses can be purchased at any time. <a href="team">Learn more about Beacon for teams</a>.<br><strong>This feature requires Beacon 1.5, which is currently in testing.</strong></span></td>
- 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="slot_quantity_field" min="0" max="20"><span id="slot_quantity_prohibited" class="hidden">N/A</span></td>
- 			<td class="price_column"><?php echo htmlentities($product_details['slot']['price_formatted']); ?>
- 		</tr><?php } ?>
-		<tr>
-			<td>Beacon Omni Gift Codes<br><span class="smaller text-lighter">If you would like to purchase a copy of Beacon Omni for somebody else, this is the option for you. You'll be given codes which you can distribute any way you feel like.</span></td>
-			<td class="quantity_column"><input class="text-center" type="number" value="0" id="gift_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($product_details['gift']['price_formatted']); ?>
+		<?php if ($ark2_enabled) { ?><tr class="header">
+			<td colspan="3">Beacon Omni for Ark 2</td>
 		</tr>
 		<tr>
-			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
+			<td>Beacon Omni for Ark 2 + 1 year of updates<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for Ark 2 for your account. This includes a year of software updates.<span id="ark2-activelicense" class="hidden"> Since your account already has an active update plan, your plan's expiration date will be extended for an additional year.</span></span></td>
+			<td class="quantity_column"><div id="ark2_checkbox_frame"><label class="checkbox"><input type="checkbox" name="ark2" id="ark2_checkbox" checked><span></span></label></div></td>
+			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK2]['price_formatted']); ?></td>
+		</tr>
+		<tr>
+			<td>Beacon Omni For Ark 2 + 1 year of upates (Gift Code)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
+			<td class="quantity_column"><input class="text-center" type="number" value="0" id="ark2_gift_quantity_field" min="0" max="10"></td>
+			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK2_GIFT]['price_formatted']); ?>
+		</tr><?php } ?>
+		<tr class="header">
+			<td colspan="3">Beacon Omni for Ark: Survival Evolved</td>
+		</tr>
+		<tr>
+			<td>Beacon Omni for Ark: Survival Evolved<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for Ark: Survival Evolved for your account. All software updates are included for life.</span></td>
+			<td class="quantity_column"><div id="ark_checkbox_frame"><label class="checkbox"><input type="checkbox" name="ark" id="ark_checkbox" <?php if ($ark2_enabled === false) { ?>checked<?php } ?>><span></span></label></div><span id="ark_owned_caption" class="hidden">Owned</span></td>
+			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK]['price_formatted']); ?></td>
+		</tr>
+		<tr>
+			<td>Beacon Omni for Ark: Survival Evolved (Gift Code)<br><span class="smaller text-lighter">Same option as above, except you will be sent a gift code that can be given away however you'd like.</span></td>
+			<td class="quantity_column"><input class="text-center" type="number" value="0" id="ark_gift_quantity_field" min="0" max="10"></td>
+			<td class="price_column"><?php echo htmlentities($product_details[KEY_ARK_GIFT]['price_formatted']); ?>
+		</tr>
+		<tr class="header">
+			<td colspan="3">Other Stuff</td>
+		</tr>
+		<tr>
+			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">This of this like a tip jar. Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="stw_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($product_details['stw']['price_formatted']); ?>
+			<td class="price_column"><?php echo htmlentities($product_details[KEY_STW]['price_formatted']); ?>
 		</tr>
 		<tr>
 			<td colspan="2" class="text-right">Total</td>
-			<td class="price_column" id="total_field"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
+			<td class="price_column" id="total_field"><?php echo htmlentities($product_details[KEY_ARK]['price_formatted']); ?></td>
 		</tr>
 		<tr>
 			<td colspan="3" class="text-center">

@@ -3,26 +3,30 @@
 namespace BeaconAPI;
 
 class User implements \JsonSerializable {
-	const OmniFree = false;
+	const ARK_FREE = false;
+	const ARK2_FREE = false;
 	
-	protected $user_id = '';
-	protected $username = null;
-	protected $email_id = null;
-	protected $public_key = '';
-	protected $private_key = null;
-	protected $private_key_salt = null;
-	protected $private_key_iterations = null;
-	protected $signatures = array();
-	protected $purchased_omni_version = -1;
-	protected $expiration = '';
-	protected $usercloud_key = null;
 	protected $banned = false;
+	protected $email_id = null;
 	protected $enabled = true;
-	protected $require_password_change = false;
+	protected $expiration = '';
+	protected $license_hash_members = [];
+	protected $license_mask = -1;
+	protected $licenses = [];
+	protected $licenses_loaded = false;
 	protected $parent_account_id = null;
+	protected $private_key = null;
+	protected $private_key_iterations = null;
+	protected $private_key_salt = null;
+	protected $public_key = '';
+	protected $require_password_change = false;
+	protected $signatures = [];
+	protected $user_id = '';
+	protected $usercloud_key = null;
+	protected $username = null;
 	
-	private $has_child_accounts = null;
 	private $child_accounts = null;
+	private $has_child_accounts = null;
 	
 	public function __construct($source = null) {
 		if ($source instanceof \BeaconRecordSet) {
@@ -167,31 +171,25 @@ class User implements \JsonSerializable {
 	}
 	
 	public function OmniVersion() {
-		if ($this->purchased_omni_version === -1) {
-			$this->purchased_omni_version = 0;
-			if (self::OmniFree) {
-				$this->purchased_omni_version = 1;
-			} elseif ($this->enabled === true) {
-				$database = \BeaconCommon::Database();
-				if (is_null($this->parent_account_id)) {
-					$purchases = $database->Query('SELECT product_id FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
-				} else {
-					$purchases = $database->Query('SELECT DISTINCT product_id FROM purchased_products INNER JOIN users ON (purchased_products.purchaser_email = users.email_id) WHERE users.user_id = $1;', $this->parent_account_id);
-				}
-				while (!$purchases->EOF()) {
-					$omni_version = 0;
-					$product_id = $purchases->Field('product_id');
-					switch ($product_id) {
-					case '972f9fc5-ad64-4f9c-940d-47062e705cc5':
-						$omni_version = 1;
-						break;
-					}
-					$this->purchased_omni_version = max($this->purchased_omni_version, $omni_version);
-					$purchases->MoveNext();
-				}
-			}	
+		$this->LoadLicenses();
+		return $this->license_mask;
+	}
+	
+	// Do not use the method, use Licenses instead
+	public function Purchases() {
+		return $this->Licenses();
+	}
+	
+	public function Licenses() {
+		$this->LoadLicenses();
+		return $this->licenses;
+	}
+	
+	public function LicenseInfo(string $product_id) {
+		$this->LoadLicenses();
+		if (array_key_exists($product_id, $this->licenses)) {
+			return $this->licenses[$product_id];
 		}
-		return $this->purchased_omni_version;
 	}
 	
 	public function IsBanned() {
@@ -637,7 +635,7 @@ class User implements \JsonSerializable {
 	}
 	
 	public function jsonSerialize() {
-		$arr = array(
+		$arr = [
 			'user_id' => $this->user_id,
 			'username' => $this->username,
 			'public_key' => $this->public_key,
@@ -646,21 +644,92 @@ class User implements \JsonSerializable {
 			'private_key_iterations' => $this->private_key_iterations,
 			'banned' => $this->banned,
 			'signatures' => $this->signatures,
-			'omni_version' => $this->OmniVersion(),
+			'licenses' => $this->licenses,
+			'omni_version' => $this->license_mask,
 			'usercloud_key' => $this->usercloud_key
-		);
-		if (!empty($this->expiration)) {
+		];
+		if (empty($this->expiration) === false) {
 			$arr['expiration'] = $this->expiration;
 		}
 		return $arr;
 	}
 	
-	public function PrepareSignatures(string $hardware_id) {
-		// version 1
-		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->OmniVersion()));
-		if (self::OmniFree) {
-			$expires = (floor(time() / 604800) * 604800) + 2592000;
+	public function LoadLicenses() {
+		if ($this->licenses_loaded === true) {
+			return;
+		}
+		
+		$database = \BeaconCommon::Database();
+		$purchases = [];
+		$hash_members = [];
+		$combined_flags = 0;
+		
+		$free_licenses = [];
+		if (self::ARK_FREE) {
+			$free_licenses[] = \BeaconShop::ARK_PRODUCT_ID;
+		}
+		if (self::ARK2_FREE) {
+			$free_licenses[] = \BeaconShop::ARK2_PRODUCT_ID;
+		}
+		if (count($free_licenses) > 0) {
+			$expires = (floor(time() / 604800) * 604800) + 1209600;
 			$this->expiration = date('Y-m-d H:i:sO', $expires);
+		}
+		foreach ($free_licenses as $product_id) {
+			$results = $database->Query('SELECT product_id, flags FROM products WHERE product_id = $1;', $product_id);
+			if ($results->RecordCount() === 1) {
+				$purchase = [
+					'product_id' => $results->Field('product_id'),
+					'flags' => intval($results->Field('flags'))
+				];
+				$combined_flags = $combined_flags | $purchase['flags'];
+				$hash_data = strtolower($purchase['product_id']) . ':' . strval($purchase['flags']);
+				$purchases[] = $purchase;
+				$hash_members[] = $hash_data;
+			}
+		}
+		
+		$results = $database->Query('SELECT product_id, EXTRACT(epoch FROM expiration) AS expiration, flags FROM purchased_products WHERE purchaser_email = $1 ORDER BY product_id;', $this->email_id);
+		while ($results->EOF() === false) {
+			$purchase = [
+				'product_id' => $results->Field('product_id'),
+				'flags' => intval($results->Field('flags'))
+			];
+			$combined_flags = $combined_flags | $purchase['flags'];
+			$hash_data = strtolower($purchase['product_id']) . ':' . strval($purchase['flags']);
+			
+			$expires = $results->Field('expiration');
+			if (is_null($expires) === false) {
+				$expires_str = date('Y-m-d H:i:sO', intval($expires));
+				$purchase['expires'] = $expires_str;
+				$hash_data .= ':' . $expires_str;
+			}
+			$purchases[] = $purchase;
+			$hash_members[] = $hash_data;
+			$results->MoveNext();
+		}
+		$this->licenses = $purchases;
+		$this->license_hash_members = $hash_members;
+		$this->licenses_loaded = true;
+		$this->license_mask = $combined_flags;
+	}
+	
+	// Don't use this method, use LoadLicenses or PrepareSignatures
+	public function Prepare(string $hardware_id) {
+		$this->PrepareSignatures($hardware_id);
+	}
+	
+	public function PrepareSignatures(string $hardware_id) {
+		if (count($this->signatures) !== 0) {
+			return;
+		}
+		
+		$this->LoadLicenses();
+		
+		$user_id = strtolower($this->UserID());
+		// signature v1
+		$fields = [$hardware_id, $user_id, strval($this->license_mask)];
+		if (empty($this->expiration) === false) {
 			$fields[] = $this->expiration;
 		}
 		$signature = '';
@@ -668,16 +737,24 @@ class User implements \JsonSerializable {
 			$this->signatures['1'] = bin2hex($signature);
 		}
 		
-		// version 2
-		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->OmniVersion()), ($this->banned ? 'Banned' : 'Clean'));
-		if (self::OmniFree) {
-			$expires = (floor(time() / 604800) * 604800) + 2592000;
-			$this->expiration = date('Y-m-d H:i:sO', $expires);
+		// signature v2
+		$fields = [$hardware_id, $user_id, strval($this->license_mask), ($this->banned ? 'Banned' : 'Clean')];
+		if (empty($this->expiration) === false) {
 			$fields[] = $this->expiration;
 		}
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['2'] = bin2hex($signature);
+		}
+		
+		// signature v3
+		$fields = [$hardware_id, $user_id, implode(';', $this->license_hash_members), ($this->banned ? 'Banned' : 'Clean')];
+		if (empty($this->expiration) === false) {
+			$fields[] = $this->expiration;
+		}
+		$signature = '';
+		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			$this->signatures['3'] = bin2hex($signature);
 		}
 	}
 	

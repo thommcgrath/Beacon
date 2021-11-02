@@ -19,6 +19,10 @@ if (isset($_SESSION['STW_PUBLIC_KEY'])) {
 	unset($private_key);
 }
 
+$database = BeaconCommon::Database();
+$results = $database->Query('SELECT product_id FROM products WHERE product_id = $1;', BeaconShop::ARK2_PRODUCT_ID);
+$ark2_enabled = $results->RecordCount() === 1;
+
 BeaconTemplate::AddScript('https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js');
 
 BeaconTemplate::StartScript(); ?>
@@ -33,7 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		var join_button = document.getElementById('stw_join_button');
 		join_button.disabled = true;
 		
-		var fields = {'email': encrypted};
+		<?php if ($ark2_enabled) { ?>var product_id = document.getElementById('ark_radio').value;
+		if (document.getElementById('ark2_radio').checked) {
+			product_id = document.getElementById('ark2_radio').value;
+		}<?php } else { ?>var product_id = document.getElementById('product_id').value;<?php } ?>
+		
+		var fields = {'email': encrypted, 'product_id': product_id};
 		request.post('submit', fields, function (obj) {
 			var container = document.getElementById('stw_container');
 			container.innerHTML = 'Ok, ' + obj.email + ' is now on the list! If selected, you will receive an email with instructions.';
@@ -69,7 +78,16 @@ BeaconTemplate::FinishScript();
 <h3>How to get a free copy of Beacon Omni</h3>
 <p>If you'd like to be a potential recipient of a free Beacon Omni license under the <em>Share The Wealth</em> program, all you need to do is add your email address.</p>
 <div id="stw_container" class="text-center inset-note">
-<form action="#" method="post" id="stw_form"><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"><br><br><input type="submit" value="Join the Program" id="stw_join_button"></form>
+	<form action="#" method="post" id="stw_form">
+		<?php if ($ark2_enabled) { ?>
+		<p class="bold">Product</p>
+		<ul class="no-markings">
+			<li><label for="ark2_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK2_PRODUCT_ID; ?>" id="ark2_radio" checked><span></span>Beacon Omni for Ark 2</label></li>
+			<li><label for="ark_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK_PRODUCT_ID; ?>" id="ark_radio"><span></span>Beacon Omni for Ark: Survival Evolved</label></li>
+		</ul>
+		<?php } ?><p><?php if ($ark2_enabled === false) { ?><input type="hidden" name="product_id" value="<?php echo htmlentities(BeaconShop::ARK_PRODUCT_ID); ?>"><?php } ?><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"></p>
+		<p><input type="submit" value="Join the Program" id="stw_join_button"></p>
+	</form>
 </div>
 <p class="smaller">There's no guarantee when or if your address will be chosen at random. Odds of selection depend on number of participants and purchasers. One recipient will be chosen each day at <?php echo $utc->format('g:i A T'); ?> / <?php echo $est->format('g:i A T'); ?> / <?php echo $pst->format('g:i A T'); ?>, as long as there are Beacon Omni licenses waiting in the <em>Share The Wealth</em> program. Participants will be removed from the list after six months.</p>
 <p class="smaller">Because Beacon is so interested in privacy, email addresses are normally stored as a one-way hash. However, the <em>Share The Wealth</em> program requires email addresses to be accessible to send out notifications to recipients. Therefore, email addresses entered into the <em>Share The Wealth</em> program will be stored using encryption instead of hashing. If selected, the encrypted email address will be discarded and converted to a high security hashed value.</p>
