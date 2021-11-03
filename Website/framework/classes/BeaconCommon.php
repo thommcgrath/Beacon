@@ -684,6 +684,32 @@ abstract class BeaconCommon {
 	public static function IsBeacon() {
 		return (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, 7) === 'Beacon/');
 	}
+	
+	public static function BuildDateForVersion($version) {
+		if (is_string($version)) {
+			$version = self::VersionToBuildNumber($version);
+		}
+		
+		$stage = floor(($version / pow(10, 2)) % 10);
+		$minor = floor($version / 1000) * 1000;
+		if ($stage < 3) {
+			$min_stage = 0;
+			$max_stage = 2;
+			$stage = 0;
+		} else {
+			$min_stage = 3;
+			$max_stage = 99;
+		}
+		$base = $minor + ($stage * 100);
+		
+		$database = self::Database();
+		$results = $database->Query('SELECT EXTRACT(epoch FROM published) AS published FROM updates WHERE build_number >= $1 AND stage >= $2 AND stage <= $3 ORDER BY build_number LIMIT 1;', $base, $min_stage, $max_stage);
+		if ($results->RecordCount() === 0) {
+			return date('Y-m-d H:i:sO', time());
+		} else {
+			return date('Y-m-d H:i:sO', $results->Field('published'));
+		}
+	}
 }
 
 ?>
