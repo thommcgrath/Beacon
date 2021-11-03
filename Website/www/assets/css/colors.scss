@@ -200,6 +200,10 @@
 			}
 		}
 		
+		&.no-row-colors tbody tr {
+			background-color: transparent;
+		}
+		
 		td, th {
 			border-color: $separator-color;
 		}

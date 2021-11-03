@@ -645,7 +645,7 @@ BeaconTemplate::FinishScript();
 </div>
 <div id="page_cart" class="hidden">
 	<p id="cart_back_paragraph"><button id="cart_back_button">&laquo; Back</button></p>
-	<table class="generic">
+	<table class="generic no-row-colors">
 		<tr>
 			<td colspan="3">
 				<p>Beacon Account E-Mail Address</p>

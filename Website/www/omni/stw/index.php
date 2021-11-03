@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		var join_button = document.getElementById('stw_join_button');
 		join_button.disabled = true;
 		
-		<?php if ($ark2_enabled) { ?>var product_id = document.getElementById('ark_radio').value;
-		if (document.getElementById('ark2_radio').checked) {
+		var product_id = document.getElementById('ark_radio').value;
+		<?php if ($ark2_enabled) { ?>if (document.getElementById('ark2_radio').checked) {
 			product_id = document.getElementById('ark2_radio').value;
-		}<?php } else { ?>var product_id = document.getElementById('product_id').value;<?php } ?>
+		}<?php } ?>
 		
 		var fields = {'email': encrypted, 'product_id': product_id};
 		request.post('submit', fields, function (obj) {
@@ -85,7 +85,7 @@ BeaconTemplate::FinishScript();
 			<li><label for="ark2_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK2_PRODUCT_ID; ?>" id="ark2_radio" checked><span></span>Beacon Omni for Ark 2</label></li>
 			<li><label for="ark_radio" class="radio"><input type="radio" name="product_id" value="<?php echo BeaconShop::ARK_PRODUCT_ID; ?>" id="ark_radio"><span></span>Beacon Omni for Ark: Survival Evolved</label></li>
 		</ul>
-		<?php } ?><p><?php if ($ark2_enabled === false) { ?><input type="hidden" name="product_id" value="<?php echo htmlentities(BeaconShop::ARK_PRODUCT_ID); ?>"><?php } ?><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"></p>
+		<?php } ?><p><?php if ($ark2_enabled === false) { ?><input type="hidden" name="product_id" value="<?php echo htmlentities(BeaconShop::ARK_PRODUCT_ID); ?>" id="ark_radio"><?php } ?><input type="email" placeholder="E-Mail Address" id="stw_email_field" name="email"></p>
 		<p><input type="submit" value="Join the Program" id="stw_join_button"></p>
 	</form>
 </div>
