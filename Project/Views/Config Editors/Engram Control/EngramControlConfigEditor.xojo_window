@@ -510,7 +510,7 @@ End
 		      
 		      If Config.AutoUnlockAllEngrams Or (IsNull(AutoUnlock) = False And AutoUnlock.BooleanValue = True) Then
 		        If IsNull(RequiredLevel) = False And RequiredLevel.IntegerValue > 0 Then
-		          Behaviors.Add("Auto unlocks at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
+		          Behaviors.Add("Auto unlocks at " + If(RequiredLevel.IntegerValue > 1, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
 		        Else
 		          Behaviors.Add("Auto unlocks at spawn")
 		        End If

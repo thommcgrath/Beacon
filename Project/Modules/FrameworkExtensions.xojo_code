@@ -139,6 +139,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Coalesce(ParamArray Values() As Variant) As Variant
+		  For Idx As Integer = 0 To Values.LastIndex
+		    If Values(Idx).IsNull = False Then
+		      Return Values(Idx)
+		    End If
+		  Next Idx
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CompareValues(Value1 As Double, Value2 As Double) As Integer
 		  If Value1 > Value2 Then
 		    Return 1
