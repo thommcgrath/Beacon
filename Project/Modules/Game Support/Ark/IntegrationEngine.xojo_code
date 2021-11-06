@@ -153,7 +153,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Function ValidateContent(Content As String, Filename As String) As Boolean
-		  Var MissingHeaders() As String = Beacon.ValidateIniContent(Content, Filename)
+		  Var MissingHeaders() As String = Ark.ValidateIniContent(Content, Filename)
 		  
 		  If MissingHeaders.Count = 0 Then
 		    Return True

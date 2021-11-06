@@ -1,5 +1,5 @@
 #tag Class
-Protected Class Task
+Protected Class ProjectTool
 	#tag Method, Flags = &h0
 		Function Caption() As String
 		  Return Self.mCaption
@@ -7,47 +7,47 @@ Protected Class Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Caption As String, UUID As String, RelevantEditors() As String)
+		Sub Constructor(Caption As String, UUID As String, RelevantGroups() As String)
 		  Self.mCaption = Caption
 		  Self.mUUID = UUID
 		  
-		  Self.mEditors.ResizeTo(RelevantEditors.LastIndex)
-		  For Idx As Integer = 0 To Self.mEditors.LastIndex
-		    Self.mEditors(Idx) = RelevantEditors(Idx)
+		  Self.mGroups.ResizeTo(RelevantGroups.LastIndex)
+		  For Idx As Integer = 0 To Self.mGroups.LastIndex
+		    Self.mGroups(Idx) = RelevantGroups(Idx)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Caption As String, UUID As String, ParamArray RelevantEditors() As String)
-		  Self.Constructor(Caption, UUID, RelevantEditors)
+		Sub Constructor(Caption As String, UUID As String, ParamArray RelevantGroups() As String)
+		  Self.Constructor(Caption, UUID, RelevantGroups)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FirstEditor() As String
-		  Return Self.mEditors(0)
+		Function FirstGroup() As String
+		  Return Self.mGroups(0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsRelevantForEditor(Group As Beacon.ConfigGroup) As Boolean
+		Function IsRelevantForGroup(Group As Ark.ConfigGroup) As Boolean
 		  If Group Is Nil Then
 		    Return False
 		  End If
 		  
-		  Return Self.IsRelevantForEditor(Group.ConfigName)
+		  Return Self.IsRelevantForGroup(Group.InternalName)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsRelevantForEditor(GroupName As String) As Boolean
-		  Return Self.mEditors.IndexOf(GroupName) > -1
+		Function IsRelevantForGroup(GroupName As String) As Boolean
+		  Return Self.mGroups.IndexOf(GroupName) > -1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As BeaconConfigs.Task) As Integer
+		Function Operator_Compare(Other As Ark.ProjectTool) As Integer
 		  If Other Is Nil Then
 		    Return 1
 		  End If
@@ -72,7 +72,7 @@ Protected Class Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEditors() As String
+		Private mGroups() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

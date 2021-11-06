@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSet
-Implements Beacon.Countable,Iterable, Ark.Weighted
+Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mMinNumItems = 1
@@ -151,7 +151,7 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		  Var MaxQualityModifiers() As Integer
 		  Var BlueprintMultipliers() As Double
 		  For Each LootSelectorUUID As String In ActiveModifiers
-		    Var LootSelector As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootTemplateSelector(LootSelectorUUID)
+		    Var LootSelector As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelector(LootSelectorUUID)
 		    If (LootSelector Is Nil) = False And LootSelector.Matches(ForLootContainer) Then
 		      QuantityMultipliers.Add(Template.QuantityMultiplier(LootSelectorUUID))
 		      MinQualityModifiers.Add(Template.MinQualityOffset(LootSelectorUUID))
@@ -507,7 +507,7 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		Function SaveData() As Dictionary
 		  Var Children() As Dictionary
 		  For Each Entry As Ark.LootItemSetEntry In Self.mEntries
-		    Children.Add(Entry.SaveData(False))
+		    Children.Add(Entry.SaveData)
 		  Next
 		  
 		  Var Keys As New Dictionary
@@ -641,6 +641,16 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		Function UUID() As String
 		  Return Self.mUUID
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  For Each Entry As Ark.LootItemSetEntry In Self.mEntries
+		    Entry.Validate(Location + "." + Self.UUID, Issues, Project)
+		  Next Entry
+		End Sub
 	#tag EndMethod
 
 

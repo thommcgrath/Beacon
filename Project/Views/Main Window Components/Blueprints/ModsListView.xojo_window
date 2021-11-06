@@ -71,7 +71,6 @@ Begin BeaconSubview ModsListView
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   "False"
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True

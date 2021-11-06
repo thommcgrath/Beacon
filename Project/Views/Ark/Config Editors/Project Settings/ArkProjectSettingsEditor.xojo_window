@@ -339,7 +339,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return "metadata"
+		  Return Ark.Configs.NameMetadataPsuedo
 		End Function
 	#tag EndMethod
 

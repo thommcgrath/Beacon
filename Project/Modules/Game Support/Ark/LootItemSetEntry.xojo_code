@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSetEntry
-Implements Beacon.Countable,Iterable, Ark.Weighted
+Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
@@ -45,7 +45,7 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		  Self.mMaxQuality = Ark.Qualities.Tier3
 		  Self.mChanceToBeBlueprint = 0.25
 		  Self.mWeight = 250
-		  Self.mUniqueID = ""
+		  Self.mUUID = ""
 		  Self.mSingleItemMode = False
 		End Sub
 	#tag EndMethod
@@ -62,7 +62,7 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		  Self.mMinQuality = Source.mMinQuality
 		  Self.mMinQuantity = Source.mMinQuantity
 		  Self.mWeight = Source.mWeight
-		  Self.mUniqueID = Source.mUniqueID
+		  Self.mUUID = Source.mUUID
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
@@ -575,7 +575,7 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		    Return 1
 		  End If
 		  
-		  If Self.mUniqueID.IsEmpty = False And Self.mUniqueID = Other.mUniqueID Then
+		  If Self.mUUID.IsEmpty = False And Self.mUUID = Other.mUUID Then
 		    Return 0
 		  End If
 		  
@@ -807,13 +807,23 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UniqueID() As String
+		Function UUID(Create As Boolean = True) As String
 		  // For efficiency, don't create a UUID until it is needed
-		  If Self.mUniqueID = "" Then
-		    Self.mUniqueID = New v4UUID
+		  If Self.mUUID.IsEmpty And Create Then
+		    Self.mUUID = New v4UUID
 		  End If
-		  Return Self.mUniqueID
+		  Return Self.mUUID
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
+		    Option.Validate(Location + "." + Self.UUID, Issues, Project)
+		  Next Option
+		End Sub
 	#tag EndMethod
 
 
@@ -861,8 +871,8 @@ Implements Beacon.Countable,Iterable, Ark.Weighted
 		Protected mSingleItemMode As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUniqueID As String
+	#tag Property, Flags = &h1
+		Protected mUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

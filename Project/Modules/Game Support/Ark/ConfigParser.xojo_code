@@ -12,7 +12,7 @@ Private Class ConfigParser
 		      
 		      Select Case Self.Type
 		      Case Self.TypePair
-		        Self.mValue = New Beacon.Pair(Self.Key, Self.SubParser.Value)
+		        Self.mValue = New Beacon.KeyValuePair(Self.Key, Self.SubParser.Value)
 		        Self.ConsumedLastChar = Self.SubParser.ConsumedLastChar
 		        Self.SubParser = Nil
 		        Return True

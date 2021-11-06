@@ -9,6 +9,16 @@ Inherits Ark.LootItemSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AddBlueprintEntries(Sources() As Ark.LootItemSetEntry) As Ark.LootItemSetEntry()
+		  #if DebugBuild
+		    #Pragma Warning "Does not create blueprint entries"
+		  #else
+		    #Pragma Error "Does not create blueprint entries"
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
 		  

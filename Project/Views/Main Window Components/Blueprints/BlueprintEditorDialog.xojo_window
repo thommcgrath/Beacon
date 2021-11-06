@@ -45,7 +45,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -1568,12 +1568,14 @@ End
 		  
 		  If (Self.mOriginalBlueprint Is Nil) = False Then
 		    Select Case Self.mOriginalBlueprint
-		    Case IsA Beacon.Creature
+		    Case IsA Ark.Creature
 		      Self.TypeMenu.SelectByCaption("Creature")
-		    Case IsA Beacon.Engram
+		    Case IsA Ark.Engram
 		      Self.TypeMenu.SelectByCaption("Engram")
-		    Case IsA Beacon.SpawnPoint
+		    Case IsA Ark.SpawnPoint
 		      Self.TypeMenu.SelectByCaption("Spawn Point")
+		    Case IsA Ark.LootContainer
+		      Self.TypeMenu.SelectByCaption("Loot Container")
 		    End Select
 		    Self.TypeMenu.Enabled = False
 		    Self.PathField.Text = Self.mOriginalBlueprint.Path
@@ -1582,12 +1584,14 @@ End
 		    Self.MapSelector.Mask = Self.mOriginalBlueprint.Availability
 		    
 		    Select Case Self.mOriginalBlueprint
-		    Case IsA Beacon.Engram
-		      Self.LoadEngram(Beacon.Engram(Self.mOriginalBlueprint))
-		    Case IsA Beacon.Creature
-		      Self.LoadCreature(Beacon.Creature(Self.mOriginalBlueprint))
-		    Case IsA Beacon.SpawnPoint
-		      Self.LoadSpawnPoint(Beacon.SpawnPoint(Self.mOriginalBlueprint))
+		    Case IsA Ark.Engram
+		      Self.LoadEngram(Ark.Engram(Self.mOriginalBlueprint))
+		    Case IsA Ark.Creature
+		      Self.LoadCreature(Ark.Creature(Self.mOriginalBlueprint))
+		    Case IsA Ark.SpawnPoint
+		      Self.LoadSpawnPoint(Ark.SpawnPoint(Self.mOriginalBlueprint))
+		    Case IsA Ark.LootContainer
+		      Self.LoadLootContainer(Ark.LootContainer(Self.mOriginalBlueprint))
 		    End Select
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
@@ -1615,10 +1619,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Blueprint As Beacon.Blueprint)
+		Private Sub Constructor(Blueprint As Ark.Blueprint)
 		  Self.mOriginalBlueprint = Blueprint.ImmutableVersion
-		  Self.mModUUID = Blueprint.ModID
-		  Self.mModName = Blueprint.ModName
+		  Self.mModUUID = Blueprint.ContentPackUUID
+		  Self.mModName = Blueprint.ContentPackName
 		  
 		  Super.Constructor
 		End Sub
@@ -1645,7 +1649,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadCreature(Creature As Beacon.Creature)
+		Private Sub LoadCreature(Creature As Ark.Creature)
 		  If Creature.IncubationTime > 0 Then
 		    Self.CreatureIncubationTimeField.Text = Beacon.SecondsToString(Creature.IncubationTime)
 		  End If
@@ -1662,9 +1666,9 @@ End
 		    Self.CreatureIntervalMaxTimeField.Text = Beacon.SecondsToString(Creature.MaxMatingInterval)
 		  End If
 		  
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  For Each Stat As Beacon.Stat In Stats
-		    Var Values As Beacon.CreatureStatValue = Creature.StatValue(Stat)
+		  Var Stats() As Ark.Stat = Ark.Stats.All
+		  For Each Stat As Ark.Stat In Stats
+		    Var Values As Ark.CreatureStatValue = Creature.StatValue(Stat)
 		    If Values Is Nil Then
 		      Continue
 		    End If
@@ -1678,7 +1682,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadEngram(Engram As Beacon.Engram)
+		Private Sub LoadEngram(Engram As Ark.Engram)
 		  Self.EngramEntryStringField.Text = Engram.EntryString
 		  
 		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
@@ -1693,8 +1697,8 @@ End
 		    Self.EngramStackSizeField.Text = Engram.StackSize.IntegerValue.ToString(Locale.Current, ",##0")
 		  End If
 		  
-		  Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
-		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
+		  Var Ingredients() As Ark.CraftingCostIngredient = Engram.Recipe
+		  For Each Ingredient As Ark.CraftingCostIngredient In Ingredients
 		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Ingredient.Quantity.ToString(Locale.Current, ",##0"))
 		    Self.EngramCraftingCostList.CellCheckBoxValueAt(Self.EngramCraftingCostList.LastAddedRowIndex, 2) = Ingredient.RequireExact
 		    Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
@@ -1705,11 +1709,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadSpawnPoint(Point As Beacon.SpawnPoint)
-		  Var Mutable As Beacon.MutableSpawnPoint = Point.MutableVersion
-		  LocalData.SharedInstance.LoadDefaults(Mutable)
+		Private Sub LoadLootContainer(Container As Ark.LootContainer)
+		  #if DebugBuild
+		    #Pragma Warning "Incomplete"
+		  #else
+		    #Pragma Error "Incomplete"
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadSpawnPoint(Point As Ark.SpawnPoint)
+		  Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
+		  Ark.DataSource.SharedInstance.LoadDefaults(Mutable)
 		  
-		  Var Points(0) As Beacon.SpawnPoint
+		  Var Points(0) As Ark.SpawnPoint
 		  Points(0) = Mutable
 		  Self.SpawnPointEditor1.SpawnPoints = Points
 		End Sub
@@ -1743,7 +1757,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Blueprint As Beacon.Blueprint) As Beacon.Blueprint
+		Shared Function Present(Parent As Window, Blueprint As Ark.Blueprint) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -1757,7 +1771,7 @@ End
 		  Var Win As New BlueprintEditorDialog(Blueprint)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Var EditedBlueprint As Beacon.Blueprint
+		  Var EditedBlueprint As Ark.Blueprint
 		  If Not Win.mCancelled Then
 		    EditedBlueprint = Win.mModifiedBlueprint.ImmutableVersion
 		  End If
@@ -1767,7 +1781,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ModUUID As String, ModName As String) As Beacon.Blueprint
+		Shared Function Present(Parent As Window, ModUUID As String, ModName As String) As Ark.Blueprint
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -1775,7 +1789,7 @@ End
 		  Var Win As New BlueprintEditorDialog(ModUUID, ModName)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Var EditedBlueprint As Beacon.Blueprint
+		  Var EditedBlueprint As Ark.Blueprint
 		  If Not Win.mCancelled Then
 		    EditedBlueprint = Win.mModifiedBlueprint.ImmutableVersion
 		  End If
@@ -1802,11 +1816,13 @@ End
 		      Var TempPath As String
 		      Select Case Self.TypeMenu.SelectedRowIndex
 		      Case Self.IndexEngram
-		        TempPath = Beacon.Engram.CreateCustom("", "", Path).Path
+		        TempPath = Ark.Engram.CreateCustom("", "", Path).Path
 		      Case Self.IndexCreature
-		        TempPath = Beacon.Creature.CreateCustom("", "", Path).Path
+		        TempPath = Ark.Creature.CreateCustom("", "", Path).Path
 		      Case Self.IndexSpawnPoint
-		        TempPath = Beacon.SpawnPoint.CreateCustom("", "", Path).Path
+		        TempPath = Ark.SpawnPoint.CreateCustom("", "", Path).Path
+		      Case Self.IndexLootContainer
+		        TempPath = Ark.LootContainer.CreateCustom("", "", Path).Path
 		      End Select
 		      If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Suggestion", "Cancel") Then
 		        Path = TempPath
@@ -1833,15 +1849,17 @@ End
 		    Return False
 		  End If
 		  
-		  Var Blueprint As Beacon.MutableBlueprint
+		  Var Blueprint As Ark.MutableBlueprint
 		  If Self.mOriginalBlueprint Is Nil Then
 		    Select Case Self.TypeMenu.SelectedRowIndex
 		    Case Self.IndexEngram
-		      Blueprint = New Beacon.MutableEngram(Path, New v4UUID)
+		      Blueprint = New Ark.MutableEngram(Path, New v4UUID)
 		    Case Self.IndexCreature
-		      Blueprint = New Beacon.MutableCreature(Path, New v4UUID)
+		      Blueprint = New Ark.MutableCreature(Path, New v4UUID)
 		    Case Self.IndexSpawnPoint
-		      Blueprint = New Beacon.MutableSpawnPoint(Path, New v4UUID)
+		      Blueprint = New Ark.MutableSpawnPoint(Path, New v4UUID)
+		    Case Self.IndexLootContainer
+		      Blueprint = New Ark.MutableLootContainer(Path, New v4UUID)
 		    End Select
 		  Else
 		    Blueprint = Self.mOriginalBlueprint.MutableVersion
@@ -1854,20 +1872,24 @@ End
 		  Blueprint.Label = Label
 		  Blueprint.Tags = Tags
 		  Blueprint.Availability = Availability
-		  Blueprint.ModID = Self.mModUUID
-		  Blueprint.ModName = Self.mModName
+		  Blueprint.ContentPackUUID = Self.mModUUID
+		  Blueprint.ContentPackName = Self.mModName
 		  
 		  Select Case Blueprint
-		  Case IsA Beacon.MutableEngram
-		    If Not Self.UpdateEngram(Beacon.MutableEngram(Blueprint)) Then
+		  Case IsA Ark.MutableEngram
+		    If Not Self.UpdateEngram(Ark.MutableEngram(Blueprint)) Then
 		      Return False
 		    End If
-		  Case IsA Beacon.MutableCreature
-		    If Not Self.UpdateCreature(Beacon.MutableCreature(Blueprint)) Then
+		  Case IsA Ark.MutableCreature
+		    If Not Self.UpdateCreature(Ark.MutableCreature(Blueprint)) Then
 		      Return False
 		    End If
-		  Case IsA Beacon.MutableSpawnPoint
-		    If Not Self.UpdateSpawnPoint(Beacon.MutableSpawnPoint(Blueprint)) Then
+		  Case IsA Ark.MutableSpawnPoint
+		    If Not Self.UpdateSpawnPoint(Ark.MutableSpawnPoint(Blueprint)) Then
+		      Return False
+		    End If
+		  Case IsA Ark.MutableLootContainer
+		    If Not Self.UpdateLootContainer(Ark.MutableLootContainer(Blueprint)) Then
 		      Return False
 		    End If
 		  End Select
@@ -1880,29 +1902,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowStatInRow(Row As Integer, Values As Beacon.CreatureStatValue)
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnLabel) = Language.LabelForStat(Values.Stat)
+		Private Sub ShowStatInRow(Row As Integer, Values As Ark.CreatureStatValue)
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnLabel) = Values.Stat.Label
 		  Self.CreatureStatsList.RowTagAt(Row) = Values
 		  
 		  Var BaseValue As Double = Values.BaseValue
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnBase) = If(BaseValue <> Beacon.Creature.MissingStatValue, BaseValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnBase) = If(BaseValue <> Ark.Creature.MissingStatValue, BaseValue.PrettyText(True), "")
 		  
 		  Var WildValue As Double = Values.WildMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnWild) = If(WildValue <> Beacon.Creature.MissingStatValue, WildValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnWild) = If(WildValue <> Ark.Creature.MissingStatValue, WildValue.PrettyText(True), "")
 		  
 		  Var TamedValue As Double = Values.TamedMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnTamed) = If(TamedValue <> Beacon.Creature.MissingStatValue, TamedValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnTamed) = If(TamedValue <> Ark.Creature.MissingStatValue, TamedValue.PrettyText(True), "")
 		  
 		  Var AddValue As Double = Values.AddMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAdd) = If(AddValue <> Beacon.Creature.MissingStatValue, AddValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAdd) = If(AddValue <> Ark.Creature.MissingStatValue, AddValue.PrettyText(True), "")
 		  
 		  Var AffinityValue As Double = Values.AffinityMultiplier
-		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Beacon.Creature.MissingStatValue, AffinityValue.PrettyText(True), "")
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Ark.Creature.MissingStatValue, AffinityValue.PrettyText(True), "")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateCreature(Creature As Beacon.MutableCreature) As Boolean
+		Private Function UpdateCreature(Creature As Ark.MutableCreature) As Boolean
 		  Const ParseInstructions = "Use a format like ""2 days 3 hours 4 minutes 5 seconds"" to specify an amount of time. Short versions such as ""2d3h4m5s"" may also be used. Omit any units that are not needed. Decimal values may only be used on the seconds field."
 		  
 		  Var IncubationString As String = Self.CreatureIncubationTimeField.Text.Trim
@@ -1956,7 +1978,7 @@ End
 		  Creature.ClearStats
 		  Var Mask As UInt16
 		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
-		    Var Values As Beacon.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
+		    Var Values As Ark.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
 		    Creature.AddStatValue(Values)
 		    Mask = Mask Or Values.Mask
 		  Next
@@ -1967,7 +1989,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateEngram(Engram As Beacon.MutableEngram) As Boolean
+		Private Function UpdateEngram(Engram As Ark.MutableEngram) As Boolean
 		  Var EntryString As String = Self.EngramEntryStringField.Text.Trim
 		  Var RequiredLevelString As String = Self.EngramPlayerLevelField.Text.Trim
 		  Var RequiredPointsString As String = Self.EngramRequiredPointsField.Text.Trim
@@ -2032,7 +2054,7 @@ End
 		  End If
 		  
 		  If Self.EngramCraftingCostList.RowCount > 0  Then
-		    Var Ingredients() As Beacon.RecipeIngredient
+		    Var Ingredients() As Ark.CraftingCostIngredient
 		    For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
 		      Ingredients.Add(Self.EngramCraftingCostList.RowTagAt(Row))
 		    Next
@@ -2046,13 +2068,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateSpawnPoint(Point As Beacon.MutableSpawnPoint) As Boolean
+		Private Function UpdateLootContainer(Container As Ark.MutableLootContainer) As Boolean
+		  #if DebugBuild
+		    #Pragma Warning "Incomplete"
+		  #else
+		    #Pragma Error "Incomplete"
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UpdateSpawnPoint(Point As Ark.MutableSpawnPoint) As Boolean
 		  Var Points() As Ark.SpawnPoint = Self.SpawnPointEditor1.SpawnPoints
 		  If Points.Count <> 1 Then
 		    Return False
 		  End If
 		  
-		  Var Source As Beacon.SpawnPoint = Points(0)
+		  Var Source As Ark.SpawnPoint = Points(0)
 		  Point.SetsString = Source.SetsString
 		  Point.LimitsString = Source.LimitsString
 		  
@@ -2124,6 +2156,9 @@ End
 	#tag Constant, Name = IndexEngram, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = IndexLootContainer, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = IndexSpawnPoint, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
@@ -2134,6 +2169,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageEngramSettings, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageLootSettings, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageSpawnSettings, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -2250,20 +2288,20 @@ End
 #tag Events EngramAddIngredient
 	#tag Event
 		Sub Action()
-		  Var Engrams() As Beacon.Engram
+		  Var Engrams() As Ark.Engram
 		  For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
-		    Engrams.Add(Beacon.RecipeIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
+		    Engrams.Add(Ark.CraftingCostIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
 		  Next
 		  
 		  Var Mods As New Beacon.StringList
-		  Var NewEngrams() As Beacon.Engram = ArkBlueprintSelectorDialog.Present(Self, "Resources", Engrams, Mods, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple)
+		  Var NewEngrams() As Ark.Engram = ArkBlueprintSelectorDialog.Present(Self, "Resources", Engrams, Mods, ArkBlueprintSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastIndex = -1 Then
 		    Return
 		  End If
 		  
-		  For Each Engram As Beacon.Engram In NewEngrams
+		  For Each Engram As Ark.Engram In NewEngrams
 		    If (Engram Is Nil) = False Then
-		      Var Ingredient As New Beacon.RecipeIngredient(Engram, 1, False)
+		      Var Ingredient As New Ark.CraftingCostIngredient(Engram, 1, False)
 		      Self.EngramCraftingCostList.AddRow(Engram.Label, "1")
 		      Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
 		    End If
@@ -2325,11 +2363,11 @@ End
 		Sub Action()
 		  Var UsedStats As UInt16
 		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
-		    Var Values As Beacon.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
+		    Var Values As Ark.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
 		    UsedStats = UsedStats Or Values.Mask
 		  Next
 		  
-		  Var NewStat As Beacon.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats)
+		  Var NewStat As Ark.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats)
 		  If NewStat Is Nil Then
 		    Return
 		  End If
@@ -2388,7 +2426,7 @@ End
 		  If Warn Then
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(Row) Then
-		        Var Ingredient As Beacon.RecipeIngredient = Me.RowTagAt(Row)
+		        Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		        Labels.Add(Ingredient.Engram.Label)
 		      End If
 		    Next
@@ -2415,7 +2453,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Var Ingredient As Beacon.RecipeIngredient = Me.RowTagAt(Row)
+		  Var Ingredient As Ark.CraftingCostIngredient = Me.RowTagAt(Row)
 		  
 		  Select Case Column
 		  Case 1
@@ -2427,10 +2465,10 @@ End
 		      Return
 		    End If
 		    
-		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Quantity, Ingredient.RequireExact)
+		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Quantity, Ingredient.RequireExact)
 		    Me.CellValueAt(Row, Column) = Quantity.ToString(Locale.Current, ",##0")
 		  Case 2
-		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
+		    Me.RowTagAt(Row) = New Ark.CraftingCostIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -2447,8 +2485,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  Var Values1 As Beacon.CreatureStatValue = Me.RowTagAt(Row1)
-		  Var Values2 As Beacon.CreatureStatValue = Me.RowTagAt(Row2)
+		  Var Values1 As Ark.CreatureStatValue = Me.RowTagAt(Row1)
+		  Var Values2 As Ark.CreatureStatValue = Me.RowTagAt(Row2)
 		  
 		  Select Case Column
 		  Case Self.CreatureStatColumnLabel
@@ -2488,14 +2526,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformEdit()
-		  Var Values As Beacon.CreatureStatValue = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var Values As Ark.CreatureStatValue = Me.RowTagAt(Me.SelectedRowIndex)
 		  
 		  Var UsedStats As UInt16
 		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
-		    UsedStats = UsedStats Or Beacon.CreatureStatValue(Self.CreatureStatsList.RowTagAt(Row)).Mask
+		    UsedStats = UsedStats Or Ark.CreatureStatValue(Self.CreatureStatsList.RowTagAt(Row)).Mask
 		  Next
 		  
-		  Var NewStat As Beacon.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats, Values)
+		  Var NewStat As Ark.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats, Values)
 		  If NewStat Is Nil Then
 		    Return
 		  End If
@@ -2522,8 +2560,8 @@ End
 #tag Events SpawnPointEditor1
 	#tag Event
 		Sub Open()
-		  Var Points(0) As Beacon.SpawnPoint
-		  Points(0) = New Beacon.MutableSpawnPoint(Beacon.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25")
+		  Var Points(0) As Ark.SpawnPoint
+		  Points(0) = New Ark.MutableSpawnPoint(Ark.UnknownBlueprintPath("SpawnPoints", "BlueprintEditor_C"), "8cdcd17e-b246-4973-a694-98e0dee33e25")
 		  Me.SpawnPoints = Points
 		End Sub
 	#tag EndEvent

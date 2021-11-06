@@ -48,7 +48,7 @@ Begin BeaconDialog RegisterModDialog
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   1
       Visible         =   True
       Width           =   520
       Begin Label IntroMessageLabel
@@ -890,14 +890,12 @@ Begin BeaconDialog RegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1159,8 +1157,8 @@ End
 #tag Events NameActionButton
 	#tag Event
 		Sub Action()
-		  Var UserMod As Beacon.ModDetails = LocalData.SharedInstance.CreateUserMod(Self.NameInputField.Text.Trim)
-		  Self.mModUUID = UserMod.ModID
+		  Var ContentPack As Ark.ContentPack = Ark.DataSource.SharedInstance.CreateLocalContentPack(Self.NameInputField.Text.Trim)
+		  Self.mModUUID = ContentPack.UUID
 		  
 		  If Self.NameShowInstructionsCheck.Value Then
 		    System.GotoURL(Beacon.WebURL("/help/adding_blueprints_to_beacon"))

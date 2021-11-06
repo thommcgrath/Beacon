@@ -386,6 +386,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EditorForProject(Project As Beacon.Project) As DocumentEditorView
+		  Var Editors() As DocumentEditorView
+		  Var Bound As Integer = Self.PageCount - 1
+		  For Idx As Integer = 0 To Bound
+		    Var Page As BeaconSubview = Self.Page(Idx)
+		    If Page IsA DocumentEditorView And (DocumentEditorView(Page).Project Is Nil) = False And DocumentEditorView(Page).Project.UUID = Project.UUID Then
+		      Return DocumentEditorView(Page)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function FrontmostDocumentEditor(GameID As String) As DocumentEditorView
 		  For Offset As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.FrontmostPage(Offset)

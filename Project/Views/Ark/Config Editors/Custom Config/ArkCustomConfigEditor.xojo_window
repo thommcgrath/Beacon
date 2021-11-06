@@ -186,8 +186,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RunTask(Task As BeaconConfigs.Task)
-		  Select Case Task.UUID
+		Sub RunTool(Tool As Ark.ProjectTool)
+		  Select Case Tool.UUID
 		  Case "d29dc6f8-e834-4969-9cfe-b38e1c052156"
 		    Self.LookForSupportedContent()
 		  End Select

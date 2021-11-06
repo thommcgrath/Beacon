@@ -305,7 +305,7 @@ End
 		  
 		  Var Masks() As UInt64
 		  Var Tags As New Dictionary
-		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
+		  For Each Blueprint As Ark.Blueprint In Self.mBlueprints
 		    Masks.Add(Blueprint.Availability)
 		    
 		    Var BlueprintTags() As String = Blueprint.Tags
@@ -344,7 +344,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Blueprints() As Beacon.Blueprint)
+		Private Sub Constructor(Blueprints() As Ark.Blueprint)
 		  // Calling the overridden superclass constructor.
 		  Self.mBlueprints.ResizeTo(Blueprints.LastIndex)
 		  For Idx As Integer = 0 To Blueprints.LastIndex
@@ -374,7 +374,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Blueprints() As Beacon.Blueprint) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Blueprints() As Ark.Blueprint) As Ark.Blueprint()
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -382,7 +382,7 @@ End
 		  Var Win As New BlueprintMultiEditor(Blueprints)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Var EditedBlueprints() As Beacon.Blueprint
+		  Var EditedBlueprints() As Ark.Blueprint
 		  If Not Win.mCancelled Then
 		    EditedBlueprints = Win.mBlueprints
 		  End If
@@ -400,7 +400,7 @@ End
 		  Var ClearMask As UInt64 = Self.MapSelector.UncheckedMask
 		  
 		  For Idx As Integer = 0 To Self.mBlueprints.LastIndex
-		    Var Blueprint As Beacon.MutableBlueprint = Self.mBlueprints(Idx).MutableVersion
+		    Var Blueprint As Ark.MutableBlueprint = Self.mBlueprints(Idx).MutableVersion
 		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
 		    Blueprint.AddTags(AddTags)
 		    Blueprint.RemoveTags(RemoveTags)
@@ -413,7 +413,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mBlueprints() As Beacon.Blueprint
+		Private mBlueprints() As Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

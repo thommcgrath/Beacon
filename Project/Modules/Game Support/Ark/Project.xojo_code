@@ -150,6 +150,22 @@ Inherits Beacon.Project
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Validate(Issues As Beacon.ProjectValidationResults)
+		  If Self.mMapMask = CType(0, UInt64) Then
+		    Issues.Add(New Beacon.Issue("MapMask", "No map has been selected."))
+		  End If
+		  
+		  Var SetNames() As String = Self.ConfigSetNames()
+		  For Each SetName As String In SetNames
+		    Var Configs() As Ark.ConfigGroup = Self.ImplementedConfigs(SetName)
+		    For Each Config As Ark.ConfigGroup In Configs
+		      Config.Validate(SetName, Issues, Self)
+		    Next Config
+		  Next SetName
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub AddConfigGroup(Group As Ark.ConfigGroup)

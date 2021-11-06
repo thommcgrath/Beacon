@@ -156,7 +156,7 @@ Inherits Ark.ConfigGroup
 		  Next Pack
 		  
 		  Var Config As New Ark.Configs.OtherSettings
-		  Var AllKeys() As Ark.ConfigKey = DataSource.SearchForConfigKey("", "", "", False)
+		  Var AllKeys() As Ark.ConfigKey = DataSource.GetConfigKeys("", "", "", False)
 		  For Each Key As Ark.ConfigKey In AllKeys
 		    If KeySupported(Key, ContentPacks) = False Then
 		      Continue

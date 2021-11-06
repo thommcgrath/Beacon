@@ -948,6 +948,14 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Validate() As Beacon.ProjectValidationResults
+		  Var Issues As New Beacon.ProjectValidationResults
+		  RaiseEvent Validate(Issues)
+		  Return Issues
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event AccountReplaced(OldUUID As String, NewUUID As String)
@@ -979,6 +987,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event SaveConfigSet(SetDict As Dictionary, PlainData As Dictionary, EncryptedData As Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Validate(Issues As Beacon.ProjectValidationResults)
 	#tag EndHook
 
 

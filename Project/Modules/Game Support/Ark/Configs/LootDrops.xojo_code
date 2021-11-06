@@ -25,7 +25,7 @@ Implements Iterable
 		  Var DifficultyValue As Double = Difficulty.DifficultyValue
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.SearchForLootContainers()
+		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainers()
 		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("1b4d42f4-86ab-4277-a73e-dd688635b324")
 		    
 		    Var Entry As New Ark.MutableLootItemSetEntry
@@ -113,6 +113,14 @@ Implements Iterable
 		      Self.mContainers(Idx) = Container
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  For Each Container As Ark.LootContainer In Self.mContainers
+		    Container.Validate(Location, Issues, Project)
+		  Next Container
 		End Sub
 	#tag EndEvent
 

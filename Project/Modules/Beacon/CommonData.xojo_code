@@ -219,7 +219,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IsTemplateCustom(TemplateUUID As String) As Boolean
-		  Var UserID As String = App.IdentityManager.CurrentIdentity
+		  Var UserID As String = App.IdentityManager.CurrentUserID
 		  
 		  If Self.mTemplateCache.HasKey(UserID + ":" + TemplateUUID) Then
 		    Return True

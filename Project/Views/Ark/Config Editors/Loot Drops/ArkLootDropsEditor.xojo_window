@@ -377,8 +377,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RunTask(Task As BeaconConfigs.Task)
-		  Select Case Task.UUID
+		Sub RunTool(Tool As Ark.ProjectTool)
+		  Select Case Tool.UUID
 		  Case "08efc49c-f39f-4147-820d-201637c206b5"
 		    Self.RebuildAllItemSets()
 		  End Select
@@ -475,7 +475,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildQuickDropMenu(Menu As MenuItem)
 		  Var Data As Ark.DataSource = Ark.DataSource.SharedInstance
-		  Var Containers() As Ark.LootContainer = Data.SearchForLootContainers("", Self.Project.ContentPacks, "", Preferences.ShowExperimentalLootSources)
+		  Var Containers() As Ark.LootContainer = Data.GetLootContainers("", Self.Project.ContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  Var HasExperimentalContainers As Boolean = Data.HasExperimentalLootContainers(Self.Project.ContentPacks)
 		  Var Config As Ark.Configs.LootDrops = Self.Config(False)
 		  Var Mask As UInt64 = Self.Project.MapMask

@@ -628,7 +628,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text
 		  Var Tags As String = Self.Picker.Spec
 		  
-		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.SharedInstance.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.SharedInstance.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Ark.Blueprint In Blueprints

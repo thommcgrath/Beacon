@@ -48,6 +48,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mRespectQualityOffsets = Source.mRespectQualityOffsets
 		  Self.mRespectQuantityMultipliers = Source.mRespectQuantityMultipliers
 		  Self.mWeight = Source.mWeight
+		  Self.mUUID = Source.mUUID
 		  
 		  Self.mOptions.ResizeTo(Source.LastIndex)
 		  For Idx As Integer = 0 To Self.mOptions.LastIndex
@@ -136,6 +137,17 @@ Implements Beacon.Countable,Iterable
 		    App.Log(Err, CurrentMethodName, "Reading RespectBlueprintMultiplier value")
 		  End Try
 		  
+		  Try
+		    If Dict.HasKey("UUID") Then
+		      Entry.UUID = Dict.Value("UUID")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading UUID value")
+		  End Try
+		  If Entry.UUID.IsEmpty Or v4UUID.IsValid(Entry.UUID) = False Then
+		    Entry.UUID = New v4UUID
+		  End If
+		  
 		  If Dict.HasKey("Items") Then
 		    Var Children() As Dictionary
 		    Try
@@ -164,7 +176,7 @@ Implements Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mHash.IsEmpty Then
-		    Self.mHash = Beacon.Hash(Beacon.GenerateJSON(Self.SaveData(False), False))
+		    Self.mHash = Beacon.Hash(Beacon.GenerateJSON(Self.SaveData, False))
 		  End If
 		  Return Self.mHash
 		End Function
@@ -281,14 +293,34 @@ Implements Beacon.Countable,Iterable
 		    Return 1
 		  End If
 		  
-		  If Self.Hash = Other.Hash Then
+		  If Self.mUUID = Other.mUUID Then
 		    Return 0
 		  End If
 		  
-		  Var MySort As String = Self.Label + ":" + Self.Hash
-		  Var OtherSort As String = Other.Label + ":" + Other.Hash
+		  Var MySort As String = Self.Label + ":" + Self.mUUID
+		  Var OtherSort As String = Other.Label + ":" + Other.mUUID
 		  Return MySort.Compare(OtherSort, ComparisonOptions.CaseInsensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As Ark.LootItemSetEntry
+		  #if DebugBuild
+		    #Pragma Warning "Incomplete"
+		  #else
+		    #Pragma Error "Incomplete"
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Operator_Convert(Source As Ark.LootItemSetEntry)
+		  #if DebugBuild
+		    #Pragma Warning "Incomplete"
+		  #else
+		    #Pragma Error "Incomplete"
+		  #endif
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -360,7 +392,14 @@ Implements Beacon.Countable,Iterable
 		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityOffsets
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultipliers
 		  Dict.Value("Weight") = Self.RawWeight
+		  Dict.Value("UUID") = Self.UUID
 		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UUID() As String
+		  Return Self.mUUID
 		End Function
 	#tag EndMethod
 
@@ -423,6 +462,10 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mRespectQuantityMultipliers As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

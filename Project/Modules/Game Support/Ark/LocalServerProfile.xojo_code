@@ -121,6 +121,14 @@ Inherits Ark.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Mask"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="UInt64"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="ProfileColor"
 			Visible=false
 			Group="Behavior"

@@ -333,7 +333,7 @@ End
 		    Var LastConfig As String = Preferences.LastUsedConfigName(UUID)
 		    If LastConfig.IsEmpty Then
 		      If Self.URL.Scheme = Beacon.ProjectURL.TypeWeb Then
-		        LastConfig = "metadata"
+		        LastConfig = Ark.Configs.NameMetadataPsuedo
 		      Else
 		        LastConfig = Ark.Configs.NameLootDrops
 		      End If
@@ -430,14 +430,13 @@ End
 		      Return
 		    End If
 		    
-		    If Self.Project.IsValid(App.IdentityManager.CurrentIdentity) = False Then
-		      Self.ShowIssues()
-		      Return
+		    If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
+		      Var Validator As New Beacon.ProjectValidator
+		      AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
+		      AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Deploy
+		      Validator.StartValidation(Self.Project, PreselectServers)
+		      Self.mValidator = Validator
 		    End If
-		    
-		    Var Win As DeployManager = New DeployManager(Self.Project, PreselectServers)
-		    Self.mDeployWindow = New WeakRef(Win)
-		    Win.BringToFront()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -450,12 +449,13 @@ End
 		    Return
 		  End If
 		  
-		  If Self.Project.IsValid(App.IdentityManager.CurrentIdentity) = False Then
-		    Self.ShowIssues()
-		    Return
+		  If Self.mValidator Is Nil And (Self.mValidationResultsDialog Is Nil Or Self.mValidationResultsDialog.Value Is Nil) Then
+		    Var Validator As New Beacon.ProjectValidator
+		    AddHandler Validator.Validating, WeakAddressOf mValidator_Validating
+		    AddHandler Validator.ValidationComplete, WeakAddressOf mValidator_ValidationComplete_Export
+		    Validator.StartValidation(Self.Project)
+		    Self.mValidator = Validator
 		  End If
-		  
-		  ArkExportWindow.Present(Self, Self.Project)
 		End Sub
 	#tag EndMethod
 
@@ -580,6 +580,14 @@ End
 		    Self.mModsPopoverController = Nil
 		  End If
 		  
+		  If (Self.mValidationResultsDialog Is Nil) = False And (Self.mValidationResultsDialog.Value Is Nil) = False Then
+		    ResolveIssuesDialog(Self.mValidationResultsDialog.Value).Close
+		  End If
+		  
+		  If (Self.mDeployWindow Is Nil) = False And (Self.mDeployWindow.Value Is Nil) = False Then
+		    DeployManager(Self.mDeployWindow.Value).Close
+		  End If
+		  
 		  Super.Destructor()
 		End Sub
 	#tag EndMethod
@@ -599,21 +607,6 @@ End
 		  RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		  Panel.Close
 		  Self.Panels.Remove(CacheKey)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub GoToIssue(Issue As Beacon.Issue)
-		  If Issue = Nil Then
-		    Return
-		  End If
-		  
-		  Self.CurrentConfigName = Issue.ConfigName
-		  
-		  Var View As ArkConfigEditor = Self.CurrentPanel
-		  If View <> Nil Then
-		    View.GoToIssue(Issue)
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -739,6 +732,72 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mValidationResultsDialog_GoToIssue(Sender As ResolveIssuesDialog, Issue As Beacon.Issue)
+		  Break
+		  
+		  #Pragma Warning "Implementation incomplete"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mValidator_Validating(Sender As Beacon.ProjectValidator)
+		  #Pragma Unused Sender
+		  
+		  Var Progress As New ProgressWindow
+		  Progress.Message = "Checking project for errors…"
+		  Progress.Detail = "Just a moment…"
+		  Progress.Show
+		  Self.mValidatorProgress = Progress
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function mValidator_ValidationComplete_Common(Sender As Beacon.ProjectValidator, Results As Beacon.ProjectValidationResults, UserData As Variant) As Boolean
+		  #Pragma Unused Sender
+		  #Pragma Unused UserData
+		  
+		  Self.mValidator = Nil
+		  If (Self.mValidatorProgress Is Nil) = False Then
+		    Self.mValidatorProgress.Close
+		    Self.mValidatorProgress = Nil
+		  End If
+		  
+		  If Results.Count > 0 Then
+		    Var Dialog As New ResolveIssuesDialog(Results)
+		    AddHandler Dialog.GoToIssue, WeakAddressOf mValidationResultsDialog_GoToIssue
+		    Dialog.ShowWithin(Self)
+		    Self.mValidationResultsDialog = New WeakRef(Dialog)
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mValidator_ValidationComplete_Deploy(Sender As Beacon.ProjectValidator, Results As Beacon.ProjectValidationResults, UserData As Variant)
+		  If Self.mValidator_ValidationComplete_Common(Sender, Results, UserData) = False Then
+		    Return
+		  End If
+		  
+		  Var PreselectServers() As Beacon.ServerProfile = UserData
+		  Var Win As DeployManager = New DeployManager(Self.Project, PreselectServers)
+		  Self.mDeployWindow = New WeakRef(Win)
+		  Win.BringToFront()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mValidator_ValidationComplete_Export(Sender As Beacon.ProjectValidator, Results As Beacon.ProjectValidationResults, UserData As Variant)
+		  If Self.mValidator_ValidationComplete_Common(Sender, Results, UserData) = False Then
+		    Return
+		  End If
+		  
+		  ArkExportWindow.Present(Self, Self.Project)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, OldValue As Variant, NewValue As Variant)
 		  // Part of the ObservationKit.Observer interface.
@@ -825,13 +884,6 @@ End
 		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Ark.ServerProfile)
 		  #Pragma Unused Sender
 		  Self.BeginDeploy(SelectedProfiles)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowIssues()
-		  ResolveIssuesDialog.Present(Self, Self.Project, AddressOf GoToIssue)
-		  Self.Changed = Self.Project.Modified
 		End Sub
 	#tag EndMethod
 
@@ -926,7 +978,7 @@ End
 			    Return
 			  End If
 			  
-			  If (Value = "accounts" Or Value = "deployments" Or Value = "metadata") And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
+			  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
 			    Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
 			  End If
 			  
@@ -959,11 +1011,11 @@ End
 			      NewPanel = Self.Panels.Value(CacheKey)
 			    Else
 			      Select Case Value
-			      Case "deployments"
+			      Case Ark.Configs.NameServersPseudo
 			        NewPanel = New ServersConfigEditor(Self.Project)
-			      Case "accounts"
+			      Case Ark.Configs.NameAccountsPsuedo
 			        NewPanel = New ArkAccountsEditor(Self.Project)
-			      Case "metadata"
+			      Case Ark.Configs.NameMetadataPsuedo
 			        NewPanel = New ArkProjectSettingsEditor(Self.Project)
 			      Case Ark.Configs.NameLootDrops
 			        NewPanel = New ArkLootDropsEditor(Self.Project)
@@ -1106,6 +1158,18 @@ End
 
 	#tag Property, Flags = &h21
 		Private mUpdateUITag As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidationResultsDialog As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidator As Beacon.ProjectValidator
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidatorProgress As ProgressWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1258,21 +1322,21 @@ End
 		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
 		    Self.mModsPopoverController = Controller
 		  Case "ToolsButton"
-		    Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
+		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
 		    Var LastEditor As String
 		    Var Base As New MenuItem
-		    For Each Task As BeaconConfigs.Task In Tasks
-		      If Task.FirstEditor <> LastEditor Then
+		    For Each Tool As Ark.ProjectTool In Tools
+		      If Tool.FirstGroup <> LastEditor Then
 		        If Base.Count > 0 Then
 		          Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		        End If
 		        
-		        Var Header As New MenuItem(Language.LabelForConfig(Task.FirstEditor))
+		        Var Header As New MenuItem(Language.LabelForConfig(Tool.FirstGroup))
 		        Header.Enabled = False
 		        Base.AddMenu(Header)
-		        LastEditor = Task.FirstEditor
+		        LastEditor = Tool.FirstGroup
 		      End If
-		      Base.AddMenu(New MenuItem(Task.Caption, Task))
+		      Base.AddMenu(New MenuItem(Tool.Caption, Tool))
 		    Next
 		    
 		    Var Position As Point = Me.Window.GlobalPosition
@@ -1281,11 +1345,11 @@ End
 		      Return
 		    End If
 		    
-		    Var Task As BeaconConfigs.Task = Choice.Tag
-		    If Task.IsRelevantForEditor(Self.CurrentConfigName) = False Then
-		      Self.CurrentConfigName = Task.FirstEditor
+		    Var Tool As Ark.ProjectTool = Choice.Tag
+		    If Tool.IsRelevantForGroup(Self.CurrentConfigName) = False Then
+		      Self.CurrentConfigName = Tool.FirstGroup
 		    End If
-		    Call Self.CurrentPanel.RunTask(Task.UUID)
+		    Call Self.CurrentPanel.RunTool(Tool.UUID)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1359,10 +1423,10 @@ End
 		  
 		  If ItemIndex > -1 Then
 		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
-		    Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
-		    For Each Task As BeaconConfigs.Task In Tasks
-		      If Task.IsRelevantForEditor(ConfigName) Then
-		        Base.AddMenu(New MenuItem(Task.Caption, Task.UUID))
+		    Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
+		    For Each Tool As Ark.ProjectTool In Tools
+		      If Tool.IsRelevantForGroup(ConfigName) Then
+		        Base.AddMenu(New MenuItem(Tool.Caption, Tool.UUID))
 		      End If
 		    Next
 		    If Base.Count > 0 Then
@@ -1418,7 +1482,7 @@ End
 		      Me.SelectedRowIndex = ItemIndex
 		    End If
 		    
-		    Call Self.CurrentPanel.RunTask(Choice.Tag)
+		    Call Self.CurrentPanel.RunTool(Choice.Tag)
 		  End Select
 		End Sub
 	#tag EndEvent

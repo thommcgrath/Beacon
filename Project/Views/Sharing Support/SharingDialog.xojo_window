@@ -541,6 +541,7 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -756,7 +757,10 @@ End
 		    Var Description As String = Self.mProject.Description.Trim
 		    If Description.IsEmpty Then
 		      Self.ShowAlert("Your project has no description and will be rejected if shared.", "This might be the best project ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
-		      DocumentEditorView.SwitchToEditor(Self.mProject, BeaconConfigs.NameMetadata)
+		      Try
+		        App.MainWindow.Documents.EditorForProject(Self.mProject).SwitchToEditor(Ark.Configs.NameMetadataPsuedo)
+		      Catch Err As RuntimeException
+		      End Try
 		      Self.Hide()
 		      Return
 		    End If

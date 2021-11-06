@@ -118,6 +118,40 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  Var Locale As Locale = Locale.Current
+		  
+		  If Self.mPlayerLevels.LastIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
+		    Issues.Add(New Beacon.Issue(Location + ".PlayerLevels", "Must define at least " + Self.AscensionLevels.ToString(Locale) + " player levels to handle ascension correctly."))
+		  End If
+		  
+		  For I As Integer = 0 To Self.mPlayerLevels.LastIndex
+		    Var Level As Integer = I + 2
+		    Var XP As UInt64 = Self.mPlayerLevels(I)
+		    Var LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), CType(0, UInt64))
+		    If XP < LastXP Then
+		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
+		    End If
+		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
+		      Issues.Add(New Beacon.Issue(Location + ".PlayerLevels." + Level.ToString(Locale.Raw), "Player level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, ",##0") + "."))
+		    End If
+		  Next I
+		  
+		  For I As Integer = 0 To Self.mDinoLevels.LastIndex
+		    Var Level As Integer = I + 2
+		    Var XP As UInt64 = Self.mDinoLevels(I)
+		    Var LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), CType(0, UInt64))
+		    If XP < LastXP Then
+		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level."))
+		    End If
+		    If XP > CType(Self.MaxSupportedXP, UInt64) Then
+		      Issues.Add(New Beacon.Issue(Location + ".DinoLevels." + Level.ToString(Locale.Raw), "Dino level " + Level.ToString(Locale) + " required experience is greater than Ark's limit of " + Self.MaxSupportedXP.ToString(Locale.Current, ",##0") + "."))
+		    End If
+		  Next I
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  SaveData.Value("Player Levels") = Self.mPlayerLevels
 		  SaveData.Value("Dino Levels") = Self.mDinoLevels

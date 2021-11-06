@@ -144,11 +144,11 @@ Protected Module Language
 		    Return "Decay and Spoil"
 		  Case Ark.Configs.NameOtherSettings
 		    Return "General Settings"
-		  Case "deployments"
+		  Case Ark.Configs.NameServersPseudo
 		    Return "Servers"
-		  Case "accounts"
+		  Case Ark.Configs.NameAccountsPsuedo
 		    Return "Accounts"
-		  Case "metadata"
+		  Case Ark.Configs.NameMetadataPsuedo
 		    Return "Project Settings"
 		  End Select
 		End Function

@@ -558,8 +558,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RunTask(Task As BeaconConfigs.Task)
-		  Select Case Task.UUID
+		Sub RunTool(Tool As Ark.ProjectTool)
+		  Select Case Tool.UUID
 		  Case "5265adcd-5c7e-437c-bce2-d10721afde43"
 		    Self.ConvertGlobalHarvestRate()
 		  End Select
@@ -601,7 +601,7 @@ End
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.SearchForEngrams("", Self.Project.ContentPacks, "harvestable")
+		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "harvestable")
 		  For Each Engram As Ark.Engram In Engrams
 		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
 		      Continue

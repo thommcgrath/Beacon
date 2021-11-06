@@ -97,13 +97,13 @@ Inherits Beacon.Thread
 		      If Value = Nil Then
 		        Continue
 		      End If
-		      If Value.Type <> Variant.TypeObject Or Value IsA Beacon.Pair = False Then
+		      If Value.Type <> Variant.TypeObject Or Value IsA Beacon.KeyValuePair = False Then
 		        Continue
 		      End If
 		      
-		      Var Key As String = Beacon.Pair(Value).Key
+		      Var Key As String = Beacon.KeyValuePair(Value).Key
 		      Var ExtendedKey As String = CurrentHeader + "." + Key
-		      Value = Beacon.Pair(Value).Value
+		      Value = Beacon.KeyValuePair(Value).Value
 		      
 		      If ParsedData.HasKey(Key) Then
 		        Var ExistingValue As Variant = ParsedData.Value(Key)
@@ -473,11 +473,11 @@ Inherits Beacon.Thread
 		    Var ArrayValue() As Variant = Input
 		    Var IsDict As Boolean = True
 		    For Each Item As Variant In ArrayValue
-		      IsDict = IsDict And Item.Type = Variant.TypeObject And Item.ObjectValue IsA Beacon.Pair
+		      IsDict = IsDict And Item.Type = Variant.TypeObject And Item.ObjectValue IsA Beacon.KeyValuePair
 		    Next
 		    If IsDict Then
 		      Var Dict As New Dictionary
-		      For Each Item As Beacon.Pair In ArrayValue
+		      For Each Item As Beacon.KeyValuePair In ArrayValue
 		        Dict.Value(Item.Key) = ToXojoType(Item.Value)
 		      Next
 		      Return Dict
@@ -494,9 +494,9 @@ Inherits Beacon.Thread
 		  Case Variant.TypeObject
 		    Var ObjectValue As Object = Input.ObjectValue
 		    Select Case ObjectValue
-		    Case IsA Beacon.Pair
-		      Var Original As Beacon.Pair = Input
-		      Return New Beacon.Pair(Original.Key, ToXojoType(Original.Value))
+		    Case IsA Beacon.KeyValuePair
+		      Var Original As Beacon.KeyValuePair = Input
+		      Return New Beacon.KeyValuePair(Original.Key, ToXojoType(Original.Value))
 		    End Select
 		  Case Variant.TypeString
 		    Var StringValue As String = Input.StringValue

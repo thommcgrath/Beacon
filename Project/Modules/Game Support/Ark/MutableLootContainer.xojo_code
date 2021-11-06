@@ -51,6 +51,16 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Path As String, ObjectID As v4UUID)
+		  Super.Constructor()
+		  
+		  Self.mObjectID = ObjectID
+		  Self.mPath = Path
+		  Self.mClassString = Beacon.ClassStringFromPath(Path)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ContentPackName(Assigns Value As String)
 		  // Part of the Ark.MutableBlueprint interface.
 		  

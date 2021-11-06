@@ -37,6 +37,14 @@ Inherits Ark.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  If Self.mMaxDinoLevel <= 0 Then
+		    Issues.Add(New Beacon.Issue(Location + ".MaxDinoLevel", "Difficulty must be greater than zero."))
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
 		  SaveData.Value("MaxDinoLevel") = Self.mMaxDinoLevel
 		End Sub

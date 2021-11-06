@@ -193,11 +193,11 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RunTask(TaskUUID As String) As Boolean
-		  Var Tasks() As BeaconConfigs.Task = BeaconConfigs.AllTasks
-		  For Each Task As BeaconConfigs.Task In Tasks
-		    If Task.UUID = TaskUUID Then
-		      RaiseEvent RunTask(Task)
+		Function RunTool(ToolUUID As String) As Boolean
+		  Var Tools() As Ark.ProjectTool = Ark.Configs.AllTools
+		  For Each Tool As Ark.ProjectTool In Tools
+		    If Tool.UUID = ToolUUID Then
+		      RaiseEvent RunTool(Tool)
 		      Return True
 		    End If
 		  Next
@@ -254,7 +254,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event RunTask(Task As BeaconConfigs.Task)
+		Event RunTool(Tool As Ark.ProjectTool)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -318,7 +318,7 @@ End
 		  If (SelectEntries Is Nil) = False Then
 		    For Each Entry As Ark.LootItemSetEntry In SelectEntries
 		      If (Entry Is Nil) = False Then
-		        Selected.Add(Entry.UniqueID)
+		        Selected.Add(Entry.UUID)
 		      End If
 		    Next
 		    ScrollToSelection = True
@@ -326,7 +326,7 @@ End
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
 		        Var Entry As Ark.LootItemSetEntry = EntryList.RowTagAt(I)
-		        Selected.Add(Entry.UniqueID)
+		        Selected.Add(Entry.UUID)
 		      End If
 		    Next
 		  End If
@@ -418,7 +418,7 @@ End
 		    
 		    EntryList.CellTagAt(Idx, Self.ColumnLabel) = MainColumnTag
 		    EntryList.RowTagAt(Idx) = Entry
-		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UniqueID) > -1
+		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UUID) > -1
 		  Next
 		  
 		  EntryList.Sort
@@ -545,7 +545,7 @@ End
 		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(I)).SaveData(False))
+		      Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(I)).SaveData)
 		    End If
 		  Next
 		  
@@ -649,29 +649,19 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
-		    Var Entries() As Ark.MutableLootItemSetEntry
+		    Var Entries() As Ark.LootItemSetEntry
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
 		        Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(I)).MutableClone)
 		      End If
 		    Next
 		    
-		    Var BlueprintEntry As Ark.MutableLootItemSetEntry = Ark.LootItemSetEntry.CreateBlueprintEntry(Entries)
-		    If BlueprintEntry Is Nil Then
+		    Var CreatedEntries() As Ark.LootItemSetEntry = Self.mSet.AddBlueprintEntries(Entries)
+		    If CreatedEntries.Count = 0 Then
 		      Return True
 		    End If
 		    
-		    For Each Entry As Ark.MutableLootItemSetEntry In Entries
-		      Var Idx As Integer = Self.mSet.IndexOf(Entry)
-		      If Idx > -1 Then
-		        Self.mSet(Idx) = Entry
-		      Else
-		        Self.mSet.Add(Entry)
-		      End If
-		    Next
-		    
-		    Self.mSet.Add(BlueprintEntry)
-		    Self.UpdateEntryList(BlueprintEntry)
+		    Self.UpdateEntryList(CreatedEntries)
 		    RaiseEvent Updated
 		    Return True
 		  Case "splitengrams"

@@ -373,8 +373,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RunTask(Task As BeaconConfigs.Task)
-		  Select Case Task.UUID
+		Sub RunTool(Tool As Ark.ProjectTool)
+		  Select Case Tool.UUID
 		  Case "94eced5b-be7d-441a-a5b3-f4a9bf40a856"
 		    Self.CreateFibercraftServer()
 		  Case "24376f12-c256-440c-87ca-2c8309a7a754"
@@ -821,7 +821,7 @@ End
 		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.SearchForEngrams("", Self.Project.ContentPacks, "blueprintable NOT generic")
+		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "blueprintable NOT generic")
 		  For Each Engram As Ark.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close

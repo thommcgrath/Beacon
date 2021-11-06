@@ -686,7 +686,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
          _ScrollWidth    =   -1
       End
    End
-   Begin OmniBar PresetToolbar
+   Begin OmniBar TemplateToolbar
       Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -742,8 +742,8 @@ End
 	#tag Event
 		Sub Open()
 		  Self.MapSelector.RemoveAllSegments
-		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In AllMaps
+		  Var AllMaps() As Ark.Map = Ark.Maps.All
+		  For Each Map As Ark.Map In AllMaps
 		    Var MapSegment As New Segment
 		    MapSegment.Title = Map.Name
 		    MapSegment.Enabled = True
@@ -781,11 +781,11 @@ End
 			
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
+			Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-			If File <> Nil Then
-			Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary(Beacon.Preset.SaveFormats.Universal), File)
+			If (File Is Nil) = False Then
+			Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, File)
 			Writer.Start
 			End If
 			Return True
@@ -811,10 +811,10 @@ End
 			
 			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
-			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
+			Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
 			
 			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-			If File <> Nil Then
+			If (File Is Nil) = False Then
 			Self.mSaveFile = File
 			Self.Save()
 			End If
@@ -824,9 +824,9 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddEntriesToList(Entries() As Beacon.PresetEntry)
-		  Var Maps() As Beacon.Map = Self.FilteredMaps()
-		  For Each Entry As Beacon.PresetEntry In Entries
+		Private Sub AddEntriesToList(Entries() As Ark.LootTemplateEntry)
+		  Var Maps() As Ark.Map = Self.FilteredMaps()
+		  For Each Entry As Ark.LootTemplateEntry In Entries
 		    Self.ContentsList.AddRow("")
 		    Self.PutEntryInRow(Entry, Self.ContentsList.LastAddedRowIndex, Maps)
 		  Next
@@ -836,9 +836,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Preset As Beacon.Preset, SourceFile As FolderItem = Nil)
-		  Self.mPreset = New Beacon.MutablePreset(Preset)
-		  Self.ViewID = Preset.PresetID
+		Sub Constructor(Template As Ark.LootTemplate, SourceFile As FolderItem = Nil)
+		  Self.mTemplate = New Ark.MutableLootTemplate(Template)
+		  Self.ViewID = Template.UUID
 		  Self.mSaveFile = SourceFile
 		End Sub
 	#tag EndMethod
@@ -857,10 +857,10 @@ End
 		    If Not Self.ContentsList.Selected(I) Then
 		      Continue
 		    End If
-		    Var Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
-		    Var Idx As Integer = Self.mPreset.IndexOf(Entry)
+		    Var Entry As Ark.LootTemplateEntry = Self.ContentsList.RowTagAt(I)
+		    Var Idx As Integer = Self.mTemplate.IndexOf(Entry)
 		    If Idx > -1 Then
-		      Self.mPreset.Remove(Idx)  
+		      Self.mTemplate.RemoveAt(Idx)  
 		      Self.Changed = True
 		    End If
 		    Self.ContentsList.RemoveRowAt(I)
@@ -871,53 +871,52 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelectedEntries()
-		  Var Entries() As Beacon.PresetEntry
+		  Var Entries() As Ark.LootItemSetEntry
 		  For I As Integer = 0 To ContentsList.RowCount - 1
 		    If Not ContentsList.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Var Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
-		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
+		    Var Entry As Ark.MutableLootTemplateEntry = ContentsList.RowTagAt(I)
 		    Entries.Add(Entry)
 		  Next
 		  
-		  If Entries.LastIndex = -1 Then
+		  If Entries.Count = 0 Then
 		    Return
 		  End If
 		  
-		  Var NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
+		  Var NewEntries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If
 		  
-		  Var Maps() As Beacon.Map = Self.FilteredMaps()
-		  For Each NewEntry As Beacon.SetEntry In NewEntries
-		    Var OriginalEntry As Beacon.PresetEntry
+		  Var Maps() As Ark.Map = Self.FilteredMaps()
+		  For Each NewEntry As Ark.LootItemSetEntry In NewEntries
+		    Var OriginalEntry As Ark.LootTemplateEntry
 		    Var OriginalIndex As Integer = -1
-		    For I As Integer = 0 To Self.mPreset.LastIndex
-		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
-		        OriginalEntry = Self.mPreset(I)
-		        OriginalIndex = I
-		        Exit For I
+		    For Idx As Integer = 0 To Self.mTemplate.LastIndex
+		      If Self.mTemplate(Idx).UUID = NewEntry.UUID Then
+		        OriginalEntry = Self.mTemplate(Idx)
+		        OriginalIndex = Idx
+		        Exit For Idx
 		      End If
 		    Next
 		    If OriginalIndex = -1 Then
-		      System.DebugLog("Unable to find original entry " + NewEntry.UniqueID)
+		      System.DebugLog("Unable to find original entry " + NewEntry.UUID)
 		      Break
 		      Return
 		    End If
 		    
-		    Var Item As New Beacon.PresetEntry(NewEntry)
+		    Var Item As New Ark.MutableLootTemplateEntry(NewEntry)
 		    Item.Availability = OriginalEntry.Availability
-		    Item.RespectQualityModifier = OriginalEntry.RespectQualityModifier
-		    Item.RespectQuantityMultiplier = OriginalEntry.RespectQuantityMultiplier
-		    Self.mPreset(OriginalIndex) = Item
+		    Item.RespectQualityOffsets = OriginalEntry.RespectQualityOffsets
+		    Item.RespectQuantityMultipliers = OriginalEntry.RespectQuantityMultipliers
+		    Self.mTemplate(OriginalIndex) = Item
 		    
-		    For I As Integer = 0 To ContentsList.RowCount - 1
-		      If Beacon.PresetEntry(ContentsList.RowTagAt(I)).UniqueID = OriginalEntry.UniqueID Then
-		        Self.PutEntryInRow(Item, I, Maps)
-		        Exit For I
+		    For Idx As Integer = 0 To ContentsList.RowCount - 1
+		      If Ark.LootTemplateEntry(ContentsList.RowTagAt(Idx)).UUID = OriginalEntry.UUID Then
+		        Self.PutEntryInRow(Item, Idx, Maps)
+		        Exit For Idx
 		      End If
 		    Next
 		  Next
@@ -928,9 +927,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FilteredMaps() As Beacon.Map()
-		  Var Maps() As Beacon.Map
-		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		Private Function FilteredMaps() As Ark.Map()
+		  Var Maps() As Ark.Map
+		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Idx As Integer = 0 To Self.MapSelector.SegmentCount - 1
 		    Var Cell As Segment = Self.MapSelector.SegmentAt(Idx)
 		    If Not Cell.Selected Then
@@ -956,14 +955,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer, Maps() As Beacon.Map, SelectIt As Boolean = False)
+		Private Sub PutEntryInRow(Entry As Ark.LootTemplateEntry, Index As Integer, Maps() As Ark.Map, SelectIt As Boolean = False)
 		  If Index = -1 Then
 		    Self.ContentsList.AddRow("")
 		    Index = Self.ContentsList.LastAddedRowIndex
 		  End If
 		  
 		  Var MapsValid, MapsInvalid As Integer
-		  For Each Map As Beacon.Map In Maps
+		  For Each Map As Ark.Map In Maps
 		    If Entry.ValidForMap(Map) Then
 		      MapsValid = MapsValid + 1
 		    Else
@@ -979,14 +978,14 @@ End
 		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Indeterminate
 		  End If
 		  
-		  Self.ContentsList.RowTagAt(Index) = Entry
+		  Self.ContentsList.RowTagAt(Index) = Entry.MutableVersion
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnDescription) = Entry.Label
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Entry.MinQuantity.ToString(Locale.Current, "0"), Entry.MinQuantity.ToString(Locale.Current, "0") + "-" + Entry.MaxQuantity.ToString(Locale.Current, "0"))
-		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
+		  Self.ContentsList.CellValueAt(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Entry.MinQuality.Label, Entry.MinQuality.Label(False) + "-" + Entry.MaxQuality.Label(False))
 		  Self.ContentsList.CellValueAt(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint.ToString(Locale.Current, "0%"), "N/A")
-		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
-		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityModifier
-		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintMultiplier
+		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultipliers
+		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnQuality) = Entry.RespectQualityOffsets
+		  Self.ContentsList.CellCheckBoxValueAt(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintChanceMultipliers
 		  
 		  If SelectIt Then
 		    Self.ContentsList.Selected(Index) = True
@@ -997,25 +996,25 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Save()
 		  If Self.mSaveFile = Nil Then
-		    Beacon.Data.SavePreset(Self.mPreset)
-		    Self.ViewID = Self.mPreset.PresetID
+		    Beacon.CommonData.SharedInstance.SaveTemplate(Self.mTemplate)
+		    Self.ViewID = Self.mTemplate.UUID
 		  Else
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary(Beacon.Preset.SaveFormats.Modern), Self.mSaveFile)
+		    Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, Self.mSaveFile)
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Start
 		  End If
 		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.Caption = Self.mPreset.Label
+		    Self.LinkedOmniBarItem.Caption = Self.mTemplate.Label
 		  End If
 		  Self.Changed = False
-		  NotificationKit.Post("Preset Saved", Self.mPreset)
+		  NotificationKit.Post("Template Saved", Self.mTemplate)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SelectedEntries() As Beacon.PresetEntry()
-		  Var Entries() As Beacon.PresetEntry
+		Private Function SelectedEntries() As Ark.MutableLootTemplateEntry()
+		  Var Entries() As Ark.MutableLootTemplateEntry
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
 		    If Self.ContentsList.Selected(I) Then
 		      Entries.Add(Self.ContentsList.RowTagAt(I))
@@ -1027,16 +1026,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
+		  Var Entries() As Ark.LootItemSetEntry = ArkLootEntryEditor.Present(Self.TrueWindow)
 		  If Entries = Nil Or Entries.LastIndex = -1 Then
 		    Return
 		  End If
 		  Self.ContentsList.SelectedRowIndex = -1
-		  Var Maps() As Beacon.Map = Self.FilteredMaps
-		  For Each Entry As Beacon.SetEntry In Entries
-		    Var Item As New Beacon.PresetEntry(Entry)
+		  Var Maps() As Ark.Map = Self.FilteredMaps
+		  For Each Entry As Ark.LootItemSetEntry In Entries
+		    Var Item As New Ark.LootTemplateEntry(Entry)
 		    Self.PutEntryInRow(Item, -1, Maps, True)
-		    Self.mPreset.Append(Item)
+		    Self.mTemplate.Add(Item)
 		    Self.Changed = True
 		  Next
 		  Self.ContentsList.Sort
@@ -1052,7 +1051,7 @@ End
 		  If Edit And Self.ModifiersList.SelectedRowCount = 1 Then
 		    EditID = Self.ModifiersList.RowTagAt(Self.ModifiersList.SelectedRowIndex)
 		  End If
-		  If PresetModifierEditor.Present(Self, Self.mPreset, EditID) Then
+		  If ArkLootTemplateModifierEditor.Present(Self, Self.mTemplate, EditID) Then
 		    Self.UpdateUI
 		    Self.Changed = True
 		  End If
@@ -1064,61 +1063,61 @@ End
 		  Var Focus As RectControl = Self.Window.Focus
 		  
 		  If Focus <> Self.MinItemsField Then
-		    Self.MinItemsField.Text = Self.mPreset.MinItems.ToString(Locale.Current, "0")
+		    Self.MinItemsField.Text = Self.mTemplate.MinEntriesSelected.ToString(Locale.Current, "0")
 		  End If
 		  If Focus <> Self.MaxItemsField Then
-		    Self.MaxItemsField.Text = Self.mPreset.MaxItems.ToString(Locale.Current, "0")
+		    Self.MaxItemsField.Text = Self.mTemplate.MaxEntriesSelected.ToString(Locale.Current, "0")
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  If Self.mSaveFile <> Nil Then
+		  If (Self.mSaveFile Is Nil) = False Then
 		    Self.Title = Self.mSaveFile.DisplayName
 		  Else
-		    Self.Title = Self.mPreset.Label
+		    Self.Title = Self.mTemplate.Label
 		  End If
 		  Self.ViewTitle = Self.Title
 		  Self.mUpdating = True
 		  Self.Changed = False
 		  
 		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
-		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
+		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Idx As Integer = 0 To AllMaps.LastIndex
 		    Self.MapSelector.SegmentAt(Idx).Selected = (Mask And AllMaps(Idx).Mask) = AllMaps(Idx).Mask
 		  Next
 		  
-		  Var Maps() As Beacon.Map = Self.FilteredMaps()
+		  Var Maps() As Ark.Map = Self.FilteredMaps()
 		  Var SelectedEntries() As String
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.Selected(I) Then
-		      Var Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
-		      SelectedEntries.Add(Entry.UniqueID)
+		      Var Entry As Ark.MutableLootTemplateEntry = Self.ContentsList.RowTagAt(I)
+		      SelectedEntries.Add(Entry.UUID)
 		    End If
 		  Next
 		  Self.ContentsList.RemoveAllRows()
-		  For Each Entry As Beacon.PresetEntry In Self.mPreset
-		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntries.IndexOf(Entry.UniqueID) > -1)
+		  For Each Entry As Ark.LootTemplateEntry In Self.mTemplate
+		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntries.IndexOf(Entry.UUID) > -1)
 		  Next
 		  Self.ContentsList.Sort
 		  
-		  Self.NameField.Text = Self.mPreset.Label
-		  Self.GroupingField.Text = Self.mPreset.Grouping
+		  Self.NameField.Text = Self.mTemplate.Label
+		  Self.GroupingField.Text = Self.mTemplate.Grouping
 		  Self.UpdateMinAndMaxFields
 		  
-		  Var AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
-		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.GetPresetModifiers
+		  Var AppliedModifiers() As String = Self.mTemplate.ActiveSelectorIDs
+		  Var Modifiers() As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelectors
 		  Self.ModifiersList.RemoveAllRows()
-		  For Each Modifier As Beacon.PresetModifier In Modifiers
-		    If AppliedModifiers.IndexOf(Modifier.ModifierID) = -1 Then
+		  For Each Modifier As Ark.LootContainerSelector In Modifiers
+		    If AppliedModifiers.IndexOf(Modifier.UUID) = -1 Then
 		      Continue
 		    End If
 		    
-		    Var QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
-		    Var MinQualityModifier As Integer = Self.mPreset.MinQualityModifier(Modifier)
-		    Var MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
-		    Var BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
+		    Var QuantityMultiplier As Double = Self.mTemplate.QuantityMultiplier(Modifier)
+		    Var MinQualityModifier As Integer = Self.mTemplate.MinQualityOffset(Modifier)
+		    Var MaxQualityModifier As Integer = Self.mTemplate.MaxQualityOffset(Modifier)
+		    Var BlueprintMultiplier As Double = Self.mTemplate.BlueprintChanceMultiplier(Modifier)
 		    
 		    Var QuantityLabel As String = "x " + QuantityMultiplier.PrettyText(True)
 		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.PrettyText(True)
@@ -1135,7 +1134,7 @@ End
 		    End If
 		    
 		    Self.ModifiersList.AddRow(Modifier.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
-		    Self.ModifiersList.RowTagAt(Self.ModifiersList.LastAddedRowIndex) = Modifier.ModifierID
+		    Self.ModifiersList.RowTagAt(Self.ModifiersList.LastAddedRowIndex) = Modifier.UUID
 		  Next
 		  
 		  Self.mUpdating = False
@@ -1145,9 +1144,9 @@ End
 	#tag Method, Flags = &h0
 		Function ViewType(Plural As Boolean, Lowercase As Boolean) As String
 		  If Plural Then
-		    Return If(Lowercase, "presets", "Presets")
+		    Return If(Lowercase, "templates", "Templates")
 		  Else
-		    Return If(Lowercase, "preset", "Preset")
+		    Return If(Lowercase, "template", "Template")
 		  End If
 		End Function
 	#tag EndMethod
@@ -1163,11 +1162,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mPreset As Beacon.MutablePreset
+		Private mSaveFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSaveFile As FolderItem
+		Private mTemplate As Ark.MutableLootTemplate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1208,17 +1207,17 @@ End
 #tag Events Pages
 	#tag Event
 		Sub Change()
-		  Var GeneralTab As OmniBarItem = Self.PresetToolbar.Item("GeneralTab")
+		  Var GeneralTab As OmniBarItem = Self.TemplateToolbar.Item("GeneralTab")
 		  If (GeneralTab Is Nil) = False Then
 		    GeneralTab.Toggled = Me.SelectedPanelIndex = Self.PageSettings
 		  End If
 		  
-		  Var ContentsTab As OmniBarItem = Self.PresetToolbar.Item("ContentsTab")
+		  Var ContentsTab As OmniBarItem = Self.TemplateToolbar.Item("ContentsTab")
 		  If (ContentsTab Is Nil) = False Then
 		    ContentsTab.Toggled = Me.SelectedPanelIndex = Self.PageContents
 		  End If
 		  
-		  Var ModifiersTab As OmniBarItem = Self.PresetToolbar.Item("ModifiersTab")
+		  Var ModifiersTab As OmniBarItem = Self.TemplateToolbar.Item("ModifiersTab")
 		  If (ModifiersTab Is Nil) = False Then
 		    ModifiersTab.Toggled = Me.SelectedPanelIndex = Self.PageModifiers
 		  End If
@@ -1236,11 +1235,11 @@ End
 		  
 		  Self.mUpdating = True
 		  
-		  Var Maps() As Beacon.Map = Self.FilteredMaps
+		  Var Maps() As Ark.Map = Self.FilteredMaps
 		  Preferences.LastPresetMapFilter = Maps.Mask
 		  
 		  For I As Integer = ContentsList.RowCount - 1 DownTo 0
-		    Var Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
+		    Var Entry As Ark.LootTemplateEntry = ContentsList.RowTagAt(I)
 		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.Selected(I))
 		  Next
 		  
@@ -1284,19 +1283,19 @@ End
 		  End If
 		  
 		  Var Value As Integer = Max(CDbl(Me.Text), 1)
-		  If Self.mPreset.MaxItems <> Value Then
-		    Self.mPreset.MaxItems = Value
+		  If Self.mTemplate.MaxEntriesSelected <> Value Then
+		    Self.mTemplate.MaxEntriesSelected = Value
 		    Self.Changed = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Text = Self.mPreset.MaxItems.ToString(Locale.Raw, "0")
+		    Me.Text = Self.mTemplate.MaxEntriesSelected.ToString(Locale.Raw, "0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = Self.mPreset.MaxItems.ToString(Locale.Raw, "0")
+		  Me.Text = Self.mTemplate.MaxEntriesSelected.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1308,19 +1307,19 @@ End
 		  End If
 		  
 		  Var Value As Integer = Max(CDbl(Me.Text), 1)
-		  If Self.mPreset.MinItems <> Value Then
-		    Self.mPreset.MinItems = Value
+		  If Self.mTemplate.MinEntriesSelected <> Value Then
+		    Self.mTemplate.MinEntriesSelected = Value
 		    Self.Changed = True
 		  End If
 		  
 		  If Self.Window.Focus <> Me Then
-		    Me.Text = Self.mPreset.MinItems.ToString(Locale.Raw, "0")
+		    Me.Text = Self.mTemplate.MinEntriesSelected.ToString(Locale.Raw, "0")
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = Self.mPreset.MinItems.ToString(Locale.Raw, "0")
+		  Me.Text = Self.mTemplate.MinEntriesSelected.ToString(Locale.Raw, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1332,8 +1331,8 @@ End
 		  End If
 		  
 		  Var Value As String = Me.Text.Trim
-		  If Value <> "" And Self.mPreset.Grouping.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-		    Self.mPreset.Grouping = Value
+		  If Value <> "" And Self.mTemplate.Grouping.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mTemplate.Grouping = Value
 		    Self.Changed = True
 		  End If
 		End Sub
@@ -1347,8 +1346,8 @@ End
 		  End If
 		  
 		  Var Value As String = Me.Text.Trim
-		  If Value <> "" And Self.mPreset.Label.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
-		    Self.mPreset.Label = Value
+		  If Value <> "" And Self.mTemplate.Label.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mTemplate.Label = Value
 		    Self.Changed = True
 		  End If
 		End Sub
@@ -1398,34 +1397,38 @@ End
 		      Return
 		    End If
 		    
-		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		    Var Maps() As Beacon.Map = Self.FilteredMaps
-		    For Each Map As Beacon.Map In Maps
+		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    Var Maps() As Ark.Map = Self.FilteredMaps
+		    For Each Map As Ark.Map In Maps
 		      If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
-		        Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
+		        Var Mutable As New Ark.MutableLootTemplateEntry(Entry)
+		        Mutable.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
+		        Entry = New Ark.LootTemplateEntry(Mutable)
+		        Self.mTemplate.Add(Entry)
+		        Me.RowTagAt(Row) = Entry
 		        Self.Changed = True
 		      End If
 		    Next
 		    Return
 		  Case Self.ColumnQuantity
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		    If Entry.RespectQuantityMultiplier <> Checked Then
-		      Entry.RespectQuantityMultiplier = Checked
+		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    If Entry.RespectQuantityMultipliers <> Checked Then
+		      Entry.RespectQuantityMultipliers = Checked
 		      Self.Changed = True
 		    End If
 		  Case Self.ColumnQuality
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		    If Entry.RespectQualityModifier <> Checked Then
-		      Entry.RespectQualityModifier = Checked
+		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    If Entry.RespectQualityOffsets <> Checked Then
+		      Entry.RespectQualityOffsets = Checked
 		      Self.Changed = True
 		    End If
 		  Case Self.ColumnBlueprint
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		    If Entry.RespectBlueprintMultiplier <> Checked Then
-		      Entry.RespectBlueprintMultiplier = Checked
+		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    If Entry.RespectBlueprintChanceMultipliers <> Checked Then
+		      Entry.RespectBlueprintChanceMultipliers = Checked
 		      Self.Changed = True
 		    End If
 		  End Select
@@ -1457,58 +1460,24 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
-		    Var Maps() As Beacon.Map = Beacon.Maps.All
-		    Var NewEntries As New Dictionary
-		    For Each Map As Beacon.Map In Maps
-		      Var Entries() As Beacon.PresetEntry
-		      For I As Integer = 0 To Me.RowCount - 1
-		        If Not Me.Selected(I) Then
-		          Continue
-		        End If
-		        
-		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
-		        If Entry.ValidForMap(Map) Then
-		          Entries.Add(Entry)
-		        End If
-		      Next
-		      
-		      Var BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
-		      If BlueprintEntry <> Nil Then
-		        Var Hash As String = BlueprintEntry.Hash
-		        If NewEntries.HasKey(Hash) Then
-		          Var Entry As Beacon.PresetEntry = NewEntries.Value(Hash)
-		          Entry.ValidForMap(Map) = True
-		          NewEntries.Value(Hash) = Entry
-		        Else
-		          Var Entry As New Beacon.PresetEntry(BlueprintEntry)
-		          Entry.Availability = 0
-		          Entry.ValidForMap(Map) = True
-		          NewEntries.Value(Hash) = Entry
-		        End If
+		    Var Entries() As Ark.LootTemplateEntry
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(Idx) = False Then
+		        Continue
 		      End If
-		    Next
+		      
+		      Entries.Add(Me.RowTagAt(Idx))
+		    Next Idx
 		    
-		    If NewEntries.KeyCount = 0 Then
-		      System.Beep
+		    Var CreatedEntries() As Ark.LootTemplateEntry = Self.mTemplate.AddBlueprintEntries(Entries)
+		    If CreatedEntries.Count = 0 Then
 		      Return True
 		    End If
 		    
-		    For I As Integer = 0 To Me.RowCount - 1
-		      If Me.Selected(I) Then
-		        Beacon.PresetEntry(Me.RowTagAt(I)).ChanceToBeBlueprint = 0.0
-		      End If
-		    Next
-		    Me.SelectedRowIndex = -1
-		    
-		    Var SelectedMaps() As Beacon.Map = Self.FilteredMaps()
-		    For Each Entry As DictionaryEntry In NewEntries
-		      Var Item As Beacon.PresetEntry = Entry.Value
-		      Item.RespectQualityModifier = True
-		      Item.RespectQuantityMultiplier = False
-		      Item.RespectBlueprintMultiplier = False
-		      Self.PutEntryInRow(Item, -1, SelectedMaps, True)
-		      Self.mPreset.Append(Item)
-		    Next
+		    Var SelectedMaps() As Ark.Map = Self.FilteredMaps()
+		    For Each Entry As Ark.LootTemplateEntry In CreatedEntries
+		      Self.PutEntryInRow(Entry, -1, SelectedMaps, True)
+		    Next Entry
 		    
 		    Me.Sort
 		    Me.EnsureSelectionIsVisible()
@@ -1520,13 +1489,21 @@ End
 		        Continue
 		      End If
 		      
-		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Idx)
+		      Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Idx)
 		      Var Availability As UInt64
-		      For Each Option As Beacon.SetEntryOption In Entry
+		      For Each Option As Ark.LootItemSetEntryOption In Entry
 		        Availability = Availability Or Option.Engram.Availability
 		      Next
 		      If Entry.Availability <> Availability Then
-		        Entry.Availability = Availability
+		        Var EntryIdx As Integer = Self.mTemplate.IndexOf(Entry)
+		        Var Mutable As New Ark.MutableLootTemplateEntry(Entry)
+		        Mutable.Availability = Availability
+		        Entry = New Ark.LootTemplateEntry(Mutable)
+		        If EntryIdx > -1 Then
+		          Self.mTemplate(EntryIdx) = Entry
+		        Else
+		          Self.mTemplate.Add(Entry)
+		        End If
 		        Changed = True
 		        Self.PutEntryInRow(Entry, Idx, Self.FilteredMaps)
 		      End If
@@ -1537,7 +1514,11 @@ End
 		      Me.EnsureSelectionIsVisible()
 		      Self.Changed = True
 		    End If
+		  Else
+		    Return False
 		  End Select
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1557,7 +1538,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Var EditEntriesButton As OmniBarItem = Self.PresetToolbar.Item("EditEntriesButton")
+		  Var EditEntriesButton As OmniBarItem = Self.TemplateToolbar.Item("EditEntriesButton")
 		  If (EditEntriesButton Is Nil) = False Then
 		    EditEntriesButton.Enabled = Me.CanEdit()
 		  End If
@@ -1613,7 +1594,7 @@ End
 		    End If
 		    
 		    Var ModifierID As String = Self.ModifiersList.RowTagAt(I)
-		    Self.mPreset.ClearModifier(ModifierID)
+		    Self.mTemplate.ClearSelector(ModifierID)
 		    Self.ModifiersList.RemoveRowAt(I)
 		    Self.Changed = True
 		  Next
@@ -1629,10 +1610,10 @@ End
 		    
 		    Var ModifierID As String = Me.RowTagAt(I)
 		    Var Dict As New Dictionary
-		    Dict.Value("Quantity") = Self.mPreset.QuantityMultiplier(ModifierID)
-		    Dict.Value("MinQuality") = Self.mPreset.MinQualityModifier(ModifierID)
-		    Dict.Value("MaxQuality") = Self.mPreset.MaxQualityModifier(ModifierID)
-		    Dict.Value("Blueprint") = Self.mPreset.BlueprintMultiplier(ModifierID)
+		    Dict.Value("Quantity") = Self.mTemplate.QuantityMultiplier(ModifierID)
+		    Dict.Value("MinQuality") = Self.mTemplate.MinQualityOffset(ModifierID)
+		    Dict.Value("MaxQuality") = Self.mTemplate.MaxQualityOffset(ModifierID)
+		    Dict.Value("Blueprint") = Self.mTemplate.BlueprintChanceMultiplier(ModifierID)
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
@@ -1654,17 +1635,17 @@ End
 		      Var Dict As Dictionary = Entry.Value
 		      
 		      If Dict.HasKey("Quantity") Then
-		        Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
+		        Self.mTemplate.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
 		      End If
 		      If Dict.HasKey("MinQuality") And Dict.HasKey("MaxQuality") Then
-		        Self.mPreset.MinQualityModifier(ModifierID) = Dict.Value("MinQuality")
-		        Self.mPreset.MaxQualityModifier(ModifierID) = Dict.Value("MaxQuality")
+		        Self.mTemplate.MinQualityOffset(ModifierID) = Dict.Value("MinQuality")
+		        Self.mTemplate.MaxQualityOffset(ModifierID) = Dict.Value("MaxQuality")
 		      ElseIf Dict.HasKey("Quality") Then
-		        Self.mPreset.MinQualityModifier(ModifierID) = Dict.Value("Quality")
-		        Self.mPreset.MaxQualityModifier(ModifierID) = Dict.Value("Quality")
+		        Self.mTemplate.MinQualityOffset(ModifierID) = Dict.Value("Quality")
+		        Self.mTemplate.MaxQualityOffset(ModifierID) = Dict.Value("Quality")
 		      End If
 		      If Dict.HasKey("Blueprint") Then
-		        Self.mPreset.BlueprintMultiplier(ModifierID) = Dict.Value("Blueprint")
+		        Self.mTemplate.BlueprintChanceMultiplier(ModifierID) = Dict.Value("Blueprint")
 		      End If
 		    Next
 		    
@@ -1681,14 +1662,14 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PresetToolbar
+#tag Events TemplateToolbar
 	#tag Event
 		Sub Open()
 		  Me.Append(OmniBarItem.CreateTab("GeneralTab", "General"))
 		  Me.Append(OmniBarItem.CreateTab("ContentsTab", "Contents"))
 		  Me.Append(OmniBarItem.CreateTab("ModifiersTab", "Modifiers"))
 		  Me.Append(OmniBarItem.CreateSeparator)
-		  Me.Append(OmniBarItem.CreateButton("AddEntriesButton", "New Entry", IconToolbarAdd, "Add engrams to this preset."))
+		  Me.Append(OmniBarItem.CreateButton("AddEntriesButton", "New Entry", IconToolbarAdd, "Add engrams to this template."))
 		  Me.Append(OmniBarItem.CreateButton("EditEntriesButton", "Edit", IconToolbarEdit, "Edit the selected entries.", False))
 		  
 		  Me.Item("GeneralTab").Toggled = True

@@ -369,7 +369,7 @@ Inherits Ark.IntegrationEngine
 		      
 		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
 		        // Build our own ini files from known keys
-		        Var AllConfigs() As Ark.ConfigKey = Ark.DataSource.SharedInstance.SearchForConfigKey("", "", "", False) // To retrieve all
+		        Var AllConfigs() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys("", "", "", False) // To retrieve all
 		        Var GuidedOrganizer As New Ark.ConfigOrganizer
 		        For Each ConfigKey As Ark.ConfigKey In AllConfigs
 		          If ConfigKey.HasNitradoEquivalent = False Then

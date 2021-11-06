@@ -393,7 +393,7 @@ End
 		    SelectableCreatures.Add(Nil)
 		  End If
 		  
-		  Var AllCreatures() As Ark.Creature = Ark.DataSource.SharedInstance.SearchForCreatures("", Mods, "")
+		  Var AllCreatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Mods, "")
 		  For Each Creature As Ark.Creature In AllCreatures
 		    If IsNull(Creature) Or Map.HasKey(Creature.ObjectID) Then
 		      Continue

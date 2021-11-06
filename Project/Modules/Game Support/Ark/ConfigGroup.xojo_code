@@ -1,5 +1,6 @@
 #tag Class
 Protected Class ConfigGroup
+Implements Beacon.Validateable
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  
@@ -161,6 +162,14 @@ Protected Class ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  RaiseEvent Validate(Location + "." + Self.InternalName, Issues, Project)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event CopyFrom(Other As Ark.ConfigGroup)
@@ -184,6 +193,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

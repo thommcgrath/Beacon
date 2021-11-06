@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconDialog PresetModifierEditor
+Begin BeaconDialog ArkLootTemplateModifierEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -480,30 +480,30 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  Self.MinQualityField.DoubleValue = Self.mPreset.MinQualityModifier(Self.mEditID)
-		  Self.MaxQualityField.DoubleValue = Self.mPreset.MaxQualityModifier(Self.mEditID)
-		  Self.QuantityField.Text = Self.mPreset.QuantityMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
-		  Self.BlueprintField.Text = Self.mPreset.BlueprintMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
+		  Self.MinQualityField.DoubleValue = Self.mTemplate.MinQualityOffset(Self.mEditID)
+		  Self.MaxQualityField.DoubleValue = Self.mTemplate.MaxQualityOffset(Self.mEditID)
+		  Self.QuantityField.Text = Self.mTemplate.QuantityMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
+		  Self.BlueprintField.Text = Self.mTemplate.BlueprintChanceMultiplier(Self.mEditID).ToString(Locale.Current, "0.00")
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Preset As Beacon.MutablePreset, EditModifierID As String)
+		Private Sub Constructor(Template As Ark.MutableLootTemplate, EditModifierID As String)
 		  // Calling the overridden superclass constructor.
-		  Self.mPreset = Preset
+		  Self.mTemplate = Template
 		  Self.mEditID = EditModifierID
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Preset As Beacon.MutablePreset, EditModifierID As String = "") As Boolean
+		Shared Function Present(Parent As Window, Template As Ark.MutableLootTemplate, EditModifierID As String = "") As Boolean
 		  If Parent = Nil Then
 		    Return False
 		  End If
 		  
-		  Var Win As New PresetModifierEditor(Preset, EditModifierID)
+		  Var Win As New ArkLootTemplateModifierEditor(Template, EditModifierID)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Var Cancelled As Boolean = Win.mCancelled
@@ -522,7 +522,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPreset As Beacon.MutablePreset
+		Private mTemplate As Ark.MutableLootTemplate
 	#tag EndProperty
 
 
@@ -531,17 +531,17 @@ End
 #tag Events GroupMenu
 	#tag Event
 		Sub Open()
-		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.GetPresetModifiers
-		  Var Actives() As String = Self.mPreset.ActiveModifierIDs()
-		  For Each Modifier As Beacon.PresetModifier In Modifiers
-		    Var Editing As Boolean = Modifier.ModifierID = Self.mEditID
-		    If Editing = True Or Actives.IndexOf(Modifier.ModifierID) = -1 Then
-		      Me.AddRow(Modifier.Label, Modifier)
+		  Var Selectors() As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelectors
+		  Var Actives() As String = Self.mTemplate.ActiveSelectorIDs()
+		  For Each LootSelector As Ark.LootContainerSelector In Selectors
+		    Var Editing As Boolean = (LootSelector.UUID = Self.mEditID)
+		    If Editing = True Or Actives.IndexOf(LootSelector.UUID) = -1 Then
+		      Me.AddRow(LootSelector.Label, LootSelector)
 		      If Editing Then
 		        Me.SelectedRowIndex = Me.RowCount - 1
 		      End If
 		    End If
-		  Next
+		  Next LootSelector
 		  
 		  If Me.SelectedRowIndex = -1 Then
 		    Me.SelectedRowIndex = 0
@@ -577,13 +577,13 @@ End
 		    Return
 		  End If
 		  
-		  Var Modifier As Beacon.PresetModifier = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
+		  Var LootSelector As Ark.LootContainerSelector = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
 		  
-		  Self.mPreset.ClearModifier(Self.mEditID)
-		  Self.mPreset.MinQualityModifier(Modifier) = MinQualityModifier
-		  Self.mPreset.MaxQualityModifier(Modifier) = MaxQualityModifier
-		  Self.mPreset.QuantityMultiplier(Modifier) = QuantityMultiplier
-		  Self.mPreset.BlueprintMultiplier(Modifier) = BlueprintMultiplier
+		  Self.mTemplate.ClearSelector(Self.mEditID)
+		  Self.mTemplate.MinQualityOffset(LootSelector) = MinQualityModifier
+		  Self.mTemplate.MaxQualityOffset(LootSelector) = MaxQualityModifier
+		  Self.mTemplate.QuantityMultiplier(LootSelector) = QuantityMultiplier
+		  Self.mTemplate.BlueprintChanceMultiplier(LootSelector) = BlueprintMultiplier
 		  
 		  Self.mCancelled = False
 		  Self.Hide

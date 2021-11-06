@@ -1876,7 +1876,7 @@ End
 		  Var ImprintAmountMultiplier As Double = Self.mBaselineRates.Value("BabyImprintAmountMultiplier").DoubleValue * Self.Config(False).BabyImprintAmountMultiplier
 		  
 		  Var CuddlePeriod As Integer = Ark.DataSource.SharedInstance.GetIntegerVariable("Cuddle Period") * ImprintPeriodMultiplier
-		  Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.SearchForCreatures("", Self.Project.ContentPacks)
+		  Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Self.Project.ContentPacks)
 		  Var SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
 		    SelectedClass = CreaturesList.RowTagAt(CreaturesList.SelectedRowIndex)
@@ -2260,7 +2260,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
-		    Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.SearchForCreatures("", Self.Project.ContentPacks)
+		    Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures("", Self.Project.ContentPacks)
 		    Var Interval As Double = ArkBreedingTunerDialog.Present(Self, Self.mBaselineRates, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
 		    If Interval > 0 Then
 		      Self.ImprintPeriodField.Text = Interval.PrettyText

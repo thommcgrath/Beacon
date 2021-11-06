@@ -673,7 +673,7 @@ End
 		  Var SearchText As String = Self.FilterField.Text
 		  Var Tags As String = Self.Picker.Spec
 		  
-		  Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.SearchForEngrams(SearchText, Self.mMods, Tags)
+		  Var Engrams() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.RemoveAllRows
 		  
 		  Self.mEngramRowIndexes = New Dictionary

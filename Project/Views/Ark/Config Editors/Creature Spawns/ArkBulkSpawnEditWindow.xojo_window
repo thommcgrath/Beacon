@@ -657,11 +657,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ProcessSpawnPoint(Point As Ark.MutableSpawnPoint)
-		  For SetIdx As Integer = 0 To Point.LastRowIndex
+		  For SetIdx As Integer = 0 To Point.LastIndex
 		    Var MutableSet As Ark.MutableSpawnPointSet = Point.Set(SetIdx).MutableVersion
 		    Var ChangeThisColorSet As Boolean
 		    
-		    For EntryIdx As Integer = 0 To MutableSet.LastRowIndex
+		    For EntryIdx As Integer = 0 To MutableSet.LastIndex
 		      Var Entry As Ark.MutableSpawnPointSetEntry = MutableSet.Entry(EntryIdx).MutableVersion
 		      If Self.mCreatures.IndexOf(Entry.Creature) = -1 Then
 		        Continue
@@ -821,7 +821,7 @@ End
 		  
 		  Var Creatures() As Ark.Creature
 		  If AllCreaturesRadio.Value Then
-		    Creatures = Ark.DataSource.SharedInstance.SearchForCreatures("", Self.mMods)
+		    Creatures = Ark.DataSource.SharedInstance.GetCreatures("", Self.mMods)
 		  Else
 		    For RowIdx As Integer = 0 To Self.CreatureList.LastRowIndex
 		      Creatures.Add(Self.CreatureList.RowTagAt(RowIdx))

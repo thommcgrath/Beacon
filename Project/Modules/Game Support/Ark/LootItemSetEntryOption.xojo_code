@@ -1,5 +1,6 @@
 #tag Class
 Protected Class LootItemSetEntryOption
+Implements Beacon.Validateable
 	#tag Method, Flags = &h0
 		Sub Constructor(Reference As Ark.BlueprintReference, Weight As Double)
 		  Self.mEngram = Reference
@@ -91,6 +92,28 @@ Protected Class LootItemSetEntryOption
 		  Keys.Value("Weight") = Self.mWeight
 		  Return Keys
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  Try
+		    Var ObjectID As String = Self.mEngram.ObjectID
+		    Location = Location + "." + ObjectID
+		    If Issues.HasIssue(Location) Then
+		      Return
+		    End If
+		    
+		    Var Engram As Ark.Engram = Self.Engram
+		    If Project IsA Ark.Project And Ark.Project(Project).ContentPackEnabled(Engram.ContentPackUUID) = False Then
+		      Issues.Add(New Beacon.Issue(Location, "'" + Engram.Label + "' is provided by the '" + Engram.ContentPackName + "' mod, which is turned off for this project."))
+		    ElseIf Engram.IsTagged("Generic") Or Engram.IsTagged("Blueprint") Then
+		      Issues.Add(New Beacon.Issue(Location, "'" + Engram.Label + "' is a generic item intended for crafting recipies and cannot spawn in a drop."))
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

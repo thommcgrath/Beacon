@@ -115,7 +115,7 @@ Begin BeaconDialog ResolveIssuesDialog
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   False
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   296
       HelpTag         =   ""
       Hierarchical    =   False
@@ -134,7 +134,6 @@ Begin BeaconDialog ResolveIssuesDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   "False"
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -193,87 +192,36 @@ End
 	#tag Event
 		Sub Open()
 		  Self.UpdateUI()
-		  Self.GoToButton.Visible = (Self.GoToIssueHandler <> Nil)
 		End Sub
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document, Issues() As Beacon.Issue, Handler As ResolveIssuesDialog.GoToIssueCallback)
-		  Self.Issues = Issues
-		  Self.Document = Document
-		  Self.GoToIssueHandler = Handler
-		  Super.Constructor()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function DescribeIssues(Document As Beacon.Document) As Beacon.Issue()
-		  Var DocumentIssues() As Beacon.Issue
-		  
-		  Var UniqueIssues As New Dictionary
-		  If Document.MapCompatibility = CType(0, UInt64) Then
-		    Var Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
-		    UniqueIssues.Value(Issue.Description) = Issue
-		    DocumentIssues.Add(Issue)
-		  End If
-		  
-		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  For Each Config As Beacon.ConfigGroup In Configs
-		    Var Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
-		    For Each Issue As Beacon.Issue In Issues
-		      If Not UniqueIssues.HasKey(Issue.Description) Then
-		        DocumentIssues.Add(Issue)
-		        UniqueIssues.Value(Issue.Description) = Issue
-		      End If
-		    Next
-		  Next
-		  
-		  Return DocumentIssues
-		End Function
-	#tag EndMethod
-
-	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub GoToIssueCallback(Issue As Beacon . Issue)
-	#tag EndDelegateDeclaration
-
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Document As Beacon.Document, Handler As ResolveIssuesDialog.GoToIssueCallback = Nil)
-		  Var Issues() As Beacon.Issue = DescribeIssues(Document)
-		  If Issues.LastIndex = -1 Then
-		    Return
-		  End If
-		  
-		  Var Win As New ResolveIssuesDialog(Document, Issues, Handler)
-		  Win.ShowModalWithin(Parent.TrueWindow)
+		Sub Constructor(Issues As Beacon.ProjectValidationResults)
+		  Self.mIssues = Issues
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.IssuesList.RemoveAllRows
-		  For Each Issue As Beacon.Issue In Self.Issues
+		  For Each Issue As Beacon.Issue In Self.mIssues
 		    Self.IssuesList.AddRow(Issue.Description)
 		    Self.IssuesList.RowTagAt(Self.IssuesList.LastAddedRowIndex) = Issue
 		  Next
+		  Self.IssuesList.Sort
 		End Sub
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private ConfigsWaitingToResolve As Integer
-	#tag EndProperty
+	#tag Hook, Flags = &h0
+		Event GoToIssue(Issue As Beacon.Issue)
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
-		Private Document As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private GoToIssueHandler As ResolveIssuesDialog.GoToIssueCallback
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Issues() As Beacon.Issue
+		Private mIssues As Beacon.ProjectValidationResults
 	#tag EndProperty
 
 
@@ -289,23 +237,29 @@ End
 #tag Events IssuesList
 	#tag Event
 		Sub Change()
-		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Me.SelectedRowIndex > -1
+		  Self.GoToButton.Enabled = Me.SelectedRowIndex > -1
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  #Pragma Unused Column
+		  
+		  Var Issue1 As Beacon.Issue = Me.RowTagAt(Row1)
+		  Var Issue2 As Beacon.Issue = Me.RowTagAt(Row2)
+		  Result = Issue1.Location.Compare(Issue2.Location, ComparisonOptions.CaseInsensitive)
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events GoToButton
 	#tag Event
 		Sub Action()
-		  If Self.IssuesList.SelectedRowIndex = -1 Or Self.GoToIssueHandler = Nil Then
+		  If Self.IssuesList.SelectedRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Var Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
-		  Self.Hide()
-		  If Beacon.SafeToInvoke(Self.GoToIssueHandler) Then
-		    Self.GoToIssueHandler.Invoke(Issue)
-		  End If
-		  Self.Close()
+		  RaiseEvent GoToIssue(Issue)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

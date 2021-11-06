@@ -551,13 +551,13 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  For Each Stat As Beacon.Stat In Stats
+		  Var Stats() As Ark.Stat = Ark.Stats.All
+		  For Each Stat As Ark.Stat In Stats
 		    If (Self.mUsedStats And Stat.Mask) = Stat.Mask And (Self.mValues Is Nil Or Self.mValues.Stat <> Stat) Then
 		      Continue
 		    End If
 		    
-		    Self.StatMenu.AddRow(Language.LabelForStat(Stat))
+		    Self.StatMenu.AddRow(Stat.Label)
 		    Self.StatMenu.RowTagAt(Self.StatMenu.LastAddedRowIndex) = Stat
 		    
 		    If (Self.mValues Is Nil) = False And Self.mValues.Stat = Stat Then
@@ -579,7 +579,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(UsedStats As UInt16, Values As Beacon.CreatureStatValue)
+		Private Sub Constructor(UsedStats As UInt16, Values As Ark.CreatureStatValue)
 		  Self.mUsedStats = UsedStats
 		  Self.mValues = Values
 		  Super.Constructor
@@ -588,7 +588,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, UsedStats As UInt16, Values As Beacon.CreatureStatValue = Nil) As Beacon.CreatureStatValue
+		Shared Function Present(Parent As Window, UsedStats As UInt16, Values As Ark.CreatureStatValue = Nil) As Ark.CreatureStatValue
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -600,8 +600,8 @@ End
 		    Return Nil
 		  End If
 		  
-		  Var Stat As Beacon.Stat = Win.StatMenu.RowTagAt(Win.StatMenu.SelectedRowIndex)
-		  Return New Beacon.CreatureStatValue(Stat, CDbl(Win.BaseField.Text), CDbl(Win.WildField.Text), CDbl(Win.TamedField.Text), CDbl(Win.AddField.Text), CDbl(Win.AffinityField.Text))
+		  Var Stat As Ark.Stat = Win.StatMenu.RowTagAt(Win.StatMenu.SelectedRowIndex)
+		  Return New Ark.CreatureStatValue(Stat, CDbl(Win.BaseField.Text), CDbl(Win.WildField.Text), CDbl(Win.TamedField.Text), CDbl(Win.AddField.Text), CDbl(Win.AffinityField.Text))
 		End Function
 	#tag EndMethod
 
@@ -615,7 +615,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mValues As Beacon.CreatureStatValue
+		Private mValues As Ark.CreatureStatValue
 	#tag EndProperty
 
 

@@ -189,7 +189,7 @@ End
 		  
 		  Self.mFilter = Value
 		  
-		  Var AllKeys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.SearchForConfigKey("", "", "", True)
+		  Var AllKeys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys("", "", "", True)
 		  If Self.mDependencies Is Nil Then
 		    Self.mDependencies = New Dictionary
 		    For Each Key As Ark.ConfigKey In AllKeys

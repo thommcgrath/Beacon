@@ -240,7 +240,7 @@ End
 		  If ItemSet.TemplateUUID.IsEmpty = False Then
 		    Var SourceTemplate As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplateByUUID(ItemSet.TemplateUUID)
 		    If (SourceTemplate Is Nil) = False And SourceTemplate IsA Ark.LootTemplate Then
-		      Template = New Ark.MutableLootTemplate(SourceTemplate)
+		      Template = New Ark.MutableLootTemplate(Ark.LootTemplate(SourceTemplate))
 		    End If
 		  End If
 		  If Template Is Nil Then

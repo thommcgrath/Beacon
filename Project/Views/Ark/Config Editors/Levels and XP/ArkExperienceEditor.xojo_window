@@ -583,8 +583,10 @@ End
 		  End Try
 		  
 		  Var NewConfig As Ark.Configs.ExperienceCurves = Ark.Configs.ExperienceCurves(Ark.Configs.CloneInstance(Self.Config(False)))
+		  Var Issues As New Beacon.ProjectValidationResults
+		  NewConfig.Validate("", Issues, Self.Project)
 		  Var ViewingPlayerStats As Boolean = Self.ViewingPlayerStats
-		  Var WasValid As Boolean = NewConfig.PlayerLevelCap > 1 And NewConfig.Issues(Self.Project, App.IdentityManager.CurrentIdentity).Count = 0
+		  Var WasValid As Boolean = NewConfig.PlayerLevelCap > 1 And Issues.Count = 0
 		  Var IndexOffset As Integer = If(ViewingPlayerStats, 2, 1)
 		  Var AddedLevels() As Integer
 		  For Idx As Integer = Levels.FirstIndex To Levels.LastIndex
@@ -608,7 +610,9 @@ End
 		    End Try
 		  Next
 		  
-		  Var IsValid As Boolean = NewConfig.PlayerLevelCap > 1 And NewConfig.Issues(Self.Project, App.IdentityManager.CurrentIdentity).Count = 0
+		  Issues = New Beacon.ProjectValidationResults
+		  NewConfig.Validate("", Issues, Self.Project)
+		  Var IsValid As Boolean = NewConfig.PlayerLevelCap > 1 And Issues.Count = 0
 		  If WasValid = True And IsValid = False Then
 		    Var Cancel As Boolean = Self.ShowConfirm("Pasting this data will create an invalid experience plan.", "Either at least one of the new levels have experience amounts lower than the previous level, or there aren't enough levels defined. Do you want to paste anyway?", "Paste Anyway", "Cancel") = False
 		    If Cancel Then

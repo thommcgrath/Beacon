@@ -149,8 +149,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub RunTask(Task As BeaconConfigs.Task)
-		  Select Case Task.UUID
+		Sub RunTool(Tool As Ark.ProjectTool)
+		  Select Case Tool.UUID
 		  Case "614cfc80-b7aa-437d-b17e-01534f2ab778"
 		    Var Changes As Integer = Self.Project.ConvertDinoReplacementsToSpawnOverrides()
 		    Self.SetupUI

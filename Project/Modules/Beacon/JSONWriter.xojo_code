@@ -28,7 +28,6 @@ Inherits Thread
 		    Self.mError = Err
 		  End Try
 		  Self.mSource = Nil
-		  Self.mSourceDocument = Nil
 		  Self.mSourceIdentity = Nil
 		  #if Not TargetiOS
 		    Self.mLock.Leave

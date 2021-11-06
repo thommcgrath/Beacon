@@ -1,5 +1,39 @@
 #tag Module
 Protected Module Ark
+	#tag Method, Flags = &h0
+		Sub AddTag(Extends Blueprint As Ark.MutableBlueprint, ParamArray TagsToAdd() As String)
+		  Blueprint.AddTags(TagsToAdd)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddTags(Extends Blueprint As Ark.MutableBlueprint, TagsToAdd() As String)
+		  Var Tags() As String = Blueprint.Tags
+		  Var Changed As Boolean
+		  For I As Integer = 0 To TagsToAdd.LastIndex
+		    Var Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
+		    
+		    If Tag = "object" Then
+		      Continue
+		    End If
+		    
+		    If Tags.IndexOf(Tag) <> -1 Then
+		      Continue
+		    End If
+		    
+		    Tags.Add(Tag)
+		    Changed = True
+		  Next
+		  
+		  If Not Changed Then
+		    Return
+		  End If
+		  
+		  Tags.Sort
+		  Blueprint.Tags = Tags
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Categories() As String()
 		  Return Array(Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers)
@@ -39,7 +73,7 @@ Protected Module Ark
 		    Results.Value(Blueprints(Idx).ObjectID) = Blueprints(Idx).Label
 		  Next Idx
 		  
-		  Var All() As Ark.Blueprint = Ark.DataSource.SharedInstance.SearchForBlueprints(Category, "", New Beacon.StringList, "")
+		  Var All() As Ark.Blueprint = Ark.DataSource.SharedInstance.GetBlueprints(Category, "", New Beacon.StringList, "")
 		  Var Labels As New Dictionary
 		  For Idx As Integer = 0 To All.LastIndex
 		    If All(Idx).ValidForMask(EnabledMaps) = False And Results.HasKey(All(Idx).ObjectID) = False Then
@@ -101,9 +135,61 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Mask(Extends Maps() As Ark.Map) As UInt64
+		  Var Bits As UInt64
+		  For Each Map As Ark.Map In Maps
+		    Bits = Bits Or Map.Mask
+		  Next
+		  Return Bits
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function OmniPurchased(Identity As Beacon.Identity) As Boolean
 		  Return Identity.IsOmniFlagged(Ark.OmniFlag)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Pack(Extends Blueprint As Ark.Blueprint) As Dictionary
+		  Return PackBlueprint(Blueprint)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PackBlueprint(Blueprint As Ark.Blueprint) As Dictionary
+		  Var Dict As New Dictionary
+		  
+		  Select Case Blueprint
+		  Case IsA Ark.Engram
+		    Dict.Value("group") = "engrams"
+		  Case IsA Ark.Creature
+		    Dict.Value("group") = "creatures"
+		  Case IsA Ark.SpawnPoint
+		    Dict.Value("group") = "spawn_points"
+		  Case IsA Ark.LootContainer
+		    Dict.Value("group") = "loot_containers"
+		  Else
+		    Return Nil
+		  End Select
+		  
+		  Var ModInfo As New Dictionary
+		  ModInfo.Value("id") = Blueprint.ContentPackUUID
+		  ModInfo.Value("name") = Blueprint.ContentPackName
+		  
+		  Dict.Value("id") = Blueprint.ObjectID
+		  Dict.Value("label") = Blueprint.Label
+		  Dict.Value("alternate_label") = Blueprint.AlternateLabel
+		  Dict.Value("mod") = ModInfo
+		  Dict.Value("tags") = Blueprint.Tags
+		  Dict.Value("availability") = Blueprint.Availability
+		  Dict.Value("path") = Blueprint.Path
+		  
+		  // Let the blueprint add whatever additional data it needs
+		  Blueprint.Pack(Dict)
+		  
+		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -177,6 +263,41 @@ Protected Module Ark
 		  End If
 		  Return CommandLineOptions
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveTag(Extends Blueprint As Ark.MutableBlueprint, ParamArray TagsToRemove() As String)
+		  Blueprint.RemoveTags(TagsToRemove)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveTags(Extends Blueprint As Ark.MutableBlueprint, TagsToRemove() As String)
+		  Var Tags() As String = Blueprint.Tags
+		  Var Changed As Boolean
+		  For I As Integer = 0 To TagsToRemove.LastIndex
+		    Var Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
+		    
+		    If Tag = "object" Then
+		      Continue
+		    End If
+		    
+		    Var Idx As Integer = Tags.IndexOf(Tag)
+		    If Idx = -1 Then
+		      Continue
+		    End If
+		    
+		    Tags.RemoveAt(Idx)
+		    Changed = True
+		  Next
+		  
+		  If Not Changed Then
+		    Return
+		  End If
+		  
+		  // No, you don't need to sort here
+		  Blueprint.Tags = Tags
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -483,6 +604,71 @@ Protected Module Ark
 		  End If
 		  
 		  Return Ark.UnknownBlueprintPrefix + FolderName + "/" + ClassName + "." + ClassName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function UnpackBlueprint(Dict As Dictionary) As Ark.MutableBlueprint
+		  If Not Dict.HasAllKeys("id", "label", "alternate_label", "path", "group", "tags", "availability", "mod") Then
+		    Return Nil
+		  End If
+		  
+		  Var Group As String = Dict.Value("group")
+		  Var Path As String = Dict.Value("path")
+		  Var ObjectID As String = Dict.Value("id")
+		  
+		  If Path.IsEmpty Or ObjectID.IsEmpty Or Group.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Blueprint As Ark.MutableBlueprint
+		  Select Case Group
+		  Case "engrams"
+		    Blueprint = New Ark.MutableEngram(Path, ObjectID)
+		  Case "creatures"
+		    Blueprint = New Ark.MutableCreature(Path, ObjectID)
+		  Case "spawn_points"
+		    Blueprint = New Ark.MutableSpawnPoint(Path, ObjectID)
+		  Case "loot_containers"
+		    Blueprint = New Ark.MutableLootContainer(Path, ObjectID)
+		  Else
+		    Return Nil
+		  End Select
+		  
+		  Var ModInfo As Dictionary = Dict.Value("mod")
+		  
+		  Var Tags() As String
+		  If Dict.Value("tags").IsArray Then
+		    If Dict.Value("tags").ArrayElementType = Variant.TypeString Then
+		      Tags = Dict.Value("tags")
+		    ElseIf Dict.Value("tags").ArrayElementType = Variant.TypeObject Then
+		      Var Temp() As Variant = Dict.Value("tags")
+		      For Each Tag As Variant In Temp
+		        If Tag.Type = Variant.TypeString Then
+		          Tags.Add(Tag.StringValue)
+		        End If
+		      Next
+		    End If
+		  End If
+		  
+		  If IsNull(Dict.Value("alternate_label")) = False And Dict.Value("alternate_label").StringValue.IsEmpty = False Then
+		    Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
+		  Else
+		    Blueprint.AlternateLabel = Nil
+		  End If
+		  Blueprint.Availability = Dict.Value("availability").UInt64Value
+		  Blueprint.Label = Dict.Value("label").StringValue
+		  Blueprint.ContentPackUUID = ModInfo.Value("id").StringValue
+		  Blueprint.ContentPackName = ModInfo.Value("name").StringValue
+		  Blueprint.Tags = Tags
+		  
+		  // Let the blueprint grab whatever additional data it needs
+		  Blueprint.Unpack(Dict)
+		  
+		  Return Blueprint
+		  
+		  Exception Err As RuntimeException
+		    Return Nil
 		End Function
 	#tag EndMethod
 

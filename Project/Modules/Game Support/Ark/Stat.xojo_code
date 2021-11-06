@@ -1,7 +1,8 @@
 #tag Class
 Protected Class Stat
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As String, Index As Integer, IsPercentage As Boolean, PlayerBase As Double, PlayerBaseCapped As Boolean, PlayerPerLevelAmount As Double, PlayerPerLevelEditable As Boolean, WildDefault As Double, TamedDefault As Double, TamedAddDefault As Double, TamedAffinityDefault As Double)
+		Sub Constructor(Label As String, Key As String, Index As Integer, IsPercentage As Boolean, PlayerBase As Double, PlayerBaseCapped As Boolean, PlayerPerLevelAmount As Double, PlayerPerLevelEditable As Boolean, WildDefault As Double, TamedDefault As Double, TamedAddDefault As Double, TamedAffinityDefault As Double)
+		  Self.mLabel = Label
 		  Self.mKey = Key
 		  Self.mIndex = Index
 		  Self.mIsPercentage = IsPercentage
@@ -31,6 +32,12 @@ Protected Class Stat
 	#tag Method, Flags = &h0
 		Function Key() As String
 		  Return Self.mKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As String
+		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
@@ -111,6 +118,10 @@ Protected Class Stat
 
 	#tag Property, Flags = &h21
 		Private mKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -101,7 +101,7 @@ Inherits Beacon.DataSource
 		  Var TestDoc As New Ark.Project
 		  Var Packs As Beacon.StringList = TestDoc.ContentPacks
 		  Var Tags As String = Preferences.SelectedTag(Ark.CategoryEngrams, "8e58f9e4") // Use a strange subgroup here to always get the default
-		  Call Self.SearchForBlueprints(Ark.CategoryEngrams, "", Packs, Tags)
+		  Call Self.GetBlueprints(Ark.CategoryEngrams, "", Packs, Tags)
 		End Sub
 	#tag EndEvent
 
@@ -219,6 +219,153 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreateLocalContentPack(PackName As String) As Ark.ContentPack
+		  Var PackUUID As String = New v4UUID
+		  Var WorkshopID As UInt32 = CRC_32OfStrMBS(PackUUID)
+		  Var Details As New Ark.ContentPack(PackUUID, PackName, False, False, True, WorkshopID)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, PackName, WorkshopID, True, False, True)
+		  Self.CommitTransaction()
+		  Self.SyncUserEngrams()
+		  Return Details
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Blueprint()
+		  Var Categories() As String = Ark.Categories
+		  Var Blueprints() As Ark.Blueprint
+		  For Each Category As String In Categories
+		    Var Results() As Ark.Blueprint = Self.GetBlueprints(Category, SearchText, ContentPacks, Tags)
+		    For Each Result As Ark.Blueprint In Results
+		      Blueprints.Add(Result)
+		    Next
+		  Next
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Blueprint()
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  Return Self.GetBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Ark.Blueprint()
+		  Var Blueprints() As Ark.Blueprint
+		  
+		  Try
+		    Var NextPlaceholder As Integer = 1
+		    Var Clauses() As String
+		    Var Values As New Dictionary
+		    If SearchText <> "" Then
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    
+		    Var SQL As String
+		    Select Case Category
+		    Case Ark.CategoryEngrams
+		      SQL = Self.EngramSelectSQL
+		    Case Ark.CategoryCreatures
+		      SQL = Self.CreatureSelectSQL
+		    Case Ark.CategorySpawnPoints
+		      SQL = Self.SpawnPointSelectSQL
+		    Case Ark.CategoryLootContainers
+		      SQL = Self.LootContainerSelectSQL
+		    Else
+		      Return Blueprints
+		    End Select
+		    
+		    If ContentPacks <> Nil And ContentPacks.LastRowIndex > -1 Then
+		      Var Placeholders() As String
+		      For Each ContentPackUUIDID As String In ContentPacks
+		        Placeholders.Add("?" + NextPlaceholder.ToString)
+		        Values.Value(NextPlaceholder) = ContentPackUUIDID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
+		    End If
+		    If Tags <> "" Then
+		      SQL = SQL.Replace(Category + " INNER JOIN content_packs", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN content_packs")
+		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		      Values.Value(NextPlaceholder) = Tags
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    
+		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
+		      For I As Integer = 0 To ExtraClauses.LastIndex
+		        If ExtraClauses(I).IndexOf(":placeholder:") > -1 Then
+		          Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
+		          Var Value As Variant = ExtraValues(I)
+		          Clauses.Add(Clause)
+		          Values.Value(NextPlaceholder) = Value
+		          NextPlaceholder = NextPlaceholder + 1
+		        Else
+		          Clauses.Add(ExtraClauses(I))
+		        End If
+		      Next
+		    End If
+		    
+		    If Clauses.LastIndex > -1 Then
+		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
+		    End If
+		    SQL = SQL + " ORDER BY label;"
+		    
+		    Var Results As RowSet
+		    #if false
+		      Var StartTime As Double = System.Microseconds
+		    #endif
+		    If Values.KeyCount = 0 Then
+		      Results = Self.SQLSelect(SQL)
+		    Else
+		      Results = Self.SQLSelect(SQL, Values)
+		    End If
+		    #if false
+		      Var Duration As Double = System.Microseconds - StartTime
+		      System.DebugLog("Searching for blueprints took " + Duration.ToString(Locale.Raw, "0") + " microseconds")
+		      System.DebugLog("EXPLAIN QUERY PLAN " + SQL)
+		    #endif
+		    
+		    Select Case Category
+		    Case Ark.CategoryEngrams
+		      Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results)
+		      Self.Cache(Engrams)
+		      For Each Engram As Ark.Engram In Engrams
+		        Blueprints.Add(Engram)
+		      Next Engram
+		    Case Ark.CategoryCreatures
+		      Var Creatures() As Ark.Creature = Self.RowSetToCreature(Results)
+		      Self.Cache(Creatures)
+		      For Each Creature As Ark.Creature In Creatures
+		        Blueprints.Add(Creature)
+		      Next Creature
+		    Case Ark.CategorySpawnPoints
+		      Var SpawnPoints() As Ark.SpawnPoint = Self.RowSetToSpawnPoint(Results)
+		      Self.Cache(SpawnPoints)
+		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
+		        Blueprints.Add(SpawnPoint)
+		      Next SpawnPoint
+		    Case Ark.CategoryLootContainers
+		      Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
+		      Self.Cache(LootContainers)
+		      For Each LootContainer As Ark.LootContainer In LootContainers
+		        Blueprints.Add(LootContainer)
+		      Next LootContainer
+		    End Select
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
 		  Var Value As Variant = Self.GetVariable(Key, Default)
 		  Return Value.BooleanValue
@@ -265,10 +412,75 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetConfigKey(File As String, Header As String, Key As String) As Ark.ConfigKey
-		  Var Results() As Ark.ConfigKey = Self.SearchForConfigKey(File, Header, Key, False)
+		  Var Results() As Ark.ConfigKey = Self.GetConfigKeys(File, Header, Key, False)
 		  If Results.Count = 1 Then
 		    Return Results(0)
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigKeys(File As String, Header As String, Key As String, SortHuman As Boolean) As Ark.ConfigKey()
+		  Var Clauses() As String
+		  Var Values As New Dictionary
+		  Var Idx As Integer = 1
+		  
+		  If File = Beacon.ConfigFileGameUserSettings Then
+		    If Header.IsEmpty = False Then
+		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
+		      Values.Value(Idx) = Header
+		      Idx = Idx + 1
+		    Else
+		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
+		    End If
+		  Else
+		    If File.IsEmpty = False Then
+		      If File = "CommandLine" Then
+		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
+		      ElseIf File.IndexOf("*") > -1 Then
+		        Values.Value(Idx) = Self.EscapeLikeValue(File).ReplaceAll("*", "%")
+		        Clauses.Add("file LIKE ?" + Idx.ToString + " ESCAPE '\'")
+		        Idx = Idx + 1
+		      Else
+		        Values.Value(Idx) = File
+		        Clauses.Add("file = ?" + Idx.ToString)
+		        Idx = Idx + 1
+		      End If
+		    End If
+		    If Header.IsEmpty = False Then
+		      Values.Value(Idx) = Header
+		      Clauses.Add("header = ?" + Idx.ToString)
+		      Idx = Idx + 1
+		    End If
+		  End If
+		  If Key.IsEmpty = False Then
+		    If Key.IndexOf("*") > -1 Then
+		      Values.Value(Idx) = Self.EscapeLikeValue(Key).ReplaceAll("*", "%")
+		      Clauses.Add("key LIKE ?" + Idx.ToString + " ESCAPE '\'")
+		    Else
+		      Values.Value(Idx) = Key
+		      Clauses.Add("key = ?" + Idx.ToString)
+		    End If
+		    Idx = Idx + 1
+		  End If
+		  
+		  Var SQL As String = Self.ConfigKeySelectSQL
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
+		  End If
+		  If SortHuman Then
+		    SQL = SQL + " ORDER BY COALESCE(custom_sort, label)"
+		  Else
+		    SQL = SQL + " ORDER BY key"
+		  End If
+		  
+		  Var Results() As Ark.ConfigKey
+		  Try
+		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL, Values))
+		  Catch Err As RuntimeException
+		    App.ReportException(Err)
+		  End Try
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -372,6 +584,22 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Creature()
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategoryCreatures, SearchText, ContentPacks, Tags)
+		  Var Creatures() As Ark.Creature
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.Creature Then
+		      Creatures.Add(Ark.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCreaturesByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature()
 		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.class_string = ?1"
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
@@ -449,7 +677,23 @@ Inherits Beacon.DataSource
 		Function GetEngramEntries(SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
 		  Var ExtraValues(0) As Variant
-		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
+		  Var Engrams() As Ark.Engram
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.Engram Then
+		      Engrams.Add(Ark.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Engram()
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags)
 		  Var Engrams() As Ark.Engram
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    If Blueprint IsA Ark.Engram Then
@@ -716,6 +960,57 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As Ark.LootContainer()
+		  #Pragma Unused Tags
+		  #Pragma Warning "Tags could be used here"
+		  
+		  Var Containers() As Ark.LootContainer
+		  
+		  Try
+		    Var Clauses() As String
+		    Var Values As New Dictionary
+		    Var NextPlaceholder As Integer = 1
+		    If (ContentPacks Is Nil) = False And CType(ContentPacks.Count, Integer) > 0 Then
+		      Var Placeholders() As String
+		      For Each ContentPackUUID As String In ContentPacks
+		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		        Values.Value(NextPlaceholder) = ContentPackUUID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
+		    End If
+		    If SearchText.IsEmpty = False Then
+		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
+		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    If IncludeExperimental = False Then
+		      Clauses.Add("experimental = 0")
+		    End If
+		    
+		    Var SQL As String = Self.LootContainerSelectSQL
+		    If Clauses.LastIndex > -1 Then
+		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
+		    End If
+		    SQL = SQL + " ORDER BY loot_containers.sort_order, loot_containers.label;"
+		    
+		    Var Results As RowSet
+		    If Values.KeyCount > 0 Then
+		      Results = Self.SQLSelect(SQL, Values)
+		    Else
+		      Results = Self.SQLSelect(SQL)
+		    End If
+		    
+		    Containers = Self.RowSetToLootContainer(Results)
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
+		  Return Containers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetLootContainersByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer()
 		  Var SQL As String = Self.LootContainerSelectSQL + " WHERE loot_containers.class_string = ?1"
 		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
@@ -742,6 +1037,40 @@ Inherits Beacon.DataSource
 		  Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Rows)
 		  Self.Cache(LootContainers)
 		  Return LootContainers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainerSelector(SelectorUUID As String) As Ark.LootContainerSelector
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, language, code FROM loot_container_selectors WHERE object_id = ?1;", SelectorUUID)
+		  If Results.RowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Return New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainerSelectors(IncludeOfficial As Boolean = True, IncludeCustom As Boolean = True) As Ark.LootContainerSelector()
+		  Var Selectors() As Ark.LootContainerSelector
+		  
+		  Var SQL As String = "SELECT object_id, label, language, code FROM loot_container_selectors"
+		  If IncludeOfficial = False And IncludeCustom = True Then
+		    SQL = SQL + " WHERE content_pack_id = '" + Ark.UserContentPackUUID + "'"
+		  ElseIf IncludeOfficial = True And IncludeCustom = False Then
+		    SQL = SQL + " WHERE content_pack_id != '" + Ark.UserContentPackUUID + "'"
+		  ElseIf IncludeOfficial = False And IncludeCustom = False Then
+		    Return Selectors
+		  End If
+		  SQL = SQL + " ORDER BY label;"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL)
+		  While Not Results.AfterLastRow
+		    Selectors.Add(New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue))
+		    Results.MoveToNextRow
+		  Wend
+		  Return Selectors
 		End Function
 	#tag EndMethod
 
@@ -777,40 +1106,6 @@ Inherits Beacon.DataSource
 		    
 		    Rows.MoveToNextRow
 		  Wend
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetLootTemplateSelector(SelectorUUID As String) As Ark.LootContainerSelector
-		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, language, code FROM loot_container_selectors WHERE object_id = ?1;", SelectorUUID)
-		  If Results.RowCount <> 1 Then
-		    Return Nil
-		  End If
-		  
-		  Return New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetLootTemplateSelectors(IncludeOfficial As Boolean = True, IncludeCustom As Boolean = True) As Ark.LootContainerSelector()
-		  Var Selectors() As Ark.LootContainerSelector
-		  
-		  Var SQL As String = "SELECT object_id, label, language, code FROM loot_container_selectors"
-		  If IncludeOfficial = False And IncludeCustom = True Then
-		    SQL = SQL + " WHERE content_pack_id = '" + Ark.UserContentPackUUID + "'"
-		  ElseIf IncludeOfficial = True And IncludeCustom = False Then
-		    SQL = SQL + " WHERE content_pack_id != '" + Ark.UserContentPackUUID + "'"
-		  ElseIf IncludeOfficial = False And IncludeCustom = False Then
-		    Return Selectors
-		  End If
-		  SQL = SQL + " ORDER BY label;"
-		  
-		  Var Results As RowSet = Self.SQLSelect(SQL)
-		  While Not Results.AfterLastRow
-		    Selectors.Add(New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue))
-		    Results.MoveToNextRow
-		  Wend
-		  Return Selectors
 		End Function
 	#tag EndMethod
 
@@ -910,7 +1205,7 @@ Inherits Beacon.DataSource
 		  If ContentPacks Is Nil Then
 		    ContentPacks = New Beacon.StringList
 		  End If
-		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategorySpawnPoints, SearchText, ContentPacks, Tags)
+		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategorySpawnPoints, SearchText, ContentPacks, Tags)
 		  Var Points() As Ark.SpawnPoint
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    If Blueprint IsA Ark.SpawnPoint Then
@@ -958,7 +1253,7 @@ Inherits Beacon.DataSource
 		  Clauses.Add("spawn_points.sets LIKE :placeholder:")
 		  Values.Add("%" + Creature.ObjectID + "%")
 		  
-		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategorySpawnPoints, "", ContentPacks, Tags, Clauses, Values)
+		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategorySpawnPoints, "", ContentPacks, Tags, Clauses, Values)
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    If Blueprint IsA Ark.SpawnPoint Then
@@ -1392,270 +1687,197 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String) As Ark.Blueprint()
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  Return Self.SearchForBlueprints(Category, SearchText, ContentPacks, Tags, ExtraClauses, ExtraValues)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SearchForBlueprints(Category As String, SearchText As String, ContentPacks As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Ark.Blueprint()
-		  Var Blueprints() As Ark.Blueprint
+		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint, ErrorDict As Dictionary) As Boolean
+		  Var CountSuccess, CountErrors As Integer
 		  
-		  Try
-		    Var NextPlaceholder As Integer = 1
-		    Var Clauses() As String
-		    Var Values As New Dictionary
-		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
-		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    
-		    Var SQL As String
-		    Select Case Category
-		    Case Ark.CategoryEngrams
-		      SQL = Self.EngramSelectSQL
-		    Case Ark.CategoryCreatures
-		      SQL = Self.CreatureSelectSQL
-		    Case Ark.CategorySpawnPoints
-		      SQL = Self.SpawnPointSelectSQL
-		    Case Ark.CategoryLootContainers
-		      SQL = Self.LootContainerSelectSQL
-		    Else
-		      Return Blueprints
-		    End Select
-		    
-		    If ContentPacks <> Nil And ContentPacks.LastRowIndex > -1 Then
-		      Var Placeholders() As String
-		      For Each ContentPackUUIDID As String In ContentPacks
-		        Placeholders.Add("?" + NextPlaceholder.ToString)
-		        Values.Value(NextPlaceholder) = ContentPackUUIDID
-		        NextPlaceholder = NextPlaceholder + 1
-		      Next
-		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
-		    End If
-		    If Tags <> "" Then
-		      SQL = SQL.Replace(Category + " INNER JOIN content_packs", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN content_packs")
-		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		      Values.Value(NextPlaceholder) = Tags
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    
-		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
-		      For I As Integer = 0 To ExtraClauses.LastIndex
-		        If ExtraClauses(I).IndexOf(":placeholder:") > -1 Then
-		          Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
-		          Var Value As Variant = ExtraValues(I)
-		          Clauses.Add(Clause)
-		          Values.Value(NextPlaceholder) = Value
-		          NextPlaceholder = NextPlaceholder + 1
-		        Else
-		          Clauses.Add(ExtraClauses(I))
-		        End If
-		      Next
-		    End If
-		    
-		    If Clauses.LastIndex > -1 Then
-		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
-		    End If
-		    SQL = SQL + " ORDER BY label;"
-		    
-		    Var Results As RowSet
-		    #if false
-		      Var StartTime As Double = System.Microseconds
-		    #endif
-		    If Values.KeyCount = 0 Then
-		      Results = Self.SQLSelect(SQL)
-		    Else
-		      Results = Self.SQLSelect(SQL, Values)
-		    End If
-		    #if false
-		      Var Duration As Double = System.Microseconds - StartTime
-		      System.DebugLog("Searching for blueprints took " + Duration.ToString(Locale.Raw, "0") + " microseconds")
-		      System.DebugLog("EXPLAIN QUERY PLAN " + SQL)
-		    #endif
-		    
-		    Select Case Category
-		    Case Ark.CategoryEngrams
-		      Var Engrams() As Ark.Engram = Self.RowSetToEngram(Results)
-		      Self.Cache(Engrams)
-		      For Each Engram As Ark.Engram In Engrams
-		        Blueprints.Add(Engram)
-		      Next Engram
-		    Case Ark.CategoryCreatures
-		      Var Creatures() As Ark.Creature = Self.RowSetToCreature(Results)
-		      Self.Cache(Creatures)
-		      For Each Creature As Ark.Creature In Creatures
-		        Blueprints.Add(Creature)
-		      Next Creature
-		    Case Ark.CategorySpawnPoints
-		      Var SpawnPoints() As Ark.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		      Self.Cache(SpawnPoints)
-		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		        Blueprints.Add(SpawnPoint)
-		      Next SpawnPoint
-		    Case Ark.CategoryLootContainers
-		      Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
-		      Self.Cache(LootContainers)
-		      For Each LootContainer As Ark.LootContainer In LootContainers
-		        Blueprints.Add(LootContainer)
-		      Next LootContainer
-		    End Select
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForConfigKey(File As String, Header As String, Key As String, SortHuman As Boolean) As Ark.ConfigKey()
-		  Var Clauses() As String
-		  Var Values As New Dictionary
-		  Var Idx As Integer = 1
-		  
-		  If File = Beacon.ConfigFileGameUserSettings Then
-		    If Header.IsEmpty = False Then
-		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
-		      Values.Value(Idx) = Header
-		      Idx = Idx + 1
-		    Else
-		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
-		    End If
-		  Else
-		    If File.IsEmpty = False Then
-		      If File = "CommandLine" Then
-		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
-		      ElseIf File.IndexOf("*") > -1 Then
-		        Values.Value(Idx) = Self.EscapeLikeValue(File).ReplaceAll("*", "%")
-		        Clauses.Add("file LIKE ?" + Idx.ToString + " ESCAPE '\'")
-		        Idx = Idx + 1
-		      Else
-		        Values.Value(Idx) = File
-		        Clauses.Add("file = ?" + Idx.ToString)
-		        Idx = Idx + 1
+		  Self.BeginTransaction()
+		  For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
+		    Var TransactionStarted As Boolean
+		    Try
+		      Self.BeginTransaction()
+		      TransactionStarted = True
+		      Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 AND mod_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1);", Blueprint.ObjectID)
+		      Self.CommitTransaction()
+		      TransactionStarted = False
+		      CountSuccess = CountSuccess + 1
+		    Catch Err As RuntimeException
+		      If TransactionStarted Then
+		        Self.RollbackTransaction()
 		      End If
-		    End If
-		    If Header.IsEmpty = False Then
-		      Values.Value(Idx) = Header
-		      Clauses.Add("header = ?" + Idx.ToString)
-		      Idx = Idx + 1
-		    End If
-		  End If
-		  If Key.IsEmpty = False Then
-		    If Key.IndexOf("*") > -1 Then
-		      Values.Value(Idx) = Self.EscapeLikeValue(Key).ReplaceAll("*", "%")
-		      Clauses.Add("key LIKE ?" + Idx.ToString + " ESCAPE '\'")
-		    Else
-		      Values.Value(Idx) = Key
-		      Clauses.Add("key = ?" + Idx.ToString)
-		    End If
-		    Idx = Idx + 1
-		  End If
+		      If (ErrorDict Is Nil) = False Then
+		        ErrorDict.Value(Blueprint) = Err
+		      End If
+		      CountErrors = CountErrors + 1
+		    End Try
+		  Next
 		  
-		  Var SQL As String = Self.ConfigKeySelectSQL
-		  If Clauses.Count > 0 Then
-		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
-		  End If
-		  If SortHuman Then
-		    SQL = SQL + " ORDER BY COALESCE(custom_sort, label)"
+		  For Each Blueprint As Ark.Blueprint In BlueprintsToSave
+		    Var TransactionStarted As Boolean
+		    Try
+		      Var UpdateObjectID As String
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		      Var CacheDict As Dictionary
+		      If Results.RowCount = 1 Then
+		        If Results.Column("is_user_blueprint").BooleanValue = False Then
+		          Continue
+		        End If
+		        UpdateObjectID = Results.Column("object_id").StringValue
+		      ElseIf Results.RowCount > 1 Then
+		        // What the hell?
+		        Continue
+		      End If
+		      
+		      If Blueprint.Path.IsEmpty Or Blueprint.ClassString.IsEmpty Then
+		        Continue
+		      End If
+		      
+		      Var Category As String = Blueprint.Category
+		      Var Columns As New Dictionary
+		      Columns.Value("object_id") = Blueprint.ObjectID
+		      Columns.Value("path") = Blueprint.Path
+		      Columns.Value("class_string") = Blueprint.ClassString
+		      Columns.Value("label") = Blueprint.Label
+		      Columns.Value("tags") = Blueprint.TagString
+		      Columns.Value("availability") = Blueprint.Availability
+		      Columns.Value("mod_id") = Blueprint.ContentPackUUID
+		      
+		      Select Case Blueprint
+		      Case IsA Ark.Creature
+		        Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
+		          Columns.Value("incubation_time") = Creature.IncubationTime
+		          Columns.Value("mature_time") = Creature.MatureTime
+		        Else
+		          Columns.Value("incubation_time") = Nil
+		          Columns.Value("mature_time") = Nil
+		        End If
+		        If Creature.MinMatingInterval > 0 And Creature.MaxMatingInterval > 0 Then
+		          Columns.Value("mating_interval_min") = Creature.MinMatingInterval
+		          Columns.Value("mating_interval_max") = Creature.MaxMatingInterval
+		        Else
+		          Columns.Value("mating_interval_min") = Nil
+		          Columns.Value("mating_interval_max") = Nil
+		        End If
+		        Columns.Value("used_stats") = Creature.StatsMask
+		        
+		        Var StatDicts() As Dictionary
+		        Var StatValues() As Beacon.CreatureStatValue = Creature.AllStatValues
+		        For Each StatValue As Beacon.CreatureStatValue In StatValues
+		          StatDicts.Add(StatValue.SaveData)
+		        Next
+		        Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
+		        
+		        CacheDict = Self.mCreatureCache
+		      Case IsA Ark.SpawnPoint
+		        Columns.Value("sets") = Beacon.SpawnPoint(Blueprint).SetsString(False)
+		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
+		        CacheDict = Self.mSpawnPointCache
+		      Case IsA Ark.Engram
+		        Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
+		        Columns.Value("recipe") = Beacon.RecipeIngredient.ToJSON(Engram.Recipe, False)
+		        If Engram.EntryString.IsEmpty Then
+		          Columns.Value("entry_string") = Nil
+		        Else
+		          Columns.Value("entry_string") = Engram.EntryString
+		        End If
+		        If Engram.RequiredPlayerLevel Is Nil Then
+		          Columns.Value("required_level") = Nil
+		        Else
+		          Columns.Value("required_level") = Engram.RequiredPlayerLevel.IntegerValue
+		        End If
+		        If Engram.RequiredUnlockPoints Is Nil Then
+		          Columns.Value("required_points") = Nil
+		        Else
+		          Columns.Value("required_points") = Engram.RequiredUnlockPoints.IntegerValue
+		        End If
+		        If Engram.StackSize Is Nil Then
+		          Columns.Value("stack_size") = Nil
+		        Else
+		          Columns.Value("stack_size") = Engram.StackSize.IntegerValue
+		        End If
+		        CacheDict = Self.mEngramCache
+		      Case IsA Ark.LootContainer
+		        #if DebugBuild
+		          #Pragma Warning "Incomplete"
+		        #else
+		          #Pragma Error "Incomplete"
+		        #endif
+		      End Select
+		      
+		      Self.BeginTransaction()
+		      TransactionStarted = True
+		      If UpdateObjectID.IsEmpty = False Then
+		        Var Assignments() As String
+		        Var Values() As Variant
+		        Var NextPlaceholder As Integer = 1
+		        Var WhereClause As String
+		        For Each Entry As DictionaryEntry In Columns
+		          If Entry.Key = "object_id" Then
+		            WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		          Else
+		            Assignments.Add(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
+		          End If
+		          Values.Add(Entry.Value)
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        
+		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, UpdateObjectID, Blueprint.TagString)
+		      Else
+		        Var ColumnNames(), Placeholders() As String
+		        Var Values() As Variant
+		        Var NextPlaceholder As Integer = 1
+		        For Each Entry As DictionaryEntry In Columns
+		          ColumnNames.Add(Entry.Key.StringValue)
+		          Placeholders.Add("?" + NextPlaceholder.ToString)
+		          Values.Add(Entry.Value)
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        
+		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
+		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, Blueprint.ObjectID, Blueprint.TagString)
+		      End If
+		      Self.CommitTransaction()
+		      TransactionStarted = False
+		      
+		      If CacheDict <> Nil Then
+		        If CacheDict.HasKey(Blueprint.ObjectID) Then
+		          CacheDict.Remove(Blueprint.ObjectID)
+		        End If
+		        If CacheDict.HasKey(Blueprint.Path) Then
+		          CacheDict.Remove(Blueprint.Path)
+		        End If
+		        If CacheDict.HasKey(Blueprint.ClassString) Then
+		          CacheDict.Remove(Blueprint.ClassString)
+		        End If
+		        If Blueprint IsA Ark.Engram And Ark.Engram(Blueprint).HasUnlockDetails And CacheDict.HasKey(Ark.Engram(Blueprint).EntryString) Then
+		          CacheDict.Remove(Ark.Engram(Blueprint).EntryString)
+		        End If
+		      End If
+		      
+		      CountSuccess = CountSuccess + 1
+		    Catch Err As RuntimeException
+		      If TransactionStarted Then
+		        Self.RollbackTransaction()
+		      End If
+		      If (ErrorDict Is Nil) = False Then
+		        ErrorDict.Value(Blueprint) = Err
+		      End If
+		      CountErrors = CountErrors + 1
+		    End Try
+		  Next
+		  If CountErrors = 0 And CountSuccess > 0 Then
+		    Self.CommitTransaction()
+		    
+		    Self.SyncUserEngrams()
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		    
+		    Return True
 		  Else
-		    SQL = SQL + " ORDER BY key"
+		    Self.RollbackTransaction()
+		    
+		    Return False
 		  End If
-		  
-		  Var Results() As Ark.ConfigKey
-		  Try
-		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL, Values))
-		  Catch Err As RuntimeException
-		    App.ReportException(Err)
-		  End Try
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForCreatures(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Creature()
-		  If ContentPacks Is Nil Then
-		    ContentPacks = New Beacon.StringList
-		  End If
-		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategoryCreatures, SearchText, ContentPacks, Tags)
-		  Var Creatures() As Ark.Creature
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    If Blueprint IsA Ark.Creature Then
-		      Creatures.Add(Ark.Creature(Blueprint))
-		    End If
-		  Next
-		  Return Creatures
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "") As Ark.Engram()
-		  If ContentPacks Is Nil Then
-		    ContentPacks = New Beacon.StringList
-		  End If
-		  Var Blueprints() As Ark.Blueprint = Self.SearchForBlueprints(Ark.CategoryEngrams, SearchText, ContentPacks, Tags)
-		  Var Engrams() As Ark.Engram
-		  For Each Blueprint As Ark.Blueprint In Blueprints
-		    If Blueprint IsA Ark.Engram Then
-		      Engrams.Add(Ark.Engram(Blueprint))
-		    End If
-		  Next
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As Ark.LootContainer()
-		  #Pragma Unused Tags
-		  #Pragma Warning "Tags could be used here"
-		  
-		  Var Containers() As Ark.LootContainer
-		  
-		  Try
-		    Var Clauses() As String
-		    Var Values As New Dictionary
-		    Var NextPlaceholder As Integer = 1
-		    If (ContentPacks Is Nil) = False And CType(ContentPacks.Count, Integer) > 0 Then
-		      Var Placeholders() As String
-		      For Each ContentPackUUID As String In ContentPacks
-		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		        Values.Value(NextPlaceholder) = ContentPackUUID
-		        NextPlaceholder = NextPlaceholder + 1
-		      Next
-		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
-		    End If
-		    If SearchText.IsEmpty = False Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
-		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    If IncludeExperimental = False Then
-		      Clauses.Add("experimental = 0")
-		    End If
-		    
-		    Var SQL As String = Self.LootContainerSelectSQL
-		    If Clauses.LastIndex > -1 Then
-		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
-		    End If
-		    SQL = SQL + " ORDER BY loot_containers.sort_order, loot_containers.label;"
-		    
-		    Var Results As RowSet
-		    If Values.KeyCount > 0 Then
-		      Results = Self.SQLSelect(SQL, Values)
-		    Else
-		      Results = Self.SQLSelect(SQL)
-		    End If
-		    
-		    Containers = Self.RowSetToLootContainer(Results)
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  Return Containers
 		End Function
 	#tag EndMethod
 
@@ -1666,6 +1888,87 @@ Inherits Beacon.DataSource
 		  End If
 		  Return mInstance
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncUserEngrams()
+		  // This way changing lots of engrams rapidly won't require a write to disk
+		  // after each action
+		  
+		  If Self.mSyncUserEngramsKey <> "" Then
+		    CallLater.Cancel(Self.mSyncUserEngramsKey)
+		    Self.mSyncUserEngramsKey = ""
+		  End If
+		  
+		  Self.mSyncUserEngramsKey = CallLater.Schedule(250, AddressOf SyncUserEngramsActual)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncUserEngramsActual()
+		  Var Packed() As Dictionary
+		  
+		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks()
+		  If UserPacks.Count > 0 Then
+		    Var Packs As New Beacon.StringList()
+		    For Each Pack As Ark.ContentPack In UserPacks
+		      Packs.Append(Pack.UUID)
+		      
+		      Var Dict As New Dictionary
+		      Dict.Value("mod_id") = Pack.UUID
+		      Dict.Value("name") = Pack.Name
+		      Dict.Value("workshop_id") = Pack.WorkshopID
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
+		    For Each Engram As Ark.Engram In Engrams
+		      Var Dict As Dictionary = Engram.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
+		    For Each Creature As Ark.Creature In Creatures
+		      Var Dict As Dictionary = Creature.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
+		    For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
+		      Var Dict As Dictionary = SpawnPoint.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
+		    For Each Container As Ark.LootContainer In Containers
+		      Var Dict As Dictionary = Container.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		  End If
+		  
+		  If Packed.Count > 0 Then
+		    Var Content As String = Beacon.GenerateJSON(Packed, True)
+		    Call UserCloud.Write("Blueprints.json", Content)
+		  Else
+		    Call UserCloud.Delete("Blueprints.json")
+		  End If
+		End Sub
 	#tag EndMethod
 
 
@@ -1721,6 +2024,10 @@ Inherits Beacon.DataSource
 		Private mSpawnPointCache As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSyncUserEngramsKey As String
+	#tag EndProperty
+
 
 	#tag Constant, Name = ConfigKeySelectSQL, Type = String, Dynamic = False, Default = \"SELECT object_id\x2C label\x2C file\x2C header\x2C key\x2C value_type\x2C max_allowed\x2C description\x2C default_value\x2C nitrado_path\x2C nitrado_format\x2C nitrado_deploy_style\x2C native_editor_version\x2C ui_group\x2C custom_sort\x2C constraints\x2C content_pack_id FROM ini_options", Scope = Private
 	#tag EndConstant
@@ -1741,6 +2048,9 @@ Inherits Beacon.DataSource
 	#tag EndConstant
 
 	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.requirements\x2C loot_containers.content_pack_id\x2C loot_containers.tags FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_EngramsChanged, Type = String, Dynamic = False, Default = \"Engrams Changed", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM spawn_points INNER JOIN content_packs ON (spawn_points.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private

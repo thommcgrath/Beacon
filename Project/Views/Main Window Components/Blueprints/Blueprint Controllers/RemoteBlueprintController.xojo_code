@@ -2,28 +2,30 @@
 Protected Class RemoteBlueprintController
 Inherits BlueprintController
 	#tag Event
-		Sub Publish(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint)
+		Sub Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
 		  Var Engrams(), Creatures(), SpawnPoints(), LootSources() As Dictionary
 		  Var Deletions() As String
 		  
-		  For Each Blueprint As Beacon.Blueprint In BlueprintsToDelete
+		  For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
 		    Deletions.Add(Blueprint.ObjectID)
 		  Next
 		  
-		  For Each Blueprint As Beacon.Blueprint In BlueprintsToSave
+		  For Each Blueprint As Ark.Blueprint In BlueprintsToSave
 		    If Blueprint Is Nil Then
 		      Continue
 		    End If
 		    
-		    Var Packed As Dictionary = Beacon.PackBlueprint(Blueprint)
+		    Var Packed As Dictionary = Ark.PackBlueprint(Blueprint)
 		    
 		    Select Case Blueprint
-		    Case IsA Beacon.Engram
+		    Case IsA Ark.Engram
 		      Engrams.Add(Packed)
-		    Case IsA Beacon.Creature
+		    Case IsA Ark.Creature
 		      Creatures.Add(Packed)
-		    Case IsA Beacon.SpawnPoint
+		    Case IsA Ark.SpawnPoint
 		      SpawnPoints.Add(Packed)
+		    Case IsA Ark.LootContainer
+		      LootSources.Add(Packed)
 		    End Select
 		  Next
 		  
@@ -100,7 +102,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Var Blueprints() As Beacon.Blueprint
+		  Var Blueprints() As Ark.Blueprint
 		  Var Dict As Dictionary = Parsed
 		  
 		  If Not Self.Unpack(Blueprints, Dict, "engrams") Then
@@ -146,12 +148,12 @@ Inherits BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Unpack(Blueprints() As Beacon.Blueprint, Dict As Dictionary, Key As String) As Boolean
+		Private Function Unpack(Blueprints() As Ark.Blueprint, Dict As Dictionary, Key As String) As Boolean
 		  If Dict.HasKey(Key) Then
 		    Try
 		      Var Definitions() As Dictionary = Dict.Value(Key).DictionaryArrayValue
 		      For Each Definition As Dictionary In Definitions
-		        Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Definition)
+		        Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Definition)
 		        If (Blueprint Is Nil) = False Then
 		          Blueprints.Add(Blueprint)
 		        End If

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class BlueprintController
 	#tag Method, Flags = &h0
-		Function Blueprint(ObjectID As String) As Beacon.Blueprint
+		Function Blueprint(ObjectID As String) As Ark.Blueprint
 		  If Self.mBlueprints.HasKey(ObjectID) Then
 		    Return Self.mBlueprints.Value(ObjectID)
 		  End If
@@ -15,8 +15,8 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Blueprints() As Beacon.Blueprint()
-		  Var Results() As Beacon.Blueprint
+		Function Blueprints() As Ark.Blueprint()
+		  Var Results() As Ark.Blueprint
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
 		    Results.Add(Entry.Value)
 		  Next
@@ -27,16 +27,16 @@ Protected Class BlueprintController
 	#tag Method, Flags = &h1
 		Protected Sub CacheBlueprints()
 		  // This is a convenience method to finish loading an empty set.
-		  Var Blueprints() As Beacon.Blueprint
+		  Var Blueprints() As Ark.Blueprint
 		  Self.CacheBlueprints(Blueprints)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub CacheBlueprints(Blueprints() As Beacon.Blueprint)
+		Protected Sub CacheBlueprints(Blueprints() As Ark.Blueprint)
 		  Self.mBlueprints.RemoveAll
 		  
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Self.mBlueprints.Value(Blueprint.ObjectID) = Blueprint
 		  Next
 		  
@@ -92,10 +92,10 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Creatures() As Beacon.Creature()
-		  Var Results() As Beacon.Creature
+		Function Creatures() As Ark.Creature()
+		  Var Results() As Ark.Creature
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Beacon.Creature Then
+		    If Entry.Value IsA Ark.Creature Then
 		      Results.Add(Entry.Value)
 		    End If
 		  Next
@@ -104,20 +104,20 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteBlueprint(ParamArray Blueprints() As Beacon.Blueprint)
+		Sub DeleteBlueprint(ParamArray Blueprints() As Ark.Blueprint)
 		  Self.DeleteBlueprints(Blueprints)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteBlueprints(Blueprints() As Beacon.Blueprint)
+		Sub DeleteBlueprints(Blueprints() As Ark.Blueprint)
 		  If Self.IsWorking Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
 		  End If
 		  
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Var ObjectID As String = Blueprint.ObjectID
 		    
 		    If Self.mBlueprints.HasKey(ObjectID) Then
@@ -153,10 +153,10 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Engrams() As Beacon.Engram()
-		  Var Results() As Beacon.Engram
+		Function Engrams() As Ark.Engram()
+		  Var Results() As Ark.Engram
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Beacon.Engram Then
+		    If Entry.Value IsA Ark.Engram Then
 		      Results.Add(Entry.Value)
 		    End If
 		  Next
@@ -199,10 +199,22 @@ Protected Class BlueprintController
 		  If IsEventImplemented("RefreshBlueprints") Then
 		    RaiseEvent RefreshBlueprints()
 		  Else
-		    Var Blueprints() As Beacon.Blueprint
+		    Var Blueprints() As Ark.Blueprint
 		    Self.CacheBlueprints(Blueprints)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootContainers() As Ark.LootContainer()
+		  Var Results() As Ark.LootContainer
+		  For Each Entry As DictionaryEntry In Self.mBlueprints
+		    If Entry.Value IsA Ark.LootContainer Then
+		      Results.Add(Entry.Value)
+		    End If
+		  Next
+		  Return Results
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -230,7 +242,7 @@ Protected Class BlueprintController
 		  RaiseEvent WorkStarted()
 		  
 		  If IsEventImplemented("Publish") Then 
-		    Var BlueprintsToSave(), BlueprintsToDelete() As Beacon.Blueprint
+		    Var BlueprintsToSave(), BlueprintsToDelete() As Ark.Blueprint
 		    For Each Entry As DictionaryEntry In Self.mBlueprintsToSave
 		      BlueprintsToSave.Add(Entry.Value)
 		    Next
@@ -246,27 +258,27 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveBlueprint(ParamArray Blueprints() As Beacon.Blueprint)
+		Sub SaveBlueprint(ParamArray Blueprints() As Ark.Blueprint)
 		  Self.SaveBlueprints(Blueprints)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveBlueprints(Blueprints() As Beacon.Blueprint)
+		Sub SaveBlueprints(Blueprints() As Ark.Blueprint)
 		  If Self.IsWorking Then
 		    Var Err As New UnsupportedOperationException
 		    Err.Message = "Another action is already running"
 		    Raise Err
 		  End If
 		  
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		  For Each Blueprint As Ark.Blueprint In Blueprints
 		    Var ObjectID As String = Blueprint.ObjectID
 		    
-		    If Blueprint.ModID <> Self.ModID Then
+		    If Blueprint.ContentPackUUID <> Self.ModID Then
 		      // Need to adjust the mod info to match
-		      Var MutableVersion As Beacon.MutableBlueprint = Blueprint.MutableVersion
-		      MutableVersion.ModID = Self.ModID
-		      MutableVersion.ModName = Self.ModName
+		      Var MutableVersion As Ark.MutableBlueprint = Blueprint.MutableVersion
+		      MutableVersion.ContentPackUUID = Self.ModID
+		      MutableVersion.ContentPackName = Self.ModName
 		      Blueprint = MutableVersion.ImmutableVersion
 		    End If
 		    
@@ -281,10 +293,10 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpawnPoints() As Beacon.SpawnPoint()
-		  Var Results() As Beacon.SpawnPoint
+		Function SpawnPoints() As Ark.SpawnPoint()
+		  Var Results() As Ark.SpawnPoint
 		  For Each Entry As DictionaryEntry In Self.mBlueprints
-		    If Entry.Value IsA Beacon.SpawnPoint Then
+		    If Entry.Value IsA Ark.SpawnPoint Then
 		      Results.Add(Entry.Value)
 		    End If
 		  Next
@@ -304,7 +316,7 @@ Protected Class BlueprintController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Publish(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint)
+		Event Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

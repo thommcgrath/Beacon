@@ -555,8 +555,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Select Case Instructions
 		    Case "showdocuments"
 		      Self.mMainWindow.ShowDocuments()
-		    Case "showpresets"
-		      Self.mMainWindow.ShowPresets()
+		    Case "showpresets", "showtemplates"
+		      Self.mMainWindow.ShowTemplates()
 		    Case "showengrams", "showblueprints", "showmods"
 		      Self.mMainWindow.ShowBlueprints()
 		    Case "showidentity"
@@ -1135,9 +1135,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return
 		  End If
 		  
-		  If File.ExtensionMatches(Beacon.FileExtensionPreset) Then
+		  If File.ExtensionMatches(Beacon.FileExtensionPreset, Beacon.FileExtensionTemplate) Then
 		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Presets.OpenPreset(File, Import)
+		    Self.mMainWindow.Templates.OpenTemplate(File, Import)
 		    Return
 		  End If
 		  

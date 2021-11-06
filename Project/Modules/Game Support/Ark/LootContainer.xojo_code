@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootContainer
-Implements Ark.Blueprint,Beacon.Countable,Iterable
+Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  // Part of the Ark.Blueprint interface.
@@ -594,6 +594,16 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable
 		Function UIColor() As Color
 		  Return Self.mUIColor
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  // Part of the Beacon.Validateable interface.
+		  
+		  For Each Set As Ark.LootItemSet In Self.mItemSets
+		    Set.Validate(Location + "." + Self.ClassString, Issues, Project)
+		  Next Set
+		End Sub
 	#tag EndMethod
 
 

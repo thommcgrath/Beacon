@@ -505,7 +505,7 @@ End
 		    Case Self.FilterModeSpawnPoint
 		      SpawnPoints = Ark.DataSource.SharedInstance.GetSpawnPoints(SearchText, Self.mMods)
 		    Case Self.FilterModeCreature
-		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.SearchForCreatures(SearchText, Self.mMods)
+		      Var Creatures() As Ark.Creature = Ark.DataSource.SharedInstance.GetCreatures(SearchText, Self.mMods)
 		      Var UniqueSpawnPoints As New Dictionary
 		      For Each Creature As Ark.Creature In Creatures
 		        Var CreatureSpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsForCreature(Creature, Self.mMods, "")

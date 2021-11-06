@@ -16,8 +16,8 @@ Implements Beacon.Countable,Iterable
 		  
 		  SaveData.Value("Label") = Self.Label
 		  SaveData.Value("Grouping") = Self.Grouping
-		  SaveData.Value("Min") = Self.MinItems
-		  SaveData.Value("Max") = Self.MaxItems
+		  SaveData.Value("Min") = Self.MinEntriesSelected
+		  SaveData.Value("Max") = Self.MaxEntriesSelected
 		  SaveData.Value("ItemSets") = Contents
 		  SaveData.Value("Modifiers") = Self.mModifierValues
 		End Sub
@@ -159,12 +159,6 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label() As String
-		  Return Self.mLabel
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function MaxEntriesSelected() As Integer
 		  Return Self.mMaxEntriesSelected
 		End Function
@@ -294,10 +288,6 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mGrouping As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

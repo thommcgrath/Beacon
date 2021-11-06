@@ -2,15 +2,15 @@
 Protected Class LocalBlueprintController
 Inherits BlueprintController
 	#tag Event
-		Sub Publish(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint)
+		Sub Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
 		  Var Errors As New Dictionary
-		  Var Success As Boolean = Beacon.Data.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
+		  Var Success As Boolean = Ark.DataSource.SharedInstance.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
 		  If Success Then
 		    Self.FinishPublishing(True, "")
 		  Else
 		    Var Reasons() As String
 		    For Each Entry As DictionaryEntry In Errors
-		      Var Blueprint As Beacon.Blueprint = Entry.Key
+		      Var Blueprint As Ark.Blueprint = Entry.Key
 		      Var Err As RuntimeException = Entry.Value
 		      
 		      If Err.Message.BeginsWith("Unique constraint failed") Then
@@ -29,7 +29,7 @@ Inherits BlueprintController
 		  Var Mods As New Beacon.StringList(0)
 		  Mods(0) = Self.ModID
 		  
-		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints("", Mods, "")
+		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.SharedInstance.GetBlueprints("", Mods, "")
 		  
 		  Self.CacheBlueprints(Blueprints)
 		End Sub

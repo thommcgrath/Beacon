@@ -131,7 +131,6 @@ Begin BeaconSubview ModEditorView
    End
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -139,7 +138,7 @@ Begin BeaconSubview ModEditorView
       StackSize       =   0
       TabPanelIndex   =   0
       ThreadID        =   0
-      ThreadState     =   ""
+      ThreadState     =   0
    End
 End
 #tag EndWindow
@@ -208,7 +207,7 @@ End
 		  For Idx As Integer = 0 To Self.BlueprintList.LastRowIndex
 		    If SelectAll Or Self.BlueprintList.Selected(Idx) Then
 		      Var ObjectID As String = Self.BlueprintList.RowTagAt(Idx)
-		      Var Blueprint As Beacon.Blueprint = Self.mController.Blueprint(ObjectID)
+		      Var Blueprint As Ark.Blueprint = Self.mController.Blueprint(ObjectID)
 		      If Blueprint Is Nil Then
 		        Continue
 		      End If
@@ -327,7 +326,7 @@ End
 		      Path = Path.Left(Path.Length - 2)
 		    End If
 		    
-		    Var Engram As New Beacon.MutableEngram(Path, New v4UUID)
+		    Var Engram As New Ark.MutableEngram(Path, New v4UUID)
 		    Engram.Label = ItemDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
 		    Engram.AddTag("blueprintable")
 		    Select Case ItemDict.Value("ITEM_TYPE").StringValue
@@ -361,7 +360,7 @@ End
 		      Path = Path.Left(Path.Length - 2)
 		    End If
 		    
-		    Var Creature As New Beacon.MutableCreature(Path, New v4UUID)
+		    Var Creature As New Ark.MutableCreature(Path, New v4UUID)
 		    Creature.Label = CreatureDict.Value("DESCRIPTIVE_NAME").StringValue.Trim().ReplaceLineEndings(" ")
 		    Self.mFoundBlueprints.Add(Creature.ImmutableVersion)
 		  Next CreatureDict
@@ -373,7 +372,7 @@ End
 		      Path = Path.Left(Path.Length - 2)
 		    End If
 		    
-		    Var Point As New Beacon.MutableSpawnPoint(Path, New v4UUID)
+		    Var Point As New Ark.MutableSpawnPoint(Path, New v4UUID)
 		    Point.Label = SpawnDict.Value("CLASS")
 		    Self.mFoundBlueprints.Add(Point.ImmutableVersion)
 		  Next
@@ -408,7 +407,7 @@ End
 		    
 		    Try
 		      Var Dict As Dictionary = Dictionaries(Idx)
-		      Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Dict)
+		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
 		      If (Blueprint Is Nil) = False Then
 		        Self.mFoundBlueprints.Add(Blueprint)
 		        
@@ -491,7 +490,7 @@ End
 		    GroupColumnIdx = HeaderColumns.IndexOf("Group")
 		    BlueprintColumnIdx = HeaderColumns.IndexOf("Can Blueprint")
 		    
-		    Var AllAvailabilityMask As UInt64 = Beacon.Maps.UniversalMask
+		    Var AllAvailabilityMask As UInt64 = Ark.Maps.UniversalMask
 		    
 		    If PathColumnIdx = -1 Or LabelColumnIdx = -1 Then
 		      Var Err As New UnsupportedFormatException
@@ -527,12 +526,12 @@ End
 		        Category = Columns(GroupColumnIdx)
 		      End If
 		      
-		      Var Blueprint As Beacon.MutableBlueprint
+		      Var Blueprint As Ark.MutableBlueprint
 		      Select Case Category
-		      Case Beacon.CategoryEngrams
-		        Blueprint = New Beacon.MutableEngram(Path, New v4UUID)
-		      Case Beacon.CategoryCreatures
-		        Blueprint = New Beacon.MutableCreature(Path, New v4UUID)
+		      Case Ark.CategoryEngrams
+		        Blueprint = New Ark.MutableEngram(Path, New v4UUID)
+		      Case Ark.CategoryCreatures
+		        Blueprint = New Ark.MutableCreature(Path, New v4UUID)
 		      Else
 		        Continue
 		      End Select
@@ -611,12 +610,12 @@ End
 		    
 		    Var Command As String = Paths.Value(Key)
 		    Var Path As String = Key
-		    Var Blueprint As Beacon.Blueprint
+		    Var Blueprint As Ark.Blueprint
 		    Select Case Command
 		    Case "giveitem"
-		      Blueprint = Beacon.ResolveEngram("", Path, "", New Beacon.StringList(Beacon.UserModID))
+		      Blueprint = Ark.ResolveEngram("", Path, "", New Beacon.StringList(Ark.UserContentPackUUID))
 		    Case "spawndino"
-		      Blueprint = Beacon.ResolveCreature("", Path, "", New Beacon.StringList(Beacon.UserModID))
+		      Blueprint = Ark.ResolveCreature("", Path, "", New Beacon.StringList(Ark.UserContentPackUUID))
 		    End Select
 		    
 		    If Blueprint Is Nil Then
@@ -781,9 +780,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(Selected() As Beacon.Blueprint)
+		Private Sub UpdateList(Selected() As Ark.Blueprint)
 		  Var SelectedBlueprints() As String
-		  For Each Blueprint As Beacon.Blueprint In Selected
+		  For Each Blueprint As Ark.Blueprint In Selected
 		    SelectedBlueprints.Add(Blueprint.ObjectID)
 		  Next
 		  
@@ -792,7 +791,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(Selected As Beacon.Blueprint)
+		Private Sub UpdateList(Selected As Ark.Blueprint)
 		  Var SelectedBlueprints() As String = Array(Selected.ObjectID)
 		  Self.UpdateList(SelectedBlueprints)
 		End Sub
@@ -800,24 +799,24 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(Selected() As String)
-		  Var Blueprints() As Beacon.Blueprint = Self.mController.Blueprints
+		  Var Blueprints() As Ark.Blueprint = Self.mController.Blueprints
 		  
 		  Self.BlueprintList.SelectionChangeBlocked = True
 		  Self.BlueprintList.RowCount = Blueprints.Count
 		  
 		  For Row As Integer = 0 To Self.BlueprintList.LastRowIndex
-		    Var Blueprint As Beacon.Blueprint = Blueprints(Row)
+		    Var Blueprint As Ark.Blueprint = Blueprints(Row)
 		    Var ObjectID As String = Blueprint.ObjectID
 		    
 		    Var Type As String = "Blueprint"
 		    Select Case Blueprint
-		    Case IsA Beacon.Engram
+		    Case IsA Ark.Engram
 		      Type = "Engram"
-		    Case IsA Beacon.Creature
+		    Case IsA Ark.Creature
 		      Type = "Creature"
-		    Case IsA Beacon.SpawnPoint
+		    Case IsA Ark.SpawnPoint
 		      Type = "Spawn"
-		    Case IsA Beacon.LootSource
+		    Case IsA Ark.LootContainer
 		      Type = "Loot Container"
 		    End Select
 		    
@@ -874,7 +873,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFoundBlueprints() As Beacon.Blueprint
+		Private mFoundBlueprints() As Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -910,14 +909,14 @@ End
 		    Return
 		  End If
 		  
-		  Var Blueprints() As Beacon.Blueprint
+		  Var Blueprints() As Ark.Blueprint
 		  For Row As Integer = 0 To Me.LastRowIndex
 		    If Not Me.Selected(Row) Then
 		      Continue
 		    End If
 		    
 		    Var ObjectID As String = Me.RowTagAt(Row)
-		    Var Blueprint As Beacon.Blueprint = Self.mController.Blueprint(ObjectID)
+		    Var Blueprint As Ark.Blueprint = Self.mController.Blueprint(ObjectID)
 		    If Blueprint Is Nil Then
 		      Continue
 		    End If
@@ -941,7 +940,7 @@ End
 		  
 		  If Me.SelectedRowCount = 1 Then
 		    Var ObjectID As String = Me.RowTagAt(Me.SelectedRowIndex)
-		    Var Blueprint As Beacon.Blueprint = Self.mController.Blueprint(ObjectID)
+		    Var Blueprint As Ark.Blueprint = Self.mController.Blueprint(ObjectID)
 		    If Blueprint Is Nil Then
 		      Return
 		    End If
@@ -954,16 +953,16 @@ End
 		    Self.mController.SaveBlueprint(Blueprint)
 		    Self.UpdateList(Blueprint)
 		  ElseIf Me.SelectedRowCount > 1 Then
-		    Var Blueprints() As Beacon.Blueprint
+		    Var Blueprints() As Ark.Blueprint
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(Row) Then
 		        Blueprints.Add(Self.mController.Blueprint(Me.RowTagAt(Row).StringValue))
 		      End If
 		    Next
 		    
-		    Var ModifiedBlueprints() As Beacon.Blueprint = BlueprintMultiEditor.Present(Self, Blueprints)
+		    Var ModifiedBlueprints() As Ark.Blueprint = BlueprintMultiEditor.Present(Self, Blueprints)
 		    If (ModifiedBlueprints Is Nil) = False Then
-		      For Each Blueprint As Beacon.Blueprint In ModifiedBlueprints
+		      For Each Blueprint As Ark.Blueprint In ModifiedBlueprints
 		        Self.mController.SaveBlueprint(Blueprint)
 		      Next
 		    End If
@@ -1008,7 +1007,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AddBlueprint"
-		    Var Blueprint As Beacon.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ModID, Self.mController.ModName)
+		    Var Blueprint As Ark.Blueprint = BlueprintEditorDialog.Present(Self, Self.mController.ModID, Self.mController.ModName)
 		    If (Blueprint Is Nil) = False Then
 		      Self.mController.SaveBlueprint(Blueprint)
 		      Self.UpdateList()
@@ -1065,10 +1064,10 @@ End
 		          // Show a prompt
 		          Var ChosenNames() As String = SelectModPrefixDialog.Present(Self, Self.mFoundModNames)
 		          If ChosenNames.Count > 0 Then
-		            Var ChosenBlueprints() As Beacon.Blueprint
+		            Var ChosenBlueprints() As Ark.Blueprint
 		            For Each Name As String In ChosenNames
 		              Var Prefix As String = "/Game/Mods/" + Name + "/"
-		              For Each Blueprint As Beacon.Blueprint In Self.mFoundBlueprints
+		              For Each Blueprint As Ark.Blueprint In Self.mFoundBlueprints
 		                If Blueprint.Path.BeginsWith(Prefix) Then
 		                  ChosenBlueprints.Add(Blueprint)
 		                End If

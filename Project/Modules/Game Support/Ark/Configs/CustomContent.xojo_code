@@ -38,7 +38,7 @@ Inherits Ark.ConfigGroup
 		  Var PotentialCommandLineValues() As Ark.ConfigValue = Organizer.FilteredValues(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings)
 		  
 		  For Each ParsedValue As Ark.ConfigValue In PotentialCommandLineValues
-		    Var Keys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.SearchForConfigKey("CommandLine", "", ParsedValue.SimplifiedKey, False)
+		    Var Keys() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys("CommandLine", "", ParsedValue.SimplifiedKey, False)
 		    If Keys.Count <> 1 Then
 		      Continue
 		    End If

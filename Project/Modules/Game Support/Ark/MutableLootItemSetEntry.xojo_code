@@ -97,6 +97,12 @@ Inherits Ark.LootItemSetEntry
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UUID(Assigns Value As String)
+		  Self.mUUID = Value
+		End Sub
+	#tag EndMethod
+
 
 End Class
 #tag EndClass
