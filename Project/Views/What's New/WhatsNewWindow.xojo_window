@@ -134,6 +134,9 @@ End
 		    Self.WinViewer.Height = Self.Height
 		    Self.WinViewer.UserAgent = App.UserAgent
 		    Self.WinViewer.Visible = True
+		  Else
+		    Self.Viewer.Visible = True
+		    Self.WinViewer.Visible = False
 		  End If
 		End Sub
 	#tag EndEvent
