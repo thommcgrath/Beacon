@@ -360,6 +360,132 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConvertDinoReplacementsToSpawnOverrides() As Integer
+		  If Self.HasConfigGroup(Ark.Configs.NameDinoAdjustments) = False Then
+		    Return 0
+		  End If
+		  
+		  Var DinoConfig As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Self.ConfigGroup(Ark.Configs.NameDinoAdjustments))
+		  If DinoConfig = Nil Then
+		    Return 0
+		  End If
+		  
+		  Var SpawnConfig As Ark.Configs.SpawnPoints // Don't create it yet
+		  
+		  Var CountChanges As Integer
+		  Var Behaviors() As Ark.CreatureBehavior = DinoConfig.All
+		  For Each Behavior As Ark.CreatureBehavior In Behaviors
+		    Var ReplacedCreature As Ark.Creature = Behavior.TargetCreature
+		    Var ReplacementCreature As Ark.Creature = Behavior.ReplacementCreature
+		    If ReplacementCreature = Nil Then
+		      Continue
+		    End If
+		    
+		    Var ConfigUpdated As Boolean
+		    Var SpawnPoints() As Ark.SpawnPoint = Ark.DataSource.SharedInstance.GetSpawnPointsForCreature(ReplacedCreature, Self.ContentPacks, "")
+		    For Each SourceSpawnPoint As Ark.SpawnPoint In SpawnPoints
+		      If SourceSpawnPoint.ValidForMask(Self.MapMask) = False Then
+		        Continue
+		      End If
+		      
+		      Var SpawnPoint As Ark.MutableSpawnPoint = SourceSpawnPoint.MutableClone
+		      Ark.DataSource.SharedInstance.LoadDefaults(SpawnPoint)
+		      
+		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
+		      Var NewSets() As Ark.SpawnPointSet
+		      For Each Set As Ark.SpawnPointSet In SpawnPoint
+		        Var NewSet As Ark.MutableSpawnPointSet
+		        For Each Entry As Ark.SpawnPointSetEntry In Set
+		          If Entry.Creature = ReplacedCreature Then
+		            If NewSet = Nil Then
+		              NewSet = New Ark.MutableSpawnPointSet()
+		              NewSet.Weight = Set.Weight
+		              NewSet.Label = ReplacementCreature.Label + " (Converted)"
+		              If IsNull(Set.SpreadRadius) Then
+		                NewSet.SpreadRadius = 650
+		              Else
+		                NewSet.SpreadRadius = Set.SpreadRadius
+		              End If
+		            End If
+		            
+		            Const SpreadMultiplierHigh = 1.046153846
+		            Const SpreadMultiplierLow = 0.523076923
+		            
+		            Var NewEntry As Ark.MutableSpawnPointSetEntry
+		            
+		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.7
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 1.0
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh), 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.2
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow), 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.25
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow) * -1, 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Ark.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.6
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh) * -1, 0.0)
+		            NewSet.Append(NewEntry)
+		          End If
+		        Next
+		        If (NewSet Is Nil) = False Then
+		          NewSets.Add(NewSet)
+		        End If
+		      Next
+		      
+		      If NewSets.Count > 0 Then
+		        If SpawnConfig Is Nil Then
+		          SpawnConfig = Ark.Configs.SpawnPoints(Self.ConfigGroup(Ark.Configs.NameSpawnPoints, True))
+		        End If
+		        
+		        Var Override As Ark.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeAppend)
+		        If Override = Nil Then
+		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.ObjectID, Ark.SpawnPoint.ModeOverride)
+		        End If
+		        If Override = Nil Then
+		          Override = New Ark.MutableSpawnPoint(SpawnPoint)
+		          Beacon.MutableSpawnPoint(Override).ResizeTo(-1)
+		          Beacon.MutableSpawnPoint(Override).LimitsString = "{}"
+		          Beacon.MutableSpawnPoint(Override).Mode = Ark.SpawnPoint.ModeAppend
+		        End If
+		        
+		        Var Mutable As Ark.MutableSpawnPoint = Override.MutableVersion
+		        Mutable.Limit(ReplacementCreature) = Limit
+		        For Each Set As Ark.SpawnPointSet In NewSets
+		          Mutable.AddSet(Set)
+		        Next
+		        
+		        SpawnConfig.Add(Mutable)
+		        ConfigUpdated = True
+		      End If
+		    Next
+		    
+		    If ConfigUpdated Then
+		      CountChanges = CountChanges + 1
+		      
+		      Var NewBehavior As New Ark.MutableCreatureBehavior(Behavior)
+		      NewBehavior.ProhibitSpawning = True
+		      NewBehavior.ReplacementCreature = Nil
+		      DinoConfig.RemoveBehavior(ReplacedCreature)
+		      DinoConfig.Add(NewBehavior)
+		    End If
+		  Next
+		  
+		  Return CountChanges
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CreateConfigOrganizer(Identity As Beacon.Identity, Profile As Ark.ServerProfile) As Ark.ConfigOrganizer
 		  Try
 		    If Identity.IsBanned Then

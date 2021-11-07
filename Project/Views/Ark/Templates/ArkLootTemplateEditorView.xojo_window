@@ -1397,38 +1397,38 @@ End
 		      Return
 		    End If
 		    
-		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
 		    Var Maps() As Ark.Map = Self.FilteredMaps
 		    For Each Map As Ark.Map In Maps
 		      If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
-		        Var Mutable As New Ark.MutableLootTemplateEntry(Entry)
-		        Mutable.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
-		        Entry = New Ark.LootTemplateEntry(Mutable)
+		        Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
 		        Self.mTemplate.Add(Entry)
-		        Me.RowTagAt(Row) = Entry
 		        Self.Changed = True
 		      End If
 		    Next
 		    Return
 		  Case Self.ColumnQuantity
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
 		    If Entry.RespectQuantityMultipliers <> Checked Then
 		      Entry.RespectQuantityMultipliers = Checked
+		      Self.mTemplate.Add(Entry)
 		      Self.Changed = True
 		    End If
 		  Case Self.ColumnQuality
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
 		    If Entry.RespectQualityOffsets <> Checked Then
 		      Entry.RespectQualityOffsets = Checked
+		      Self.mTemplate.Add(Entry)
 		      Self.Changed = True
 		    End If
 		  Case Self.ColumnBlueprint
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Row)
+		    Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Row)
 		    If Entry.RespectBlueprintChanceMultipliers <> Checked Then
 		      Entry.RespectBlueprintChanceMultipliers = Checked
+		      Self.mTemplate.Add(Entry)
 		      Self.Changed = True
 		    End If
 		  End Select
@@ -1489,21 +1489,13 @@ End
 		        Continue
 		      End If
 		      
-		      Var Entry As Ark.LootTemplateEntry = Me.RowTagAt(Idx)
+		      Var Entry As Ark.MutableLootTemplateEntry = Me.RowTagAt(Idx)
 		      Var Availability As UInt64
 		      For Each Option As Ark.LootItemSetEntryOption In Entry
 		        Availability = Availability Or Option.Engram.Availability
 		      Next
 		      If Entry.Availability <> Availability Then
-		        Var EntryIdx As Integer = Self.mTemplate.IndexOf(Entry)
-		        Var Mutable As New Ark.MutableLootTemplateEntry(Entry)
-		        Mutable.Availability = Availability
-		        Entry = New Ark.LootTemplateEntry(Mutable)
-		        If EntryIdx > -1 Then
-		          Self.mTemplate(EntryIdx) = Entry
-		        Else
-		          Self.mTemplate.Add(Entry)
-		        End If
+		        Self.mTemplate.Add(Entry)
 		        Changed = True
 		        Self.PutEntryInRow(Entry, Idx, Self.FilteredMaps)
 		      End If

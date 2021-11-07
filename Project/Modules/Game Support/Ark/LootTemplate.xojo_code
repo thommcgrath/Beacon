@@ -256,6 +256,12 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RebuildLootItemSet(Set As Ark.MutableLootItemSet, Container As Ark.MutableLootContainer, ContentPacks As Beacon.StringList) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UUID() As String
 		  Return Self.mUUID
 		End Function

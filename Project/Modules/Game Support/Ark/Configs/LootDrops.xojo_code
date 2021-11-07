@@ -321,6 +321,25 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RebuildItemSets(Mask As UInt64, ContentPacks As Beacon.StringList) As Integer
+		  If Mask = CType(0, UInt64) Then
+		    Return 0
+		  End If
+		  
+		  Var NumChanged As Integer
+		  For Idx As Integer = 0 To Self.mContainers.LastIndex
+		    Var Mutable As Ark.MutableLootContainer = Self.mContainers(Idx).MutableVersion
+		    Var Num As Integer = Mutable.RebuildItemSets(Mask, ContentPacks)
+		    If Num > 0 Then
+		      NumChanged = NumChanged + Num
+		      Self.mContainers(Idx) = Mutable.ImmutableVersion
+		    End If
+		  Next Idx
+		  Return NumChanged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Container As Ark.LootContainer)
 		  Var Idx As Integer = Self.IndexOf(Container)
 		  If Idx > -1 Then

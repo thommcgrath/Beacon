@@ -1016,7 +1016,7 @@ End
 		    
 		    // Rebuild if necessary
 		    If ReconfigureTemplates Then
-		      Call Mutable.ReconfigureTemplates(Self.mMask, Self.mContentPacks)
+		      Call Mutable.RebuildItemSets(Self.mMask, Self.mContentPacks)
 		    End If
 		    
 		    // Apply basic settings

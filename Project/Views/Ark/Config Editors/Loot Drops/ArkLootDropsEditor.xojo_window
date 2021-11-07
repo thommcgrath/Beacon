@@ -578,7 +578,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
-		  Var NumChanges As Integer = Self.Config(True).ReconfigurePresets(Self.Project.MapMask, Self.Project.ContentPacks)
+		  Var NumChanges As Integer = Self.Config(True).RebuildItemSets(Self.Project.MapMask, Self.Project.ContentPacks)
 		  If NumChanges = 0 Then
 		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
 		    Return

@@ -15,55 +15,57 @@ Implements Iterable
 
 	#tag Event
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Var DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
-		  If DifficultyConfig = Nil Then
-		    DifficultyConfig = New BeaconConfigs.Difficulty
-		    DifficultyConfig.IsImplicit = True
-		  End If
-		  
-		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Var Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, False)
+		  #if false
+		    Var DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
+		    If DifficultyConfig = Nil Then
+		      DifficultyConfig = New BeaconConfigs.Difficulty
+		      DifficultyConfig.IsImplicit = True
+		    End If
 		    
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByID("1b4d42f4-86ab-4277-a73e-dd688635b324")
-		    
-		    Var Entry As New Beacon.SetEntry
-		    Entry.Append(New Beacon.SetEntryOption(Engram, 1.0))
-		    Entry.MinQuantity = 300
-		    Entry.MaxQuantity = 300
-		    Entry.MinQuality = Beacon.Qualities.Tier1
-		    Entry.MaxQuality = Beacon.Qualities.Tier1
-		    Entry.ChanceToBeBlueprint = 0
-		    
-		    Var Set As New Beacon.ItemSet
-		    Set.Label = "Turds"
-		    Set.MinNumItems = 1
-		    Set.MaxNumItems = 1
-		    Set.Append(Entry)
+		    If App.IdentityManager.CurrentIdentity.IsBanned Then
+		      Var Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, False)
+		      
+		      Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByID("1b4d42f4-86ab-4277-a73e-dd688635b324")
+		      
+		      Var Entry As New Beacon.SetEntry
+		      Entry.Append(New Beacon.SetEntryOption(Engram, 1.0))
+		      Entry.MinQuantity = 300
+		      Entry.MaxQuantity = 300
+		      Entry.MinQuality = Beacon.Qualities.Tier1
+		      Entry.MaxQuality = Beacon.Qualities.Tier1
+		      Entry.ChanceToBeBlueprint = 0
+		      
+		      Var Set As New Beacon.ItemSet
+		      Set.Label = "Turds"
+		      Set.MinNumItems = 1
+		      Set.MaxNumItems = 1
+		      Set.Append(Entry)
+		      
+		      Var Values() As Beacon.ConfigValue
+		      For Each Source As Beacon.LootSource In Sources
+		        If Not Source.ValidForMask(Profile.Mask) Then
+		          Continue
+		        End If
+		        
+		        Source.MinItemSets = 1
+		        Source.MaxItemSets = 1
+		        Call Source.ItemSets.Append(Set, False)
+		        
+		        Self.BuildOverrides(Source, Values, DifficultyConfig)
+		      Next
+		      Return Values
+		    End If
 		    
 		    Var Values() As Beacon.ConfigValue
-		    For Each Source As Beacon.LootSource In Sources
+		    For Each Source As Beacon.LootSource In Self.mSources
 		      If Not Source.ValidForMask(Profile.Mask) Then
 		        Continue
 		      End If
 		      
-		      Source.MinItemSets = 1
-		      Source.MaxItemSets = 1
-		      Call Source.ItemSets.Append(Set, False)
-		      
 		      Self.BuildOverrides(Source, Values, DifficultyConfig)
 		    Next
-		    Return Values
-		  End If
-		  
-		  Var Values() As Beacon.ConfigValue
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    If Not Source.ValidForMask(Profile.Mask) Then
-		      Continue
-		    End If
-		    
-		    Self.BuildOverrides(Source, Values, DifficultyConfig)
-		  Next
-		  Return Values()
+		    Return Values()
+		  #endif
 		End Function
 	#tag EndEvent
 

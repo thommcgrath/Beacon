@@ -1195,8 +1195,8 @@ End
 		    If Targets.LastIndex = 0 Then
 		      Var Organizer As Ark.LootItemSetOrganizer = Targets(0)
 		      
-		      Var NewPreset As Ark.LootTemplate = App.MainWindow.Templates.CreateTemplate(Organizer.Template)
-		      If NewPreset = Nil Then
+		      Var NewTemplate As Ark.LootTemplate = App.MainWindow.Templates.CreateTemplate(Organizer.Template)
+		      If NewTemplate Is Nil Then
 		        Return True
 		      End If
 		      
@@ -1204,12 +1204,15 @@ End
 		      Var Containers() As Ark.MutableLootContainer = Organizer.Containers
 		      For Each Container As Ark.MutableLootContainer In Containers
 		        Var Set As Ark.LootItemSet = Organizer.SetForContainer(Container)
-		        If Set = Nil Then
+		        If Set Is Nil Then
 		          Continue
 		        End If
 		        
-		        If Set.ReconfigureWithPreset(NewPreset, Container, Self.Project) Then
-		          AffectedItemSets.Add(Set)
+		        Var MutableSet As Ark.MutableLootItemSet = Set.MutableVersion
+		        If NewTemplate.RebuildLootItemSet(MutableSet, Container, Self.Project.ContentPacks) Then
+		          Var Idx As Integer = Container.IndexOf(Set)
+		          Container(Idx) = MutableSet
+		          AffectedItemSets.Add(MutableSet)
 		        End If
 		      Next
 		      
@@ -1220,28 +1223,30 @@ End
 		    End If
 		  Case "reconfigure"
 		    Var AffectedItemSets() As Ark.LootItemSet
-		    Var Presets As New Dictionary
+		    Var Templates As New Dictionary
 		    For Each Organizer As Ark.LootItemSetOrganizer In Targets
 		      Var Containers() As Ark.MutableLootContainer = Organizer.Containers
 		      
 		      For Each Container As Ark.MutableLootContainer In Containers
 		        Var Set As Ark.LootItemSet = Organizer.SetForContainer(Container)
-		        If Set = Nil Or Set.TemplateUUID = "" Then
+		        If Set Is Nil Or Set.TemplateUUID.IsEmpty Then
 		          Continue
 		        End If
 		        
-		        If Not Presets.HasKey(Set.TemplateUUID) Then
-		          Var LoadedPreset As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Set.TemplateUUID)
-		          If LoadedPreset = Nil Then
+		        If Not Templates.HasKey(Set.TemplateUUID) Then
+		          Var LoadedTemplate As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Set.TemplateUUID)
+		          If LoadedTemplate Is Nil Then
 		            Continue
 		          End If
-		          Presets.Value(Set.TemplateUUID) = LoadedPreset
+		          Templates.Value(Set.TemplateUUID) = LoadedTemplate
 		        End If
 		        
-		        Var Preset As Ark.LootTemplate = Presets.Value(Set.TemplateUUID)
-		        
-		        If Set.ReconfigureWithPreset(Preset, Container, Self.Project) Then
-		          AffectedItemSets.Add(Set)
+		        Var MutableSet As Ark.MutableLootItemSet = Set.MutableVersion
+		        Var Template As Ark.LootTemplate = Templates.Value(Set.TemplateUUID)
+		        If Template.RebuildLootItemSet(MutableSet, Container, Self.Project.ContentPacks) Then
+		          Var Idx As Integer = Container.IndexOf(Set)
+		          Container(Idx) = MutableSet
+		          AffectedItemSets.Add(MutableSet)
 		        End If
 		      Next
 		    Next

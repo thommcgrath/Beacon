@@ -6,20 +6,22 @@ Implements Iterable
 		Function GenerateConfigValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
-		  Var Values() As Beacon.ConfigValue
-		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
-		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
-		    
-		    If Not SpawnPoint.ValidForMask(Profile.Mask) Then
-		      Continue
-		    End If
-		    
-		    Var Value As Beacon.ConfigValue = Self.ConfigValueForSpawnPoint(SpawnPoint)
-		    If Value <> Nil Then
-		      Values.Add(Value)
-		    End If
-		  Next
-		  Return Values
+		  #if false
+		    Var Values() As Beacon.ConfigValue
+		    For Each Entry As DictionaryEntry In Self.mSpawnPoints
+		      Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
+		      
+		      If Not SpawnPoint.ValidForMask(Profile.Mask) Then
+		        Continue
+		      End If
+		      
+		      Var Value As Beacon.ConfigValue = Self.ConfigValueForSpawnPoint(SpawnPoint)
+		      If Value <> Nil Then
+		        Values.Add(Value)
+		      End If
+		    Next
+		    Return Values
+		  #endif
 		End Function
 	#tag EndEvent
 

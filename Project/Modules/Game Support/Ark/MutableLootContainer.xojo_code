@@ -176,16 +176,25 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigureTemplates(Mask As UInt64, ContentPacks As Beacon.StringList) As Integer
+		Function RebuildItemSets(Mask As UInt64, ContentPacks As Beacon.StringList) As Integer
 		  Var NumChanged As Integer
 		  For Idx As Integer = 0 To Self.mItemSets.LastIndex
-		    Var Clone As Ark.LootItemSet = Self.mItemSets(Idx).Rebuild(Self, Mask, ContentPacks)
-		    If Clone Is Nil Then
+		    If Self.mItemSets(Idx).TemplateUUID.IsEmpty Then
+		      Continue
+		    End If
+		    
+		    Var Template As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplateByUUID(Self.mItemSets(Idx).TemplateUUID)
+		    If Template Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Mutable As Ark.MutableLootItemSet = Self.mItemSets(Idx).MutableVersion
+		    If Template.RebuildLootItemSet(Mutable, Self, ContentPacks) = False Then
 		      Continue
 		    End If
 		    
 		    NumChanged = NumChanged + 1
-		    Self.mItemSets(Idx) = Clone.ImmutableVersion
+		    Self.mItemSets(Idx) = Mutable.ImmutableVersion
 		    Self.Modified = True
 		  Next
 		  Return NumChanged

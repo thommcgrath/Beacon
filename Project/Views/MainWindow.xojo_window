@@ -83,7 +83,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   1420
       Begin DashboardPane DashboardPane1
