@@ -76,6 +76,8 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
+		    // 2021-11-06: Always include EngramLevelRequirement and EngramPointsCost because Ark is dumb and will assume 0 if you do not
+		    
 		    If ExplicitAutoUnlocked = False And EffectivelyHidden = False Then
 		      Var Level, Points As NullableDouble
 		      Var RemovePrereq As NullableBoolean
@@ -85,8 +87,8 @@ Inherits Beacon.ConfigGroup
 		        Level = Coalesce(Self.RequiredPlayerLevel(Engram), Engram.RequiredPlayerLevel)
 		      ElseIf Engram.ManualUnlock Then
 		        // Since it is not auto unlocked, only include the following values if the engram supports manual unlocking
-		        Level = Self.RequiredPlayerLevel(Engram)
-		        Points = Self.RequiredPoints(Engram)
+		        Level = Coalesce(Self.RequiredPlayerLevel(Engram), Engram.RequiredPlayerLevel)
+		        Points = Coalesce(Self.RequiredPoints(Engram), Engram.RequiredUnlockPoints)
 		        RemovePrereq = Self.RemovePrerequisites(Engram)
 		      End If
 		      
