@@ -27,6 +27,7 @@ if (isset($_SESSION['store_currency_options']) === false) {
 			switch ($currency_code) {
 			case 'USD':
 			case 'EUR':
+			case 'GBP':
 				$currency_options[] = $currency_code;
 				break;
 			}
@@ -67,6 +68,10 @@ case 'EUR':
 	$thousands_character = '.';
 	$currency_symbol = '€';
 	break;
+case 'GBP':
+	$decimal_character = '.';
+	$thousands_character = ',';
+	$currency_symbol = '£';
 }
 
 $results = $database->Query('SELECT products.product_id, product_prices.currency, product_prices.price FROM products INNER JOIN product_prices ON (product_prices.product_id = products.product_id) WHERE product_prices.currency = $1;', $currency);
@@ -167,6 +172,10 @@ td.bullet-column {
 		.eur {
 			display: none;
 		}
+		
+		.gbp {
+			display: none;
+		}
 	}
 	
 	&.eur {
@@ -175,6 +184,24 @@ td.bullet-column {
 		}
 		
 		.eur {
+			display: block;
+		}
+		
+		.gbp {
+			display: none;
+		}
+	}
+	
+	&.gbp {
+		.usd {
+			display: none;
+		}
+		
+		.eur {
+			display: none;
+		}
+		
+		.gbp {
 			display: block;
 		}
 	}
@@ -699,7 +726,8 @@ BeaconTemplate::FinishScript();
 				$payment_methods = [
 					'universal' => ['mastercard', 'visa', 'amex', 'discover', 'dinersclub', 'jcb'],
 					'usd' => [],
-					'eur' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24']
+					'eur' => ['bancontact', 'eps', 'giropay', 'ideal', 'p24'],
+					'gbp' => []
 				];
 				$payment_labels = [
 					'apple' => 'Apple Pay',
