@@ -88,15 +88,20 @@ class BeaconSearch {
 		return false;
 	}
 	
-	public function Search(string $query, int $client_version, int $result_count, string|null $type = null) {
+	public function Search(string $query, int|null $client_version, int $result_count, string|null $type = null) {
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
 		
-		$filter = 'min_version <= ' . $client_version . ' AND max_version >= ' . $client_version;
-		if (empty($type) === false) {
-			$filter .= ' AND type:' . $type;
+		$filters = [];
+		if (empty($client_version) === false) {
+			$filters[] = 'min_version <= ' . $client_version;
+			$filters[] = 'max_version >= ' . $client_version;
 		}
+		if (empty($type) === false) {
+			$filter[] = 'type:' . $type;
+		}
+		$filter = implode(' AND ', $filters);
 		
 		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode($query) . '&hitsPerPage=' . $result_count . '&filters=' . urlencode($filter);
 		$cache_key = md5($url);
