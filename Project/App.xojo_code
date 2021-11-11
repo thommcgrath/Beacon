@@ -888,7 +888,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      // Only do this if WebView2 is not available
 		      If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty Then
 		        Var Reg As New RegistryItem("HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION")
-		        Reg.Value(Self.ExecutableFile.Name) = &h2AF8
+		        Reg.Value(Self.ExecutableFile.Name) = CType(&h2AF8, Int32)
 		      End If
 		    Catch Err As RuntimeException
 		    End Try
