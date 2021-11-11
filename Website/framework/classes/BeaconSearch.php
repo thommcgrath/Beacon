@@ -1,13 +1,14 @@
 <?php
 
-class BeaconAlgolia {
+class BeaconSearch {
 	private $requests = [];
 	private $results = [];
 	private $total_result_count = 0;
+	private $raw_response = null;
 	
 	public function SaveObject(string $object_id, bool $autocommit = true) {
 		$database = BeaconCommon::Database();
-		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, mods.mod_id, mods.name AS mod_name FROM search_contents LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id) WHERE (mods.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_contents.id = $1;', $object_id);
+		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, mods.mod_id, mods.name AS mod_name FROM search_contents LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id) WHERE (mods.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_contents.id = $1;', $object_id);
 		if ($rows->RecordCount() === 0) {
 			return false;
 		}
@@ -37,6 +38,8 @@ class BeaconAlgolia {
 					'objectID' => $rows->Field('id'),
 					'title' => trim($rows->Field('title')),
 					'body' => trim($rows->Field('body')),
+					'preview' => trim($rows->Field('preview')),
+					'meta_content' => trim($rows->Field('meta_content')),
 					'type' => $rows->Field('type'),
 					'subtype' => $rows->Field('subtype'),
 					'uri' => $rows->Field('uri'),
@@ -73,7 +76,7 @@ class BeaconAlgolia {
 		curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode(['requests' => $this->requests]));
-		$body = curl_exec($handle);
+		$this->raw_response = curl_exec($handle);
 		$status = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 		curl_close($handle);
 		
@@ -82,33 +85,38 @@ class BeaconAlgolia {
 			return true;
 		}
 		
-		echo $body;
-		
 		return false;
 	}
 	
-	public function Search(string $query, int $client_version, int $result_count) {
+	public function Search(string $query, int $client_version, int $result_count, string|null $type = null) {
 		$app_id = BeaconCommon::GetGlobal('Algolia Application ID');
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
 		
-		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode($query) . '&hitsPerPage=' . $result_count . '&filters=' . urlencode('min_version <= ' . $client_version . ' AND max_version >= ' . $client_version);
-		$handle = curl_init($url);
-		curl_setopt($handle, CURLOPT_HTTPHEADER, [
-			'X-Algolia-Application-Id: ' . $app_id,
-			'X-Algolia-API-Key: ' . $api_key
-		]);
-		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-		$body = curl_exec($handle);
-		$status = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-		curl_close($handle);
-		
-		if ($status !== 200) {
-			echo $body;
-			return [];
+		$filter = 'min_version <= ' . $client_version . ' AND max_version >= ' . $client_version;
+		if (empty($type) === false) {
+			$filter .= ' AND type:' . $type;
 		}
 		
-		$response = json_decode($body, true);
+		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode($query) . '&hitsPerPage=' . $result_count . '&filters=' . urlencode($filter);
+		$this->raw_response = BeaconCache::Get($url);
+		if (is_null($this->raw_response)) {
+			$handle = curl_init($url);
+			curl_setopt($handle, CURLOPT_HTTPHEADER, [
+				'X-Algolia-Application-Id: ' . $app_id,
+				'X-Algolia-API-Key: ' . $api_key
+			]);
+			curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+			$this->raw_response = curl_exec($handle);
+			$status = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+			curl_close($handle);
+			if ($status !== 200) {
+				return [];
+			}
+			BeaconCache::Set($url, $this->raw_response);
+		}
+		
+		$response = json_decode($this->raw_response, true);
 		$this->results = $response['hits'];
 		$this->total_result_count = $response['nbHits'];
 		return $this->results;
@@ -122,6 +130,10 @@ class BeaconAlgolia {
 		return $this->total_result_count;
 	}
 	
+	public function RawResponse() {
+		return $this->raw_response;
+	}
+	
 	public function Sync() {
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -131,7 +143,12 @@ class BeaconAlgolia {
 			$rows->MoveNext();
 		}
 		
-		$rows = $database->Query('SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, mods.mod_id, mods.name AS mod_name FROM search_sync INNER JOIN search_contents ON (search_sync.object_id = search_contents.id) LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id) WHERE (mods.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_sync.action = $1;', 'Save');
+		$sql = 'SELECT search_contents.id, search_contents.title, search_contents.body, search_contents.preview, search_contents.meta_content, search_contents.type, search_contents.subtype, search_contents.uri, search_contents.min_version, search_contents.max_version, mods.mod_id, mods.name AS mod_name FROM search_sync INNER JOIN search_contents ON (search_sync.object_id = search_contents.id) LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id) WHERE (mods.confirmed = TRUE OR search_contents.mod_id IS NULL) AND search_sync.action = $1';
+		if (BeaconCommon::InProduction() === false) {
+			$sql .= ' LIMIT 100';
+		}
+		$sql .= ';';
+		$rows = $database->Query($sql, 'Save');
 		$this->SaveObjectRows($rows);
 		$database->Query('DELETE FROM search_sync;');
 		

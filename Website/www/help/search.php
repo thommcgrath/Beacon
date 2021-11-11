@@ -39,8 +39,10 @@ if ($version !== $latest_version) {
 $include_url_version = ($stage !== 3);
 $version_formatted = BeaconCommon::BuildNumberToVersion($version);
 
-$results = $database->Query('SELECT support_articles.subject, support_articles.preview, search_contents.uri, ts_rank(lexemes, keywords) AS rank FROM search_contents INNER JOIN support_articles ON (search_contents.id = support_articles.article_id), to_tsquery($1) AS keywords WHERE type = \'Help\' AND keywords @@ lexemes AND search_contents.min_version <= $2 AND search_contents.max_version >= $2 ORDER BY rank DESC, title ASC;', $query, $version);
-if ($results->RecordCount() == 0) {
+$search = new BeaconSearch();
+$results = $search->Search($query, $version, 20, 'Help');
+
+if (count($results) == 0) {
 	$html = '<h1>No Results</h1><p>Could not find anything for &quot;' . htmlentities($terms) . '&quot;</p>';
 } else {
 	BeaconTemplate::StartStyles(); ?>
@@ -69,14 +71,12 @@ if ($results->RecordCount() == 0) {
 	BeaconTemplate::FinishStyles();
 	
 	$html = '<h1>Search Results for &quot;' . htmlentities($terms) . '&quot;</h1>';
-	while (!$results->EOF()) {
-		$path = $results->Field('uri');
+	foreach ($results as $result) {
+		$path = $result['uri'];
 		if ($include_url_version) {
 			$path = str_replace('/help/', '/help/' . urlencode($version_formatted) . '/', $path);
 		}
-		$html .= '<div class="support_result separator-color"><h3><a href="' . $path . '">' . htmlentities($results->Field('subject')) . '</a></h3><p>' . htmlentities($results->Field('preview')) . '</p></div>';
-		
-		$results->MoveNext();
+		$html .= '<div class="support_result separator-color"><h3><a href="' . $path . '">' . htmlentities($result['title']) . '</a></h3><p>' . htmlentities($result['preview']) . '</p></div>';
 	}
 }
 

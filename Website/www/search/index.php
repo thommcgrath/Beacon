@@ -13,11 +13,14 @@ if (isset($_GET['count'])) {
 	$max_results = min(intval($_GET['count']), $max_results);
 }
 
-$algo = new BeaconAlgolia();
-$results = $algo->Search($terms, $version, $max_results);
+$search = new BeaconSearch();
+$results = $search->Search($terms, $version, $max_results);
 $items = [];
 foreach ($results as $result) {
-	$summary = $result['body'];
+	$summary = $result['preview'];
+	if (empty($summary)) {
+		$summary = $result['body'];
+	}
 	if (strlen($summary) > 200) {
 		$pos = strpos($summary, ' ', 200);
 		if ($pos !== false) {
@@ -63,7 +66,7 @@ foreach ($results as $result) {
 	
 	$items[] = $item;
 }
-$result_count = $algo->TotalResultCount();
+$result_count = $search->TotalResultCount();
 
 for ($idx = 0; $idx < count($items); $idx++) {
 	$title = $items[$idx]['title'];

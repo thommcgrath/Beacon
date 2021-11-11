@@ -7,11 +7,12 @@ while (ob_get_level() > 0) {
 	ob_end_clean();
 }
 
-$algolia = new BeaconAlgolia();
-if ($algolia->Sync()) {
+$search = new BeaconSearch();
+if ($search->Sync()) {
 	echo "Sync finished\n";
 } else {
 	echo "Sync failed\n";
+	echo $search->RawResponse() . "\n";
 }
 
 ?>
