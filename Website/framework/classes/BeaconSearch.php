@@ -99,7 +99,8 @@ class BeaconSearch {
 		}
 		
 		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode($query) . '&hitsPerPage=' . $result_count . '&filters=' . urlencode($filter);
-		$this->raw_response = BeaconCache::Get($url);
+		$cache_key = md5($url);
+		$this->raw_response = BeaconCache::Get($cache_key);
 		if (is_null($this->raw_response)) {
 			$handle = curl_init($url);
 			curl_setopt($handle, CURLOPT_HTTPHEADER, [
@@ -113,7 +114,7 @@ class BeaconSearch {
 			if ($status !== 200) {
 				return [];
 			}
-			BeaconCache::Set($url, $this->raw_response);
+			BeaconCache::Set($cache_key, $this->raw_response);
 		}
 		
 		$response = json_decode($this->raw_response, true);
