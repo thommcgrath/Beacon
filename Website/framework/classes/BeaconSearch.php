@@ -103,7 +103,7 @@ class BeaconSearch {
 		}
 		$filter = implode(' AND ', $filters);
 		
-		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode($query) . '&hitsPerPage=' . $result_count . '&filters=' . urlencode($filter);
+		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode(BeaconCommon::CorrectEncoding($query)) . '&hitsPerPage=100&filters=' . urlencode($filter);
 		$cache_key = md5($url);
 		$this->raw_response = BeaconCache::Get($cache_key);
 		if (is_null($this->raw_response)) {
@@ -123,7 +123,7 @@ class BeaconSearch {
 		}
 		
 		$response = json_decode($this->raw_response, true);
-		$this->results = $response['hits'];
+		$this->results = array_slice($response['hits'], 0, $result_count);
 		$this->total_result_count = $response['nbHits'];
 		return $this->results;
 	}

@@ -119,21 +119,8 @@ case 'GET':
 			$params['mask'] = $_GET['mask'];
 		}
 		if (isset($_GET['search'])) {
-			$query = $_GET['search'];
-			$encodings = ['UTF-16', 'UTF-8', 'ASCII'];
-			$detected_encoding = 'ASCII';
-			foreach ($encodings as $encoding) {
-				if (mb_check_encoding($query, $encoding)) {
-					$detected_encoding = $encoding;
-					break;
-				}
-			}
-			if ($detected_encoding !== 'UTF-8') {
-				$query = iconv($detected_encoding, 'UTF-8', $query);
-			}
-			
 			$search = new BeaconSearch();
-			$results = $search->Search($query, null, 100, 'Document');
+			$results = $search->Search($_GET['search'], null, 100, 'Document');
 			if (count($results) > 0) {
 				$ids = [];
 				foreach ($results as $result) {

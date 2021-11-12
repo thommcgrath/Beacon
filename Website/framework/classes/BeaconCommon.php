@@ -684,6 +684,21 @@ abstract class BeaconCommon {
 	public static function IsBeacon() {
 		return (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, 7) === 'Beacon/');
 	}
+	
+	public static function CorrectEncoding(string $value) {
+		$encodings = ['UTF-16', 'UTF-8', 'ASCII'];
+		$detected_encoding = 'ASCII';
+		foreach ($encodings as $encoding) {
+			if (mb_check_encoding($value, $encoding)) {
+				$detected_encoding = $encoding;
+				break;
+			}
+		}
+		if ($detected_encoding !== 'UTF-8') {
+			$value = iconv($detected_encoding, 'UTF-8', $value);
+		}
+		return $value;
+	}
 }
 
 ?>
