@@ -101,7 +101,7 @@ class BeaconSearch {
 			$filters[] = 'max_version >= ' . $client_version;
 		}
 		if (empty($type) === false) {
-			$filter[] = 'type:' . $type;
+			$filters[] = 'type:' . $type;
 		}
 		if (count($filters) > 0) {
 			$url .= '&filters=' . urlencode(implode(' AND ', $filters));
