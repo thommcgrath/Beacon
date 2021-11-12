@@ -93,6 +93,8 @@ class BeaconSearch {
 		$index = BeaconCommon::GetGlobal('Algolia Index Name');
 		$api_key = BeaconCommon::GetGlobal('Algolia API Key');
 		
+		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode(BeaconCommon::CorrectEncoding($query)) . '&hitsPerPage=100';
+		
 		$filters = [];
 		if (empty($client_version) === false) {
 			$filters[] = 'min_version <= ' . $client_version;
@@ -101,9 +103,10 @@ class BeaconSearch {
 		if (empty($type) === false) {
 			$filter[] = 'type:' . $type;
 		}
-		$filter = implode(' AND ', $filters);
+		if (count($filters) > 0) {
+			$url .= '&filters=' . urlencode(implode(' AND ', $filters));
+		}
 		
-		$url = 'https://' . urlencode($app_id) . '.algolia.net/1/indexes/' . urlencode($index) . '?query=' . urlencode(BeaconCommon::CorrectEncoding($query)) . '&hitsPerPage=100&filters=' . urlencode($filter);
 		$cache_key = md5($url);
 		$this->raw_response = BeaconCache::Get($cache_key);
 		if (is_null($this->raw_response)) {
