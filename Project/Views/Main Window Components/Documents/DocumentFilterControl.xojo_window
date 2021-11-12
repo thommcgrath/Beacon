@@ -31,6 +31,7 @@ Begin ContainerControl DocumentFilterControl
       AllowFocusRing  =   True
       AllowRecentItems=   True
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   "Search Projects"
@@ -211,7 +212,14 @@ End
 
 	#tag Method, Flags = &h0
 		Function SearchText() As String
-		  Return Self.FilterField.Text.Trim()
+		  Var Value As String = Self.FilterField.Text.Trim()
+		  If Value.Encoding Is Nil Then
+		    // Huh?
+		    Value = Value.DefineEncoding(Encodings.ASCII)
+		  ElseIf Value.Encoding <> Encodings.UTF8 Then
+		    Value = Value.ConvertEncoding(Encodings.UTF8)
+		  End If
+		  Return Value
 		End Function
 	#tag EndMethod
 
@@ -328,6 +336,20 @@ End
 			End Set
 		#tag EndSetter
 		RequireAllMaps As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.FilterField.DelayPeriod
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.FilterField.DelayPeriod = Value
+			End Set
+		#tag EndSetter
+		SearchDelayPeriod As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -622,6 +644,38 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="Mask"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="UInt64"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ConsoleSafe"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="RequireAllMaps"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="SearchDelayPeriod"
+		Visible=true
+		Group="Behavior"
+		InitialValue="250"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -650,30 +704,6 @@ End
 		Visible=false
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Mask"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="UInt64"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ConsoleSafe"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="RequireAllMaps"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty

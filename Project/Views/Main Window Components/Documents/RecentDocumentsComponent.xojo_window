@@ -140,6 +140,7 @@ Begin DocumentsComponentView RecentDocumentsComponent Implements NotificationKit
       Mask            =   ""
       RequireAllMaps  =   False
       Scope           =   2
+      SearchDelayPeriod=   250
       ShowFullControls=   False
       TabIndex        =   2
       TabPanelIndex   =   0

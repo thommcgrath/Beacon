@@ -134,6 +134,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
          Mask            =   ""
          RequireAllMaps  =   False
          Scope           =   2
+         SearchDelayPeriod=   250
          ShowFullControls=   True
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -472,6 +473,7 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

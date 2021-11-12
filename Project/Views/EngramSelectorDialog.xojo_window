@@ -381,6 +381,7 @@ Begin BeaconDialog EngramSelectorDialog
       AllowFocusRing  =   True
       AllowRecentItems=   False
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   "Search Objects"
