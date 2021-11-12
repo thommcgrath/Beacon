@@ -7,13 +7,10 @@ if (!isset($_GET['query'])) {
 	exit;
 }
 
-$terms = $_GET['query'];
-$query = preg_replace('/[^a-z ]/', '', strtolower($terms));
-$query = preg_replace('/\s+/', ' | ', trim($query));
-$query = preg_replace('/(\w+)/', '$1:*', $query);
+$query = $_GET['query'];
 $database = BeaconCommon::Database();
 
-BeaconTemplate::SetTitle('Help: ' . $terms);
+BeaconTemplate::SetTitle('Help: ' . $query);
 
 $stable_version = BeaconCommon::NewestVersionForStage(3);
 $version = $stable_version;
@@ -43,7 +40,7 @@ $search = new BeaconSearch();
 $results = $search->Search($query, $version, 20, 'Help');
 
 if (count($results) == 0) {
-	$html = '<h1>No Results</h1><p>Could not find anything for &quot;' . htmlentities($terms) . '&quot;</p>';
+	$html = '<h1>No Results</h1><p>Could not find anything for &quot;' . htmlentities($query) . '&quot;</p>';
 } else {
 	BeaconTemplate::StartStyles(); ?>
 	<style>
@@ -70,7 +67,7 @@ if (count($results) == 0) {
 	<?php
 	BeaconTemplate::FinishStyles();
 	
-	$html = '<h1>Search Results for &quot;' . htmlentities($terms) . '&quot;</h1>';
+	$html = '<h1>Search Results for &quot;' . htmlentities($query) . '&quot;</h1>';
 	foreach ($results as $result) {
 		$path = $result['uri'];
 		if ($include_url_version) {
