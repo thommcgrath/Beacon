@@ -91,7 +91,8 @@ var explore = {
 			explore.displayResults();
 			return;
 		}
-		request.get('/search/', { 'query': terms.trim(), 'count': 4 }, function(data) {
+		let hash = crc32(navigator.userAgent.toLowerCase() + terms.trim());
+		request.get('/search/', { 'query': terms.trim(), 'count': 4, 'hash': hash }, function(data) {
 			explore.displayResults(data);
 		}, function(http_status, body) {
 			explore.displayResults();
@@ -148,7 +149,8 @@ var explore = {
 			
 			if (total > results.length) {
 				document.getElementById('explore_results_right_button').style.display = 'block';
-				explore.searchMoreURL = '/search/?query=' + encodeURIComponent(terms);
+				let hash = crc32(navigator.userAgent.toLowerCase() + terms);
+				explore.searchMoreURL = '/search/?query=' + encodeURIComponent(terms) + '&hash=' + hash;
 			} else {
 				document.getElementById('explore_results_right_button').style.display = 'none';
 			}
