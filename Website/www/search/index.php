@@ -24,18 +24,8 @@ if (isset($_GET['count'])) {
 	$max_results = min(intval($_GET['count']), $max_results);
 }
 
-$sent_hash = 0;
-$computed_hash = crc32(strtolower($_SERVER['HTTP_USER_AGENT']) . $terms);
-if (isset($_GET['hash'])) {
-	$sent_hash = intval($_GET['hash']);
-}
-
 $search = new BeaconSearch();
-if ($sent_hash === $computed_hash) {
-	$results = $search->Search($terms, $version, $max_results);
-} else {
-	$results = [];
-}
+$results = $search->Search($terms, $version, $max_results);
 $items = [];
 foreach ($results as $result) {
 	$summary = $result['preview'];
