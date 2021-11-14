@@ -686,6 +686,9 @@ abstract class BeaconCommon {
 	}
 	
 	public static function CorrectEncoding(string $value) {
+		// this isn't working at all
+		return $value;
+		
 		$encodings = ['UTF-16', 'UTF-8', 'ASCII'];
 		$detected_encoding = 'ASCII';
 		foreach ($encodings as $encoding) {
