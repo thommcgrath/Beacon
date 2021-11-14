@@ -203,7 +203,7 @@ Inherits Beacon.ConfigGroup
 		    If Self.mEncryptedValues = Nil Then
 		      Self.mEncryptedValues = New Dictionary
 		    End If
-		    Self.mEncryptedValues.Value(EncodeHex(Crypto.SHA512(Decrypted))) = Input
+		    Self.mEncryptedValues.Value(EncodeHex(Crypto.SHA2_512(Decrypted))) = Input
 		    Return Decrypted
 		  Catch Err As RuntimeException
 		  End Try
@@ -237,7 +237,7 @@ Inherits Beacon.ConfigGroup
 		      Return ""
 		    End Try
 		    
-		    Var ComputedHash As String = EncodeHex(Crypto.SHA512(Decrypted))
+		    Var ComputedHash As String = EncodeHex(Crypto.SHA2_512(Decrypted))
 		    If ComputedHash <> ExpectedHash Then
 		      Return ""
 		    End If
@@ -267,7 +267,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function Encrypt(Input As String, Document As Beacon.Document) As String
 		  Try
-		    Var Hash As String = EncodeHex(Crypto.SHA512(Input))
+		    Var Hash As String = EncodeHex(Crypto.SHA2_512(Input))
 		    If Self.mEncryptedValues <> Nil And Self.mEncryptedValues.HasKey(Hash) Then
 		      Return Self.mEncryptedValues.Value(Hash)
 		    End If

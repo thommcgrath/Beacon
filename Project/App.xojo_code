@@ -1244,12 +1244,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
 		  
-		  Var File As FolderItem
-		  If Parent Is Nil Then
-		    File = Dialog.ShowModal
-		  Else
-		    File = Dialog.ShowModalWithin(Parent.TrueWindow)
-		  End If
+		  Var File As FolderItem = Dialog.ShowModal(Parent.TrueWindow)
 		  If (File Is Nil) = False Then
 		    Self.OpenDocument(File)
 		  End If

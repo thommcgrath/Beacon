@@ -811,7 +811,7 @@ End
 		    Return
 		  End If
 		  
-		  If EncodeHex(Crypto.SHA256(ClipboardContents)) = Self.mLastRewrittenHash Then
+		  If EncodeHex(Crypto.SHA2_256(ClipboardContents)) = Self.mLastRewrittenHash Then
 		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyReadyMessage, Filename), Language.ReplacePlaceholders(SmartCopyReadyExplanation, Filename))
 		    Return
 		  End If
@@ -900,7 +900,7 @@ End
 		  If Self.mCopyWhenFinished Then
 		    Var Board As New Clipboard
 		    Board.Text = Content
-		    Self.mLastRewrittenHash = EncodeHex(Crypto.SHA256(Content)).Lowercase
+		    Self.mLastRewrittenHash = EncodeHex(Crypto.SHA2_256(Content)).Lowercase
 		    Self.ShowAlert(Language.ReplacePlaceholders(SmartCopyReadyMessage, "ini"), Language.ReplacePlaceholders(SmartCopyReadyExplanation, "ini"))
 		    Return
 		  End If

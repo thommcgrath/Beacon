@@ -508,7 +508,7 @@ End
 		    Dialog.ActionButtonCaption = "Import"
 		    Dialog.Filter = BeaconFileTypes.IniFile
 		    
-		    Var Selected As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Selected As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		    If Selected = Nil Then
 		      Return ""
 		    End If
@@ -658,7 +658,7 @@ End
 		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGame)
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
-		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File <> Nil Then
 		    Self.AddFile(File)
 		  End If

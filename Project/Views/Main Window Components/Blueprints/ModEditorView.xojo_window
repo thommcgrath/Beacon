@@ -198,7 +198,7 @@ End
 		  Dialog.SuggestedFileName = "Exported Blueprints.json"
 		  Dialog.Filter = BeaconFileTypes.JsonFile
 		  
-		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File Is Nil Then
 		    Return
 		  End If
@@ -655,7 +655,7 @@ End
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile + BeaconFileTypes.JsonFile
 		  
-		  Var File As FolderItem = Dialog.ShowModalWithin(Parent.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModal(Parent.TrueWindow)
 		  If File Is Nil Then
 		    Return
 		  End If

@@ -260,8 +260,8 @@ End
 		    Dialog.Filter = BeaconFileTypes.BeaconPreset
 		    Dialog.SuggestedFileName = Preset.Label + Beacon.FileExtensionPreset
 		    
-		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		    If File <> Nil Then
+		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		    If (File Is Nil) = False Then
 		      Preset.ToFile(File, Beacon.Preset.SaveFormats.Universal)
 		    End If
 		    
@@ -271,8 +271,8 @@ End
 		  Var Dialog As New SelectFolderDialog
 		  Dialog.PromptText = "Select Folder For Bulk Export"
 		  
-		  Var Folder As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If Folder = Nil Then
+		  Var Folder As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		  If Folder Is Nil Then
 		    Return
 		  End If
 		  

@@ -128,6 +128,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
       AllowFocusRing  =   True
       AllowRecentItems=   False
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   ""
