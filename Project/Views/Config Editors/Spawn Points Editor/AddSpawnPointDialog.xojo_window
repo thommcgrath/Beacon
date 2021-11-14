@@ -168,7 +168,6 @@ Begin BeaconDialog AddSpawnPointDialog
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -497,7 +496,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Text.Trim
+		  Var SearchText As String = Self.FilterField.Text.MakeUTF8.Trim
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  
 		  If SearchText = "" Then

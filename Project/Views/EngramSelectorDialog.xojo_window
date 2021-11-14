@@ -102,7 +102,6 @@ Begin BeaconDialog EngramSelectorDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -226,7 +225,6 @@ Begin BeaconDialog EngramSelectorDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   4
@@ -628,7 +626,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Text
+		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)

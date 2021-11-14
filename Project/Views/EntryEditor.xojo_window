@@ -671,7 +671,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Text
+		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)

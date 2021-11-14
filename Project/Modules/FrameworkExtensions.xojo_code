@@ -335,6 +335,24 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MakeUTF8(Extends Source As String) As String
+		  If Source.Encoding = Encodings.UTF8 Then
+		    Return Source
+		  End If
+		  
+		  If Source.Encoding Is Nil Then
+		    If Encodings.UTF8.IsValidData(Source) Then
+		      Return Source.DefineEncoding(Encodings.UTF8)
+		    Else
+		      Source = Source.DefineEncoding(Encodings.ASCII)
+		    End If
+		  End If
+		  
+		  Return Source.ConvertEncoding(Encodings.UTF8)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Middle(Extends Source As MemoryBlock, Offset As Integer, Length As Integer) As MemoryBlock
 		  Offset = Min(Offset, Source.Size)
 		  Var Bound As Integer = Min(Offset + Length, Source.Size)
