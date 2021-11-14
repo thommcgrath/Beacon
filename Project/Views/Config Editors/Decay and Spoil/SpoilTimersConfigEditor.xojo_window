@@ -214,7 +214,6 @@ Begin ConfigEditor SpoilTimersConfigEditor
             AllowFocusRing  =   True
             AllowTabs       =   False
             Backdrop        =   0
-            Clickable       =   False
             ContentHeight   =   0
             DoubleBuffer    =   False
             Enabled         =   True

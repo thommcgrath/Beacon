@@ -989,7 +989,7 @@ End
 		    Dialog.SuggestedFileName = Self.mController.Name + Beacon.FileExtensionProject
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
-		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File = Nil Then
 		      Return
 		    End If

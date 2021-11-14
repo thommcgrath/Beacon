@@ -610,8 +610,8 @@ End
 		    Dialog.SuggestedFileName = Self.mFilename
 		    Dialog.PromptText = "Choose a location for the update file"
 		    
-		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		    If File Is Nil Then
+		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If File = Nil Then
 		      Return
 		    End If
 		    

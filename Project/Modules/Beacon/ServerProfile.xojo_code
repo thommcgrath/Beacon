@@ -200,7 +200,7 @@ Protected Class ServerProfile
 		  Catch Err As RuntimeException
 		    Raw = Self.Name + "    " + Self.ProfileID
 		  End Try
-		  Return EncodeHex(Crypto.SHA2_256(Raw)).Lowercase
+		  Return EncodeHex(Crypto.SHA256(Raw)).Lowercase
 		End Function
 	#tag EndMethod
 

@@ -212,7 +212,14 @@ End
 
 	#tag Method, Flags = &h0
 		Function SearchText() As String
-		  Return Self.FilterField.Text.Trim()
+		  Var Value As String = Self.FilterField.Text.Trim()
+		  If Value.Encoding Is Nil Then
+		    // Huh?
+		    Value = Value.DefineEncoding(Encodings.ASCII)
+		  ElseIf Value.Encoding <> Encodings.UTF8 Then
+		    Value = Value.ConvertEncoding(Encodings.UTF8)
+		  End If
+		  Return Value
 		End Function
 	#tag EndMethod
 

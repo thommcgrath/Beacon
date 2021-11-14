@@ -415,8 +415,8 @@ End
 		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
 		  Dialog.SuggestedFileName = "Identity Backup" + Beacon.FileExtensionIdentity
 		  
-		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File Is Nil Then
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
 		    Return
 		  End If
 		  
@@ -431,8 +431,8 @@ End
 		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
 		  
-		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
-		  If File Is Nil Then
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
 		    Return
 		  End If
 		  

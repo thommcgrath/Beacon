@@ -62,7 +62,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.mCachedHash.IsEmpty Then
-		    Self.mCachedHash = EncodeHex(Crypto.SHA2_256(Self.Join(","))).Lowercase
+		    Self.mCachedHash = EncodeHex(Crypto.SHA256(Self.Join(","))).Lowercase
 		  End If
 		  Return Self.mCachedHash
 		End Function

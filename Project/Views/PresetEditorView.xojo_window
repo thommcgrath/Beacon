@@ -607,6 +607,7 @@ Begin BeaconSubview PresetEditorView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -666,6 +667,7 @@ Begin BeaconSubview PresetEditorView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   3
@@ -745,7 +747,7 @@ End
 		  Var AllMaps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In AllMaps
 		    Var MapSegment As New Segment
-		    MapSegment.Caption = Map.Name
+		    MapSegment.Title = Map.Name
 		    MapSegment.Enabled = True
 		    Self.MapSelector.AddSegment(MapSegment)
 		  Next
@@ -783,7 +785,7 @@ End
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
 			
-			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
 			Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary(Beacon.Preset.SaveFormats.Universal), File)
 			Writer.Start
@@ -813,7 +815,7 @@ End
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mPreset.Label + Beacon.FileExtensionPreset
 			
-			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
+			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
 			Self.mSaveFile = File
 			Self.Save()

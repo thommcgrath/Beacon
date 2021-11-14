@@ -193,13 +193,17 @@ Inherits BeaconSubview
 		  Var SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Var FocusControl As RectControl = Self.Focus
-		  Self.SetFocus()
+		  #if TargetMacOS
+		    ClearFocus()
+		  #else
+		    Self.SetFocus()
+		  #endif
 		  #if DebugBuild
 		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		    System.DebugLog(Info.Name + ".SetupUI")
 		  #endif
 		  RaiseEvent SetupUI
-		  If (FocusControl Is Nil) = False Then
+		  If FocusControl <> Nil Then
 		    FocusControl.SetFocus()
 		  End If
 		  Self.SettingUp = SettingUp

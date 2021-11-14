@@ -56,7 +56,7 @@ Protected Class IntegrationTransfer
 
 	#tag Method, Flags = &h0
 		Function SHA256() As String
-		  Return EncodeHex(Crypto.SHA2_256(Self.Content)).Lowercase
+		  Return EncodeHex(Crypto.SHA256(Self.Content)).Lowercase
 		End Function
 	#tag EndMethod
 

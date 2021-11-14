@@ -264,7 +264,7 @@ Protected Class IntegrationEngine
 		    Var DownloadSuccess As Boolean
 		    Var CheckedContents As String = Self.GetFile(Filename, DownloadFailureMode.Required, True, DownloadSuccess)
 		    If DownloadSuccess Then
-		      Var CheckedHash As String = EncodeHex(Crypto.SHA2_256(CheckedContents)).Lowercase
+		      Var CheckedHash As String = EncodeHex(Crypto.SHA256(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
 		        Self.Log("Uploaded " + Transfer.Filename + ", size: " + Beacon.BytesToString(OriginalSize))
 		        Return True
