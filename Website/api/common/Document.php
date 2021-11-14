@@ -727,15 +727,6 @@ class Document implements \JsonSerializable {
 				$database->Query('DELETE FROM guest_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $guest_id);
 			}
 			$database->Commit();
-			if ($is_searchable) {
-				// It is currently searchable.
-				$algolia = new \BeaconAlgolia();
-				$algolia->SaveObject($document_id, true);
-			} elseif ($was_searchable != $is_searchable) {
-				// It is searchable before, but it is no longer searchable.
-				$algolia = new \BeaconAlgolia();
-				$algolia->DeleteObject($document_id, true);
-			}
 		} catch (\Exception $err) {
 			$reason = 'Database error: ' . $err->getMessage();
 			return false;
