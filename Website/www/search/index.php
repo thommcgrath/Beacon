@@ -6,6 +6,17 @@ $terms = '';
 if (isset($_GET['query'])) {
 	$terms = $_GET['query'];
 }
+$request_content_type = 'text/html';
+if (isset($_SERVER['HTTP_ACCEPT'])) {
+	$request_content_type = strtolower($_SERVER['HTTP_ACCEPT']);
+}
+
+if ($request_content_type === 'application/rss+xml') {
+	http_response_code(404);
+	header('Content-Type: text/plain');
+	echo 'File not found';
+	exit;
+}
 
 $version = BeaconCommon::NewestVersionForStage(3);
 $max_results = 100;
@@ -75,43 +86,14 @@ for ($idx = 0; $idx < count($items); $idx++) {
 	}
 }
 
-if (isset($_SERVER['HTTP_ACCEPT'])) {
-	switch ($_SERVER['HTTP_ACCEPT']) {
-	case 'application/json':
-		header('Content-Type: application/json');
-		echo json_encode($response = array(
-			'terms' => $terms,
-			'results' => $items,
-			'total' => $result_count
-		));
-		exit;
-	case 'application/rss+xml':
-		header('Content-Type: application/rss+xml');
-		echo '<?xml version="1.0" encoding="UTF-8"?>';
-		echo '<rss version="2.0" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">';
-		echo '<channel>';
-		echo '<title>Beacon</title>';
-		echo '<link>' . BeaconCommon::AbsoluteURL('/') . '</link>';
-		echo '<description>Search results for Beacon, a loot editor for Ark: Survival Evolved.</description>';
-		echo '<opensearch:totalResults>' . $result_count . '</opensearch:totalResults>';
-		echo '<opensearch:startIndex>0</opensearch:startIndex>';
-		echo '<opensearch:itemsPerPage>' . $max_results . '</opensearch:itemsPerPage>';
-		echo '<atom:link rel="search" type="application/opensearchdescription+xml" href="' . htmlentities(BeaconCommon::AbsoluteURL('/search/opensearch.php')) . '"/>';
-		echo '<opensearch:Query role="request" searchTerms="' . htmlentities($terms) . '" startPage="1" />';
-		
-		foreach ($items as $item) {
-			echo '<item>';
-			echo '<title>' . htmlentities($item['title']) . '</title>';
-			echo '<link>' . htmlentities(BeaconCommon::AbsoluteURL($item['url'])) . '</link>';
-			echo '<description>' . htmlentities($item['summary']) . '</description>';
-			echo '</item>';
-		}
-		
-		echo '</channel>';
-		echo '</rss>';
-		
-		exit;
-	}
+if ($request_content_type === 'application/json') {
+	header('Content-Type: application/json');
+	echo json_encode($response = array(
+		'terms' => $terms,
+		'results' => $items,
+		'total' => $result_count
+	));
+	exit;
 }
 
 if (empty($terms)) {
