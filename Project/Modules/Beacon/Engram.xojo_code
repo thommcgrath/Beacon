@@ -191,7 +191,7 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function ManualUnlock() As Boolean
 		  If Self.HasUnlockDetails = False Then
-		    Return False
+		    Return Beacon.Data.EngramIsCustom(Self)
 		  End If
 		  
 		  Return ((Self.RequiredPlayerLevel Is Nil) = False And (Self.RequiredUnlockPoints Is Nil) = False) Or Beacon.Data.EngramIsCustom(Self) = True
