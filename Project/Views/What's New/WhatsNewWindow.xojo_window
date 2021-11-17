@@ -47,6 +47,7 @@ Begin Window WhatsNewWindow
    End
    Begin URLConnection PreflightSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -180,11 +181,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowConfirmedURL()
-		  If Self.WinViewer.Visible Then
-		    Self.WinViewer.LoadURL(Self.mConfirmedURL)
-		  ElseIf Self.Viewer.Visible Then
-		    Self.Viewer.LoadURL(Self.mConfirmedURL)
-		  End If
+		  Try
+		    If Self.WinViewer.Visible Then
+		      Self.WinViewer.LoadURL(Self.mConfirmedURL)
+		    ElseIf Self.Viewer.Visible Then
+		      Self.Viewer.LoadURL(Self.mConfirmedURL)
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
 		End Sub
 	#tag EndMethod
 
