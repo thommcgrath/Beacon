@@ -657,6 +657,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Value = Value.ReplaceLineEndings(" ").Trim
+			  
 			  If Self.mLabel.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
 			    Return
 			  End If
