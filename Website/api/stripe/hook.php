@@ -49,9 +49,9 @@ case 'checkout.session.completed':
 	$intent_id = $obj['payment_intent'];
 	$rows = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $intent_id);
 	if ($rows->RecordCount() > 0) {
-		/*http_response_code(200);
+		http_response_code(200);
 		echo 'Notification already handled.';
-		exit;*/
+		exit;
 	}
 	
 	$line_items = $api->GetLineItems($obj['id']);
