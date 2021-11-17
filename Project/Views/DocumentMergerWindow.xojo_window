@@ -102,7 +102,6 @@ Begin BeaconDialog DocumentMergerWindow
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -392,25 +391,40 @@ End
 		    Next
 		  End If
 		  
+		  Var ShowConfigSetNames As Boolean
+		  For Each SourceDocument As Beacon.Document In SourceDocuments
+		    Var SetNames() As String = SourceDocument.ConfigSetNames
+		    If SetNames.Count > 1 Then
+		      ShowConfigSetNames = True
+		      Exit For SourceDocument
+		    End If
+		  Next SourceDocument
+		  
 		  Var ActiveConfigSet As String = DestinationDocument.ActiveConfigSet
 		  Var MergeItems() As Beacon.DocumentMergeItem
 		  Var DesiredMask As UInt64
 		  Var UniqueMods As New Dictionary
 		  For Each SourceDocument As Beacon.Document In SourceDocuments
 		    // Config Groups
-		    Var Configs() As Beacon.ConfigGroup = SourceDocument.ImplementedConfigs
-		    For Each Config As Beacon.ConfigGroup In Configs
-		      If Config IsA BeaconConfigs.Metadata Then
-		        Continue
-		      End If
-		      
-		      Var MergeItem As New Beacon.DocumentMergeConfigGroupItem(Config, SourceDocument)
-		      If UseServerNames Then
-		        MergeItem.Label = MergeItem.Label + EndOfLine + "From " + SourceDocument.Title
-		      End If
-		      MergeItem.DestinationConfigSet = ActiveConfigSet
-		      MergeItems.Add(MergeItem)
-		    Next
+		    Var SetNames() As String = SourceDocument.ConfigSetNames
+		    For Each SetName As String In SetNames
+		      Var Configs() As Beacon.ConfigGroup = SourceDocument.ImplementedConfigs(SetName)
+		      For Each Config As Beacon.ConfigGroup In Configs
+		        If Config IsA BeaconConfigs.Metadata Then
+		          Continue
+		        End If
+		        
+		        Var MergeItem As New Beacon.DocumentMergeConfigGroupItem(Config, SourceDocument)
+		        If ShowConfigSetNames Then
+		          MergeItem.Label = SetName + ": " + MergeItem.Label
+		        End If
+		        If UseServerNames Then
+		          MergeItem.Label = MergeItem.Label + EndOfLine + "From " + SourceDocument.Title
+		        End If
+		        MergeItem.DestinationConfigSet = ActiveConfigSet
+		        MergeItems.Add(MergeItem)
+		      Next Config
+		    Next SetName
 		    
 		    // Profiles
 		    Var ProfileBound As Integer = SourceDocument.ServerProfileCount - 1
