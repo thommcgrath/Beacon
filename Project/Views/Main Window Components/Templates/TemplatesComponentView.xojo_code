@@ -2,16 +2,6 @@
 Protected Class TemplatesComponentView
 Inherits BeaconSubview
 	#tag Method, Flags = &h1
-		Attributes( Deprecated = "CloseTemplate" ) Protected Function ClosePreset(Preset As Beacon.Preset) As Boolean
-		  #Pragma Unused Preset
-		  
-		  // Do nothing
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function CloseTemplate(Template As Beacon.Template) As Boolean
 		  Return RaiseEvent CloseTemplate(Template)
 		End Function
@@ -20,14 +10,6 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h1
 		Protected Sub NewTemplate()
 		  RaiseEvent NewTemplate()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "OpenTemplate" ) Protected Sub OpenPreset(Preset As Beacon.Preset)
-		  #Pragma Unused Preset
-		  
-		  // Do nothing
 		End Sub
 	#tag EndMethod
 

@@ -739,7 +739,7 @@ End
 		    Var Document As BeaconAPI.Document = FilteredDocuments(I)
 		    
 		    Self.List.CellValueAt(I, Self.ColumnName) = Document.Name
-		    Self.List.CellValueAt(I, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
+		    Self.List.CellValueAt(I, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellValueAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
 		    Self.List.CellValueAt(I, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		    Self.List.CellValueAt(I, Self.ColumnRevision) = Document.Revision.ToString(Locale.Current, ",##0")
@@ -845,7 +845,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.Mask = Beacon.Maps.UniversalMask
+		  Me.Mask = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndEvent
 	#tag Event

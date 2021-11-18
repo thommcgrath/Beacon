@@ -119,7 +119,7 @@ Implements Ark.Blueprint
 		    If ClassString.IsEmpty Then
 		      ClassString = "PrimalItemMystery_" + ObjectID + "_C"
 		    End If
-		    Path = Beacon.UnknownBlueprintPath("Engrams", ClassString)
+		    Path = Ark.UnknownBlueprintPath("Engrams", ClassString)
 		  ElseIf ClassString.IsEmpty Then
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If

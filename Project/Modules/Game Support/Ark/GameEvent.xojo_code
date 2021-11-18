@@ -27,7 +27,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.GameEvent)
+		Sub Constructor(Source As Ark.GameEvent)
 		  Self.Constructor
 		  
 		  If Source Is Nil Then

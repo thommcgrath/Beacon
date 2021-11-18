@@ -745,9 +745,9 @@ End
 		  Var DifficultyOffset As Double = 1.0
 		  
 		  Self.LootScaleField.Text = Difficulty.DifficultyValue.ToString(Locale.Current, ",##0%")
-		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
+		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText(Ark.Configs.Difficulty.DecimalPlaces, True)
 		  Self.DifficultyOffsetField.Text = DifficultyOffset.ToString(Locale.Current, "0.0")
-		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
+		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText(Ark.Configs.Difficulty.DecimalPlaces, True)
 		  Self.MaxTekLevelField.Text = Difficulty.MaxTekLevel.ToString(Locale.Current, ",##0")
 		  Self.MaxWyvernLevelField.Text = Difficulty.MaxWyvernLevel.ToString(Locale.Current, ",##0")
 		  Self.MaxCrystalWyvernLevelField.Text = Difficulty.MaxCrystalWyvernLevel.ToString(Locale.Current, ",##0")

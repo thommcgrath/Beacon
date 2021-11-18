@@ -819,7 +819,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTicketDocument As Beacon.Document
+		Private mTicketDocument As Beacon.Project
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -893,7 +893,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Document As Beacon.Document
+		  Var Document As Beacon.Project
 		  If Self.DocumentMenu.SelectedRowIndex > -1 Then
 		    Document = Self.DocumentMenu.RowTagAt(Self.DocumentMenu.SelectedRowIndex)
 		  ElseIf Not Self.ShowConfirm("Are you sure you do not wish to include a project?", "Including a Beacon project provides a ton of information and helps get you an answer faster. If you cannot find your project in the menu, open the project first. Are you sure you do not want to include a project?", "Do Not Include", "Cancel") Then
@@ -1034,7 +1034,7 @@ End
 		    End If
 		    Self.mProgress.Detail = "Attaching project…"
 		    Var FileName As String = Self.mTicketDocument.Title + ".beacon"
-		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.ToDictionary(Identity), True)
+		    Var FileContent As String = Beacon.GenerateJSON(Self.mTicketDocument.SaveData(Identity), True)
 		    
 		    If Not Self.AddtoArchive(Beacon.SanitizeFilename(FileName), FileContent) Then
 		      Return

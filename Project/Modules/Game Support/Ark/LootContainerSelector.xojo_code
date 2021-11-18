@@ -1,5 +1,6 @@
 #tag Class
 Protected Class LootContainerSelector
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Code() As String
 		  Return Self.mCode
@@ -81,7 +82,7 @@ Protected Class LootContainerSelector
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Source As Dictionary) As Ark.LootContainerSelector
+		Shared Function FromSaveData(Source As Dictionary) As Ark.LootContainerSelector
 		  If Source Is Nil Then
 		    Return Nil
 		  End If
@@ -208,13 +209,34 @@ Protected Class LootContainerSelector
 		    Return 1
 		  End If
 		  
-		  Var SelfData As String = Beacon.GenerateJSON(Self.ToDictionary(False), False)
-		  Var OtherData As String = Beacon.GenerateJSON(Other.ToDictionary(False), False)
+		  Var SelfData As String = Beacon.GenerateJSON(Self.SaveData(False), False)
+		  Var OtherData As String = Beacon.GenerateJSON(Other.SaveData(False), False)
 		  If SelfData.Compare(OtherData, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return 0
 		  End If
 		  
 		  Return Self.Label.Compare(Other.Label, ComparisonOptions.CaseInsensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(CompatibilityMode As Boolean) As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("UUID") = Self.mUUID
+		  Dict.Value("Label") = Self.mLabel
+		  Dict.Value("Language") = Self.mLanguage
+		  Dict.Value("Code") = Self.mCode
+		  If CompatibilityMode Then
+		    Dict.Value("ModifierID") = Self.mUUID
+		    Select Case Self.mLanguage
+		    Case Self.LanguageRegEx
+		      Dict.Value("Pattern") = Self.mCode
+		    Case Self.LanguageJavaScript
+		      Dict.Value("Pattern") = ""
+		      Dict.Value("Advanced Pattern") = Self.mCode
+		    End Select
+		  End If
+		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -247,27 +269,6 @@ Protected Class LootContainerSelector
 		      Return False
 		    End Try
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary(CompatibilityMode As Boolean) As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("UUID") = Self.mUUID
-		  Dict.Value("Label") = Self.mLabel
-		  Dict.Value("Language") = Self.mLanguage
-		  Dict.Value("Code") = Self.mCode
-		  If CompatibilityMode Then
-		    Dict.Value("ModifierID") = Self.mUUID
-		    Select Case Self.mLanguage
-		    Case Self.LanguageRegEx
-		      Dict.Value("Pattern") = Self.mCode
-		    Case Self.LanguageJavaScript
-		      Dict.Value("Pattern") = ""
-		      Dict.Value("Advanced Pattern") = Self.mCode
-		    End Select
-		  End If
-		  Return Dict
 		End Function
 	#tag EndMethod
 

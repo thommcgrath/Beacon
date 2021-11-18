@@ -36,11 +36,11 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Details As Beacon.ModDetails)
-		  Self.mModID = Details.ModID
+		Sub Constructor(Details As Ark.ContentPack)
+		  Self.mModID = Details.UUID
 		  Self.mName = Details.Name
 		  Self.mWorkshopID = Details.WorkshopID
-		  Self.mIsLocalMod = Details.IsUserMod
+		  Self.mIsLocalMod = Details.IsLocal
 		  Self.mConfirmed = True
 		End Sub
 	#tag EndMethod
@@ -106,9 +106,9 @@ Protected Class WorkshopMod
 		Shared Function UserBlueprintsMod() As BeaconAPI.WorkshopMod
 		  Var ModInfo As New BeaconAPI.WorkshopMod
 		  ModInfo.mConfirmed = True
-		  ModInfo.mModID = Beacon.UserModID
-		  ModInfo.mName = Beacon.UserModName
-		  ModInfo.mWorkshopID = CType(Beacon.UserModWorkshopID, UInt32)
+		  ModInfo.mModID = Ark.UserContentPackUUID
+		  ModInfo.mName = Ark.UserContentPackName
+		  ModInfo.mWorkshopID = CRC_32OfStrMBS(ModInfo.mModID)
 		  Return ModInfo
 		End Function
 	#tag EndMethod

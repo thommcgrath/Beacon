@@ -31,13 +31,13 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.UniversalMask
+		  Self.mAvailability = Ark.Maps.UniversalMask
 		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.Engram)
+		Sub Constructor(Source As Ark.Engram)
 		  Self.CanBeBlueprint = Source.IsTagged("blueprintable")
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
@@ -88,26 +88,26 @@ Protected Class Engram
 		  ElseIf Source.HasKey("environments") Then
 		    Var Environments() As Variant = Source.Value("environments")
 		    For Each Environment As String In Environments
-		      Var Map As Beacon.Map
+		      Var Map As Ark.Map
 		      Select Case Environment
 		      Case "island"
-		        Map = Beacon.Maps.TheIsland
+		        Map = Ark.Maps.TheIsland
 		      Case "scorched"
-		        Map = Beacon.Maps.ScorchedEarth
+		        Map = Ark.Maps.ScorchedEarth
 		      Case "center"
-		        Map = Beacon.Maps.TheCenter
+		        Map = Ark.Maps.TheCenter
 		      Case "ragnarok"
-		        Map = Beacon.Maps.Ragnarok
+		        Map = Ark.Maps.Ragnarok
 		      Case "abberation", "aberration"
-		        Map = Beacon.Maps.Aberration
+		        Map = Ark.Maps.Aberration
 		      Case "extinction"
-		        Map = Beacon.Maps.Extinction
+		        Map = Ark.Maps.Extinction
 		      Case "valguero"
-		        Map = Beacon.Maps.Valguero
+		        Map = Ark.Maps.Valguero
 		      Case "genesis"
-		        Map = Beacon.Maps.Genesis
+		        Map = Ark.Maps.Genesis
 		      Case "crystalisles"
-		        Map = Beacon.Maps.CrystalIsles
+		        Map = Ark.Maps.CrystalIsles
 		      End Select
 		      If Map <> Nil Then
 		        Self.ValidForMap(Map) = True
@@ -165,13 +165,13 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValidForMap(Map As Beacon.Map) As Boolean
+		Function ValidForMap(Map As Ark.Map) As Boolean
 		  Return Map = Nil Or Map.Matches(Self.mAvailability)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
+		Sub ValidForMap(Map As Ark.Map, Assigns Value As Boolean)
 		  If Value Then
 		    Self.mAvailability = Self.mAvailability Or Map.Mask
 		  Else

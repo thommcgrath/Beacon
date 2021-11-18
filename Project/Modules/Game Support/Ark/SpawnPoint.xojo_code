@@ -41,7 +41,7 @@ Implements Ark.Blueprint,Beacon.Countable
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.UniversalMask
+		  Self.mAvailability = Ark.Maps.UniversalMask
 		  Self.mLimits = New Ark.BlueprintAttributeManager
 		End Sub
 	#tag EndMethod
@@ -113,7 +113,7 @@ Implements Ark.Blueprint,Beacon.Countable
 		    If ClassString.IsEmpty Then
 		      ClassString = "BeaconSpawn_" + ObjectID + "_C"
 		    End If
-		    Path = Beacon.UnknownBlueprintPath("SpawnPoints", ClassString)
+		    Path = Ark.UnknownBlueprintPath("SpawnPoints", ClassString)
 		  ElseIf ClassString.IsEmpty Then
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If

@@ -54,7 +54,7 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mAvailability = Beacon.Maps.UniversalMask
+		  Self.mAvailability = Ark.Maps.UniversalMask
 		  Self.mStats = New Dictionary
 		End Sub
 	#tag EndMethod
@@ -115,7 +115,7 @@ Implements Ark.Blueprint
 		    If ClassString.IsEmpty Then
 		      ClassString = ObjectID + "_Character_BP_C"
 		    End If
-		    Path = Beacon.UnknownBlueprintPath("Creatures", ClassString)
+		    Path = Ark.UnknownBlueprintPath("Creatures", ClassString)
 		  ElseIf ClassString.IsEmpty Then
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If

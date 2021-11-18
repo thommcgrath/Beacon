@@ -281,19 +281,19 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ArkML() As Beacon.ArkML
+		Function ArkML() As Ark.ArkML
 		  If Self.RawMode Then
 		    // Currently viewing the ArkML version
-		    Return Beacon.ArkML.FromArkML(Self.Field.Text)
+		    Return Ark.ArkML.FromArkML(Self.Field.Text)
 		  Else
 		    // Viewing the RTF version
-		    Return Beacon.ArkML.FromRTF(Self.Field.StyledText.RTFData)
+		    Return Ark.ArkML.FromRTF(Self.Field.StyledText.RTFData)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ArkML(Assigns ArkML As Beacon.ArkML)
+		Sub ArkML(Assigns ArkML As Ark.ArkML)
 		  If Self.RawMode Then
 		    // Currently viewing the ArkML version
 		    Self.Field.Text = ArkML.ArkMLValue
@@ -361,7 +361,7 @@ End
 			  
 			  Try
 			    Var Parsed As Dictionary = Beacon.ParseJSON(Value)
-			    Self.ArkML = Beacon.ArkML.FromObjects(Parsed.Value("Objects"))
+			    Self.ArkML = Ark.ArkML.FromObjects(Parsed.Value("Objects"))
 			  Catch Err As RuntimeException
 			  End Try
 			End Set
@@ -394,7 +394,7 @@ End
 			    // Convert RTF data to ArkML
 			    Var ArkML As String
 			    Try
-			      ArkML = Beacon.ArkML.FromRTF(Self.Field.StyledText.RTFData).ArkMLValue
+			      ArkML = Ark.ArkML.FromRTF(Self.Field.StyledText.RTFData).ArkMLValue
 			    Catch Err As RuntimeException
 			      // Something went wrong
 			    End Try
@@ -408,7 +408,7 @@ End
 			    // Convert ArkML to RTF
 			    Var RTF As String
 			    Try
-			      RTF = Beacon.ArkML.FromArkML(Self.Field.Text).RTFValue
+			      RTF = Ark.ArkML.FromArkML(Self.Field.Text).RTFValue
 			    Catch Err As RuntimeException
 			      // Something went wrong
 			    End Try
@@ -451,7 +451,7 @@ End
 			  End If
 			  
 			  Try
-			    Self.ArkML = Beacon.ArkML.FromRTF(Value)
+			    Self.ArkML = Ark.ArkML.FromRTF(Value)
 			  Catch Err As RuntimeException
 			  End Try
 			End Set

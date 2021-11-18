@@ -1173,7 +1173,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PathSelected(Path As String)
-		  Self.BrowseActionButton.Enabled = Path.EndsWith(Beacon.ConfigFileGame)
+		  Self.BrowseActionButton.Enabled = Path.EndsWith(Ark.ConfigFileGame)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

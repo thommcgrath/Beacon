@@ -10,7 +10,6 @@ Inherits Beacon.DataSource
 		    ContentPackDeleteBehavior = "CASCADE"
 		  #endif
 		  
-		  Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER UNIQUE, is_local BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
@@ -69,15 +68,402 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function GetIdentifier() As String
-		  Return Ark.Identifier
+		Function GetSchemaVersion() As Integer
+		  Return 100
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Function GetSchemaVersion() As Integer
-		  Return 100
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		  Var BuildNumber As Integer = App.BuildNumber
+		  
+		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
+		  For Each RequiredKey As String In RequiredKeys
+		    If Not ChangeDict.HasKey(RequiredKey) Then
+		      App.Log("Cannot import blueprints because key '" + RequiredKey + "' is missing.")
+		      Return False
+		    End If
+		  Next
+		  
+		  Self.DropIndexes()
+		  
+		  Var Mods() As Variant = ChangeDict.Value("mods")
+		  For Each ModData As Dictionary In Mods
+		    Var ModID As String = ModData.Value("mod_id").StringValue.Lowercase
+		    Var ModName As String = ModData.Value("name").StringValue
+		    Var ConsoleSafe As Boolean = ModData.Value("console_safe").BooleanValue
+		    Var DefaultEnabled As Boolean = ModData.Value("default_enabled").BooleanValue
+		    Var WorkshopID As UInt32 = ModData.Value("workshop_id").UInt32Value
+		    If ModData.HasKey("min_version") And ModData.Value("min_version").IntegerValue > BuildNumber Then
+		      // This mod is too new
+		      Continue
+		    End If
+		    
+		    Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1;", ModID)
+		    If Results.RowCount = 1 Then
+		      Self.SQLExecute("UPDATE content_packs SET name = ?2, console_safe = ?3, default_enabled = ?4, workshop_id = ?5 WHERE content_pack_id = ?1 AND (name != ?2 OR console_safe != ?3 OR default_enabled != ?4 OR workshop_id != ?5);", ModID, ModName, ConsoleSafe, DefaultEnabled, WorkshopID)
+		    Else
+		      Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ModID, ModName, ConsoleSafe, DefaultEnabled, WorkshopID, False)
+		    End If
+		  Next
+		  
+		  // When deleting, loot_source_icons must be done after loot_sources
+		  Var Deletions() As Variant = ChangeDict.Value("deletions")
+		  Var DeleteIcons() As String
+		  Var BlueprintsToDelete() As String
+		  For Each Deletion As Dictionary In Deletions
+		    Var ObjectID As String = Deletion.Value("object_id").StringValue
+		    Select Case Deletion.Value("group")
+		    Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources"
+		      BlueprintsToDelete.Add(ObjectID)
+		    Case "loot_source_icons"
+		      DeleteIcons.Add(ObjectID)
+		    Case "presets"
+		      Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
+		    Case "mods"
+		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectID)
+		    Case "maps"
+		      Self.SQLExecute("DELETE FROM maps WHERE object_id = ?1;", ObjectID)
+		    Case "colors"
+		      Self.SQLExecute("DELETE FROM colors WHERE color_uuid = ?1;", ObjectID)
+		    Case "events"
+		      Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectID)
+		    End Select
+		  Next
+		  For Each IconID As String In DeleteIcons
+		    Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		  Next
+		  
+		  Var BlueprintsToSave() As Ark.Blueprint
+		  
+		  Var LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
+		  For Each Dict As Dictionary In LootSourceIcons
+		    If Dict.Value("min_version") > BuildNumber Then
+		      Continue
+		    End If
+		    
+		    Var IconID As String = Dict.Value("id")
+		    Var IconData As MemoryBlock = DecodeBase64(Dict.Value("icon_data"))
+		    
+		    IconID = IconID.Lowercase
+		    
+		    Var Results As RowSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		    If Results.RowCount = 1 Then
+		      Self.SQLExecute("UPDATE loot_source_icons SET icon_data = ?2 WHERE icon_id = ?1;", IconID, IconData)
+		    Else
+		      Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
+		    End If
+		  Next
+		  If LootSourceIcons.LastIndex > -1 Then
+		    Self.mIconCache = Nil
+		  End If
+		  
+		  Var LootSources() As Variant = ChangeDict.Value("loot_sources")
+		  For Each Dict As Dictionary In LootSources
+		    If Dict.Value("min_version") > BuildNumber Then
+		      Continue
+		    End If
+		    
+		    Var Container As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
+		    If (Container Is Nil) = False Then
+		      BlueprintsToSave.Add(Container)
+		    End If
+		  Next
+		  
+		  If ChangeDict.HasKey("engrams") Then
+		    Var Engrams() As Variant = ChangeDict.Value("engrams")
+		    For Each Dict As Dictionary In Engrams
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Var Engram As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
+		      If (Engram Is Nil) = False Then
+		        BlueprintsToSave.Add(Engram)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("creatures") Then
+		    Var Creatures() As Variant = ChangeDict.Value("creatures")
+		    For Each Dict As Dictionary In Creatures
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Var Creature As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
+		      If (Creature Is Nil) = False Then
+		        BlueprintsToSave.Add(Creature)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("spawn_points") Then
+		    Var SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
+		    For Each Dict As Dictionary In SpawnPoints
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Var Point As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
+		      If (Point Is Nil) = False Then
+		        BlueprintsToSave.Add(Point)
+		      End If
+		    Next
+		  End If
+		  
+		  Var BlueprintSaveErrors As New Dictionary
+		  Var EngramsChanged As Boolean = Self.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, BlueprintSaveErrors, False)
+		  For Each Entry As DictionaryEntry In BlueprintSaveErrors
+		    Var BlueprintUUID As String = Entry.Key
+		    Var Err As RuntimeException = Entry.Value
+		    App.Log("Unable to import blueprint " + BlueprintUUID + ": Error #" + Err.ErrorNumber.ToString(Locale.Raw, "0") + " " + Err.Message.NthField(EndOfLine, 1))
+		  Next Entry
+		  
+		  If ChangeDict.HasKey("ini_options") Then
+		    Self.mConfigKeyCache = New Dictionary
+		    
+		    Var Options() As Variant = ChangeDict.Value("ini_options")
+		    For Each Dict As Dictionary In Options
+		      If Dict.Value("min_version") > BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
+		      Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
+		      Var File As String = Dict.Value("file").StringValue
+		      Var Header As String = Dict.Value("header").StringValue
+		      Var Key As String = Dict.Value("key").StringValue
+		      Var TagString, TagStringForSearching As String
+		      Try
+		        Var Tags() As String
+		        Var Temp() As Variant = Dict.Value("tags")
+		        For Each Tag As String In Temp
+		          Tags.Add(Tag)
+		        Next
+		        TagString = Tags.Join(",")
+		        Tags.AddAt(0, "object")
+		        TagStringForSearching = Tags.Join(",")
+		      Catch Err As RuntimeException
+		        
+		      End Try
+		      
+		      Var Values(18) As Variant
+		      Values(0) = ObjectID.StringValue
+		      Values(1) = Dict.Value("label")
+		      Values(2) = ModID.StringValue
+		      Values(3) = Dict.Value("native_editor_version")
+		      Values(4) = File
+		      Values(5) = Header
+		      Values(6) = Key
+		      Values(7) = Dict.Value("value_type")
+		      Values(8) = Dict.Value("max_allowed")
+		      Values(9) = Dict.Value("description")
+		      Values(10) = Dict.Value("default_value")
+		      Values(11) = Dict.Value("alternate_label")
+		      If Dict.HasKey("nitrado_guided_equivalent") And IsNull(Dict.Value("nitrado_guided_equivalent")) = False Then
+		        Var NitradoEq As Dictionary = Dict.Value("nitrado_guided_equivalent")
+		        Values(12) = NitradoEq.Value("path")
+		        Values(13) = NitradoEq.Value("format")
+		        Values(14) = NitradoEq.Value("deploy_style")
+		      Else
+		        Values(12) = Nil
+		        Values(13) = Nil
+		        Values(14) = Nil
+		      End If
+		      Values(15) = TagString
+		      If Dict.HasKey("ui_group") Then
+		        Values(16) = Dict.Value("ui_group")
+		      End If
+		      If Dict.HasKey("custom_sort") Then
+		        Values(17) = Dict.Value("custom_sort")
+		      End If
+		      If Dict.HasKey("constraints") And IsNull(Dict.Value("constraints")) = False Then
+		        Try
+		          Values(18) = Beacon.GenerateJSON(Dict.Value("constraints"), False)
+		        Catch JSONErr As RuntimeException
+		        End Try
+		      End If
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ObjectID.StringValue, File, Header, Key)
+		      If Results.RowCount > 1 Then
+		        Self.SQLExecute("DELETE FROM ini_options WHERE object_id = ?1 OR (file = ?2 AND header = ?3 AND key = ?4);", ObjectID.StringValue, File, Header, Key)
+		      End If
+		      If Results.RowCount = 1 Then
+		        // Update
+		        Var OriginalObjectID As v4UUID = Results.Column("object_id").StringValue
+		        Values.Add(OriginalObjectID.StringValue)
+		        Self.SQLExecute("UPDATE ini_options SET object_id = ?1, label = ?2, content_pack_id = ?3, native_editor_version = ?4, file = ?5, header = ?6, key = ?7, value_type = ?8, max_allowed = ?9, description = ?10, default_value = ?11, alternate_label = ?12, nitrado_path = ?13, nitrado_format = ?14, nitrado_deploy_style = ?15, tags = ?16, ui_group = ?17, custom_sort = ?18, constraints = ?19 WHERE object_id = ?20;", Values)
+		      Else
+		        // Insert
+		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19);", Values)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("maps") Then
+		    Var Maps() As Dictionary = ChangeDict.Value("maps").DictionaryArrayValue
+		    For Each MapDict As Dictionary In Maps
+		      Var MapID As String = MapDict.Value("map_id")
+		      Var ModID As String = MapDict.Value("mod_id")
+		      Var Label As String = MapDict.Value("label")
+		      Var Identifier As String = MapDict.Value("identifier")
+		      Var Difficulty As Double = MapDict.Value("difficulty")
+		      Var Official As Boolean = MapDict.Value("official")
+		      Var Mask As UInt64 = MapDict.Value("mask")
+		      Var Sort As Integer = MapDict.Value("sort")
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM maps WHERE object_id = ?1;", MapID)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE maps SET content_pack_id = ?2, label = ?3, ark_identifier = ?4, difficulty_scale = ?5, official = ?6, mask = ?7, sort = ?8 WHERE object_id = ?1;", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		      Else
+		        Self.SQLExecute("INSERT INTO maps (object_id, content_pack_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
+		      End If
+		    Next
+		    Ark.Maps.ClearCache
+		  End If
+		  
+		  #if Not DebugBuild
+		    #Pragma Error "This won't work"
+		  #endif
+		  Var PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
+		  For Each Dict As Dictionary In PresetModifiers
+		    If Dict.Value("min_version") > BuildNumber Then
+		      Continue
+		    End If
+		    
+		    Var ObjectID As v4UUID = Dict.Value("id").StringValue
+		    Var Label As String = Dict.Value("label")
+		    Var Pattern As String = Dict.Value("pattern")
+		    Var AdvancedPattern As String = Dict.Lookup("advanced_pattern", "")
+		    Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
+		    
+		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_container_selectors WHERE object_id = ?1;", ObjectID.StringValue)
+		    If Results.RowCount = 1 Then
+		      Self.SQLExecute("UPDATE loot_container_selectors SET label = ?2, pattern = ?3, mod_id = ?4, advanced_pattern = ?5 WHERE object_id = ?1;", ObjectID.StringValue, Label, Pattern, ModID.StringValue, AdvancedPattern)
+		    Else
+		      Self.SQLExecute("INSERT INTO loot_container_selectors (object_id, label, pattern, mod_id, advanced_pattern) VALUES (?1, ?2, ?3, ?4, ?5);", ObjectID.StringValue, Label, Pattern, ModID.StringValue, AdvancedPattern)
+		    End If
+		  Next
+		  
+		  If ChangeDict.HasKey("help_topics") Then
+		    Var HelpTopics() As Variant = ChangeDict.Value("help_topics")
+		    For Each Dict As Dictionary In HelpTopics
+		      Var ConfigName As String = Dict.Value("topic")
+		      Var Title As String = Dict.Value("title")
+		      Var Body As String = Dict.Value("body")
+		      Var DetailURL As String
+		      If Dict.Value("detail_url") <> Nil Then
+		        DetailURL = Dict.Value("detail_url")
+		      End If
+		      
+		      ConfigName = ConfigName.Lowercase
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT config_name FROM config_help WHERE config_name = ?1;", ConfigName)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE config_help SET title = ?2, body = ?3, detail_url = ?4 WHERE config_name = ?1;", ConfigName, Title, Body, DetailURL)
+		      Else
+		        Self.SQLExecute("INSERT INTO config_help (config_name, title, body, detail_url) VALUES (?1, ?2, ?3, ?4);", ConfigName, Title, Body, DetailURL)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("game_variables") Then
+		    Var HelpTopics() As Variant = ChangeDict.Value("game_variables")
+		    For Each Dict As Dictionary In HelpTopics
+		      Var Key As String = Dict.Value("key")
+		      Var Value As String = Dict.Value("value")
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT key FROM game_variables WHERE key = ?1;", Key)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE game_variables SET value = ?2 WHERE key = ?1;", Key, Value)
+		      Else
+		        Self.SQLExecute("INSERT INTO game_variables (key, value) VALUES (?1, ?2);", Key, Value)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("colors") Then
+		    Var Colors() As Variant = ChangeDict.Value("colors")
+		    For Each Dict As Dictionary In Colors
+		      Var ColorID As Integer = Dict.Value("color_id")
+		      Var ColorUUID As String = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, "color " + ColorID.ToString(Locale.Raw, "0"))
+		      Var Label As String = Dict.Value("label")
+		      Var HexValue As String = Dict.Value("hex")
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT color_id FROM colors WHERE color_id = ?1;", ColorID)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE colors SET color_uuid = ?2, label = ?3, hex_value = ?4 WHERE color_id = ?1;", ColorID, ColorUUID, Label, HexValue)
+		      Else
+		        Self.SQLExecute("INSERT INTO colors (color_id, color_uuid, label, hex_value) VALUES (?1, ?2, ?3, ?4);", ColorID, ColorUUID, Label, HexValue)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("color_sets") Then
+		    Var Sets() As Variant = ChangeDict.Value("color_sets")
+		    For Each Dict As Dictionary In Sets
+		      Var SetUUID As String = Dict.Value("color_set_id")
+		      Var Label As String = Dict.Value("label")
+		      Var ClassString As String = Dict.Value("class_string")
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT color_set_id FROM color_sets WHERE color_set_id = ?1;", SetUUID)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE color_sets SET label = ?2, class_string = ?3 WHERE color_set_id = ?1;", SetUUID, Label, ClassString)
+		      Else
+		        Self.SQLExecute("INSERT INTO color_sets (color_set_id, label, class_string) VALUES (?1, ?2, ?3);", SetUUID, Label, ClassString)
+		      End If
+		    Next
+		  End If
+		  
+		  If ChangeDict.HasKey("events") Then
+		    Var Events() As Variant = ChangeDict.Value("events")
+		    For Each Dict As Dictionary In Events
+		      Var EventID As String = Dict.Value("event_id")
+		      Var Label As String = Dict.Value("label")
+		      Var ArkCode As String = Dict.Value("ark_code")
+		      Var Rates As String = Beacon.GenerateJSON(Dict.Value("rates"), False)
+		      Var Colors As String = Beacon.GenerateJSON(Dict.Value("colors"), False)
+		      Var Engrams As String = Beacon.GenerateJSON(Dict.Value("engrams"), False)
+		      
+		      Var Results As RowSet = Self.SQLSelect("SELECT event_id FROM events WHERE event_id = ?1;", EventID)
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("UPDATE events SET label = ?2, ark_code = ?3, rates = ?4, colors = ?5, engrams = ?6 WHERE event_id = ?1;", EventID, Label, ArkCode, Rates, Colors, Engrams)
+		      Else
+		        Self.SQLExecute("INSERT INTO events (event_id, label, ark_code, rates, colors, engrams) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", EventID, Label, ArkCode, Rates, Colors, Engrams)
+		      End If
+		    Next
+		  End If
+		  
+		  Self.BuildIndexes()
+		  
+		  StatusData.Value("Engrams Changed") = EngramsChanged
+		  
+		  Return True
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub ImportCleanup(StatusData As Dictionary)
+		  Self.mContainerLabelCacheMask = 0
+		  Self.mContainerLabelCacheDict = New Dictionary
+		  Self.mSpawnLabelCacheMask = 0
+		  Self.mSpawnLabelCacheDict = New Dictionary
+		  
+		  If StatusData.Lookup("Engrams Changed", False).BooleanValue Then
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		  End If
+		  
+		  Self.mOfficialPlayerLevelData = Nil
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ImportTruncate()
+		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Ark.UserContentPackUUID)
+		  Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Ark.UserContentPackUUID)
+		  Self.SQLExecute("DELETE FROM content_packs WHERE is_local = 0") // Mods must be deleted last
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -105,6 +491,63 @@ Inherits Beacon.DataSource
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Sub AddLootContainerSelector(ParamArray LootSelectors() As Ark.LootContainerSelector)
+		  Self.AddLootContainerSelector(LootSelectors)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddLootContainerSelector(LootSelectors() As Ark.LootContainerSelector)
+		  If LootSelectors Is Nil Or LootSelectors.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Self.BeginTransaction()
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT changes();")
+		  Var PreChanges As Integer = Rows.ColumnAt(0).IntegerValue
+		  
+		  For Each LootSelector As Ark.LootContainerSelector In LootSelectors
+		    Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id FROM loot_container_selectors WHERE object_id = ?1;", LootSelector.UUID)
+		    If Results.RowCount = 1 Then
+		      If Results.Column("content_pack_id").StringValue = Ark.UserContentPackUUID Then
+		        Self.SQLExecute("UPDATE loot_container_selectors SET label = ?2, code = ?3, language = ?4 WHERE object_id = ?1 AND (label != ?2 OR code != OR language != ?4);", LootSelector.UUID, LootSelector.Label, LootSelector.Code, LootSelector.Language)
+		      End If
+		    Else
+		      Self.SQLExecute("INSERT INTO loot_container_selectors (object_id, content_pack_id, label, code, language) VALUES (?1, ?2, ?3, ?4, ?5);", LootSelector.UUID, Ark.UserContentPackUUID, LootSelector.Label, LootSelector.Code, LootSelector.Language)
+		    End If
+		  Next
+		  
+		  Rows = Self.SQLSelect("SELECT changes();")
+		  Var PostChanges As Integer = Rows.ColumnAt(0).IntegerValue
+		  
+		  Self.CommitTransaction()
+		  
+		  If PreChanges <> PostChanges Then
+		    Self.BackupLootContainerSelectors()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BackupLootContainerSelectors()
+		  If Self.InTransaction Then
+		    // Do not write to disk while there is still a transaction running
+		    Return
+		  End If
+		  
+		  Var LootSelectors() As Ark.LootContainerSelector = Self.GetLootContainerSelectors(False, True)
+		  Var Dictionaries() As Dictionary
+		  For Each LootSelector As Ark.LootContainerSelector In LootSelectors
+		    Dictionaries.Add(LootSelector.SaveData(False))
+		  Next
+		  
+		  Var Content As String = Beacon.GenerateJSON(Dictionaries, True)
+		  Call UserCloud.Write("/Modifiers.json", Content)
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As Ark.Blueprint) As Boolean
@@ -211,8 +654,8 @@ Inherits Beacon.DataSource
 		  Self.mSpawnLabelCacheDict = New Dictionary
 		  Self.mLootTemplateCache = New Dictionary
 		  Self.mIconCache = New Dictionary
-		  Self.mContainerLabelsCacheDict = New Dictionary
-		  Self.mContainerLabelsCacheMask = 0
+		  Self.mContainerLabelCacheDict = New Dictionary
+		  Self.mContainerLabelCacheMask = 0
 		  
 		  Super.Constructor()
 		End Sub
@@ -228,6 +671,59 @@ Inherits Beacon.DataSource
 		  Self.CommitTransaction()
 		  Self.SyncUserEngrams()
 		  Return Details
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteContentPack(Pack As Ark.ContentPack) As Boolean
+		  Return Self.DeleteContentPack(Pack.UUID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteContentPack(ContentPackUUID As String) As Boolean
+		  Self.BeginTransaction()
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT content_pack_id FROM content_packs WHERE content_pack_id = ?1 AND is_local = 1;", ContentPackUUID)
+		  If Rows.RowCount = 0 Then
+		    Self.RollbackTransaction()
+		    Return False
+		  End If
+		  
+		  Self.DeleteDataForContentPack(ContentPackUUID)
+		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ContentPackUUID)
+		  Self.CommitTransaction()
+		  Self.SyncUserEngrams()
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DeleteDataForContentPack(ContentPackUUID As String)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id = ?1;", ContentPackUUID)
+		  Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1;", ContentPackUUID)
+		  Self.CommitTransaction()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteLootContainerSelector(ParamArray LootSelectors() As Ark.LootContainerSelector) As Boolean
+		  Return Self.DeleteLootContainerSelector(LootSelectors)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeleteLootContainerSelector(LootSelectors() As Ark.LootContainerSelector) As Boolean
+		  Self.BeginTransaction()
+		  For Each LootSelector As Ark.LootContainerSelector In LootSelectors
+		    // Make sure this modifier is not in use
+		    Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1 AND object_id = ?2;", Ark.UserContentPackUUID, LootSelector.UUID)
+		  Next
+		  Self.CommitTransaction()
+		  Self.BackupLootContainerSelectors()
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -425,7 +921,7 @@ Inherits Beacon.DataSource
 		  Var Values As New Dictionary
 		  Var Idx As Integer = 1
 		  
-		  If File = Beacon.ConfigFileGameUserSettings Then
+		  If File = Ark.ConfigFileGameUserSettings Then
 		    If Header.IsEmpty = False Then
 		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
 		      Values.Value(Idx) = Header
@@ -820,7 +1316,33 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIconForLootContainer(Container As Ark.LootContainer, BackgroundColor As Color) As Picture
+		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
+		  Var Value As Variant = Self.GetVariable(Key, Default)
+		  Return Value.IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainerByUUID(LootContainerUUID As String) As Ark.LootContainer
+		  If Self.mLootContainerCache.HasKey(LootContainerUUID) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootContainerUUID)
+		      If Results.RowCount <> 1 Then
+		        Return Nil
+		      End If
+		      
+		      Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
+		      Self.Cache(LootContainers)
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  End If
+		  Return Self.mLootContainerCache.Value(LootContainerUUID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootContainerIcon(Container As Ark.LootContainer, BackgroundColor As Color) As Picture
 		  Var ForegroundColor As Color = Container.UIColor
 		  Select Case ForegroundColor
 		  Case &cFFF02A00
@@ -839,12 +1361,12 @@ Inherits Beacon.DataSource
 		    ForegroundColor = SystemColors.SystemOrangeColor
 		  End Select
 		  
-		  Return Self.GetIconForLootContainer(Container, ForegroundColor, BackgroundColor)
+		  Return Self.GetLootContainerIcon(Container, ForegroundColor, BackgroundColor)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIconForLootContainer(Container As Ark.LootContainer, ForegroundColor As Color, BackgroundColor As Color) As Picture
+		Function GetLootContainerIcon(Container As Ark.LootContainer, ForegroundColor As Color, BackgroundColor As Color) As Picture
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
 		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
 		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(Color.RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
@@ -930,32 +1452,6 @@ Inherits Beacon.DataSource
 		  Var Icon As New Picture(Width, Height, Bitmaps)
 		  Self.mIconCache.Value(IconID) = Icon
 		  Return Icon
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
-		  Var Value As Variant = Self.GetVariable(Key, Default)
-		  Return Value.IntegerValue
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetLootContainerByUUID(LootContainerUUID As String) As Ark.LootContainer
-		  If Self.mLootContainerCache.HasKey(LootContainerUUID) = False Then
-		    Try
-		      Var Results As RowSet = Self.SQLSelect(Self.LootContainerSelectSQL + " WHERE object_id = ?1;", LootContainerUUID)
-		      If Results.RowCount <> 1 Then
-		        Return Nil
-		      End If
-		      
-		      Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Results)
-		      Self.Cache(LootContainers)
-		    Catch Err As RuntimeException
-		      Return Nil
-		    End Try
-		  End If
-		  Return Self.mLootContainerCache.Value(LootContainerUUID)
 		End Function
 	#tag EndMethod
 
@@ -1354,6 +1850,12 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Identifier() As String
+		  Return Ark.Identifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub LoadDefaults(SpawnPoint As Ark.MutableSpawnPoint)
 		  If SpawnPoint Is Nil Then
 		    Return
@@ -1388,6 +1890,17 @@ Inherits Beacon.DataSource
 		    Self.mOfficialPlayerLevelData = Ark.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
 		  End If
 		  Return Self.mOfficialPlayerLevelData
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ResolvePathFromClassString(ClassString As String) As String
+		  Var Results As RowSet = Self.SQLSelect("SELECT path FROM blueprints WHERE class_string = ?1;", ClassString)
+		  If Results.RowCount = 0 Then
+		    Return ""
+		  End If
+		  
+		  Return Results.Column("path").StringValue
 		End Function
 	#tag EndMethod
 
@@ -1688,15 +2201,36 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint, ErrorDict As Dictionary) As Boolean
+		  Var DeleteUUIDs() As String
+		  For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
+		    DeleteUUIDs.Add(Blueprint.ObjectID)
+		  Next Blueprint
+		  
+		  Return Self.SaveBlueprints(BlueprintsToSave, DeleteUUIDs, ErrorDict, True)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary) As Boolean
+		  Return Self.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, ErrorDict, True)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SaveBlueprints(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As String, ErrorDict As Dictionary, LocalModsOnly As Boolean) As Boolean
 		  Var CountSuccess, CountErrors As Integer
 		  
 		  Self.BeginTransaction()
-		  For Each Blueprint As Ark.Blueprint In BlueprintsToDelete
+		  For Each BlueprintUUID As String In BlueprintsToDelete
 		    Var TransactionStarted As Boolean
 		    Try
 		      Self.BeginTransaction()
 		      TransactionStarted = True
-		      Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 AND mod_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1);", Blueprint.ObjectID)
+		      If LocalModsOnly Then
+		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 AND mod_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1);", BlueprintUUID)
+		      Else
+		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", BlueprintUUID)
+		      End If
 		      Self.CommitTransaction()
 		      TransactionStarted = False
 		      CountSuccess = CountSuccess + 1
@@ -1705,7 +2239,7 @@ Inherits Beacon.DataSource
 		        Self.RollbackTransaction()
 		      End If
 		      If (ErrorDict Is Nil) = False Then
-		        ErrorDict.Value(Blueprint) = Err
+		        ErrorDict.Value(BlueprintUUID) = Err
 		      End If
 		      CountErrors = CountErrors + 1
 		    End Try
@@ -1715,10 +2249,15 @@ Inherits Beacon.DataSource
 		    Var TransactionStarted As Boolean
 		    Try
 		      Var UpdateObjectID As String
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		      Var Results As RowSet
+		      If LocalModsOnly Then
+		        Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		      Else
+		        Results = Self.SQLSelect("SELECT object_id FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		      End If
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
-		        If Results.Column("is_user_blueprint").BooleanValue = False Then
+		        If LocalModsOnly And Results.Column("is_user_blueprint").BooleanValue = False Then
 		          Continue
 		        End If
 		        UpdateObjectID = Results.Column("object_id").StringValue
@@ -1743,7 +2282,7 @@ Inherits Beacon.DataSource
 		      
 		      Select Case Blueprint
 		      Case IsA Ark.Creature
-		        Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		        Var Creature As Ark.Creature = Ark.Creature(Blueprint)
 		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
 		          Columns.Value("incubation_time") = Creature.IncubationTime
 		          Columns.Value("mature_time") = Creature.MatureTime
@@ -1761,20 +2300,20 @@ Inherits Beacon.DataSource
 		        Columns.Value("used_stats") = Creature.StatsMask
 		        
 		        Var StatDicts() As Dictionary
-		        Var StatValues() As Beacon.CreatureStatValue = Creature.AllStatValues
-		        For Each StatValue As Beacon.CreatureStatValue In StatValues
+		        Var StatValues() As Ark.CreatureStatValue = Creature.AllStatValues
+		        For Each StatValue As Ark.CreatureStatValue In StatValues
 		          StatDicts.Add(StatValue.SaveData)
 		        Next
 		        Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
 		        
 		        CacheDict = Self.mCreatureCache
 		      Case IsA Ark.SpawnPoint
-		        Columns.Value("sets") = Beacon.SpawnPoint(Blueprint).SetsString(False)
-		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
+		        Columns.Value("sets") = Ark.SpawnPoint(Blueprint).SetsString(False)
+		        Columns.Value("limits") = Ark.SpawnPoint(Blueprint).LimitsString(False)
 		        CacheDict = Self.mSpawnPointCache
 		      Case IsA Ark.Engram
-		        Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
-		        Columns.Value("recipe") = Beacon.RecipeIngredient.ToJSON(Engram.Recipe, False)
+		        Var Engram As Ark.Engram = Ark.Engram(Blueprint)
+		        Columns.Value("recipe") = Ark.CraftingCostIngredient.ToJSON(Engram.Recipe, False)
 		        If Engram.EntryString.IsEmpty Then
 		          Columns.Value("entry_string") = Nil
 		        Else
@@ -1840,7 +2379,7 @@ Inherits Beacon.DataSource
 		      Self.CommitTransaction()
 		      TransactionStarted = False
 		      
-		      If CacheDict <> Nil Then
+		      If (CacheDict Is Nil) = False Then
 		        If CacheDict.HasKey(Blueprint.ObjectID) Then
 		          CacheDict.Remove(Blueprint.ObjectID)
 		        End If
@@ -1861,7 +2400,7 @@ Inherits Beacon.DataSource
 		        Self.RollbackTransaction()
 		      End If
 		      If (ErrorDict Is Nil) = False Then
-		        ErrorDict.Value(Blueprint) = Err
+		        ErrorDict.Value(Blueprint.ObjectID) = Err
 		      End If
 		      CountErrors = CountErrors + 1
 		    End Try
@@ -1977,11 +2516,11 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContainerLabelsCacheDict As Dictionary
+		Private mContainerLabelCacheDict As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContainerLabelsCacheMask As UInt64
+		Private mContainerLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

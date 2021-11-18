@@ -122,7 +122,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		    If ClassString.IsEmpty Then
 		      ClassString = "BeaconLoot_" + ObjectID + "_C"
 		    End If
-		    Path = Beacon.UnknownBlueprintPath("LootContainers", ClassString)
+		    Path = Ark.UnknownBlueprintPath("LootContainers", ClassString)
 		  ElseIf ClassString.IsEmpty Then
 		    ClassString = Beacon.ClassStringFromPath(Path)
 		  End If
@@ -223,7 +223,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  If LegacyMode And Container.ContentPackUUID = Ark.UserContentPackUUID Then
 		    // Load the extra data
 		    Try
-		      Container.Availability = SaveData.Lookup("Availability", Beacon.Maps.UniversalMask).UInt64Value
+		      Container.Availability = SaveData.Lookup("Availability", Ark.Maps.UniversalMask).UInt64Value
 		    Catch Err As RuntimeException
 		    End Try
 		    

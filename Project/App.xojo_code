@@ -18,20 +18,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    // Whatever
 		  End Try
 		  
-		  Var LocalData As LocalData = LocalData.SharedInstance(False)
-		  If (LocalData Is Nil) = False Then
-		    LocalData.Close
-		  End If
-		  
-		  Var ArkData As Ark.DataSource = Ark.DataSource.SharedInstance(False)
-		  If (ArkData Is Nil) = False Then
-		    ArkData.Close
-		  End If
-		  
-		  Var CommonData As Beacon.CommonData = Beacon.CommonData.SharedInstance(False)
-		  If (CommonData Is Nil) = False Then
-		    CommonData.Close
-		  End If
+		  For Idx As Integer = Self.mDataSources.LastIndex DownTo 0
+		    Self.mDataSources(Idx).Close
+		  Next Idx
 		  
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
@@ -159,7 +148,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, LocalData.Notification_ImportSuccess)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, Beacon.DataSource.Notification_ImportSuccess)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
@@ -178,7 +167,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
-		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabase)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabases)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CleanupConfigBackups)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_RequestUser)
@@ -453,6 +442,27 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DataSourceForGame(GameID As String) As Beacon.DataSource
+		  For Idx As Integer = 0 To Self.mDataSources.LastIndex
+		    If Self.mDataSources(Idx).Identifier = GameID Then
+		      Return Self.mDataSources(Idx)
+		    End If
+		  Next Idx
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DataSources() As Beacon.DataSource()
+		  Var Sources() As Beacon.DataSource
+		  Sources.ResizeTo(Self.mDataSources.LastIndex)
+		  For Idx As Integer = 0 To Sources.LastIndex
+		    Sources(Idx) = Self.mDataSources(Idx)
+		  Next Idx
+		  Return Sources
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GenericLootSourceIcon() As Picture
 		  Return IconLootStandard
 		End Function
@@ -571,13 +581,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"
 		      If Self.GetOnlinePermission() Then
-		        EngramsUpdateWindow.ShowIfNecessary()
-		        LocalData.SharedInstance.CheckForEngramUpdates
+		        EngramsUpdateWindow.SyncAndShowIfNecessary(False)
 		      End If
 		    Case "refreshengrams"
 		      If Self.GetOnlinePermission() Then
-		        EngramsUpdateWindow.ShowIfNecessary()
-		        LocalData.SharedInstance.CheckForEngramUpdates(True)
+		        EngramsUpdateWindow.SyncAndShowIfNecessary(True)
 		      End If
 		    Case "refreshuser"
 		      Self.IdentityManager.RefreshUserDetails()
@@ -826,32 +834,19 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LaunchQueue_SetupDatabase()
+		Private Sub LaunchQueue_SetupDatabases()
 		  Try
-		    LocalData.Start
-		    Call Ark.DataSource.SharedInstance(True)
-		    Call Beacon.CommonData.SharedInstance(True)
+		    Self.mDataSources.Add(Ark.DataSource.SharedInstance(True))
+		    Self.mDataSources.Add(Beacon.CommonData.SharedInstance(True))
 		  Catch Err As RuntimeException
-		    // There was a problem setting up the database, so let's delete the files (probably corrupt) and try again
+		    // Something is still wrong
+		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")
 		    Var AppSupport As FolderItem = Self.ApplicationSupport
-		    Try
-		      Var Bound As Integer = AppSupport.Count - 1
-		      For Idx As Integer = Bound DownTo 0
-		        Var Child As FolderItem = AppSupport.ChildAt(Idx)
-		        If Child.Name.BeginsWith("Library.sqlite") Then
-		          Child.Remove
-		        End If
-		      Next
-		      LocalData.Start
-		    Catch BiggerError As RuntimeException
-		      // Something is still wrong
-		      BeaconUI.ShowAlert("Beacon cannot start due to a problem with the local database.", "Beacon is unable to create or repair its local database. The original database error was: `" + Err.Message + "` and the error while attempting to repair was `" + BiggerError.Message + "`.")
-		      If (AppSupport Is Nil) = False ANd AppSupport.Exists Then
-		        AppSupport.Open
-		      End If
-		      Quit
-		      Return
-		    End Try
+		    If (AppSupport Is Nil) = False And AppSupport.Exists Then
+		      AppSupport.Open
+		    End If
+		    Quit
+		    Return
 		  End Try
 		  
 		  Self.NextLaunchQueueTask()
@@ -1069,6 +1064,19 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NewestSyncDate() As DateTime
+		  Var SecondsFrom1970 As Double
+		  For Each Source As Beacon.DataSource In Self.mDataSources
+		    Var SyncDate As DateTime = Source.LastSync
+		    If (SyncDate Is Nil) = False Then
+		      SecondsFrom1970 = Max(SecondsFrom1970, SyncDate.SecondsFrom1970)
+		    End If
+		  Next Source
+		  Return New DateTime(SecondsFrom1970, New TimeZone(0))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NextLaunchQueueTask()
 		  If Self.mLaunchQueue.LastIndex = -1 Then
 		    Return
@@ -1098,18 +1106,20 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    HelpSyncCloudFiles.Enabled = True
 		  Case Preferences.Notification_OnlineStateChanged
 		    UpdatesKit.IsCheckingAutomatically = Preferences.OnlineEnabled
-		  Case LocalData.Notification_ImportSuccess
-		    If Self.mHasTestedDatabase = False Then
-		      Var Result As LocalData.PerformanceResults = LocalData.SharedInstance.TestPerformance(True)
-		      Select Case Result
-		      Case LocalData.PerformanceResults.CouldNotRepair
-		        App.Log("Database is performing poorly and repair did not help.")
-		      Case LocalData.PerformanceResults.Repaired
-		        App.Log("Database was performing poorly but has been repaired.")
-		      Case LocalData.PerformanceResults.RepairsNecessary
-		        App.Log("Database is performing poorly and should be repaired.")
-		      End Select
-		      Self.mHasTestedDatabase = True
+		  Case Beacon.DataSource.Notification_ImportSuccess
+		    If Self.mHasTestedDatabases = False Then
+		      For Each Source As Beacon.DataSource In Self.mDataSources
+		        Var Result As Beacon.DataSource.PerformanceResults = Source.TestPerformance(True)
+		        Select Case Result
+		        Case Beacon.DataSource.PerformanceResults.CouldNotRepair
+		          App.Log("Database " + Source.Identifier + " is performing poorly and repair did not help.")
+		        Case Beacon.DataSource.PerformanceResults.Repaired
+		          App.Log("Database " + Source.Identifier + " was performing poorly but has been repaired.")
+		        Case Beacon.DataSource.PerformanceResults.RepairsNecessary
+		          App.Log("Database " + Source.Identifier + " is performing poorly and should be repaired.")
+		        End Select
+		      Next Source
+		      Self.mHasTestedDatabases = True
 		    End If
 		  End Select
 		End Sub
@@ -1126,12 +1136,21 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionDelta) Or File.ExtensionMatches(Beacon.FileExtensionJSON) Then
+		    Var Content As String
 		    Try
-		      Var Content As String = File.Read(Encodings.UTF8)
-		      LocalData.SharedInstance.Import(Content)
+		      Content = File.Read(Encodings.UTF8)
 		    Catch Err As RuntimeException
-		      
+		      Self.Log(Err, CurrentMethodName, "Reading update file")
 		    End Try
+		    If Content.IsEmpty = False Then
+		      For Each Source As Beacon.DataSource In Self.mDataSources
+		        Try
+		          Source.Import(Content)
+		        Catch Err As RuntimeException
+		          Self.Log(Err, CurrentMethodName, "Scheduling update file import")
+		        End Try
+		      Next Source
+		    End If
 		    Return
 		  End If
 		  
@@ -1347,11 +1366,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDataSources() As Beacon.DataSource
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHandoffSocket As IPCSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHasTestedDatabase As Boolean
+		Private mHasTestedDatabases As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

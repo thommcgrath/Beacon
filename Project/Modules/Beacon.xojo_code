@@ -1,54 +1,5 @@
 #tag Module
 Protected Module Beacon
-	#tag Method, Flags = &h0
-		Sub AddArray(Extends Destination() As Beacon.ConfigValue, Source() As Beacon.ConfigValue)
-		  If Source Is Nil Or Source.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Var StartingIndex As Integer = Destination.LastIndex + 1
-		  Destination.ResizeTo((Destination.Count + Source.Count) - 1)
-		  
-		  For Idx As Integer = StartingIndex To Destination.LastIndex
-		    Destination(Idx) = Source(Idx - StartingIndex)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToAdd() As String)
-		  Blueprint.AddTags(TagsToAdd)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As String)
-		  Var Tags() As String = Blueprint.Tags
-		  Var Changed As Boolean
-		  For I As Integer = 0 To TagsToAdd.LastIndex
-		    Var Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
-		    
-		    If Tag = "object" Then
-		      Continue
-		    End If
-		    
-		    If Tags.IndexOf(Tag) <> -1 Then
-		      Continue
-		    End If
-		    
-		    Tags.Add(Tag)
-		    Changed = True
-		  Next
-		  
-		  If Not Changed Then
-		    Return
-		  End If
-		  
-		  Tags.Sort
-		  Blueprint.Tags = Tags
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function AreElementsEqual(Items() As Variant) As Boolean
 		  If Items = Nil Or Items.LastIndex <= 0 Then
@@ -136,12 +87,6 @@ Protected Module Beacon
 		  
 		  Var Tebibytes As Double = Gibibytes / 1024
 		  Return Tebibytes.ToString(Locale, ",##0.00") + " TiB"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Categories() As String()
-		  Return Array(CategoryEngrams, CategoryCreatures, CategorySpawnPoints)
 		End Function
 	#tag EndMethod
 
@@ -351,74 +296,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ComputeSimulationFigures(ItemSetPool() As Beacon.ItemSet, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Dictionary)
-		  Weights.ResizeTo(-1)
-		  WeightLookup = New Dictionary
-		  WeightSum = 0
-		  
-		  For Each Set As Beacon.ItemSet In ItemSetPool
-		    If Set.RawWeight = 0 Then
-		      Continue
-		    End If
-		    WeightSum = WeightSum + Set.RawWeight
-		    Weights.Add(WeightSum * WeightScale)
-		    WeightLookup.Value(WeightSum * WeightScale) = Set
-		  Next
-		  Weights.Sort
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ComputeWeightStatistics(Extends Source As Beacon.LootSource, ByRef TotalWeight As Double, ByRef AverageWeight As Double, ByRef MinWeight As Double, ByRef MaxWeight As Double)
-		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  
-		  Var NumSets As Integer = Sets.Count
-		  If NumSets = 0 Then
-		    Return
-		  End If
-		  
-		  TotalWeight = Sets.AtIndex(0).RawWeight
-		  MinWeight = Sets.AtIndex(0).RawWeight
-		  MaxWeight = Sets.AtIndex(0).RawWeight
-		  
-		  For I As Integer = 1 To Sets.LastRowIndex
-		    TotalWeight = TotalWeight + Sets.AtIndex(I).RawWeight
-		    MinWeight = Min(MinWeight, Sets.AtIndex(I).RawWeight)
-		    MaxWeight = Max(MaxWeight, Sets.AtIndex(I).RawWeight)
-		  Next
-		  
-		  AverageWeight = TotalWeight / NumSets
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Creatures(Extends Blueprints() As Beacon.Blueprint) As Beacon.Creature()
-		  Var Creatures() As Beacon.Creature
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Add(Beacon.Creature(Blueprint))
-		    End If
-		  Next
-		  Return Creatures
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Data() As Beacon.DataSourceLegacy
-		  Return mDataSource
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Data(Assigns Value As Beacon.DataSourceLegacy)
-		  If mDataSource <> Value Then
-		    mDataSource = Value
-		    mDataSource.LoadPresets
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function Decompress(Data As String) As String
 		  If Not IsCompressed(Data) Then
@@ -530,16 +407,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function DifficultyScale(Extends Maps() As Beacon.Map) As Double
-		  Var Scale As Double
-		  For Each Map As Beacon.Map In Maps
-		    Scale = Max(Scale, Map.DifficultyScale)
-		  Next
-		  Return Scale
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
 		  Offset = Max(Offset, 0.0001)
@@ -568,18 +435,6 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, Default As Double, AllowArray As Boolean = False) As Double
 		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray, AddressOf CoerceToDouble)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Engrams(Extends Blueprints() As Beacon.Blueprint) As Beacon.Engram()
-		  Var Engrams() As Beacon.Engram
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Add(Beacon.Engram(Blueprint))
-		    End If
-		  Next
-		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -635,15 +490,6 @@ Protected Module Beacon
 		  #else
 		    Return Xojo.GenerateJSON(Source, Pretty)
 		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetConfigKey(Extends Source As Beacon.DataSourceLegacy, File As String, Header As String, Key As String) As Beacon.ConfigKey
-		  Var Results() As Beacon.ConfigKey = Source.SearchForConfigKey(File, Header, Key, False)
-		  If Results.Count = 1 Then
-		    Return Results(0)
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -794,32 +640,9 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Hash(Extends Blueprint As Beacon.Blueprint) As String
-		  #if DebugBuild
-		    Return Beacon.GenerateJSON(Beacon.PackBlueprint(Blueprint), True)
-		  #else
-		    Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Beacon.PackBlueprint(Blueprint), False))).Lowercase
-		  #endif
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function Hash(Block As MemoryBlock) As String
 		  Return EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8).Lowercase
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ImplementedPresetCount(Extends Source As Beacon.LootSource) As UInteger
-		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  Var Total As UInteger
-		  For Each Set As Beacon.ItemSet In Sets
-		    If Set.SourcePresetID <> "" Then
-		      Total = Total + CType(1, UInteger)
-		    End If
-		  Next
-		  Return Total
 		End Function
 	#tag EndMethod
 
@@ -862,33 +685,6 @@ Protected Module Beacon
 		  // See if the value starts with 1F8B
 		  Var MagicBytes As String = EncodeHex(StringValue.LeftBytes(2))
 		  Return MagicBytes = "1F8B"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsUnknown(Extends Blueprint As Beacon.Blueprint) As Boolean
-		  Return Blueprint.Path.BeginsWith(UnknownBlueprintPrefix)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Label(Extends Maps() As Beacon.Map) As String
-		  Var Names() As String
-		  For Each Map As Beacon.Map In Maps
-		    Names.Add(Map.Name)
-		  Next
-		  
-		  If Names.LastIndex = -1 Then
-		    Return "No Maps"
-		  ElseIf Names.LastIndex = 0 Then
-		    Return Names(0)
-		  ElseIf Names.LastIndex = 1 Then
-		    Return Names(0) + " & " + Names(1)
-		  Else
-		    Var Tail As String = Names(Names.LastIndex)
-		    Names.RemoveAt(Names.LastIndex)
-		    Return Names.Join(", ") + ", & " + Tail
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -980,70 +776,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LoadLootSourceSaveData(SaveData As Dictionary) As Beacon.LootSource
-		  If SaveData Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var ClassString As String = SaveData.Lookup("SupplyCrateClassString", "")
-		  If ClassString.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var Type As String = SaveData.Lookup("Type", "LootContainer")
-		  Var Source As Beacon.LootSource
-		  Select Case Type
-		  Case "LootContainer"
-		    Var OfficialSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
-		    Source = OfficialSource
-		  End Select
-		  
-		  If Source Is Nil Then
-		    Source = New CustomLootContainer(ClassString)
-		  End If
-		  
-		  Try
-		    Source.MinItemSets = SaveData.Lookup("MinItemSets", 1).IntegerValue
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading MinItemSets value")
-		  End Try
-		  
-		  Try
-		    Source.MaxItemSets = SaveData.Lookup("MaxItemSets", 1).IntegerValue
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading MaxItemSets value")
-		  End Try
-		  
-		  Try
-		    Source.PreventDuplicates = SaveData.Lookup("bSetsRandomWithoutReplacement", True).BooleanValue
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading bSetsRandomWithoutReplacement value")
-		  End Try
-		  
-		  Try
-		    Source.AppendMode = SaveData.Lookup("bAppendMode", False).BooleanValue
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading bAppendMode value")
-		  End Try
-		  
-		  If SaveData.HasKey("ItemSets") Then
-		    Try
-		      Source.ItemSets = Beacon.ItemSetCollection.FromSaveData(SaveData.Value("ItemSets"))
-		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Reading ItemSets value")
-		    End Try
-		  End If
-		  
-		  If Not Source.LoadSaveData(SaveData) Then
-		    Return Nil
-		  End If
-		  
-		  Source.Modified = True
-		  Return Source
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function MakeHumanReadable(Source As String) As String
 		  Var Chars() As String
 		  Var SourceChars() As String = Source.Split("")
@@ -1068,16 +800,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Mask(Extends Maps() As Beacon.Map) As UInt64
-		  Var Bits As UInt64
-		  For Each Map As Beacon.Map In Maps
-		    Bits = Bits Or Map.Mask
-		  Next
-		  Return Bits
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As MemoryBlock) As String
 		  Return EncodeHex(Crypto.MD5(Value))
@@ -1094,23 +816,6 @@ Protected Module Beacon
 		    Unique.Value(Engram.ObjectID) = Engram
 		  Next
 		  Var Merged() As Ark.Engram
-		  For Each Entry As DictionaryEntry In Unique
-		    Merged.Add(Entry.Value)
-		  Next
-		  Return Merged
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Merge(Array1() As Beacon.Engram, Array2() As Beacon.Engram) As Beacon.Engram()
-		  Var Unique As New Dictionary
-		  For Each Engram As Beacon.Engram In Array1
-		    Unique.Value(Engram.ObjectID) = Engram
-		  Next
-		  For Each Engram As Beacon.Engram In Array2
-		    Unique.Value(Engram.ObjectID) = Engram
-		  Next
-		  Var Merged() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Unique
 		    Merged.Add(Entry.Value)
 		  Next
@@ -1166,40 +871,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NormalizeBlueprintPath(Path As String, FolderName As String) As String
-		  Path = Path.Trim
-		  
-		  If Path.BeginsWith("BlueprintGeneratedClass") Then
-		    Path = Path.Middle(23)
-		  ElseIf Path.BeginsWith("Blueprint") Then
-		    Path = Path.Middle(9)
-		  End If
-		  
-		  If (Path.BeginsWith("'") And Path.EndsWith("'")) Or (Path.BeginsWith("""") And Path.EndsWith("""")) Then
-		    Path = Path.Middle(1, Path.Length - 2)
-		  End If
-		  
-		  If Path.BeginsWith("/Game/") Then
-		    // Looks like a real path
-		    
-		    If Path.EndsWith("_C") Then
-		      Path = Path.Left(Path.Length - 2)
-		    End If
-		    
-		    Return Path
-		  Else
-		    // Assume this is a class string
-		    Var PossiblePath As String = Beacon.Data.ResolvePathFromClassString(Path)
-		    If PossiblePath <> "" Then
-		      Return PossiblePath
-		    Else
-		      Return Beacon.UnknownBlueprintPath(FolderName, Path)
-		    End If
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function NormalizeTag(Tag As String) As String
 		  Var TagString As String = Tag.Lowercase.Trim
 		  
@@ -1214,46 +885,6 @@ Protected Module Beacon
 		  TagString = Sanitizer.Replace(TagString)
 		  
 		  Return TagString
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Pack(Extends Blueprint As Beacon.Blueprint) As Dictionary
-		  Return PackBlueprint(Blueprint)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function PackBlueprint(Blueprint As Beacon.Blueprint) As Dictionary
-		  Var Dict As New Dictionary
-		  
-		  Select Case Blueprint
-		  Case IsA Beacon.Engram
-		    Dict.Value("group") = "engrams"
-		  Case IsA Beacon.Creature
-		    Dict.Value("group") = "creatures"
-		  Case IsA Beacon.SpawnPoint
-		    Dict.Value("group") = "spawn_points"
-		  Else
-		    Return Nil
-		  End Select
-		  
-		  Var ModInfo As New Dictionary
-		  ModInfo.Value("id") = Blueprint.ModID
-		  ModInfo.Value("name") = Blueprint.ModName
-		  
-		  Dict.Value("id") = Blueprint.ObjectID
-		  Dict.Value("label") = Blueprint.Label
-		  Dict.Value("alternate_label") = Blueprint.AlternateLabel
-		  Dict.Value("mod") = ModInfo
-		  Dict.Value("tags") = Blueprint.Tags
-		  Dict.Value("availability") = Blueprint.Availability
-		  Dict.Value("path") = Blueprint.Path
-		  
-		  // Let the blueprint add whatever additional data it needs
-		  Blueprint.Pack(Dict)
-		  
-		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -1464,226 +1095,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Integer
-		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  Var NumChanged As Integer
-		  For Each Set As Beacon.ItemSet In Sets
-		    If Set.SourcePresetID = "" Then
-		      Continue
-		    End If
-		    
-		    If Set.ReconfigureWithPreset(Source, Mask, Mods) Then
-		      NumChanged = NumChanged + 1
-		    End If
-		  Next
-		  Return NumChanged
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToRemove() As String)
-		  Blueprint.RemoveTags(TagsToRemove)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As String)
-		  Var Tags() As String = Blueprint.Tags
-		  Var Changed As Boolean
-		  For I As Integer = 0 To TagsToRemove.LastIndex
-		    Var Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
-		    
-		    If Tag = "object" Then
-		      Continue
-		    End If
-		    
-		    Var Idx As Integer = Tags.IndexOf(Tag)
-		    If Idx = -1 Then
-		      Continue
-		    End If
-		    
-		    Tags.RemoveAt(Idx)
-		    Changed = True
-		  Next
-		  
-		  If Not Changed Then
-		    Return
-		  End If
-		  
-		  // No, you don't need to sort here
-		  Blueprint.Tags = Tags
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Beacon.Creature
-		  Var ObjectID, Path, ClassString As String
-		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
-		  End If
-		  
-		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
-		    Path = Dict.Value(PathKey)
-		  End If
-		  
-		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
-		    ClassString = Dict.Value(ClassKey)
-		  End If
-		  
-		  Return Beacon.ResolveCreature(ObjectID, Path, ClassString, Mods)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Beacon.Creature
-		  If ObjectID.IsEmpty = False Then
-		    Try
-		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(ObjectID)
-		      If (Creature Is Nil) = False Then
-		        Return Creature
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var Creatures() As Beacon.Creature = Beacon.Data.GetCreaturesByPath(Path, Mods)
-		      If Creatures.Count > 0 Then
-		        Return Creatures(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var Creatures() As Beacon.Creature = Beacon.Data.GetCreaturesByClass(ClassString, Mods)
-		      If Creatures.Count > 0 Then
-		        Return Creatures(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Return Beacon.Creature.CreateCustom(ObjectID, Path, ClassString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Beacon.Engram
-		  Var ObjectID, Path, ClassString As String
-		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
-		  End If
-		  
-		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
-		    Path = Dict.Value(PathKey)
-		  End If
-		  
-		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
-		    ClassString = Dict.Value(ClassKey)
-		  End If
-		  
-		  Return Beacon.ResolveEngram(ObjectID, Path, ClassString, Mods)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ResolveEngram(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Beacon.Engram
-		  If ObjectID.IsEmpty = False Then
-		    Try
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(ObjectID)
-		      If (Engram Is Nil) = False Then
-		        Return Engram
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var Engrams() As Beacon.Engram = Beacon.Data.GetEngramsByPath(Path, Mods)
-		      If Engrams.Count > 0 Then
-		        Return Engrams(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var Engrams() As Beacon.Engram = Beacon.Data.GetEngramsByClass(ClassString, Mods)
-		      If Engrams.Count > 0 Then
-		        Return Engrams(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Return Beacon.Engram.CreateCustom(ObjectID, Path, ClassString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String, Mods As Beacon.StringList) As Beacon.SpawnPoint
-		  Var ObjectID, Path, ClassString As String
-		  
-		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    ObjectID = Dict.Value(ObjectIDKey)
-		  End If
-		  
-		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
-		    Path = Dict.Value(PathKey)
-		  End If
-		  
-		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
-		    ClassString = Dict.Value(ClassKey)
-		  End If
-		  
-		  Return Beacon.ResolveSpawnPoint(ObjectID, Path, ClassString, Mods)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String, Mods As Beacon.StringList) As Beacon.SpawnPoint
-		  If ObjectID.IsEmpty = False Then
-		    Try
-		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByID(ObjectID)
-		      If (SpawnPoint Is Nil) = False Then
-		        Return SpawnPoint
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If Path.IsEmpty = False Then
-		    Try
-		      Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsByPath(Path, Mods)
-		      If SpawnPoints.Count > 0 Then
-		        Return SpawnPoints(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  If ClassString.IsEmpty = False Then
-		    Try
-		      Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsByClass(ClassString, Mods)
-		      If SpawnPoints.Count > 0 Then
-		        Return SpawnPoints(0)
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		  End If
-		  
-		  Return Beacon.SpawnPoint.CreateCustom(ObjectID, Path, ClassString)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function SafeToInvoke(Callback As Variant) As Boolean
 		  Return Callback.IsNull = False And (GetDelegateWeakMBS(Callback) = False Or (GetDelegateTargetMBS(Callback) Is Nil) = False)
@@ -1753,87 +1164,6 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function SanitizeIni(Content As String) As String
 		  Return Content.SanitizeIni
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SaveData(Extends Source As Beacon.LootSource) As Dictionary
-		  // Mandatory item sets should not be part of this.
-		  
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Source)
-		  
-		  Var Keys As New Dictionary
-		  Keys.Value("Type") = Info.Name
-		  Keys.Value("ItemSets") = Source.ItemSets.SaveData
-		  Keys.Value("MaxItemSets") = Source.MaxItemSets
-		  Keys.Value("MinItemSets") = Source.MinItemSets
-		  Keys.Value("bSetsRandomWithoutReplacement") = Source.PreventDuplicates
-		  Keys.Value("SupplyCrateClassString") = Source.ClassString
-		  Keys.Value("bAppendMode") = Source.AppendMode
-		  Source.EditSaveData(Keys)
-		  Return Keys
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForBlueprints(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Blueprint()
-		  Var Categories() As String = Beacon.Categories
-		  Var Blueprints() As Beacon.Blueprint
-		  For Each Category As String In Categories
-		    Var Results() As Beacon.Blueprint = Source.SearchForBlueprints(Category, SearchText, Mods, Tags)
-		    For Each Result As Beacon.Blueprint In Results
-		      Blueprints.Add(Result)
-		    Next
-		  Next
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForCreatures(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Creature()
-		  If Mods = Nil Then
-		    Mods = New Beacon.StringList
-		  End If
-		  Var Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryCreatures, SearchText, Mods, Tags)
-		  Var Creatures() As Beacon.Creature
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Add(Beacon.Creature(Blueprint))
-		    End If
-		  Next
-		  Return Creatures
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForEngrams(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Engram()
-		  If Mods = Nil Then
-		    Mods = New Beacon.StringList
-		  End If
-		  Var Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryEngrams, SearchText, Mods, Tags)
-		  Var Engrams() As Beacon.Engram
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Add(Beacon.Engram(Blueprint))
-		    End If
-		  Next
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForSpawnPoints(Extends Source As Beacon.DataSourceLegacy, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.SpawnPoint()
-		  If Mods = Nil Then
-		    Mods = New Beacon.StringList
-		  End If
-		  Var Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategorySpawnPoints, SearchText, Mods, Tags)
-		  Var SpawnPoints() As Beacon.SpawnPoint
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.SpawnPoint Then
-		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
-		    End If
-		  Next
-		  Return SpawnPoints
 		End Function
 	#tag EndMethod
 
@@ -1910,257 +1240,9 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
-		Attributes( Deprecated )  Function Simulate(Extends Source As Beacon.LootSource) As Beacon.SimulatedSelection()
-		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
-		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
-		  Var Selections() As Beacon.SimulatedSelection
-		  Var NumSets As Integer = Sets.Count + MandatorySets.Count
-		  If NumSets = 0 Then
-		    Return Selections
-		  End If
-		  
-		  Var MinSets As Integer = Min(Source.MinItemSets, Source.MaxItemSets)
-		  Var MaxSets As Integer = Max(Source.MaxItemSets, Source.MinItemSets)
-		  
-		  Var SelectedSets() As Beacon.ItemSet
-		  If NumSets = MinSets And MinSets = MaxSets And Source.PreventDuplicates Then
-		    // All
-		    For Each Set As Beacon.ItemSet In Sets
-		      SelectedSets.Add(Set)
-		    Next
-		    For Each Set As Beacon.ItemSet In MandatorySets
-		      SelectedSets.Add(Set)
-		    Next
-		  Else
-		    Const WeightScale = 100000
-		    Var ItemSetPool() As Beacon.ItemSet
-		    For I As Integer = 0 To Sets.LastRowIndex
-		      ItemSetPool.Add(Sets.AtIndex(I))
-		    Next
-		    For I As Integer = 0 To MandatorySets.LastIndex
-		      ItemSetPool.Add(MandatorySets(I))
-		    Next
-		    
-		    Var RecomputeFigures As Boolean = True
-		    Var ChooseSets As Integer = System.Random.InRange(MinSets, MaxSets)
-		    Var WeightSum, Weights() As Double
-		    Var WeightLookup As Dictionary
-		    For I As Integer = 1 To ChooseSets
-		      If ItemSetPool.LastIndex = -1 Then
-		        Exit For I
-		      End If
-		      
-		      If RecomputeFigures Then
-		        Beacon.ComputeSimulationFigures(ItemSetPool, WeightScale, WeightSum, Weights, WeightLookup)
-		        RecomputeFigures = False
-		      End If
-		      
-		      Do
-		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
-		        Var SelectedSet As Beacon.ItemSet
-		        
-		        For X As Integer = 0 To Weights.LastIndex
-		          If Weights(X) >= Decision Then
-		            Var SelectedWeight As Double = Weights(X)
-		            SelectedSet = WeightLookup.Value(SelectedWeight)
-		            Exit For X
-		          End If
-		        Next
-		        
-		        If SelectedSet = Nil Then
-		          Continue
-		        End If
-		        
-		        SelectedSets.Add(SelectedSet)
-		        If Source.PreventDuplicates Then
-		          For X As Integer = 0 To ItemSetPool.LastIndex
-		            If ItemSetPool(X) = SelectedSet Then
-		              ItemSetPool.RemoveAt(X)
-		              Exit For X
-		            End If
-		          Next
-		          RecomputeFigures = True
-		        End If
-		        
-		        Exit
-		      Loop
-		    Next
-		  End If
-		  
-		  For Each Set As Beacon.ItemSet In SelectedSets
-		    Var SetSelections() As Beacon.SimulatedSelection = Set.Simulate
-		    For Each Selection As Beacon.SimulatedSelection In SetSelections
-		      Selections.Add(Selection)
-		    Next
-		  Next
-		  Return Selections
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Sort(Sources() As Beacon.LootSource)
-		  Var Bound As Integer = Sources.LastIndex
-		  If Bound = -1 Then
-		    Return
-		  End If
-		  
-		  Var Order() As String
-		  Order.ResizeTo(Bound)
-		  For I As Integer = 0 To Bound
-		    Order(I) = Sources(I).SortValue.ToString(Locale.Raw, "0000") + Sources(I).Label + Sources(I).ClassString
-		  Next
-		  
-		  Order.SortWith(Sources)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Sort(Qualities() As Beacon.Quality)
-		  Var Bound As Integer = Qualities.LastIndex
-		  If Bound = -1 Then
-		    Return
-		  End If
-		  
-		  Var Order() As Double
-		  Order.ResizeTo(Bound)
-		  For I As Integer = 0 To Bound
-		    Order(I) = Qualities(I).BaseValue
-		  Next
-		  
-		  Order.SortWith(Qualities)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Sort(Extends Values() As Beacon.ConfigValue)
-		  If Values.Count <= 1 Then
-		    Return
-		  End If
-		  
-		  Var Sorts() As String
-		  Sorts.ResizeTo(Values.LastIndex)
-		  For Idx As Integer = 0 To Sorts.LastIndex
-		    Sorts(Idx) = Values(Idx).SortKey
-		  Next
-		  Sorts.SortWith(Values)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function StringValue(Extends Dict As Dictionary, Key As Variant, Default As String, AllowArray As Boolean = False) As String
 		  Return GetValueAsType(Dict, Key, "String", Default, AllowArray, AddressOf CoerceToString)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function TagString(Extends Blueprint As Beacon.Blueprint) As String
-		  Var Tags() As String = Blueprint.Tags
-		  If Tags.IndexOf("object") = -1 Then
-		    Tags.AddAt(0, "object")
-		  End If
-		  Return Tags.Join(",")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function TagString(Extends Source As Beacon.LootSource) As String
-		  Var Tags() As String = Source.Tags
-		  Return Tags.Join(",")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub TagString(Extends Blueprint As Beacon.MutableBlueprint, Assigns Value As String)
-		  Var Tags() As String = Value.Split(",")
-		  Var Idx As Integer = Tags.IndexOf("object")
-		  If Idx > -1 Then
-		    Tags.RemoveAt(Idx)
-		  End If
-		  Blueprint.Tags = Tags
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub TagString(Extends Source As Beacon.MutableLootSource, Assigns Value As String)
-		  Var Tags() As String = Value.Split(",")
-		  Source.Tags = Tags
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function UnknownBlueprintPath(FolderName As String, ClassString As String) As String
-		  Var ClassName As String
-		  If ClassString.EndsWith("_C") Then
-		    ClassName = ClassString.Left(ClassString.Length - 2)
-		  Else
-		    ClassName = ClassString
-		  End If
-		  
-		  Return UnknownBlueprintPrefix + FolderName + "/" + ClassName + "." + ClassName
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function UnpackBlueprint(Dict As Dictionary) As Beacon.MutableBlueprint
-		  If Not Dict.HasAllKeys("id", "label", "alternate_label", "path", "group", "tags", "availability", "mod") Then
-		    Return Nil
-		  End If
-		  
-		  Var Group As String = Dict.Value("group")
-		  Var Path As String = Dict.Value("path")
-		  Var ObjectID As String = Dict.Value("id")
-		  
-		  If Path.IsEmpty Or ObjectID.IsEmpty Or Group.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var Blueprint As Beacon.MutableBlueprint
-		  Select Case Group
-		  Case "engrams"
-		    Blueprint = New Beacon.MutableEngram(Path, ObjectID)
-		  Case "creatures"
-		    Blueprint = New Beacon.MutableCreature(Path, ObjectID)
-		  Case "spawn_points"
-		    Blueprint = New Beacon.MutableSpawnPoint(Path, ObjectID)
-		  Else
-		    Return Nil
-		  End Select
-		  
-		  Var ModInfo As Dictionary = Dict.Value("mod")
-		  
-		  Var Tags() As String
-		  If Dict.Value("tags").IsArray Then
-		    If Dict.Value("tags").ArrayElementType = Variant.TypeString Then
-		      Tags = Dict.Value("tags")
-		    ElseIf Dict.Value("tags").ArrayElementType = Variant.TypeObject Then
-		      Var Temp() As Variant = Dict.Value("tags")
-		      For Each Tag As Variant In Temp
-		        If Tag.Type = Variant.TypeString Then
-		          Tags.Add(Tag.StringValue)
-		        End If
-		      Next
-		    End If
-		  End If
-		  
-		  If IsNull(Dict.Value("alternate_label")) = False And Dict.Value("alternate_label").StringValue.IsEmpty = False Then
-		    Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
-		  Else
-		    Blueprint.AlternateLabel = Nil
-		  End If
-		  Blueprint.Availability = Dict.Value("availability").UInt64Value
-		  Blueprint.Label = Dict.Value("label").StringValue
-		  Blueprint.ModID = ModInfo.Value("id").StringValue
-		  Blueprint.ModName = ModInfo.Value("name").StringValue
-		  Blueprint.Tags = Tags
-		  
-		  // Let the blueprint grab whatever additional data it needs
-		  Blueprint.Unpack(Dict)
-		  
-		  Return Blueprint
-		  
-		  Exception Err As RuntimeException
-		    Return Nil
 		End Function
 	#tag EndMethod
 
@@ -2174,70 +1256,6 @@ Protected Module Beacon
 		  Validator.SearchPattern = "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$"
 		  Return Validator.Search(Address) <> Nil
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "Ark.ValidateIniContent" ) Protected Function ValidateIniContent(Content As String, RequiredHeaders() As String) As String()
-		  Return Ark.ValidateIniContent(Content, RequiredHeaders)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "Ark.ValidateIniContent" ) Protected Function ValidateIniContent(Content As String, Filename As String) As String()
-		  Return Ark.ValidateIniContent(Content, Filename)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForDocument(Extends Blueprint As Beacon.Blueprint, Document As Beacon.Document) As Boolean
-		  Return (Document Is Nil) = False And Document.ModEnabled(Blueprint.ModID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMap(Extends Blueprint As Beacon.Blueprint, Map As Beacon.Map) As Boolean
-		  Return Map = Nil Or Blueprint.ValidForMask(Map.Mask)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMap(Extends Source As Beacon.LootSource, Map As Beacon.Map) As Boolean
-		  Return Source.ValidForMask(Map.Mask)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ValidForMap(Extends Blueprint As Beacon.MutableBlueprint, Map As Beacon.Map, Assigns Value As Boolean)
-		  If Map <> Nil Then
-		    Blueprint.ValidForMask(Map.Mask) = Value
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMask(Extends Blueprint As Beacon.Blueprint, Mask As UInt64) As Boolean
-		  Return Mask = CType(0, UInt64) Or (Blueprint.Availability And Mask) > CType(0, UInt64)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMask(Extends Source As Beacon.LootSource, Mask As UInt64) As Boolean
-		  Return (Source.Availability And Mask) > CType(0, UInt64)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ValidForMask(Extends Blueprint As Beacon.MutableBlueprint, Mask As UInt64, Assigns Value As Boolean)
-		  Var Availability As UInt64 = Blueprint.Availability
-		  If Value Then
-		    Availability = Availability Or Mask
-		  Else
-		    Availability = Availability And Not Mask
-		  End If
-		  If Availability <> Blueprint.Availability Then
-		    Blueprint.Availability = Availability
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
@@ -2268,26 +1286,6 @@ Protected Module Beacon
 		
 	#tag EndNote
 
-
-	#tag Property, Flags = &h21
-		Private mDataSource As Beacon.DataSourceLegacy
-	#tag EndProperty
-
-
-	#tag Constant, Name = CategoryCreatures, Type = String, Dynamic = False, Default = \"creatures", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = CategoryEngrams, Type = String, Dynamic = False, Default = \"engrams", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = CategorySpawnPoints, Type = String, Dynamic = False, Default = \"spawn_points", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = ConfigFileGame, Type = String, Dynamic = False, Default = \"Game.ini", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = ConfigFileGameUserSettings, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
-	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrettyDecimals, Type = Double, Dynamic = False, Default = \"9", Scope = Private
 	#tag EndConstant
@@ -2328,12 +1326,6 @@ Protected Module Beacon
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = RewriteModeGameIni, Type = String, Dynamic = False, Default = \"Game.ini", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = RewriteModeGameUserSettingsIni, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = SecondsPerDay, Type = Double, Dynamic = False, Default = \"86400", Scope = Private
 	#tag EndConstant
 
@@ -2343,25 +1335,7 @@ Protected Module Beacon
 	#tag Constant, Name = SecondsPerMinute, Type = Double, Dynamic = False, Default = \"60", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ServerSettingsHeader, Type = String, Dynamic = False, Default = \"ServerSettings", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = ShooterGameHeader, Type = String, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = URLScheme, Type = String, Dynamic = False, Default = \"beacon", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = UserModName, Type = String, Dynamic = False, Default = \"User Blueprints", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = UserModWorkshopID, Type = Double, Dynamic = False, Default = \"3971430332", Scope = Protected
 	#tag EndConstant
 
 

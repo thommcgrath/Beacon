@@ -1033,9 +1033,9 @@ End
 		Sub Open(index as Integer)
 		  Me.RemoveAllRows()
 		  
-		  Var Qualities() As Beacon.Quality = Beacon.Qualities.All
-		  For Each Quality As Beacon.Quality In Qualities
-		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
+		  Var Qualities() As Ark.Quality = Ark.Qualities.All
+		  For Each Quality As Ark.Quality In Qualities
+		    Me.AddRow(Quality.Label, Quality.BaseValue)
 		  Next
 		  
 		  Me.SelectedRowIndex = 0

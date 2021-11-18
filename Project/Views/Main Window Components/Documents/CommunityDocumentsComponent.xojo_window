@@ -201,7 +201,7 @@ End
 		    Self.List.AddRow("")
 		    Var Idx As Integer = Self.List.LastAddedRowIndex
 		    Self.List.CellValueAt(Idx, Self.ColumnName) = Document.Name
-		    Self.List.CellValueAt(Idx, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
+		    Self.List.CellValueAt(Idx, Self.ColumnMaps) = Ark.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellValueAt(Idx, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
 		    Self.List.CellValueAt(Idx, Self.ColumnUpdated) = Document.LastUpdated(TimeZone.Current).ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
 		    Self.List.CellValueAt(Idx, Self.ColumnDownloads) = Document.DownloadCount.ToString(Locale.Raw, ",##0")
@@ -256,7 +256,7 @@ End
 #tag Events FilterBar
 	#tag Event
 		Sub Open()
-		  Me.Mask = Beacon.Maps.UniversalMask
+		  Me.Mask = Ark.Maps.UniversalMask
 		End Sub
 	#tag EndEvent
 	#tag Event

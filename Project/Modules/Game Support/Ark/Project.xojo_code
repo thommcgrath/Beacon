@@ -454,9 +454,9 @@ Inherits Beacon.Project
 		        End If
 		        If Override = Nil Then
 		          Override = New Ark.MutableSpawnPoint(SpawnPoint)
-		          Beacon.MutableSpawnPoint(Override).ResizeTo(-1)
-		          Beacon.MutableSpawnPoint(Override).LimitsString = "{}"
-		          Beacon.MutableSpawnPoint(Override).Mode = Ark.SpawnPoint.ModeAppend
+		          Ark.MutableSpawnPoint(Override).ResizeTo(-1)
+		          Ark.MutableSpawnPoint(Override).LimitsString = "{}"
+		          Ark.MutableSpawnPoint(Override).Mode = Ark.SpawnPoint.ModeAppend
 		        End If
 		        
 		        Var Mutable As Ark.MutableSpawnPoint = Override.MutableVersion
@@ -530,11 +530,48 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function CreateTrollConfigOrganizer() As Ark.ConfigOrganizer
-		  #if DebugBuild
-		    #Pragma Warning "Fill with stuff from BeaconConfigs.Metadata here"
-		  #else
-		    #Pragma Error "Fill with stuff from BeaconConfigs.Metadata here"
-		  #endif
+		  Var Values As Ark.ConfigOrganizer
+		  
+		  Var Messages() As String
+		  Messages.Add("My dog has no nose.\nHow does he smell?\nBad.")
+		  Messages.Add("Pet the damn Thylacoleo!")
+		  Messages.Add("You are not in the sudoers file.\nThis incident will be reported.")
+		  Messages.Add("All our horses are 100% horse-fed for that double-horse juiced-in goodness.")
+		  Messages.Add("The intent is to provide players with a sense of pride and accomplishment.")
+		  Messages.Add("Dog lips. That is all.")
+		  Messages.Add("Maybe question how the server owner pays for this server.")
+		  Messages.Add("You're stuck with this message for 5 minutes.")
+		  Messages.Add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!")
+		  Messages.Add("Bonus round! Until further notice, there are no rules! Admin password is 'peanuts' so have fun!")
+		  Messages.Add("It's ""Boy in the Bubble"" day! Even a sneeze could kill you! Good luck!")
+		  Messages.Add("Children of Men! Dinos won't respawn! Good luck!")
+		  Messages.Add("What happens when an Ark spins out of control?")
+		  
+		  Var Rand As Random = System.Random
+		  Rand.RandomizeSeed
+		  Var Index As Integer = Rand.InRange(0, Messages.LastIndex)
+		  
+		  Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Messages(Index)))
+		  
+		  If Index = 9 Then
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ServerAdminPassword=peanuts"))
+		  ElseIf Index = 10 Then
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "PlayerResistanceMultiplier=9999"))
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "MaxFallSpeedMultiplier=0.01"))
+		  ElseIf Index = 11 Then
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DinoCountMultiplier=0"))
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DinoResistanceMultiplier=9999"))
+		  ElseIf Index = 12 Then
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DayCycleSpeedScale=300"))
+		  End If
+		  
+		  If Index = 7 Then
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=360"))
+		  Else
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=30"))
+		  End If
+		  
+		  Return Values
 		End Function
 	#tag EndMethod
 

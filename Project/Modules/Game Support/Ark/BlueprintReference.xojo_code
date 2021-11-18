@@ -84,7 +84,7 @@ Protected Class BlueprintReference
 		  End If
 		  
 		  Var VersionValue As Variant = Dict.Value("Version")
-		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > Beacon.BlueprintReference.Version Then
+		  If VersionValue.IsNull Or VersionValue.IsNumeric = False Or VersionValue.IntegerValue > Ark.BlueprintReference.Version Then
 		    Return False
 		  End If
 		  
@@ -105,12 +105,14 @@ Protected Class BlueprintReference
 		  End If
 		  
 		  Select Case Self.mBlueprint
-		  Case IsA Beacon.Engram
+		  Case IsA Ark.Engram
 		    Return Self.KindEngram
-		  Case IsA Beacon.Creature
+		  Case IsA Ark.Creature
 		    Return Self.KindCreature
-		  Case IsA Beacon.SpawnPoint
+		  Case IsA Ark.SpawnPoint
 		    Return Self.KindSpawnPoint
+		  Case IsA Ark.LootContainer
+		    Return Self.KindLootContainer
 		  End Select
 		End Function
 	#tag EndMethod
@@ -197,11 +199,11 @@ Protected Class BlueprintReference
 		    Dict.Value("Schema") = "Beacon.BlueprintReference"
 		    Dict.Value("Version") = Self.Version
 		    Select Case Self.mBlueprint
-		    Case IsA Beacon.Engram
+		    Case IsA Ark.Engram
 		      Dict.Value("Kind") = Self.KindEngram
-		    Case IsA Beacon.Creature
+		    Case IsA Ark.Creature
 		      Dict.Value("Kind") = Self.KindCreature
-		    Case IsA Beacon.SpawnPoint
+		    Case IsA Ark.SpawnPoint
 		      Dict.Value("Kind") = Self.KindSpawnPoint
 		    Case IsA Ark.LootContainer
 		      Dict.Value("Kind") = Self.KindLootContainer

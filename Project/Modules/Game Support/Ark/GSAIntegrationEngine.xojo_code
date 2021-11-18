@@ -144,7 +144,7 @@ Inherits Ark.IntegrationEngine
 		      
 		      Var Profile As New Ark.GSAServerProfile(TemplateID, TemplateName)
 		      Profile.ExternalAccountUUID = Self.mAccount.UUID
-		      Profile.Mask = Beacon.Maps.All.Mask
+		      Profile.Mask = Ark.Maps.All.Mask
 		      
 		      Var Server As New Ark.GSADiscoveredData(TemplateID, Self.mAccount.AccessToken)
 		      Server.Profile = Profile

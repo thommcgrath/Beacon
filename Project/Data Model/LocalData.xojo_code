@@ -1,6 +1,7 @@
 #tag Class
 Protected Class LocalData
-Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
+Implements NotificationKit.Receiver
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 	#tag Method, Flags = &h21
 		Private Function AddBlueprintToDatabase(Category As String, BlueprintData As Dictionary, ExtraValues As Dictionary = Nil) As Boolean
 		  Try
@@ -216,42 +217,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		    Self.SQLExecute("SAVEPOINT " + Savepoint + ";")
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function BlueprintLabels(Category As String, Mods As Beacon.StringList) As Dictionary
-		  Var CacheKey As String = Category + ":" + Mods.Hash
-		  If Self.mBlueprintLabelsCacheKey <> CacheKey Then
-		    Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Category, "", Mods, "")
-		    Var Temp As New Dictionary
-		    For Each Blueprint As Beacon.Blueprint In Blueprints
-		      Var Matches() As Beacon.Blueprint
-		      If Temp.HasKey(Blueprint.Label) Then
-		        Matches = Temp.Value(Blueprint.Label)
-		      End If
-		      Matches.Add(Blueprint)
-		      Temp.Value(Blueprint.Label) = Matches
-		    Next
-		    
-		    Var Dict As New Dictionary
-		    For Each Entry As DictionaryEntry In Temp
-		      Var Base As String = Entry.Key
-		      Var Matches() As Beacon.Blueprint = Entry.Value
-		      If Matches.Count = 1 Then
-		        Dict.Value(Matches(0).ObjectID) = Base
-		      Else
-		        For Each Sibling As Beacon.Blueprint In Matches
-		          Dict.Value(Sibling.ObjectID) = Base.Disambiguate(Sibling.ModName)
-		        Next
-		      End If
-		    Next
-		    
-		    Self.mBlueprintLabelsCacheDict = Dict
-		    Self.mBlueprintLabelsCacheKey = CacheKey
-		  End If
-		  
-		  Return Self.mBlueprintLabelsCacheDict
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -728,116 +693,9 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function EngramIsCustom(Item As Beacon.Blueprint) As Boolean
-		  If Item Is Nil Then
-		    Return False
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT is_user_mod FROM mods WHERE mod_id = ?1;", Item.ModID)
-		  Return Rows.RowCount = 1 And Rows.Column("is_user_mod").BooleanValue
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Shared Function EscapeLikeValue(Value As String, EscapeChar As String = "\") As String
 		  Return Value.ReplaceAll("%", EscapeChar + "%").ReplaceAll("_", EscapeChar + "_")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprintByID(ObjectID As v4UUID) As Beacon.Blueprint
-		  Var Results As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
-		  If Results.RowCount <> 1 Then
-		    Return Nil
-		  End If
-		  
-		  Select Case Results.Column("category").StringValue
-		  Case Beacon.CategoryEngrams
-		    Return Self.GetEngramByID(ObjectID)
-		  Case Beacon.CategoryCreatures
-		    Return Self.GetCreatureByID(ObjectID)
-		  Case Beacon.CategorySpawnPoints
-		    Return Self.GetSpawnPointByID(ObjectID)
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprintsByClass(ClassString As String, Mods As Beacon.StringList) As Beacon.Blueprint()
-		  // This is not the most efficient method, but there shouldn't be a lot
-		  // of items with duplicate classes, so it probably won't matter.
-		  
-		  Var Blueprints() As Beacon.Blueprint
-		  
-		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE class_string = ?1;"
-		  If (Mods Is Nil) = False Then
-		    SQL = SQL.Left(SQL.Length - 1) + " AND mod_id IN (" + Mods.SQLValue + ");"
-		  End If
-		  
-		  Var Results As RowSet = Self.SQLSelect(SQL, ClassString)
-		  If Results.RowCount = 0 Then
-		    Return Blueprints
-		  End If
-		  
-		  While Results.AfterLastRow = False
-		    Var Blueprint As Beacon.Blueprint
-		    Var ObjectID As String = Results.Column("object_id").StringValue
-		    
-		    Select Case Results.Column("category").StringValue
-		    Case Beacon.CategoryEngrams
-		      Blueprint = Self.GetEngramByID(ObjectID)
-		    Case Beacon.CategoryCreatures
-		      Blueprint = Self.GetCreatureByID(ObjectID)
-		    Case Beacon.CategorySpawnPoints
-		      Blueprint = Self.GetSpawnPointByID(ObjectID)
-		    End Select
-		    If (Blueprint Is Nil) = False Then
-		      Blueprints.Add(Blueprint)
-		    End If
-		    Results.MoveToNextRow
-		  Wend
-		  
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetBlueprintsByPath(Path As String, Mods As Beacon.StringList) As Beacon.Blueprint()
-		  // This is not the most efficient method, but there shouldn't be a lot
-		  // of items with duplicate paths, so it probably won't matter.
-		  
-		  Var Blueprints() As Beacon.Blueprint
-		  
-		  Var SQL As String = "SELECT object_id, category FROM blueprints WHERE path = ?1;"
-		  If (Mods Is Nil) = False Then
-		    SQL = SQL.Left(SQL.Length - 1) + " AND mod_id IN (" + Mods.SQLValue + ");"
-		  End If
-		  
-		  Var Results As RowSet = Self.SQLSelect(SQL, Path)
-		  If Results.RowCount = 0 Then
-		    Return Blueprints
-		  End If
-		  
-		  While Results.AfterLastRow = False
-		    Var Blueprint As Beacon.Blueprint
-		    Var ObjectID As String = Results.Column("object_id").StringValue
-		    
-		    Select Case Results.Column("category").StringValue
-		    Case Beacon.CategoryEngrams
-		      Blueprint = Self.GetEngramByID(ObjectID)
-		    Case Beacon.CategoryCreatures
-		      Blueprint = Self.GetCreatureByID(ObjectID)
-		    Case Beacon.CategorySpawnPoints
-		      Blueprint = Self.GetSpawnPointByID(ObjectID)
-		    End Select
-		    If (Blueprint Is Nil) = False Then
-		      Blueprints.Add(Blueprint)
-		    End If
-		    Results.MoveToNextRow
-		  Wend
-		  
-		  Return Blueprints
 		End Function
 	#tag EndMethod
 
@@ -1330,25 +1188,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetSpawnPointsForCreature(Creature As Beacon.Creature, Mods As Beacon.StringList, Tags As String) As Beacon.SpawnPoint()
-		  Var Clauses() As String
-		  Var Values() As Variant
-		  Clauses.Add("spawn_points.sets LIKE :placeholder:")
-		  Values.Add("%" + Creature.ObjectID + "%")
-		  
-		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, Tags, Clauses, Values)
-		  Var SpawnPoints() As Beacon.SpawnPoint
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.SpawnPoint Then
-		      SpawnPoints.Add(Beacon.SpawnPoint(Blueprint))
-		    End If
-		  Next
-		  
-		  Return SpawnPoints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetStringVariable(Key As String, Default As String = "") As String
 		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
@@ -1569,14 +1408,14 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		  End Try
 		  If Not LegacyMode Then
 		    Var Mods As New Beacon.StringList(0)
-		    Var Unpacked() As Beacon.Blueprint
+		    Var Unpacked() As Ark.Blueprint
 		    For Each Dict As Dictionary In Blueprints
 		      Try
-		        Var Blueprint As Beacon.Blueprint = Beacon.UnpackBlueprint(Dict)
+		        Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
 		        If (Blueprint Is Nil) = False Then
 		          Unpacked.Add(Blueprint)
-		          If Mods.IndexOf(Blueprint.ModID) = -1 Then
-		            Mods.Append(Blueprint.ModID)
+		          If Mods.IndexOf(Blueprint.ContentPackUUID) = -1 Then
+		            Mods.Append(Blueprint.ContentPackUUID)
 		          End If
 		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
 		          Self.SQLExecute("INSERT OR IGNORE INTO mods (mod_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id").UInt32Value, False, False, True)
@@ -1585,7 +1424,7 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		      End Try
 		    Next
 		    
-		    Call Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Nil)
+		    Call Self.SaveBlueprints(Unpacked, Self.SearchForBlueprints("", Mods, ""), Nil)
 		  Else
 		    Self.BeginTransaction()
 		    Self.DeleteDataForMod(Beacon.UserModID)
@@ -2368,43 +2207,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function LootSourceLabels(Availability As UInt64) As Dictionary
-		  If Self.mDropsLabelCacheMask <> Availability Then
-		    Var Drops() As Beacon.LootSource = Self.SearchForLootSources("", New Beacon.StringList, True)
-		    Var Labels() As String
-		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Drops.LastIndex)
-		    
-		    For I As Integer = 0 To Drops.LastIndex
-		      If Drops(I).ValidForMask(Availability) = False Then
-		        Continue
-		      End If
-		      
-		      Var Label As String = Drops(I).Label
-		      Var Idx As Integer = Labels.IndexOf(Label)
-		      Labels(I) = Label
-		      If Idx > -1 Then
-		        Var Filtered As UInt64 = Drops(Idx).Availability And Availability
-		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label.Disambiguate(Maps.Label)
-		        
-		        Filtered = Drops(I).Availability And Availability
-		        Maps = Beacon.Maps.ForMask(Filtered)
-		        Label = Label.Disambiguate(Maps.Label)
-		      End If
-		      
-		      Dict.Value(Drops(I).Path) = Label
-		    Next
-		    
-		    Self.mDropsLabelCacheDict = Dict
-		    Self.mDropsLabelCacheMask = Availability
-		  End If
-		  
-		  Return Self.mDropsLabelCacheDict
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub mDeltaDownload_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
@@ -3022,195 +2824,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveBlueprints(BlueprintsToSave() As Beacon.Blueprint, BlueprintsToDelete() As Beacon.Blueprint, ErrorDict As Dictionary) As Boolean
-		  Var CountSuccess, CountErrors As Integer
-		  
-		  Self.BeginTransaction()
-		  For Each Blueprint As Beacon.Blueprint In BlueprintsToDelete
-		    Var TransactionStarted As Boolean
-		    Try
-		      Self.BeginTransaction()
-		      TransactionStarted = True
-		      Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 AND mod_id IN (SELECT mod_id FROM mods WHERE is_user_mod = 1);", Blueprint.ObjectID)
-		      Self.Commit()
-		      TransactionStarted = False
-		      CountSuccess = CountSuccess + 1
-		    Catch Err As RuntimeException
-		      If TransactionStarted Then
-		        Self.Rollback()
-		      End If
-		      If (ErrorDict Is Nil) = False Then
-		        ErrorDict.Value(Blueprint) = Err
-		      End If
-		      CountErrors = CountErrors + 1
-		    End Try
-		  Next
-		  
-		  For Each Blueprint As Beacon.Blueprint In BlueprintsToSave
-		    Var TransactionStarted As Boolean
-		    Try
-		      Var UpdateObjectID As String
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id IN (SELECT mod_id FROM mods WHERE is_user_mod = 1) AS is_user_blueprint FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
-		      Var CacheDict As Dictionary
-		      If Results.RowCount = 1 Then
-		        If Results.Column("is_user_blueprint").BooleanValue = False Then
-		          Continue
-		        End If
-		        UpdateObjectID = Results.Column("object_id").StringValue
-		      ElseIf Results.RowCount > 1 Then
-		        // What the hell?
-		        Continue
-		      End If
-		      
-		      If Blueprint.Path.IsEmpty Or Blueprint.ClassString.IsEmpty Then
-		        Continue
-		      End If
-		      
-		      Var Category As String = Blueprint.Category
-		      Var Columns As New Dictionary
-		      Columns.Value("object_id") = Blueprint.ObjectID
-		      Columns.Value("path") = Blueprint.Path
-		      Columns.Value("class_string") = Blueprint.ClassString
-		      Columns.Value("label") = Blueprint.Label
-		      Columns.Value("tags") = Blueprint.TagString
-		      Columns.Value("availability") = Blueprint.Availability
-		      Columns.Value("mod_id") = Blueprint.ModID
-		      
-		      Select Case Blueprint
-		      Case IsA Beacon.Creature
-		        Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
-		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
-		          Columns.Value("incubation_time") = Creature.IncubationTime
-		          Columns.Value("mature_time") = Creature.MatureTime
-		        Else
-		          Columns.Value("incubation_time") = Nil
-		          Columns.Value("mature_time") = Nil
-		        End If
-		        If Creature.MinMatingInterval > 0 And Creature.MaxMatingInterval > 0 Then
-		          Columns.Value("mating_interval_min") = Creature.MinMatingInterval
-		          Columns.Value("mating_interval_max") = Creature.MaxMatingInterval
-		        Else
-		          Columns.Value("mating_interval_min") = Nil
-		          Columns.Value("mating_interval_max") = Nil
-		        End If
-		        Columns.Value("used_stats") = Creature.StatsMask
-		        
-		        Var StatDicts() As Dictionary
-		        Var StatValues() As Beacon.CreatureStatValue = Creature.AllStatValues
-		        For Each StatValue As Beacon.CreatureStatValue In StatValues
-		          StatDicts.Add(StatValue.SaveData)
-		        Next
-		        Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
-		        
-		        CacheDict = Self.mCreatureCache
-		      Case IsA Beacon.SpawnPoint
-		        Columns.Value("sets") = Beacon.SpawnPoint(Blueprint).SetsString(False)
-		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
-		        CacheDict = Self.mSpawnPointCache
-		      Case IsA Beacon.Engram
-		        Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
-		        Columns.Value("recipe") = Beacon.RecipeIngredient.ToJSON(Engram.Recipe, False)
-		        If Engram.EntryString.IsEmpty Then
-		          Columns.Value("entry_string") = Nil
-		        Else
-		          Columns.Value("entry_string") = Engram.EntryString
-		        End If
-		        If Engram.RequiredPlayerLevel Is Nil Then
-		          Columns.Value("required_level") = Nil
-		        Else
-		          Columns.Value("required_level") = Engram.RequiredPlayerLevel.IntegerValue
-		        End If
-		        If Engram.RequiredUnlockPoints Is Nil Then
-		          Columns.Value("required_points") = Nil
-		        Else
-		          Columns.Value("required_points") = Engram.RequiredUnlockPoints.IntegerValue
-		        End If
-		        If Engram.StackSize Is Nil Then
-		          Columns.Value("stack_size") = Nil
-		        Else
-		          Columns.Value("stack_size") = Engram.StackSize.IntegerValue
-		        End If
-		        CacheDict = Self.mEngramCache
-		      End Select
-		      
-		      Self.BeginTransaction()
-		      TransactionStarted = True
-		      If UpdateObjectID.IsEmpty = False Then
-		        Var Assignments() As String
-		        Var Values() As Variant
-		        Var NextPlaceholder As Integer = 1
-		        Var WhereClause As String
-		        For Each Entry As DictionaryEntry In Columns
-		          If Entry.Key = "object_id" Then
-		            WhereClause = "object_id = ?" + NextPlaceholder.ToString
-		          Else
-		            Assignments.Add(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
-		          End If
-		          Values.Add(Entry.Value)
-		          NextPlaceholder = NextPlaceholder + 1
-		        Next
-		        
-		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, UpdateObjectID, Blueprint.TagString)
-		      Else
-		        Var ColumnNames(), Placeholders() As String
-		        Var Values() As Variant
-		        Var NextPlaceholder As Integer = 1
-		        For Each Entry As DictionaryEntry In Columns
-		          ColumnNames.Add(Entry.Key.StringValue)
-		          Placeholders.Add("?" + NextPlaceholder.ToString)
-		          Values.Add(Entry.Value)
-		          NextPlaceholder = NextPlaceholder + 1
-		        Next
-		        
-		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, Blueprint.ObjectID, Blueprint.TagString)
-		      End If
-		      Self.Commit()
-		      TransactionStarted = False
-		      
-		      If CacheDict <> Nil Then
-		        If CacheDict.HasKey(Blueprint.ObjectID) Then
-		          CacheDict.Remove(Blueprint.ObjectID)
-		        End If
-		        If CacheDict.HasKey(Blueprint.Path) Then
-		          CacheDict.Remove(Blueprint.Path)
-		        End If
-		        If CacheDict.HasKey(Blueprint.ClassString) Then
-		          CacheDict.Remove(Blueprint.ClassString)
-		        End If
-		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails And CacheDict.HasKey(Beacon.Engram(Blueprint).EntryString) Then
-		          CacheDict.Remove(Beacon.Engram(Blueprint).EntryString)
-		        End If
-		      End If
-		      
-		      CountSuccess = CountSuccess + 1
-		    Catch Err As RuntimeException
-		      If TransactionStarted Then
-		        Self.Rollback()
-		      End If
-		      If (ErrorDict Is Nil) = False Then
-		        ErrorDict.Value(Blueprint) = Err
-		      End If
-		      CountErrors = CountErrors + 1
-		    End Try
-		  Next
-		  If CountErrors = 0 And CountSuccess > 0 Then
-		    Self.Commit()
-		    
-		    Self.SyncUserEngrams()
-		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
-		    
-		    Return True
-		  Else
-		    Self.Rollback()
-		    
-		    Return False
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SavePreset(Preset As Beacon.Preset)
 		  Self.SavePreset(Preset, True)
 		End Sub
@@ -3233,183 +2846,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Blueprint()
-		  Var ExtraClauses() As String
-		  Var ExtraValues() As Variant
-		  Return Self.SearchForBlueprints(Category, SearchText, Mods, Tags, ExtraClauses, ExtraValues)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Beacon.Blueprint()
-		  Var Blueprints() As Beacon.Blueprint
-		  
-		  Try
-		    Var NextPlaceholder As Integer = 1
-		    Var Clauses() As String
-		    Var Values As New Dictionary
-		    If SearchText <> "" Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR (alternate_label IS NOT NULL AND alternate_label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\') OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
-		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    
-		    Var SQL As String
-		    Select Case Category
-		    Case Beacon.CategoryEngrams
-		      SQL = Self.EngramSelectSQL
-		    Case Beacon.CategoryCreatures
-		      SQL = Self.CreatureSelectSQL
-		    Case Beacon.CategorySpawnPoints
-		      SQL = Self.SpawnPointSelectSQL
-		    Else
-		      Return Blueprints
-		    End Select
-		    
-		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
-		      Var Placeholders() As String
-		      For Each ModID As String In Mods
-		        Placeholders.Add("?" + NextPlaceholder.ToString)
-		        Values.Value(NextPlaceholder) = ModID
-		        NextPlaceholder = NextPlaceholder + 1
-		      Next
-		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
-		    End If
-		    If Tags <> "" Then
-		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
-		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		      Values.Value(NextPlaceholder) = Tags
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    
-		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
-		      For I As Integer = 0 To ExtraClauses.LastIndex
-		        If ExtraClauses(I).IndexOf(":placeholder:") > -1 Then
-		          Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
-		          Var Value As Variant = ExtraValues(I)
-		          Clauses.Add(Clause)
-		          Values.Value(NextPlaceholder) = Value
-		          NextPlaceholder = NextPlaceholder + 1
-		        Else
-		          Clauses.Add(ExtraClauses(I))
-		        End If
-		      Next
-		    End If
-		    
-		    If Clauses.LastIndex > -1 Then
-		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
-		    End If
-		    SQL = SQL + " ORDER BY label;"
-		    
-		    Var Results As RowSet
-		    #if false
-		      Var StartTime As Double = System.Microseconds
-		    #endif
-		    If Values.KeyCount = 0 Then
-		      Results = Self.SQLSelect(SQL)
-		    Else
-		      Results = Self.SQLSelect(SQL, Values)
-		    End If
-		    #if false
-		      Var Duration As Double = System.Microseconds - StartTime
-		      System.DebugLog("Searching for blueprints took " + Duration.ToString(Locale.Raw, "0") + " microseconds")
-		      System.DebugLog("EXPLAIN QUERY PLAN " + SQL)
-		    #endif
-		    
-		    Select Case Category
-		    Case Beacon.CategoryEngrams
-		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      For Each Engram As Beacon.Engram In Engrams
-		        Self.Cache(Engram)
-		        Blueprints.Add(Engram)
-		      Next
-		    Case Beacon.CategoryCreatures
-		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
-		      For Each Creature As Beacon.Creature In Creatures
-		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Blueprints.Add(Creature)
-		      Next
-		    Case Beacon.CategorySpawnPoints
-		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
-		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Blueprints.Add(SpawnPoint)
-		      Next
-		    End Select
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForConfigKey(File As String, Header As String, Key As String, SortHuman As Boolean) As Beacon.ConfigKey()
-		  Var Clauses() As String
-		  Var Values As New Dictionary
-		  Var Idx As Integer = 1
-		  
-		  If File = Beacon.ConfigFileGameUserSettings Then
-		    If Header.IsEmpty = False Then
-		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
-		      Values.Value(Idx) = Header
-		      Idx = Idx + 1
-		    Else
-		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
-		    End If
-		  Else
-		    If File.IsEmpty = False Then
-		      If File = "CommandLine" Then
-		        Clauses.Add("file IN ('CommandLineFlag', 'CommandLineOption')")
-		      ElseIf File.IndexOf("*") > -1 Then
-		        Values.Value(Idx) = Self.EscapeLikeValue(File).ReplaceAll("*", "%")
-		        Clauses.Add("file LIKE ?" + Idx.ToString + " ESCAPE '\'")
-		        Idx = Idx + 1
-		      Else
-		        Values.Value(Idx) = File
-		        Clauses.Add("file = ?" + Idx.ToString)
-		        Idx = Idx + 1
-		      End If
-		    End If
-		    If Header.IsEmpty = False Then
-		      Values.Value(Idx) = Header
-		      Clauses.Add("header = ?" + Idx.ToString)
-		      Idx = Idx + 1
-		    End If
-		  End If
-		  If Key.IsEmpty = False Then
-		    If Key.IndexOf("*") > -1 Then
-		      Values.Value(Idx) = Self.EscapeLikeValue(Key).ReplaceAll("*", "%")
-		      Clauses.Add("key LIKE ?" + Idx.ToString + " ESCAPE '\'")
-		    Else
-		      Values.Value(Idx) = Key
-		      Clauses.Add("key = ?" + Idx.ToString)
-		    End If
-		    Idx = Idx + 1
-		  End If
-		  
-		  Var SQL As String = Self.ConfigKeySelectSQL
-		  If Clauses.Count > 0 Then
-		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
-		  End If
-		  If SortHuman Then
-		    SQL = SQL + " ORDER BY COALESCE(custom_sort, label)"
-		  Else
-		    SQL = SQL + " ORDER BY key"
-		  End If
-		  
-		  Var Results() As Beacon.ConfigKey
-		  Try
-		    Results = Self.RowSetToConfigKeys(Self.SQLSelect(SQL, Values))
-		  Catch Err As RuntimeException
-		    App.ReportException(Err)
-		  End Try
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SearchForCreatureColors(Label As String = "") As Beacon.CreatureColor()
 		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
 		  Return Self.RowSetToCreatureColors(Rows)
@@ -3420,21 +2856,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		Function SearchForCreatureColorSets(Label As String = "") As Beacon.CreatureColorSet()
 		  Var Rows As RowSet = Self.SQLSelect(Self.CreatureColorSetSelectSQL + " WHERE label LIKE ?1 ESCAPE '\' ORDER BY label;", "%" + Self.EscapeLikeValue(Label) + "%")
 		  Return Self.RowSetToCreatureColorSets(Rows)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
-		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
-		  Var ExtraValues(0) As Variant
-		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategoryEngrams, SearchText, Mods, Tags, ExtraClauses, ExtraValues)
-		  Var Engrams() As Beacon.Engram
-		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Add(Beacon.Engram(Blueprint))
-		    End If
-		  Next
-		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -3516,43 +2937,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		    End If
 		  End If
 		  Return mInstance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SpawnPointLabels(Availability As UInt64) As Dictionary
-		  If Self.mSpawnLabelCacheMask <> Availability Then
-		    Var Points() As Beacon.SpawnPoint = Self.SearchForSpawnPoints("", New Beacon.StringList)
-		    Var Labels() As String
-		    Var Dict As New Dictionary
-		    Labels.ResizeTo(Points.LastIndex)
-		    
-		    For I As Integer = 0 To Points.LastIndex
-		      If Points(I).ValidForMask(Availability) = False Then
-		        Continue
-		      End If
-		      
-		      Var Label As String = Points(I).Label
-		      Var Idx As Integer = Labels.IndexOf(Label)
-		      Labels(I) = Label
-		      If Idx > -1 Then
-		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
-		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Points(Idx).ObjectID) = Points(Idx).Label.Disambiguate(Maps.Label)
-		        
-		        Filtered = Points(I).Availability And Availability
-		        Maps = Beacon.Maps.ForMask(Filtered)
-		        Label = Label.Disambiguate(Maps.Label)
-		      End If
-		      
-		      Dict.Value(Points(I).ObjectID) = Label
-		    Next
-		    
-		    Self.mSpawnLabelCacheDict = Dict
-		    Self.mSpawnLabelCacheMask = Availability
-		  End If
-		  
-		  Return Self.mSpawnLabelCacheDict
 		End Function
 	#tag EndMethod
 
@@ -3722,35 +3106,6 @@ Implements Beacon.DataSourceLegacy,NotificationKit.Receiver
 		    Call UserCloud.Delete("Blueprints.json")
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function TestPerformance(AttemptRepair As Boolean) As LocalData.PerformanceResults
-		  Var TestDoc As New Beacon.Document
-		  Var Mods As Beacon.StringList = TestDoc.Mods
-		  Var Tags As String = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
-		  Var StartTime As Double = System.Microseconds
-		  Var Results() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, Tags)
-		  Var InitialDuration As Double = System.Microseconds - StartTime
-		  If InitialDuration <= 250000 Then
-		    Return LocalData.PerformanceResults.NoRepairsNecessary
-		  End If
-		  If AttemptRepair = False Then
-		    Return LocalData.PerformanceResults.RepairsNecessary
-		  End If
-		  
-		  Self.mBase.ExecuteSQL("ANALYZE;")
-		  Self.mBase.ExecuteSQL("VACUUM;")
-		  
-		  StartTime = System.Microseconds
-		  Results = Self.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, Tags)
-		  Var RepairedDuration As Double = System.Microseconds - StartTime
-		  If RepairedDuration <= 250000 Then
-		    Return LocalData.PerformanceResults.Repaired
-		  Else
-		    Return LocalData.PerformanceResults.CouldNotRepair
-		  End If
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

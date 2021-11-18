@@ -114,6 +114,16 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash(Extends Blueprint As Ark.Blueprint) As String
+		  #if DebugBuild
+		    Return Beacon.GenerateJSON(Ark.PackBlueprint(Blueprint), True)
+		  #else
+		    Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Ark.PackBlueprint(Blueprint), False))).Lowercase
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Ark.Map) As String
 		  Var Names() As String
 		  Names.ResizeTo(Maps.LastIndex)
@@ -142,6 +152,40 @@ Protected Module Ark
 		    Bits = Bits Or Map.Mask
 		  Next
 		  Return Bits
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NormalizeBlueprintPath(Path As String, FolderName As String) As String
+		  Path = Path.Trim
+		  
+		  If Path.BeginsWith("BlueprintGeneratedClass") Then
+		    Path = Path.Middle(23)
+		  ElseIf Path.BeginsWith("Blueprint") Then
+		    Path = Path.Middle(9)
+		  End If
+		  
+		  If (Path.BeginsWith("'") And Path.EndsWith("'")) Or (Path.BeginsWith("""") And Path.EndsWith("""")) Then
+		    Path = Path.Middle(1, Path.Length - 2)
+		  End If
+		  
+		  If Path.BeginsWith("/Game/") Then
+		    // Looks like a real path
+		    
+		    If Path.EndsWith("_C") Then
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    
+		    Return Path
+		  Else
+		    // Assume this is a class string
+		    Var PossiblePath As String = Ark.DataSource.SharedInstance.ResolvePathFromClassString(Path)
+		    If PossiblePath.IsEmpty = False Then
+		      Return PossiblePath
+		    Else
+		      Return Ark.UnknownBlueprintPath(FolderName, Path)
+		    End If
+		  End If
 		End Function
 	#tag EndMethod
 

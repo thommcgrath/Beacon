@@ -16,8 +16,8 @@ Inherits Ark.ConfigGroup
 		  SelfOrganizer.Remove(SourceOrganizer.DistinctKeys)
 		  SelfOrganizer.Add(SourceOrganizer.FilteredValues)
 		  
-		  Var MergedGameIni As String = SelfOrganizer.Build(Beacon.ConfigFileGame)
-		  Var MergedGameUserSettingsIni As String = SelfOrganizer.Build(Beacon.ConfigFileGameUserSettings)
+		  Var MergedGameIni As String = SelfOrganizer.Build(Ark.ConfigFileGame)
+		  Var MergedGameUserSettingsIni As String = SelfOrganizer.Build(Ark.ConfigFileGameUserSettings)
 		  
 		  If Self.mGameIniContent <> MergedGameIni Or Self.mGameUserSettingsIniContent <> MergedGameUserSettingsIni Then
 		    Self.Modified = True

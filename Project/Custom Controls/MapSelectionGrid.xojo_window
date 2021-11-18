@@ -66,10 +66,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Var Maps() As Beacon.Map = Beacon.Maps.All
-		  Var OfficialMaps(), OtherMaps() As Beacon.Map
+		  Var Maps() As Ark.Map = Ark.Maps.All
+		  Var OfficialMaps(), OtherMaps() As Ark.Map
 		  Var OfficialMasks(), OtherMasks() As UInt64
-		  For Each Map As Beacon.Map In Maps
+		  For Each Map As Ark.Map In Maps
 		    If Map.Official Then
 		      OfficialMaps.Add(Map)
 		      OfficialMasks.Add(Map.Mask)
@@ -89,7 +89,7 @@ End
 		  
 		  Boxes(0).Close
 		  
-		  For Each Map As Beacon.Map In OfficialMaps
+		  For Each Map As Ark.Map In OfficialMaps
 		    Var Box As New Boxes
 		    Box.Mask = Map.Mask
 		    Box.Caption = Map.Name
@@ -98,7 +98,7 @@ End
 		    OfficialNextTop = OfficialNextTop + Box.Height + 12
 		    Self.mBoxes.Add(Box)
 		  Next
-		  For Each Map As Beacon.Map In OtherMaps
+		  For Each Map As Ark.Map In OtherMaps
 		    Var Box As New Boxes
 		    Box.Mask = Map.Mask
 		    Box.Caption = Map.Name

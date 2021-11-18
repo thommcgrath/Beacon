@@ -387,7 +387,6 @@ End
 
 	#tag Method, Flags = &h0
 		Function EditorForProject(Project As Beacon.Project) As DocumentEditorView
-		  Var Editors() As DocumentEditorView
 		  Var Bound As Integer = Self.PageCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var Page As BeaconSubview = Self.Page(Idx)

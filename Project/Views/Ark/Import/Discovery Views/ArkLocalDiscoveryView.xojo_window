@@ -425,13 +425,13 @@ End
 		  Case ConfigFileType.GameIni
 		    Self.mGameIniFile = File
 		    Self.mGameIniContent = Content
-		    OtherFilename = File.Name.Replace(Beacon.ConfigFileGame, Beacon.ConfigFileGameUserSettings)
+		    OtherFilename = File.Name.Replace(Ark.ConfigFileGame, Ark.ConfigFileGameUserSettings)
 		    OtherContent = Self.mGameUserSettingsIniContent
 		    OtherType = ConfigFileType.GameUserSettingsIni
 		  Case ConfigFileType.GameUserSettingsIni
 		    Self.mGameUserSettingsIniFile = File
 		    Self.mGameUserSettingsIniContent = Content
-		    OtherFilename = File.Name.Replace(Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGame)
+		    OtherFilename = File.Name.Replace(Ark.ConfigFileGameUserSettings, Ark.ConfigFileGame)
 		    OtherContent = Self.mGameIniContent
 		    OtherType = ConfigFileType.GameIni
 		  End Select
@@ -453,8 +453,8 @@ End
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
 		  Content = Content.GuessEncoding
-		  Var GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
-		  Var SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
+		  Var GameIniPos As Integer = Content.IndexOf(Ark.HeaderShooterGame)
+		  Var SettingsIniPos As Integer = Content.IndexOf(Ark.HeaderServerSettings)
 		  
 		  If GameIniPos > -1 And SettingsIniPos = -1 Then
 		    Return ConfigFileType.GameIni
@@ -462,9 +462,9 @@ End
 		    Return ConfigFileType.GameUserSettingsIni
 		  ElseIf File <> Nil Then
 		    Select Case File.Name
-		    Case Beacon.ConfigFileGame
+		    Case Ark.ConfigFileGame
 		      Return ConfigFileType.GameIni
-		    Case Beacon.ConfigFileGameUserSettings
+		    Case Ark.ConfigFileGameUserSettings
 		      Return ConfigFileType.GameUserSettingsIni
 		    End Select
 		  End If
@@ -655,7 +655,7 @@ End
 		  End If
 		  
 		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGame)
+		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGame)
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
 		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
@@ -669,8 +669,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
+		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = Self.GameUserSettingsIniIndex
 		End Sub
@@ -692,8 +692,8 @@ End
 #tag Events MapMenu
 	#tag Event
 		Sub Open()
-		  Var Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
+		  Var Maps() As Ark.Map = Ark.Maps.All
+		  For Each Map As Ark.Map In Maps
 		    Me.AddRow(Map.Name, Map.Mask)
 		  Next
 		  Me.SelectedRowIndex = 0

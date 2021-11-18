@@ -247,22 +247,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub Simulate(ItemSet As Beacon.ItemSet)
-		  #Pragma Unused ItemSet
-		  
-		  // Do nothing
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub Simulate(LootSource As Beacon.LootSource)
-		  #Pragma Unused LootSource
-		  
-		  // Do nothing
-		End Sub
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event ResizeFinished()

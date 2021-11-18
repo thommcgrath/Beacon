@@ -397,7 +397,6 @@ End
 		    Return
 		  End If
 		  
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Issue.UserData)
 		  Select Case Issue.UserData
 		  Case IsA Ark.LootContainer
 		    Var Container As Ark.LootContainer = Issue.UserData
@@ -759,9 +758,9 @@ End
 		    Var Container As Ark.LootContainer = Me.RowTagAt(Row)
 		    Var Icon As Picture
 		    If Me.Selected(Row) And IsHighlighted Then
-		      Icon = Ark.DataSource.SharedInstance.GetIconForLootContainer(Container, TextColor, BackgroundColor)
+		      Icon = Ark.DataSource.SharedInstance.GetLootContainerIcon(Container, TextColor, BackgroundColor)
 		    Else
-		      Icon = Ark.DataSource.SharedInstance.GetIconForLootContainer(Container, BackgroundColor)
+		      Icon = Ark.DataSource.SharedInstance.GetLootContainerIcon(Container, BackgroundColor)
 		    End If
 		    
 		    G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))

@@ -204,7 +204,7 @@ Protected Module Preferences
 		  Var Default As String
 		  
 		  Select Case Category
-		  Case Beacon.CategoryEngrams
+		  Case Ark.CategoryEngrams
 		    Select Case Subgroup
 		    Case "Harvesting"
 		      Default = "(""object"" AND ""harvestable"") NOT (""deprecated"" OR ""cheat"")"
@@ -215,7 +215,7 @@ Protected Module Preferences
 		    Else
 		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"" OR ""generic"" OR ""blueprint"")"
 		    End Select
-		  Case Beacon.CategoryCreatures
+		  Case Ark.CategoryCreatures
 		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"" OR ""generic"")"
 		  End Select
 		  
@@ -421,7 +421,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.VariantValue("Last Preset Map Filter", Beacon.Maps.UniversalMask)
+			  Return mManager.VariantValue("Last Preset Map Filter", Ark.Maps.UniversalMask)
 			End Get
 		#tag EndGetter
 		#tag Setter

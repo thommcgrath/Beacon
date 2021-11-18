@@ -180,12 +180,12 @@ End
 		    Next
 		  End If
 		  
-		  Var UserMods() As Beacon.ModDetails = LocalData.SharedInstance.GetUserMods
-		  For Each UserMod As Beacon.ModDetails In UserMods
-		    Self.ModsList.AddRow(UserMod.Name, If(UserMod.ModID = Beacon.UserModID, "Built-In", "Custom"))
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		  For Each Pack As Ark.ContentPack In Packs
+		    Self.ModsList.AddRow(Pack.Name, If(Pack.IsLocal = False, "Built-In", "Custom"))
 		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
-		    Self.ModsList.RowTagAt(Idx) = New BeaconAPI.WorkshopMod(UserMod)
-		    If SelectedModID = UserMod.ModID Then
+		    Self.ModsList.RowTagAt(Idx) = New BeaconAPI.WorkshopMod(Pack)
+		    If SelectedModID = Pack.UUID Then
 		      Self.ModsList.SelectedRowIndex = Idx
 		    End If
 		  Next
@@ -299,7 +299,7 @@ End
 #tag Events ModsList
 	#tag Event
 		Function CanDelete() As Boolean
-		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Beacon.UserModID Then
+		  If Me.SelectedRowCount = 1 And BeaconAPI.WorkshopMod(Me.RowTagAt(Me.SelectedRowIndex)).ModID = Ark.UserContentPackUUID Then
 		    Return False
 		  Else
 		    Return Me.SelectedRowCount > 0
@@ -318,7 +318,7 @@ End
 		    Var Names() As String
 		    For Row As Integer = 0 To Me.LastRowIndex
 		      Var ModInfo As BeaconAPI.WorkshopMod = Me.RowTagAt(Row)
-		      If Me.Selected(Row) And ModInfo.ModID <> Beacon.UserModID Then
+		      If Me.Selected(Row) And ModInfo.ModID <> Ark.UserContentPackUUID Then
 		        Names.Add(ModInfo.Name)
 		        Mods.Add(ModInfo)
 		      End If
@@ -345,7 +345,7 @@ End
 		  
 		  If LocalUUIDs.Count > 0 Then
 		    For Each LocalUUID As String In LocalUUIDs
-		      If LocalData.SharedInstance.DeleteMod(LocalUUID) Then
+		      If Ark.DataSource.SharedInstance.DeleteContentPack(LocalUUID) Then
 		        For Row As Integer = Me.LastRowIndex DownTo 0
 		          If BeaconAPI.WorkshopMod(Me.RowTagAt(Row)).ModID = LocalUUID Then
 		            Me.RemoveRowAt(Row)

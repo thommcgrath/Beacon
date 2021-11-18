@@ -57,7 +57,7 @@ Protected Class LogFile
 		    Var StartupParams() As String = Params(0).Split("?")
 		    Params.RemoveAt(0)
 		    
-		    File.mMaps = Beacon.Maps.MaskForIdentifier(StartupParams(0))
+		    File.mMaps = Ark.Maps.MaskForIdentifier(StartupParams(0))
 		    StartupParams.RemoveAt(0)
 		    
 		    StartupParams.RemoveAt(0) // The Listen statement

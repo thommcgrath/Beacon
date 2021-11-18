@@ -107,7 +107,7 @@ End
 		  Const PageSteam = 1
 		  Const PageLocal = 2
 		  
-		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
 		  Var RequiredPage As Integer
 		  For Idx As Integer = 0 To Self.ViewSelector.LastSegmentIndex
 		    If Self.ViewSelector.SegmentAt(Idx).Selected Then
@@ -121,13 +121,13 @@ End
 		  Next
 		  
 		  Var Measure As New Picture(20, 20)
-		  Var Filtered() As Beacon.ModDetails
+		  Var Filtered() As Ark.ContentPack
 		  Var MaxWidth As Double
-		  For Idx As Integer = 0 To Mods.LastIndex
+		  For Idx As Integer = 0 To Packs.LastIndex
 		    Var TargetPage As Integer
-		    If Mods(Idx).IsUserMod Then
+		    If Packs(Idx).IsLocal Then
 		      TargetPage = PageLocal
-		    ElseIf Mods(Idx).ConsoleSafe Then
+		    ElseIf Packs(Idx).ConsoleSafe Then
 		      TargetPage = PageUniversal
 		    Else
 		      TargetPage = PageSteam
@@ -136,8 +136,8 @@ End
 		      Continue
 		    End If
 		    
-		    Filtered.Add(Mods(Idx))
-		    MaxWidth = Max(MaxWidth, Measure.Graphics.TextWidth(Mods(Idx).Name))
+		    Filtered.Add(Packs(Idx))
+		    MaxWidth = Max(MaxWidth, Measure.Graphics.TextWidth(Packs(Idx).Name))
 		  Next
 		  Self.CheckboxesBound = Filtered.LastIndex
 		  
@@ -149,8 +149,8 @@ End
 		  
 		  Self.ModCheckbox(0).Caption = Filtered(0).Name
 		  Self.ModCheckbox(0).Width = CheckboxWidth
-		  Self.ModCheckbox(0).Value = Self.ModEnabled(Filtered(0).ModID)
-		  Self.mMap(0) = Filtered(0).ModID
+		  Self.ModCheckbox(0).Value = Self.ModEnabled(Filtered(0).UUID)
+		  Self.mMap(0) = Filtered(0).UUID
 		  
 		  Var NextLeft As Integer = Self.ModCheckbox(0).Left + Self.ModCheckbox(0).Width + 12
 		  Var NextTop As Integer = Self.ModCheckbox(0).Top
@@ -160,8 +160,8 @@ End
 		    Check.Width = CheckboxWidth
 		    Check.Left = NextLeft
 		    Check.Top = NextTop
-		    Check.Value = Self.ModEnabled(Filtered(Idx).ModID)
-		    Self.mMap(Idx) = Filtered(Idx).ModID
+		    Check.Value = Self.ModEnabled(Filtered(Idx).UUID)
+		    Self.mMap(Idx) = Filtered(Idx).UUID
 		    
 		    If (Idx + 1) Mod ColumnCount = 0 Then
 		      NextLeft = Self.ModCheckbox(0).Left
@@ -199,7 +199,7 @@ End
 	#tag Method, Flags = &h1
 		Protected Sub EnabledMods(Assigns List As Beacon.StringList)
 		  Self.mModStates = New Dictionary
-		  Self.mModStates.Value(Beacon.UserModID) = True
+		  Self.mModStates.Value(Ark.UserContentPackUUID) = True
 		  
 		  For Each ModID As String In List
 		    Self.mModStates.Value(ModID) = True
@@ -215,7 +215,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub ModEnabled(ModID As String, Assigns Value As Boolean)
-		  Self.mModStates.Value(ModID) = Value Or ModID = Beacon.UserModID
+		  Self.mModStates.Value(ModID) = Value Or ModID = Ark.UserContentPackUUID
 		End Sub
 	#tag EndMethod
 

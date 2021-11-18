@@ -948,7 +948,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event DocumentsImported(Documents() As Beacon.Document)
+		Event DocumentsImported(Documents() As Beacon.Project)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

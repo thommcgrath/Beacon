@@ -9,9 +9,23 @@ Inherits Ark.LootContainerSelector
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Ark.LootContainerSelector
 		  Return New Ark.LootContainerSelector(Self)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Label(Assigns Value As String)
+		  Self.mLanguage = Value
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -134,13 +134,17 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, LocalData.Notification_EngramUpdateFinished)
+		  NotificationKit.Ignore(Self, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_DatabaseUpdated)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  NotificationKit.Watch(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, LocalData.Notification_EngramUpdateFinished)
+		  NotificationKit.Watch(Self, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_DatabaseUpdated)
+		  
+		  For Each DataSource As Beacon.DataSource In Self.mDataSources
+		    DataSource.Sync(Self.mForceRefresh)
+		  Next DataSource
 		End Sub
 	#tag EndEvent
 
@@ -149,7 +153,14 @@ End
 		Private Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  Super.Constructor
-		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(ForceRefresh As Boolean)
+		  Self.mDataSources = App.DataSources
+		  Self.mForceRefresh = ForceRefresh
+		  Self.Constructor
 		End Sub
 	#tag EndMethod
 
@@ -158,20 +169,17 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, LocalData.Notification_EngramUpdateFinished
-		    If LocalData.SharedInstance.Importing Or LocalData.SharedInstance.CheckingForEngramUpdates Then
-		      // Not done yet
-		      Return
-		    End If
+		  Case Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_DatabaseUpdated
+		    For Each Source As Beacon.DataSource In Self.mDataSources
+		      If Source.Importing Or Source.Syncing Then
+		        // Not done yet
+		        Return
+		      End If
+		    Next Source
 		    
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
 		    
-		    Var ImportDate As DateTime
-		    If Notification.UserData <> Nil And Notification.UserData IsA DateTime Then
-		      ImportDate = Notification.UserData
-		    Else
-		      ImportDate = LocalData.SharedInstance.LastSync
-		    End If
+		    Var ImportDate As DateTime = App.NewestSyncDate
 		    
 		    Var Message, Explanation As String
 		    If IsNull(ImportDate) Then
@@ -190,12 +198,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub ShowIfNecessary()
-		  Var Win As New EngramsUpdateWindow
+		Shared Sub SyncAndShowIfNecessary(ForceRefresh As Boolean)
+		  Var Win As New EngramsUpdateWindow(ForceRefresh)
 		  // Do not show it, the timer will do that
 		  #Pragma Unused Win
 		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mDataSources() As Beacon.DataSource
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mForceRefresh As Boolean
+	#tag EndProperty
 
 
 #tag EndWindowCode

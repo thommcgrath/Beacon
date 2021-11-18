@@ -367,7 +367,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ToggleEncryption()
-		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Var Tag As String = Ark.Configs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
 		  Var Source As String = Self.ConfigArea.Text
 		  
@@ -453,7 +453,7 @@ End
 		  
 		  Var Pos As Integer
 		  Var Source As String = Self.ConfigArea.Text
-		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Var Tag As String = Ark.Configs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
 		  Var Styles As StyledText = Self.ConfigArea.StyledText
 		  If Styles <> Nil Then

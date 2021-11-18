@@ -399,7 +399,7 @@ End
 			Return False
 			End If
 			
-			Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
+			Self.ActiveConfigSet = Beacon.Project.BaseConfigSetName
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -892,7 +892,7 @@ End
 		  Var Labels(), Tags() As String
 		  
 		  Var ActiveConfigSet As String = Self.ActiveConfigSet
-		  Var IsBase As Boolean = ActiveConfigSet = Beacon.Document.BaseConfigSetName
+		  Var IsBase As Boolean = ActiveConfigSet = Beacon.Project.BaseConfigSetName
 		  If IsBase Then
 		    // Show everything
 		    #if DeployEnabled
@@ -903,7 +903,7 @@ End
 		    Tags.Add("accounts")
 		  End If
 		  
-		  Var Names() As String = BeaconConfigs.AllConfigNames
+		  Var Names() As String = Ark.Configs.AllNames
 		  For Each Name As String In Names
 		    Labels.Add(Language.LabelForConfig(Name))
 		    Tags.Add(Name)
@@ -978,8 +978,8 @@ End
 			    Return
 			  End If
 			  
-			  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet <> Beacon.Document.BaseConfigSetName Then
-			    Self.ActiveConfigSet = Beacon.Document.BaseConfigSetName
+			  If (Value = Ark.Configs.NameAccountsPsuedo Or Value = Ark.Configs.NameServersPseudo Or Value = Ark.Configs.NameMetadataPsuedo) And Self.ActiveConfigSet <> Beacon.Project.BaseConfigSetName Then
+			    Self.ActiveConfigSet = Beacon.Project.BaseConfigSetName
 			  End If
 			  
 			  Self.mCurrentConfigName = Value
@@ -1072,7 +1072,7 @@ End
 			  If (Self.CurrentPanel Is Nil) = False Then
 			    Var RequiresPurchase As Boolean
 			    If Value.Length > 0 Then
-			      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Value, If((App.IdentityManager.CurrentIdentity Is Nil) = False, App.IdentityManager.CurrentIdentity.OmniFlags, 0))
+			      RequiresPurchase = Not Ark.Configs.ConfigUnlocked(Value, App.IdentityManager.CurrentIdentity)
 			    End If
 			    Var TopOffset As Integer
 			    If RequiresPurchase Then

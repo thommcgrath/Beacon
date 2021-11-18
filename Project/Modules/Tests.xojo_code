@@ -48,7 +48,7 @@ Protected Module Tests
 		Private Sub TestArkML()
 		  Var InputString As String = "This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like 'discord.gg/invite' that\nneed to be encoded."
 		  
-		  Var ArkML As Beacon.ArkML = Beacon.ArkML.FromArkML(InputString)
+		  Var ArkML As Ark.ArkML = Ark.ArkML.FromArkML(InputString)
 		  Var ArkMLString As String = ArkML.ArkMLValue()
 		  
 		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated. Input: `" + InputString + "` Output: `" + ArkMLString + "`")
@@ -59,24 +59,25 @@ Protected Module Tests
 		Private Sub TestBlueprintSerialization()
 		  // Use object ids here just in case
 		  
-		  TestBlueprintSerialization(Beacon.Data.GetEngramByID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
-		  TestBlueprintSerialization(Beacon.Data.GetCreatureByID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
-		  TestBlueprintSerialization(Beacon.Data.GetSpawnPointByID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
+		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetEngramByUUID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
+		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetCreatureByUUID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
+		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetSpawnPointByUUID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
+		  TestBlueprintSerialization(Ark.DataSource.SharedInstance.GetLootContainerByUUID("40f02506-f341-46c5-85c0-31e0d37509b6")) // SupplyCrate_IceCaveTier2_C
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TestBlueprintSerialization(SourceBlueprint As Beacon.Blueprint)
+		Private Sub TestBlueprintSerialization(SourceBlueprint As Ark.Blueprint)
 		  If Not Assert(SourceBlueprint <> Nil, "Source blueprint is nil") Then
 		    Return
 		  End If
 		  
-		  Var Serialized As Dictionary = Beacon.PackBlueprint(SourceBlueprint)
+		  Var Serialized As Dictionary = Ark.PackBlueprint(SourceBlueprint)
 		  If Not Assert(Serialized <> Nil, "Unable to produce serialized blueprint") Then
 		    Return
 		  End If
 		  
-		  Var Unserialized As Beacon.Blueprint = Beacon.UnpackBlueprint(Serialized)
+		  Var Unserialized As Ark.Blueprint = Ark.UnpackBlueprint(Serialized)
 		  If Not Assert(Unserialized <> Nil, "Unable to unserialize blueprint") Then
 		    Return
 		  End If
@@ -91,7 +92,7 @@ Protected Module Tests
 		  // Also test unserializing from json
 		  Var JSON As String = Beacon.GenerateJSON(Serialized, False)
 		  Serialized = Beacon.ParseJSON(JSON)
-		  Unserialized = Beacon.UnpackBlueprint(Serialized)
+		  Unserialized = Ark.UnpackBlueprint(Serialized)
 		  UnserializedHash = Unserialized.Hash
 		  
 		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
@@ -102,15 +103,15 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestConfigKeys()
-		  Var LocalData As LocalData = LocalData.SharedInstance
+		  Var Source As Ark.DataSource = Ark.DataSource.SharedInstance
 		  
-		  Var AllConfigKeys() As Beacon.ConfigKey = LocalData.SearchForConfigKey("", "", "", False)
+		  Var AllConfigKeys() As Ark.ConfigKey = Source.GetConfigKeys("", "", "", False)
 		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
 		  
-		  Var SpecificConfigKey As Beacon.ConfigKey = LocalData.GetConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "DayTimeSpeedScale")
+		  Var SpecificConfigKey As Ark.ConfigKey = Source.GetConfigKey(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "DayTimeSpeedScale")
 		  Call Assert((SpecificConfigKey Is Nil) = False, "Could not find DayTimeSpeedScale key.")
 		  
-		  Var SpeedScales() As Beacon.ConfigKey = LocalData.SearchForConfigKey(Beacon.ConfigFileGameUserSettings, "ServerSettings", "*SpeedScale", False)
+		  Var SpeedScales() As Ark.ConfigKey = Source.GetConfigKeys(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "*SpeedScale", False)
 		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
 		End Sub
 	#tag EndMethod
@@ -263,10 +264,10 @@ Protected Module Tests
 		  Const StateModifierScale = 0.001
 		  Const RandomizerRangeMultiplier = 0.1
 		  
-		  Var Limit As Double = BeaconConfigs.StatLimits.ComputeEffectiveLimit(19800.0, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
+		  Var Limit As Double = Ark.Configs.StatLimits.ComputeEffectiveLimit(19800.0, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
 		  Call Assert(Limit = 298.0, "Longneck effective damage limit computed as " + Limit.PrettyText + " instead of 298.0.")
 		  
-		  Var Value As Double = BeaconConfigs.StatLimits.SolveForDesiredLimit(298.0, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
+		  Var Value As Double = Ark.Configs.StatLimits.SolveForDesiredLimit(298.0, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
 		  Call Assert(Value = 19800.0, "Longneck damage limit value computed as " + Value.PrettyText + " instead of 19800.0.")
 		End Sub
 	#tag EndMethod
@@ -371,23 +372,23 @@ Protected Module Tests
 		  Const ExpectedUnofficialPath = "/Game/Mods/CrystalWyverns/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo"
 		  Const ExpectedUnknownPath = "/Game/BeaconUserBlueprints/Creatures/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo"
 		  
-		  Var NormalizedPath As String = Beacon.NormalizeBlueprintPath("BlueprintGeneratedClass'/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle_C'", "Engrams")
+		  Var NormalizedPath As String = Ark.NormalizeBlueprintPath("BlueprintGeneratedClass'/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle_C'", "Engrams")
 		  Call Assert(NormalizedPath = ExpectedOfficialPath, "Failed to resolve path correctly. Expected " + ExpectedOfficialPath + ", got " + NormalizedPath)
 		  
-		  NormalizedPath = Beacon.NormalizeBlueprintPath(ExpectedOfficialPath, "Engrams")
+		  NormalizedPath = Ark.NormalizeBlueprintPath(ExpectedOfficialPath, "Engrams")
 		  Call Assert(NormalizedPath = ExpectedOfficialPath, "Failed to resolve path correctly. Expected " + ExpectedOfficialPath + ", got " + NormalizedPath)
 		  
-		  NormalizedPath = Beacon.NormalizeBlueprintPath("PrimalItemArmor_RockDrakeSaddle_C", "Engrams")
+		  NormalizedPath = Ark.NormalizeBlueprintPath("PrimalItemArmor_RockDrakeSaddle_C", "Engrams")
 		  Call Assert(NormalizedPath = ExpectedOfficialPath, "Failed to resolve path correctly. Expected " + ExpectedOfficialPath + ", got " + NormalizedPath)
 		  
 		  
-		  NormalizedPath = Beacon.NormalizeBlueprintPath("BlueprintGeneratedClass'/Game/Mods/CrystalWyverns/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo_C'", "Creatures")
+		  NormalizedPath = Ark.NormalizeBlueprintPath("BlueprintGeneratedClass'/Game/Mods/CrystalWyverns/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo_C'", "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnofficialPath, "Failed to resolve path correctly. Expected " + ExpectedUnofficialPath + ", got " + NormalizedPath)
 		  
-		  NormalizedPath = Beacon.NormalizeBlueprintPath(ExpectedUnofficialPath, "Creatures")
+		  NormalizedPath = Ark.NormalizeBlueprintPath(ExpectedUnofficialPath, "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnofficialPath, "Failed to resolve path correctly. Expected " + ExpectedUnofficialPath + ", got " + NormalizedPath)
 		  
-		  NormalizedPath = Beacon.NormalizeBlueprintPath("Wyvern_Character_Blue_BP_PetCraftToo_C", "Creatures")
+		  NormalizedPath = Ark.NormalizeBlueprintPath("Wyvern_Character_Blue_BP_PetCraftToo_C", "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnknownPath, "Failed to resolve path correctly. Expected " + ExpectedUnknownPath + ", got " + NormalizedPath)
 		  
 		  
@@ -398,26 +399,26 @@ Protected Module Tests
 		  ObjectData.Value("Path") = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
 		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
 		  
-		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
+		  Var Engram As Ark.Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
 		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
+		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
 		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "", "", "Class", Nil)
+		  Engram = Ark.ResolveEngram(ObjectData, "", "", "Class", Nil)
 		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "", "Path", "", Nil)
+		  Engram = Ark.ResolveEngram(ObjectData, "", "Path", "", Nil)
 		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
 		  // Now use faulty data and see how it resolves
 		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
 		  ObjectData.Value("ObjectID") = BadEngramID
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
+		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "Path", "Class", Nil)
 		  Call Assert(Engram <> Nil And Engram.ObjectID = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID)
 		  
-		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
+		  Engram = Ark.ResolveEngram(ObjectData, "ObjectID", "", "", Nil)
 		  Call Assert(Engram <> Nil And Engram.ObjectID = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID)
 		End Sub
 	#tag EndMethod

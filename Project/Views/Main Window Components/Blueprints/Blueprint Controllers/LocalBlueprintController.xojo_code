@@ -3,6 +3,14 @@ Protected Class LocalBlueprintController
 Inherits BlueprintController
 	#tag Event
 		Sub Publish(BlueprintsToSave() As Ark.Blueprint, BlueprintsToDelete() As Ark.Blueprint)
+		  Var BlueprintMap As New Dictionary
+		  For Idx As Integer = 0 To BlueprintsToSave.LastIndex
+		    BlueprintMap.Value(BlueprintsToSave(Idx).ObjectID) = BlueprintsToSave(Idx)
+		  Next Idx
+		  For Idx As Integer = 0 To BlueprintsToDelete.LastIndex
+		    BlueprintMap.Value(BlueprintsToDelete(Idx).ObjectID) = BlueprintsToDelete(Idx)
+		  Next Idx
+		  
 		  Var Errors As New Dictionary
 		  Var Success As Boolean = Ark.DataSource.SharedInstance.SaveBlueprints(BlueprintsToSave, BlueprintsToDelete, Errors)
 		  If Success Then
@@ -10,8 +18,8 @@ Inherits BlueprintController
 		  Else
 		    Var Reasons() As String
 		    For Each Entry As DictionaryEntry In Errors
-		      Var Blueprint As Ark.Blueprint = Entry.Key
 		      Var Err As RuntimeException = Entry.Value
+		      Var Blueprint As Ark.Blueprint = BlueprintMap.Value(Entry.Key)
 		      
 		      If Err.Message.BeginsWith("Unique constraint failed") Then
 		        Reasons.Add(Blueprint.Label + ": A blueprint already exists with this path.")

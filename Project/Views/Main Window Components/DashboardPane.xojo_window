@@ -294,7 +294,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, LocalData.Notification_EngramUpdateStarted, LocalData.Notification_EngramUpdateFinished)
+		  NotificationKit.Ignore(Self, Beacon.DataSource.Notification_DatabaseUpdated, Beacon.DataSource.Notification_ImportStarted, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, Beacon.DataSource.Notification_SyncStarted, Beacon.DataSource.Notification_SyncFinished)
 		End Sub
 	#tag EndEvent
 
@@ -308,7 +308,7 @@ End
 		  Self.MinimumHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinimumWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, LocalData.Notification_EngramUpdateStarted, LocalData.Notification_EngramUpdateFinished)
+		  NotificationKit.Watch(Self, Beacon.DataSource.Notification_DatabaseUpdated, Beacon.DataSource.Notification_ImportStarted, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, Beacon.DataSource.Notification_SyncStarted, Beacon.DataSource.Notification_SyncFinished)
 		  
 		  Self.UpdateEngramStatus
 		End Sub
@@ -357,7 +357,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportFailed, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_EngramUpdateStarted, LocalData.Notification_EngramUpdateFinished
+		  Case Beacon.DataSource.Notification_DatabaseUpdated, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_ImportStarted, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_SyncStarted, Beacon.DataSource.Notification_SyncFinished
 		    Var LastSync As DateTime = Notification.UserData
 		    Self.UpdateEngramStatus(LastSync)
 		  Case IdentityManager.Notification_IdentityChanged
@@ -368,23 +368,28 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEngramStatus(LastSync As DateTime = Nil)
-		  If LocalData.SharedInstance.CheckingForEngramUpdates Then
-		    Self.SyncLabel.Text = "Checking for blueprint updates…"
-		    Self.EngramImportIndicator.Visible = True
-		  ElseIf LocalData.SharedInstance.Importing Then
-		    Self.SyncLabel.Text = "Importing blueprints…"
-		    Self.EngramImportIndicator.Visible = True
-		  Else
-		    If IsNull(LastSync) Then
-		      LastSync = LocalData.SharedInstance.LastSync
+		  Var Sources() As Beacon.DataSource = App.DataSources
+		  For Each Source As Beacon.DataSource In Sources
+		    If Source.Syncing Then
+		      Self.SyncLabel.Text = Source.Identifier + ": Checking for updates…"
+		      Self.EngramImportIndicator.Visible = True
+		      Return
+		    ElseIf Source.Importing Then
+		      Self.SyncLabel.Text = Source.Identifier + ": Importing update data…"
+		      Self.EngramImportIndicator.Visible = True
+		      Return
 		    End If
-		    If IsNull(LastSync) Then
-		      Self.SyncLabel.Text = "No blueprint data available"
-		    Else
-		      Self.SyncLabel.Text = "Blueprints updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
-		    End If
-		    Self.EngramImportIndicator.Visible = False
+		  Next Source
+		  
+		  If IsNull(LastSync) Then
+		    LastSync = App.NewestSyncDate
 		  End If
+		  If IsNull(LastSync) Then
+		    Self.SyncLabel.Text = "Databases are empty"
+		  Else
+		    Self.SyncLabel.Text = "Databases updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
+		  End If
+		  Self.EngramImportIndicator.Visible = False
 		End Sub
 	#tag EndMethod
 
@@ -438,7 +443,7 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Var LastSync As DateTime = LocalData.SharedInstance.LastSync
+		  Var LastSync As DateTime = Ark.DataSource.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
 		    Me.Text = "No engram data available"
 		  Else

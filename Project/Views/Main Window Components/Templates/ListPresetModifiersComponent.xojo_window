@@ -143,42 +143,42 @@ End
 		Private Sub CloneSelected()
 		  Var Siblings() As String
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
-		    Siblings.Add(Beacon.PresetModifier(Self.List.RowTagAt(Idx)).Label)
+		    Siblings.Add(Ark.LootContainerSelector(Self.List.RowTagAt(Idx)).Label)
 		  Next
 		  
-		  Var Clones() As Beacon.PresetModifier
+		  Var Clones() As Ark.LootContainerSelector
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(Idx) = False Then
 		      Continue
 		    End If
 		    
-		    Var Modifier As Beacon.PresetModifier = Self.List.RowTagAt(Idx)
-		    Var Clone As New Beacon.MutablePresetModifier(Modifier, True)
+		    Var Modifier As Ark.LootContainerSelector = Self.List.RowTagAt(Idx)
+		    Var Clone As New Ark.MutableLootContainerSelector(Modifier, True)
 		    Clone.Label = Beacon.FindUniqueLabel(Clone.Label, Siblings)
 		    Siblings.Add(Clone.Label)
 		    Clones.Add(Clone)
 		  Next
 		  
-		  LocalData.SharedInstance.AddPresetModifier(Clones)
+		  Ark.DataSource.SharedInstance.AddLootContainerSelector(Clones)
 		  Self.UpdateList(Clones)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub EditModifier(Modifier As Beacon.PresetModifier)
-		  Var CreatedModifier As Beacon.PresetModifier = PresetModifierEditorDialog.Present(Self, Modifier)
+		Private Sub EditModifier(Modifier As Ark.LootContainerSelector)
+		  Var CreatedModifier As Ark.LootContainerSelector = PresetModifierEditorDialog.Present(Self, Modifier)
 		  If CreatedModifier Is Nil Then
 		    Return
 		  End If
 		  
-		  LocalData.SharedInstance.AddPresetModifier(CreatedModifier)
+		  Ark.DataSource.SharedInstance.AddLootContainerSelector(CreatedModifier)
 		  Self.UpdateList(CreatedModifier)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Modifiers() As Beacon.PresetModifier
+		  Var Modifiers() As Ark.LootContainerSelector
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(Idx) = False Then
 		      Continue
@@ -190,19 +190,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectModifiers() As Beacon.PresetModifier)
+		Private Sub UpdateList(SelectModifiers() As Ark.LootContainerSelector)
 		  Var SelectIDs() As String
-		  For Each Modifier As Beacon.PresetModifier In SelectModifiers
-		    SelectIDs.Add(Modifier.ModifierID)
+		  For Each Modifier As Ark.LootContainerSelector In SelectModifiers
+		    SelectIDs.Add(Modifier.UUID)
 		  Next
 		  
-		  Var Modifiers() As Beacon.PresetModifier = Beacon.Data.GetPresetModifiers(False, True)
+		  Var Modifiers() As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelectors(False, True)
 		  
 		  Self.List.RowCount = Modifiers.Count
 		  For Idx As Integer = 0 To Self.List.LastRowIndex
 		    Self.List.CellValueAt(Idx, 0) = Modifiers(Idx).Label
 		    Self.List.RowTagAt(Idx) = Modifiers(Idx)
-		    Self.List.Selected(Idx) = SelectIDs.IndexOf(Modifiers(Idx).ModifierID) > -1
+		    Self.List.Selected(Idx) = SelectIDs.IndexOf(Modifiers(Idx).UUID) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -210,8 +210,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectModifier As Beacon.PresetModifier)
-		  Var Modifiers() As Beacon.PresetModifier
+		Private Sub UpdateList(SelectModifier As Ark.LootContainerSelector)
+		  Var Modifiers() As Ark.LootContainerSelector
 		  If (SelectModifier Is Nil) = False Then
 		    Modifiers.Add(SelectModifier)
 		  End If
@@ -226,7 +226,7 @@ End
 	#tag EndHook
 
 
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon.presetmodifier", Scope = Private
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.Ark.LootContainerSelector", Scope = Private
 	#tag EndConstant
 
 
@@ -247,7 +247,7 @@ End
 		  
 		  Select Case Item.Name
 		  Case "NewModifier"
-		    Self.EditModifier(New Beacon.MutablePresetModifier)
+		    Self.EditModifier(New Ark.MutableLootContainerSelector)
 		  Case "EditModifier"
 		    Self.List.DoEdit()
 		  Case "CloneModifier"
@@ -279,7 +279,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Var Modifiers() As Beacon.PresetModifier
+		  Var Modifiers() As Ark.LootContainerSelector
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) Then
 		      Modifiers.Add(Me.RowTagAt(Idx))
@@ -290,11 +290,11 @@ End
 		    Return
 		  End If
 		  
-		  If Not LocalData.SharedInstance.DeletePresetModifier(Modifiers) Then
+		  If Not Ark.DataSource.SharedInstance.DeleteLootContainerSelector(Modifiers) Then
 		    If Modifiers.Count = 1 Then
-		      Self.ShowAlert("This preset selector is still in use by at least one preset and cannot be deleted.", "Once you have removed this selector from all presets, try to delete it again.")
+		      Self.ShowAlert("This loot container selector is still in use by at least one preset and cannot be deleted.", "Once you have removed this selector from all loot templates, try to delete it again.")
 		    Else
-		      Self.ShowAlert("These preset selectors cannot be deleted until there are no presets that use them.", "If you have trouble figuring out which preset selector is still in use, try deleting fewer at a time.")
+		      Self.ShowAlert("These loot container selectors cannot be deleted until there are no presets that use them.", "If you have trouble figuring out which loot container selector is still in use, try deleting fewer at a time.")
 		    End If
 		    Return
 		  End If
@@ -306,7 +306,7 @@ End
 		  Var Dictionaries() As Dictionary
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    If Me.Selected(Idx) Then
-		      Dictionaries.Add(Beacon.PresetModifier(Me.RowTagAt(Idx)).ToDictionary(False))
+		      Dictionaries.Add(Ark.LootContainerSelector(Me.RowTagAt(Idx)).SaveData(False))
 		    End If
 		  Next
 		  
@@ -340,14 +340,14 @@ End
 		    Return
 		  End Try
 		  
-		  Var Added() As Beacon.PresetModifier
+		  Var Added() As Ark.LootContainerSelector
 		  For Each Member As Variant In Members
 		    If (Member IsA Dictionary) = False Then
 		      Continue
 		    End If
 		    
 		    Try
-		      Var Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dictionary(Member))
+		      Var Modifier As Ark.LootContainerSelector = Ark.LootContainerSelector.FromSaveData(Dictionary(Member))
 		      If Modifier <> Nil Then
 		        Added.Add(Modifier)
 		      End If
@@ -355,7 +355,7 @@ End
 		    End Try
 		  Next
 		  
-		  LocalData.SharedInstance.AddPresetModifier(Added)
+		  Ark.DataSource.SharedInstance.AddLootContainerSelector(Added)
 		  Self.UpdateList(Added)
 		End Sub
 	#tag EndEvent

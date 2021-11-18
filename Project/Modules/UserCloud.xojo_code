@@ -481,11 +481,13 @@ Protected Module UserCloud
 		    SyncKey = ""
 		  End If
 		  
-		  If LocalData.SharedInstance.Importing Then
-		    // Wait
-		    SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
-		    Return
-		  End If
+		  Var Sources() As Beacon.DataSource = App.DataSources
+		  For Each Source As Beacon.DataSource In Sources
+		    If Source.Importing Then
+		      SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
+		      Return
+		    End If
+		  Next Source
 		  
 		  SyncActions.ResizeTo(-1)
 		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))

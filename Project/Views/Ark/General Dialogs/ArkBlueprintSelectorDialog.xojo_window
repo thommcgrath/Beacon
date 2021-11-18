@@ -409,7 +409,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
+		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
 		  Self.SwapButtons()

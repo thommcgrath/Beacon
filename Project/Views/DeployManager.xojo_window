@@ -675,6 +675,7 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1197,7 +1198,7 @@ End
 		  Var State As New TextAreaState
 		  State.ApplyTo(Self.ReviewArea)
 		  Self.ReviewSwitcher.SelectedIndex = 1
-		  Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGameUserSettings, "").StringValue
+		  Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGameUserSettings, "").StringValue
 		  Self.UpdatingReviewContent = False
 		End Sub
 	#tag EndMethod
@@ -1392,8 +1393,8 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconGameUserSettingsIni, Beacon.ConfigFileGameUserSettings, Beacon.ConfigFileGameUserSettings)
-		  Me.Add(IconGameIni, Beacon.ConfigFileGame, Beacon.ConfigFileGame)
+		  Me.Add(IconGameUserSettingsIni, Ark.ConfigFileGameUserSettings, Ark.ConfigFileGameUserSettings)
+		  Me.Add(IconGameIni, Ark.ConfigFileGame, Ark.ConfigFileGame)
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = 1
 		End Sub
@@ -1417,9 +1418,9 @@ End
 		  Var UserData As Dictionary = Controller.UserData
 		  Select Case Me.SelectedIndex
 		  Case 1
-		    Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGameUserSettings, "").StringValue
+		    Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGameUserSettings, "").StringValue
 		  Case 2
-		    Self.ReviewArea.Text = UserData.Lookup(Beacon.ConfigFileGame, "").StringValue
+		    Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGame, "").StringValue
 		  End Select
 		  Self.UpdatingReviewContent = False
 		End Sub

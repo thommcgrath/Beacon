@@ -301,7 +301,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Picker.ClearSelections()
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags()
+		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags()
 		  
 		  Var Masks() As UInt64
 		  Var Tags As New Dictionary

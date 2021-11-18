@@ -454,13 +454,12 @@ End
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
 		  
 		  If (Self.mSourceModifier Is Nil) = False Then
-		    If Self.mSourceModifier.UsesAdvancedPattern Then
+		    If Self.mSourceModifier.Language = Ark.LootContainerSelector.LanguageJavaScript Then
 		      Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS
-		      Self.CodeField.Text = Self.mSourceModifier.AdvancedPattern
 		    Else
 		      Self.SyntaxMenu.SelectedRowIndex = Self.IndexRegEx
-		      Self.CodeField.Text = Self.mSourceModifier.Pattern
 		    End If
+		    Self.CodeField.Text = Self.mSourceModifier.Code
 		    Self.NameField.Text = Self.mSourceModifier.Label
 		    Call Self.RunTest(True)
 		  End If
@@ -482,14 +481,14 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Modifier As Beacon.PresetModifier)
+		Sub Constructor(Modifier As Ark.LootContainerSelector)
 		  Self.mSourceModifier = Modifier
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Modifier As Beacon.PresetModifier = Nil) As Beacon.PresetModifier
+		Shared Function Present(Parent As Window, Modifier As Ark.LootContainerSelector = Nil) As Ark.LootContainerSelector
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
@@ -500,7 +499,7 @@ End
 		    Win.Close
 		    Return Nil
 		  End If
-		  Var NewModifier As Beacon.PresetModifier = Win.mNewModifier
+		  Var NewModifier As Ark.LootContainerSelector = Win.mNewModifier
 		  Win.Close
 		  Return NewModifier
 		End Function
@@ -522,19 +521,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function RunTest(Silent As Boolean) As Boolean
-		  Var Modifier As New Beacon.MutablePresetModifier
+		  Var Modifier As New Ark.MutableLootContainerSelector
+		  Modifier.Code = Self.CodeField.Text
 		  If Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS Then
-		    Modifier.AdvancedPattern = Self.CodeField.Text
+		    Modifier.Language = Ark.LootContainerSelector.LanguageJavaScript
 		  Else
-		    Modifier.Pattern = Self.CodeField.Text
+		    Modifier.Language = Ark.LootContainerSelector.LanguageRegEx
 		  End If
 		  
 		  Var Message As String
-		  If Modifier.TestPattern(Message) Then
-		    Var Sources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", New Beacon.StringList, True)
-		    Var Matches() As Beacon.LootSource = Modifier.Matches(Sources)
+		  If Modifier.TestCode(Message) Then
+		    Var Sources() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainers("", New Beacon.StringList, "", True)
+		    Var Matches() As Ark.LootContainer = Modifier.Matches(Sources)
 		    Self.MatchList.RemoveAllRows
-		    For Each Source As Beacon.LootSource In Matches
+		    For Each Source As Ark.LootContainer In Matches
 		      Self.MatchList.AddRow(Source.Label)
 		    Next
 		    Return True
@@ -553,11 +553,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNewModifier As Beacon.PresetModifier
+		Private mNewModifier As Ark.LootContainerSelector
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSourceModifier As Beacon.PresetModifier
+		Private mSourceModifier As Ark.LootContainerSelector
 	#tag EndProperty
 
 
@@ -579,24 +579,23 @@ End
 		  
 		  Self.mCancelled = False
 		  
-		  Var Modifier As Beacon.MutablePresetModifier
+		  Var Modifier As Ark.MutableLootContainerSelector
 		  If Self.mSourceModifier Is Nil Then
-		    Modifier = New Beacon.MutablePresetModifier
+		    Modifier = New Ark.MutableLootContainerSelector
 		  Else
-		    Modifier = New Beacon.MutablePresetModifier(Self.mSourceModifier)
+		    Modifier = New Ark.MutableLootContainerSelector(Self.mSourceModifier)
 		  End If
 		  
 		  Modifier.Label = Self.NameField.Text
+		  Modifier.Code = Self.CodeField.Text
 		  
 		  If Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS Then
-		    Modifier.AdvancedPattern = Self.CodeField.Text
-		    Modifier.Pattern = ""
+		    Modifier.Language = Ark.LootContainerSelector.LanguageJavaScript
 		  Else
-		    Modifier.AdvancedPattern = ""
-		    Modifier.Pattern = Self.CodeField.Text
+		    Modifier.Language = Ark.LootContainerSelector.LanguageRegEx
 		  End If
 		  
-		  Self.mNewModifier = New Beacon.PresetModifier(Modifier)
+		  Self.mNewModifier = New Ark.LootContainerSelector(Modifier)
 		  
 		  Self.Hide
 		End Sub

@@ -468,7 +468,7 @@ End
 		  
 		  // Reduce the target by a set amount and compute the imprint multiplier
 		  Var TargetCuddleSeconds As Double = FastestMature * Threshold
-		  Var OfficialCuddlePeriod As Integer = Round(LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue)
+		  Var OfficialCuddlePeriod As Integer = Round(Ark.DataSource.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.mBaselineRates.Value("BabyCuddleIntervalMultiplier").DoubleValue)
 		  Var ImprintMultiplier As Double = (TargetCuddleSeconds / (Self.mImprintAmountMultiplier * Self.mBaselineRates.Value("BabyImprintAmountMultiplier").DoubleValue)) / OfficialCuddlePeriod
 		  
 		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList
@@ -500,7 +500,7 @@ End
 #tag Events MajorCreaturesButton
 	#tag Event
 		Sub Action()
-		  Self.CheckCreatures(LocalData.SharedInstance.GetStringVariable("Major Imprint Creatures"))
+		  Self.CheckCreatures(Ark.DataSource.SharedInstance.GetStringVariable("Major Imprint Creatures"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -27,12 +27,6 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Function GetIdentifier() As String
-		  Return "Common"
-		End Function
-	#tag EndEvent
-
-	#tag Event
 		Function GetSchemaVersion() As Integer
 		  Return 100
 		End Function
@@ -204,6 +198,12 @@ Inherits Beacon.DataSource
 		  Wend
 		  
 		  Return Templates
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Identifier() As String
+		  Return "Common"
 		End Function
 	#tag EndMethod
 
