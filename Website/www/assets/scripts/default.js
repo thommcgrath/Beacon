@@ -37,7 +37,7 @@ var explore = {
 			}
 			this.searchTimeout = setTimeout(function() {
 				explore.search(explore.field.value);
-			}, 500);
+			}, 1000);
 		});
 		
 		document.getElementById('explore_results_back').addEventListener('click', function() {
