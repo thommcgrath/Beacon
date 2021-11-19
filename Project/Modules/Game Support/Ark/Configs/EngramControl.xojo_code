@@ -87,7 +87,7 @@ Inherits Ark.ConfigGroup
 		        
 		        ExplicitAutoUnlocked = True
 		        UnlockEntries.Add(EntryString)
-		        UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks=(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")", "EngramEntryAutoUnlocks:" + EntryString))
+		        UnlockConfigs.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "EngramEntryAutoUnlocks=(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")", "EngramEntryAutoUnlocks:" + EntryString))
 		      End If
 		    End If
 		    

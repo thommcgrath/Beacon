@@ -775,7 +775,7 @@ End
 		  Self.mAllowManualUnlock = True
 		  
 		  For Idx As Integer = 0 To Engrams.LastIndex
-		    If Beacon.Data.EngramIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
+		    If Ark.DataSource.SharedInstance.BlueprintIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
 		      Self.mAllowManualUnlock = False
 		      Exit For Idx
 		    End If
@@ -969,7 +969,7 @@ End
 		        Continue
 		      End If
 		      
-		      If Beacon.Data.EngramIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
+		      If Ark.DataSource.SharedInstance.BlueprintIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
 		        ManualUnlockAllowed = False
 		        Exit For Idx
 		      End If
@@ -1013,7 +1013,7 @@ End
 		      Self.mConfig.AutoUnlockEngram(Engram) = AutoUnlock
 		    End If
 		    
-		    If Beacon.Data.EngramIsCustom(Engram) = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
+		    If Ark.DataSource.SharedInstance.BlueprintIsCustom(Engram) = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
 		      If EditLevel Then
 		        Self.mConfig.RequiredPlayerLevel(Engram) = RequiredLevel
 		      End If

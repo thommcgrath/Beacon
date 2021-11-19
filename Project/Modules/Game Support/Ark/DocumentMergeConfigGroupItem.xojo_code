@@ -4,7 +4,7 @@ Inherits Beacon.DocumentMergeItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Group As Ark.ConfigGroup, SourceProject As Ark.Project, SourceConfigSet As String)
 		  Self.Group = Group
-		  Self.Label = Group.Label
+		  Self.Label = Language.LabelForConfig(Group)
 		  Self.SourceProject = SourceProject
 		  Self.SourceConfigSet = SourceConfigSet
 		End Sub
@@ -24,7 +24,7 @@ Inherits Beacon.DocumentMergeItem
 
 	#tag Method, Flags = &h0
 		Function SourceKey() As String
-		  Return Self.SourceDocument.DocumentID + ":" + Self.SourceConfigSet
+		  Return Self.SourceProject.UUID + ":" + Self.SourceConfigSet
 		End Function
 	#tag EndMethod
 
@@ -116,6 +116,14 @@ Inherits Beacon.DocumentMergeItem
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SourceConfigSet"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

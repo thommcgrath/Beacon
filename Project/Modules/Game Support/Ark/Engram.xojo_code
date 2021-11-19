@@ -212,16 +212,16 @@ Implements Ark.Blueprint
 	#tag Method, Flags = &h0
 		Function ManualUnlock() As Boolean
 		  If Self.HasUnlockDetails = False Then
-		    Return Beacon.Data.EngramIsCustom(Self)
+		    Return Ark.DataSource.SharedInstance.BlueprintIsCustom(Self)
 		  End If
 		  
-		  Return ((Self.RequiredPlayerLevel Is Nil) = False And (Self.RequiredUnlockPoints Is Nil) = False) Or Beacon.Data.EngramIsCustom(Self) = True
+		  Return ((Self.RequiredPlayerLevel Is Nil) = False And (Self.RequiredUnlockPoints Is Nil) = False) Or Ark.DataSource.SharedInstance.BlueprintIsCustom(Self) = True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-	 	  Return Self.mModified
+		  Return Self.mModified
 		End Function
 	#tag EndMethod
 

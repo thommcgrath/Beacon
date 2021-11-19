@@ -391,6 +391,16 @@ End
 		    Next
 		  End If
 		  
+		  Var ShowConfigSetNames As Boolean
+		  For Each SourceProject As Beacon.Project In SourceProjects
+		    Var SetNames() As String = SourceProject.ConfigSetNames
+		    If SetNames.Count > 1 Then
+		      ShowConfigSetNames = True
+		      Exit For SourceProject
+		    End If
+		  Next SourceProject
+		  
+		  Var ActiveConfigSet As String = DestinationProject.ActiveConfigSet
 		  Var MergeItems() As Beacon.DocumentMergeItem
 		  Var DesiredArkMask As UInt64
 		  Var UniqueContentPacks As New Dictionary
@@ -399,15 +409,21 @@ End
 		      Var ArkProject As Ark.Project = Ark.Project(SourceProject)
 		      
 		      // Config Groups
-		      Var Configs() As Ark.ConfigGroup = ArkProject.ImplementedConfigs
-		      For Each Config As Ark.ConfigGroup In Configs
-		        Var MergeItem As New Ark.DocumentMergeConfigGroupItem(Config, ArkProject)
-		        If UseServerNames Then
-		          MergeItem.Label = MergeItem.Label + EndOfLine + "From " + ArkProject.Title
-		        End If
-		        MergeItem.DestinationConfigSet = ArkProject.ActiveConfigSet
-		        MergeItems.Add(MergeItem)
-		      Next
+		      Var SetNames() As String = SourceProject.ConfigSetNames
+		      For Each SetName As String In SetNames
+		        Var Configs() As Ark.ConfigGroup = ArkProject.ImplementedConfigs(SetName)
+		        For Each Config As Ark.ConfigGroup In Configs
+		          Var MergeItem As New Ark.DocumentMergeConfigGroupItem(Config, ArkProject, SetName)
+		          If ShowConfigSetNames Then
+		            MergeItem.Label = SetName + ": " + MergeItem.Label
+		          End If
+		          If UseServerNames Then
+		            MergeItem.Label = MergeItem.Label + EndOfLine + "From " + ArkProject.Title
+		          End If
+		          MergeItem.DestinationConfigSet = ActiveConfigSet
+		          MergeItems.Add(MergeItem)
+		        Next Config
+		      Next SetName
 		      
 		      // Maps to be handled after the loop
 		      DesiredArkMask = DesiredArkMask Or ArkProject.MapMask
