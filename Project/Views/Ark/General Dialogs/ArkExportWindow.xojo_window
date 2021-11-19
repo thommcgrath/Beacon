@@ -666,6 +666,7 @@ Begin BeaconDialog ArkExportWindow
    End
    Begin Ark.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""

@@ -259,10 +259,10 @@ End
 		  End If
 		  Var Count As Integer = FoundInDocuments.Count
 		  Var AlreadyInDestination As Boolean
-		  If FoundInDocuments.IndexOf(Self.mDestination.UUID) > -1 Then
+		  If FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1 Then
 		    AlreadyInDestination = True
 		  End If
-		  If FoundInDocuments.IndexOf(ConfigItem.SourceProject.UUID) > -1 Then
+		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
 		    Count = Count - 1
 		  End If
 		  If AlreadyInDestination And Count = 1 Then
@@ -329,9 +329,9 @@ End
 		  End If
 		  
 		  Var Count As Integer = FoundInDocuments.Count
-		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.UUID) > -1
+		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.UUID + ":" + ConfigItem.DestinationConfigSet) > -1
 		  
-		  If FoundInDocuments.IndexOf(ConfigItem.SourceProject.UUID) > -1 Then
+		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
 		    Count = Count - 1
 		  End If
 		  
@@ -516,7 +516,7 @@ End
 		    End If
 		    
 		    Var ConfigItem As Ark.DocumentMergeConfigGroupItem = Ark.DocumentMergeConfigGroupItem(MergeItem)
-		    If ConfigItem.OrganizationKey <> TargetKey Or ConfigItem.SourceProject.UUID = TargetConfigItem.SourceProject.UUID Then
+		    If ConfigItem.OrganizationKey <> TargetKey Or ConfigItem.SourceKey = TargetConfigItem.SourceKey Then
 		      Continue
 		    End If
 		    
@@ -545,7 +545,7 @@ End
 		    For Each ConfigSet As String In ConfigSets
 		      Var Groups() As Ark.ConfigGroup = Ark.Project(Self.mDestination).ImplementedConfigs(ConfigSet)
 		      For Each Group As Ark.ConfigGroup In Groups
-		        ConfigMap.Value(ConfigSet + ":" + Group.InternalName) = Array(Self.mDestination.UUID)
+		        ConfigMap.Value(ConfigSet + ":" + Group.InternalName) = Array(Self.mDestination.UUID + ":" + ConfigSet)
 		      Next
 		    Next
 		    For RowIndex As Integer = 0 To Self.List.LastRowIndex
@@ -560,7 +560,7 @@ End
 		      If ConfigMap.HasKey(Key) Then
 		        Map = ConfigMap.Value(Key)
 		      End If
-		      Map.Add(ConfigItem.SourceProject.UUID)
+		      Map.Add(ConfigItem.SourceKey)
 		      ConfigMap.Value(Key) = Map
 		    Next
 		  End If

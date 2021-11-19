@@ -29,7 +29,7 @@ AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
 Compression=lzma2
 SolidCompression=no
-MinVersion=6.1.7601
+MinVersion=6.1sp1
 ChangesAssociations=yes
 #ifdef x64
   OutputDir=Output\{#MyAppVersion}\x64
@@ -46,11 +46,13 @@ ChangesAssociations=yes
   ArchitecturesInstallIn64BitMode=x64 arm64
 #endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://usebeaon.app$q $f
+SignToolRunMinimized=true
 SignedUninstaller=yes
 WizardStyle=modern
 SetupIconFile=../../Artwork/App.ico
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
+AppMutex=com.thezaz.beacon
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

@@ -17,7 +17,7 @@ header('Cache-Control: no-cache');
 	<div class="column">
 		<p><strong>Windows</strong></p>
 		<ul>
-			<li id="win_version_requirements">Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, or newer.</li>
+			<li id="win_version_requirements">Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, Windows 11, or newer.</li>
 			<li>1280x720 screen resolution or greater. Windows scaling settings will affect this number. For example, a 150% scaling setting would require 1.5 times more pixels, which is 1920x1080. At 200% scaling, the minimum screen resolution is 2560x1440.</li>
 		</ul>
 	</div>
@@ -25,8 +25,7 @@ header('Cache-Control: no-cache');
 
 $database = BeaconCommon::Database();
 $download_links = [
-	'current' => BuildLinksForStage($database, 3),
-	'legacy' => BuildLinksForVersion($database, 10408304)
+	'current' => BuildLinksForStage($database, 3)
 ];
 $prerelease_stage = $database->Query('SELECT stage FROM updates WHERE build_number > $1 AND stage < 3 ORDER BY build_number DESC LIMIT 1;', $download_links['current']['build_number']);
 if ($prerelease_stage->RecordCount() === 1) {
@@ -214,6 +213,9 @@ function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results
 	list($mac_major, $mac_minor, $mac_bug) = explode('.', $min_mac_version, 3);
 	$min_mac_version = ($mac_major * 10000) + ($mac_minor * 100) + $mac_bug;
 	$mac_versions = [];
+	if ($min_mac_version <= 101700) {
+		$mac_versions[] = '12 Monterey';
+	}
 	if ($min_mac_version <= 101600) {
 		$mac_versions[] = '11 Big Sur';
 	}
@@ -236,18 +238,21 @@ function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results
 	
 	$min_win_version = $results->Field('min_win_version');
 	list($win_major, $win_minor, $win_build) = explode('.', $min_win_version, 3);
-	$min_win_version = ($win_major * 1000000) + ($win_minor * 10000) + $win_build;
+	$min_win_version = ($win_major * 100000000) + ($win_minor * 1000000) + $win_build;
 	$win_versions = [];
-	if ($min_win_version <= 100000000) {
+	if ($min_win_version <= 1000022000) {
+		$win_versions[] = 'Windows 11';
+	}
+	if ($min_win_version <= 1000010240) {
 		$win_versions[] = 'Windows 10';
 	}
-	if ($min_win_version <= 60309600) {
+	if ($min_win_version <= 603009600) {
 		$win_versions[] = 'Windows 8.1';
 	}
-	if ($min_win_version <= 60309200) {
+	if ($min_win_version <= 603009200) {
 		$win_versions[] = 'Windows 8';
 	}
-	if ($min_win_version <= 60107601) {
+	if ($min_win_version <= 601007601) {
 		$win_versions[] = 'Windows 7 with Service Pack 1';
 	}
 	$data['win_display_versions'] = BeaconCommon::ArrayToEnglish($win_versions, 'or');

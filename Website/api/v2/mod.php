@@ -58,15 +58,16 @@ case 'POST':
 	$mods = array();
 	$database->BeginTransaction();
 	foreach ($items as $item) {
-		if (!BeaconCommon::HasAllKeys($item, 'mod_id')) {
+		if (BeaconCommon::HasAllKeys($item, 'mod_id') === false) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
-		$workshop_id = abs($item['mod_id']);
-		if (!is_numeric($workshop_id)) {
+		$workshop_id = $item['mod_id'];
+		if (is_numeric($workshop_id) === false) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Mod ID must be numeric.', $item);
 		}
+		$workshop_id = abs(intval($workshop_id));
 		$pull_url = null;
 		if (isset($item['pull_url'])) {
 			$pull_url = filter_var($item['pull_url'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED);

@@ -126,16 +126,6 @@ End
 		  
 		  PreflightSocket.RequestHeader("User-Agent") = App.UserAgent
 		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Self.mPreviousVersion.ToString("0") + "&to=" + App.BuildNumber.ToString))
-		  
-		  If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
-		    Self.Viewer.Visible = False
-		    Self.WinViewer.Top = 0
-		    Self.WinViewer.Left = 0
-		    Self.WinViewer.Width = Self.Width
-		    Self.WinViewer.Height = Self.Height
-		    Self.WinViewer.UserAgent = App.UserAgent
-		    Self.WinViewer.Visible = True
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -164,6 +154,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SetTitle(NewTitle As String)
+		  If Self.mPreviousVersion = 0 Then
+		    Self.Title = NewTitle
+		  Else
+		    Self.Title = "What's new in Beacon: " + NewTitle
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function ShouldCancel(URL As String) As Boolean
 		  If URL.BeginsWith("beacon://finished") Then
 		    Call CallLater.Schedule(1, AddressOf CloseLater)
@@ -179,9 +179,26 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowConfirmedURL()
+		  Try
+		    If Self.WinViewer.Visible Then
+		      Self.WinViewer.LoadURL(Self.mConfirmedURL)
+		    ElseIf Self.Viewer.Visible Then
+		      Self.Viewer.LoadURL(Self.mConfirmedURL)
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBottomMargin As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConfirmedURL As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -230,7 +247,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub TitleChanged(newTitle as String)
-		  Self.Title = "What's new in Beacon: " + NewTitle
+		  Self.SetTitle(NewTitle)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -245,12 +262,23 @@ End
 	#tag Event
 		Sub HeadersReceived(URL As String, HTTPStatus As Integer)
 		  If HTTPStatus = 200 Then
-		    If Self.WinViewer.Visible Then
-		      Self.Visible = True // Has to be visible before loading
-		      Self.WinViewer.LoadURL(URL)
+		    Self.mConfirmedURL = URL
+		    Self.Visible = True
+		    
+		    If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
+		      Self.Viewer.Visible = False
+		      Self.WinViewer.Top = 0
+		      Self.WinViewer.Left = 0
+		      Self.WinViewer.Width = Self.Width
+		      Self.WinViewer.Height = Self.Height
+		      Self.WinViewer.UserAgent = App.UserAgent
+		      Self.WinViewer.Visible = True
 		    Else
-		      Self.Viewer.LoadURL(URL)
+		      Self.Viewer.Visible = True
+		      Self.WinViewer.Visible = False
 		    End If
+		    
+		    Call CallLater.Schedule(250, AddressOf ShowConfirmedURL)
 		  Else
 		    Self.Close
 		  End If
@@ -277,7 +305,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DocumentTitleChanged()
-		  Self.Title = "What's new in Beacon: " + Me.DocumentTitle
+		  Self.SetTitle(Me.DocumentTitle)
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -546,6 +546,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          AllowFocusRing  =   True
          AllowRecentItems=   False
          ClearMenuItemValue=   "Clear"
+         DelayPeriod     =   250
          Enabled         =   True
          Height          =   22
          Hint            =   "Search Loot Containers"
@@ -731,7 +732,7 @@ End
 		  
 		  Var CurrentContainers() As Ark.LootContainer = Self.mConfig.Containers
 		  Var Labels As Dictionary = CurrentContainers.Disambiguate(Self.mMask)
-		  Var AllowedLootContainers() As Ark.LootContainer = Data.GetLootContainers(Self.FilterField.Text, Self.mContentPacks, "", Preferences.ShowExperimentalLootSources)
+		  Var AllowedLootContainers() As Ark.LootContainer = Data.GetLootContainers(Self.FilterField.Text.MakeUTF8, Self.mContentPacks, "", Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootContainers.LastIndex DownTo 0
 		    If Not AllowedLootContainers(X).ValidForMask(Self.mMask) Then
 		      AllowedLootContainers.RemoveAt(X)

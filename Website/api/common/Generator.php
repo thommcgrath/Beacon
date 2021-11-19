@@ -31,14 +31,22 @@ class Generator {
 		}
 		
 		$version = $contents['Version'];
-		if ($version >= 3) {
+		if (isset($contents['Config Sets'])) {
+			if (isset($contents['Config Sets']['Base']['LootDrops']['Contents'])) {
+				$loot_sources_json = $contents['Config Sets']['Base']['LootDrops']['Contents'];
+			} else {
+				$loot_sources_json = [];
+			}
+		} elseif (isset($contents['Configs'])) {
 			if (isset($contents['Configs']['LootDrops']['Contents'])) {
 				$loot_sources_json = $contents['Configs']['LootDrops']['Contents'];
 			} else {
-				$loot_sources_json = array();
+				$loot_sources_json = [];
 			}
-		} else {
+		} elseif (isset($contents['LootSources'])) {
 			$loot_sources_json = $contents['LootSources'];
+		} else {
+			$loot_sources_json = [];
 		}
 		$new_lines = array(
 			sprintf('SupplyCrateLootQualityMultiplier=%F', $this->quality_scale)
@@ -234,7 +242,12 @@ class Generator {
 			$options_weight_sum = $options_weight_sum + max(floatval($item['Weight']), 0.0001);
 		}
 		foreach ($items as $item) {
-			$classes[] = sprintf('"%s"', $item['Class']);
+			if (isset($item['Blueprint']['Class'])) {
+				$classes[] = sprintf('"%s"', $item['Blueprint']['Class']);
+			} elseif (isset($item['Class'])) {
+				$classes[] = sprintf('"%s"', $item['Class']);
+			}
+			
 			$relative_weights[] = sprintf('%u', round((max(floatval($item['Weight']), 0.0001) / $options_weight_sum) * 1000));
 		}
 		

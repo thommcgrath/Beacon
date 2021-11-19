@@ -166,6 +166,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupLogs)
+		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetWindowsBrowserMode)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_SetupDatabases)
 		  Self.mLaunchQueue.Add(AddressOf LaunchQueue_CleanupConfigBackups)
@@ -884,6 +885,23 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mLogManager.Flush
 		  Catch Err As RuntimeException
 		  End Try
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SetWindowsBrowserMode()
+		  #if TargetWindows
+		    Try
+		      // Only do this if WebView2 is not available
+		      If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty Then
+		        Var Reg As New RegistryItem("HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION")
+		        Reg.Value(Self.ExecutableFile.Name) = CType(&h2AF8, Int32)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  #endif
 		  
 		  Self.NextLaunchQueueTask()
 		End Sub

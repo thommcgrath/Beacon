@@ -119,11 +119,17 @@ case 'GET':
 			$params['mask'] = $_GET['mask'];
 		}
 		if (isset($_GET['search'])) {
-			$clauses[] = 'document_id IN (SELECT id FROM search_contents, to_tsquery(::query::) AS keywords WHERE keywords @@ lexemes AND type = \'Document\')';
-			$query = preg_replace('/[^a-z ]/', '', strtolower($_GET['search']));
-			$query = preg_replace('/\s+/', ' | ', trim($query));
-			$query = preg_replace('/(\w+)/', '$1:*', $query);
-			$params['query'] = $query;
+			$search = new BeaconSearch();
+			$results = $search->Search($_GET['search'], null, 100, 'Document');
+			if (count($results) > 0) {
+				$ids = [];
+				foreach ($results as $result) {
+					$ids[] = $database->EscapeLiteral($result['objectID']);
+				}
+				$clauses[] = 'document_id IN (' . implode(', ', $ids) . ')';
+			} else {
+				$clauses[] = "document_id = '00000000-0000-0000-0000-000000000000'";
+			}
 		}
 		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM allowed_documents WHERE ' . implode(' AND ', $clauses);
 		

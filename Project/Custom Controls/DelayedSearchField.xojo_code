@@ -2,18 +2,35 @@
 Protected Class DelayedSearchField
 Inherits UITweaks.ResizedSearchField
 	#tag Event
+		Function KeyDown(key As String) As Boolean
+		  If RaiseEvent KeyDown(Key) Then
+		    Return True
+		  End If
+		  
+		  Var Code As Integer = Key.Asc
+		  Select Case Code
+		  Case 10, 13, 3
+		    Self.TriggerAfter(10)
+		    Return False
+		  End Select
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub LostFocus()
+		  Self.TriggerAfter(10)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Pressed()
-		  Self.mTimer.Reset
-		  Self.mTimer.Period = 10
-		  Self.mTimer.RunMode = Timer.RunModes.Single
+		  Self.TriggerAfter(10)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub TextChanged()
-		  Self.mTimer.Reset
-		  Self.mTimer.Period = 250
-		  Self.mTimer.RunMode = Timer.RunModes.Single
+		  Self.TriggerAfter(Self.DelayPeriod)
 		End Sub
 	#tag EndEvent
 
@@ -24,7 +41,7 @@ Inherits UITweaks.ResizedSearchField
 		  
 		  Self.mTimer = New Timer
 		  Self.mTimer.RunMode = Timer.RunModes.Off
-		  Self.mTimer.Period = 100
+		  Self.mTimer.Period = 250
 		  AddHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
 		  
 		  Super.Constructor
@@ -44,15 +61,38 @@ Inherits UITweaks.ResizedSearchField
 		Private Sub mTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  RaiseEvent TextChanged
+		  If Self.mLastEventValue.Compare(Self.Text, ComparisonOptions.CaseSensitive) <> 0 Then
+		    Self.mLastEventValue = Self.Text
+		    RaiseEvent TextChanged
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerAfter(Delay As Integer)
+		  Self.mTimer.Reset
+		  Self.mTimer.Period = Delay
+		  Self.mTimer.RunMode = Timer.RunModes.Single
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
+		Event KeyDown(key As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event TextChanged()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h0
+		DelayPeriod As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastEventValue As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mTimer As Timer
@@ -157,14 +197,6 @@ Inherits UITweaks.ResizedSearchField
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabStop"
 			Visible=true
 			Group="Position"
@@ -221,14 +253,6 @@ Inherits UITweaks.ResizedSearchField
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Hint"
-			Visible=true
-			Group="Initial State"
-			InitialValue="Search"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AllowRecentItems"
 			Visible=true
 			Group="Behavior"
@@ -261,20 +285,44 @@ Inherits UITweaks.ResizedSearchField
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Text"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DelayPeriod"
+			Visible=true
+			Group="Behavior"
+			InitialValue="250"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Hint"
+			Visible=true
+			Group="Initial State"
+			InitialValue="Search"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group=""
+			InitialValue=""
+			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

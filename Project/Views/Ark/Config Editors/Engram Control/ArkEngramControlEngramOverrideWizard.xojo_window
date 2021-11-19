@@ -716,7 +716,7 @@ End
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
 		        Self.RequiredLevelField.Text = "0"
 		      Else
-		        Self.RequiredLevelField.Text = "Tek"
+		        Self.RequiredLevelField.Text = ""
 		      End If
 		    End If
 		    
@@ -739,6 +739,11 @@ End
 		        Self.RemovePrereqCheck.Value = False
 		      End If
 		    End If
+		  End If
+		  
+		  If Self.mAllowManualUnlock = False Then
+		    Self.RequiredPointsField.Enabled = False
+		    Self.RequiredPointsLabel.Enabled = False
 		  End If
 		  
 		  If Self.mEngrams.LastIndex > 0 Then
@@ -767,6 +772,14 @@ End
 		  Self.mProject = Project
 		  Self.mEngrams = Engrams
 		  Self.mSettingUp = True
+		  Self.mAllowManualUnlock = True
+		  
+		  For Idx As Integer = 0 To Engrams.LastIndex
+		    If Beacon.Data.EngramIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
+		      Self.mAllowManualUnlock = False
+		      Exit For Idx
+		    End If
+		  Next Idx
 		  
 		  Var Config As Ark.ConfigGroup = Project.ConfigGroup(Ark.Configs.NameEngramControl, False)
 		  If Config = Nil Then
@@ -825,11 +838,13 @@ End
 		      Self.AutoUnlockCheck.Enabled = True
 		    End If
 		    
-		    Self.RequiredLevelField.Enabled = True
-		    Self.RequiredLevelLabel.Enabled = True
-		    Self.RequiredPointsField.Enabled = Not Self.AutoUnlockCheck.Value
+		    // If it auto unlocks, it needs a level field and should not have a points field.
+		    // If it does not auto unlock, it should have both a level and points field if all target engrams are manual unlocks
+		    Self.RequiredLevelField.Enabled = Self.AutoUnlockCheck.Value = True Or Self.mAllowManualUnlock = True
+		    Self.RequiredPointsField.Enabled = Self.AutoUnlockCheck.Value = False And Self.mAllowManualUnlock = True
+		    Self.RemovePrereqCheck.Enabled = Self.AutoUnlockCheck.Value = False And Self.mAllowManualUnlock = True
+		    Self.RequiredLevelLabel.Enabled = Self.RequiredLevelField.Enabled
 		    Self.RequiredPointsLabel.Enabled = Self.RequiredPointsField.Enabled
-		    Self.RemovePrereqCheck.Enabled = Self.RequiredPointsField.Enabled
 		  End If
 		  
 		  Self.AutoUnlockEditCheck.Enabled = Self.AutoUnlockCheck.Enabled
@@ -843,6 +858,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAddConfigGroup As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowManualUnlock As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -906,10 +925,10 @@ End
 		  Var EditLevel As Boolean = Self.LevelEditCheck.Value And Self.LevelEditCheck.Enabled
 		  Var RequiredLevel As NullableDouble
 		  If EditLevel Then
-		    If Self.RequiredLevelField.Text = "Tek" Then
+		    If Self.RequiredLevelField.Text.IsEmpty Then
 		      RequiredLevel = Nil
 		    ElseIf Self.RequiredLevelField.Text = "Spawn" Then
-		      RequiredLevel = 0
+		      RequiredLevel = 1
 		    ElseIf IsNumeric(Self.RequiredLevelField.Text) = False Then
 		      Self.ShowAlert("Please enter a number for the level field.", "The value entered is not a number.")
 		      Return
@@ -927,7 +946,7 @@ End
 		  Var EditPoints As Boolean = Self.PointsEditCheck.Value And Self.PointsEditCheck.Enabled
 		  Var RequiredPoints As NullableDouble
 		  If EditPoints Then
-		    If Self.RequiredPointsField.Text = "Tek" Then
+		    If Self.RequiredPointsField.Text.IsEmpty Then
 		      RequiredPoints = Nil
 		    ElseIf IsNumeric(Self.RequiredPointsField.Text) = False Then
 		      Self.ShowAlert("Please enter a number for the points field.", "The value entered is not a number.")
@@ -943,37 +962,45 @@ End
 		    RemovePrereq = Self.RemovePrereqCheck.Value
 		  End If
 		  
-		  Var HasOfficialEngram As Boolean
-		  For Idx As Integer = 0 To Self.mEngrams.LastIndex
-		    If Self.mEngrams(Idx) Is Nil Then
-		      Continue
-		    End If
-		    
-		    If Ark.DataSource.SharedInstance.BlueprintIsCustom(Self.mEngrams(Idx)) = False Then
-		      HasOfficialEngram = True
-		      Exit For Idx
-		    End If
-		  Next
-		  
-		  // Tek engrams must always be auto unlocked
-		  If HasOfficialEngram And (EditAutoUnlock Or (EditLevel And (RequiredLevel Is Nil) = False) Or (EditPoints And (RequiredPoints Is Nil) = False)) Then
-		    For Each Engram As Ark.Engram In Engrams
-		      If Engram.RequiredPlayerLevel Is Nil Then
-		        // Tek unlock
-		        Var EngramIsAutoUnlocked As Boolean
-		        If EditAutoUnlock Then
-		          EngramIsAutoUnlocked = AutoUnlock
-		        Else
-		          EngramIsAutoUnlocked = If(Self.mConfig.AutoUnlockEngram(Engram) Is Nil, False, Self.mConfig.AutoUnlockEngram(Engram).BooleanValue)
-		        End If
-		        If EngramIsAutoUnlocked = False Then
-		          // Can't do that
-		          Self.ShowAlert(Engram.Label + " is a Tek engram and must be configured to auto unlock.", "Tek engrams are normally automatically unlocked by defeating bosses. Enter 'Tek' into the 'Required Level' field to use the official unlock config. To have the engram unlocked when the player reaches a certain level, make sure the 'Automatically Unlocks' box is checked.")
-		          Return
-		        End If
+		  #if false
+		    Var ManualUnlockAllowed As Boolean = True
+		    For Idx As Integer = 0 To Engrams
+		      If Engrams(Idx) Is Nil Then
+		        Continue
+		      End If
+		      
+		      If Beacon.Data.EngramIsCustom(Engrams(Idx)) = False And Engrams(Idx).ManualUnlock = False Then
+		        ManualUnlockAllowed = False
+		        Exit For Idx
 		      End If
 		    Next
-		  End If
+		    
+		    
+		    If HasOfficialEngram And (EditAutoUnlock Or (EditLevel And (RequiredLevel Is Nil) = False) Or (EditPoints And (RequiredPoints Is Nil) = False)) Then
+		      For Each Engram As Beacon.Engram In Engrams
+		        If Engram.ManualUnlock = True Or (EditLevel And RequiredLevel Is Nil) Then
+		          Continue
+		        End If
+		        
+		        // This engram cannot be manually unlocked, but the user is trying to make that happen
+		        
+		        If Engram.ManualUnlock Then
+		          // Tek unlock
+		          Var EngramIsAutoUnlocked As Boolean
+		          If EditAutoUnlock Then
+		            EngramIsAutoUnlocked = AutoUnlock
+		          Else
+		            EngramIsAutoUnlocked = If(Self.mConfig.AutoUnlockEngram(Engram) Is Nil, False, Self.mConfig.AutoUnlockEngram(Engram).BooleanValue)
+		          End If
+		          If EngramIsAutoUnlocked = False And EditLevel And (RequiredLevel Is Nil) = False Then
+		            // Can't do that
+		            Self.ShowAlert(Engram.Label + " is a Tek engram and must be configured to auto unlock.", "Tek engrams are normally automatically unlocked by defeating bosses. Enter 'Tek' into the 'Required Level' field to use the official unlock config. To have the engram unlocked when the player reaches a certain level, make sure the 'Automatically Unlocks' box is checked.")
+		            Return
+		          End If
+		        End If
+		      Next
+		    End If
+		  #endif
 		  
 		  If (EditHidden Or EditLevel Or EditAutoUnlock Or EditPoints Or EditPrereq) = False Then
 		    // Need to at least change something
@@ -982,20 +1009,28 @@ End
 		  End If
 		  
 		  For Each Engram As Ark.Engram In Engrams
-		    If EditHidden Then
-		      Self.mConfig.Hidden(Engram) = Hidden
-		    End If
-		    If EditLevel Then
-		      Self.mConfig.RequiredPlayerLevel(Engram) = RequiredLevel
-		    End If
 		    If EditAutoUnlock Then
 		      Self.mConfig.AutoUnlockEngram(Engram) = AutoUnlock
 		    End If
-		    If EditPoints Then
-		      Self.mConfig.RequiredPoints(Engram) = RequiredPoints
+		    
+		    If Beacon.Data.EngramIsCustom(Engram) = True Or Engram.ManualUnlock = True Or Self.mConfig.EffectivelyAutoUnlocked(Engram) = True Then
+		      If EditLevel Then
+		        Self.mConfig.RequiredPlayerLevel(Engram) = RequiredLevel
+		      End If
+		      If EditPoints Then
+		        Self.mConfig.RequiredPoints(Engram) = RequiredPoints
+		      End If
+		      If EditPrereq Then
+		        Self.mConfig.RemovePrerequisites(Engram) = RemovePrereq
+		      End If
+		    Else
+		      Self.mConfig.RequiredPlayerLevel(Engram) = Nil
+		      Self.mConfig.RequiredPoints(Engram) = Nil
+		      Self.mConfig.RemovePrerequisites(Engram) = Nil
 		    End If
-		    If EditPrereq Then
-		      Self.mConfig.RemovePrerequisites(Engram) = RemovePrereq
+		    
+		    If EditHidden Then
+		      Self.mConfig.Hidden(Engram) = Hidden
 		    End If
 		  Next
 		  

@@ -139,6 +139,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Coalesce(ParamArray Values() As Variant) As Variant
+		  For Idx As Integer = 0 To Values.LastIndex
+		    If Values(Idx).IsNull = False Then
+		      Return Values(Idx)
+		    End If
+		  Next Idx
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CompareValues(Value1 As Double, Value2 As Double) As Integer
 		  If Value1 > Value2 Then
 		    Return 1
@@ -331,6 +341,24 @@ Protected Module FrameworkExtensions
 		Function LocalTime(Extends Source As DateTime) As DateTime
 		  Var Now As DateTime = DateTime.Now
 		  Return New DateTime(Source.SecondsFrom1970, Now.Timezone)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MakeUTF8(Extends Source As String) As String
+		  If Source.Encoding = Encodings.UTF8 Then
+		    Return Source
+		  End If
+		  
+		  If Source.Encoding Is Nil Then
+		    If Encodings.UTF8.IsValidData(Source) Then
+		      Return Source.DefineEncoding(Encodings.UTF8)
+		    Else
+		      Source = Source.DefineEncoding(Encodings.ASCII)
+		    End If
+		  End If
+		  
+		  Return Source.ConvertEncoding(Encodings.UTF8)
 		End Function
 	#tag EndMethod
 

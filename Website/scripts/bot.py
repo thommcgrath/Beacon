@@ -96,8 +96,8 @@ class BeaconBot(discord.Client):
 					remove_roles.append(role)
 			
 			member = guild.get_member(message.author.id)
-			if member == None:
-				num_numbers += 1
+			if member != None:
+				num_members += 1
 				continue
 			
 			for role in remove_roles:
@@ -105,7 +105,7 @@ class BeaconBot(discord.Client):
 			for role in add_roles:
 				await member.add_roles(role)
 		
-		if num_numbers == 0:
+		if num_members == 0:
 			self.logMessage('Could not find member object for user ' + message.author.name + '.');
 			self.logMessage('User said `' + message.content + '`');
 			await message.channel.send('Sorry, I seem to be having trouble. You should contact the server admin.')

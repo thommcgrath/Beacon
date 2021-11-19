@@ -379,6 +379,7 @@ Begin BeaconDialog ArkBlueprintSelectorDialog
       AllowFocusRing  =   True
       AllowRecentItems=   False
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   "Search Objects"
@@ -625,7 +626,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Text
+		  Var SearchText As String = Self.FilterField.Text.MakeUTF8
 		  Var Tags As String = Self.Picker.Spec
 		  
 		  Var Blueprints() As Ark.Blueprint = Ark.DataSource.SharedInstance.GetBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)

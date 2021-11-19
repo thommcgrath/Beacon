@@ -404,6 +404,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       AllowFocusRing  =   True
       AllowRecentItems=   False
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   "Search for spawn points"
@@ -495,7 +496,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Text.Trim
+		  Var SearchText As String = Self.FilterField.Text.MakeUTF8.Trim
 		  Var SpawnPoints() As Ark.SpawnPoint
 		  
 		  If SearchText = "" Then

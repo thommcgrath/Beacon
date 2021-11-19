@@ -2,10 +2,11 @@
 Protected Class DocumentMergeConfigGroupItem
 Inherits Beacon.DocumentMergeItem
 	#tag Method, Flags = &h0
-		Sub Constructor(Group As Ark.ConfigGroup, SourceProject As Ark.Project)
+		Sub Constructor(Group As Ark.ConfigGroup, SourceProject As Ark.Project, SourceConfigSet As String)
 		  Self.Group = Group
-		  Self.Label = Language.LabelForConfig(Group)
+		  Self.Label = Group.Label
 		  Self.SourceProject = SourceProject
+		  Self.SourceConfigSet = SourceConfigSet
 		End Sub
 	#tag EndMethod
 
@@ -22,6 +23,12 @@ Inherits Beacon.DocumentMergeItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SourceKey() As String
+		  Return Self.SourceDocument.DocumentID + ":" + Self.SourceConfigSet
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SupportsMerging() As Boolean
 		  Return Self.Group.SupportsMerging
 		End Function
@@ -34,6 +41,10 @@ Inherits Beacon.DocumentMergeItem
 
 	#tag Property, Flags = &h0
 		Group As Ark.ConfigGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		SourceConfigSet As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

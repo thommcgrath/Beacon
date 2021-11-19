@@ -182,7 +182,7 @@ Begin BeaconDialog BlueprintEditorDialog
          InitialValue    =   "Engram\nCreature\nSpawn Point"
          Italic          =   False
          Left            =   152
-         ListIndex       =   0
+         ListIndex       =   -1
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True

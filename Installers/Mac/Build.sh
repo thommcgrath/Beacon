@@ -44,7 +44,7 @@ REQUESTUUID=$(sed -n 's/RequestUUID = \(.*\)/\1/p' ${TMPDIR}notarize_output);
 echo "Disk image has been uploaded. Request UUID is ${REQUESTUUID}. Checking status every 10 seconds...";
 STATUS="in progress";
 while [ "${STATUS}" = "in progress" ]; do
-	sleep 10s;
+	sleep 10;
 	xcrun altool --notarization-info "${REQUESTUUID}" --username "${APPLEID}" --password @keychain:"App Notarization" --asc-provider "${TEAMID}" > ${TMPDIR}notarize_output 2>&1 || { rm -f ${TMPDIR}notarize_output; echo "Failed to check on notarization status."; exit $?; };
 	STATUS=$(sed -ne 's/^[[:space:]]*Status: \(.*\)$/\1/p' ${TMPDIR}notarize_output);
 done;
