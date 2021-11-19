@@ -128,6 +128,7 @@ Begin ConfigEditor OtherSettingsConfigEditor
       AllowFocusRing  =   True
       AllowRecentItems=   False
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   ""
@@ -256,7 +257,7 @@ End
 #tag Events SearchField1
 	#tag Event
 		Sub TextChanged()
-		  Self.List.Filter = Me.Text
+		  Self.List.Filter = Me.Text.MakeUTF8
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -125,6 +125,8 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
+		  Value = Value.ReplaceLineEndings(" ").Trim
+		  
 		  If Self.mLabel.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
 		    Self.mLabel = Value
 		    Self.Modified = True

@@ -49,20 +49,23 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
-		    Var AutoUnlocked As Boolean = Self.AutoUnlockAllEngrams
-		    If Self.mAutoUnlockAllEngrams = False And Self.mOverrides.HasAttribute(Engram, Self.KeyAutoUnlockLevel) And Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel).BooleanValue = True Then
-		      Var Level As Integer
-		      If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) And Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IsNull = False Then
-		        Level = Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IntegerValue
-		      ElseIf (Engram.RequiredPlayerLevel Is Nil) = False Then
-		        Level = Engram.RequiredPlayerLevel.IntegerValue
-		      Else
-		        Level = 0
+		    Var EffectivelyHidden As Boolean = Self.EffectivelyHidden(Engram)
+		    Var ExplicitAutoUnlocked As Boolean
+		    If EffectivelyHidden = False Then
+		      If Self.mAutoUnlockAllEngrams = False And Self.mOverrides.HasAttribute(Engram, Self.KeyAutoUnlockLevel) And Self.mOverrides.Value(Engram, Self.KeyAutoUnlockLevel).BooleanValue = True Then
+		        Var Level As Integer
+		        If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) And Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IsNull = False Then
+		          Level = Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).IntegerValue
+		        ElseIf (Engram.RequiredPlayerLevel Is Nil) = False Then
+		          Level = Engram.RequiredPlayerLevel.IntegerValue
+		        Else
+		          Level = 0
+		        End If
+		        
+		        ExplicitAutoUnlocked = True
+		        UnlockEntries.Add(EntryString)
+		        UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks=(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")", "EngramEntryAutoUnlocks:" + EntryString))
 		      End If
-		      
-		      AutoUnlocked = True
-		      UnlockEntries.Add(EntryString)
-		      UnlockConfigs.Add(New Beacon.ConfigValue(Beacon.ConfigFileGame, Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks=(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")", "EngramEntryAutoUnlocks:" + EntryString))
 		    End If
 		    
 		    Var Arguments() As String
@@ -73,34 +76,30 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    If Not AutoUnlocked Then
-		      If Not Self.EffectivelyHidden(Engram) Then
-		        If Self.mOverrides.HasAttribute(Engram, Self.KeyRemovePrerequisites) Then
-		          Var RemovePrereq As Boolean = Self.mOverrides.Value(Engram, Self.KeyRemovePrerequisites).BooleanValue
-		          If RemovePrereq = True Then
-		            Arguments.Add("RemoveEngramPreReq=True")
-		          End If
-		        End If
-		        
-		        If Self.mOverrides.HasAttribute(Engram, Self.KeyPlayerLevel) Then
-		          Var Level As Integer = Round(Self.mOverrides.Value(Engram, Self.KeyPlayerLevel).DoubleValue)
-		          Arguments.Add("EngramLevelRequirement=" + Level.ToString)
-		        Else
-		          Var Level As NullableDouble = Engram.RequiredPlayerLevel
-		          If (Level Is Nil) = False Then
-		            Arguments.Add("EngramLevelRequirement=" + Level.IntegerValue.ToString)
-		          End If
-		        End If
-		        
-		        If Self.mOverrides.HasAttribute(Engram, Self.KeyUnlockPoints) Then
-		          Var Points As Integer = Round(Self.mOverrides.Value(Engram, Self.KeyUnlockPoints).DoubleValue)
-		          Arguments.Add("EngramPointsCost=" + Points.ToString)
-		        Else
-		          Var Points As NullableDouble = Engram.RequiredUnlockPoints
-		          If (Points Is Nil) = False Then
-		            Arguments.Add("EngramPointsCost=" + Points.IntegerValue.ToString)
-		          End If
-		        End If
+		    // 2021-11-06: Always include EngramLevelRequirement and EngramPointsCost because Ark is dumb and will assume 0 if you do not
+		    
+		    If ExplicitAutoUnlocked = False And EffectivelyHidden = False Then
+		      Var Level, Points As NullableDouble
+		      Var RemovePrereq As NullableBoolean
+		      
+		      If Self.EffectivelyAutoUnlocked(Engram) Then
+		        // Auto unlocked engrams have no need for points and no prerequisites
+		        Level = Coalesce(Self.RequiredPlayerLevel(Engram), Engram.RequiredPlayerLevel)
+		      ElseIf Engram.ManualUnlock Then
+		        // Since it is not auto unlocked, only include the following values if the engram supports manual unlocking
+		        Level = Coalesce(Self.RequiredPlayerLevel(Engram), Engram.RequiredPlayerLevel)
+		        Points = Coalesce(Self.RequiredPoints(Engram), Engram.RequiredUnlockPoints)
+		        RemovePrereq = Self.RemovePrerequisites(Engram)
+		      End If
+		      
+		      If (Level Is Nil) = False Then
+		        Arguments.Add("EngramLevelRequirement=" + Level.IntegerValue.ToString)
+		      End If
+		      If (Points Is Nil) = False Then
+		        Arguments.Add("EngramPointsCost=" + Points.IntegerValue.ToString)
+		      End If
+		      If (RemovePrereq Is Nil) = False Then
+		        Arguments.Add("RemoveEngramPreReq=" + If(RemovePrereq.BooleanValue, "True", "False"))
 		      End If
 		    End If
 		    
@@ -308,6 +307,17 @@ Inherits Beacon.ConfigGroup
 		  
 		  Self.mOverrides = New Beacon.BlueprintAttributeManager
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EffectivelyAutoUnlocked(Engram As Beacon.Engram) As Boolean
+		  Var AutoUnlocks As NullableBoolean = Self.AutoUnlockEngram(Engram)
+		  If AutoUnlocks Is Nil Then
+		    Return Self.mAutoUnlockAllEngrams
+		  Else
+		    Return AutoUnlocks.BooleanValue
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

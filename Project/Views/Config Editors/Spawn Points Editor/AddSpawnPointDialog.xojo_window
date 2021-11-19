@@ -168,7 +168,6 @@ Begin BeaconDialog AddSpawnPointDialog
       RequiresSelection=   False
       RowSelectionType=   1
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -405,6 +404,7 @@ Begin BeaconDialog AddSpawnPointDialog
       AllowFocusRing  =   True
       AllowRecentItems=   False
       ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
       Hint            =   "Search for spawn points"
@@ -496,7 +496,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SearchText As String = Self.FilterField.Text.Trim
+		  Var SearchText As String = Self.FilterField.Text.MakeUTF8.Trim
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  
 		  If SearchText = "" Then

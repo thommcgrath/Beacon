@@ -822,6 +822,8 @@ Begin ContainerControl CommonServerSettingsView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   22
       Index           =   -2147483648
@@ -833,8 +835,10 @@ Begin ContainerControl CommonServerSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   0
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
+      SelectedColor   =   ""
       TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True

@@ -1061,6 +1061,7 @@ Begin BeaconDialog LootSourceWizard
          AllowFocusRing  =   True
          AllowRecentItems=   False
          ClearMenuItemValue=   "Clear"
+         DelayPeriod     =   250
          Enabled         =   True
          Height          =   22
          Hint            =   "Search Loot Sources"
@@ -1125,7 +1126,6 @@ Begin BeaconDialog LootSourceWizard
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   2
@@ -1185,7 +1185,6 @@ Begin BeaconDialog LootSourceWizard
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   7
@@ -1255,7 +1254,7 @@ End
 		  Var Labels As Dictionary = Data.LootSourceLabels(Self.mMask)
 		  
 		  Var CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
-		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources(Self.FilterField.Text, Self.mMods, Preferences.ShowExperimentalLootSources)
+		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources(Self.FilterField.Text.MakeUTF8, Self.mMods, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootSources.LastIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
 		      AllowedLootSources.RemoveAt(X)

@@ -713,11 +713,13 @@ class Document implements \JsonSerializable {
 		$editors = '{' . implode(',', $document['EditorNames']) . '}';
 		try {
 			$database->BeginTransaction();
+			$was_searchable = $database->Query('SELECT id FROM search_contents WHERE id = $1;', $document_id)->RecordCount() === 1;
 			if ($new_document) {
 				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
 				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP, deleted = FALSE WHERE document_id = $1 AND user_id = $2;', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			}
+			$is_searchable = $database->Query('SELECT id FROM search_contents WHERE id = $1;', $document_id)->RecordCount() === 1;
 			foreach ($guests_to_add as $guest_id) {
 				$database->Query('INSERT INTO guest_documents (document_id, user_id) VALUES ($1, $2);', $document_id, $guest_id);
 			}

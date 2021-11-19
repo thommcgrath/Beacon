@@ -102,7 +102,6 @@ Begin BeaconDialog DocumentMergerWindow
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -260,10 +259,10 @@ End
 		  End If
 		  Var Count As Integer = FoundInDocuments.Count
 		  Var AlreadyInDestination As Boolean
-		  If FoundInDocuments.IndexOf(Self.mDestination.DocumentID) > -1 Then
+		  If FoundInDocuments.IndexOf(Self.mDestination.DocumentID + ":" + ConfigItem.DestinationConfigSet) > -1 Then
 		    AlreadyInDestination = True
 		  End If
-		  If FoundInDocuments.IndexOf(ConfigItem.SourceDocument.DocumentID) > -1 Then
+		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
 		    Count = Count - 1
 		  End If
 		  If AlreadyInDestination And Count = 1 Then
@@ -330,9 +329,9 @@ End
 		  End If
 		  
 		  Var Count As Integer = FoundInDocuments.Count
-		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.DocumentID) > -1
+		  Var AlreadyInDestination As Boolean = FoundInDocuments.IndexOf(Self.mDestination.DocumentID + ":" + ConfigItem.DestinationConfigSet) > -1
 		  
-		  If FoundInDocuments.IndexOf(ConfigItem.SourceDocument.DocumentID) > -1 Then
+		  If FoundInDocuments.IndexOf(ConfigItem.SourceKey) > -1 Then
 		    Count = Count - 1
 		  End If
 		  
@@ -392,25 +391,40 @@ End
 		    Next
 		  End If
 		  
+		  Var ShowConfigSetNames As Boolean
+		  For Each SourceDocument As Beacon.Document In SourceDocuments
+		    Var SetNames() As String = SourceDocument.ConfigSetNames
+		    If SetNames.Count > 1 Then
+		      ShowConfigSetNames = True
+		      Exit For SourceDocument
+		    End If
+		  Next SourceDocument
+		  
 		  Var ActiveConfigSet As String = DestinationDocument.ActiveConfigSet
 		  Var MergeItems() As Beacon.DocumentMergeItem
 		  Var DesiredMask As UInt64
 		  Var UniqueMods As New Dictionary
 		  For Each SourceDocument As Beacon.Document In SourceDocuments
 		    // Config Groups
-		    Var Configs() As Beacon.ConfigGroup = SourceDocument.ImplementedConfigs
-		    For Each Config As Beacon.ConfigGroup In Configs
-		      If Config IsA BeaconConfigs.Metadata Then
-		        Continue
-		      End If
-		      
-		      Var MergeItem As New Beacon.DocumentMergeConfigGroupItem(Config, SourceDocument)
-		      If UseServerNames Then
-		        MergeItem.Label = MergeItem.Label + EndOfLine + "From " + SourceDocument.Title
-		      End If
-		      MergeItem.DestinationConfigSet = ActiveConfigSet
-		      MergeItems.Add(MergeItem)
-		    Next
+		    Var SetNames() As String = SourceDocument.ConfigSetNames
+		    For Each SetName As String In SetNames
+		      Var Configs() As Beacon.ConfigGroup = SourceDocument.ImplementedConfigs(SetName)
+		      For Each Config As Beacon.ConfigGroup In Configs
+		        If Config IsA BeaconConfigs.Metadata Then
+		          Continue
+		        End If
+		        
+		        Var MergeItem As New Beacon.DocumentMergeConfigGroupItem(Config, SourceDocument, SetName)
+		        If ShowConfigSetNames Then
+		          MergeItem.Label = SetName + ": " + MergeItem.Label
+		        End If
+		        If UseServerNames Then
+		          MergeItem.Label = MergeItem.Label + EndOfLine + "From " + SourceDocument.Title
+		        End If
+		        MergeItem.DestinationConfigSet = ActiveConfigSet
+		        MergeItems.Add(MergeItem)
+		      Next Config
+		    Next SetName
 		    
 		    // Profiles
 		    Var ProfileBound As Integer = SourceDocument.ServerProfileCount - 1
@@ -537,7 +551,7 @@ End
 		    End If
 		    
 		    Var ConfigItem As Beacon.DocumentMergeConfigGroupItem = Beacon.DocumentMergeConfigGroupItem(MergeItem)
-		    If ConfigItem.OrganizationKey <> TargetKey Or ConfigItem.SourceDocument.DocumentID = TargetConfigItem.SourceDocument.DocumentID Then
+		    If ConfigItem.OrganizationKey <> TargetKey Or ConfigItem.SourceKey = TargetConfigItem.SourceKey Then
 		      Continue
 		    End If
 		    
@@ -565,7 +579,7 @@ End
 		  For Each ConfigSet As String In ConfigSets
 		    Var Groups() As Beacon.ConfigGroup = Self.mDestination.ImplementedConfigs(ConfigSet)
 		    For Each Group As Beacon.ConfigGroup In Groups
-		      ConfigMap.Value(ConfigSet + ":" + Group.ConfigName) = Array(Self.mDestination.DocumentID)
+		      ConfigMap.Value(ConfigSet + ":" + Group.ConfigName) = Array(Self.mDestination.DocumentID + ":" + ConfigSet)
 		    Next
 		  Next
 		  For RowIndex As Integer = 0 To Self.List.LastRowIndex
@@ -580,7 +594,7 @@ End
 		    If ConfigMap.HasKey(Key) Then
 		      Map = ConfigMap.Value(Key)
 		    End If
-		    Map.Add(ConfigItem.SourceDocument.DocumentID)
+		    Map.Add(ConfigItem.SourceKey)
 		    ConfigMap.Value(Key) = Map
 		  Next
 		  

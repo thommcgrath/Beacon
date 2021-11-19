@@ -50,6 +50,7 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       Mask            =   ""
       RequireAllMaps  =   False
       Scope           =   2
+      SearchDelayPeriod=   1000
       ShowFullControls=   True
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -265,7 +266,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Changed()
-		  Self.Load
+		  Self.Load()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

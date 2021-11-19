@@ -666,6 +666,7 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin Beacon.Rewriter SharedRewriter
       DebugIdentifier =   ""
+      Enabled         =   True
       FinishedCommandLineContent=   ""
       FinishedGameIniContent=   ""
       FinishedGameUserSettingsIniContent=   ""
