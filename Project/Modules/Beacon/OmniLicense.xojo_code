@@ -4,7 +4,7 @@ Protected Class OmniLicense
 		Sub Constructor(Source As Dictionary)
 		  Var ProductID As String = Source.Value("product_id").StringValue
 		  Var Flags As Integer = Source.Value("flags").IntegerValue
-		  Var ExpirationString As String = Source.Lookup("expiration", "").StringValue
+		  Var ExpirationString As String = Source.Lookup("expires", "").StringValue
 		  
 		  Self.Constructor(ProductID, Flags, ExpirationString)
 		End Sub
@@ -16,7 +16,7 @@ Protected Class OmniLicense
 		  Self.mFlags = Flags
 		  Self.mValidationString = ProductID.Lowercase + ":" + Flags.ToString(Locale.Raw, "0")
 		  
-		  If Self.mExpirationString.IsEmpty = False Then
+		  If ExpirationString.IsEmpty = False Then
 		    Self.mExpirationString = ExpirationString
 		    Self.mValidationString = Self.mValidationString + ":" + ExpirationString
 		    

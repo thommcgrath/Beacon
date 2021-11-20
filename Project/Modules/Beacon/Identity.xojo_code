@@ -2,8 +2,9 @@
 Protected Class Identity
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.Identity
-		  Var Exported As Dictionary = Self.Export()
-		  Return Self.Import(Exported)
+		  Var JSON As String = Beacon.GenerateJSON(Self.Export, False)
+		  Var Parsed As Variant = Beacon.ParseJSON(JSON)
+		  Return Self.Import(Dictionary(Parsed))
 		End Function
 	#tag EndMethod
 
@@ -63,7 +64,7 @@ Protected Class Identity
 		  
 		  Self.mLicenses.ResizeTo(-1)
 		  If Dict.HasKey("licenses") Then
-		    Var LicenseDicts() As Variant
+		    Var LicenseDicts() As Variant = Dict.Value("licenses")
 		    For Each LicenseDictMember As Variant In LicenseDicts
 		      Try
 		        Self.mLicenses.Add(New Beacon.OmniLicense(Dictionary(LicenseDictMember)))
@@ -323,7 +324,9 @@ Protected Class Identity
 		    Return 1
 		  End If
 		  
-		  Return Self.mIdentifier.Compare(Other.mIdentifier, ComparisonOptions.CaseInsensitive)
+		  Var SelfHash As String = Beacon.Hash(Beacon.GenerateJSON(Self.Export, False))
+		  Var OtherHash As String = Beacon.Hash(Beacon.GenerateJSON(Other.Export, False))
+		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -420,6 +423,10 @@ Protected Class Identity
 		      Return True
 		    End If
 		  End If
+		  
+		  #if DebugBuild
+		    System.DebugLog("Failed to validate identity file")
+		  #endif
 		  
 		  Self.mUsername = ""
 		  Self.mLicenses.ResizeTo(-1)
