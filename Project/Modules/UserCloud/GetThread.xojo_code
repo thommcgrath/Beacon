@@ -3,7 +3,7 @@ Private Class GetThread
 Inherits Thread
 	#tag Event
 		Sub Run()
-		  If Self.mResponse.Success = False Or App.IdentityManager.CurrentIdentity = Nil Then
+		  If Self.mResponse.Success = False Or App.IdentityManager.CurrentIdentity Is Nil Then
 		    // Do what?
 		    CleanupRequest(Self.mRequest)
 		    Return

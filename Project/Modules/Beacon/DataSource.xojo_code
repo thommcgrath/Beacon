@@ -673,6 +673,8 @@ Protected Class DataSource
 
 	#tag Method, Flags = &h0
 		Function SyncURL(ForceRefresh As Boolean) As String
+		  #Pragma Unused ForceRefresh
+		  
 		  Var Err As New RuntimeException
 		  Err.Message = "DataSource.SyncURL was not overridden"
 		  Raise Err

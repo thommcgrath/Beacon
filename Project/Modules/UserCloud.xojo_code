@@ -170,7 +170,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Function LocalFile(RemotePath As String = "", Create As Boolean = True) As FolderItem
-		  If App.IdentityManager.CurrentIdentity = Nil Then
+		  If App.IdentityManager.CurrentIdentity Is Nil Then
 		    Return Nil
 		  End If
 		  
@@ -496,7 +496,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub UploadFileTo(LocalFile As FolderItem, RemotePath As String)
-		  If App.IdentityManager.CurrentIdentity = Nil Then
+		  If App.IdentityManager.CurrentIdentity Is Nil Then
 		    Return
 		  End If
 		  

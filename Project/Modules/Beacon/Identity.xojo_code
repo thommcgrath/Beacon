@@ -61,11 +61,16 @@ Protected Class Identity
 		    Self.mUsername = ""
 		  End Try
 		  
-		  Try
-		    Self.mOmniFlags = Dict.Lookup("omni_version", 0)
-		  Catch Err As RuntimeException
-		    Self.mOmniFlags = 0
-		  End Try
+		  Self.mLicenses.ResizeTo(-1)
+		  If Dict.HasKey("licenses") Then
+		    Var LicenseDicts() As Variant
+		    For Each LicenseDictMember As Variant In LicenseDicts
+		      Try
+		        Self.mLicenses.Add(New Beacon.OmniLicense(Dictionary(LicenseDictMember)))
+		      Catch Err As RuntimeException
+		      End Try
+		    Next LicenseDictMember
+		  End If
 		  
 		  Try
 		    Self.mExpirationString = Dict.Lookup("expiration", "")
@@ -76,7 +81,8 @@ Protected Class Identity
 		  Try
 		    If Dict.HasKey("signatures") Then
 		      Var SignaturesDict As Dictionary = Dict.Value("signatures")
-		      Self.mSignature = DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion.ToString, ""))
+		      Self.mSignature = DecodeHex(SignaturesDict.Value(Self.SignatureVersion.ToString))
+		      Self.mSignatureVersion = Self.SignatureVersion
 		    Else
 		      Self.mSignature = Nil
 		    End If
@@ -96,15 +102,6 @@ Protected Class Identity
 		  Try
 		    Self.mBanned = Dict.Lookup("banned", false)
 		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  Try
-		    If Dict.HasKey("parent_account_id") And Dict.Value("parent_account_id") <> Nil Then
-		      Self.mParentAccountID = Dict.Value("parent_account_id").StringValue
-		    End If
-		  Catch Err As RuntimeException
-		    
 		  End Try
 		  
 		  Return True
@@ -130,25 +127,34 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
+		  Var Licenses() As Dictionary
+		  For Idx As Integer = 0 To Self.mLicenses.LastIndex
+		    Var License As New Dictionary
+		    License.Value("Flags") = Self.mLicenses(Idx).Flags
+		    License.Value("Product ID") = Self.mLicenses(Idx).ProductID
+		    If Self.mLicenses(Idx).IsLifetime = False Then
+		      License.Value("Expiration") = Self.mLicenses(Idx).ExpirationString
+		    End If
+		    Licenses.Add(License)
+		  Next Idx
+		  
 		  Var Dict As New Dictionary
 		  Dict.Value("Identifier") = Self.mIdentifier
 		  Dict.Value("Public") = Self.mPublicKey
 		  Dict.Value("Private") = Self.mPrivateKey
-		  Dict.Value("Version") = 2
-		  Dict.Value("Omni Version") = Self.mOmniFlags
+		  Dict.Value("Version") = Self.SignatureVersion
+		  Dict.Value("Licenses") = Licenses
 		  Dict.Value("Username") = Self.mUsername
 		  Dict.Value("Banned") = Self.mBanned
-		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
+		  If (Self.mSignature Is Nil) = False And Self.mSignature.Size > 0 Then
 		    Dict.Value("Signature") = EncodeHex(Self.mSignature)
+		    Dict.Value("Signature Version") = Self.mSignatureVersion
 		  End If
 		  If Self.mExpirationString <> "" Then
 		    Dict.Value("Expiration") = Self.mExpirationString
 		  End If
 		  If Self.mUsercloudKey <> Nil Then
 		    Dict.Value("Cloud Key") = EncodeHex(Self.mUsercloudKey)
-		  End If
-		  If Self.IsChildAccount Then
-		    Dict.Value("Parent Account ID") = Self.mParentAccountID.StringValue
 		  End If
 		  Return Dict
 		End Function
@@ -184,7 +190,7 @@ Protected Class Identity
 		    If Not Identity.ConsumeUserDictionary(Dict) Then
 		      Return Nil
 		    End If
-		    Identity.Validate()
+		    Call Identity.Validate()
 		    Return Identity
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -201,7 +207,7 @@ Protected Class Identity
 		  Var PublicKey, PrivateKey As String
 		  If Source.HasKey("Version") Then
 		    Select Case Source.Value("Version")
-		    Case 2
+		    Case 2, 3
 		      PublicKey = Source.Value("Public")
 		      PrivateKey = Source.Value("Private")
 		    Else
@@ -218,28 +224,27 @@ Protected Class Identity
 		  
 		  Var Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
 		  
-		  If Source.HasKey("Purchases") Then
-		    Var Purchases() As Variant = Source.Value("Purchases")
-		    Var Now As DateTime
-		    For Each Purchase As Dictionary In Purchases
-		      Var Flags As Integer = Purchase.Value("Flags")
-		      Var Expiration As DateTime
-		      If Purchase.HasKey("Expiration") Then
-		        Expiration = NewDateFromSQLDateTime(Purchase.Value("Expiration"))
-		        If Now Is Nil Then
-		          Now = DateTime.Now
-		        End If
-		      End If
-		      If Expiration Is Nil Or Expiration.SecondsFrom1970 > Now.SecondsFrom1970 Then
-		        Identity.mOmniFlags = Identity.mOmniFlags Or Flags
-		      End If
-		    Next Purchase
+		  If Source.HasKey("Licenses") Then
+		    Var Licenses() As Variant = Source.Value("Licenses")
+		    For Each License As Dictionary In Licenses
+		      Var Flags As Integer = License.Value("Flags").IntegerValue
+		      Var ProductID As String = License.Value("Product ID").StringValue
+		      Var ExpirationString As String = License.Lookup("Expiration", "").StringValue
+		      
+		      Identity.mLicenses.Add(New Beacon.OmniLicense(ProductID, Flags, ExpirationString))
+		    Next License
 		  ElseIf Source.HasKey("Omni Version") Then
-		    Identity.mOmniFlags = Source.Value("Omni Version")
+		    Var Flags As Integer = Source.Value("Omni Version").IntegerValue
+		    Identity.mLicenses.Add(New Beacon.OmniLicense("972f9fc5-ad64-4f9c-940d-47062e705cc5", Flags, ""))
 		  End If
 		  
 		  If Source.HasKey("Signature") Then
 		    Identity.mSignature = DecodeHex(Source.Value("Signature"))
+		  End If
+		  If Source.HasKey("Signature Version") Then
+		    Identity.mSignatureVersion = Source.Value("Signature Version")
+		  Else
+		    Identity.mSignatureVersion = 2
 		  End If
 		  
 		  If Source.HasKey("Username") Then
@@ -260,11 +265,7 @@ Protected Class Identity
 		    Identity.mBanned = Source.Value("Banned")
 		  End If
 		  
-		  If Source.HasKey("Parent Account ID") Then
-		    Identity.mParentAccountID = Source.Value("Parent Account ID").StringValue
-		  End If
-		  
-		  Identity.Validate()
+		  Call Identity.Validate()
 		  
 		  Return Identity
 		End Function
@@ -283,14 +284,14 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsChildAccount() As Boolean
-		  Return (Self.mParentAccountID Is Nil) = False And Self.mParentAccountID.IsNull = False
+		Attributes( Deprecated )  Function IsChildAccount() As Boolean
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsOmniFlagged(Value As Integer) As Boolean
-		  Return (Self.mOmniFlags And Value) = Value
+		  Return (Self.OmniFlags And Value) = Value
 		End Function
 	#tag EndMethod
 
@@ -306,92 +307,29 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function OmniFlags() As Integer
-		  Return Self.mOmniFlags
+		  Var Flags As Integer
+		  For Each License As Beacon.OmniLicense In Self.mLicenses
+		    If License.IsExpired = False Then
+		      Flags = Flags Or License.Flags
+		    End If
+		  Next License
+		  Return Flags
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Identity) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
-		  // Case changes do matter
-		  Var Result As Integer = Self.mUsername.Compare(Other.mUsername, ComparisonOptions.CaseInsensitive)
-		  If Result <> 0 Then
-		    Return Result
-		  End If
-		  
-		  // Case changes do not matter
-		  If Self.mIdentifier <> Other.mIdentifier Then
-		    Return Self.mIdentifier.Compare(Other.mIdentifier, ComparisonOptions.CaseInsensitive)
-		  End If
-		  
-		  // Newer sorts after older
-		  If Self.mOmniFlags > Other.mOmniFlags Then
-		    Return 1
-		  ElseIf Self.mOmniFlags < Other.mOmniFlags Then
-		    Return -1
-		  End If
-		  
-		  // Compare expirations
-		  Var Now As DateTime = DateTime.Now
-		  Var Period As New DateInterval(30) // Yes, this says 30 years
-		  Var SelfExpiration As DateTime
-		  If Self.mExpirationString <> "" Then
-		    SelfExpiration = NewDateFromSQLDateTime(Self.mExpirationString)
-		  Else
-		    SelfExpiration = Now + Period
-		  End If
-		  Var OtherExpiration As DateTime
-		  If Other.mExpirationString <> "" Then
-		    OtherExpiration = NewDateFromSQLDateTime(Other.mExpirationString)
-		  Else
-		    OtherExpiration = Now + Period
-		  End If
-		  If SelfExpiration.SecondsFrom1970 = OtherExpiration.SecondsFrom1970 Then
-		  ElseIf SelfExpiration.SecondsFrom1970 > OtherExpiration.SecondsFrom1970 Then
-		    Return 1
-		  Else
-		    Return -1
-		  End If
-		  
-		  // Use custom comparison for binary data
-		  Result = Self.Compare(Self.mPublicKey, Other.mPublicKey)
-		  If Result <> 0 Then
-		    Return Result
-		  End If
-		  
-		  Result = Self.Compare(Self.mPrivateKey, Other.mPrivateKey)
-		  If Result <> 0 Then
-		    Return Result
-		  End If
-		  
-		  Result = Self.Compare(Self.mSignature, Other.mSignature)
-		  If Result <> 0 Then
-		    Return Result
-		  End If
-		  
-		  Result = Self.Compare(Self.mUsercloudKey, Other.mUsercloudKey)
-		  If Result <> 0 Then
-		    Return Result
-		  End If
-		  
-		  Var SelfParent As String = If(Self.mParentAccountID Is Nil, "", Self.mParentAccountID.StringValue)
-		  Var OtherParent As String = If(Other.mParentAccountID Is Nil, "", Other.mParentAccountID.StringValue)
-		  Result = SelfParent.Compare(OtherParent, ComparisonOptions.CaseInsensitive)
-		  If Result <> 0 Then
-		    Return Result
-		  End If
-		  
-		  // They are fully equal
-		  Return 0
+		  Return Self.mIdentifier.Compare(Other.mIdentifier, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ParentAccountID() As v4UUID
-		  Return Self.mParentAccountID
+		Attributes( Deprecated )  Function ParentAccountID() As v4UUID
+		  Return Nil
 		End Function
 	#tag EndMethod
 
@@ -428,16 +366,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserIDForEncryption() As String
+		Attributes( Deprecated = "UserID" )  Function UserIDForEncryption() As String
 		  // For use when decrypting a document. Returns the parent id for child accounts,
 		  // or the user's actual id for regular accounts. Return as string since this is
 		  // most useful as a dictionary key.
 		  
-		  If Self.IsChildAccount Then
-		    Return Self.mParentAccountID
-		  Else
-		    Return Self.mIdentifier
-		  End If
+		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
 
@@ -452,14 +386,22 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Validate()
-		  #Pragma Warning "Bump signature version to support expiring purchases"
-		  
-		  If Self.mSignature <> Nil Then
+		Function Validate() As Boolean
+		  If (Self.mSignature Is Nil) = False Then
 		    Var Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
 		    Fields(1) = Self.mIdentifier.Lowercase
-		    Fields(2) = Self.mOmniFlags.ToString(Locale.Raw, "#")
+		    Select Case Self.mSignatureVersion
+		    Case 2
+		      Fields(2) = Self.OmniFlags.ToString(Locale.Raw, "0")
+		    Case 3
+		      Var LicenseSigningData() As String
+		      For Each License As Beacon.OmniLicense In Self.mLicenses
+		        LicenseSigningData.Add(License.ValidationString)
+		      Next License
+		      
+		      Fields(2) = String.FromArray(LicenseSigningData, ";")
+		    End Select
 		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
 		    
 		    If Self.mExpirationString.IsEmpty = False Then
@@ -475,13 +417,14 @@ Protected Class Identity
 		    Var CheckData As String = Fields.Join(" ")
 		    If Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
 		      // It is valid, now return so the reset code below does not fire
-		      Return
+		      Return True
 		    End If
 		  End If
 		  
 		  Self.mUsername = ""
-		  Self.mOmniFlags = 0
-		End Sub
+		  Self.mLicenses.ResizeTo(-1)
+		  Return False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -520,11 +463,7 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOmniFlags As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mParentAccountID As v4UUID
+		Private mLicenses() As OmniLicense
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -540,6 +479,10 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSignatureVersion As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUsercloudKey As MemoryBlock
 	#tag EndProperty
 
@@ -548,7 +491,7 @@ Protected Class Identity
 	#tag EndProperty
 
 
-	#tag Constant, Name = SignatureVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = SignatureVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 

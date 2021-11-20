@@ -1664,7 +1664,7 @@ End
 		Sub Close()
 		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
-		  If App.IdentityManager.CurrentIdentity = Nil Then
+		  If App.IdentityManager.CurrentIdentity Is Nil Then
 		    Quit
 		  Else
 		    App.NextLaunchQueueTask()
@@ -1762,7 +1762,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub IdentityManager_Finished(Sender As IdentityManager)
-		  If Sender.CurrentIdentity = Nil Then
+		  If Sender.CurrentIdentity Is Nil Then
 		    // Error
 		    Var Message As String = Sender.LastError
 		    If Message = "" Then

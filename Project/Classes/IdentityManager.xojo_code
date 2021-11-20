@@ -89,7 +89,7 @@ Protected Class IdentityManager
 		      ElseIf Self.CurrentIdentity <> Nil Then
 		        Identity = Self.CurrentIdentity.Clone
 		        If Identity.ConsumeUserDictionary(Response.JSON) Then
-		          Identity.Validate()
+		          Call Identity.Validate()
 		          Self.CurrentIdentity(False) = Identity
 		        End If
 		      End If
@@ -251,7 +251,7 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  
 		  Var Identity As Beacon.Identity = Self.CurrentIdentity
-		  If Identity = Nil Then
+		  If Identity Is Nil Then
 		    RaiseEvent NeedsLogin()
 		    Return
 		  End If

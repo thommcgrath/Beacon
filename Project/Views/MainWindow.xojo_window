@@ -818,7 +818,7 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
-		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.Username = "" Then
+		    If App.IdentityManager.CurrentIdentity Is Nil Or App.IdentityManager.CurrentIdentity.Username.IsEmpty Then
 		      Base.AddMenu(New MenuItem("Sign In", "beacon://action/signin"))
 		    Else
 		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")

@@ -728,12 +728,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If Beacon.Identity.IsUserDictionary(Dict) Then
 		    // Password is needed to decrypt
 		    Identity = IdentityDecryptDialog.ShowDecryptIdentityDict(ParentWindow, Dict)
-		    If Identity = Nil Then
+		    If Identity Is Nil Then
 		      Return
 		    End If
 		  Else
 		    Identity = Beacon.Identity.Import(Dict)
-		    If Identity = Nil Then
+		    If Identity Is Nil Then
 		      ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
 		      Return
 		    End If
@@ -819,7 +819,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_PrivacyCheck()
-		  If Self.mIdentityManager.CurrentIdentity = Nil Then
+		  If Self.mIdentityManager.CurrentIdentity Is Nil Then
 		    UserWelcomeWindow.Present(False)
 		  Else
 		    Self.NextLaunchQueueTask()

@@ -564,6 +564,7 @@ Class=ProjectValidator;Modules/Beacon/ProjectValidator.xojo_code;&h000000005853D
 Class=ProjectValidationResults;Modules/Beacon/ProjectValidationResults.xojo_code;&h00000000733C6FFF;&h0000000055ADDFFF;false
 Interface=Validateable;Modules/Beacon/Validateable.xojo_code;&h000000003C843FFF;&h0000000055ADDFFF;false
 Class=ProjectTool;Modules/Game Support/Ark/ProjectTool.xojo_code;&h00000000248B47FF;&h0000000016B997FF;false
+Class=OmniLicense;Modules/Beacon/OmniLicense.xojo_code;&h000000007D217FFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=5
