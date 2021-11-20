@@ -482,14 +482,12 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
-		  Const UseMBS = False
-		  
-		  #if UseMBS
+		  If UseMBSJSONGeneration And Pretty Then
 		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
 		    Return Temp.ToString(Pretty)
-		  #else
+		  Else
 		    Return Xojo.GenerateJSON(Source, Pretty)
-		  #endif
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1285,6 +1283,11 @@ Protected Module Beacon
 		step value.
 		
 	#tag EndNote
+
+
+	#tag Property, Flags = &h1
+		Protected UseMBSJSONGeneration As Boolean
+	#tag EndProperty
 
 
 	#tag Constant, Name = DefaultPrettyDecimals, Type = Double, Dynamic = False, Default = \"9", Scope = Private

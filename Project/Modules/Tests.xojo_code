@@ -26,6 +26,7 @@ Protected Module Tests
 	#tag Method, Flags = &h1
 		Protected Sub RunTests()
 		  #if DebugBuild
+		    TestJSON
 		    TestQualities()
 		    TestMemoryBlockExtensions()
 		    TestStrings()
@@ -255,6 +256,25 @@ Protected Module Tests
 		  
 		  Var TimeString As String = Beacon.SecondsToString(6.45)
 		  Call Assert(TimeString = "6.45s", "Failed to generate fractional time string: expected `6.45s`, got `" + TimeString + "`.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestJSON()
+		  Var Members() As String = Array("One", "Two", "Three")
+		  Var Dict As New Dictionary
+		  Dict.Value("Key") = "Value"
+		  Dict.Value("Number") = 1
+		  Dict.Value("List") = Members
+		  Dict.Value("Key With Spaces") = "Yep"
+		  
+		  Var GeneratedCompactJSON As String = Xojo.GenerateJSON(Dict, False)
+		  Var GeneratedPrettyJSON As String = Xojo.GenerateJSON(Dict, True)
+		  
+		  Call Assert(GeneratedCompactJSON = CompactJSON, "Compact JSON does not match the expected output")
+		  If Assert(GeneratedPrettyJSON = PrettyJSON, "Pretty JSON does not match the expected output") = False Then
+		    Beacon.UseMBSJSONGeneration = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -556,6 +576,13 @@ Protected Module Tests
 		  End Try
 		End Sub
 	#tag EndMethod
+
+
+	#tag Constant, Name = CompactJSON, Type = String, Dynamic = False, Default = \"{\"Key\":\"Value\"\x2C\"Number\":1\x2C\"List\":[\"One\"\x2C\"Two\"\x2C\"Three\"]\x2C\"Key With Spaces\":\"Yep\"}", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PrettyJSON, Type = String, Dynamic = False, Default = \"{\n    \"Key\": \"Value\"\x2C\n    \"Number\": 1\x2C\n    \"List\": [\n        \"One\"\x2C\n        \"Two\"\x2C\n        \"Three\"\n    ]\x2C\n    \"Key With Spaces\": \"Yep\"\n}\n", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior
