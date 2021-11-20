@@ -1102,7 +1102,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function SanitizeFilename(Filename As String, MaxLength As Integer = 0) As String
 		  // Windows doesn't seem to agree with trailing whitespace
-		  Filename = Filename.Trim
+		  Filename = Filename.Trim(EndOfLine.CRLF, EndOfLine.CR, EndOfLine.LF, ".")
 		  
 		  Var Searcher As New Regex
 		  Searcher.Options.ReplaceAllMatches = True
