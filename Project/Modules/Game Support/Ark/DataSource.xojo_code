@@ -69,7 +69,7 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub DoInitialImport()
-		  Var LocalDataFile As FolderItem = App.ResourcesFolder.Child("Complete.beacondata")
+		  Var LocalDataFile As FolderItem = App.ResourcesFolder.Child("Ark.beacondata")
 		  If LocalDataFile.Exists = False Then
 		    Return
 		  End If

@@ -81,13 +81,13 @@
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3, Architecture = 0
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl -L 'https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + "' > " + App + "/Contents/Resources/Complete.beacondata")
+					Call DoShellCommand("/usr/bin/curl -L 'https://lab.usebeacon.app/download/complete?game=ark&version=" + ConstantValue("Beacon.DataSource.DeltaFormat") + "' > " + App + "/Contents/Resources/Ark.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildMac , AppliesTo = 2, Architecture = 0
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl -L 'https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + "' > " + App + "/Contents/Resources/Complete.beacondata")
+					Call DoShellCommand("/usr/bin/curl -L 'https://usebeacon.app/download/complete?game=ark&version=" + ConstantValue("Beacon.DataSource.DeltaFormat") + "' > " + App + "/Contents/Resources/Ark.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 1, Architecture = 0
