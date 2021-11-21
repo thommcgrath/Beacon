@@ -371,11 +371,11 @@ End
 		  Var Sources() As Beacon.DataSource = App.DataSources
 		  For Each Source As Beacon.DataSource In Sources
 		    If Source.Syncing Then
-		      Self.SyncLabel.Text = Source.Identifier + ": Checking for updates…"
+		      Self.SyncLabel.Text = Source.Identifier + ": Checking for game data updates…"
 		      Self.EngramImportIndicator.Visible = True
 		      Return
 		    ElseIf Source.Importing Then
-		      Self.SyncLabel.Text = Source.Identifier + ": Importing update data…"
+		      Self.SyncLabel.Text = Source.Identifier + ": Importing game data…"
 		      Self.EngramImportIndicator.Visible = True
 		      Return
 		    End If

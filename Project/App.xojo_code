@@ -371,9 +371,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag MenuHandler
 		Function HelpUpdateEngrams() As Boolean Handles HelpUpdateEngrams.Action
 			If Keyboard.OptionKey Then
-			Call Self.HandleURL(Beacon.URLScheme + "://action/refreshengrams")
+			Self.SyncGamedata(False, True)
 			Else
-			Call Self.HandleURL(Beacon.URLScheme + "://action/checkforengrams")
+			Self.SyncGamedata(False, False)
 			End If
 			Return True
 		End Function
@@ -581,13 +581,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Case "checkforupdate"
 		      Self.CheckForUpdates()
 		    Case "checkforengrams"
-		      If Self.GetOnlinePermission() Then
-		        EngramsUpdateWindow.SyncAndShowIfNecessary(False)
-		      End If
+		      Self.SyncGamedata(False, False)
 		    Case "refreshengrams"
-		      If Self.GetOnlinePermission() Then
-		        EngramsUpdateWindow.SyncAndShowIfNecessary(True)
-		      End If
+		      Self.SyncGamedata(False, True)
 		    Case "refreshuser"
 		      Self.IdentityManager.RefreshUserDetails()
 		    Case "releasenotes"
@@ -917,6 +913,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mPendingURLs.RemoveAt(0)
 		  Wend
 		  
+		  Call CallLater.Schedule(3000, WeakAddressOf PostlaunchGamedataSync)
+		  
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
@@ -1213,6 +1211,12 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub PostlaunchGamedataSync()
+		  Self.SyncGamedata(True, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub PresentException(Err As Variant)
 		  ExceptionWindow.Present(Err)
 		End Sub
@@ -1318,6 +1322,27 @@ Implements NotificationKit.Receiver,Beacon.Application
 		Sub StartTicket()
 		  Var Win As New SupportTicketWindow
 		  Win.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SyncGamedata(Silent As Boolean, ForceRefresh As Boolean)
+		  If Silent Then
+		    If Preferences.OnlineEnabled = False Then
+		      Return
+		    End If
+		    
+		    For Each Source As Beacon.DataSource In Self.mDataSources
+		      Source.Sync(ForceRefresh)
+		    Next Source
+		    Return
+		  End If
+		  
+		  If Self.GetOnlinePermission() = False Then
+		    Return
+		  End If
+		  
+		  EngramsUpdateWindow.SyncAndShowIfNecessary(ForceRefresh)
 		End Sub
 	#tag EndMethod
 

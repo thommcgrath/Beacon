@@ -345,11 +345,13 @@ Protected Module BeaconUI
 		    Return
 		  End If
 		  
-		  Try
-		    Win = Win.TrueWindow
-		  Catch Err As RuntimeException
-		    Win = Nil
-		  End Try
+		  If (Win Is Nil) = False Then
+		    Try
+		      Win = Win.TrueWindow
+		    Catch Err As RuntimeException
+		      Win = Nil
+		    End Try
+		  End If
 		  
 		  #if TargetWindows
 		    Var Dialog As New TaskDialogMBS

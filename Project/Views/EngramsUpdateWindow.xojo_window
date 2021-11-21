@@ -134,15 +134,16 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_DatabaseUpdated)
+		  NotificationKit.Ignore(Self, Beacon.DataSource.Notification_SyncFinished, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  NotificationKit.Watch(Self, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_DatabaseUpdated)
+		  NotificationKit.Watch(Self, Beacon.DataSource.Notification_SyncFinished, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed)
 		  
-		  For Each DataSource As Beacon.DataSource In Self.mDataSources
+		  Var Sources() As Beacon.DataSource = App.DataSources
+		  For Each DataSource As Beacon.DataSource In Sources
 		    DataSource.Sync(Self.mForceRefresh)
 		  Next DataSource
 		End Sub
@@ -158,7 +159,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(ForceRefresh As Boolean)
-		  Self.mDataSources = App.DataSources
 		  Self.mForceRefresh = ForceRefresh
 		  Self.Constructor
 		End Sub
@@ -169,8 +169,9 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_DatabaseUpdated
-		    For Each Source As Beacon.DataSource In Self.mDataSources
+		  Case Beacon.DataSource.Notification_SyncFinished, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed
+		    Var Sources() As Beacon.DataSource = App.DataSources
+		    For Each Source As Beacon.DataSource In Sources
 		      If Source.Importing Or Source.Syncing Then
 		        // Not done yet
 		        Return
@@ -190,7 +191,7 @@ End
 		      Explanation = "Blueprints are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
 		    End If
 		    Self.Hide
-		    Self.ShowAlert(Message, Explanation)
+		    BeaconUI.ShowAlert(Message, Explanation)
 		    
 		    Self.Close
 		  End Select
@@ -207,10 +208,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mDataSources() As Beacon.DataSource
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mForceRefresh As Boolean
 	#tag EndProperty
 
@@ -220,7 +217,18 @@ End
 #tag Events RevealTimer
 	#tag Event
 		Sub Action()
-		  Self.Show()
+		  // Make sure the window is only shown if there is a database syncing
+		  
+		  Var Sources() As Beacon.DataSource = App.DataSources
+		  For Each Source As Beacon.DataSource In Sources
+		    If Source.Syncing Or Source.Importing Then
+		      Self.Show()
+		      Return
+		    End If
+		  Next Source
+		  
+		  // Nothing is syncing, so just close the window
+		  Self.Close()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
