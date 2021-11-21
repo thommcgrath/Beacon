@@ -112,6 +112,11 @@ Protected Class DataSource
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
 		  
+		  Self.mUpdateCheckTimer = New Timer
+		  Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Off
+		  Self.mUpdateCheckTimer.Period = 60000
+		  AddHandler mUpdateCheckTimer.Action, WeakAddressOf mUpdateCheckTimer_Action
+		  
 		  Const YieldInterval = 100
 		  
 		  Var DatafileName As String = Self.DatafileName
@@ -622,6 +627,11 @@ Protected Class DataSource
 
 	#tag Method, Flags = &h0
 		Sub Sync(ForceRefresh As Boolean = False)
+		  Var CheckURL As String = Self.SyncURL(ForceRefresh)
+		  If CheckURL.IsEmpty Then
+		    Return
+		  End If
+		  
 		  If Self.Syncing Then
 		    Return
 		  End If
@@ -643,7 +653,6 @@ Protected Class DataSource
 		  If Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Off Then
 		    Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Multiple
 		  End If
-		  Var CheckURL As String = Self.SyncURL(ForceRefresh)
 		  App.Log("Syncing " + Self.Identifier + " database with " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub

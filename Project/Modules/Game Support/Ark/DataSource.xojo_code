@@ -107,7 +107,7 @@ Inherits Beacon.DataSource
 		    End If
 		  Next
 		  
-		  // When deleting, loot_source_icons must be done after loot_sources
+		  // When deleting, loot_icons must be done after loot_sources
 		  Var Deletions() As Variant = ChangeDict.Value("deletions")
 		  Var DeleteIcons() As String
 		  Var BlueprintsToDelete() As String
@@ -116,7 +116,7 @@ Inherits Beacon.DataSource
 		    Select Case Deletion.Value("group")
 		    Case Ark.CategoryEngrams, Ark.CategoryCreatures, Ark.CategorySpawnPoints, Ark.CategoryLootContainers, "loot_sources"
 		      BlueprintsToDelete.Add(ObjectID)
-		    Case "loot_source_icons"
+		    Case "loot_icons"
 		      DeleteIcons.Add(ObjectID)
 		    Case "presets"
 		      Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
@@ -131,7 +131,7 @@ Inherits Beacon.DataSource
 		    End Select
 		  Next
 		  For Each IconID As String In DeleteIcons
-		    Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		    Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
 		  Next
 		  
 		  Var BlueprintsToSave() As Ark.Blueprint
@@ -147,11 +147,11 @@ Inherits Beacon.DataSource
 		    
 		    IconID = IconID.Lowercase
 		    
-		    Var Results As RowSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		    Var Results As RowSet = Self.SQLSelect("SELECT icon_id FROM loot_icons WHERE icon_id = ?1;", IconID)
 		    If Results.RowCount = 1 Then
-		      Self.SQLExecute("UPDATE loot_source_icons SET icon_data = ?2 WHERE icon_id = ?1;", IconID, IconData)
+		      Self.SQLExecute("UPDATE loot_icons SET icon_data = ?2 WHERE icon_id = ?1;", IconID, IconData)
 		    Else
-		      Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
+		      Self.SQLExecute("INSERT INTO loot_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
 		    End If
 		  Next
 		  If LootSourceIcons.LastIndex > -1 Then
@@ -338,11 +338,20 @@ Inherits Beacon.DataSource
 		    Var AdvancedPattern As String = Dict.Lookup("advanced_pattern", "")
 		    Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
 		    
+		    Var Language, Code As String
+		    If AdvancedPattern.IsEmpty Then
+		      Language = Ark.LootContainerSelector.LanguageJavaScript
+		      Code = AdvancedPattern
+		    Else
+		      Language = Ark.LootContainerSelector.LanguageRegEx
+		      Code = Pattern
+		    End If
+		    
 		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_container_selectors WHERE object_id = ?1;", ObjectID.StringValue)
 		    If Results.RowCount = 1 Then
-		      Self.SQLExecute("UPDATE loot_container_selectors SET label = ?2, pattern = ?3, mod_id = ?4, advanced_pattern = ?5 WHERE object_id = ?1;", ObjectID.StringValue, Label, Pattern, ModID.StringValue, AdvancedPattern)
+		      Self.SQLExecute("UPDATE loot_container_selectors SET label = ?2, content_pack_id = ?3, language = ?4, code = ?5 WHERE object_id = ?1;", ObjectID.StringValue, Label, ModID.StringValue, Language, Code)
 		    Else
-		      Self.SQLExecute("INSERT INTO loot_container_selectors (object_id, label, pattern, mod_id, advanced_pattern) VALUES (?1, ?2, ?3, ?4, ?5);", ObjectID.StringValue, Label, Pattern, ModID.StringValue, AdvancedPattern)
+		      Self.SQLExecute("INSERT INTO loot_container_selectors (object_id, label, content_pack_id, language, code) VALUES (?1, ?2, ?3, ?4, ?5);", ObjectID.StringValue, Label, ModID.StringValue, Language, Code)
 		    End If
 		  Next
 		  
@@ -460,8 +469,8 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub ImportTruncate()
-		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Ark.UserContentPackUUID)
-		  Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Ark.UserContentPackUUID)
+		  Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id != ?1;", Ark.UserContentPackUUID)
+		  Self.SQLExecute("DELETE FROM ini_options WHERE content_pack_id != ?1;", Ark.UserContentPackUUID)
 		  Self.SQLExecute("DELETE FROM content_packs WHERE is_local = 0") // Mods must be deleted last
 		End Sub
 	#tag EndEvent
@@ -1376,7 +1385,7 @@ Inherits Beacon.DataSource
 		  Var SpriteSheet, BadgeSheet As Picture
 		  Var Results As RowSet
 		  Try
-		    Results = Self.SQLSelect("SELECT loot_container_icons.icon_id, loot_container_icons.icon_data, loot_containers.experimental FROM loot_containers INNER JOIN loot_container_icons ON (loot_containers.icon = loot_container_icons.icon_id) WHERE loot_containers.content_pack_id = ?1 AND loot_conatiners.path = ?2 LIMIT 1;", Container.ContentPackUUID, Container.Path)
+		    Results = Self.SQLSelect("SELECT loot_icons.icon_id, loot_icons.icon_data, loot_containers.experimental FROM loot_containers INNER JOIN loot_icons ON (loot_containers.icon = loot_icons.icon_id) WHERE loot_containers.content_pack_id = ?1 AND loot_conatiners.path = ?2 LIMIT 1;", Container.ContentPackUUID, Container.Path)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "ContentPackUUID: " + Container.ContentPackUUID + " Path: " + Container.Path)
 		  End Try
@@ -2227,7 +2236,7 @@ Inherits Beacon.DataSource
 		      Self.BeginTransaction()
 		      TransactionStarted = True
 		      If LocalModsOnly Then
-		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 AND mod_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1);", BlueprintUUID)
+		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1 AND content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1);", BlueprintUUID)
 		      Else
 		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", BlueprintUUID)
 		      End If
@@ -2278,7 +2287,7 @@ Inherits Beacon.DataSource
 		      Columns.Value("label") = Blueprint.Label
 		      Columns.Value("tags") = Blueprint.TagString
 		      Columns.Value("availability") = Blueprint.Availability
-		      Columns.Value("mod_id") = Blueprint.ContentPackUUID
+		      Columns.Value("content_pack_id") = Blueprint.ContentPackUUID
 		      
 		      Select Case Blueprint
 		      Case IsA Ark.Creature
@@ -2429,6 +2438,25 @@ Inherits Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SyncURL(ForceRefresh As Boolean) As String
+		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Self.DeltaFormat.ToString(Locale.Raw, "0") + "&game=" + Self.Identifier.Lowercase)
+		  
+		  If ForceRefresh = False Then
+		    Var LastSync As String = Self.Variable("sync_time")
+		    If LastSync.IsEmpty = False Then
+		      CheckURL = CheckURL + "&since=" + EncodeURLComponent(LastSync)
+		    End If
+		  End If
+		  
+		  If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
+		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
+		  End If
+		  
+		  Return CheckURL
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngrams()
 		  // This way changing lots of engrams rapidly won't require a write to disk
@@ -2451,10 +2479,14 @@ Inherits Beacon.DataSource
 		  If UserPacks.Count > 0 Then
 		    Var Packs As New Beacon.StringList()
 		    For Each Pack As Ark.ContentPack In UserPacks
+		      If Pack.IsLocal = False Then
+		        Continue
+		      End If
+		      
 		      Packs.Append(Pack.UUID)
 		      
 		      Var Dict As New Dictionary
-		      Dict.Value("mod_id") = Pack.UUID
+		      Dict.Value("content_pack_id") = Pack.UUID
 		      Dict.Value("name") = Pack.Name
 		      Dict.Value("workshop_id") = Pack.WorkshopID
 		      Packed.Add(Dict)

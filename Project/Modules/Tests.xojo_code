@@ -272,9 +272,7 @@ Protected Module Tests
 		  Var GeneratedPrettyJSON As String = Xojo.GenerateJSON(Dict, True)
 		  
 		  Call Assert(GeneratedCompactJSON = CompactJSON, "Compact JSON does not match the expected output")
-		  If Assert(GeneratedPrettyJSON = PrettyJSON, "Pretty JSON does not match the expected output") = False Then
-		    Beacon.UseMBSJSONGeneration = True
-		  End If
+		  Call Assert(GeneratedPrettyJSON = PrettyJSON, "Pretty JSON does not match the expected output")
 		End Sub
 	#tag EndMethod
 

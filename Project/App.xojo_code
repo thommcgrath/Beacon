@@ -1090,6 +1090,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      SecondsFrom1970 = Max(SecondsFrom1970, SyncDate.SecondsFrom1970)
 		    End If
 		  Next Source
+		  If SecondsFrom1970 = 0 Then
+		    Return Nil
+		  End If
 		  Return New DateTime(SecondsFrom1970, New TimeZone(0))
 		End Function
 	#tag EndMethod

@@ -304,6 +304,14 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SyncURL(ForceRefresh As Boolean) As String
+		  #Pragma Unused ForceRefresh
+		  
+		  Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub UpdateNews()
 		  If (Self.mUpdateNewsThread Is Nil) = False Then
 		    Return
