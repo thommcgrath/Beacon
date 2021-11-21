@@ -301,13 +301,6 @@ Protected Class DataSource
 		  Var Duration As Double = (System.Microseconds - StartTime) / 1000000
 		  System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms import data")
 		  
-		  // Force analyze
-		  StartTime = System.Microseconds
-		  Self.SQLExecute("ANALYZE;")
-		  Self.SQLExecute("VACUUM;")
-		  Duration = (System.Microseconds - StartTime) / 1000000
-		  System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms to optimize")
-		  
 		  Try
 		    RaiseEvent ImportCleanup(StatusData)
 		  Catch Err As RuntimeException
@@ -451,6 +444,10 @@ Protected Class DataSource
 		  End If
 		  
 		  If Success Then
+		    Self.SQLExecute("ANALYZE;")
+		    Self.SQLExecute("VACUUM;")
+		    App.Log("Database optimized")
+		    
 		    NotificationKit.Post(Self.Notification_ImportSuccess, SyncNew)
 		  Else
 		    NotificationKit.Post(Self.Notification_ImportFailed, SyncNew)
