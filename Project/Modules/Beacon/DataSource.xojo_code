@@ -154,6 +154,7 @@ Protected Class DataSource
 		    Self.BeginTransaction()
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
 		    RaiseEvent BuildSchema
+		    RaiseEvent DoInitialImport
 		    Self.BuildIndexes
 		    Self.CommitTransaction()
 		  End If
@@ -752,6 +753,10 @@ Protected Class DataSource
 
 	#tag Hook, Flags = &h0
 		Event DefineIndexes() As Beacon.DataIndex()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DoInitialImport()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

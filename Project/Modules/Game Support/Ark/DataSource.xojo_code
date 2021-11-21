@@ -68,6 +68,25 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub DoInitialImport()
+		  Var LocalDataFile As FolderItem = App.ResourcesFolder.Child("Complete.beacondata")
+		  If LocalDataFile.Exists = False Then
+		    Return
+		  End If
+		  
+		  Var Content As String
+		  Try
+		    Content = LocalDataFile.Read
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading local data file")
+		    Return
+		  End Try
+		  
+		  Self.Import(Content)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function GetSchemaVersion() As Integer
 		  Return 100
 		End Function
