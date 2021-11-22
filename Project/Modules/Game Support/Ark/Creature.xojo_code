@@ -93,10 +93,6 @@ Implements Ark.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ContentPackUUID() As String
-		  If Self.mContentPackUUID Is Nil Then
-		    Return ""
-		  End If
-		  
 		  Return Self.mContentPackUUID
 		End Function
 	#tag EndMethod
@@ -391,7 +387,7 @@ Implements Ark.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentPackUUID As v4UUID
+		Protected mContentPackUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

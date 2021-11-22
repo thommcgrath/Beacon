@@ -50,7 +50,7 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As v4UUID)
+		Sub Constructor(Path As String, ObjectID As String)
 		  Super.Constructor()
 		  
 		  Self.mObjectID = ObjectID

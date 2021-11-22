@@ -459,7 +459,7 @@ Implements Ark.Blueprint,Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mObjectID As v4UUID
+		Protected mObjectID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

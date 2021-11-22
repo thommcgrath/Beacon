@@ -45,18 +45,21 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  Self.mRequirements = New Dictionary
+		  
 		  Super.Constructor
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As v4UUID)
-		  Super.Constructor()
-		  
+		Sub Constructor(Path As String, ObjectID As String)
 		  Self.mObjectID = ObjectID
 		  Self.mPath = Path
 		  Self.mClassString = Beacon.ClassStringFromPath(Path)
+		  Self.mRequirements = New Dictionary
+		  
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -81,6 +84,13 @@ Implements Ark.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Experimental(Assigns Value As Boolean)
 		  Self.mExperimental = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub IconID(Assigns Value As String)
+		  Self.mIconID = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -219,8 +229,33 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub RequiredItemSetCount(Assigns Value As Integer)
-		  Self.mRequiredItemSetCount = Value
+		  If Value <= 1 Then
+		    If Self.mRequirements.HasKey("min_item_sets") Then
+		      Self.mRequirements.Remove("min_item_sets")
+		      Self.Modified = True
+		    End If
+		    Return
+		  End If
+		  
+		  Self.mRequirements.Value("min_item_sets") = Value
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Requirements(Assigns Dict As Dictionary)
+		  If Dict Is Nil Then
+		    If Self.mRequirements.KeyCount >= 0 Then
+		      Self.mRequirements = New Dictionary
+		      Self.Modified = True
+		    End If
+		    Return
+		  End If
+		  
+		  If Beacon.Hash(Beacon.GenerateJSON(Dict, False)) <> Beacon.Hash(Beacon.GenerateJSON(Self.mRequirements, False)) Then
+		    Self.mRequirements = Dict.Clone
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -256,7 +291,36 @@ Implements Ark.MutableBlueprint
 		Sub Unpack(Dict As Dictionary)
 		  // Part of the Ark.MutableBlueprint interface.
 		  
+		  If Dict.HasKey("multipliers") Then
+		    Var Multipliers As Dictionary = Dict.Value("multipliers")
+		    Var MultiplierMin As Double = Multipliers.Value("min")
+		    Var MultiplierMax As Double = Multipliers.Value("max")
+		    Self.mMultipliers = New Beacon.Range(MultiplierMin, MultiplierMax)
+		  End If
 		  
+		  If Dict.HasKey("ui_color") Then
+		    Self.mUIColor = Dict.Value("ui_color").StringValue.ToColor
+		  End If
+		  
+		  If Dict.HasKey("icon") Then
+		    Self.mIconID = Dict.Value("icon").StringValue
+		  End If
+		  
+		  If Dict.HasKey("sort_order") Then
+		    Self.mSortValue = Dict.Value("sort_order").IntegerValue
+		  End If
+		  
+		  If Dict.HasKey("experimental") Then
+		    Self.mExperimental = Dict.Value("experimental").BooleanValue
+		  End If
+		  
+		  If Dict.HasKey("notes") Then
+		    Self.mNotes = Dict.Value("notes").StringValue
+		  End If
+		  
+		  If Dict.HasKey("requirements") Then
+		    Self.mRequirements = Dictionary(Dict.Value("requirements").ObjectValue).Clone
+		  End If
 		End Sub
 	#tag EndMethod
 

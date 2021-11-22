@@ -667,13 +667,13 @@ Protected Module Ark
 		  
 		  Var Blueprint As Ark.MutableBlueprint
 		  Select Case Group
-		  Case "engrams"
+		  Case Ark.CategoryEngrams
 		    Blueprint = New Ark.MutableEngram(Path, ObjectID)
-		  Case "creatures"
+		  Case Ark.CategoryCreatures
 		    Blueprint = New Ark.MutableCreature(Path, ObjectID)
-		  Case "spawn_points"
+		  Case Ark.CategorySpawnPoints
 		    Blueprint = New Ark.MutableSpawnPoint(Path, ObjectID)
-		  Case "loot_containers"
+		  Case Ark.CategoryLootContainers, "loot_sources"
 		    Blueprint = New Ark.MutableLootContainer(Path, ObjectID)
 		  Else
 		    Return Nil

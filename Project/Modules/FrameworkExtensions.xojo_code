@@ -561,6 +561,32 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ToColor(Extends Source As String) As Color
+		  Var RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
+		  If Source.Length = 3 Then
+		    RedHex = Source.Middle(0, 1) + Source.Middle(0, 1)
+		    GreenHex = Source.Middle(1, 1) + Source.Middle(1, 1)
+		    BlueHex = Source.Middle(2, 1) + Source.Middle(2, 1)
+		  ElseIf Source.Length = 4 Then
+		    RedHex = Source.Middle(0, 1) + Source.Middle(0, 1)
+		    GreenHex = Source.Middle(1, 1) + Source.Middle(1, 1)
+		    BlueHex = Source.Middle(2, 1) + Source.Middle(2, 1)
+		    AlphaHex = Source.Middle(3, 1) + Source.Middle(3, 1)
+		  ElseIf Source.Length = 6 Then
+		    RedHex = Source.Middle(0, 2)
+		    GreenHex = Source.Middle(2, 2)
+		    BlueHex = Source.Middle(4, 2)
+		  ElseIf Source.Length = 8 Then
+		    RedHex = Source.Middle(0, 2)
+		    GreenHex = Source.Middle(2, 2)
+		    BlueHex = Source.Middle(4, 2)
+		    AlphaHex = Source.Middle(6, 2)
+		  End If
+		  Return Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToHex(Extends Source As Color) As String
 		  Return Source.Red.ToHex(2).Lowercase + Source.Green.ToHex(2).Lowercase + Source.Blue.ToHex(2).Lowercase + Source.Alpha.ToHex(2).Lowercase
 		End Function

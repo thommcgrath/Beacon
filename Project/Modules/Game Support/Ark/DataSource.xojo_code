@@ -13,8 +13,8 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER UNIQUE, is_local BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
@@ -2145,49 +2145,30 @@ Inherits Beacon.DataSource
 		Private Function RowSetToLootContainer(Results As RowSet) As Ark.LootContainer()
 		  Var Sources() As Ark.LootContainer
 		  While Not Results.AfterLastRow
-		    Var HexColor As String = Results.Column("uicolor").StringValue
-		    Var RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
-		    If HexColor.Length = 3 Then
-		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
-		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
-		      BlueHex = HexColor.Middle(2, 1) + HexColor.Middle(2, 1)
-		    ElseIf HexColor.Length = 4 Then
-		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
-		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
-		      BlueHex = HexColor.Middle(2, 1) + HexColor.Middle(2, 1)
-		      AlphaHex = HexColor.Middle(3, 1) + HexColor.Middle(3, 1)
-		    ElseIf HexColor.Length = 6 Then
-		      RedHex = HexColor.Middle(0, 2)
-		      GreenHex = HexColor.Middle(2, 2)
-		      BlueHex = HexColor.Middle(4, 2)
-		    ElseIf HexColor.Length = 8 Then
-		      RedHex = HexColor.Middle(0, 2)
-		      GreenHex = HexColor.Middle(2, 2)
-		      BlueHex = HexColor.Middle(4, 2)
-		      AlphaHex = HexColor.Middle(6, 2)
-		    End If
-		    
 		    Var Requirements As Dictionary
 		    #Pragma BreakOnExceptions Off
 		    Try
 		      Requirements = Beacon.ParseJSON(Results.Column("requirements").StringValue)
 		    Catch Err As RuntimeException
-		      
+		      Requirements = New Dictionary
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
-		    Var Source As New Ark.MutableLootContainer
+		    Var Source As New Ark.MutableLootContainer(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Source.Label = Results.Column("label").StringValue
-		    Source.Path = Results.Column("path").StringValue
+		    If IsNull(Results.Column("alternate_label").Value) = False Then
+		      Source.AlternateLabel = Results.Column("alternate_label").StringValue
+		    End If
 		    Source.Availability = Results.Column("availability").Value
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
-		    Source.UIColor = Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		    Source.UIColor = Results.Column("uicolor").StringValue.ToColor
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
 		    Source.ContentPackUUID = Results.Column("content_pack_id").StringValue
 		    Source.ContentPackName = Results.Column("content_pack_name").StringValue
 		    Source.TagString = Results.Column("tags").StringValue
+		    Source.IconID = Results.Column("icon").StringValue
 		    
 		    If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
 		      Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
@@ -2364,11 +2345,20 @@ Inherits Beacon.DataSource
 		        End If
 		        CacheDict = Self.mEngramCache
 		      Case IsA Ark.LootContainer
-		        #if DebugBuild
-		          #Pragma Warning "Incomplete"
-		        #else
-		          #Pragma Error "Incomplete"
-		        #endif
+		        Var Container As Ark.LootContainer = Ark.LootContainer(Blueprint)
+		        Var Requirements As New Dictionary
+		        If Container.RequiredItemSetCount > 0 Then
+		          Requirements.Value("min_item_sets") = Container.RequiredItemSetCount
+		        End If
+		        
+		        Columns.Value("multiplier_min") = Container.Multipliers.Min
+		        Columns.Value("multiplier_max") = Container.Multipliers.Max
+		        Columns.Value("uicolor") = Container.UIColor.ToHex
+		        Columns.Value("sort_order") = Container.SortValue
+		        Columns.Value("icon") = Container.IconID
+		        Columns.Value("experimental") = Container.Experimental
+		        Columns.Value("notes") = Container.Notes
+		        Columns.Value("requirements") = Requirements
 		      End Select
 		      
 		      Self.BeginTransaction()
@@ -2637,7 +2627,7 @@ Inherits Beacon.DataSource
 	#tag Constant, Name = GameEventSelectSQL, Type = String, Dynamic = False, Default = \"SELECT events.event_id\x2C events.label\x2C events.ark_code\x2C events.colors\x2C events.rates\x2C events.engrams FROM events", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.requirements\x2C loot_containers.content_pack_id\x2C loot_containers.tags FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
+	#tag Constant, Name = LootContainerSelectSQL, Type = String, Dynamic = False, Default = \"SELECT loot_containers.object_id\x2C loot_containers.path\x2C loot_containers.class_string\x2C loot_containers.label\x2C loot_containers.alternate_label\x2C loot_containers.availability\x2C loot_containers.multiplier_min\x2C loot_containers.multiplier_max\x2C loot_containers.uicolor\x2C loot_containers.requirements\x2C loot_containers.sort_order\x2C loot_containers.experimental\x2C loot_containers.notes\x2C loot_containers.tags\x2C loot_containers.icon\x2C content_packs.content_pack_id\x2C content_packs.name AS content_pack_name FROM loot_containers INNER JOIN content_packs ON (loot_containers.content_pack_id \x3D content_packs.content_pack_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_EngramsChanged, Type = String, Dynamic = False, Default = \"Engrams Changed", Scope = Public

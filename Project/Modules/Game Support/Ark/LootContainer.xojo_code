@@ -69,7 +69,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mObjectID = Source.mObjectID
 		  Self.mPath = Source.mPath
 		  Self.mPreventDuplicates = Source.mPreventDuplicates
-		  Self.mRequiredItemSetCount = Source.mRequiredItemSetCount
+		  Self.mRequirements = Source.mRequirements.Clone
 		  Self.mSortValue = Source.mSortValue
 		  Self.mUIColor = Source.mUIColor
 		  
@@ -91,10 +91,6 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function ContentPackUUID() As String
 		  // Part of the Ark.Blueprint interface.
-		  
-		  If Self.mContentPackUUID Is Nil Then
-		    Return ""
-		  End If
 		  
 		  Return Self.mContentPackUUID
 		End Function
@@ -266,6 +262,12 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  
 		  Container.Modified = True
 		  Return Container
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IconID() As String
+		  Return Self.mIconID
 		End Function
 	#tag EndMethod
 
@@ -447,7 +449,13 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Sub Pack(Dict As Dictionary)
 		  // Part of the Ark.Blueprint interface.
 		  
-		  
+		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
+		  Dict.Value("ui_color") = Self.mUIColor.ToHex
+		  Dict.Value("icon") = Self.mIconID
+		  Dict.Value("sort_order") = Self.mSortValue
+		  Dict.Value("experimental") = Self.mExperimental
+		  Dict.Value("notes") = Self.mNotes
+		  Dict.Value("requirements") = Self.mRequirements.Clone
 		End Sub
 	#tag EndMethod
 
@@ -467,7 +475,17 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function RequiredItemSetCount() As Integer
-		  Return Self.mRequiredItemSetCount
+		  If Self.mRequirements.HasKey("min_item_sets") Then
+		    Return Max(Self.mRequirements.Value("min_item_sets").IntegerValue, 1)
+		  Else
+		    Return 1
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Requirements() As Dictionary
+		  Return Self.mRequirements.Clone
 		End Function
 	#tag EndMethod
 
@@ -628,11 +646,15 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentPackUUID As v4UUID
+		Protected mContentPackUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mExperimental As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mIconID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -664,7 +686,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mObjectID As v4UUID
+		Protected mObjectID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -676,7 +698,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequiredItemSetCount As Integer
+		Protected mRequirements As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
