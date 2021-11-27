@@ -470,6 +470,15 @@ class User implements \JsonSerializable {
 		}
 	}
 	
+	public static function GetByEmailID(string $email_id) {
+			$database = \BeaconCommon::Database();
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id = ANY($1);', '{' . $email_id . '}');
+			$users = static::GetFromResults($results);
+			if (count($users) == 1) {
+				return $users[0];
+			}
+		}
+	
 	public static function GetByUserID(string $user_id) {
 		$database = \BeaconCommon::Database();
 		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');

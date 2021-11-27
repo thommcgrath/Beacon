@@ -28,16 +28,22 @@ if (strlen($body) < 60) {
 	ReplyError('Please include a more detailed description of your issue.', 400);
 }
 
+if (BeaconUser::ValidateEmail($email) === false) {
+	ReplyError('Could not validate email address.', 400);
+}
+
+$database = BeaconCommon::Database();
+$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+$email_id = $results->Field('email_id');
+	
+$user = null;
 if ($has_expanded_parameters) {
 	$user_id = trim($_POST['user']);
+	$user = BeaconUser::GetByUserID($user_id);
 	$os = trim($_POST['os']);
 	$version = trim($_POST['version']);
 	$build = trim($_POST['build']);
 	$time_submitting = 15; // Just make something up.
-	
-	if (BeaconUser::ValidateEmail($email) === false) {
-		ReplyError('Could not validate email address.', 400);
-	}
 } else {
 	$timestamp = intval($_POST['timestamp']);
 	$min_timestamp = $timestamp + 60;
@@ -54,6 +60,9 @@ if ($has_expanded_parameters) {
 	if ($provided_hash !== $required_hash) {
 		ReplyError('Invalid parameters.', 400);
 	}
+}
+if (is_null($user)) {
+	$user = BeaconUser::GetByEmailID($email_id);
 }
 
 $platform_map = [
@@ -82,6 +91,12 @@ $custom_fields = [
 		'value' => $host
 	],
 ];
+if (is_null($user) === false) {
+	$custom_fields[] = [
+		'id' => 360033879552,
+		'value' => $user->UserID()
+	];
+}
 if ($has_expanded_parameters) {
 	$custom_fields[] = [
 		'id' => 360033875991,
@@ -90,10 +105,6 @@ if ($has_expanded_parameters) {
 	$custom_fields[] = [
 		'id' => 360033879592,
 		'value' => $version
-	];
-	$custom_fields[] = [
-		'id' => 360033879552,
-		'value' => $user_id
 	];
 	$custom_fields[] = [
 		'id' => 360033879572,
@@ -107,36 +118,22 @@ if (isset($_POST['archive_key'])) {
 	];
 }
 
-$user = null;
-$email_id = null;
-$user_has_omni = false;
-$email_has_omni = false;
-$user_matches_purchase = false;
+$licenses = [];
+if (is_null($user) === false) {
+	$licenses = GetLicensesForEmailID($user->EmailID());
+	if ($email_id !== $user->EmailID()) {
+		$licenses = array_merge($licenses, GetLicensesForEmailID($email_id));
+	}
+} else {
+	$licenses = GetLicensesForEmailID($email_id);
+}
+if (count($licenses) > 0) {
+	$omni_description = "\n\nLicenses:\n" . implode("\n", $licenses);
+} else {
+	$omni_description = '';
+}
 
-$omni_description = '';
 if ($has_expanded_parameters) {
-	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT purchaser_email FROM purchases INNER JOIN purchase_items ON (purchases.purchase_id = purchase_items.purchase_id) WHERE purchases.refunded = FALSE AND purchase_items.product_id = $2 AND purchases.purchaser_email = uuid_for_email($1);', $email, '972f9fc5-ad64-4f9c-940d-47062e705cc5');
-	if ($results->RecordCount() >= 1) {
-		$email_has_omni = true;
-		$email_id = $results->Field('purchaser_email');
-	}
-	
-	try {
-		$user = BeaconUser::GetByUserID($user_id);
-		if (is_null($user) === false) {
-			$user_has_omni = $user->OmniVersion() >= 1;
-			$user_matches_purchase = $user->EmailID() === $email_id;
-		}
-	} catch (Exception $e) {
-	}
-	
-	if ($user_has_omni) {
-		$omni_description = "\n\nHas Omni: Yes.";
-	} elseif ($email_has_omni) {
-		$omni_description = "\n\nHas Omni: Maybe. The email address has a valid purchase, but the user account has a different email address.";
-	}
-	
 	$attachment_token = null;
 	$curl = curl_init('https://thezaz.zendesk.com/api/v2/uploads.json?filename=' . urlencode($_FILES['archive']['name']));
 	curl_setopt($curl, CURLOPT_USERPWD, BeaconCommon::GetGlobal('ZenDesk_Username') . ":" . BeaconCommon::GetGlobal('ZenDesk_Password'));
@@ -154,15 +151,9 @@ if ($has_expanded_parameters) {
 	} else {
 		ReplyError('Unable to upload to ZenDesk.', 500, $zendesk_body);
 	}
-} else {
-	$user = BeaconUser::GetByEmail($email);
-	if (is_null($user) === false && $user->OmniVersion() >= 1) {
-		$omni_description = "\n\nHas Omni: Yes.";
-		$user_has_omni = true;
-	}
 }
 
-if ($user_has_omni === false) {
+if (is_null($user)) {
 	// Pass to CleanTalk for spam detection
 	$spam = [
 		'method_name' => 'check_message',
@@ -231,6 +222,26 @@ function ReplyError(string $message, int $code, $detail = null) {
 	http_response_code($code);
 	echo json_encode(['error' => true, 'message' => $message, 'detail' => $detail], JSON_PRETTY_PRINT);
 	exit;
+}
+
+function GetLicensesForEmailID(?string $email_id) {
+	$licenses = [];
+	if (is_null($email_id)) {
+		return $licenses;
+	}
+	
+	$database = BeaconCommon::Database();
+	$results = $database->Query('SELECT product_name, expiration AT TIME ZONE \'UTC\' AS expiration FROM purchased_products WHERE purchaser_email = $1 ORDER BY product_name;', $email_id);
+	while ($results->EOF() === false) {
+		$license = $results->Field('product_name');
+		if (is_null($results->Field('expiration')) === false) {
+			$expiration = new DateTime($results->Field('expiration'));
+			$license .= ', expires ' . $expiration->format('Y-m-d');
+		}
+		$licenses[] = $license;
+		$results->MoveNext();
+	}
+	return $licenses;
 }
 
 ?>
