@@ -365,7 +365,7 @@ Implements ObservationKit.Observable
 		    Next
 		    
 		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
-		      Var UserID As String = PossibleIdentity.UserIDForEncryption
+		      Var UserID As String = PossibleIdentity.UserID
 		      If Passwords.HasKey(UserID) = False Then
 		        Continue
 		      End If
@@ -816,8 +816,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function SaveData(Identity As Beacon.Identity) As Dictionary
-		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserIDForEncryption) Then
-		    Self.AddUser(Identity.UserIDForEncryption, Identity.PublicKey)
+		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserID) Then
+		    Self.AddUser(Identity.UserID, Identity.PublicKey)
 		  End If
 		  
 		  Var Dict As New Dictionary

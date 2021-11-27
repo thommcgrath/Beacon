@@ -63,12 +63,6 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Project" )  Function Document() As Ark.Project
-		  Return Self.mProject
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub GoToIssue(Issue As Beacon.Issue)
 		  RaiseEvent ShowIssue(Issue)
 		End Sub

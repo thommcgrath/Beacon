@@ -285,12 +285,6 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function IsChildAccount() As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IsOmniFlagged(Value As Integer) As Boolean
 		  Return (Self.OmniFlags And Value) = Value
 		End Function
@@ -331,12 +325,6 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function ParentAccountID() As v4UUID
-		  Return Nil
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function PrivateKey() As String
 		  Return Self.mPrivateKey
 		End Function
@@ -364,16 +352,6 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function UserID() As String
-		  Return Self.mIdentifier
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "UserID" )  Function UserIDForEncryption() As String
-		  // For use when decrypting a document. Returns the parent id for child accounts,
-		  // or the user's actual id for regular accounts. Return as string since this is
-		  // most useful as a dictionary key.
-		  
 		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod

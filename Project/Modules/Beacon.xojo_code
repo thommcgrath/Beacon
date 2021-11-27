@@ -769,12 +769,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "LastIndex" )  Function LastRowIndex(Extends Target As Beacon.Countable) As Integer
-		  Return Target.Count - 1
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function MakeHumanReadable(Source As String) As String
 		  Var Chars() As String

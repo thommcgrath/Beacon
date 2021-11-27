@@ -708,16 +708,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Templates" )  Function Presets(SwitchTo As Boolean = True) As TemplatesComponent
-		  If SwitchTo Then
-		    Self.SwitchView(Self.PageTemplates)
-		  End If
-		  
-		  Return Self.TemplatesComponent1
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
 		  If Self.NavBar Is Nil Then
@@ -796,12 +786,6 @@ End
 	#tag Method, Flags = &h0
 		Sub ShowHome()
 		  Self.SwitchView(Self.PageHome)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "ShowTemplates" )  Sub ShowPresets()
-		  Self.SwitchView(Self.PageTemplates)
 		End Sub
 	#tag EndMethod
 
