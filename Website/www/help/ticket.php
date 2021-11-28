@@ -148,7 +148,7 @@ if (isset($_POST['archive_key'])) {
 	];
 }
 
-$paragraphs = [$body];
+$diagnostics = [];
 
 $licenses = [];
 if (count($license_emails) > 1) {
@@ -165,12 +165,12 @@ if (count($license_emails) > 1) {
 }
 if (count($licenses) > 0) {
 	asort($licenses);
-	$paragraphs[] = "Licenses:\n" . implode("\n", $licenses);
+	$diagnostics[] = "- Licenses:\n" . implode("\n", $licenses);
 }
 if (count($users) > 1) {
 	$usernames = [];
 	foreach ($users as $user) {
-		$username = $user->Username() . '#' . $user->Suffix();
+		$username = '  - ' . $user->Username() . '#' . $user->Suffix();
 		if ($user->EmailID() === $email_id) {
 			$username .= ' (This email)';
 		} elseif (is_null($user_id) === false && $user_id === $user->UserID()) {
@@ -178,7 +178,24 @@ if (count($users) > 1) {
 		}
 		$usernames[] = $username;
 	}
-	$paragraphs[] = "Multiple users detected: " . BeaconCommon::ArrayToEnglish($usernames);
+	$diagnostics[] = "- Multiple users detected:\n" . implode("\n", $usernames);
+} elseif (count($users) === 1 && $user_id !== $users[0]->UserID()) {
+	$diagnostics[] = "- User may be signed into the wrong account.";
+} elseif (count($users) === 0 && is_null($user_id) === false) {
+	$diagnostics[] = '- User may be anonymous.';
+}
+
+$paragraphs = [$body];
+if (count($diagnostics) > 0) {
+	$paragraphs[] = '-- Diagnostic Information Follows --';
+	$paragraphs[] = implode("\n", $diagnostics);
+}
+
+if (BeaconCommon::InProduction() === false) {
+	// Pretend success
+	http_response_code(201);
+	echo json_encode(['error' => false, 'message' => 'Ticked Created', 'detail' => implode("\n\n", $paragraphs)], JSON_PRETTY_PRINT);
+	exit;
 }
 
 if ($has_expanded_parameters) {
@@ -199,13 +216,6 @@ if ($has_expanded_parameters) {
 	} else {
 		ReplyError('Unable to upload to ZenDesk.', 500, $zendesk_body);
 	}
-}
-
-if (BeaconCommon::InProduction() === false) {
-	// Pretend success
-	http_response_code(201);
-	echo json_encode(['error' => false, 'message' => 'Ticked Created', 'detail' => implode("\n\n", $paragraphs)], JSON_PRETTY_PRINT);
-	exit;
 }
 
 if (count($users) === 0) {
@@ -301,7 +311,7 @@ function GetLicensesForEmailID(?string $email_id, ?string $username = null) {
 		if (is_null($username) === false) {
 			$license = "$username: $license";
 		}
-		$licenses[] = $license;
+		$licenses[] = "  - $license";
 		$results->MoveNext();
 	}
 	return $licenses;
