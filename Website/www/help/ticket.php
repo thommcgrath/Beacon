@@ -1,11 +1,20 @@
 <?php
 
+/* Scenarios:
+
+1. Form is submitted without a user uuid, such as from the website. In this case, the user info comes from the email address.
+2. Form is submitted with a user uuid, but the account does not exist (offline) or has no email address (anonymous). In this case, the user info comes from the email address.
+3. Form is submitted with a user uuid which has an email address matching the submitted email address. In this case, the user info comes from the user uuid.
+4. Form is submitted with a user uuid wihch has an email address that does not match the submitted email address. In this case, information for both users should be included.
+
+*/
+
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	ReplyError("Method not allowed.", 405);
+	ReplyError('Method not allowed.', 405);
 }
 
 $has_expanded_parameters = BeaconCommon::HasAnyKeys($_POST, 'user', 'os', 'version', 'build') || isset($_FILES['archive']);
@@ -35,16 +44,25 @@ if (BeaconUser::ValidateEmail($email) === false) {
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
 $email_id = $results->Field('email_id');
-	
-$user = null;
+
+$user_id = null;
+$users = [];
+$license_emails = [];
+$license_users = [];
 if ($has_expanded_parameters) {
 	$user_id = trim($_POST['user']);
-	$user = BeaconUser::GetByUserID($user_id);
+	$user_by_id = BeaconUser::GetByUserID($user_id);
+	if (is_null($user_by_id) === false && is_null($user_by_id->EmailID()) === false) {
+		$users[] = $user_by_id;
+		$license_emails[] = $user_by_id->EmailID();
+		$license_users[$user_by_id->EmailID()] = $user_by_id;
+	}
 	$os = trim($_POST['os']);
 	$version = trim($_POST['version']);
 	$build = trim($_POST['build']);
 	$time_submitting = 15; // Just make something up.
 } else {
+	// Scenario 1: No user uuid submitted
 	$timestamp = intval($_POST['timestamp']);
 	$min_timestamp = $timestamp + 60;
 	$max_timestamp = $timestamp + 3600;
@@ -61,8 +79,20 @@ if ($has_expanded_parameters) {
 		ReplyError('Invalid parameters.', 400);
 	}
 }
-if (is_null($user)) {
-	$user = BeaconUser::GetByEmailID($email_id);
+if (count($users) === 0 || $users[0]->EmailID() !== $email_id) {
+	$user_by_email = BeaconUser::GetByEmailID($email_id);
+	if (is_null($user_by_email) === false) {
+		$users[] = $user_by_email;
+		$license_emails[] = $email_id;
+		$license_users[$email_id] = $user_by_email;
+		if (is_null($user_id)) {
+			$user_id = $user_by_email->UserID();
+		}
+	}
+}
+if (in_array($email_id, $license_emails) === false) {
+	$license_emails[] = $email_id;
+	$license_users[$email_id] = null;
 }
 
 $platform_map = [
@@ -91,10 +121,10 @@ $custom_fields = [
 		'value' => $host
 	],
 ];
-if (is_null($user) === false) {
+if (is_null($user_id) === false) {
 	$custom_fields[] = [
 		'id' => 360033879552,
-		'value' => $user->UserID()
+		'value' => $user_id
 	];
 }
 if ($has_expanded_parameters) {
@@ -118,19 +148,37 @@ if (isset($_POST['archive_key'])) {
 	];
 }
 
+$paragraphs = [$body];
+
 $licenses = [];
-if (is_null($user) === false) {
-	$licenses = GetLicensesForEmailID($user->EmailID());
-	if ($email_id !== $user->EmailID()) {
-		$licenses = array_merge($licenses, GetLicensesForEmailID($email_id));
+if (count($license_emails) > 1) {
+	foreach ($license_emails as $license_email_id) {
+		$username = null;
+		$user = $license_users[$license_email_id];
+		if (is_null($user) === false && is_null($user->Username()) === false) {
+			$username = $user->Username() . '#' . $user->Suffix();
+		}
+		$licenses = array_merge($licenses, GetLicensesForEmailID($license_email_id, $username));
 	}
-} else {
-	$licenses = GetLicensesForEmailID($email_id);
+} elseif (count($license_emails) === 1) {
+	$licenses = GetLicensesForEmailID($license_emails[0]);
 }
 if (count($licenses) > 0) {
-	$omni_description = "\n\nLicenses:\n" . implode("\n", $licenses);
-} else {
-	$omni_description = '';
+	asort($licenses);
+	$paragraphs[] = "Licenses:\n" . implode("\n", $licenses);
+}
+if (count($users) > 1) {
+	$usernames = [];
+	foreach ($users as $user) {
+		$username = $user->Username() . '#' . $user->Suffix();
+		if ($user->EmailID() === $email_id) {
+			$username .= ' (This email)';
+		} elseif (is_null($user_id) === false && $user_id === $user->UserID()) {
+			$username .= ' (Signed in user)';
+		}
+		$usernames[] = $username;
+	}
+	$paragraphs[] = "Multiple users detected: " . BeaconCommon::ArrayToEnglish($usernames);
 }
 
 if ($has_expanded_parameters) {
@@ -153,7 +201,14 @@ if ($has_expanded_parameters) {
 	}
 }
 
-if (is_null($user)) {
+if (BeaconCommon::InProduction() === false) {
+	// Pretend success
+	http_response_code(201);
+	echo json_encode(['error' => false, 'message' => 'Ticked Created', 'detail' => implode("\n\n", $paragraphs)], JSON_PRETTY_PRINT);
+	exit;
+}
+
+if (count($users) === 0) {
 	// Pass to CleanTalk for spam detection
 	$spam = [
 		'method_name' => 'check_message',
@@ -194,7 +249,7 @@ $ticket = [
 			'email' => $email
 		],
 		'comment' => [
-			'body' => $body . $omni_description,
+			'body' => implode("\n\n", $paragraphs),
 		]
 	]
 ];
@@ -224,7 +279,7 @@ function ReplyError(string $message, int $code, $detail = null) {
 	exit;
 }
 
-function GetLicensesForEmailID(?string $email_id) {
+function GetLicensesForEmailID(?string $email_id, ?string $username = null) {
 	$licenses = [];
 	if (is_null($email_id)) {
 		return $licenses;
@@ -232,11 +287,19 @@ function GetLicensesForEmailID(?string $email_id) {
 	
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT product_name, expiration AT TIME ZONE \'UTC\' AS expiration FROM purchased_products WHERE purchaser_email = $1 ORDER BY product_name;', $email_id);
+	$now = new DateTime();
 	while ($results->EOF() === false) {
 		$license = $results->Field('product_name');
 		if (is_null($results->Field('expiration')) === false) {
 			$expiration = new DateTime($results->Field('expiration'));
-			$license .= ', expires ' . $expiration->format('Y-m-d');
+			if ($expiration < $now) {
+				$license .= ', expired ' . $expiration->format('Y-m-d');
+			} else {
+				$license .= ', expires ' . $expiration->format('Y-m-d');
+			}
+		}
+		if (is_null($username) === false) {
+			$license = "$username: $license";
 		}
 		$licenses[] = $license;
 		$results->MoveNext();
