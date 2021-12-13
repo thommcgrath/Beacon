@@ -1620,13 +1620,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		            Mods.Append(Blueprint.ModID)
 		          End If
 		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
+		          Self.BeginTransaction()
 		          Self.SQLExecute("INSERT OR IGNORE INTO mods (mod_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id").UInt32Value, False, False, True)
+		          Self.Commit()
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
 		    
-		    Call Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Nil)
+		    If Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Nil) = False Then
+		      Break
+		    End If
 		  Else
 		    Self.BeginTransaction()
 		    Self.DeleteDataForMod(Beacon.UserModID)
