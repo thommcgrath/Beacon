@@ -3418,7 +3418,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    SQL = SQL + " ORDER BY label;"
 		    
 		    Var Results As RowSet
-		    #if true
+		    #if false
 		      Var StartTime As Double = System.Microseconds
 		    #endif
 		    If Values.KeyCount = 0 Then
@@ -3426,7 +3426,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Else
 		      Results = Self.SQLSelect(SQL, Values)
 		    End If
-		    #if true
+		    #if false
 		      Var Duration As Double = System.Microseconds - StartTime
 		      System.DebugLog("Searching for blueprints took " + Duration.ToString(Locale.Raw, "0") + " microseconds")
 		      System.DebugLog("EXPLAIN QUERY PLAN " + SQL)
