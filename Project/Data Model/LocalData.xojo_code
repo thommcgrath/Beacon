@@ -1640,11 +1640,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Self.Commit()
 		        End If
 		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName)
 		      End Try
 		    Next
 		    
-		    If Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Nil) = False Then
-		      Break
+		    // BlueprintsToDelete will run first, so this first clears out the additions before adding the unpacked blueprints
+		    Var Errors As Dictionary
+		    If Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Errors) = False Then
+		      For Each Entry As DictionaryEntry In Errors
+		        Var Blueprint As Beacon.Blueprint = Entry.Key
+		        Var Err As RuntimeException = Entry.Value
+		        App.Log(Err, CurrentMethodName, Blueprint.Path)
+		      Next Entry
 		    End If
 		  Else
 		    Self.BeginTransaction()
@@ -1674,6 +1681,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next Tag
 		        EngramsUpdated = True
 		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName)
 		      End Try
 		    Next
 		    Self.Commit()
