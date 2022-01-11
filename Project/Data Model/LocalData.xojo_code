@@ -1645,8 +1645,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    
 		    // BlueprintsToDelete will run first, so this first clears out the additions before adding the unpacked blueprints
-		    Var Errors As Dictionary
-		    If Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Errors) = False Then
+		    Var Errors As New Dictionary
+		    If Self.SaveBlueprints(Unpacked, Self.SearchForBlueprints("", Mods, ""), Errors) = False Then
 		      For Each Entry As DictionaryEntry In Errors
 		        Var Blueprint As Beacon.Blueprint = Entry.Key
 		        Var Err As RuntimeException = Entry.Value
