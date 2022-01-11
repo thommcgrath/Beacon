@@ -860,7 +860,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Stat Clamps Multiplier:"
+      Text            =   "Stat Limits Multiplier:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   "#HelpTagStatClampMultiplier"
@@ -1189,7 +1189,7 @@ End
 	#tag Constant, Name = HelpTagAllowGrinding, Type = String, Dynamic = False, Default = \"If unchecked\x2C the items cannot be fed to the industrial grinder.", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat clamping is used on the server\x2C this setting will allow the items to generate above or below the item stat clamp.", Scope = Private
+	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat limiting is used on the server\x2C this setting will allow the items to generate above or below the item stat limit. For example\x2C if damage is limited to 1000 in the Item Stat Limits editor\x2C a multiplier of 0.5 would limit to 500 and a multiplier of 2.0 would limit to 1000.", Scope = Private
 	#tag EndConstant
 
 
@@ -1332,7 +1332,7 @@ End
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 0
-		  MaxValue = 1000
+		  MaxValue = 100000
 		End Sub
 	#tag EndEvent
 #tag EndEvents
