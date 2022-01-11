@@ -8,7 +8,7 @@ Begin BeaconDialog EntryEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   534
+   Height          =   600
    ImplicitInstance=   False
    LiveResize      =   "False"
    MacProcID       =   0
@@ -17,7 +17,7 @@ Begin BeaconDialog EntryEditor
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   534
+   MinHeight       =   600
    MinimizeButton  =   False
    MinWidth        =   900
    Placement       =   1
@@ -32,7 +32,7 @@ Begin BeaconDialog EntryEditor
       Bold            =   False
       Caption         =   "Possible Items"
       Enabled         =   True
-      Height          =   462
+      Height          =   528
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -81,7 +81,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   442
+         Top             =   508
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -140,7 +140,7 @@ Begin BeaconDialog EntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   261
+         Height          =   327
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -246,9 +246,9 @@ Begin BeaconDialog EntryEditor
    Begin GroupBox SettingsGroup
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Quantities And Qualities"
+      Caption         =   "Quantity and Stats"
       Enabled         =   True
-      Height          =   245
+      Height          =   311
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -281,7 +281,7 @@ Begin BeaconDialog EntryEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   209
+         Height          =   275
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
@@ -325,7 +325,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   277
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -356,7 +356,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   442
+         Top             =   508
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -410,7 +410,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   313
+         Top             =   379
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -448,7 +448,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   494
+      Top             =   560
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -480,7 +480,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   494
+      Top             =   560
       Transparent     =   False
       Underline       =   False
       Visible         =   True

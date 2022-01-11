@@ -62,6 +62,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mMinQuality = Source.mMinQuality
 		  Self.mMinQuantity = Source.mMinQuantity
 		  Self.mWeight = Source.mWeight
+		  Self.mPreventGrinding = Source.mPreventGrinding
+		  Self.mStatClampMultiplier = Source.mStatClampMultiplier
 		  Self.mUniqueID = Source.mUniqueID
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
@@ -229,6 +231,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		  End If
 		  
+		  If Dict.HasKey("PreventGrinding") Then
+		    Entry.PreventGrinding = Dict.Value("PreventGrinding")
+		  End If
+		  
+		  If Dict.HasKey("StatClampMultiplier") Then
+		    Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
+		  End If
+		  
 		  Entry.Modified = False
 		  Return Entry
 		End Function
@@ -247,7 +257,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Var Locale As Locale = Locale.Raw
 		    Var Format As String = "0.000"
 		    
-		    Var Parts(6) As String
+		    Var Parts(8) As String
 		    Parts(0) = Beacon.MD5(Items.Join(",")).Lowercase
 		    Parts(1) = Self.ChanceToBeBlueprint.ToString(Locale, Format)
 		    Parts(2) = Self.MaxQuality.Key.Lowercase
@@ -255,6 +265,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Parts(4) = Self.MinQuality.Key.Lowercase
 		    Parts(5) = Self.MinQuantity.ToString(Locale, Format)
 		    Parts(6) = Self.RawWeight.ToString(Locale, Format)
+		    Parts(7) = If(Self.PreventGrinding, "True", "False")
+		    Parts(8) = Self.StatClampMultiplier.ToString(Locale, Format)
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
 		    Self.mLastHashTime = System.Microseconds
@@ -287,6 +299,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  If Dict.HasKey("MaxQuantity") Then
 		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
+		  End If
+		  If Dict.HasKey("bForcePreventGrinding") Then
+		    Entry.PreventGrinding = Dict.Value("bForcePreventGrinding")
+		  End If
+		  If Dict.HasKey("ItemStatClampsMultiplier") Then
+		    Entry.StatClampMultiplier = Dict.Value("ItemStatClampsMultiplier")
 		  End If
 		  
 		  // If bForceBlueprint is not included or explicitly true, then force is true. This
@@ -586,6 +604,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Keys.Value("PreventGrinding") = Self.PreventGrinding
+		  Keys.Value("StatClampMultiplier") = Self.StatClampMultiplier
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -713,12 +733,20 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  // 2017-07-07: As of 261.0, it appears ChanceToActuallyGiveItem does something else. It will
 		  // now be left off.
 		  If Chance < 1 Then
-		    Values.Add("bForceBlueprint=false")
+		    Values.Add("bForceBlueprint=False")
 		  Else
-		    Values.Add("bForceBlueprint=true")
+		    Values.Add("bForceBlueprint=True")
 		  End If
 		  //Values.Add("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
 		  Values.Add("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
+		  
+		  If Self.PreventGrinding Then
+		    Values.Add("bForcePreventGrinding=True")
+		  End If
+		  
+		  If Self.StatClampMultiplier <> 1.0 Then
+		    Values.Add("ItemStatClampsMultiplier=" + Self.StatClampMultiplier.PrettyText)
+		  End If
 		  
 		  Return "(" + Values.Join(",") + ")"
 		End Function
@@ -883,12 +911,39 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPreventGrinding As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStatClampMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUniqueID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mWeight As Double
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPreventGrinding
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mPreventGrinding = Value Then
+			    Return
+			  End If
+			  
+			  Self.mPreventGrinding = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		PreventGrinding As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -908,6 +963,25 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			End Set
 		#tag EndSetter
 		RawWeight As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mStatClampMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mStatClampMultiplier = Value Then
+			    Return
+			  End If
+			  
+			  Self.mStatClampMultiplier = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		StatClampMultiplier As Double
 	#tag EndComputedProperty
 
 
