@@ -64,12 +64,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mWeight = Source.mWeight
 		  Self.mPreventGrinding = Source.mPreventGrinding
 		  Self.mStatClampMultiplier = Source.mStatClampMultiplier
+		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
 		  Self.mUniqueID = Source.mUniqueID
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  Self.mLastSaveTime = Source.mLastSaveTime
-		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
 		  
 		  For I As Integer = 0 To Source.mOptions.LastIndex
 		    Self.mOptions(I) = New Beacon.SetEntryOption(Source.mOptions(I))
@@ -232,13 +232,22 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("PreventGrinding") Then
-		    Entry.PreventGrinding = Dict.Value("PreventGrinding")
-		  End If
+		  Try
+		    If Dict.HasKey("PreventGrinding") Then
+		      Entry.PreventGrinding = Dict.Value("PreventGrinding")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading PreventGrinding value")
+		  End Try
 		  
-		  If Dict.HasKey("StatClampMultiplier") Then
-		    Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
-		  End If
+		  Try
+		    If Dict.HasKey("StatClampMultiplier") Then
+		      Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading StatClampMultiplier value")
+		  End Try
+		  
 		  Try
 		    If Dict.HasKey("SingleItemQuantity") Then
 		      Entry.SingleItemQuantity = Dict.Value("SingleItemQuantity")
@@ -313,6 +322,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  If Dict.HasKey("ItemStatClampsMultiplier") Then
 		    Entry.StatClampMultiplier = Dict.Value("ItemStatClampsMultiplier")
+		  End If
 		  If Dict.HasKey("bApplyQuantityToSingleItem") Then
 		    Entry.SingleItemQuantity = Dict.Value("bApplyQuantityToSingleItem")
 		  End If
@@ -752,7 +762,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Add("MaxQuantity=" + Self.MaxQuantity.ToString)
 		  Values.Add("MinQuality=" + MinQuality.PrettyText)
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
-		  Values.Add("bApplyQuantityToSingleItem=" + If(Self.SingleItemQuantity, "true", "false"))
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
 		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
@@ -777,6 +786,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  If Self.StatClampMultiplier <> 1.0 Then
 		    Values.Add("ItemStatClampsMultiplier=" + Self.StatClampMultiplier.PrettyText)
+		  End If
+		  
+		  If Self.SingleItemQuantity Then
+		    Values.Add("bApplyQuantityToSingleItem=True")
 		  End If
 		  
 		  Return "(" + Values.Join(",") + ")"
@@ -946,11 +959,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStatClampMultiplier As Double = 1.0
+		Private mSingleItemQuantity As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSingleItemQuantity As Boolean
+		Private mStatClampMultiplier As Double = 1.0
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1003,6 +1016,25 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mSingleItemQuantity Or Self.mOptions.Count <= 1
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSingleItemQuantity = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSingleItemQuantity = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		SingleItemQuantity As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mStatClampMultiplier
 			End Get
 		#tag EndGetter
@@ -1018,24 +1050,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndSetter
 		StatClampMultiplier As Double
 	#tag EndComputedProperty
-	
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mSingleItemQuantity Or Self.mOptions.Count <= 1
-			End Getter
-		#tag EndGetter
-		#tag Setter
-			  If Self.mSingleItemQuantity = Value Then
-			    Return
-			  End If
-			  
-			  Self.mSingleItemQuantity = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		SingleItemQuantity As Boolean
-	#tag EndComputedProperty
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
@@ -1116,6 +1131,30 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PreventGrinding"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StatClampMultiplier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SingleItemQuantity"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

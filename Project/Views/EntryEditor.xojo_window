@@ -81,7 +81,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   508
+         Top             =   476
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -140,7 +140,7 @@ Begin BeaconDialog EntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   229
+         Height          =   295
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -266,8 +266,8 @@ Begin BeaconDialog EntryEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
-         Tooltip         =   "With this option off, the quantity will be distributed between all selected items. When turned on, only one item is selected for the entire quantity."
-         Top             =   442
+         Tooltip         =   "With this option off, the quantity will be distributed between all selected items. When turned on, only one item is selected for the entire quantity. The simulator will help visualize what effect this has."
+         Top             =   508
          Transparent     =   False
          Underline       =   False
          Value           =   False

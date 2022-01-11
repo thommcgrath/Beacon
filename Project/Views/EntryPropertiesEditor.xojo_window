@@ -823,6 +823,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      State           =   1
       TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
@@ -832,7 +833,6 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
-      VisualState     =   1
       Width           =   58
    End
    Begin Label StatClampMultiplierLabel
@@ -879,6 +879,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -934,6 +935,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      State           =   1
       TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
@@ -943,7 +945,6 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   True
-      VisualState     =   1
       Width           =   244
    End
    Begin CheckBox EditAllowGrindingCheck
@@ -967,6 +968,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      State           =   1
       TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
@@ -976,7 +978,6 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
-      VisualState     =   1
       Width           =   58
    End
 End
