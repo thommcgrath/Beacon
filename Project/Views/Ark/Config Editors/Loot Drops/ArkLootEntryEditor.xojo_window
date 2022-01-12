@@ -8,7 +8,7 @@ Begin BeaconDialog ArkLootEntryEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   534
+   Height          =   600
    ImplicitInstance=   False
    LiveResize      =   "False"
    MacProcID       =   0
@@ -17,7 +17,7 @@ Begin BeaconDialog ArkLootEntryEditor
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   534
+   MinHeight       =   600
    MinimizeButton  =   False
    MinWidth        =   900
    Placement       =   1
@@ -32,7 +32,7 @@ Begin BeaconDialog ArkLootEntryEditor
       Bold            =   False
       Caption         =   "Possible Items"
       Enabled         =   True
-      Height          =   462
+      Height          =   528
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -55,7 +55,7 @@ Begin BeaconDialog ArkLootEntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin CheckBox SingleEntryCheck
+      Begin CheckBox SingleEntryCheckbox
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Merge selections into one entry"
@@ -81,7 +81,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   442
+         Top             =   476
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -140,7 +140,7 @@ Begin BeaconDialog ArkLootEntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   261
+         Height          =   295
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -242,13 +242,46 @@ Begin BeaconDialog ArkLootEntryEditor
          Visible         =   True
          Width           =   65
       End
+      Begin CheckBox SingleItemCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Choose only one item"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   "With this option off, the quantity will be distributed between all selected items. When turned on, only one item is selected for the entire quantity. The simulator will help visualize what effect this has."
+         Top             =   508
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   340
+      End
    End
    Begin GroupBox SettingsGroup
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Quantities And Qualities"
+      Caption         =   "Quantity and Stats"
       Enabled         =   True
-      Height          =   245
+      Height          =   311
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -281,7 +314,7 @@ Begin BeaconDialog ArkLootEntryEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   209
+         Height          =   275
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
@@ -325,7 +358,7 @@ Begin BeaconDialog ArkLootEntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   277
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -356,7 +389,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   442
+         Top             =   508
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -410,7 +443,7 @@ Begin BeaconDialog ArkLootEntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   313
+         Top             =   379
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -448,7 +481,7 @@ Begin BeaconDialog ArkLootEntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   494
+      Top             =   560
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -480,7 +513,7 @@ Begin BeaconDialog ArkLootEntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   494
+      Top             =   560
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -529,7 +562,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function AllowMultipleEntries() As Boolean
-		  Return Self.mOriginalEntry = Nil
+		  Return Self.mOriginalEntry Is Nil
 		End Function
 	#tag EndMethod
 
@@ -651,11 +684,12 @@ End
 		    For Each Option As Ark.LootItemSetEntryOption In Self.mOriginalEntry
 		      Self.mSelectedEngrams.Value(Option.Engram.ObjectID) = Option
 		    Next
+		    Self.SingleItemCheckbox.Value = Self.mOriginalEntry.SingleItemQuantity
 		  End If
 		  
 		  Self.FilterField.Text = Prefilter
 		  Self.UpdateFilter()
-		  SingleEntryCheck.Value = Self.mSelectedEngrams.KeyCount > 1
+		  Self.SingleEntryCheckbox.Value = Self.mSelectedEngrams.KeyCount > 1
 		  
 		  For I As Integer = 0 To EngramList.RowCount - 1
 		    If EngramList.CellCheckBoxValueAt(I, 0) Then
@@ -697,13 +731,25 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSelectionUI()
-		  If Self.mSelectedEngrams.KeyCount > 1 And Self.AllowMultipleEntries Then
-		    Self.SingleEntryCheck.Visible = True
-		    Self.EngramList.Height = Self.SingleEntryCheck.Top - (12 + Self.EngramList.Top)
+		  Var ListBottom As Integer = (Self.EngramsGroup.Top + Self.EngramsGroup.Height) - 20
+		  
+		  If Self.mSelectedEngrams.KeyCount > 1 Then
+		    Self.SingleItemCheckbox.Visible = True
+		    ListBottom = Self.SingleItemCheckbox.Top - 12
+		    
+		    If Self.AllowMultipleEntries Then
+		      Self.SingleEntryCheckbox.Visible = True
+		      ListBottom = Self.SingleEntryCheckbox.Top - 12
+		      Self.SingleItemCheckbox.Enabled = Self.SingleEntryCheckbox.Value
+		    Else
+		      Self.SingleItemCheckbox.Enabled = True
+		    End If
 		  Else
-		    Self.SingleEntryCheck.Visible = False
-		    Self.EngramList.Height = (Self.SingleEntryCheck.Top + Self.SingleEntryCheck.Height) - Self.EngramList.Top
+		    Self.SingleEntryCheckbox.Visible = False
+		    Self.SingleItemCheckbox.Visible = False
 		  End If
+		  
+		  Self.EngramList.Height = ListBottom - Self.EngramList.Top
 		  Self.EnableButtons
 		End Sub
 	#tag EndMethod
@@ -716,9 +762,10 @@ End
 		    Return
 		  End If
 		  
-		  Var FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  Var FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheckbox.Value And Self.SingleEntryCheckbox.Visible)
 		  
 		  Var Entry As New Ark.MutableLootItemSetEntry
+		  Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		  For Each Item As DictionaryEntry In Self.mSelectedEngrams
 		    Var Option As Ark.LootItemSetEntryOption = Item.Value
 		    Entry.Add(Option)
@@ -798,9 +845,10 @@ End
 
 #tag EndWindowCode
 
-#tag Events SingleEntryCheck
+#tag Events SingleEntryCheckbox
 	#tag Event
 		Sub Action()
+		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
 		End Sub
 	#tag EndEvent
@@ -940,6 +988,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events SingleItemCheckbox
+	#tag Event
+		Sub Action()
+		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EntryPropertiesEditor1
 	#tag Event
 		Sub Changed()
@@ -973,6 +1028,7 @@ End
 		    For Each Option As Ark.LootItemSetEntryOption In Options
 		      Entry.Add(Option)
 		    Next
+		    Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		    Entries.Add(Entry)
 		  ElseIf Options.Count > 1 Then
 		    If SingleEntryCheck.Value Then
@@ -981,6 +1037,7 @@ End
 		      For Each Option As Ark.LootItemSetEntryOption In Options
 		        Entry.Add(Option)
 		      Next
+		      Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		      Entries.Add(Entry)
 		    Else
 		      // Multiple entries

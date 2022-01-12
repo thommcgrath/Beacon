@@ -9,7 +9,7 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   209
+   Height          =   275
    HelpTag         =   ""
    Index           =   -2147483648
    InitialParent   =   ""
@@ -802,6 +802,184 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Visible         =   False
       Width           =   58
    End
+   Begin CheckBox EditStatClampMultiplierCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Edit"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   430
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   1
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   211
+      Transparent     =   False
+      Underline       =   False
+      Value           =   True
+      Visible         =   False
+      Width           =   58
+   End
+   Begin Label StatClampMultiplierLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   10
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Stat Limits Multiplier:"
+      TextAlignment   =   3
+      TextColor       =   &c00000000
+      Tooltip         =   "#HelpTagStatClampMultiplier"
+      Top             =   211
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   152
+   End
+   Begin RangeField StatClampMultiplierField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      DoubleValue     =   0.0
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   174
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.0"
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   "#HelpTagStatClampMultiplier"
+      Top             =   211
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin CheckBox AllowGrindingCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Allow Grinding"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   174
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   1
+      TabIndex        =   25
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "#HelpTagAllowGrinding"
+      Top             =   245
+      Transparent     =   False
+      Underline       =   False
+      Value           =   True
+      Visible         =   True
+      Width           =   244
+   End
+   Begin CheckBox EditAllowGrindingCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Edit"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   430
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   1
+      TabIndex        =   26
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   245
+      Transparent     =   False
+      Underline       =   False
+      Value           =   True
+      Visible         =   False
+      Width           =   58
+   End
 End
 #tag EndWindow
 
@@ -839,6 +1017,11 @@ End
 		  Var MinQuality As Ark.Quality = Ark.Qualities.ForBaseValue(MinQualityValue)
 		  Var MaxQuality As Ark.Quality = Ark.Qualities.ForBaseValue(MaxQualityValue)
 		  
+		  Var BlueprintChance As Double = ChanceSlider.Value / 100
+		  Var Weight As Double = WeightField.DoubleValue
+		  Var StatClampMultiplier As Double = StatClampMultiplierField.DoubleValue
+		  Var PreventGrinding As Boolean = Not AllowGrindingCheck.Value
+		  
 		  For Idx As Integer = 0 To Entries.LastIndex
 		    If Self.EditMaxQuantityCheck.Value Then
 		      Entries(Idx).MaxQuantity = MaxQuantity
@@ -846,11 +1029,17 @@ End
 		    If Self.EditMinQuantityCheck.Value Then
 		      Entries(Idx).MinQuantity = MinQuantity
 		    End If
-		    If Self.EditChanceCheck.Value Then
-		      Entries(Idx).ChanceToBeBlueprint = ChanceSlider.Value / 100
+		    If EditChanceCheck.Value Then
+		      Entry.ChanceToBeBlueprint = BlueprintChance
 		    End If
-		    If Self.EditWeightCheck.Value Then
-		      Entries(Idx).RawWeight = WeightField.DoubleValue
+		    If EditWeightCheck.Value Then
+		      Entry.RawWeight = Weight
+		    End If
+		    If EditAllowGrindingCheck.Value Then
+		      Entry.PreventGrinding = PreventGrinding
+		    End If
+		    If EditStatClampMultiplierCheck.Value Then
+		      Entry.StatClampMultiplier = StatClampMultiplier
 		    End If
 		    If Self.EditMaxQualityCheck.Value Then
 		      Entries(Idx).MaxQuality = MaxQuality
@@ -884,16 +1073,18 @@ End
 		  
 		  Var MinQuantities(), MaxQuantities() As Integer
 		  Var MinQualities(), MaxQualities() As Double
-		  Var TotalWeight, TotalChance As Double
-		  Var CanBeBlueprint As Boolean
+		  Var TotalWeight, TotalChance, TotalStatClamMultiplier As Double
+		  Var CanBeBlueprint, PreventGrinding As Boolean
 		  For Each Entry As Ark.LootItemSetEntry In Entries
 		    MinQuantities.Add(Entry.MinQuantity)
 		    MaxQuantities.Add(Entry.MaxQuantity)
 		    TotalWeight = TotalWeight + Entry.RawWeight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
+		    TotalStatClamMultiplier = TotalStatClamMultiplier + Entry.StatClampMultiplier
 		    MinQualities.Add(Entry.MinQuality.BaseValue)
 		    MaxQualities.Add(Entry.MaxQuality.BaseValue)
 		    CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
+		    PreventGrinding = PreventGrinding Or Entry.PreventGrinding
 		  Next
 		  
 		  MinQuantities.Sort
@@ -919,8 +1110,10 @@ End
 		  End If
 		  MinQualityMenu.SelectByTag(MinQualities(0))
 		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastIndex))
-		  WeightSlider.Value = TotalWeight / (Entries.LastIndex + 1)
-		  WeightField.DoubleValue = TotalWeight / (Entries.LastIndex + 1)
+		  WeightSlider.Value = TotalWeight / Entries.Count
+		  WeightField.DoubleValue = TotalWeight / Entries.Count
+		  AllowGrindingCheck.Value = Not PreventGrinding
+		  StatClampMultiplierField.DoubleValue = TotalStatClamMultiplier / Entries.Count
 		  Self.mIgnoreChanges = False
 		  
 		  If Entries.Count > 1 Then
@@ -930,6 +1123,8 @@ End
 		    EditMinQualityCheck.Visible = True
 		    EditMinQuantityCheck.Visible = True
 		    EditWeightCheck.Visible = True
+		    EditStatClampMultiplierCheck.Visible = True
+		    EditAllowGrindingCheck.Visible = True
 		  End If
 		  
 		  EditChanceCheck.Value = Not EditChanceCheck.Visible
@@ -972,6 +1167,13 @@ End
 	#tag Property, Flags = &h21
 		Private mIgnoreChanges As Boolean
 	#tag EndProperty
+
+
+	#tag Constant, Name = HelpTagAllowGrinding, Type = String, Dynamic = False, Default = \"If unchecked\x2C the items cannot be fed to the industrial grinder.", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat limiting is used on the server\x2C this setting will allow the items to generate above or below the item stat limit. For example\x2C if damage is limited to 1000 in the Item Stat Limits editor\x2C a multiplier of 0.5 would limit to 500 and a multiplier of 2.0 would limit to 1000.", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -1097,6 +1299,32 @@ End
 		Sub TextChange()
 		  If Self.Focus = Me Then
 		    WeightSlider.Value = Round(Me.DoubleValue)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StatClampMultiplierField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mIgnoreChanges Then
+		    EditStatClampMultiplierCheck.Value = True
+		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 100000
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AllowGrindingCheck
+	#tag Event
+		Sub Action()
+		  If Not Self.mIgnoreChanges Then
+		    EditAllowGrindingCheck.Value = True
+		    RaiseEvent Changed
 		  End If
 		End Sub
 	#tag EndEvent

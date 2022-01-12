@@ -8,16 +8,16 @@ Begin Window ArkLootEntryMultiEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   261
+   Height          =   327
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   261
+   MaxHeight       =   327
    MaximizeButton  =   False
    MaxWidth        =   550
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   261
+   MinHeight       =   327
    MinimizeButton  =   False
    MinWidth        =   550
    Placement       =   1
@@ -37,7 +37,7 @@ Begin Window ArkLootEntryMultiEditor
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   209
+      Height          =   275
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -83,7 +83,7 @@ Begin Window ArkLootEntryMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   221
+      Top             =   287
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -115,7 +115,7 @@ Begin Window ArkLootEntryMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   221
+      Top             =   287
       Transparent     =   False
       Underline       =   False
       Visible         =   True

@@ -272,6 +272,30 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Sub ParseSpec(Value As String, ByRef RequiredTags() As String, ByRef ExcludedTags() As String)
+		  Var RequirePhrase, ExcludePhrase As String
+		  Try
+		    Var RequireStartPos As Integer = Value.IndexOf("(")
+		    Var RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
+		    RequirePhrase = Value.Middle(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
+		    
+		    If RequireStartPos > -1 And RequireEndPos > -1 Then
+		      Var ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
+		      If ExcludeStartPos > -1 Then
+		        Var ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
+		        ExcludePhrase = Value.Middle(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
+		      End If
+		      
+		      RequiredTags = RequirePhrase.Split(""" AND """)
+		      ExcludedTags = ExcludePhrase.Split(""" OR """)
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RequiredTags() As String()
 		  Var Tags() As String
 		  For Each Tag As String In Self.mRequireTags
@@ -504,27 +528,8 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var RequirePhrase, ExcludePhrase, RequiredTags(), ExcludedTags() As String
-			  
-			  Try
-			    Var RequireStartPos As Integer = Value.IndexOf("(")
-			    Var RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
-			    RequirePhrase = Value.Middle(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
-			    
-			    If RequireStartPos > -1 And RequireEndPos > -1 Then
-			      Var ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
-			      If ExcludeStartPos > -1 Then
-			        Var ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
-			        ExcludePhrase = Value.Middle(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
-			      End If
-			      
-			      RequiredTags = RequirePhrase.Split(""" AND """)
-			      ExcludedTags = ExcludePhrase.Split(""" OR """)
-			    End If
-			  Catch Err As RuntimeException
-			    
-			  End Try
-			  
+			  Var RequiredTags(), ExcludedTags() As String
+			  Self.ParseSpec(Value, RequiredTags, ExcludedTags)
 			  Self.SetSelections(RequiredTags, ExcludedTags)
 			End Set
 		#tag EndSetter
