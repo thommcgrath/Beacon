@@ -376,7 +376,7 @@ Protected Module BeaconUI
 		      Else
 		        Var FocusControl As RectControl = Win.Focus
 		        Win.Focus = Nil
-		        Call Dialog.ShowModalWithin(Win)
+		        Call Dialog.ShowModal(Win)
 		        Win.Focus = FocusControl
 		      End If
 		    Catch Err As RuntimeException
@@ -511,7 +511,7 @@ Protected Module BeaconUI
 		      Else
 		        Var FocusControl As RectControl = Win.Focus
 		        Win.Focus = Nil
-		        Result = Dialog.ShowModalWithin(Win)
+		        Result = Dialog.ShowModal(Win)
 		        Win.Focus = FocusControl
 		      End If
 		    Catch Err As RuntimeException

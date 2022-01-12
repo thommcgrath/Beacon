@@ -245,7 +245,7 @@ End
 		    Dialog.Filter = BeaconFileTypes.BeaconPreset
 		    Dialog.SuggestedFileName = Template.Label + Beacon.FileExtensionTemplate
 		    
-		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		    If (File Is Nil) = False Then
 		      Var Contents As String = Beacon.GenerateJSON(Template.SaveData, True)
 		      If File.Write(Contents) = False Then
@@ -259,7 +259,7 @@ End
 		  Var Dialog As New SelectFolderDialog
 		  Dialog.PromptText = "Select Folder For Bulk Export"
 		  
-		  Var Folder As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Folder As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If Folder Is Nil Then
 		    Return
 		  End If

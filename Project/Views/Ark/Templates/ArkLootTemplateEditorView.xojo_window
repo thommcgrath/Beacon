@@ -745,7 +745,7 @@ End
 		  Var AllMaps() As Ark.Map = Ark.Maps.All
 		  For Each Map As Ark.Map In AllMaps
 		    Var MapSegment As New Segment
-		    MapSegment.Title = Map.Name
+		    MapSegment.Caption = Map.Name
 		    MapSegment.Enabled = True
 		    Self.MapSelector.AddSegment(MapSegment)
 		  Next
@@ -783,7 +783,7 @@ End
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
 			
-			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 			If (File Is Nil) = False Then
 			Var Writer As New Beacon.JSONWriter(Self.mTemplate.SaveData, File)
 			Writer.Start
@@ -813,7 +813,7 @@ End
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mTemplate.Label + Beacon.FileExtensionTemplate
 			
-			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+			Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 			If (File Is Nil) = False Then
 			Self.mSaveFile = File
 			Self.Save()

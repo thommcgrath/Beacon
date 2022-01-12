@@ -476,7 +476,7 @@ End
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Ark.ConfigFileGameUserSettings
 		  
-		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File = Nil Then
 		    Return
 		  End If
@@ -499,7 +499,7 @@ End
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Ark.ConfigFileGame
 		  
-		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		  If File = Nil Then
 		    Return
 		  End If

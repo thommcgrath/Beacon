@@ -311,7 +311,7 @@ Inherits Global.Thread
 		      End If
 		      FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "Source=" + SourceString))
 		      FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "InitialSize=" + InitialContent.Bytes.ToString(Locale.Raw, "0")))
-		      FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA256(InitialContent)).Lowercase))
+		      FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "InitialHash=" + EncodeHex(Crypto.SHA2_256(InitialContent)).Lowercase))
 		      FinalOrganizer.Add(New Ark.ConfigValue(File, "Beacon", "WasTrusted=" + If(Trusted, "True", "False")))
 		      Var ManagedHeaders() As String = Organizer.Headers(File)
 		      For HeaderIdx As Integer = 0 To ManagedHeaders.LastIndex

@@ -614,7 +614,7 @@ Protected Module Beacon
 		    Created = New DateTime(Created.SecondsFrom1970, New TimeZone(0))
 		    
 		    Var Seconds As Double = Created.SecondsFrom1970 + 2082844800
-		    Return EncodeHex(Crypto.SHA256(Seconds.ToString(Locale.Raw, "0"))).Lowercase
+		    Return EncodeHex(Crypto.SHA2_256(Seconds.ToString(Locale.Raw, "0"))).Lowercase
 		  #elseif TargetiOS
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
@@ -642,7 +642,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function Hash(Block As MemoryBlock) As String
-		  Return EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8).Lowercase
+		  Return EncodeHex(Crypto.SHA2_512(Block)).DefineEncoding(Encodings.UTF8).Lowercase
 		End Function
 	#tag EndMethod
 

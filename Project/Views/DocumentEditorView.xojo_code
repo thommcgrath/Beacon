@@ -274,7 +274,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		    Dialog.SuggestedFileName = Self.mController.Name + Beacon.FileExtensionProject
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
-		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
 		    If File = Nil Then
 		      Return
 		    End If

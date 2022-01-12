@@ -508,7 +508,7 @@ Protected Module UserCloud
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
 		  If SetupIndexDatabase Then
-		    Var EncryptedContentsHash As String = EncodeHex(Crypto.SHA256(EncryptedContents)).Lowercase
+		    Var EncryptedContentsHash As String = EncodeHex(Crypto.SHA2_256(EncryptedContents)).Lowercase
 		    Var EncryptedContentsSize As Integer = EncryptedContents.Size
 		    Var Modified As String = DateTime.Now.SQLDateTimeWithOffset
 		    Var UserID As String = UserID
@@ -556,8 +556,8 @@ Protected Module UserCloud
 		  
 		  If LocalFile.Exists Then
 		    Var ExistingContent As MemoryBlock = LocalFile.Read
-		    Var ExistingHash As String = EncodeHex(Crypto.SHA256(ExistingContent))
-		    Var NewHash As String = EncodeHex(Crypto.SHA256(Content))
+		    Var ExistingHash As String = EncodeHex(Crypto.SHA2_256(ExistingContent))
+		    Var NewHash As String = EncodeHex(Crypto.SHA2_256(Content))
 		    If NewHash = ExistingHash Then
 		      // They are already the same
 		      Return True

@@ -173,7 +173,7 @@ Inherits TCPSocket
 	#tag Method, Flags = &h0
 		Shared Function PackFile(Dict As Dictionary, Contents As String, Compressed As Boolean) As Boolean
 		  Try
-		    Var Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
+		    Var Hash As String = EncodeHex(Crypto.SHA2_512(Contents)).Lowercase
 		    
 		    If Compressed Then
 		      Contents = Beacon.Compress(Contents)
@@ -202,7 +202,7 @@ Inherits TCPSocket
 		  End If
 		  
 		  // It's something else, so let's prepare a key
-		  Return Crypto.SHA256(Value)
+		  Return Crypto.SHA2_256(Value)
 		End Function
 	#tag EndMethod
 
@@ -240,7 +240,7 @@ Inherits TCPSocket
 		  If Compressed Then
 		    Content = Beacon.Decompress(Content)
 		  End If
-		  Var ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
+		  Var ComputedHash As String = EncodeHex(Crypto.SHA2_512(Content)).Lowercase
 		  
 		  If ComputedHash = Hash Then
 		    Contents = Content
