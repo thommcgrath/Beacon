@@ -33,6 +33,13 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub IndexesBuilt()
+		  Self.SQLExecute("DROP VIEW IF EXISTS loot_templates;")
+		  Self.SQLExecute("CREATE VIEW loot_templates AS SELECT * FROM custom_loot_templates UNION SELECT * FROM official_loot_templates WHERE object_id NOT IN (SELECT object_id FROM custom_loot_templates);")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.UpdateNews()
 		End Sub
@@ -158,12 +165,29 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTemplates() As Beacon.Template()
+		Function GetTemplates(Filter As String = "", GameID As String = "") As Beacon.Template()
 		  Var UserID As String = App.IdentityManager.CurrentUserID
 		  Var Templates() As Beacon.Template
 		  Var Rows As RowSet
 		  
-		  Rows = Self.SQLSelect("SELECT object_id, contents FROM custom_templates WHERE user_id = ?1;", UserID)
+		  Var OfficialFilterSQL As String = "SELECT object_id FROM custom_templates WHERE user_id = :user_id"
+		  Var Clauses(0) As String
+		  Var Values(0) As Variant
+		  Clauses(0) = "user_id = :user_id"
+		  Values(0) = UserID
+		  
+		  If GameID.IsEmpty = False Then
+		    Clauses.Add("game_id = :game_id")
+		    OfficialFilterSQL = OfficialFilterSQL + " AND game_id = :game_id"
+		    Values.Add(GameID)
+		  End If
+		  
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("label LIKE :filter ESCAPE '\'")
+		    Values.Add(Filter)
+		  End If
+		  
+		  Rows = Self.SQLSelect("SELECT object_id, contents FROM custom_templates WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
 		  While Rows.AfterLastRow = False
 		    Var TemplateUUID As String = Rows.Column("object_id").StringValue
 		    
@@ -180,7 +204,8 @@ Inherits Beacon.DataSource
 		    Rows.MoveToNextRow
 		  Wend
 		  
-		  Rows = Self.SQLSelect("SELECT object_id, contents FROM official_templates WHERE object_id NOT IN (SELECT object_id FROM custom_templates WHERE user_id = ?1);", UserID)
+		  Clauses(0) = "object_id NOT IN (" + OfficialFilterSQL + ")"
+		  Rows = Self.SQLSelect("SELECT object_id, contents FROM official_templates WHERE " + String.FromArray(Clauses, " AND ") + ";", Values)
 		  While Rows.AfterLastRow = False
 		    Var TemplateUUID As String = Rows.Column("object_id").StringValue
 		    

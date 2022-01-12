@@ -2,7 +2,7 @@
 Protected Class ContentPack
 	#tag Method, Flags = &h0
 		Function ConsoleSafe() As Boolean
-		  
+		  Return Self.mConsoleSafe
 		End Function
 	#tag EndMethod
 

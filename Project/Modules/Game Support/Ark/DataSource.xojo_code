@@ -172,7 +172,7 @@ Inherits Beacon.DataSource
 		    End If
 		  Next
 		  If LootSourceIcons.LastIndex > -1 Then
-		    Self.mIconCache = Nil
+		    Self.mIconCache = New Dictionary
 		  End If
 		  
 		  Var LootSources() As Variant = ChangeDict.Value("loot_sources")
@@ -504,9 +504,6 @@ Inherits Beacon.DataSource
 		  Next
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + String.FromArray(DeleteStatements, " ") + " END;")
 		  
-		  Self.SQLExecute("DROP VIEW IF EXISTS loot_templates;")
-		  Self.SQLExecute("CREATE VIEW loot_templates AS SELECT * FROM custom_loot_templates UNION SELECT * FROM official_loot_templates WHERE object_id NOT IN (SELECT object_id FROM custom_loot_templates);")
-		  
 		  Self.SQLExecute("DROP VIEW IF EXISTS tags;")
 		  Self.SQLExecute("CREATE VIEW tags AS " + Unions.Join(" UNION ") + ";")
 		End Sub
@@ -682,7 +679,6 @@ Inherits Beacon.DataSource
 		  Self.mLootContainerCache = New Dictionary
 		  Self.mConfigKeyCache = New Dictionary
 		  Self.mSpawnLabelCacheDict = New Dictionary
-		  Self.mLootTemplateCache = New Dictionary
 		  Self.mIconCache = New Dictionary
 		  Self.mContainerLabelCacheDict = New Dictionary
 		  Self.mContainerLabelCacheMask = 0
@@ -1427,7 +1423,7 @@ Inherits Beacon.DataSource
 		  Var SpriteSheet, BadgeSheet As Picture
 		  Var Results As RowSet
 		  Try
-		    Results = Self.SQLSelect("SELECT loot_icons.icon_id, loot_icons.icon_data, loot_containers.experimental FROM loot_containers INNER JOIN loot_icons ON (loot_containers.icon = loot_icons.icon_id) WHERE loot_containers.content_pack_id = ?1 AND loot_conatiners.path = ?2 LIMIT 1;", Container.ContentPackUUID, Container.Path)
+		    Results = Self.SQLSelect("SELECT loot_icons.icon_id, loot_icons.icon_data, loot_containers.experimental FROM loot_containers INNER JOIN loot_icons ON (loot_containers.icon = loot_icons.icon_id) WHERE loot_containers.content_pack_id = ?1 AND loot_containers.path = ?2 LIMIT 1;", Container.ContentPackUUID, Container.Path)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "ContentPackUUID: " + Container.ContentPackUUID + " Path: " + Container.Path)
 		  End Try
@@ -1623,36 +1619,23 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetLootTemplateByUUID(UUID As String) As Ark.LootTemplate
-		  If Self.mLootTemplateCache.HasKey(UUID) Then
-		    Return Self.mLootTemplateCache.Value(UUID)
-		  End If
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT contents FROM custom_loot_templates WHERE object_id = ?1;", UUID)
-		  If Rows.RowCount = 0 Then
-		    Rows = Self.SQLSelect("SELECT contents FROM official_loot_templates WHERE object_id = ?1;", UUID)
-		    If Rows.RowCount = 0 Then
-		      Return Nil
-		    End If
+		  Var Template As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplateByUUID(UUID)
+		  If (Template Is Nil) = False And Template IsA Ark.LootTemplate Then
+		    Return Ark.LootTemplate(Template)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetLootTemplates(Filter As String = "") As Ark.LootTemplate()
-		  Var Rows As RowSet = Self.SQLSelect("SELECT object_id, contents FROM loot_templates WHERE label LIKE ?1 ESCAPE '\';", Self.EscapeLikeValue(Filter))
-		  Var Templates() As Ark.LootTemplate
-		  While Rows.AfterLastRow = False
-		    Var UUID As String = Rows.Column("object_id").StringValue
-		    If Self.mLootTemplateCache.HasKey(UUID) Then
-		      Templates.Add(Self.mLootTemplateCache.Value(UUID))
-		      Rows.MoveToNextRow
-		      Continue
+		  Var Templates() As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplates(Filter, Ark.Identifier)
+		  Var Results() As Ark.LootTemplate
+		  For Idx As Integer = 0 To Templates.LastIndex
+		    If (Templates(Idx) Is Nil) = False And Templates(Idx) IsA Ark.LootTemplate Then
+		      Results.Add(Ark.LootTemplate(Templates(Idx)))
 		    End If
-		    
-		    
-		    
-		    Rows.MoveToNextRow
-		  Wend
+		  Next Idx
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -1852,6 +1835,28 @@ Inherits Beacon.DataSource
 		  Tags.Sort
 		  
 		  Return Tags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTemplateByUUID(UUID As String) As Ark.Template
+		  Var Template As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplateByUUID(UUID)
+		  If (Template Is Nil) = False And Template IsA Ark.Template Then
+		    Return Ark.Template(Template)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTemplates(Filter As String = "") As Ark.Template()
+		  Var Templates() As Beacon.Template = Beacon.CommonData.SharedInstance.GetTemplates(Filter, Ark.Identifier)
+		  Var Results() As Ark.Template
+		  For Idx As Integer = 0 To Templates.LastIndex
+		    If (Templates(Idx) Is Nil) = False And Templates(Idx) IsA Ark.Template Then
+		      Results.Add(Ark.Template(Templates(Idx)))
+		    End If
+		  Next Idx
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -2380,7 +2385,7 @@ Inherits Beacon.DataSource
 		        Columns.Value("icon") = Container.IconID
 		        Columns.Value("experimental") = Container.Experimental
 		        Columns.Value("notes") = Container.Notes
-		        Columns.Value("requirements") = Requirements
+		        Columns.Value("requirements") = Beacon.GenerateJSON(Requirements, False)
 		      End Select
 		      
 		      Self.BeginTransaction()
@@ -2625,10 +2630,6 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mLootContainerCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLootTemplateCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

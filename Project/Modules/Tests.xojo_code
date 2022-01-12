@@ -449,7 +449,7 @@ Protected Module Tests
 		    Var HighDifficulty As New Ark.Configs.Difficulty(15)
 		    Var ExtremeDifficulty As New Ark.Configs.Difficulty(100)
 		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainersByClass("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", New Beacon.StringList)
-		    If Assert(Containers.Count = 1, "Wrong number of containers returned for SupplyCrate_Cave_QualityTier3_ScorchedEarth_C") Then
+		    If Assert(Containers.Count = 1, "Wrong number of containers returned for SupplyCrate_Cave_QualityTier3_ScorchedEarth_C") = False Then
 		      Return
 		    End If
 		    Var Container As Ark.LootContainer = Containers(0)

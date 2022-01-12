@@ -306,8 +306,8 @@ Implements Ark.MutableBlueprint
 		    Self.mIconID = Dict.Value("icon").StringValue
 		  End If
 		  
-		  If Dict.HasKey("sort_order") Then
-		    Self.mSortValue = Dict.Value("sort_order").IntegerValue
+		  If Dict.HasKey("sort") Then
+		    Self.mSortValue = If(Dict.Value("sort").IsNull, 9999, Dict.Value("sort").IntegerValue)
 		  End If
 		  
 		  If Dict.HasKey("experimental") Then
@@ -319,7 +319,11 @@ Implements Ark.MutableBlueprint
 		  End If
 		  
 		  If Dict.HasKey("requirements") Then
-		    Self.mRequirements = Dictionary(Dict.Value("requirements").ObjectValue).Clone
+		    Try
+		      Var Requirements As Dictionary = Beacon.ParseJSON(Dict.Value("requirements").StringValue)
+		      Self.mRequirements = Requirements
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
 		End Sub
 	#tag EndMethod

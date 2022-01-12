@@ -110,6 +110,8 @@ Protected Module Ark
 		      Results.Value(Siblings(Idx).ObjectID) = Siblings(Idx).Label.Disambiguate(If(UseClassStrings, Siblings(Idx).ClassString, Siblings(Idx).ContentPackName))
 		    Next Idx
 		  Next Entry
+		  
+		  Return Results
 		End Function
 	#tag EndMethod
 

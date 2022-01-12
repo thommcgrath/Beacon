@@ -452,10 +452,10 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
 		  Dict.Value("ui_color") = Self.mUIColor.ToHex
 		  Dict.Value("icon") = Self.mIconID
-		  Dict.Value("sort_order") = Self.mSortValue
+		  Dict.Value("sort") = Self.mSortValue
 		  Dict.Value("experimental") = Self.mExperimental
 		  Dict.Value("notes") = Self.mNotes
-		  Dict.Value("requirements") = Self.mRequirements.Clone
+		  Dict.Value("requirements") = Beacon.GenerateJSON(Self.mRequirements, False)
 		End Sub
 	#tag EndMethod
 

@@ -136,8 +136,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Controller As Beacon.ProjectController)
 		  Self.mController = Controller
-		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
+		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  Self.ViewTitle = Controller.Name
 		  Self.UpdateViewIcon
 		  
@@ -169,7 +169,7 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  If Self.mController <> Nil Then
+		  If (Self.mController Is Nil) = False Then
 		    RemoveHandler Self.mController.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		    RemoveHandler Self.mController.WriteError, WeakAddressOf mController_WriteError
 		  End If
