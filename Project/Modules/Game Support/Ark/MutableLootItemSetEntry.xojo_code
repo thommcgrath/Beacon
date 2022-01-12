@@ -70,6 +70,13 @@ Inherits Ark.LootItemSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PreventGrinding(Assigns Value As Boolean)
+		  Self.mPreventGrinding = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
 		  Self.mWeight = Value
 		  Self.Modified = True
@@ -91,8 +98,15 @@ Inherits Ark.LootItemSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SingleItemMode(Assigns Value As Boolean)
-		  Self.mSingleItemMode = Value
+		Sub SingleItemQuantity(Assigns Value As Boolean)
+		  Self.mSingleItemQuantity = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StatClampMultiplier(Assigns Value As Double)
+		  Self.mStatClampMultiplier = Value
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

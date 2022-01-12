@@ -1030,16 +1030,16 @@ End
 		      Entries(Idx).MinQuantity = MinQuantity
 		    End If
 		    If EditChanceCheck.Value Then
-		      Entry.ChanceToBeBlueprint = BlueprintChance
+		      Entries(Idx).ChanceToBeBlueprint = BlueprintChance
 		    End If
 		    If EditWeightCheck.Value Then
-		      Entry.RawWeight = Weight
+		      Entries(Idx).RawWeight = Weight
 		    End If
 		    If EditAllowGrindingCheck.Value Then
-		      Entry.PreventGrinding = PreventGrinding
+		      Entries(Idx).PreventGrinding = PreventGrinding
 		    End If
 		    If EditStatClampMultiplierCheck.Value Then
-		      Entry.StatClampMultiplier = StatClampMultiplier
+		      Entries(Idx).StatClampMultiplier = StatClampMultiplier
 		    End If
 		    If Self.EditMaxQualityCheck.Value Then
 		      Entries(Idx).MaxQuality = MaxQuality

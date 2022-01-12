@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSetEntry
-Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
+Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
 		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
@@ -46,7 +46,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		  Self.mChanceToBeBlueprint = 0.25
 		  Self.mWeight = 250
 		  Self.mUUID = ""
-		  Self.mSingleItemMode = False
+		  Self.mSingleItemQuantity = False
 		End Sub
 	#tag EndMethod
 
@@ -70,7 +70,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  Self.mLastSaveTime = Source.mLastSaveTime
-		  Self.mSingleItemMode = Source.mSingleItemMode
+		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
 		  
 		  For I As Integer = 0 To Source.mOptions.LastIndex
 		    Self.mOptions(I) = New Ark.LootItemSetEntryOption(Source.mOptions(I))
@@ -621,6 +621,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PreventGrinding() As Boolean
+		  Return Self.mPreventGrinding
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RawWeight() As Double
 		  Return Self.mWeight
 		End Function
@@ -647,32 +653,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		    Selection.Engram = SelectedEntry.Engram
 		    Selection.IsBlueprint = BlueprintDecision > RequiredBlueprintChance
 		    Selection.Quality = Ark.Qualities.ForBaseValue(QualityValue)
-		    Return Selection
-		  Next Idx
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Shared Function RunSimulation(MinQuality As Double, MaxQuality As Double, Weights() As Double, WeightSum As Double, WeightLookup As Dictionary, RequiredBlueprintChance As Double) As Beacon.SimulatedSelection
-		  Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
-		  Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
-		  Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (WeightSum * 100000)) - 100000
-		  
-		  For Idx As Integer = 0 To Weights.LastIndex
-		    If Weights(Idx) < ClassDecision Then
-		      Continue For Idx
-		    End If
-		    
-		    Var SelectedWeight As Double = Weights(Idx)
-		    Var SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
-		    If SelectedEntry Is Nil Then
-		      Continue For Idx
-		    End If
-		    
-		    Var Selection As New Beacon.SimulatedSelection
-		    Selection.Engram = SelectedEntry.Engram
-		    Selection.IsBlueprint = BlueprintDecision > RequiredBlueprintChance
-		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
 		    Return Selection
 		  Next Idx
 		End Function
@@ -750,7 +730,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		  Next
 		  Weights.Sort
 		  
-		  If Self.SingleItemMode Then
+		  If Self.SingleItemQuantity Then
 		    Var Selection As Ark.LootSimulatorSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
 		    If (Selection Is Nil) = False Then
 		      For I As Integer = 1 To Quantity
@@ -771,13 +751,13 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SingleItemMode(Actual As Boolean = False) As Boolean
+		Function SingleItemQuantity(Actual As Boolean = False) As Boolean
 		  // If Actual is true, the caller is looking for the true state of the setting and not the effective state
 		  
 		  If Actual Then
-		    Return Self.mSingleItemMode
+		    Return Self.mSingleItemQuantity
 		  Else
-		    Return Self.mSingleItemMode Or Self.mOptions.Count = 1
+		    Return Self.mSingleItemQuantity Or Self.mOptions.Count = 1
 		  End If
 		End Function
 	#tag EndMethod
@@ -799,6 +779,12 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		    Next
 		  Next
 		  Return Replacements
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatClampMultiplier() As Double
+		  Return Self.mStatClampMultiplier
 		End Function
 	#tag EndMethod
 
@@ -837,7 +823,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		  Values.Add("MaxQuantity=" + Self.MaxQuantity.ToString)
 		  Values.Add("MinQuality=" + MinQuality.PrettyText)
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
-		  If Self.SingleItemMode Then
+		  If Self.SingleItemQuantity Then
 		    Values.Add("bApplyQuantityToSingleItem=true")
 		  End If
 		  
@@ -935,16 +921,16 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		Protected mOptions() As Ark.LootItemSetEntryOption
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mPreventGrinding As Boolean
+	#tag Property, Flags = &h1
+		Protected mPreventGrinding As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mSingleItemQuantity As Boolean
+	#tag Property, Flags = &h1
+		Protected mSingleItemQuantity As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mStatClampMultiplier As Double = 1.0
+	#tag Property, Flags = &h1
+		Protected mStatClampMultiplier As Double = 1.0
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -954,82 +940,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 	#tag Property, Flags = &h1
 		Protected mWeight As Double
 	#tag EndProperty
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPreventGrinding
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mPreventGrinding = Value Then
-			    Return
-			  End If
-			  
-			  Self.mPreventGrinding = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		PreventGrinding As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mWeight
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Max(Value, 0.0001)
-			  If Self.mWeight = Value Then
-			    Return
-			  End If
-			  
-			  Self.mWeight = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		RawWeight As Double
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mSingleItemQuantity Or Self.mOptions.Count <= 1
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mSingleItemQuantity = Value Then
-			    Return
-			  End If
-			  
-			  Self.mSingleItemQuantity = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		SingleItemQuantity As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mStatClampMultiplier
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mStatClampMultiplier = Value Then
-			    Return
-			  End If
-			  
-			  Self.mStatClampMultiplier = Value
-			  Self.Modified = True
-			End Set
-		#tag EndSetter
-		StatClampMultiplier As Double
-	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -1071,38 +981,6 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RawWeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="PreventGrinding"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="StatClampMultiplier"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SingleItemQuantity"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

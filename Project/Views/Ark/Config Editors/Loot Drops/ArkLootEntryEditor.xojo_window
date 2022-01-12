@@ -1031,7 +1031,7 @@ End
 		    Entry.SingleItemQuantity = Self.SingleItemCheckbox.Visible And Self.SingleItemCheckbox.Enabled And Self.SingleItemCheckbox.Value
 		    Entries.Add(Entry)
 		  ElseIf Options.Count > 1 Then
-		    If SingleEntryCheck.Value Then
+		    If SingleEntryCheckbox.Value Then
 		      // Merge all into one
 		      Var Entry As New Ark.MutableLootItemSetEntry
 		      For Each Option As Ark.LootItemSetEntryOption In Options
