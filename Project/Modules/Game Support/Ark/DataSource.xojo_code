@@ -3,29 +3,25 @@ Protected Class DataSource
 Inherits Beacon.DataSource
 	#tag Event
 		Sub BuildSchema()
-		  Var ContentPackDeleteBehavior As String
-		  #if DebugBuild
-		    ContentPackDeleteBehavior = "RESTRICT"
-		  #else
-		    ContentPackDeleteBehavior = "CASCADE"
-		  #endif
-		  
 		  Self.SQLExecute("CREATE TABLE content_packs (content_pack_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER UNIQUE, is_local BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
-		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
+		  Self.SQLExecute("CREATE TABLE loot_containers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
+		  Self.SQLExecute("CREATE TABLE loot_container_selectors (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, language TEXT COLLATE NOCASE NOT NULL, code TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
-		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE " + ContentPackDeleteBehavior + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
+		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE color_sets (color_set_id TEXT COLLATE NOCASE PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL);")
 		  
-		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
+		  Var Categories() As String = Ark.Categories
+		  For Each Category As String In Categories
+		    Self.SQLExecute("CREATE TABLE tags_" + Category + " (object_id TEXT COLLATE NOCASE NOT NULL REFERENCES " + Category + "(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, tag TEXT COLLATE NOCASE NOT NULL, PRIMARY KEY (object_id, tag));")
+		  Next Category
 		  
 		  Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5);", Ark.UserContentPackUUID, Ark.UserContentPackName, True, True, True)
 		End Sub
@@ -49,6 +45,8 @@ Inherits Beacon.DataSource
 		    Indexes.Add(New Beacon.DataIndex(Category, False, "class_string"))
 		    Indexes.Add(New Beacon.DataIndex(Category, False, "content_pack_id"))
 		    Indexes.Add(New Beacon.DataIndex(Category, False, "label"))
+		    Indexes.Add(New Beacon.DataIndex("tags_" + Category, False, "object_id"))
+		    Indexes.Add(New Beacon.DataIndex("tags_" + Category, False, "tag"))
 		  Next
 		  
 		  Indexes.Add(New Beacon.DataIndex("maps", False, "content_pack_id"))
@@ -498,15 +496,19 @@ Inherits Beacon.DataSource
 		Sub IndexesBuilt()
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
 		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategorySpawnPoints + "' AS category FROM spawn_points UNION SELECT object_id, class_string, path, label, tags, availability, content_pack_id, '" + Ark.CategoryLootContainers + "' AS category FROM loot_containers")
-		  Var DeleteStatements() As String
+		  Var DeleteStatements(), Unions() As String
 		  Var Categories() As String = Ark.Categories
 		  For Each Category As String In Categories
 		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
+		    Unions.Add("SELECT object_id, tag FROM tags_" + Category)
 		  Next
-		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + String.FromArray(DeleteStatements, " ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
+		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + String.FromArray(DeleteStatements, " ") + " END;")
 		  
 		  Self.SQLExecute("DROP VIEW IF EXISTS loot_templates;")
 		  Self.SQLExecute("CREATE VIEW loot_templates AS SELECT * FROM custom_loot_templates UNION SELECT * FROM official_loot_templates WHERE object_id NOT IN (SELECT object_id FROM custom_loot_templates);")
+		  
+		  Self.SQLExecute("DROP VIEW IF EXISTS tags;")
+		  Self.SQLExecute("CREATE VIEW tags AS " + Unions.Join(" UNION ") + ";")
 		End Sub
 	#tag EndEvent
 
@@ -814,11 +816,32 @@ Inherits Beacon.DataSource
 		      Next
 		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
-		    If Tags <> "" Then
-		      SQL = SQL.Replace(Category + " INNER JOIN content_packs", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN content_packs")
-		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		      Values.Value(NextPlaceholder) = Tags
-		      NextPlaceholder = NextPlaceholder + 1
+		    If Tags.IsEmpty = False Then
+		      Var RequiredTags(), ExcludedTags() As String
+		      TagPicker.ParseSpec(Tags, RequiredTags, ExcludedTags)
+		      Var ObjectTagIndex As Integer = RequiredTags.IndexOf("object")
+		      If ObjectTagIndex > -1 Then
+		        RequiredTags.RemoveAt(ObjectTagIndex)
+		      End If
+		      
+		      If RequiredTags.Count > 0 Or ExcludedTags.Count > 0 Then
+		        If RequiredTags.Count > 0 Then
+		          For Each Tag As String In RequiredTags
+		            Clauses.Add(Category + ".object_id IN (SELECT object_id FROM tags_" + Category + " WHERE tag = ?" + NextPlaceholder.ToString(Locale.Raw, "0") + ")")
+		            Values.Value(NextPlaceholder) = Tag
+		            NextPlaceholder = NextPlaceholder + 1
+		          Next Tag
+		        End If
+		        If ExcludedTags.Count > 0 Then
+		          Var TagPlaceholders() As String
+		          For Each Tag As String In ExcludedTags
+		            TagPlaceholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		            Values.Value(NextPlaceholder) = Tag
+		            NextPlaceholder = NextPlaceholder + 1
+		          Next Tag
+		          Clauses.Add(Category + ".object_id NOT IN (SELECT object_id FROM tags_" + Category + " WHERE tag IN (" + TagPlaceholders.Join(",") + "))")
+		        End If
+		      End If
 		    End If
 		    
 		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
@@ -1808,17 +1831,15 @@ Inherits Beacon.DataSource
 		Function GetTags(Category As String = "") As String()
 		  Var Results As RowSet
 		  If Category <> "" Then
-		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = ?1 AND tags != '';", Category)
+		    Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags_" + Category + " ORDER BY tag;")
 		  Else
-		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
+		    Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags ORDER BY tag;")
 		  End If
 		  Var Dict As New Dictionary
 		  While Not Results.AfterLastRow
 		    Var Tags() As String = Results.Column("tags").StringValue.Split(",")
 		    For Each Tag As String In Tags
-		      If Tag <> "object" Then
-		        Dict.Value(Tag) = True
-		      End If
+		      Dict.Value(Tag) = True
 		    Next
 		    Results.MoveToNextRow
 		  Wend
@@ -2257,12 +2278,12 @@ Inherits Beacon.DataSource
 		  For Each Blueprint As Ark.Blueprint In BlueprintsToSave
 		    Var TransactionStarted As Boolean
 		    Try
-		      Var UpdateObjectID As String
+		      Var UpdateObjectID, CurrentTagString As String
 		      Var Results As RowSet
 		      If LocalModsOnly Then
-		        Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		        Results = Self.SQLSelect("SELECT object_id, content_pack_id IN (SELECT content_pack_id FROM content_packs WHERE is_local = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
 		      Else
-		        Results = Self.SQLSelect("SELECT object_id FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		        Results = Self.SQLSelect("SELECT object_id, tags FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
 		      End If
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
@@ -2270,6 +2291,7 @@ Inherits Beacon.DataSource
 		          Continue
 		        End If
 		        UpdateObjectID = Results.Column("object_id").StringValue
+		        CurrentTagString = Results.Column("tags").StringValue
 		      ElseIf Results.RowCount > 1 Then
 		        // What the hell?
 		        Continue
@@ -2379,7 +2401,24 @@ Inherits Beacon.DataSource
 		        Next
 		        
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, UpdateObjectID, Blueprint.TagString)
+		        
+		        If Columns.Value("tags").StringValue <> CurrentTagString Then
+		          Var DesiredTags() As String = Blueprint.Tags
+		          Var CurrentTags() As String
+		          Var TagRows As RowSet = Self.SQLSelect("SELECT tag FROM tags_" + Category + " WHERE object_id = ?1;", UpdateObjectID)
+		          While TagRows.AfterLastRow = False
+		            CurrentTags.Add(TagRows.Column("tag").StringValue)
+		            TagRows.MoveToNextRow
+		          Wend
+		          Var TagsToAdd() As String = CurrentTags.NewMembers(DesiredTags)
+		          Var TagsToRemove() As String = DesiredTags.NewMembers(CurrentTags)
+		          For Each Tag As String In TagsToAdd
+		            Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
+		          Next Tag
+		          For Each Tag As String In TagsToRemove
+		            Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", UpdateObjectID, Tag)
+		          Next Tag
+		        End If
 		      Else
 		        Var ColumnNames(), Placeholders() As String
 		        Var Values() As Variant
@@ -2392,7 +2431,11 @@ Inherits Beacon.DataSource
 		        Next
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, Blueprint.ObjectID, Blueprint.TagString)
+		        
+		        Var Tags() As String = Blueprint.Tags
+		        For Each Tag As String In Tags
+		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
+		        Next Tag
 		      End If
 		      Self.CommitTransaction()
 		      TransactionStarted = False
