@@ -1,6 +1,15 @@
 #tag Class
 Protected Class CodeEditor
 Inherits ScintillaControlMBS
+Implements NotificationKit.Receiver
+	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
+		  
+		  RaiseEvent Close
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Open()
 		  Self.InitializeLexer("props")
@@ -18,9 +27,43 @@ Inherits ScintillaControlMBS
 		  RaiseEvent Open
 		  
 		  Self.UpdateLineNumbersGutter()
+		  
+		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub SelectionChanged(updated as Integer)
+		  #Pragma Unused Updated
+		  
+		  RaiseEvent SelChange
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub TextChanged(Position as Integer, modificationType as Integer, Text as String, length as Integer, linesAdded as Integer, line as Integer)
+		  #Pragma Unused Position
+		  #Pragma Unused modificationType
+		  #Pragma Unused Text
+		  #Pragma Unused Length
+		  #Pragma Unused LinesAdded
+		  #Pragma Unused Line
+		  
+		  RaiseEvent TextChange
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case App.Notification_AppearanceChanged
+		    Self.UpdateColors()
+		  End Select
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub UpdateColors()
@@ -48,6 +91,10 @@ Inherits ScintillaControlMBS
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Open()
