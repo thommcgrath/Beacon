@@ -1065,11 +1065,25 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Entries() As Ark.LootItemSetEntry)
-		  If Entries Is Nil Or Entries.Count = 0 Then
-		    Var Default As New Ark.MutableLootItemSetEntry()
-		    Default.Add(New Ark.LootItemSetEntryOption(Ark.Engram.CreateCustom("", "/Game/Mods/Default.Default", ""), 1.0))
-		    Entries = Array(Default)
+		  // This seems like a strange sequence of events, but remember that arrays are objects and therefore passed by reference
+		  // so any changes made to the array itself do not stay local to this method. This essentially makes a clone of the array
+		  // without any nils, and fills in a dummy value if the cloned array winds up with no members.
+		  
+		  Var Filtered() As Ark.LootItemSetEntry
+		  If (Entries Is Nil) = False Then
+		    For Idx As Integer = Entries.FirstIndex To Entries.LastIndex
+		      If (Entries(Idx) Is Nil) = False Then
+		        Filtered.Add(Entries(Idx))
+		      End If
+		    Next Idx
 		  End If
+		  If Filtered.Count = 0 Then
+		    Var Entry As New Ark.MutableLootItemSetEntry()
+		    Entry.Add(New Ark.LootItemSetEntryOption(Ark.Engram.CreateCustom("", "/Game/Mods/Default.Default", ""), 1.0))
+		    Filtered.Add(Entry)
+		  End If
+		  Entries = Filtered
+		  Filtered = Nil
 		  
 		  Var MinQuantities(), MaxQuantities() As Integer
 		  Var MinQualities(), MaxQualities() As Double

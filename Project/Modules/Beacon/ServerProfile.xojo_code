@@ -228,7 +228,7 @@ Protected Class ServerProfile
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
-		  If Dict.HasAllKeys("Provider", "Game") Then
+		  If Dict.HasAllKeys("Provider", "Game") = False Then
 		    Var Err As New KeyNotFoundException
 		    Err.Message = "No provider and/or game was set in ServerProfile.WriteToDictionary"
 		    Raise Err

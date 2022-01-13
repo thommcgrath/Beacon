@@ -136,8 +136,8 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Controller As Beacon.ProjectController)
 		  Self.mController = Controller
-		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
+		  AddHandler Self.mController.WriteError, WeakAddressOf mController_WriteError
+		  AddHandler Self.mController.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  Self.ViewTitle = Controller.Name
 		  Self.UpdateViewIcon
 		  
@@ -165,15 +165,6 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 		  #endif
 		  Return New ArkDocumentEditorView(Controller)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Destructor()
-		  If (Self.mController Is Nil) = False Then
-		    RemoveHandler Self.mController.WriteSuccess, WeakAddressOf mController_WriteSuccess
-		    RemoveHandler Self.mController.WriteError, WeakAddressOf mController_WriteError
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

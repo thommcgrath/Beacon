@@ -1820,7 +1820,7 @@ Inherits Beacon.DataSource
 		  End If
 		  Var Dict As New Dictionary
 		  While Not Results.AfterLastRow
-		    Var Tags() As String = Results.Column("tags").StringValue.Split(",")
+		    Var Tags() As String = Results.Column("tag").StringValue.Split(",")
 		    For Each Tag As String In Tags
 		      Dict.Value(Tag) = True
 		    Next

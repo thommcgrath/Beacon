@@ -587,8 +587,6 @@ End
 		  If (Self.mDeployWindow Is Nil) = False And (Self.mDeployWindow.Value Is Nil) = False Then
 		    DeployManager(Self.mDeployWindow.Value).Close
 		  End If
-		  
-		  Super.Destructor()
 		End Sub
 	#tag EndMethod
 

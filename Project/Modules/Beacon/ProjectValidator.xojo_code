@@ -4,6 +4,7 @@ Protected Class ProjectValidator
 		Sub Constructor()
 		  Self.mThread = New Thread
 		  AddHandler mThread.Run, WeakAddressOf mThread_Run
+		  AddHandler mThread.UserInterfaceUpdate, WeakAddressOf mThread_UserInterfaceUpdate
 		  Self.mShowUITimer = New Timer
 		  Self.mShowUITimer.Period = 2000
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Off
@@ -45,8 +46,8 @@ Protected Class ProjectValidator
 		Sub StartValidation(Project As Beacon.Project, UserData As Variant = Nil)
 		  Self.mProject = Project
 		  Self.mUserData = UserData
-		  Self.mThread.Start
 		  Self.mShowUITimer.RunMode = Timer.RunModes.Single
+		  Self.mThread.Start
 		End Sub
 	#tag EndMethod
 

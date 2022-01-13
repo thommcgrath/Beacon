@@ -262,6 +262,8 @@ Implements ObservationKit.Observable
 		  Self.mProjectPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mUUID = New v4UUID
 		  Self.mConfigSets = New Dictionary
+		  Self.mConfigSets.Value(Self.BaseConfigSetName) = New Dictionary
+		  Self.mActiveConfigSet = Self.BaseConfigSetName
 		End Sub
 	#tag EndMethod
 
