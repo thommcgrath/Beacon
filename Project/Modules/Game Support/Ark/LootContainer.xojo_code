@@ -45,7 +45,9 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  
+		  Self.mMinItemSets = 1
+		  Self.mMaxItemSets = 1
+		  Self.mPreventDuplicates = True
 		End Sub
 	#tag EndMethod
 

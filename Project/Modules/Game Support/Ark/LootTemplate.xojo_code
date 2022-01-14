@@ -56,7 +56,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mLabel = "Untitled Template"
 		  Self.mGrouping = "Miscellaneous"
 		  Self.mMinEntriesSelected = 1
-		  Self.mMaxEntriesSelected = 3
+		  Self.mMaxEntriesSelected = 1
 		  Self.mModifierValues = New Dictionary
 		  Super.Constructor()
 		End Sub

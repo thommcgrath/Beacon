@@ -4,7 +4,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mMinNumItems = 1
-		  Self.mMaxNumItems = 3
+		  Self.mMaxNumItems = 1
 		  Self.mNumItemsPower = 1
 		  Self.mSetWeight = 500
 		  Self.mItemsRandomWithoutReplacement = True
