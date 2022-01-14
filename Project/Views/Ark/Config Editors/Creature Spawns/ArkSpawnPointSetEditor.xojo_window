@@ -1412,7 +1412,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function SpawnSet() As Ark.MutableSpawnPointSet
-		  If Self.mRef <> Nil And Self.mRef.Value <> Nil Then
+		  If (Self.mRef Is Nil) = False And (Self.mRef.Value Is Nil) = False Then
 		    Return Ark.MutableSpawnPointSet(Self.mRef.Value)
 		  End If
 		End Function

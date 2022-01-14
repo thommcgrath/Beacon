@@ -244,11 +244,16 @@ End
 		    Return
 		  End If
 		  
+		  Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		  If ItemSet Is Nil Then
+		    Return
+		  End If
+		  
 		  For I As Integer = 0 To Entries.LastIndex
 		    Var Source As Ark.LootItemSetEntry = Sources(I)
-		    Var Idx As Integer = Self.mSet.IndexOf(Source)
+		    Var Idx As Integer = ItemSet.IndexOf(Source)
 		    If Idx > -1 Then
-		      Self.mSet(Idx) = Entries(I)
+		      ItemSet(Idx) = Entries(I)
 		    End If
 		  Next
 		  
@@ -274,6 +279,31 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function LootItemSet() As Ark.MutableLootItemSet
+		  If (Self.mRef Is Nil) = False And (Self.mRef.Value Is Nil) = False Then
+		    Return Ark.MutableLootItemSet(Self.mRef.Value)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LootItemSet(Assigns ItemSet As Ark.MutableLootItemSet)
+		  If ItemSet = Self.LootItemSet Then
+		    Return
+		  End If
+		  
+		  If ItemSet Is Nil Then
+		    Self.mRef = Nil
+		  Else
+		    Self.mRef = New WeakRef(ItemSet)
+		  End If
+		  
+		  Self.Settings.ItemSet = ItemSet
+		  Self.UpdateEntryList()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function Project() As Ark.Project
 		  Return RaiseEvent GetProject()
@@ -283,6 +313,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedEntries()
 		  Var Changed As Boolean
+		  Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		  If ItemSet Is Nil Then
+		    Return
+		  End If
 		  
 		  For I As Integer = EntryList.RowCount - 1 DownTo 0
 		    If Not EntryList.Selected(I) Then
@@ -290,9 +324,11 @@ End
 		    End If
 		    
 		    Var Entry As Ark.LootItemSetEntry = EntryList.RowTagAt(I)
-		    Var Idx As Integer = Self.mSet.IndexOf(Entry)
-		    Self.mSet.RemoveAt(Idx)
-		    Changed = True
+		    Var Idx As Integer = ItemSet.IndexOf(Entry)
+		    If Idx > -1 Then
+		      ItemSet.RemoveAt(Idx)
+		      Changed = True
+		    End If
 		  Next
 		  
 		  If Changed Then
@@ -333,7 +369,8 @@ End
 		  
 		  Self.EntryList.RemoveAllRows()
 		  
-		  If Self.mSet Is Nil Then
+		  Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		  If ItemSet Is Nil Then
 		    Self.UpdateStatus()
 		    Return
 		  End If
@@ -343,13 +380,13 @@ End
 		    RangeSeparator = "-"
 		  End If
 		  
-		  For I As Integer = 0 To Self.mSet.LastIndex
-		    Var Entry As Ark.LootItemSetEntry = Self.mSet(I)
+		  For I As Integer = 0 To ItemSet.LastIndex
+		    Var Entry As Ark.LootItemSetEntry = ItemSet(I)
 		    If Entry Is Nil Then
 		      Continue
 		    End If
 		    Var BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
-		    Var RelativeWeight As Double = Self.mSet.RelativeWeight(I)
+		    Var RelativeWeight As Double = ItemSet.RelativeWeight(I)
 		    Var ChanceText As String
 		    If RelativeWeight < 0.01 Then
 		      Var OnePercent As Double = 0.01
@@ -473,32 +510,12 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSet As Ark.MutableLootItemSet
+		Private mRef As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mUsingCompactMode As Boolean
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return New Ark.LootItemSet(Self.mSet)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value Is Nil Then
-			    Self.mSet = Nil
-			  Else
-			    Self.mSet = New Ark.MutableLootItemSet(Value)
-			  End If
-			  Self.Settings.ItemSet = Self.mSet
-			  Self.UpdateEntryList()
-			End Set
-		#tag EndSetter
-		Set As Ark.LootItemSet
-	#tag EndComputedProperty
 
 
 	#tag Constant, Name = ColumnFigures, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -583,8 +600,8 @@ End
 		  If Info.FullName = "Dictionary" Then
 		    // Single item
 		    Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Parsed)
-		    If Entry <> Nil Then
-		      Self.mSet.Add(Entry)
+		    If (Entry Is Nil) = False Then
+		      Self.LootItemSet.Add(Entry)
 		      Modified = True
 		    End If
 		  ElseIf Info.FullName = "Object()" Then
@@ -593,7 +610,7 @@ End
 		    For Each Dict As Dictionary In Dicts
 		      Var Entry As Ark.LootItemSetEntry = Ark.LootItemSetEntry.FromSaveData(Dict)
 		      If Entry <> Nil Then
-		        Self.mSet.Add(Entry)
+		        Self.LootItemSet.Add(Entry)
 		        Modified = True
 		      End If
 		    Next
@@ -656,7 +673,7 @@ End
 		      End If
 		    Next
 		    
-		    Var CreatedEntries() As Ark.LootItemSetEntry = Self.mSet.AddBlueprintEntries(Entries)
+		    Var CreatedEntries() As Ark.LootItemSetEntry = Self.LootItemSet.AddBlueprintEntries(Entries)
 		    If CreatedEntries.Count = 0 Then
 		      Return True
 		    End If
@@ -665,6 +682,11 @@ End
 		    RaiseEvent Updated
 		    Return True
 		  Case "splitengrams"
+		    Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		    If ItemSet Is Nil Then
+		      Return True
+		    End If
+		    
 		    Var Entries() As Ark.LootItemSetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(I) And Ark.LootItemSetEntry(Me.RowTagAt(I)).Count > 1 Then
@@ -679,19 +701,24 @@ End
 		    
 		    // This is probably not very fast, but it's accurate.
 		    For Each Entry As Ark.LootItemSetEntry In Entries
-		      Var Idx As Integer = Self.mSet.IndexOf(Entry)
+		      Var Idx As Integer = ItemSet.IndexOf(Entry)
 		      If Idx > -1 Then
-		        Self.mSet.RemoveAt(Idx)
+		        ItemSet.RemoveAt(Idx)
 		      End If
 		    Next
 		    
 		    For Each Replacement As Ark.LootItemSetEntry In Replacements
-		      Self.mSet.Add(Replacement)
+		      ItemSet.Add(Replacement)
 		    Next
 		    Self.UpdateEntryList(Replacements)
 		    RaiseEvent Updated
 		    Return True
 		  Case "mergeengrams"
+		    Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		    If ItemSet Is Nil Then
+		      Return True
+		    End If
+		    
 		    Var Entries() As Ark.LootItemSetEntry
 		    For I As Integer = 0 To Me.LastRowIndex
 		      If Me.Selected(I) Then
@@ -706,13 +733,13 @@ End
 		    
 		    // This is probably not very fast, but it's accurate.
 		    For Each Entry As Ark.LootItemSetEntry In Entries
-		      Var Idx As Integer = Self.mSet.IndexOf(Entry)
+		      Var Idx As Integer = ItemSet.IndexOf(Entry)
 		      If Idx > -1 Then
-		        Self.mSet.RemoveAt(Idx)
+		        ItemSet.RemoveAt(Idx)
 		      End If
 		    Next
 		    
-		    Self.mSet.Add(Replacement)
+		    ItemSet.Add(Replacement)
 		    Self.UpdateEntryList(Replacement)
 		    RaiseEvent Updated
 		    Return True
@@ -811,8 +838,12 @@ End
 		      Return
 		    End If
 		    
+		    Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet
+		    If ItemSet Is Nil Then
+		      Return
+		    End If
 		    For Each Entry As Ark.LootItemSetEntry In Entries
-		      Self.mSet.Add(Entry)
+		      ItemSet.Add(Entry)
 		    Next
 		    
 		    Self.UpdateEntryList(Entries)

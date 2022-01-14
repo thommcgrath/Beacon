@@ -974,12 +974,12 @@ End
 		  End If
 		  
 		  If Me.SelectedRowCount = 1 Then
-		    Editor.Set = Ark.LootItemSetOrganizer(Me.RowTagAt(Me.SelectedRowIndex)).Template
+		    Editor.LootItemSet = Ark.LootItemSetOrganizer(Me.RowTagAt(Me.SelectedRowIndex)).Template
 		    Editor.Enabled = True
 		    Panel.SelectedPanelIndex = 1
 		  Else
 		    Editor.Enabled = False
-		    Editor.Set = Nil
+		    Editor.LootItemSet = Nil
 		    Panel.SelectedPanelIndex = 0
 		  End If
 		  

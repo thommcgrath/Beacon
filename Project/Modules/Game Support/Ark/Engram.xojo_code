@@ -59,14 +59,15 @@ Implements Ark.Blueprint
 		  
 		  Self.mAlternateLabel = Source.mAlternateLabel
 		  Self.mAvailability = Source.mAvailability
+		  Self.mClassString = Source.mClassString
+		  Self.mContentPackName = Source.mContentPackName
+		  Self.mContentPackUUID = Source.mContentPackUUID
 		  Self.mEngramEntryString = Source.mEngramEntryString
 		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
 		  Self.mIsValid = Source.mIsValid
 		  Self.mItemID = Source.mItemID
 		  Self.mLabel = Source.mLabel
-		  Self.mContentPackUUID = Source.mContentPackUUID
 		  Self.mModified = Source.mModified
-		  Self.mContentPackName = Source.mContentPackName
 		  Self.mObjectID = Source.mObjectID
 		  Self.mPath = Source.mPath
 		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
