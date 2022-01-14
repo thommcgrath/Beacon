@@ -73,6 +73,11 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mSortValue = Source.mSortValue
 		  Self.mUIColor = Source.mUIColor
 		  
+		  Self.mItemSets.ResizeTo(Source.mItemSets.LastIndex)
+		  For I As Integer = Source.mItemSets.FirstRowIndex To Source.mItemSets.LastIndex
+		    Self.mItemSets(I) = Source.mItemSets(I).ImmutableVersion
+		  Next
+		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.Add(Tag)

@@ -5,13 +5,8 @@ Implements Iterable
 	#tag Event
 		Sub CopyFrom(Other As Ark.ConfigGroup)
 		  Var Source As Ark.Configs.LootDrops = Ark.Configs.LootDrops(Other)
-		  For Each Container As Ark.LootContainer In Source
-		    Var Idx As Integer = Self.IndexOf(Container)
-		    If Idx > -1 Then
-		      Self.Operator_Subscript(Idx) = Container
-		    Else
-		      Self.Add(Container)
-		    End If
+		  For Each Entry As DictionaryEntry In Source.mContainers
+		    Self.Add(Ark.LootContainer(Entry.Value))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -59,8 +54,9 @@ Implements Iterable
 		  End If
 		  
 		  Var Values() As Ark.ConfigValue
-		  For Each Container As Ark.LootContainer In Self.mContainers
-		    If Not Container.ValidForMask(Profile.Mask) Then
+		  For Each Entry As DictionaryEntry In Self.mContainers
+		    Var Container As Ark.LootContainer = Entry.Value
+		    If Container.ValidForMask(Profile.Mask) = False Then
 		      Continue
 		    End If
 		    
@@ -80,12 +76,14 @@ Implements Iterable
 
 	#tag Event
 		Function HasContent() As Boolean
-		  Return Self.mContainers.Count > 0
+		  Return Self.mContainers.KeyCount > 0
 		End Function
 	#tag EndEvent
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("Contents") = False Then
 		    App.Log("Unable to load LootDrops because there is no Contents key.")
 		    Return
@@ -93,24 +91,19 @@ Implements Iterable
 		  
 		  // Only keep the most recent of the duplicates
 		  Var Contents() As Dictionary = SaveData.Value("Contents").DictionaryArrayValue
-		  Var UniqueClasses As New Dictionary
 		  For Each DropDict As Dictionary In Contents
 		    Var Container As Ark.LootContainer
 		    Try
 		      Container = Ark.LootContainer.FromSaveData(DropDict)
+		      If Container Is Nil Then
+		        Continue For DropDict
+		      End If
+		      Self.mContainers.Value(Container.ClassString) = Container
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Reading DropDict with Beacon.LoadLootSourceSaveData")
 		    End Try
 		    If Container Is Nil Then
 		      Continue
-		    End If
-		    
-		    Var Idx As Integer = UniqueClasses.Lookup(Container.ClassString, -1)
-		    If Idx = -1 Then
-		      Self.mContainers.Add(Container)
-		      UniqueClasses.Value(Container.ClassString) = Self.mContainers.LastIndex
-		    Else
-		      Self.mContainers(Idx) = Container
 		    End If
 		  Next
 		End Sub
@@ -118,17 +111,19 @@ Implements Iterable
 
 	#tag Event
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
-		  For Each Container As Ark.LootContainer In Self.mContainers
-		    Container.Validate(Location, Issues, Project)
-		  Next Container
+		  For Each Entry As DictionaryEntry In Self.mContainers
+		    Ark.LootContainer(Entry.Value).Validate(Location, Issues, Project)
+		  Next Entry
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Var Contents() As Dictionary
-		  For Each Container As Ark.LootContainer In Self.mContainers
-		    Contents.Add(Container.SaveData)
+		  For Each Entry As DictionaryEntry In Self.mContainers
+		    Contents.Add(Ark.LootContainer(Entry.Value).SaveData)
 		  Next
 		  SaveData.Value("Contents") = Contents
 		End Sub
@@ -137,8 +132,10 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Add(Container As Ark.LootContainer)
-		  Self.mContainers.Add(Container.ImmutableVersion)
-		  Self.Modified = True
+		  If (Container Is Nil) = False Then
+		    Self.mContainers.Value(Container.ClassString) = Container.ImmutableVersion
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -170,10 +167,18 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mContainers = New Dictionary
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Containers() As Ark.LootContainer()
 		  Var Results() As Ark.LootContainer
-		  For Each Container As Ark.LootContainer In Self.mContainers
-		    Results.Add(Container)
+		  For Each Entry As DictionaryEntry In Self.mContainers
+		    Results.Add(Ark.LootContainer(Entry.Value).ImmutableVersion)
 		  Next
 		  Return Results
 		End Function
@@ -181,7 +186,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mContainers.Count
+		  Return Self.mContainers.KeyCount
 		End Function
 	#tag EndMethod
 
@@ -208,7 +213,6 @@ Implements Iterable
 		  
 		  // Only keep the most recent of the duplicates
 		  Var LootDrops As New Ark.Configs.LootDrops
-		  Var UniqueClasses As New Dictionary
 		  For Each Member As Variant In Dicts
 		    If IsNull(Member) Or Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
 		      Continue
@@ -225,15 +229,9 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Var Idx As Integer = UniqueClasses.Lookup(Container.ClassString, -1)
-		    If Idx = -1 Then
-		      LootDrops.Add(Container)
-		      UniqueClasses.Value(Container.ClassString) = LootDrops.LastIndex
-		    Else
-		      LootDrops(Idx) = Container
-		    End If
+		    LootDrops.Add(Container)
 		  Next
-		  If LootDrops.LastIndex > -1 Then
+		  If LootDrops.Count > 0 Then
 		    Return LootDrops
 		  End If
 		End Function
@@ -241,18 +239,9 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function HasContainer(Container As Ark.LootContainer) As Boolean
-		  Return Self.IndexOf(Container) > -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IndexOf(Container As Ark.LootContainer) As Integer
-		  For I As Integer = 0 To Self.mContainers.LastIndex
-		    If Self.mContainers(I).ClassString = Container.ClassString Then
-		      Return I
-		    End If
-		  Next
-		  Return -1
+		  If (Container Is Nil) = False Then
+		    Return Self.mContainers.HasKey(Container.ClassString)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -267,57 +256,11 @@ Implements Iterable
 		  // Part of the Iterable interface.
 		  
 		  Var Items() As Variant
-		  Items.ResizeTo(Self.mContainers.LastIndex)
-		  For I As Integer = Items.FirstIndex To Items.LastIndex
-		    Items(I) = Self.mContainers(I)
+		  For Each Entry As DictionaryEntry In Self.mContainers
+		    Items.Add(Ark.LootContainer(Entry.Value).ImmutableVersion)
 		  Next
 		  Return New Beacon.GenericIterator(Items)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LastIndex() As Integer
-		  Return Self.mContainers.LastIndex
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  If Super.Modified Then
-		    Return True
-		  End If
-		  
-		  For Each Container As Ark.LootContainer In Self.mContainers
-		    If Container.Modified Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  Super.Modified = Value
-		  
-		  If Value = False Then
-		    For Each Container As Ark.LootContainer In Self.mContainers
-		      Container.Modified = False
-		    Next
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Ark.LootContainer
-		  Return Self.mContainers(Index)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Container As Ark.LootContainer)
-		  Self.mContainers(Index) = Container.ImmutableVersion
-		  Self.Modified = True
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -327,40 +270,35 @@ Implements Iterable
 		  End If
 		  
 		  Var NumChanged As Integer
-		  For Idx As Integer = 0 To Self.mContainers.LastIndex
-		    Var Mutable As Ark.MutableLootContainer = Self.mContainers(Idx).MutableVersion
+		  For Each Entry As DictionaryEntry In Self.mContainers
+		    Var Mutable As Ark.MutableLootContainer = Ark.LootContainer(Entry.Value).MutableVersion
 		    Var Num As Integer = Mutable.RebuildItemSets(Mask, ContentPacks)
 		    If Num > 0 Then
 		      NumChanged = NumChanged + Num
-		      Self.mContainers(Idx) = Mutable.ImmutableVersion
+		      Self.mContainers.Value(Mutable.ClassString) = Mutable.ImmutableVersion
 		    End If
-		  Next Idx
+		  Next Entry
 		  Return NumChanged
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Remove(Container As Ark.LootContainer)
-		  Var Idx As Integer = Self.IndexOf(Container)
-		  If Idx > -1 Then
-		    Self.Remove(Idx)
+		  If Container Is Nil Then
+		    Return
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Remove(Index As Integer)
-		  Self.mContainers.RemoveAt(Index)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ResizeTo(NewBound As Integer)
-		  If NewBound <> Self.mContainers.LastIndex Then
-		    Self.mContainers.ResizeTo(NewBound)
+		  
+		  If Self.mContainers.HasKey(Container.ClassString) Then
+		    Self.mContainers.Remove(Container.ClassString)
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveAll()
+		  Self.mContainers = New Dictionary
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -378,7 +316,7 @@ Implements Iterable
 
 
 	#tag Property, Flags = &h21
-		Private mContainers() As Ark.LootContainer
+		Private mContainers As Dictionary
 	#tag EndProperty
 
 

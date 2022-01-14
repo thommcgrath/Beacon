@@ -560,7 +560,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Containers(Assigns Containers() As Ark.LootContainer)
-		  If Containers = Nil Then
+		  If Containers Is Nil Then
 		    Self.mContainers.ResizeTo(-1)
 		  Else
 		    Self.mContainers.ResizeTo(Containers.LastIndex)

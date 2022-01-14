@@ -1026,12 +1026,7 @@ End
 		    Mutable.PreventDuplicates = PreventDuplicates
 		    Mutable.AppendMode = AppendMode
 		    
-		    Var Idx As Integer = Self.mConfig.IndexOf(Mutable)
-		    If Idx = -1 Then
-		      Self.mConfig.Add(Mutable)
-		    Else
-		      Self.mConfig(Idx) = Mutable
-		    End If
+		    Self.mConfig.Add(Mutable)
 		  Next
 		  
 		  Self.mCancelled = False

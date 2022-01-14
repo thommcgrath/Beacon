@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootItemSet
-Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
+Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mMinNumItems = 1
@@ -32,7 +32,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted, Beacon.Validateable
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastIndex)
 		  For I As Integer = 0 To Source.mEntries.LastIndex
-		    Self.mEntries(I) = New Ark.LootItemSetEntry(Source.mEntries(I))
+		    Self.mEntries(I) = Source.mEntries(I).ImmutableVersion
 		  Next
 		End Sub
 	#tag EndMethod

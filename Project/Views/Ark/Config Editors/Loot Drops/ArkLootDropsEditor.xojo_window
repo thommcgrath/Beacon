@@ -941,7 +941,23 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  Self.Changed = Self.Project.Modified
+		  Var Config As Ark.Configs.LootDrops = Self.Config(True)
+		  Var Containers() As Ark.LootContainer = Me.Containers
+		  Var Map As New Dictionary
+		  For Each Container As Ark.LootContainer In Containers
+		    Config.Add(Container)
+		    Map.Value(Container.ClassString) = Container
+		  Next Container
+		  For RowIdx As Integer = 0 To Self.List.LastRowIndex
+		    Var Container As Ark.LootContainer = Self.List.RowTagAt(RowIdx)
+		    If Map.HasKey(Container.ClassString) = False Then
+		      Continue For RowIdx
+		    End If
+		    
+		    Self.List.RowTagAt(RowIdx) = Map.Value(Container.ClassString)
+		  Next RowIdx
+		  
+		  Self.Changed = Self.Config(False).Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
