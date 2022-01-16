@@ -274,7 +274,7 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   681
+      Width           =   462
    End
    Begin OmniBar PointsToolbar
       Alignment       =   0
@@ -310,6 +310,64 @@ Begin ArkConfigEditor ArkEngramControlEditor
       Transparent     =   True
       Visible         =   True
       Width           =   300
+   End
+   Begin DelayedSearchField EngramFilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Engrams"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   471
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   10
+      Transparent     =   False
+      Visible         =   True
+      Width           =   200
+   End
+   Begin OmniBarSeparator EngramFilterFieldSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   461
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   220
    End
 End
 #tag EndWindow
@@ -356,8 +414,10 @@ End
 		  Var PointsLeft As Integer = EngramsWidth + 1
 		  
 		  Self.EngramList.Width = EngramsWidth
-		  Self.EngramToolbar.Width = EngramsWidth
+		  Self.EngramToolbar.Width = EngramsWidth - Self.EngramFilterFieldSeparator.Width
 		  Self.EngramListStatus.Width = EngramsWidth
+		  Self.EngramFilterFieldSeparator.Left = Self.EngramToolbar.Left + Self.EngramToolbar.Width
+		  Self.EngramFilterField.Left = Self.EngramFilterFieldSeparator.Left + 10
 		  
 		  Self.PointsListSeparator.Left = EngramsWidth
 		  Self.PointsList.Left = PointsLeft
@@ -438,6 +498,17 @@ End
 		  For Each Engram As Ark.Engram In Engrams
 		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1
 		  Next
+		  
+		  Var Filter As String = Self.EngramFilterField.Text.Trim
+		  If Filter.IsEmpty = False Then
+		    Var Filtered() As Ark.Engram
+		    For Idx As Integer = Engrams.FirstRowIndex To Engrams.LastRowIndex
+		      If Engrams(Idx).Label.IndexOf(Filter) > -1 Or Engrams(Idx).ClassString.IndexOf(Filter) > -1 Or Engrams(Idx).Path.IndexOf(Filter) > -1 Or ((Engrams(Idx).AlternateLabel Is Nil) = False And Engrams(Idx).AlternateLabel.IndexOf(Filter) > -1) Then
+		        Filtered.Add(Engrams(Idx))
+		      End If
+		    Next Idx
+		    Engrams = Filtered
+		  End If
 		  
 		  Var Selected() As String
 		  If SelectEngrams = Nil Then
@@ -1004,6 +1075,13 @@ End
 		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateButton("AddButton", "New Level", IconToolbarAdd, "Define a new level to override engram points."))
 		  Me.Append(OmniBarItem.CreateButton("EditButton", "Edit", IconToolbarEdit, "Edit one or more levels.", False))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramFilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.SetupEngramsList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
