@@ -928,10 +928,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_WelcomeWindow()
-		  If Preferences.NewestUsedBuild < App.BuildNumber Then
-		    // Show what's new window.
-		    WhatsNewWindow.Present
-		  End If
+		  // Show what's new window if necessary. The method will handle its own "if necessary" part.
+		  WhatsNewWindow.Present(Preferences.NewestUsedBuild)
 		  
 		  Self.NextLaunchQueueTask()
 		End Sub

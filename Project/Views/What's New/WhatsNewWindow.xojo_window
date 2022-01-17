@@ -136,8 +136,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor()
-		  // Calling the overridden superclass constructor.
+		Private Sub Constructor(PreviousBuildNumber As Integer)
 		  Self.mPreviousVersion = Preferences.NewestUsedBuild
 		  Super.Constructor
 		  
@@ -145,9 +144,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present()
-		  Var Win As New WhatsNewWindow
+		Shared Sub Present(PreviousBuildNumber As Integer)
+		  If PreviousBuildNumber >= App.BuildNumber Then
+		    // No reason to check
+		    Return
+		  End If
 		  
+		  // Immediately set the new build number just in case there is some sort of error loading the
+		  // web content. If there is, it means one launch will crash but the next should have no issue continuing.
+		  Preferences.NewestUsedBuild = Max(App.BuildNumber, Preferences.NewestUsedBuild)
+		  
+		  // Don't show the window, it'll do that if there is content to display
+		  Var Win As New WhatsNewWindow(PreviousBuildNumber)
 		  #Pragma Unused Win
 		End Sub
 	#tag EndMethod
@@ -226,8 +234,6 @@ End
 		  
 		  Self.Visible = True
 		  Self.Show
-		  
-		  Preferences.NewestUsedBuild = App.BuildNumber
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -301,8 +307,6 @@ End
 		    Self.Visible = True
 		    Self.Show
 		    Me.Refresh
-		    
-		    Preferences.NewestUsedBuild = App.BuildNumber
 		  Else
 		    App.Log("Unable to load welcome content: " + ErrorStatus.ToString("0"))
 		    
