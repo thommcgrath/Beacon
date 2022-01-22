@@ -62,6 +62,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mMinQuality = Source.mMinQuality
 		  Self.mMinQuantity = Source.mMinQuantity
 		  Self.mWeight = Source.mWeight
+		  Self.mPreventGrinding = Source.mPreventGrinding
+		  Self.mStatClampMultiplier = Source.mStatClampMultiplier
+		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
 		  Self.mUniqueID = Source.mUniqueID
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
@@ -229,6 +232,30 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		  End If
 		  
+		  Try
+		    If Dict.HasKey("PreventGrinding") Then
+		      Entry.PreventGrinding = Dict.Value("PreventGrinding")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading PreventGrinding value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("StatClampMultiplier") Then
+		      Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading StatClampMultiplier value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("SingleItemQuantity") Then
+		      Entry.SingleItemQuantity = Dict.Value("SingleItemQuantity")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading SingleItemQuantity value")
+		  End Try
+		  
 		  Entry.Modified = False
 		  Return Entry
 		End Function
@@ -247,7 +274,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Var Locale As Locale = Locale.Raw
 		    Var Format As String = "0.000"
 		    
-		    Var Parts(6) As String
+		    Var Parts(8) As String
 		    Parts(0) = Beacon.MD5(Items.Join(",")).Lowercase
 		    Parts(1) = Self.ChanceToBeBlueprint.ToString(Locale, Format)
 		    Parts(2) = Self.MaxQuality.Key.Lowercase
@@ -255,6 +282,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Parts(4) = Self.MinQuality.Key.Lowercase
 		    Parts(5) = Self.MinQuantity.ToString(Locale, Format)
 		    Parts(6) = Self.RawWeight.ToString(Locale, Format)
+		    Parts(7) = If(Self.PreventGrinding, "True", "False")
+		    Parts(8) = Self.StatClampMultiplier.ToString(Locale, Format)
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
 		    Self.mLastHashTime = System.Microseconds
@@ -287,6 +316,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  If Dict.HasKey("MaxQuantity") Then
 		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
+		  End If
+		  If Dict.HasKey("bForcePreventGrinding") Then
+		    Entry.PreventGrinding = Dict.Value("bForcePreventGrinding")
+		  End If
+		  If Dict.HasKey("ItemStatClampsMultiplier") Then
+		    Entry.StatClampMultiplier = Dict.Value("ItemStatClampsMultiplier")
+		  End If
+		  If Dict.HasKey("bApplyQuantityToSingleItem") Then
+		    Entry.SingleItemQuantity = Dict.Value("bApplyQuantityToSingleItem")
 		  End If
 		  
 		  // If bForceBlueprint is not included or explicitly true, then force is true. This
@@ -552,6 +590,32 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Shared Function RunSimulation(MinQuality As Double, MaxQuality As Double, Weights() As Double, WeightSum As Double, WeightLookup As Dictionary, RequiredBlueprintChance As Double) As Beacon.SimulatedSelection
+		  Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
+		  Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
+		  Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (WeightSum * 100000)) - 100000
+		  
+		  For Idx As Integer = 0 To Weights.LastIndex
+		    If Weights(Idx) < ClassDecision Then
+		      Continue For Idx
+		    End If
+		    
+		    Var SelectedWeight As Double = Weights(Idx)
+		    Var SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
+		    If SelectedEntry Is Nil Then
+		      Continue For Idx
+		    End If
+		    
+		    Var Selection As New Beacon.SimulatedSelection
+		    Selection.Engram = SelectedEntry.Engram
+		    Selection.IsBlueprint = BlueprintDecision > RequiredBlueprintChance
+		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
+		    Return Selection
+		  Next Idx
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SafeForMods(Mods As Beacon.StringList) As Boolean
 		  // This method kind of sucks, but yes it is needed for preset generation.
@@ -586,6 +650,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Keys.Value("PreventGrinding") = Self.PreventGrinding
+		  Keys.Value("StatClampMultiplier") = Self.StatClampMultiplier
+		  Keys.Value("SingleItemQuantity") = Self.SingleItemQuantity
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -621,28 +688,21 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  Weights.Sort
 		  
-		  For I As Integer = 1 To Quantity
-		    Var QualityValue As Double = (System.Random.InRange(MinQuality * 100000, MaxQuality * 100000) / 100000)
-		    Var BlueprintDecision As Integer = System.Random.InRange(1, 100)
-		    Var ClassDecision As Double = System.Random.InRange(100000, 100000 + (Sum * 100000)) - 100000
-		    Var Selection As New Beacon.SimulatedSelection
-		    
-		    For X As Integer = 0 To Weights.LastIndex
-		      If Weights(X) >= ClassDecision Then
-		        Var SelectedWeight As Double = Weights(X)
-		        Var SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
-		        Selection.Engram = SelectedEntry.Engram
-		        Exit For X
+		  If Self.SingleItemQuantity Then
+		    Var Selection As Beacon.SimulatedSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
+		    If (Selection Is Nil) = False Then
+		      For Idx As Integer = 1 To Quantity
+		        Selections.Add(Selection)
+		      Next Idx
+		    End If
+		  Else
+		    For I As Integer = 1 To Quantity
+		      Var Selection As Beacon.SimulatedSelection = Self.RunSimulation(MinQuality, MaxQuality, Weights, Sum, WeightLookup, RequiredChance)
+		      If (Selection Is Nil) = False Then
+		        Selections.Add(Selection)
 		      End If
 		    Next
-		    If Selection.Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
-		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
-		    Selections.Add(Selection)
-		  Next
+		  End If
 		  
 		  Return Selections
 		End Function
@@ -713,12 +773,24 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  // 2017-07-07: As of 261.0, it appears ChanceToActuallyGiveItem does something else. It will
 		  // now be left off.
 		  If Chance < 1 Then
-		    Values.Add("bForceBlueprint=false")
+		    Values.Add("bForceBlueprint=False")
 		  Else
-		    Values.Add("bForceBlueprint=true")
+		    Values.Add("bForceBlueprint=True")
 		  End If
 		  //Values.Add("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
 		  Values.Add("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
+		  
+		  If Self.PreventGrinding Then
+		    Values.Add("bForcePreventGrinding=True")
+		  End If
+		  
+		  If Self.StatClampMultiplier <> 1.0 Then
+		    Values.Add("ItemStatClampsMultiplier=" + Self.StatClampMultiplier.PrettyText)
+		  End If
+		  
+		  If Self.SingleItemQuantity Then
+		    Values.Add("bApplyQuantityToSingleItem=True")
+		  End If
 		  
 		  Return "(" + Values.Join(",") + ")"
 		End Function
@@ -883,12 +955,43 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPreventGrinding As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSingleItemQuantity As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStatClampMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUniqueID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mWeight As Double
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPreventGrinding
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mPreventGrinding = Value Then
+			    Return
+			  End If
+			  
+			  Self.mPreventGrinding = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		PreventGrinding As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -908,6 +1011,44 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			End Set
 		#tag EndSetter
 		RawWeight As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSingleItemQuantity Or Self.mOptions.Count <= 1
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSingleItemQuantity = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSingleItemQuantity = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		SingleItemQuantity As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mStatClampMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mStatClampMultiplier = Value Then
+			    Return
+			  End If
+			  
+			  Self.mStatClampMultiplier = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		StatClampMultiplier As Double
 	#tag EndComputedProperty
 
 
@@ -990,6 +1131,30 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PreventGrinding"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StatClampMultiplier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SingleItemQuantity"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
