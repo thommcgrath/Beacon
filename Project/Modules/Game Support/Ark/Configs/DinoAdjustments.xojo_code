@@ -53,7 +53,7 @@ Inherits Ark.ConfigGroup
 		            Elements.Add("SpawnWeightMultiplier=" + Behavior.SpawnWeightMultiplier.PrettyText)
 		          End If
 		          If (Behavior.SpawnLimitPercent Is Nil) = False Then
-		            Elements.Add("OverrideSpawnLimitPercentage=true")
+		            Elements.Add("OverrideSpawnLimitPercentage=True")
 		            Elements.Add("SpawnLimitPercentage=" + Behavior.SpawnLimitPercent.DoubleValue.PrettyText)
 		          End If
 		          Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoSpawnWeightMultipliers=" + Elements.Join(","), "DinoSpawnWeightMultipliers:" + Behavior.TargetCreature.ClassString))

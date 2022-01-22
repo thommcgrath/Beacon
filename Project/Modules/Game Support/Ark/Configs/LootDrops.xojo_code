@@ -145,7 +145,7 @@ Implements Iterable
 		  Keys.Add("SupplyCrateClassString=""" + Container.ClassString + """")
 		  
 		  If Container.AppendMode Then
-		    Keys.Add("bAppendItemSets=true")
+		    Keys.Add("bAppendItemSets=True")
 		  Else
 		    Var MinSets As Integer = Min(Container.MinItemSets, Container.MaxItemSets)
 		    Var MaxSets As Integer = Max(Container.MaxItemSets, Container.MinItemSets)

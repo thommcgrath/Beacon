@@ -509,7 +509,7 @@ Inherits Ark.ConfigGroup
 		            End If
 		            
 		            If Entry.HasKey("bAddLevelOffsetBeforeMultiplier") Then
-		              Set.LevelOffsetBeforeMultiplier = Entry.Value("bAddLevelOffsetBeforeMultiplier").StringValue = "true"
+		              Set.LevelOffsetBeforeMultiplier = Entry.Value("bAddLevelOffsetBeforeMultiplier").StringValue = "True"
 		            End If
 		            
 		            If Entry.HasKey("GroupSpawnOffset") Then

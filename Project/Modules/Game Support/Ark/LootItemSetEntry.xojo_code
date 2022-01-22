@@ -824,7 +824,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Values.Add("MinQuality=" + MinQuality.PrettyText)
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
 		  If Self.SingleItemQuantity Then
-		    Values.Add("bApplyQuantityToSingleItem=true")
+		    Values.Add("bApplyQuantityToSingleItem=True")
 		  End If
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
