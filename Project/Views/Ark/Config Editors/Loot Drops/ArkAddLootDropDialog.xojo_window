@@ -469,7 +469,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   186
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -652,7 +652,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   1
-         Height          =   162
+         Height          =   130
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -678,7 +678,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   186
          Transparent     =   False
          TypeaheadColumn =   0
          Underline       =   False
@@ -688,6 +688,39 @@ Begin BeaconDialog ArkAddLootDropDialog
          Width           =   394
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin CheckBox CustomizeAppendItemSetsCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Add Item Sets to Default"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   136
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   154
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   394
       End
    End
 End
@@ -861,6 +894,7 @@ End
 		  Self.CustomizeMinSetsField.Text = BasedOn.MinItemSets.ToString(Locale.Current, "0")
 		  Self.CustomizeMaxSetsField.Text = BasedOn.MaxItemSets.ToString(Locale.Current, "0")
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
+		  Self.CustomizeAppendItemSetsCheck.Value = BasedOn.AppendMode
 		  
 		  Var Templates() As Ark.LootTemplate = Ark.DataSource.SharedInstance.GetLootTemplates()
 		  
@@ -969,7 +1003,7 @@ End
 		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Text))
 		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Text))
 		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
-		  Var AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
+		  Var AppendMode As Boolean = Self.CustomizeAppendItemSetsCheck.Value
 		  Var ReconfigureTemplates As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  
 		  Var AllowedTemplates(), AdditionalTemplates() As String
@@ -999,6 +1033,10 @@ End
 		  
 		  For Each Destination As Ark.LootContainer In Self.mDestinations
 		    Var Mutable As New Ark.MutableLootContainer(Destination)
+		    Mutable.MinItemSets = MinItemSets
+		    Mutable.MaxItemSets = MaxItemSets
+		    Mutable.PreventDuplicates = PreventDuplicates
+		    Mutable.AppendMode = AppendMode
 		    
 		    // Add the clones
 		    For Each Set As Ark.LootItemSet In SourceSets
@@ -1012,19 +1050,13 @@ End
 		        Continue
 		      End If
 		      
-		      Mutable.Add(Ark.LootItemSet.FromTemplate(Template, Destination, Self.mMask, Self.mContentPacks))
+		      Mutable.Add(Ark.LootItemSet.FromTemplate(Template, Mutable, Self.mMask, Self.mContentPacks))
 		    Next
 		    
 		    // Rebuild if necessary
 		    If ReconfigureTemplates Then
 		      Call Mutable.RebuildItemSets(Self.mMask, Self.mContentPacks)
 		    End If
-		    
-		    // Apply basic settings
-		    Mutable.MinItemSets = MinItemSets
-		    Mutable.MaxItemSets = MaxItemSets
-		    Mutable.PreventDuplicates = PreventDuplicates
-		    Mutable.AppendMode = AppendMode
 		    
 		    Self.mConfig.Add(Mutable)
 		  Next
