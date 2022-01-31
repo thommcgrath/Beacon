@@ -67,7 +67,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Var TagsToAdd() As String = CurrentTags.NewMembers(Tags)
 		        Var TagsToRemove() As String = Tags.NewMembers(CurrentTags)
 		        For Each Tag As String In TagsToAdd
-		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
 		        Next Tag
 		        For Each Tag As String In TagsToRemove
 		          Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", ObjectID, Tag)
@@ -90,7 +90,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
 		      For Each Tag As String In Tags
-		        Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		        Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
 		      Next Tag
 		    End If
 		    
@@ -317,7 +317,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub BuildSchema()
-		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
+		  Self.ForeignKeys = True
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
 		  Self.BeginTransaction()
@@ -650,7 +650,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
 		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 0;")
-		  Self.mBase.ExecuteSQL("PRAGMA foreign_keys = ON;")
+		  Self.ForeignKeys = True
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
@@ -759,6 +759,66 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Shared Function EscapeLikeValue(Value As String, EscapeChar As String = "\") As String
 		  Return Value.ReplaceAll("%", EscapeChar + "%").ReplaceAll("_", EscapeChar + "_")
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ForeignKeys() As Boolean
+		  Try
+		    Var Tmp As RowSet = Self.SQLSelect("PRAGMA foreign_keys;")
+		    Return Tmp.ColumnAt(0).IntegerValue = 1
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Checking foreign key status")
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ForeignKeys(Assigns Value As Boolean)
+		  If Self.ForeignKeys = Value Then
+		    Return
+		  End If
+		  
+		  If Value Then
+		    Var Rows As RowSet
+		    Try
+		      Rows = Self.SQLSelect("PRAGMA foreign_key_check;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Getting list of broken foreign keys")
+		    End Try
+		    If (Rows Is Nil) = False Then
+		      While Rows.AfterLastRow = False
+		        Var TransactionStarted As Boolean
+		        Try
+		          Var TableName As String = Rows.Column("table").StringValue
+		          Var RowID As Integer = Rows.Column("rowid").IntegerValue
+		          Self.BeginTransaction
+		          TransactionStarted = True
+		          Self.SQLExecute("DELETE FROM """ + TableName.ReplaceAll("""", """""") + """ WHERE rowid = ?1;", RowID)
+		          Self.Commit
+		          TransactionStarted = False
+		        Catch Err As RuntimeException
+		          App.Log(Err, CurrentMethodName, "Deleting broken foreign key row")
+		          If TransactionStarted Then
+		            Self.Rollback
+		          End If
+		        End Try
+		        Rows.MoveToNextRow
+		      Wend
+		    End If
+		    Try
+		      Self.SQLExecute("PRAGMA foreign_keys = ON;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Turning on foreign keys")
+		    End Try
+		  Else
+		    Try
+		      Self.SQLExecute("PRAGMA foreign_keys = OFF;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Turning off foreign keys")
+		    End Try
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1678,7 +1738,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, Tags, Beacon.UserModID)      
 		        For Each Tag As String In Tags
-		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
 		        Next Tag
 		        EngramsUpdated = True
 		      Catch Err As RuntimeException
@@ -3238,7 +3298,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Var TagsToAdd() As String = CurrentTags.NewMembers(DesiredTags)
 		          Var TagsToRemove() As String = DesiredTags.NewMembers(CurrentTags)
 		          For Each Tag As String In TagsToAdd
-		            Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
+		            Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
 		          Next Tag
 		          For Each Tag As String In TagsToRemove
 		            Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", UpdateObjectID, Tag)
@@ -3259,7 +3319,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        
 		        Var Tags() As String = Blueprint.Tags
 		        For Each Tag As String In Tags
-		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
+		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
 		        Next Tag
 		      End If
 		      Self.Commit()
