@@ -9,14 +9,15 @@ if (empty($_GET['tag'])) {
 }
 
 $tag = $_GET['tag'];
+$tag_human = ucwords(str_replace('_', ' ', $tag));
 $objects = BeaconBlueprint::GetWithTag($tag, BeaconCommon::MinVersion());
 if (count($objects) == 0) {
-	echo '<h1>No Objects Tagged &quot;' . htmlentities(ucwords($tag)) . '&quot;</h1>';
+	echo '<h1>No Objects Tagged &quot;' . htmlentities($tag_human) . '&quot;</h1>';
 	echo '<p>Sorry</p>';
 	exit;
 }
 
-echo '<h1>Objects Tagged &quot;' . htmlentities(ucwords($tag)) . '&quot;</h1>';
+echo '<h1>Objects Tagged &quot;' . htmlentities($tag_human) . '&quot;</h1>';
 echo '<ul class="object_list">';
 foreach ($objects as $object) {
 	echo '<li><a href="/object/' . urlencode($object->ObjectID()) . '">' . htmlentities($object->Label()) . '</a></li>';
