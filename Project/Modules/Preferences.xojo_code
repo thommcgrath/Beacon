@@ -199,7 +199,7 @@ Protected Module Preferences
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
-		  Key = Key + " Tag"
+		  Key = Key + " Tags"
 		  
 		  Var Default As String
 		  
@@ -207,16 +207,16 @@ Protected Module Preferences
 		  Case Beacon.CategoryEngrams
 		    Select Case Subgroup
 		    Case "Harvesting"
-		      Default = "(""object"" AND ""harvestable"") NOT (""deprecated"" OR ""cheat"")"
+		      Default = "{""required"":[""harvestable""],""excluded"":[""deprecated"",""cheat""]}"
 		    Case "Crafting"
-		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"")"
+		      Default = "{""required"":[],""excluded"":[""deprecated"",""cheat""]}"
 		    Case "Resources"
-		      Default = "(""object"" AND ""resource"") NOT (""deprecated"" OR ""cheat"")"
+		      Default = "{""required"":[""resource""],""excluded"":[""deprecated"",""cheat""]}"
 		    Else
-		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"" OR ""generic"" OR ""blueprint"")"
+		      Default = "{""required"":[],""excluded"":[""deprecated"",""cheat"",""event"",""reward"",""generic"",""blueprint""]}"
 		    End Select
 		  Case Beacon.CategoryCreatures
-		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"" OR ""generic"")"
+		    Default = "{""required"":[],""excluded"":[""minion"",""boss"",""event"",""generic""]}"
 		  End Select
 		  
 		  Init
@@ -230,7 +230,7 @@ Protected Module Preferences
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
-		  Key = Key + " Tag"
+		  Key = Key + " Tags"
 		  
 		  mManager.StringValue(Key) = Value
 		End Sub

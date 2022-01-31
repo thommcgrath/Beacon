@@ -527,7 +527,7 @@ End
 		Sub Open()
 		  Var PreferredSize As Size = Preferences.EntryEditorSize
 		  
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mMods, Beacon.CategoryEngrams)
 		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
@@ -620,6 +620,9 @@ End
 		    Next
 		    Self.mMods = ModList
 		    Preferences.PresetsEnabledMods = PrefsDict
+		    Var Spec As String = Self.Picker.Spec
+		    Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mMods, Beacon.CategoryEngrams)
+		    Self.Picker.Spec = Spec
 		    Self.UpdateFilter
 		  End If
 		  

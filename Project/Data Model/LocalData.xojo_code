@@ -170,12 +170,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AllTags(Category As String = "") As String()
+		Function AllTags(Mods As Beacon.StringList, Category As String = "") As String()
 		  Var Results As RowSet
 		  If Category.IsEmpty = False Then
-		    Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags_" + Category + " ORDER BY tag;")
+		    If Mods.Count > 0 Then
+		      Results = Self.SQLSelect("SELECT DISTINCT tags_" + Category + ".tag FROM tags_" + Category + " INNER JOIN " + Category + " ON (tags_" + Category + ".object_id = " + Category + ".object_id) WHERE " + Category + ".mod_id IN ('" + Mods.Join("','") + "') ORDER BY tags_" + Category + ".tag;")
+		    Else
+		      Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags_" + Category + " ORDER BY tag;")
+		    End If
 		  Else
-		    Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags ORDER BY tag;")
+		    If Mods.Count > 0 Then
+		      Results = Self.SQLSelect("SELECT DISTINCT tags.tag FROM tags INNER JOIN blueprints ON (tags.object_id = blueprints.object_id) WHERE blueprints.mod_id IN ('" + Mods.Join("','") + "') ORDER BY tags.tag;")
+		    Else
+		      Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags ORDER BY tag;")
+		    End If
 		  End If
 		  Var Dict As New Dictionary
 		  While Not Results.AfterLastRow

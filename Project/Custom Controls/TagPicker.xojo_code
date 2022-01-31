@@ -273,24 +273,28 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Shared Sub ParseSpec(Value As String, ByRef RequiredTags() As String, ByRef ExcludedTags() As String)
-		  Var RequirePhrase, ExcludePhrase As String
+		  RequiredTags.ResizeTo(-1)
+		  ExcludedTags.ResizeTo(-1)
+		  
+		  If Value.IsEmpty Then
+		    Return
+		  End If
+		  
+		  
 		  Try
-		    Var RequireStartPos As Integer = Value.IndexOf("(")
-		    Var RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
-		    RequirePhrase = Value.Middle(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
+		    Var Spec As Dictionary = Beacon.ParseJSON(Value)
 		    
-		    If RequireStartPos > -1 And RequireEndPos > -1 Then
-		      Var ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
-		      If ExcludeStartPos > -1 Then
-		        Var ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
-		        ExcludePhrase = Value.Middle(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
-		      End If
-		      
-		      RequiredTags = RequirePhrase.Split(""" AND """)
-		      ExcludedTags = ExcludePhrase.Split(""" OR """)
-		    End If
+		    Var Required() As Variant = Spec.Value("required")
+		    For Each Tag As String In Required
+		      RequiredTags.Add(Tag)
+		    Next Tag
+		    
+		    Var Excluded() As Variant = Spec.Value("excluded")
+		    For Each Tag As String In Excluded
+		      ExcludedTags.Add(Tag)
+		    Next Tag
 		  Catch Err As RuntimeException
-		    
+		    App.Log(Err, CurrentMethodName, "Parsing tag spec")
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -513,17 +517,10 @@ Inherits ControlCanvas
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Var Value As String
-			  If Self.mRequireTags.LastIndex > -1 Then
-			    Value = "(""" + Self.mRequireTags.Join(""" AND """) + """)"
-			  End If
-			  If Self.mExcludeTags.LastIndex > -1 Then
-			    If Value = "" Then
-			      Value = "object"
-			    End If
-			    Value = Value + " NOT (""" + Self.mExcludeTags.Join(""" OR """) + """)"
-			  End If
-			  Return Value
+			  Var Dict As New Dictionary
+			  Dict.Value("required") = Self.mRequireTags
+			  Dict.Value("excluded") = Self.mExcludeTags
+			  Return Beacon.GenerateJSON(Dict, False)
 			End Get
 		#tag EndGetter
 		#tag Setter
