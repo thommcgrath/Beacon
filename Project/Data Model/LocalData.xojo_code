@@ -650,6 +650,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
 		  Self.mBase.ExecuteSQL("PRAGMA analysis_limit = 0;")
+		  Self.mBase.ExecuteSQL("PRAGMA foreign_keys = ON;")
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
 		End Sub
