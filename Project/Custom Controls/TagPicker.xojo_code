@@ -5,6 +5,13 @@ Inherits ControlCanvas
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  For I As Integer = 0 To Self.mCells.LastIndex
 		    If Self.mCells(I) <> Nil And Self.mCells(I).Contains(X, Y) Then
+		      If IsContextualClick = False Then
+		        Self.mMouseDownCellIndex = -1
+		        Self.mMousePressedIndex = -1
+		        Self.ShowContextualMenu(I, X, Y)
+		        Return True
+		      End If
+		      
 		      Self.mMouseDownCellIndex = I
 		      Self.mMousePressedIndex = I
 		      Self.Invalidate
@@ -14,7 +21,12 @@ Inherits ControlCanvas
 		  
 		  Self.mMouseDownCellIndex = -1
 		  Self.mMousePressedIndex = -1
-		  Return False
+		  
+		  If IsContextualClick Or Self.mHiddenTags.Count = Self.mTags.Count Then
+		    Self.ShowContextualMenu(-1, X, Y)
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 
@@ -78,6 +90,7 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Open()
+		  Self.mHiddenTags = Preferences.HiddenTags
 		  RaiseEvent Open()
 		  Self.AutoResize()
 		End Sub
@@ -176,6 +189,34 @@ Inherits ControlCanvas
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ExcludeTag(Tag As String)
+		  Var Idx As Integer
+		  Var Changed As Boolean
+		  
+		  Idx = Self.mExcludeTags.IndexOf(Tag)
+		  If Idx = -1 Then
+		    Self.mExcludeTags.Add(Tag)
+		    Changed = True
+		  End If
+		  
+		  Idx = Self.mRequireTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mRequireTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Invalidate
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub LocalizeCoordinates(ByRef X As Integer, ByRef Y As Integer)
 		  If (Self.Border And Self.BorderTop) = Self.BorderTop Then
@@ -183,6 +224,34 @@ Inherits ControlCanvas
 		  End If
 		  If (Self.Border And Self.BorderLeft) = Self.BorderLeft Then
 		    X = X + 1
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NeutralizeTag(Tag As String)
+		  Var Idx As Integer
+		  Var Changed As Boolean
+		  
+		  Idx = Self.mRequireTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mRequireTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  Idx = Self.mExcludeTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mExcludeTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Invalidate
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -214,6 +283,11 @@ Inherits ControlCanvas
 		  
 		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Var Tag As String = Self.mTags(I)
+		    Var Hidden As Boolean = Self.mHiddenTags.IndexOf(Tag) > -1
+		    If Hidden Then
+		      Self.mCells(I) = Nil
+		      Continue For I
+		    End If
 		    Var Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
 		    Var Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
 		    Var Pressed As Boolean = Self.mMousePressedIndex = I
@@ -254,7 +328,7 @@ Inherits ControlCanvas
 		    End If
 		    
 		    XPos = XPos + HorizontalSpacing + CellRect.Width
-		  Next
+		  Next I
 		  
 		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
 		  HeightDelta = Self.mContentHeight - ContentArea.Height
@@ -307,6 +381,34 @@ Inherits ControlCanvas
 		  Next
 		  Return Tags
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RequireTag(Tag As String)
+		  Var Idx As Integer
+		  Var Changed As Boolean
+		  
+		  Idx = Self.mRequireTags.IndexOf(Tag)
+		  If Idx = -1 Then
+		    Self.mRequireTags.Add(Tag)
+		    Changed = True
+		  End If
+		  
+		  Idx = Self.mExcludeTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mExcludeTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Invalidate
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -368,6 +470,78 @@ Inherits ControlCanvas
 		  Else
 		    Call CallLater.Schedule(0, AddressOf TriggerChange)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowContextualMenu(CellIndex As Integer, MouseX As Integer, MouseY As Integer)
+		  Var Base As New MenuItem
+		  Var OffsetX, OffsetY As Integer
+		  
+		  If CellIndex > -1 Then
+		    Var Tag As String = Self.mTags(CellIndex)
+		    Var TagHuman As String = Tag.ReplaceAll("_", " ").Titlecase
+		    
+		    Var RequireItem As New MenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
+		    RequireItem.HasCheckMark = Self.mRequireTags.IndexOf(Tag) > -1
+		    
+		    Var ExcludeItem As New MenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
+		    ExcludeItem.HasCheckMark = Self.mExcludeTags.IndexOf(Tag) > -1
+		    
+		    Var NeutralItem As New MenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
+		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
+		    
+		    Var HideItem As New MenuItem("Hide """ + TagHuman + """", "hide:" + Tag)
+		    
+		    Base.AddMenu(RequireItem)
+		    Base.AddMenu(ExcludeItem)
+		    Base.AddMenu(NeutralItem)
+		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(HideItem)
+		    
+		    OffsetX = Self.mCells(CellIndex).Left
+		    OffsetY = Self.mCells(CellIndex).Bottom
+		  Else
+		    OffsetX = MouseX
+		    OffsetY = MouseY
+		  End If
+		  
+		  Var RestoreItem As New MenuItem("Restore Hidden Tags", "restore:")
+		  Base.AddMenu(RestoreItem)
+		  
+		  Var Position As Point = Self.Window.GlobalPosition
+		  Var Choice As MenuItem = Base.PopUp(Position.X + Self.Left + OffsetX, Position.Y + Self.Top + OffsetY)
+		  If Choice Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Pos As Integer = Choice.Tag.StringValue.IndexOf(":")
+		  If Pos = -1 Then
+		    Return
+		  End If
+		  
+		  Var Action As String = Choice.Tag.StringValue.Left(Pos)
+		  Var Tag As String = Choice.Tag.StringValue.Middle(Pos + 1)
+		  
+		  Select Case Action
+		  Case "require"
+		    Self.RequireTag(Tag)
+		  Case "exclude"
+		    Self.ExcludeTag(Tag)
+		  Case "neutral"
+		    Self.NeutralizeTag(Tag)
+		  Case "hide"
+		    Self.NeutralizeTag(Tag)
+		    Self.mHiddenTags.Add(Tag)
+		    Preferences.HiddenTags = Self.mHiddenTags
+		    Self.AutoResize()
+		    Self.Invalidate
+		  Case "restore"
+		    Self.mHiddenTags.ResizeTo(-1)
+		    Preferences.HiddenTags = Self.mHiddenTags
+		    Self.AutoResize()
+		    Self.Invalidate
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -484,6 +658,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mExcludeTags() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHiddenTags() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
