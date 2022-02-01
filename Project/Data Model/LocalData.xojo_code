@@ -2586,7 +2586,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
-		  If Self.mPendingImports.LastIndex = -1 Then
+		  If Self.mPendingImports.Count = 0 Then
 		    Self.mImporting = False
 		    Return
 		  End If
@@ -2623,6 +2623,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Self.mCheckForUpdatesAfterImport Then
 		    Self.mCheckForUpdatesAfterImport = False
 		    Self.CheckForEngramUpdates()
+		  End If
+		  
+		  // It's possible for new content to be added after the import loop finishes, but before the thread ends.
+		  // So check for that and continue the thread if necessary
+		  If Self.mImporting = True Then
+		    Self.mImportThread_Run(Sender)
 		  End If
 		End Sub
 	#tag EndMethod
