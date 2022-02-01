@@ -487,12 +487,21 @@ Inherits ControlCanvas
 		    
 		    Var RequireItem As New MenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
 		    RequireItem.HasCheckMark = Self.mRequireTags.IndexOf(Tag) > -1
+		    If Self.RequireTagCaption.IsEmpty = False Then
+		      RequireItem.Text = Self.RequireTagCaption.ReplaceAll("%%Tag%%", TagHuman)
+		    End If
 		    
 		    Var ExcludeItem As New MenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
 		    ExcludeItem.HasCheckMark = Self.mExcludeTags.IndexOf(Tag) > -1
+		    If Self.ExcludeTagCaption.IsEmpty = False Then
+		      ExcludeItem.Text = Self.ExcludeTagCaption.ReplaceAll("%%Tag%%", TagHuman)
+		    End If
 		    
 		    Var NeutralItem As New MenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
 		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
+		    If Self.NeutralTagCaption.IsEmpty = False Then
+		      NeutralItem.Text = Self.NeutralTagCaption.ReplaceAll("%%Tag%%", TagHuman)
+		    End If
 		    
 		    Var HideItem As New MenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
 		    
@@ -647,6 +656,10 @@ Inherits ControlCanvas
 		Border As Integer
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h0
+		ExcludeTagCaption As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Attributes( Hidden ) Private mBorder As Integer
 	#tag EndProperty
@@ -695,6 +708,14 @@ Inherits ControlCanvas
 		Private mTags() As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		NeutralTagCaption As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		RequireTagCaption As String
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -729,78 +750,6 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="ContentHeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ScrollActive"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ScrollingEnabled"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -906,6 +855,30 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Backdrop"
 			Visible=true
 			Group="Appearance"
@@ -926,6 +899,46 @@ Inherits ControlCanvas
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocus"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -954,6 +967,46 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Spec"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequireTagCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ExcludeTagCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NeutralTagCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="InitialParent"
 			Visible=false
 			Group=""
@@ -968,14 +1021,6 @@ Inherits ControlCanvas
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Spec"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
