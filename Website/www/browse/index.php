@@ -10,7 +10,7 @@ $search_keys = array(
 $sort_order = 'download_count DESC';
 $limit = 25;
 $offset = 0;
-$selected_maps = BeaconMap::CombinedMask(BeaconMap::GetAll());
+$selected_maps = \Ark\Map::CombinedMask(\Ark\Map::GetAll());
 $map_operator = 'any';
 if (array_key_exists('maps_operator', $_GET) && $_GET['maps_operator'] === 'all') {
 	$map_operator = 'all';
@@ -46,11 +46,11 @@ if (array_key_exists('console_safe', $_GET)) {
 }
 
 $start_time = microtime(true);
-$document_count = BeaconDocument::Search($search_keys, $sort_order, $limit, $offset, true);
-$documents = BeaconDocument::Search($search_keys, $sort_order, $limit, $offset, false);
+$document_count = \Ark\Document::Search($search_keys, $sort_order, $limit, $offset, true);
+$documents = \Ark\Document::Search($search_keys, $sort_order, $limit, $offset, false);
 $end_time = microtime(true);
 
-$maps = BeaconMap::GetAll();
+$maps = \Ark\Map::GetAll();
 $map_checkboxes = [];
 foreach ($maps as $map) {
 	$map_checkboxes[] = '<div><label class="checkbox"><input type="checkbox" name="maps[]" value="' . $map->Mask() . '" id="map_checkbox_' . $map->Mask() . '"' . (($selected_maps & $map->Mask()) == $map->Mask() ? ' checked' : '') . '><span></span>' . htmlentities($map->Name()) . '</label></div>';

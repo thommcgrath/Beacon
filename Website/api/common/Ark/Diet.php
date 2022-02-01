@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Ark;
 
-class Diet extends \Ark\BeaconObject implements \ArrayAccess {
+class Diet extends \Ark\GenericObject implements \ArrayAccess {
 	protected $engram_ids = array();
 	
 	protected static function FromRow(\BeaconRecordSet $row) {

@@ -11,7 +11,7 @@ if (is_null($document_id) || BeaconCommon::IsUUID($document_id) === false) {
 	BeaconAPI::ReplyError('Request a specific document', null, 400);
 }
 
-$documents = BeaconDocument::GetByDocumentID($document_id);
+$documents = \Ark\Document::GetByDocumentID($document_id);
 if (count($documents) != 1) {
 	BeaconAPI::ReplyError('Document not found', null, 404);
 }
@@ -22,7 +22,7 @@ if ($document->IsPublic() == false && $document->UserID() != BeaconAPI::UserID()
 	BeaconAPI::ReplyError('Unauthorized', null, 401);
 }
 
-$generator = new BeaconGenerator($document);
+$generator = new \Ark\Generator($document);
 if (array_key_exists('quality_scale', $_REQUEST)) {
 	$generator->SetQualityScale(floatval($_REQUEST['quality_scale']));
 }

@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Ark;
 
-class Preset extends \Ark\BeaconObject {
+class Preset extends \Ark\GenericObject {
 	protected $contents;
 	
 	protected static function SQLColumns() {

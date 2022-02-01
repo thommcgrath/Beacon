@@ -5,7 +5,7 @@ namespace BeaconAPI\Ark;
 class Generator {
 	protected $document, $quality_scale, $map_mask, $difficulty_value;
 	
-	public function __construct(\BeaconDocument $document) {
+	public function __construct(\Ark\Document $document) {
 		$this->document = $document;
 		$this->quality_scale = 1.0;
 		$this->map_mask = $document->MapMask();
@@ -54,9 +54,9 @@ class Generator {
 		
 		foreach ($loot_sources_json as $json) {
 			$class = $json['SupplyCrateClassString'];
-			$definition = \BeaconLootSource::Get($class);
+			$definition = \Ark\LootSource::Get($class);
 			if (count($definition) != 1) {
-				$definition = new \BeaconLootSource();
+				$definition = new \Ark\LootSource();
 				$definition->SetMultiplierMin($json['Multiplier_Min']);
 				$definition->SetMultiplierMax($json['Multiplier_Max']);
 				$definition->SetAvailability($json['Availability']);
@@ -197,7 +197,7 @@ class Generator {
 		return $raw_value / ($base_arbitrary_quality * $crate_arbitrary_quality);
 	}
 	
-	protected function RenderItemSet(\BeaconLootSource $source, array $set, float $weight_total) {
+	protected function RenderItemSet(\Ark\LootSource $source, array $set, float $weight_total) {
 		$random_without_replacement = boolval($set['bItemsRandomWithoutReplacement']);
 		$name = $set['Label'];
 		$entries = $set['ItemEntries'];
@@ -225,7 +225,7 @@ class Generator {
 		return '(' . implode(',', $keys) . ')';
 	}
 	
-	protected function RenderEntry(\BeaconLootSource $source, array $entry, float $weight_total) {
+	protected function RenderEntry(\Ark\LootSource $source, array $entry, float $weight_total) {
 		$blueprint_chance = floatval($entry['ChanceToBeBlueprintOverride']);
 		$local_weight = max(floatval($entry['EntryWeight']), 0.0001);
 		$relative_weight = round(($local_weight / $weight_total) * 1000);

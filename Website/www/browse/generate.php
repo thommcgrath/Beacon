@@ -13,7 +13,7 @@ $search_keys = array(
 	'document_id' => $document_id
 );
 
-$documents = BeaconDocument::Search($search_keys);
+$documents = \Ark\Document::Search($search_keys);
 if (count($documents) != 1) {
 	http_response_code(404);
 	BeaconTemplate::SetTitle('Document Not Found');
@@ -23,7 +23,7 @@ if (count($documents) != 1) {
 
 $document = $documents[0];
 
-$generator = new BeaconGenerator($document);
+$generator = new \Ark\Generator($document);
 if (array_key_exists('quality_scale', $_REQUEST)) {
 	$generator->SetQualityScale(floatval($_REQUEST['quality_scale']));
 }

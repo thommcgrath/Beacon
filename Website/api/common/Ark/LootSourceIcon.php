@@ -2,7 +2,7 @@
 
 namespace BeaconAPI\Ark;
 
-class LootSourceIcon extends \Ark\BeaconObject {
+class LootSourceIcon extends \Ark\GenericObject {
 	private $icon_data;
 	
 	protected static function SQLColumns() {

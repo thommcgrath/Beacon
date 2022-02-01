@@ -77,7 +77,7 @@ class ObjectManager {
 		}
 		
 		// get the mods the user is allowed to work with
-		$user_mods = \BeaconMod::GetAll(\BeaconAPI::UserID());
+		$user_mods = \Ark\Mod::GetAll(\BeaconAPI::UserID());
 		$mods_by_uuid = array();
 		$mods_by_workshop_id = array();
 		foreach ($user_mods as $mod) {

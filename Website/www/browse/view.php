@@ -14,7 +14,7 @@ $search_keys = array(
 );
 	
 
-$documents = BeaconDocument::Search($search_keys);
+$documents = \Ark\Document::Search($search_keys);
 if (count($documents) != 1) {
 	http_response_code(404);
 	BeaconTemplate::SetTitle('Document Not Found');
@@ -36,7 +36,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 $author_id = $document->UserID();
 $author = BeaconUser::GetByUserID($author_id);
 $author_name = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
-$maps = BeaconMaps::Masks($document->MapMask());
+$maps = \Ark\Maps::Masks($document->MapMask());
 
 ?><h1><?php echo htmlentities($document->Name()); ?><br><span class="subtitle">By <?php echo htmlentities($author_name); ?><span class="user-suffix">#<?php echo htmlentities($author->Suffix()); ?></span></span></h1>
 <h3>Description</h3>

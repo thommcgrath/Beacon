@@ -14,7 +14,7 @@ class Map implements \JsonSerializable {
 	
 	public function __construct($source) {
 		if (is_null($source)) {
-			throw new Exception('Cannot create a BeaconMap from null');
+			throw new Exception('Cannot create a \Ark\Map from null');
 		}
 		
 		if ($source instanceof Map) {
@@ -36,7 +36,7 @@ class Map implements \JsonSerializable {
 			$this->mask = intval($source->Field('mask'));
 			$this->sort = intval($source->Field('sort'));
 		} else {
-			throw new Exception('Cannot create BeaconMap from ' . get_class($source));
+			throw new Exception('Cannot create \Ark\Map from ' . get_class($source));
 		}
 	}
 	

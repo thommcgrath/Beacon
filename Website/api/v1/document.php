@@ -18,7 +18,7 @@ if (is_null($subobject) == false) {
 	
 	BeaconAPI::Authorize(true);
 	
-	$document = BeaconDocument::GetSharedDocumentByID($document_id, BeaconAPI::UserID());
+	$document = \Ark\Document::GetSharedDocumentByID($document_id, BeaconAPI::UserID());
 	if (is_null($document) || count($document) != 1) {
 		BeaconAPI::ReplyError('Document not found', null, 404);
 	}
@@ -91,7 +91,7 @@ case 'GET':
 		} else {
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
 		}
-		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM allowed_documents WHERE ' . implode(' AND ', $clauses);
+		$sql = 'SELECT ' . implode(', ', \Ark\Document::DatabaseColumns()) . ' FROM allowed_documents WHERE ' . implode(' AND ', $clauses);
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -122,13 +122,13 @@ case 'GET':
 		}
 		
 		$results = $database->Query($sql, $values);
-		$documents = BeaconDocument::GetFromResults($results);
+		$documents = \Ark\Document::GetFromResults($results);
 		BeaconAPI::ReplySuccess($documents);
 	} else {
 		$simple = isset($_GET['simple']);
 		
 		// specific document(s)
-		$documents = BeaconDocument::GetSharedDocumentByID($document_id, $user_id);
+		$documents = \Ark\Document::GetSharedDocumentByID($document_id, $user_id);
 		if (count($documents) === 0) {
 			BeaconAPI::ReplyError('No document found', null, 404);
 		} elseif (count($documents) > 1) {
@@ -217,7 +217,7 @@ case 'POST':
 	$file_content = BeaconAPI::Body();
 	$user = BeaconAPI::User();
 	$reason = '';
-	if (BeaconDocument::SaveFromContent($document_id, $user, $file_content, $reason) === false) {
+	if (\Ark\Document::SaveFromContent($document_id, $user, $file_content, $reason) === false) {
 		BeaconAPI::ReplyError($reason);
 	}
 	

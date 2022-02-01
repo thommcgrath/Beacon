@@ -39,22 +39,22 @@ BeaconTemplate::FinishScript();
 $keys = array(
 	'user_id' => $user->UserID()
 );
-$documents = BeaconDocument::Search($keys);
+$documents = \Ark\Document::Search($keys);
 if (count($documents) > 0) {
 	echo '<table class="generic">';
 	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Revision</th><th class="text-center low-priority">Published</th><th class="low-priority">Delete</th></tr></thead>';
 	foreach ($documents as $document) {
 		$status = $document->PublishStatus();
 		switch ($status) {
-		case BeaconDocument::PUBLISH_STATUS_PRIVATE:
-		case BeaconDocument::PUBLISH_STATUS_DENIED:
-		case BeaconDocument::PUBLISH_STATUS_APPROVED_PRIVATE:
+		case \Ark\Document::PUBLISH_STATUS_PRIVATE:
+		case \Ark\Document::PUBLISH_STATUS_DENIED:
+		case \Ark\Document::PUBLISH_STATUS_APPROVED_PRIVATE:
 			$status = 'No';
 			break;
-		case BeaconDocument::PUBLISH_STATUS_REQUESTED:
+		case \Ark\Document::PUBLISH_STATUS_REQUESTED:
 			$status = "Pending";
 			break;
-		case BeaconDocument::PUBLISH_STATUS_APPROVED:
+		case \Ark\Document::PUBLISH_STATUS_APPROVED:
 			$status = 'Yes';
 			break;
 		}

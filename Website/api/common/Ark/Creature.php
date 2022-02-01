@@ -241,10 +241,10 @@ class Creature extends \Ark\Blueprint {
 	}
 	
 	public function TamingDiet() {
-		return \BeaconDiet::GetByObjectID($this->taming_diet_id);
+		return \Ark\Diet::GetByObjectID($this->taming_diet_id);
 	}
 	
-	public function SetTamingDiet(\BeaconDiet $taming_diet) {
+	public function SetTamingDiet(\Ark\Diet $taming_diet) {
 		$this->taming_diet_id = $taming_diet->ObjectID();
 	}
 	
@@ -257,10 +257,10 @@ class Creature extends \Ark\Blueprint {
 	}
 	
 	public function TamedDiet() {
-		return \BeaconDiet::GetByObjectID($this->tamed_diet_id);
+		return \Ark\Diet::GetByObjectID($this->tamed_diet_id);
 	}
 	
-	public function SetTamedDiet(\BeaconDiet $tamed_diet) {
+	public function SetTamedDiet(\Ark\Diet $tamed_diet) {
 		$this->tamed_diet_id = $tamed_diet->ObjectID();
 	}
 	
