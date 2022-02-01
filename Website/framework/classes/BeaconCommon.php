@@ -319,22 +319,22 @@ abstract class BeaconCommon {
 			$tablename = $results->Field('tablename');
 			switch ($tablename) {
 			case 'creatures':
-				$obj = BeaconCreature::GetByObjectID($id, $build_number);
+				$obj = \Ark\Creature::GetByObjectID($id, $build_number);
 				break;
 			case 'diets':
-				$obj = BeaconDiet::GetByObjectID($id, $build_number);
+				$obj = \Ark\Diet::GetByObjectID($id, $build_number);
 				break;
 			case 'engrams':
-				$obj = BeaconEngram::GetByObjectID($id, $build_number);
+				$obj = \Ark\Engram::GetByObjectID($id, $build_number);
 				break;
 			case 'loot_sources':
-				$obj = BeaconLootSource::GetByObjectID($id, $build_number);
+				$obj = \Ark\LootSource::GetByObjectID($id, $build_number);
 				break;
 			case 'presets':
-				$obj = BeaconPreset::GetByObjectID($id, $build_number);
+				$obj = \Ark\Preset::GetByObjectID($id, $build_number);
 				break;
 			case 'spawn_points':
-				$obj = BeaconSpawnPoint::GetByObjectID($id, $build_number);
+				$obj = \Ark\SpawnPoint::GetByObjectID($id, $build_number);
 				break;
 			default:
 				$obj = null;
@@ -353,7 +353,7 @@ abstract class BeaconCommon {
 			return $objects[0];
 		} else {
 			foreach ($objects as $obj) {
-				if ($obj instanceof BeaconBlueprint) {
+				if ($obj instanceof \Ark\Blueprint) {
 					BeaconCache::Set($obj->ModWorkshopID() . '|' . $obj->ClassString(), $obj, 3600);
 				}
 			}

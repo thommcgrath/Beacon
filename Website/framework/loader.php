@@ -18,7 +18,23 @@ $_SERVER['API_VERSION'] = $api_version;
 
 spl_autoload_register(function($class_name) {
 	$filename = str_replace('\\', '/', $class_name) . '.php';
+	$paths = [dirname(__FILE__) . '/classes/' . $filename];
+	$path_parts = explode('\\', $class_name, 2);
 	
+	if (count($path_parts) > 1 && $path_parts[0] === 'BeaconAPI') {
+		$paths[] = dirname(__FILE__, 2) . '/api/common/' . str_replace('\\', '/', $path_parts[1]) . '.php';
+	} elseif (count($path_parts) === 2) {
+		$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/' . strtolower($path_parts[0]) . '/classes/' . str_replace('\\', '/', $path_parts[1]) . '.php';
+		$paths[] = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . str_replace('\\', '/', $path_parts[1]) . '.php';
+	}
+	foreach ($paths as $path) {
+		if (file_exists($path)) {
+			include($path);
+			return;
+		}
+	}
+	
+	/*
 	// check the global classes
 	$file = dirname(__FILE__) . '/classes/' . $filename;
 	if (file_exists($file)) {
@@ -40,7 +56,7 @@ spl_autoload_register(function($class_name) {
 	if (file_exists($file)) {
 		include($file);
 		return;
-	}
+	}*/
 });
 
 require(dirname(__FILE__) . '/config.php');
