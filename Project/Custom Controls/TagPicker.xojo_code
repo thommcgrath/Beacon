@@ -6,9 +6,12 @@ Inherits ControlCanvas
 		  For I As Integer = 0 To Self.mCells.LastIndex
 		    If Self.mCells(I) <> Nil And Self.mCells(I).Contains(X, Y) Then
 		      If IsContextualClick = False Then
+		        Self.mMouseDownCellIndex = I
+		        Self.mMousePressedIndex = I
+		        Self.Invalidate
+		        Self.ShowContextualMenu(I, X, Y)
 		        Self.mMouseDownCellIndex = -1
 		        Self.mMousePressedIndex = -1
-		        Self.ShowContextualMenu(I, X, Y)
 		        Return True
 		      End If
 		      
@@ -491,7 +494,7 @@ Inherits ControlCanvas
 		    Var NeutralItem As New MenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
 		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
 		    
-		    Var HideItem As New MenuItem("Hide """ + TagHuman + """", "hide:" + Tag)
+		    Var HideItem As New MenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
 		    
 		    Base.AddMenu(RequireItem)
 		    Base.AddMenu(ExcludeItem)
