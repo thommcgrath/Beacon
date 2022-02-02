@@ -17,7 +17,7 @@ class GameVariable implements \JsonSerializable {
 		}
 
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT * FROM game_variables WHERE last_update > $1;', $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query('SELECT * FROM ark.game_variables WHERE last_update > $1;', $updated_since->format('Y-m-d H:i:sO'));
 		$topics = array();
 		while (!$results->EOF()) {
 			$topics[] = new static($results);

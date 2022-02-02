@@ -33,7 +33,7 @@ class Creature extends \Ark\Blueprint {
 		$columns[] = 'breedable';
 		$columns[] = 'EXTRACT(epoch FROM incubation_time) AS incubation_time';
 		$columns[] = 'EXTRACT(epoch FROM mature_time) AS mature_time';
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier FROM creature_stats WHERE creature_stats.creature_id = creatures.object_id ORDER BY stat_index) AS template) AS stats';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier FROM ark.creature_stats WHERE creature_stats.creature_id = creatures.object_id ORDER BY stat_index) AS template) AS stats';
 		$columns[] = 'EXTRACT(epoch FROM mating_interval_min) AS mating_interval_min';
 		$columns[] = 'EXTRACT(epoch FROM mating_interval_max) AS mating_interval_max';
 		$columns[] = 'used_stats';
@@ -41,7 +41,7 @@ class Creature extends \Ark\Blueprint {
 	}
 	
 	protected static function TableName() {
-		return 'creatures';
+		return 'ark.creatures';
 	}
 	
 	protected function GetColumnValue(string $column) {
@@ -305,7 +305,7 @@ class Creature extends \Ark\Blueprint {
 	public function RelatedObjectIDs() {
 		$database = \BeaconCommon::Database();
 		$arr = array();
-		$results = $database->Query('SELECT engram_id FROM creature_engrams WHERE creature_id = $1;', $this->ObjectID());
+		$results = $database->Query('SELECT engram_id FROM ark.creature_engrams WHERE creature_id = $1;', $this->ObjectID());
 		while (!$results->EOF()) {
 			$arr[] = $results->Field('engram_id');
 			$results->MoveNext();
@@ -338,7 +338,7 @@ class Creature extends \Ark\Blueprint {
 		$object_id = $this->ObjectID();
 		
 		if (is_null($this->stats)) {
-			$database->Query('DELETE FROM creature_stats WHERE creature_id = $1;', $object_id);
+			$database->Query('DELETE FROM ark.creature_stats WHERE creature_id = $1;', $object_id);
 			return;
 		}
 		
@@ -346,9 +346,9 @@ class Creature extends \Ark\Blueprint {
 		foreach ($this->stats as $stat) {
 			$index = intval($stat['stat_index']);
 			$indexes[] = $index;
-			$database->Query('INSERT INTO creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (creature_id, stat_index) DO UPDATE SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_stats.base_value IS DISTINCT FROM $3 OR creature_stats.per_level_wild_multiplier IS DISTINCT FROM $4 OR creature_stats.per_level_tamed_multiplier IS DISTINCT FROM $5 OR creature_stats.add_multiplier IS DISTINCT FROM $7 OR creature_stats.affinity_multiplier IS DISTINCT FROM $7;', $object_id, $index, $stat['base_value'], $stat['per_level_wild_multiplier'], $stat['per_level_tamed_multiplier'], $stat['add_multiplier'], $stat['affinity_multiplier']);
+			$database->Query('INSERT INTO ark.creature_stats (creature_id, stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (creature_id, stat_index) DO UPDATE SET base_value = $3, per_level_wild_multiplier = $4, per_level_tamed_multiplier = $5, add_multiplier = $6, affinity_multiplier = $7 WHERE creature_stats.base_value IS DISTINCT FROM $3 OR creature_stats.per_level_wild_multiplier IS DISTINCT FROM $4 OR creature_stats.per_level_tamed_multiplier IS DISTINCT FROM $5 OR creature_stats.add_multiplier IS DISTINCT FROM $7 OR creature_stats.affinity_multiplier IS DISTINCT FROM $7;', $object_id, $index, $stat['base_value'], $stat['per_level_wild_multiplier'], $stat['per_level_tamed_multiplier'], $stat['add_multiplier'], $stat['affinity_multiplier']);
 		}
-		$database->Query('DELETE FROM creature_stats WHERE creature_id = $1 AND stat_index NOT IN (' . implode(',', $indexes) . ');', $object_id);
+		$database->Query('DELETE FROM ark.creature_stats WHERE creature_id = $1 AND stat_index NOT IN (' . implode(',', $indexes) . ');', $object_id);
 	}
 }
 

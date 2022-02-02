@@ -9,18 +9,18 @@ class ColorSet implements \JsonSerializable {
 	
 	protected static function SQLColumns() {
 		return [
-			'color_sets.color_set_id',
-			'color_sets.label',
-			'color_sets.class_string'
+			'ark.color_sets.color_set_id',
+			'ark.color_sets.label',
+			'ark.color_sets.class_string'
 		];
 	}
 	
 	public static function GetAll(\DateTime $updated_since = null) {
 		$database = \BeaconCommon::Database();
 		if (is_null($updated_since)) {
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM color_sets ORDER BY label;');
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.color_sets ORDER BY label;');
 		} else {
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM color_sets WHERE last_update > $1 ORDER BY label;', $updated_since->format('Y-m-d H:i:sO'));
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.color_sets WHERE last_update > $1 ORDER BY label;', $updated_since->format('Y-m-d H:i:sO'));
 		}
 		
 		return static::FromRows($results);
@@ -28,7 +28,7 @@ class ColorSet implements \JsonSerializable {
 	
 	public static function GetForUUID(string $uuid) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM color_sets WHERE color_set_id = $1 ORDER BY label;', $uuid);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.color_sets WHERE color_set_id = $1 ORDER BY label;', $uuid);
 		if ($results->RecordCount() === 1) {
 			return static::FromRow($results);
 		} else {

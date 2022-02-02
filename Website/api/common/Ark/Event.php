@@ -12,21 +12,21 @@ class Event implements \JsonSerializable {
 	
 	protected static function SQLColumns() {
 		return [
-			'events.event_id',
-			'events.event_name',
-			'events.event_code',
-			'(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT event_rates.ini_option AS object_id, event_rates.multiplier FROM event_rates INNER JOIN ini_options ON (event_rates.ini_option = ini_options.object_id) WHERE event_rates.event_id = events.event_id) AS rates_template) AS rates',
-			'(SELECT json_agg(color_id ORDER BY color_id) FROM event_colors WHERE event_colors.event_id = events.event_id) AS colors',
-			'(SELECT json_agg(object_id) FROM event_engrams WHERE event_engrams.event_id = events.event_id) AS engrams'
+			'ark.events.event_id',
+			'ark.events.event_name',
+			'ark.events.event_code',
+			'(SELECT json_agg(row_to_json(rates_template)) FROM (SELECT ark.event_rates.ini_option AS object_id, ark.event_rates.multiplier FROM ark.event_rates INNER JOIN ark.ini_options ON (ark.event_rates.ini_option = ark.ini_options.object_id) WHERE ark.event_rates.event_id = ark.events.event_id) AS rates_template) AS rates',
+			'(SELECT json_agg(color_id ORDER BY color_id) FROM ark.event_colors WHERE ark.event_colors.event_id = ark.events.event_id) AS colors',
+			'(SELECT json_agg(object_id) FROM ark.event_engrams WHERE ark.event_engrams.event_id = ark.events.event_id) AS engrams'
 		];
 	}
 	
 	public static function GetAll(\DateTime $updated_since = null) {
 		$database = \BeaconCommon::Database();
 		if (is_null($updated_since)) {
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM events;');
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.events;');
 		} else {
-			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM events WHERE last_update > $1;', $updated_since->format('Y-m-d H:i:sO'));
+			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.events WHERE last_update > $1;', $updated_since->format('Y-m-d H:i:sO'));
 		}
 		
 		return static::FromRows($results);
@@ -34,7 +34,7 @@ class Event implements \JsonSerializable {
 	
 	public static function GetForArkCode(string $code) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM events WHERE event_code = $1;', $code);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.events WHERE event_code = $1;', $code);
 		if ($results->RecordCount() === 1) {
 			return static::FromRow($results);
 		} else {
@@ -44,7 +44,7 @@ class Event implements \JsonSerializable {
 	
 	public static function GetForUUID(string $uuid) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM events WHERE event_id = $1;', $uuid);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.events WHERE event_id = $1;', $uuid);
 		if ($results->RecordCount() === 1) {
 			return static::FromRow($results);
 		} else {

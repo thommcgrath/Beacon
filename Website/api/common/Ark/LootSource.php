@@ -30,7 +30,7 @@ class LootSource extends \Ark\Blueprint {
 	}
 	
 	protected static function TableName() {
-		return 'loot_sources';
+		return 'ark.loot_sources';
 	}
 	
 	protected static function SortColumn() {

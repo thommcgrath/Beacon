@@ -12,7 +12,7 @@ class LootSourceIcon extends \Ark\GenericObject {
 	}
 	
 	protected static function TableName() {
-		return 'loot_source_icons';
+		return 'ark.loot_source_icons';
 	}
 	
 	protected function GetColumnValue(string $column) {

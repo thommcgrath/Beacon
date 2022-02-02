@@ -5,8 +5,8 @@ namespace Ark;
 class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT label, spawn_point_set_id AS group_id, weight, array_to_json(ARRAY(SELECT creatures.path FROM (SELECT DISTINCT spawn_point_set_entries.creature_id FROM spawn_point_set_entries WHERE spawn_point_set_entries.spawn_point_set_id = spawn_point_sets.spawn_point_set_id) AS entry_creatures INNER JOIN creatures ON (entry_creatures.creature_id = creatures.object_id))) AS creatures FROM spawn_point_sets WHERE spawn_point_sets.spawn_point_id = spawn_points.object_id) AS sets_template) AS spawn_groups';
-		$columns[] = 'json_object(array(SELECT array[creatures.path, max_percentage::text] FROM spawn_point_limits INNER JOIN creatures ON (spawn_point_limits.creature_id = creatures.object_id) WHERE spawn_point_limits.spawn_point_id = spawn_points.object_id)) AS spawn_limits';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT label, spawn_point_set_id AS group_id, weight, array_to_json(ARRAY(SELECT creatures.path FROM (SELECT DISTINCT spawn_point_set_entries.creature_id FROM ark.spawn_point_set_entries WHERE ark.spawn_point_set_entries.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id) AS entry_creatures INNER JOIN ark.creatures ON (entry_creatures.creature_id = ark.creatures.object_id))) AS creatures FROM ark.spawn_point_sets WHERE ark.spawn_point_sets.spawn_point_id = ark.spawn_points.object_id) AS sets_template) AS spawn_groups';
+		$columns[] = 'json_object(array(SELECT array[ark.creatures.path, max_percentage::text] FROM ark.spawn_point_limits INNER JOIN ark.creatures ON (ark.spawn_point_limits.creature_id = ark.creatures.object_id) WHERE ark.spawn_point_limits.spawn_point_id = ark.spawn_points.object_id)) AS spawn_limits';
 		return $columns;
 	}
 	

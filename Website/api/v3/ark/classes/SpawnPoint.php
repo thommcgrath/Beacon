@@ -5,8 +5,8 @@ namespace Ark;
 class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT spawn_point_set_id, label, weight, spawn_offset, min_distance_from_players_multiplier, min_distance_from_structures_multiplier, min_distance_from_tamed_dinos_multiplier, spread_radius, water_only_minimum_height, offset_before_multiplier, (SELECT array_to_json(array_agg(row_to_json(entries_template))) FROM (SELECT spawn_point_set_entry_id, creature_id, weight, override, min_level_multiplier, max_level_multiplier, min_level_offset, max_level_offset, spawn_offset, (SELECT array_to_json(array_agg(row_to_json(levels_template))) FROM (SELECT difficulty, min_level, max_level FROM spawn_point_set_entry_levels WHERE spawn_point_set_entry_levels.spawn_point_set_entry_id = spawn_point_set_entries.spawn_point_set_entry_id) AS levels_template) AS level_overrides FROM spawn_point_set_entries WHERE spawn_point_set_entries.spawn_point_set_id = spawn_point_sets.spawn_point_set_id) AS entries_template) AS entries, (SELECT array_to_json(array_agg(row_to_json(replacements_template))) FROM (SELECT target_creature_id AS creature_id, json_object(array_agg(array[replacement_creature_id::text, weight::text])) AS choices FROM spawn_point_set_replacements WHERE spawn_point_set_replacements.spawn_point_set_id = spawn_point_sets.spawn_point_set_id GROUP BY target_creature_id) AS replacements_template) AS replacements FROM spawn_point_sets WHERE spawn_point_sets.spawn_point_id = spawn_points.object_id) AS sets_template) AS spawn_sets';
-		$columns[] = 'json_object(array(SELECT array[creatures.object_id::text, max_percentage::text] FROM spawn_point_limits INNER JOIN creatures ON (spawn_point_limits.creature_id = creatures.object_id) WHERE spawn_point_limits.spawn_point_id = spawn_points.object_id)) AS spawn_limits';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT spawn_point_set_id, label, weight, spawn_offset, min_distance_from_players_multiplier, min_distance_from_structures_multiplier, min_distance_from_tamed_dinos_multiplier, spread_radius, water_only_minimum_height, offset_before_multiplier, (SELECT array_to_json(array_agg(row_to_json(entries_template))) FROM (SELECT spawn_point_set_entry_id, creature_id, weight, override, min_level_multiplier, max_level_multiplier, min_level_offset, max_level_offset, spawn_offset, (SELECT array_to_json(array_agg(row_to_json(levels_template))) FROM (SELECT difficulty, min_level, max_level FROM ark.spawn_point_set_entry_levels WHERE ark.spawn_point_set_entry_levels.spawn_point_set_entry_id = ark.spawn_point_set_entries.spawn_point_set_entry_id) AS levels_template) AS level_overrides FROM ark.spawn_point_set_entries WHERE ark.spawn_point_set_entries.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id) AS entries_template) AS entries, (SELECT array_to_json(array_agg(row_to_json(replacements_template))) FROM (SELECT target_creature_id AS creature_id, json_object(array_agg(array[replacement_creature_id::text, weight::text])) AS choices FROM ark.spawn_point_set_replacements WHERE ark.spawn_point_set_replacements.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id GROUP BY target_creature_id) AS replacements_template) AS replacements FROM ark.spawn_point_sets WHERE ark.spawn_point_sets.spawn_point_id = ark.spawn_points.object_id) AS sets_template) AS spawn_sets';
+		$columns[] = 'json_object(array(SELECT array[ark.creatures.object_id::text, max_percentage::text] FROM ark.spawn_point_limits INNER JOIN ark.creatures ON (ark.spawn_point_limits.creature_id = ark.creatures.object_id) WHERE ark.spawn_point_limits.spawn_point_id = ark.spawn_points.object_id)) AS spawn_limits';
 		return $columns;
 	}
 	
@@ -122,9 +122,9 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 			}
 		}
 		if (count($sets_list) > 0) {
-			$database->Query('DELETE FROM spawn_point_sets WHERE spawn_point_id = $1 AND spawn_point_set_id NOT IN (\'' . implode('\', \'', $sets_list) . '\');', $spawn_point_id);
+			$database->Query('DELETE FROM ark.spawn_point_sets WHERE spawn_point_id = $1 AND spawn_point_set_id NOT IN (\'' . implode('\', \'', $sets_list) . '\');', $spawn_point_id);
 		} else {
-			$database->Query('DELETE FROM spawn_point_sets WHERE spawn_point_id = $1;', $spawn_point_id);
+			$database->Query('DELETE FROM ark.spawn_point_sets WHERE spawn_point_id = $1;', $spawn_point_id);
 		}
 	}
 	
@@ -150,9 +150,9 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 			}
 		}
 		if (count($keep_entries) > 0) {
-			$database->Query('DELETE FROM spawn_point_set_entries WHERE spawn_point_set_id = $1 AND spawn_point_set_entry_id NOT IN (\'' . implode('\', \'', $keep_entries) . '\');', $spawn_point_set_id);
+			$database->Query('DELETE FROM ark.spawn_point_set_entries WHERE spawn_point_set_id = $1 AND spawn_point_set_entry_id NOT IN (\'' . implode('\', \'', $keep_entries) . '\');', $spawn_point_set_id);
 		} else {
-			$database->Query('DELETE FROM spawn_point_set_entries WHERE spawn_point_set_id = $1;', $spawn_point_set_id);
+			$database->Query('DELETE FROM ark.spawn_point_set_entries WHERE spawn_point_set_id = $1;', $spawn_point_set_id);
 		}
 	}
 	
@@ -170,9 +170,9 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 			}
 		}
 		if (count($keep_levels) > 0) {
-			$database->Query('DELETE FROM spawn_point_set_entry_levels WHERE spawn_point_set_entry_id = $1 AND spawn_point_set_entry_level_id NOT IN (\'' . implode('\', \'', $keep_levels) . '\');', $spawn_point_set_entry_id);
+			$database->Query('DELETE FROM ark.spawn_point_set_entry_levels WHERE spawn_point_set_entry_id = $1 AND spawn_point_set_entry_level_id NOT IN (\'' . implode('\', \'', $keep_levels) . '\');', $spawn_point_set_entry_id);
 		} else {
-			$database->Query('DELETE FROM spawn_point_set_entry_levels WHERE spawn_point_set_entry_id = $1;', $spawn_point_set_entry_id);
+			$database->Query('DELETE FROM ark.spawn_point_set_entry_levels WHERE spawn_point_set_entry_id = $1;', $spawn_point_set_entry_id);
 		}
 	}
 	
@@ -194,9 +194,9 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 			}
 		}
 		if (count($keep_replacements) > 0) {
-			$database->Query('DELETE FROM spawn_point_set_replacements WHERE spawn_point_set_id = $1 AND spawn_point_set_replacement_id NOT IN (\'' . implode('\', \'', $keep_replacements) . '\');', $spawn_point_set_id);
+			$database->Query('DELETE FROM ark.spawn_point_set_replacements WHERE spawn_point_set_id = $1 AND spawn_point_set_replacement_id NOT IN (\'' . implode('\', \'', $keep_replacements) . '\');', $spawn_point_set_id);
 		} else {
-			$database->Query('DELETE FROM spawn_point_set_replacements WHERE spawn_point_set_id = $1;', $spawn_point_set_id);
+			$database->Query('DELETE FROM ark.spawn_point_set_replacements WHERE spawn_point_set_id = $1;', $spawn_point_set_id);
 		}
 	}
 	
@@ -211,13 +211,13 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 					throw new \Exception('Key for limit is not a uuid.');
 				}
 				
-				$database->Query('INSERT INTO spawn_point_limits (spawn_point_id, creature_id, max_percentage) VALUES ($1, $2, $3) ON CONFLICT (spawn_point_id, creature_id) DO UPDATE SET max_percentage = $3 WHERE spawn_point_limits.max_percentage IS DISTINCT FROM $3;', $spawn_point_id, $creature_id, $percentage);
+				$database->Query('INSERT INTO ark.spawn_point_limits (spawn_point_id, creature_id, max_percentage) VALUES ($1, $2, $3) ON CONFLICT (spawn_point_id, creature_id) DO UPDATE SET max_percentage = $3 WHERE spawn_point_limits.max_percentage IS DISTINCT FROM $3;', $spawn_point_id, $creature_id, $percentage);
 			}
 		}
 		if (count($creature_list) > 0) {
-			$database->Query('DELETE FROM spawn_point_limits WHERE spawn_point_id = $1 AND creature_id NOT IN (\'' . implode('\', \'', $creature_list) . '\');', $spawn_point_id);
+			$database->Query('DELETE FROM ark.spawn_point_limits WHERE spawn_point_id = $1 AND creature_id NOT IN (\'' . implode('\', \'', $creature_list) . '\');', $spawn_point_id);
 		} else {
-			$database->Query('DELETE FROM spawn_point_limits WHERE spawn_point_id = $1;', $spawn_point_id);
+			$database->Query('DELETE FROM ark.spawn_point_limits WHERE spawn_point_id = $1;', $spawn_point_id);
 		}
 	}
 }

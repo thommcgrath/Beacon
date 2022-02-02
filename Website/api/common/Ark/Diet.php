@@ -12,7 +12,7 @@ class Diet extends \Ark\GenericObject implements \ArrayAccess {
 		}
 		
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT engram_id FROM diet_contents WHERE diet_id = $1 ORDER BY preference_order;', $obj->ObjectID());
+		$results = $database->Query('SELECT engram_id FROM ark.diet_contents WHERE diet_id = $1 ORDER BY preference_order;', $obj->ObjectID());
 		while (!$results->EOF()) {
 			$obj->engram_ids[] = $results->Field('engram_id');
 			$results->MoveNext();
@@ -22,7 +22,7 @@ class Diet extends \Ark\GenericObject implements \ArrayAccess {
 	}
 	
 	protected static function TableName() {
-		return 'diets';
+		return 'ark.diets';
 	}
 	
 	public function jsonSerialize() {
@@ -37,7 +37,7 @@ class Diet extends \Ark\GenericObject implements \ArrayAccess {
 	
 	public function CreatureIDs() {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT DISTINCT object_id, label FROM creatures WHERE taming_diet = $1 OR tamed_diet = $1 ORDER BY label;', $this->ObjectID());
+		$results = $database->Query('SELECT DISTINCT object_id, label FROM ark.creatures WHERE taming_diet = $1 OR tamed_diet = $1 ORDER BY label;', $this->ObjectID());
 		$arr = array();
 		while (!$results->EOF()) {
 			$arr[] = $results->Field('object_id');
@@ -47,10 +47,10 @@ class Diet extends \Ark\GenericObject implements \ArrayAccess {
 	}
 	
 	protected function SaveChildrenHook(\BeaconDatabase $database) {
-		$database->Query('DELETE FROM diet_contents WHERE diet_id = $1 AND engram_id != ANY($2);', $this->ObjectID(), '{' . implode(',', $this->engram_ids) . '}');
+		$database->Query('DELETE FROM ark.diet_contents WHERE diet_id = $1 AND engram_id != ANY($2);', $this->ObjectID(), '{' . implode(',', $this->engram_ids) . '}');
 		$c = 0;
 		foreach ($this->engram_ids as $engram_id) {
-			$database->Query('INSERT INTO diet_contents (diet_id, engram_id, preference_order) VALUES ($1, $2, $3) ON CONFLICT diet_contents_diet_id_engram_id_key DO UPDATE SET preference_order = $3;', $this->ObjectID(), $engram_id, $c++);
+			$database->Query('INSERT INTO ark.diet_contents (diet_id, engram_id, preference_order) VALUES ($1, $2, $3) ON CONFLICT diet_contents_diet_id_engram_id_key DO UPDATE SET preference_order = $3;', $this->ObjectID(), $engram_id, $c++);
 		}
 	}
 	

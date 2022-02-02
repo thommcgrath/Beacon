@@ -54,7 +54,7 @@ class Mod implements \JsonSerializable {
 		if (\BeaconCommon::InDevelopment() || $workshop_item->ContainsString($this->confirmation_code)) {
 			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('UPDATE mods SET confirmed = TRUE WHERE mod_id = $1;', $this->mod_id);
+			$database->Query('UPDATE ark.mods SET confirmed = TRUE WHERE mod_id = $1;', $this->mod_id);
 			$database->Commit();
 			$this->confirmed = true;
 			return true;
@@ -66,7 +66,7 @@ class Mod implements \JsonSerializable {
 	public function Delete() {
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query('DELETE FROM mods WHERE mod_id = $1;', $this->mod_id);
+		$database->Query('DELETE FROM ark.mods WHERE mod_id = $1;', $this->mod_id);
 		$database->Commit();
 	}
 	
@@ -129,7 +129,7 @@ class Mod implements \JsonSerializable {
 	}
 	
 	public static function GetLive($since = null) {
-		$sql =  'mods.confirmed = TRUE AND mods.include_in_deltas = TRUE';
+		$sql =  'ark.mods.confirmed = TRUE AND ark.mods.include_in_deltas = TRUE';
 		
 		$database = \BeaconCommon::Database();
 		if (is_null($since)) {
@@ -147,7 +147,7 @@ class Mod implements \JsonSerializable {
 	}
 	
 	protected static function BuildSQL(string $clause = '') {
-		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url, last_pull_hash, console_safe, default_enabled, min_version FROM mods';
+		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url, last_pull_hash, console_safe, default_enabled, min_version FROM ark.mods';
 		if ($clause !== '') {
 			$sql .= ' WHERE ' . $clause;
 		}

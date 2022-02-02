@@ -31,9 +31,9 @@ class GenericObject implements \JsonSerializable {
 			$table . '.alternate_label',
 			'GREATEST(' . $table . '.min_version, mods.min_version) AS min_version',
 			$table . '.tags',
-			'mods.mod_id',
-			'mods.name AS mod_name',
-			'ABS(mods.workshop_id) AS mod_workshop_id'
+			'ark.mods.mod_id',
+			'ark.mods.name AS mod_name',
+			'ABS(ark.mods.workshop_id) AS mod_workshop_id'
 		);
 	}
 	
@@ -42,7 +42,7 @@ class GenericObject implements \JsonSerializable {
 	}
 	
 	protected static function TableName() {
-		return 'objects';
+		return 'ark.objects';
 	}
 	
 	protected static function BuildSQL(...$clauses) {
@@ -51,7 +51,7 @@ class GenericObject implements \JsonSerializable {
 		}
 		
 		$table = static::TableName();
-		$sql = 'SELECT ' . $table . '.tableoid::regclass AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $table . ' INNER JOIN mods ON (' . $table . '.mod_id = mods.mod_id)';
+		$sql = 'SELECT ' . $table . '.tableoid::regclass AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $table . ' INNER JOIN ark.mods ON (' . $table . '.mod_id = mods.mod_id)';
 		if (count($clauses) != 0) {
 			$sql .= ' WHERE ' . implode(' AND ', $clauses);
 		}
@@ -153,7 +153,7 @@ class GenericObject implements \JsonSerializable {
 		$values = array_values($values);
 		
 		$database->BeginTransaction();
-		$results = $database->Query('SELECT object_id FROM objects WHERE object_id = $1;', $this->object_id);
+		$results = $database->Query('SELECT object_id FROM ark.objects WHERE object_id = $1;', $this->object_id);
 		if ($results->RecordCount() == 0) {
 			$database->Query('INSERT INTO ' . $table . ' (' . implode(', ', $active_columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
 		} else {
@@ -207,13 +207,13 @@ class GenericObject implements \JsonSerializable {
 		}
 		if (\BeaconCommon::IsUUID($value)) {
 			$possible_columns[] = 'object_id';
-			$possible_columns[] = 'mods.mod_id';
+			$possible_columns[] = 'ark.mods.mod_id';
 			return $value;
 		}
 		if (is_numeric($value)) {
 			$numeric_value = $value + 0;
 			if (is_int($numeric_value)) {
-				$possible_columns[] = 'mods.workshop_id';
+				$possible_columns[] = 'ark.mods.workshop_id';
 				return $numeric_value;
 			}
 		}
@@ -271,7 +271,7 @@ class GenericObject implements \JsonSerializable {
 		}
 		array_unshift($clauses, 'GREATEST(' . static::TableName() . '.min_version, mods.min_version) <= $1', static::TableName() . '.last_update > $2');
 		if ($confirmed_only == true) {
-			$clauses[] = 'mods.confirmed = TRUE';
+			$clauses[] = 'ark.mods.confirmed = TRUE';
 		}
 		
 		$database = \BeaconCommon::Database();
@@ -345,9 +345,9 @@ class GenericObject implements \JsonSerializable {
 		}
 		
 		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM deletions WHERE min_version <= $1;', $min_version);
+			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ark.deletions WHERE min_version <= $1;', $min_version);
 		} else {
-			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM deletions WHERE min_version <= $1 AND from_table = $2;', $min_version, $table);
+			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ark.deletions WHERE min_version <= $1 AND from_table = $2;', $min_version, $table);
 		}
 		if ($results->Field('most_recent_delete') !== null) {
 			$delete_time = new \DateTime($results->Field('most_recent_delete'));
@@ -370,9 +370,9 @@ class GenericObject implements \JsonSerializable {
 		$table = static::TableName();
 		
 		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT * FROM deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
+			$results = $database->Query('SELECT * FROM ark.deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
 		} else {
-			$results = $database->Query('SELECT * FROM deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
+			$results = $database->Query('SELECT * FROM ark.deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
 		}
 		$arr = array();
 		while (!$results->EOF()) {

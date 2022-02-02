@@ -29,7 +29,7 @@ if ($last_database_update >= $cutoff) {
 	exit;
 }
 
-$required_versions = [5];
+$required_versions = [6, 5];
 $results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
@@ -109,28 +109,60 @@ foreach ($required_versions as $version) {
 exit;
 
 function DataForVersion(int $version, $since) {
-	return array(
-		'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
-		'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
-		'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
-		'presets' => Ark\Preset::GetAll(MIN_VERSION, $since, true),
-		'preset_modifiers' => Ark\PresetModifier::GetAll(MIN_VERSION, $since, true),
-		'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
-		'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
-		'help_topics' => BeaconHelpTopic::GetAll($since),
-		'game_variables' => Ark\GameVariable::GetAll($since),
-		'mods' => Ark\Mod::GetLive($since),
-		'deletions' => Ark\GenericObject::Deletions(MIN_VERSION, $since),
-		'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
-		'spawn_points' => Ark\SpawnPoint::GetAll(MIN_VERSION, $since),
-		'maps' => Ark\Map::GetAll($since),
-		'events' => Ark\Event::GetAll($since),
-		'colors' => Ark\Color::GetAll($since),
-		'color_sets' => Ark\ColorSet::GetAll($since),
-		'beacon_version' => $version,
-		'is_full' => is_null($since) ? true : false,
-		'min_version' => 0
-	);
+	switch ($version) {
+	case 6:
+		return [
+			'ark' => [
+				'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
+				'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
+				'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
+				'presets' => Ark\Preset::GetAll(MIN_VERSION, $since, true),
+				'preset_modifiers' => Ark\PresetModifier::GetAll(MIN_VERSION, $since, true),
+				'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
+				'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
+				'game_variables' => Ark\GameVariable::GetAll($since),
+				'mods' => Ark\Mod::GetLive($since),
+				'deletions' => Ark\GenericObject::Deletions(MIN_VERSION, $since),
+				'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
+				'spawn_points' => Ark\SpawnPoint::GetAll(MIN_VERSION, $since),
+				'maps' => Ark\Map::GetAll($since),
+				'events' => Ark\Event::GetAll($since),
+				'colors' => Ark\Color::GetAll($since),
+				'color_sets' => Ark\ColorSet::GetAll($since)
+			],
+			'common' => [
+				'help_topics' => BeaconHelpTopic::GetAll($since)
+			],
+			'beacon_version' => $version,
+			'is_full' => is_null($since) ? true : false,
+			'min_version' => 0
+		];
+		break;
+	case 5:
+		return [
+			'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
+			'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
+			'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
+			'presets' => Ark\Preset::GetAll(MIN_VERSION, $since, true),
+			'preset_modifiers' => Ark\PresetModifier::GetAll(MIN_VERSION, $since, true),
+			'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
+			'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
+			'help_topics' => BeaconHelpTopic::GetAll($since),
+			'game_variables' => Ark\GameVariable::GetAll($since),
+			'mods' => Ark\Mod::GetLive($since),
+			'deletions' => Ark\GenericObject::Deletions(MIN_VERSION, $since),
+			'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
+			'spawn_points' => Ark\SpawnPoint::GetAll(MIN_VERSION, $since),
+			'maps' => Ark\Map::GetAll($since),
+			'events' => Ark\Event::GetAll($since),
+			'colors' => Ark\Color::GetAll($since),
+			'color_sets' => Ark\ColorSet::GetAll($since),
+			'beacon_version' => $version,
+			'is_full' => is_null($since) ? true : false,
+			'min_version' => 0
+		];
+		break;
+	}
 }
 
 function UploadFile(string $path, string $data) {
