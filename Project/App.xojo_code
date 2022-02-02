@@ -443,6 +443,14 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  #if TargetWindows
+		    Call WindowsWMIMBS.InitSecurity(False)
+		  #endif
+		End Sub
+	#tag EndMethod
+	
+	#tag Method, Flags = &h0
 		Function DataSourceForGame(GameID As String) As Beacon.DataSource
 		  For Idx As Integer = 0 To Self.mDataSources.LastIndex
 		    If Self.mDataSources(Idx).Identifier = GameID Then

@@ -599,22 +599,10 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function HardwareID() As String
-		  #if TargetDesktop
-		    Var Root As Global.FolderItem = FolderItem.DriveAt(0)
-		    If Root = Nil Or Root.Exists = False Then
-		      // What the hell is this?
-		      Return ""
-		    End If
-		    
-		    Var Created As DateTime = Root.CreationDateTime
-		    If Created = Nil Then
-		      // Seriously?
-		      Return ""
-		    End If
-		    Created = New DateTime(Created.SecondsFrom1970, New TimeZone(0))
-		    
-		    Var Seconds As Double = Created.SecondsFrom1970 + 2082844800
-		    Return EncodeHex(Crypto.SHA2_256(Seconds.ToString(Locale.Raw, "0"))).Lowercase
+		  #if TargetMacOS
+		    Return SystemInformationMBS.MacUUID.Lowercase
+		  #elseif TargetWindows Or TargetLinux
+		    Return v4UUID.FromHash(Crypto.HashAlgorithms.MD5, SystemInformationMBS.HardDiscSerial + ":" + SystemInformationMBS.CPUBrandString + ":" + SystemInformationMBS.MACAddress + ":" + SystemInformationMBS.WinProductKey)
 		  #elseif TargetiOS
 		    // https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
 		    
