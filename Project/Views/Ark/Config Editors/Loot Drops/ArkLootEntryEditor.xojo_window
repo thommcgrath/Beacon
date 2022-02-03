@@ -186,6 +186,7 @@ Begin BeaconDialog ArkLootEntryEditor
          ContentHeight   =   0
          DoubleBuffer    =   False
          Enabled         =   True
+         ExcludeTagCaption=   ""
          Height          =   67
          HelpTag         =   ""
          Index           =   -2147483648
@@ -196,6 +197,8 @@ Begin BeaconDialog ArkLootEntryEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         NeutralTagCaption=   ""
+         RequireTagCaption=   ""
          Scope           =   2
          ScrollActive    =   False
          ScrollingEnabled=   False
@@ -621,7 +624,7 @@ End
 		    Self.mMods = ModList
 		    Preferences.PresetsEnabledMods = PrefsDict
 		    Var Spec As String = Self.Picker.Spec
-		    Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mMods, Beacon.CategoryEngrams)
+		    Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(Self.mMods, Ark.CategoryEngrams)
 		    Self.Picker.Spec = Spec
 		    Self.UpdateFilter
 		  End If
