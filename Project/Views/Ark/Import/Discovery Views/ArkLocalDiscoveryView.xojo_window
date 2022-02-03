@@ -599,6 +599,17 @@ End
 		  Ark.SetupCodeEditor(Me)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub URIDropped(text as String)
+		  Try
+		    Var File As FolderItem = New FolderItem(Text, FolderItem.PathModes.Native)
+		    Self.AddFile(File)
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
