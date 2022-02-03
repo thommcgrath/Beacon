@@ -33,6 +33,7 @@ Begin BeaconDialog BlueprintMultiEditor
       ContentHeight   =   0
       DoubleBuffer    =   False
       Enabled         =   True
+      ExcludeTagCaption=   "Remove ""%%Tag%%"" From All Blueprints"
       Height          =   100
       HelpTag         =   ""
       Index           =   -2147483648
@@ -43,6 +44,8 @@ Begin BeaconDialog BlueprintMultiEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      NeutralTagCaption=   "“%%Tag%%” Is Unchanged"
+      RequireTagCaption=   "Add ""%%Tag%%"" to All Blueprints"
       Scope           =   2
       ScrollActive    =   False
       ScrollingEnabled=   False
@@ -301,7 +304,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Picker.ClearSelections()
-		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags()
+		  Self.Picker.Tags = Ark.DataSource.SharedInstance.GetTags(New Beacon.StringList)
 		  
 		  Var Masks() As UInt64
 		  Var Tags As New Dictionary

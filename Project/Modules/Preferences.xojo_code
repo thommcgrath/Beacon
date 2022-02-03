@@ -22,6 +22,20 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function HiddenTags() As String()
+		  Init
+		  Return mManager.StringValue("Hidden Tags", "").Split(",")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HiddenTags(Assigns Value() As String)
+		  Init
+		  mManager.StringValue("Hidden Tags") = String.FromArray(Value, ",")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Init()
 		  If mManager = Nil Then
@@ -199,7 +213,7 @@ Protected Module Preferences
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
-		  Key = Key + " Tag"
+		  Key = Key + " Tags"
 		  
 		  Var Default As String
 		  
@@ -207,16 +221,16 @@ Protected Module Preferences
 		  Case Ark.CategoryEngrams
 		    Select Case Subgroup
 		    Case "Harvesting"
-		      Default = "(""object"" AND ""harvestable"") NOT (""deprecated"" OR ""cheat"")"
+		      Default = "{""required"":[""harvestable""],""excluded"":[""deprecated"",""cheat""]}"
 		    Case "Crafting"
-		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"")"
+		      Default = "{""required"":[],""excluded"":[""deprecated"",""cheat""]}"
 		    Case "Resources"
-		      Default = "(""object"" AND ""resource"") NOT (""deprecated"" OR ""cheat"")"
+		      Default = "{""required"":[""resource""],""excluded"":[""deprecated"",""cheat""]}"
 		    Else
-		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"" OR ""generic"" OR ""blueprint"")"
+		      Default = "{""required"":[],""excluded"":[""deprecated"",""cheat"",""event"",""reward"",""generic"",""blueprint""]}"
 		    End Select
 		  Case Ark.CategoryCreatures
-		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"" OR ""generic"")"
+		    Default = "{""required"":[],""excluded"":[""minion"",""boss"",""event"",""generic""]}"
 		  End Select
 		  
 		  Init
@@ -230,7 +244,7 @@ Protected Module Preferences
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
-		  Key = Key + " Tag"
+		  Key = Key + " Tags"
 		  
 		  mManager.StringValue(Key) = Value
 		End Sub

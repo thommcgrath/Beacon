@@ -69,7 +69,7 @@ $tags = $obj->Tags();
 if (count($tags) > 0) {
 	$links = array();
 	foreach ($tags as $tag) {
-		$links[] = '[' . ucwords($tag) . '](/tags/' . urlencode($tag) . ')';
+		$links[] = '[' . ucwords(str_replace('_', ' ', $tag)) . '](/tags/' . urlencode($tag) . ')';
 	}
 	$properties['Tags'] = implode(', ', $links);
 }

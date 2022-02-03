@@ -13,9 +13,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumable_CureLow.PrimalItemConsumable_CureLow",
-                        "UUID": "0b4915fb-097c-48bc-9540-5bbcbd1fcaed",
-                        "Class": "PrimalItemConsumable_CureLow_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FocalChili.PrimalItemConsumable_Soup_FocalChili",
+                        "UUID": "06064cbd-b18b-4995-84b4-d5c6d8caf5cf",
+                        "Class": "PrimalItemConsumable_Soup_FocalChili_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
@@ -29,88 +29,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_TheHorn.PrimalItemConsumable_TheHorn",
-                        "UUID": "e3302f5e-bddc-419e-b13a-e2534a3fe5fc",
-                        "Class": "PrimalItemConsumable_TheHorn_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_ShadowSteak.PrimalItemConsumable_Soup_ShadowSteak",
-                        "UUID": "99521100-a3ee-4721-ba55-f0557d01f03e",
-                        "Class": "PrimalItemConsumable_Soup_ShadowSteak_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_BattleTartare.PrimalItemConsumable_Soup_BattleTartare",
-                        "UUID": "bee1a60b-5eda-4a17-a195-ebfa4919cad6",
-                        "Class": "PrimalItemConsumable_Soup_BattleTartare_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -137,88 +59,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FocalChili.PrimalItemConsumable_Soup_FocalChili",
-                        "UUID": "06064cbd-b18b-4995-84b4-d5c6d8caf5cf",
-                        "Class": "PrimalItemConsumable_Soup_FocalChili_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup",
-                        "UUID": "77c5b96e-7314-46a6-a670-61c6f8237221",
-                        "Class": "PrimalItemConsumable_HealSoup_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_CactusBuffSoup.PrimalItemConsumable_CactusBuffSoup",
-                        "UUID": "81f4d7ec-52c1-4d9e-aa12-89c14eda0878",
-                        "Class": "PrimalItemConsumable_CactusBuffSoup_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 106,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -245,7 +89,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -256,9 +103,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableRespecSoup.PrimalItemConsumableRespecSoup",
-                        "UUID": "7413ec91-adc5-4dc1-99fd-ad144a62fb5d",
-                        "Class": "PrimalItemConsumableRespecSoup_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup",
+                        "UUID": "77c5b96e-7314-46a6-a670-61c6f8237221",
+                        "Class": "PrimalItemConsumable_HealSoup_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
@@ -272,7 +119,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -299,7 +149,100 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_TheHorn.PrimalItemConsumable_TheHorn",
+                        "UUID": "e3302f5e-bddc-419e-b13a-e2534a3fe5fc",
+                        "Class": "PrimalItemConsumable_TheHorn_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumable_CureLow.PrimalItemConsumable_CureLow",
+                        "UUID": "0b4915fb-097c-48bc-9540-5bbcbd1fcaed",
+                        "Class": "PrimalItemConsumable_CureLow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_BattleTartare.PrimalItemConsumable_Soup_BattleTartare",
+                        "UUID": "bee1a60b-5eda-4a17-a195-ebfa4919cad6",
+                        "Class": "PrimalItemConsumable_Soup_BattleTartare_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -326,7 +269,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -353,7 +299,100 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableRespecSoup.PrimalItemConsumableRespecSoup",
+                        "UUID": "7413ec91-adc5-4dc1-99fd-ad144a62fb5d",
+                        "Class": "PrimalItemConsumableRespecSoup_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_ShadowSteak.PrimalItemConsumable_Soup_ShadowSteak",
+                        "UUID": "99521100-a3ee-4721-ba55-f0557d01f03e",
+                        "Class": "PrimalItemConsumable_Soup_ShadowSteak_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_CactusBuffSoup.PrimalItemConsumable_CactusBuffSoup",
+                        "UUID": "81f4d7ec-52c1-4d9e-aa12-89c14eda0878",
+                        "Class": "PrimalItemConsumable_CactusBuffSoup_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1130,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -364,8 +403,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumable_CureLow.PrimalItemConsumable_CureLow",
-                    "Class": "PrimalItemConsumable_CureLow_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FocalChili.PrimalItemConsumable_Soup_FocalChili",
+                    "Class": "PrimalItemConsumable_Soup_FocalChili_C",
                     "Weight": 1.0
                 }
             ],
@@ -375,67 +414,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_TheHorn.PrimalItemConsumable_TheHorn",
-                    "Class": "PrimalItemConsumable_TheHorn_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_ShadowSteak.PrimalItemConsumable_Soup_ShadowSteak",
-                    "Class": "PrimalItemConsumable_Soup_ShadowSteak_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_BattleTartare.PrimalItemConsumable_Soup_BattleTartare",
-                    "Class": "PrimalItemConsumable_Soup_BattleTartare_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -455,67 +437,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_FocalChili.PrimalItemConsumable_Soup_FocalChili",
-                    "Class": "PrimalItemConsumable_Soup_FocalChili_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup",
-                    "Class": "PrimalItemConsumable_HealSoup_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_CactusBuffSoup.PrimalItemConsumable_CactusBuffSoup",
-                    "Class": "PrimalItemConsumable_CactusBuffSoup_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 10,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 106,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -535,7 +460,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -544,8 +472,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableRespecSoup.PrimalItemConsumableRespecSoup",
-                    "Class": "PrimalItemConsumableRespecSoup_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_HealSoup.PrimalItemConsumable_HealSoup",
+                    "Class": "PrimalItemConsumable_HealSoup_C",
                     "Weight": 1.0
                 }
             ],
@@ -555,7 +483,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -575,7 +506,79 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_TheHorn.PrimalItemConsumable_TheHorn",
+                    "Class": "PrimalItemConsumable_TheHorn_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumable_CureLow.PrimalItemConsumable_CureLow",
+                    "Class": "PrimalItemConsumable_CureLow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_BattleTartare.PrimalItemConsumable_Soup_BattleTartare",
+                    "Class": "PrimalItemConsumable_Soup_BattleTartare_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -595,7 +598,10 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -615,7 +621,79 @@
             "MaxQuantity": 10,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableRespecSoup.PrimalItemConsumableRespecSoup",
+                    "Class": "PrimalItemConsumableRespecSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Soup_ShadowSteak.PrimalItemConsumable_Soup_ShadowSteak",
+                    "Class": "PrimalItemConsumable_Soup_ShadowSteak_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_CactusBuffSoup.PrimalItemConsumable_CactusBuffSoup",
+                    "Class": "PrimalItemConsumable_CactusBuffSoup_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 10,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1130,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true

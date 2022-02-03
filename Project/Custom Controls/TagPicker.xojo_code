@@ -5,6 +5,16 @@ Inherits ControlCanvas
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  For I As Integer = 0 To Self.mCells.LastIndex
 		    If Self.mCells(I) <> Nil And Self.mCells(I).Contains(X, Y) Then
+		      If IsContextualClick = False Then
+		        Self.mMouseDownCellIndex = I
+		        Self.mMousePressedIndex = I
+		        Self.Invalidate
+		        Self.ShowContextualMenu(I, X, Y)
+		        Self.mMouseDownCellIndex = -1
+		        Self.mMousePressedIndex = -1
+		        Return True
+		      End If
+		      
 		      Self.mMouseDownCellIndex = I
 		      Self.mMousePressedIndex = I
 		      Self.Invalidate
@@ -14,7 +24,12 @@ Inherits ControlCanvas
 		  
 		  Self.mMouseDownCellIndex = -1
 		  Self.mMousePressedIndex = -1
-		  Return False
+		  
+		  If IsContextualClick Or Self.mHiddenTags.Count = Self.mTags.Count Then
+		    Self.ShowContextualMenu(-1, X, Y)
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 
@@ -78,6 +93,7 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Open()
+		  Self.mHiddenTags = Preferences.HiddenTags
 		  RaiseEvent Open()
 		  Self.AutoResize()
 		End Sub
@@ -176,6 +192,34 @@ Inherits ControlCanvas
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ExcludeTag(Tag As String)
+		  Var Idx As Integer
+		  Var Changed As Boolean
+		  
+		  Idx = Self.mExcludeTags.IndexOf(Tag)
+		  If Idx = -1 Then
+		    Self.mExcludeTags.Add(Tag)
+		    Changed = True
+		  End If
+		  
+		  Idx = Self.mRequireTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mRequireTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Invalidate
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub LocalizeCoordinates(ByRef X As Integer, ByRef Y As Integer)
 		  If (Self.Border And Self.BorderTop) = Self.BorderTop Then
@@ -183,6 +227,34 @@ Inherits ControlCanvas
 		  End If
 		  If (Self.Border And Self.BorderLeft) = Self.BorderLeft Then
 		    X = X + 1
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NeutralizeTag(Tag As String)
+		  Var Idx As Integer
+		  Var Changed As Boolean
+		  
+		  Idx = Self.mRequireTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mRequireTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  Idx = Self.mExcludeTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mExcludeTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Invalidate
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -214,6 +286,11 @@ Inherits ControlCanvas
 		  
 		  For I As Integer = 0 To Self.mTags.LastIndex
 		    Var Tag As String = Self.mTags(I)
+		    Var Hidden As Boolean = Self.mHiddenTags.IndexOf(Tag) > -1
+		    If Hidden Then
+		      Self.mCells(I) = Nil
+		      Continue For I
+		    End If
 		    Var Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
 		    Var Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
 		    Var Pressed As Boolean = Self.mMousePressedIndex = I
@@ -254,7 +331,7 @@ Inherits ControlCanvas
 		    End If
 		    
 		    XPos = XPos + HorizontalSpacing + CellRect.Width
-		  Next
+		  Next I
 		  
 		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
 		  HeightDelta = Self.mContentHeight - ContentArea.Height
@@ -273,24 +350,28 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Shared Sub ParseSpec(Value As String, ByRef RequiredTags() As String, ByRef ExcludedTags() As String)
-		  Var RequirePhrase, ExcludePhrase As String
+		  RequiredTags.ResizeTo(-1)
+		  ExcludedTags.ResizeTo(-1)
+		  
+		  If Value.IsEmpty Then
+		    Return
+		  End If
+		  
+		  
 		  Try
-		    Var RequireStartPos As Integer = Value.IndexOf("(")
-		    Var RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
-		    RequirePhrase = Value.Middle(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
+		    Var Spec As Dictionary = Beacon.ParseJSON(Value)
 		    
-		    If RequireStartPos > -1 And RequireEndPos > -1 Then
-		      Var ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
-		      If ExcludeStartPos > -1 Then
-		        Var ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
-		        ExcludePhrase = Value.Middle(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
-		      End If
-		      
-		      RequiredTags = RequirePhrase.Split(""" AND """)
-		      ExcludedTags = ExcludePhrase.Split(""" OR """)
-		    End If
+		    Var Required() As Variant = Spec.Value("required")
+		    For Each Tag As String In Required
+		      RequiredTags.Add(Tag)
+		    Next Tag
+		    
+		    Var Excluded() As Variant = Spec.Value("excluded")
+		    For Each Tag As String In Excluded
+		      ExcludedTags.Add(Tag)
+		    Next Tag
 		  Catch Err As RuntimeException
-		    
+		    App.Log(Err, CurrentMethodName, "Parsing tag spec")
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -303,6 +384,34 @@ Inherits ControlCanvas
 		  Next
 		  Return Tags
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RequireTag(Tag As String)
+		  Var Idx As Integer
+		  Var Changed As Boolean
+		  
+		  Idx = Self.mRequireTags.IndexOf(Tag)
+		  If Idx = -1 Then
+		    Self.mRequireTags.Add(Tag)
+		    Changed = True
+		  End If
+		  
+		  Idx = Self.mExcludeTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mExcludeTags.RemoveAt(Idx)
+		    Changed = True
+		  End If
+		  
+		  If Changed Then
+		    If Thread.Current = Nil Then
+		      RaiseEvent TagsChanged
+		      Self.Invalidate
+		    Else
+		      Call CallLater.Schedule(0, AddressOf TriggerChange)
+		    End If
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -364,6 +473,87 @@ Inherits ControlCanvas
 		  Else
 		    Call CallLater.Schedule(0, AddressOf TriggerChange)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowContextualMenu(CellIndex As Integer, MouseX As Integer, MouseY As Integer)
+		  Var Base As New MenuItem
+		  Var OffsetX, OffsetY As Integer
+		  
+		  If CellIndex > -1 Then
+		    Var Tag As String = Self.mTags(CellIndex)
+		    Var TagHuman As String = Tag.ReplaceAll("_", " ").Titlecase
+		    
+		    Var RequireItem As New MenuItem("Results Must Be Tagged With """ + TagHuman + """", "require:" + Tag)
+		    RequireItem.HasCheckMark = Self.mRequireTags.IndexOf(Tag) > -1
+		    If Self.RequireTagCaption.IsEmpty = False Then
+		      RequireItem.Text = Self.RequireTagCaption.ReplaceAll("%%Tag%%", TagHuman)
+		    End If
+		    
+		    Var ExcludeItem As New MenuItem("Do Not Show Results Tagged With """ + TagHuman + """", "exclude:" + Tag)
+		    ExcludeItem.HasCheckMark = Self.mExcludeTags.IndexOf(Tag) > -1
+		    If Self.ExcludeTagCaption.IsEmpty = False Then
+		      ExcludeItem.Text = Self.ExcludeTagCaption.ReplaceAll("%%Tag%%", TagHuman)
+		    End If
+		    
+		    Var NeutralItem As New MenuItem("Results Are Not Affected by the """ + TagHuman + """ Tag", "neutral:" +  Tag)
+		    NeutralItem.HasCheckMark = RequireItem.HasCheckMark = False And ExcludeItem.HasCheckMark = False
+		    If Self.NeutralTagCaption.IsEmpty = False Then
+		      NeutralItem.Text = Self.NeutralTagCaption.ReplaceAll("%%Tag%%", TagHuman)
+		    End If
+		    
+		    Var HideItem As New MenuItem("Hide """ + TagHuman + """ Tag", "hide:" + Tag)
+		    
+		    Base.AddMenu(RequireItem)
+		    Base.AddMenu(ExcludeItem)
+		    Base.AddMenu(NeutralItem)
+		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(HideItem)
+		    
+		    OffsetX = Self.mCells(CellIndex).Left
+		    OffsetY = Self.mCells(CellIndex).Bottom
+		  Else
+		    OffsetX = MouseX
+		    OffsetY = MouseY
+		  End If
+		  
+		  Var RestoreItem As New MenuItem("Restore Hidden Tags", "restore:")
+		  Base.AddMenu(RestoreItem)
+		  
+		  Var Position As Point = Self.Window.GlobalPosition
+		  Var Choice As MenuItem = Base.PopUp(Position.X + Self.Left + OffsetX, Position.Y + Self.Top + OffsetY)
+		  If Choice Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Pos As Integer = Choice.Tag.StringValue.IndexOf(":")
+		  If Pos = -1 Then
+		    Return
+		  End If
+		  
+		  Var Action As String = Choice.Tag.StringValue.Left(Pos)
+		  Var Tag As String = Choice.Tag.StringValue.Middle(Pos + 1)
+		  
+		  Select Case Action
+		  Case "require"
+		    Self.RequireTag(Tag)
+		  Case "exclude"
+		    Self.ExcludeTag(Tag)
+		  Case "neutral"
+		    Self.NeutralizeTag(Tag)
+		  Case "hide"
+		    Self.NeutralizeTag(Tag)
+		    Self.mHiddenTags.Add(Tag)
+		    Preferences.HiddenTags = Self.mHiddenTags
+		    Self.AutoResize()
+		    Self.Invalidate
+		  Case "restore"
+		    Self.mHiddenTags.ResizeTo(-1)
+		    Preferences.HiddenTags = Self.mHiddenTags
+		    Self.AutoResize()
+		    Self.Invalidate
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -466,6 +656,10 @@ Inherits ControlCanvas
 		Border As Integer
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h0
+		ExcludeTagCaption As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Attributes( Hidden ) Private mBorder As Integer
 	#tag EndProperty
@@ -480,6 +674,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mExcludeTags() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHiddenTags() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -510,20 +708,21 @@ Inherits ControlCanvas
 		Private mTags() As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		NeutralTagCaption As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		RequireTagCaption As String
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Var Value As String
-			  If Self.mRequireTags.LastIndex > -1 Then
-			    Value = "(""" + Self.mRequireTags.Join(""" AND """) + """)"
-			  End If
-			  If Self.mExcludeTags.LastIndex > -1 Then
-			    If Value = "" Then
-			      Value = "object"
-			    End If
-			    Value = Value + " NOT (""" + Self.mExcludeTags.Join(""" OR """) + """)"
-			  End If
-			  Return Value
+			  Var Dict As New Dictionary
+			  Dict.Value("required") = Self.mRequireTags
+			  Dict.Value("excluded") = Self.mExcludeTags
+			  Return Beacon.GenerateJSON(Dict, False)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -551,78 +750,6 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="ContentHeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ScrollActive"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ScrollingEnabled"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -728,6 +855,30 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Backdrop"
 			Visible=true
 			Group="Appearance"
@@ -748,6 +899,46 @@ Inherits ControlCanvas
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ContentHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollActive"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollingEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocus"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -776,6 +967,46 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Spec"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequireTagCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ExcludeTagCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NeutralTagCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="InitialParent"
 			Visible=false
 			Group=""
@@ -790,14 +1021,6 @@ Inherits ControlCanvas
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Spec"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
