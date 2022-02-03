@@ -486,53 +486,25 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   0
          Width           =   255
       End
-      Begin CodeArea ReviewArea
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   True
-         AllowStyledText =   True
-         AllowTabs       =   False
-         BackgroundColor =   &cFFFFFF00
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
+      Begin CodeEditor ReviewArea
+         AutoDeactivate  =   True
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Format          =   ""
-         HasBorder       =   False
-         HasHorizontalScrollbar=   True
-         HasVerticalScrollbar=   True
          Height          =   416
-         HideSelection   =   True
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Italic          =   False
          Left            =   301
-         LineHeight      =   0.0
-         LineSpacing     =   1.0
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         MaximumCharactersAllowed=   0
-         Multiline       =   True
-         ReadOnly        =   True
          Scope           =   2
+         ShowInfoBar     =   False
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
-         TextAlignment   =   0
-         TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   73
-         Transparent     =   False
-         Underline       =   False
-         UnicodeMode     =   0
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   499
       End
@@ -675,7 +647,6 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1386,6 +1357,18 @@ End
 	#tag Event
 		Sub Action()
 		  Self.ReviewActionButton.Enabled = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReviewArea
+	#tag Event
+		Sub SetupNeeded()
+		  Ark.SetupCodeEditor(Me)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ReadOnly = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

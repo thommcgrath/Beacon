@@ -1236,6 +1236,11 @@ End
 		  Ark.SetupCodeEditor(Me)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ReadOnly = True
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ProfileMenu
 	#tag Event

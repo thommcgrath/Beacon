@@ -58,7 +58,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ImportFinishedDelegate(Projects() As Beacon.Project)
+		Delegate Sub ImportFinishedDelegate(Projects() As Beacon . Project)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h21

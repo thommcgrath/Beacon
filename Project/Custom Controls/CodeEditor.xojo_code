@@ -38,10 +38,13 @@ Implements NotificationKit.Receiver
 		  #Pragma Unused modificationType
 		  #Pragma Unused Text
 		  #Pragma Unused Length
-		  #Pragma Unused LinesAdded
 		  #Pragma Unused Line
 		  
 		  RaiseEvent TextChange
+		  
+		  If LinesAdded > 0 Then
+		    Self.UpdateLineNumbersGutter()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -93,8 +96,6 @@ Implements NotificationKit.Receiver
 		  
 		  Self.StyleClearAll()
 		  
-		  Self.CaretForeColor = BaseStyle.ForeColor
-		  
 		  Var MarginStyle As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonLineNumber)
 		  If Color.IsDarkMode Then
 		    MarginStyle.BackColor = &c222222
@@ -106,6 +107,7 @@ Implements NotificationKit.Receiver
 		  
 		  RaiseEvent SetupNeeded()
 		  
+		  Self.CaretForeColor = BaseStyle.ForeColor
 		  Self.UpdateLineNumbersGutter()
 		End Sub
 	#tag EndMethod
@@ -119,7 +121,7 @@ Implements NotificationKit.Receiver
 		  Measure.Graphics.FontSize = Style.Size
 		  Measure.Graphics.FontUnit = FontUnits.Point
 		  
-		  Var GutterWidth As Integer = Ceiling(Measure.Graphics.TextWidth(LineCount)) + 14
+		  Var GutterWidth As Integer = Ceiling(Measure.Graphics.TextWidth(LineCount)) + 10
 		  Var Margin As ScintillaMarginMBS = Self.Margin(0)
 		  Margin.Width = GutterWidth
 		End Sub

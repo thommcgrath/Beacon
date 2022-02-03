@@ -1023,9 +1023,6 @@ End
 	#tag Constant, Name = RadioProject, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SourcesPageHeight, Type = Double, Dynamic = False, Default = \"252", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = StatusPageHeight, Type = Double, Dynamic = False, Default = \"456", Scope = Private
 	#tag EndConstant
 

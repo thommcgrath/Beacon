@@ -26,53 +26,25 @@ Begin ArkDiscoveryView ArkLocalDiscoveryView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin CodeArea ConfigArea
-      AcceptTabs      =   False
-      Alignment       =   0
+   Begin CodeEditor ConfigArea
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
-      Format          =   ""
       Height          =   221
       HelpTag         =   ""
-      HideSelection   =   True
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
       Left            =   20
-      LimitText       =   0
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Multiline       =   True
-      ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   True
-      ScrollbarVertical=   True
-      Styled          =   False
+      ShowInfoBar     =   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "Source Code Pro"
-      TextSize        =   0.0
-      TextUnit        =   0
       Top             =   123
-      Transparent     =   False
-      Underline       =   False
-      UnicodeMode     =   0
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   560
    End
@@ -616,8 +588,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
+		  Break
+		  
 		  #Pragma Unused Action
 		  Self.HandleDrop(Obj)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SetupNeeded()
+		  Ark.SetupCodeEditor(Me)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

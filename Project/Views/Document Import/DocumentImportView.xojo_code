@@ -41,6 +41,7 @@ Inherits ContainerControl
 		Protected Sub SetPageHeight(Height As Integer)
 		  If Height <> Self.Height Then
 		    RaiseEvent ShouldResize(Height)
+		    Self.Height = Height
 		  End If
 		End Sub
 	#tag EndMethod
