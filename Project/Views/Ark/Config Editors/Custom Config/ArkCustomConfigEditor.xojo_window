@@ -618,6 +618,51 @@ End
 		  Ark.SetupCodeEditor(Me)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub DWellEnd(Position as Integer, X as Integer, Y as Integer)
+		  #Pragma Unused Position
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  Me.CallTipCancel
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DWellStart(Position as Integer, X as Integer, Y as Integer)
+		  #Pragma Unused Position
+		  
+		  If Position = -1 Then
+		    Me.CallTipCancel
+		    Return
+		  End If
+		  Var LineNum As Integer = Me.LineFromPosition(Position)
+		  Var PositionInLine As Integer = Position - Me.LineStart(LineNum)
+		  Var Line As String = Me.Line(LineNum).Trim
+		  
+		  Var EqualsPosition As Integer = Line.IndexOf("=")
+		  If EqualsPosition = -1 Then
+		    EqualsPosition = Line.Length
+		  End If
+		  
+		  If PositionInLine > EqualsPosition Then 
+		    Me.CallTipCancel
+		    Return
+		  End If
+		  
+		  Var Key As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKey(Self.CurrentFile, Self.CurrentHeader, Line.Left(EqualsPosition))
+		  If Key Is Nil Or Key.Description.IsEmpty Then
+		    Me.CallTipCancel
+		    Return
+		  End If
+		  
+		  Me.CallTipShow(Me.LineStart(LineNum), Key.Description)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.MouseDwellTime = 1500
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigToolbar
 	#tag Event
