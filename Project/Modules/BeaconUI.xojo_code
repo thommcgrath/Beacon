@@ -257,6 +257,18 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OpaqueColor(Extends Source As Color, BackgroundColor As Color) As Color
+		  Var SourceOpacity As Double = Source.Alpha / 255
+		  If SourceOpacity = 1 Then
+		    Return Source
+		  End If
+		  
+		  Var SourceBase As Color = Color.RGB(Source.Red, Source.Green, Source.Blue)
+		  Return SourceBase.BlendWith(BackgroundColor, SourceOpacity)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Piece(Extends Source As Picture, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As Picture
 		  Var Pic As New Picture(Width, Height)
 		  Pic.Graphics.DrawPicture(Source, 0, 0, Width, Height, Left, Top, Width, Height)

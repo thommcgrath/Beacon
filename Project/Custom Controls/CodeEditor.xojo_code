@@ -12,17 +12,11 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Sub Open()
-		  Self.InitializeLexer("props")
-		  
 		  For Idx As Integer = 1 To 4
 		    Self.Margin(Idx).Width = 0
 		  Next Idx
 		  
-		  Var Style As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonDefault)
-		  Style.Font = "Source Code Pro"
-		  Style.Size = 12
-		  
-		  Self.UpdateColors()
+		  Self.RunSetup()
 		  
 		  RaiseEvent Open
 		  
@@ -60,19 +54,43 @@ Implements NotificationKit.Receiver
 		  
 		  Select Case Notification.Name
 		  Case App.Notification_AppearanceChanged
-		    Self.UpdateColors()
+		    Self.RunSetup()
 		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateColors()
-		  const SCE_PROPS_DEFAULT = 0
-		  const SCE_PROPS_COMMENT = 1
-		  const SCE_PROPS_SECTION = 2
-		  const SCE_PROPS_ASSIGNMENT = 3
-		  const SCE_PROPS_DEFVAL = 4
-		  const SCE_PROPS_KEY = 5
+		Function PositionInLine() As Integer
+		  // find position within line
+		  
+		  Var Position As Integer = Self.Position
+		  Var LineNum As Integer = Self.LineFromPosition(Position)
+		  Var LineStart As Integer = Self.LineStart(LineNum)
+		  Return Position - LineStart
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RunSetup()
+		  Var BaseStyle As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonDefault)
+		  BaseStyle.BackColor = SystemColors.ControlBackgroundColor
+		  BaseStyle.ForeColor = SystemColors.LabelColor
+		  BaseStyle.Font = "Source Code Pro"
+		  BaseStyle.Size = 12
+		  
+		  Self.StyleClearAll()
+		  
+		  Self.CaretForeColor = SystemColors.LabelColor
+		  
+		  Var MarginStyle As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonLineNumber)
+		  If Color.IsDarkMode Then
+		    MarginStyle.BackColor = SystemColors.ControlBackgroundColor.BlendWith(&cFFFFFF, 0.1)
+		  Else
+		    MarginStyle.BackColor = SystemColors.ControlBackgroundColor.BlendWith(&c000000, 0.1)
+		  End If
+		  MarginStyle.ForeColor = SystemColors.SecondaryLabelColor
+		  
+		  RaiseEvent SetupNeeded()
 		End Sub
 	#tag EndMethod
 
@@ -102,6 +120,10 @@ Implements NotificationKit.Receiver
 
 	#tag Hook, Flags = &h0
 		Event SelChange()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event SetupNeeded()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

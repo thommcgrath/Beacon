@@ -488,7 +488,15 @@ Protected Module Beacon
 		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
 		    Return Temp.ToString(Pretty)
 		  #else
-		    Return Xojo.GenerateJSON(Source, Pretty)
+		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
+		    #if TargetARM
+		      If Pretty Then
+		        // feedback://showreport?report_id=66705
+		        Var Temp As New JSONMBS(Result)
+		        Result = Temp.ToString(True)
+		      End If
+		    #endif
+		    Return Result
 		  #endif
 		End Function
 	#tag EndMethod

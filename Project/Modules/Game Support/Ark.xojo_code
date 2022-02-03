@@ -570,6 +570,32 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit)) or  (TargetWeb and (Target32Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Sub SetupCodeEditor(Target As CodeEditor)
+		  Const SCE_PROPS_DEFAULT = 0
+		  Const SCE_PROPS_COMMENT = 1
+		  Const SCE_PROPS_SECTION = 2
+		  Const SCE_PROPS_ASSIGNMENT = 3
+		  Const SCE_PROPS_DEFVAL = 4
+		  Const SCE_PROPS_KEY = 5
+		  
+		  Target.InitializeLexer("props")
+		  
+		  Var BackgroundColor As Color = SystemColors.ControlBackgroundColor
+		  
+		  Target.Style(SCE_PROPS_DEFAULT).ForeColor = SystemColors.LabelColor.OpaqueColor(BackgroundColor)
+		  Target.Style(SCE_PROPS_DEFAULT).BackColor = BackgroundColor
+		  // Target.Style(SCE_PROPS_COMMENT).ForeColor = SystemColors.SecondaryLabelColor.OpaqueColor(BackgroundColor)
+		  Target.Style(SCE_PROPS_SECTION).ForeColor = SystemColors.SystemRedColor.OpaqueColor(BackgroundColor)
+		  Target.Style(SCE_PROPS_SECTION).Bold = True
+		  Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = SystemColors.TertiaryLabelColor.OpaqueColor(BackgroundColor) // Equals sign
+		  Target.Style(SCE_PROPS_KEY).ForeColor = SystemColors.SystemBlueColor.OpaqueColor(BackgroundColor)
+		  
+		  // Unknown colors
+		  Target.Style(SCE_PROPS_DEFVAL).ForeColor = SystemColors.SystemPinkColor.OpaqueColor(BackgroundColor)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Sort(Extends Values() As Ark.ConfigValue)
 		  If Values.Count <= 1 Then

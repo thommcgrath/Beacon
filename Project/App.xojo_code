@@ -449,7 +449,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #endif
 		End Sub
 	#tag EndMethod
-	
+
 	#tag Method, Flags = &h0
 		Function DataSourceForGame(GameID As String) As Beacon.DataSource
 		  For Idx As Integer = 0 To Self.mDataSources.LastIndex

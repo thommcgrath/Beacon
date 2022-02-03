@@ -90,7 +90,7 @@ Inherits Ark.ConfigGroup
 		  SaveData.Value(Ark.ConfigFileGame) = Self.WriteContent(Self.mGameIniContent, Rainbow)
 		  
 		  If Rainbow.KeyCount > 0 Then
-		    EncryptedData.Value("Salt") = Self.mSalt
+		    EncryptedData.Value("Salt") = EncodeHex(Self.mSalt)
 		    EncryptedData.Value("Rainbow") = Rainbow
 		  End If
 		End Sub

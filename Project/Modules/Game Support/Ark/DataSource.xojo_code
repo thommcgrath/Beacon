@@ -970,9 +970,13 @@ Inherits Beacon.DataSource
 		  
 		  If File = Ark.ConfigFileGameUserSettings Then
 		    If Header.IsEmpty = False Then
-		      Clauses.Add("((file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))")
+		      Clauses.Add("file = 'GameUserSettings.ini' AND header = ?" + Idx.ToString)
 		      Values.Value(Idx) = Header
 		      Idx = Idx + 1
+		      
+		      If Header = Ark.HeaderServerSettings Then
+		        Clauses(Clauses.LastIndex) = "((" + Clauses(Clauses.LastIndex) + ") OR file IN ('CommandLineFlag', 'CommandLineOption'))"
+		      End If
 		    Else
 		      Clauses.Add("file IN ('GameUserSettings.ini', 'CommandLineFlag', 'CommandLineOption')")
 		    End If

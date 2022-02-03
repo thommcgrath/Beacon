@@ -26,52 +26,28 @@ Begin ArkConfigEditor ArkCustomConfigEditor Implements NotificationKit.Receiver
    Transparent     =   True
    Visible         =   True
    Width           =   608
-   Begin CodeArea ConfigArea
-      AcceptTabs      =   False
-      Alignment       =   0
+   Begin CodeEditor ConfigArea
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
-      Format          =   ""
       Height          =   341
       HelpTag         =   ""
-      HideSelection   =   True
+      HorizontalScrollPosition=   0
       Index           =   -2147483648
-      Italic          =   False
+      InitialParent   =   ""
       Left            =   0
-      LimitText       =   0
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Multiline       =   True
-      ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   True
-      ScrollbarVertical=   True
-      Styled          =   False
+      SelectionLength =   0
+      ShowInfoBar     =   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "Source Code Pro"
-      TextSize        =   0.0
-      TextUnit        =   0
       Top             =   41
-      Transparent     =   False
-      Underline       =   False
-      UnicodeMode     =   0
-      UseFocusRing    =   False
+      VerticalScrollPosition=   0
       Visible         =   True
       Width           =   608
    End
@@ -223,6 +199,47 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function CurrentFile() As String
+		  Select Case Self.ActiveButtonName
+		  Case "GameUserSettingsIniButton"
+		    Return Ark.ConfigFileGameUserSettings
+		  Case "GameIniButton"
+		    Return Ark.ConfigFileGame
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CurrentHeader() As String
+		  Var CurrentLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.Position)
+		  If Self.mCachedHeaderLine = CurrentLineNum Then
+		    Return Self.mCachedHeader
+		  End If
+		  
+		  Var Header As String
+		  Select Case Self.ActiveButtonName
+		  Case "GameUserSettingsIniButton"
+		    Header = Ark.HeaderServerSettings
+		  Case "GameIniButton"
+		    Header = Ark.HeaderShooterGame
+		  End Select
+		  
+		  For LineNum As Integer = CurrentLineNum DownTo 0
+		    Var Line As String = Self.ConfigArea.Line(LineNum).Trim
+		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      Header = Line.Middle(1, Line.Length - 2)
+		      Exit For LineNum
+		    End If
+		  Next LineNum
+		  
+		  Self.mCachedHeader = Header
+		  Self.mCachedHeaderLine = CurrentLineNum
+		  
+		  Return Header
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function InternalName() As String
 		  Return Ark.Configs.NameCustomContent
@@ -255,27 +272,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsCommented() As Boolean
-		  Var Content As String = Self.ConfigArea.Text
-		  Var Boundary As String = Content.DetectLineEnding
-		  
-		  Var Prefix As String = Content.Left(Self.ConfigArea.SelectionStart)
-		  Var LineStartPos As Integer
-		  Do
-		    Var Pos As Integer = Prefix.IndexOf(LineStartPos, Boundary)
-		    If Pos = -1 Then
-		      Exit
-		    Else
-		      LineStartPos = Pos + Boundary.Length
-		    End If
-		  Loop
-		  
-		  Var LineEndPos As Integer = Content.IndexOf(LineStartPos, Boundary)
-		  If LineEndPos = -1 Then
-		    LineEndPos = Content.Length
-		  End If
-		  
-		  Var Line As String = Content.Middle(LineStartPos, LineEndPos - LineStartPos).Trim
-		  Return Line.BeginsWith("//")
+		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
+		  Var FirstLine As String = Self.ConfigArea.Line(FirstLineNum)
+		  Return FirstLine.BeginsWith("//")
 		End Function
 	#tag EndMethod
 
@@ -296,70 +295,67 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ToggleComment()
-		  Var StartPos As Integer = Self.ConfigArea.SelectionStart
-		  Var EndPos As Integer = StartPos + Self.ConfigArea.SelectionLength
-		  Var Content As String = Self.ConfigArea.Text
-		  Var EOL As String = Content.DetectLineEnding
-		  Var PreContent As String = Content.Left(StartPos)
-		  Var PostContent As String = Content.Middle(EndPos)
-		  Var SelContent As String = Content.Middle(StartPos, EndPos - StartPos)
-		  
-		  Var PreLines() As String = PreContent.Split(EOL)
-		  Var SelLines() As String = SelContent.Split(EOL)
-		  Var PostLines() As String = PostContent.Split(EOL)
-		  If SelLines.Count > 0 And PreLines.Count > 0 Then
-		    SelLines(0) = PreLines(PreLines.LastIndex) + SelLines(0)
-		    PreLines.RemoveAt(PreLines.LastIndex)
-		  ElseIf PreLines.Count > 0 Then
-		    SelLines.Add(PreLines(PreLines.LastIndex))
-		    PreLines.RemoveAt(PreLines.LastIndex)
-		  End If
-		  If SelLines.Count > 0 And PostLines.Count > 0 Then
-		    SelLines(SelLines.LastIndex) = SelLines(SelLines.LastIndex) + PostLines(0)
-		    PostLines.RemoveAt(0)
-		  ElseIf PostLines.Count > 0 Then
-		    SelLines.Add(PostLines(PostLines.LastIndex))
-		    PostLines.RemoveAt(PostLines.LastIndex)
-		  End If
-		  
-		  If SelLines.Count = 0 Then
+		Private Sub ShowAutocomplete()
+		  Var CurrentLine As String = Self.ConfigArea.CurrentLine.Trim
+		  Var Position As Integer = Self.ConfigArea.PositionInLine
+		  If Position = 0 Or Position <> CurrentLine.Length Or CurrentLine.IndexOf("=") > -1 Then
+		    // Only show autocomplete if we are at the end of the line, and the line
+		    // does not contain an equal sign
+		    Self.ConfigArea.AutoCompleteCancel
 		    Return
 		  End If
 		  
-		  Var RemoveComments As Boolean
-		  RemoveComments = SelLines(0).Trim.BeginsWith("//")
-		  For Idx As Integer = 0 To SelLines.LastIndex
-		    SelLines(Idx) = SelLines(Idx).Trim
-		    
-		    If RemoveComments Then
-		      If SelLines(Idx).BeginsWith("//") Then
-		        SelLines(Idx) = SelLines(Idx).Middle(2).Trim
-		      End If
-		    Else
-		      If SelLines(Idx).BeginsWith("//") = False Then
-		        SelLines(Idx) = "// " + SelLines(Idx)
-		      End If
+		  // Next, the word list should be based on the entire typed line
+		  Var Matches() As String
+		  Var MaxWidth As Integer
+		  For Each Possible As String In Self.mAutocompleteWords
+		    If Possible.BeginsWith(CurrentLine) Then
+		      Matches.Add(Possible)
+		      MaxWidth = Max(MaxWidth, Possible.Length)
 		    End If
-		  Next
+		  Next Possible
 		  
-		  If PreLines.Count > 0 Then
-		    PreContent = PreLines.Join(EOL) + EOL
-		  Else
-		    PreContent = ""
+		  If Matches.Count = 0 Then
+		    Self.ConfigArea.AutoCompleteCancel
+		    Return
 		  End If
 		  
-		  If PostLines.Count > 0 Then
-		    PostContent = EOL + PostLines.Join(EOL)
-		  Else
-		    PostContent = ""
-		  End If
+		  Self.ConfigArea.AutoCompleteIgnoreCase = True
+		  Self.ConfigArea.AutoCompleteMaxHeight = 9
+		  Self.ConfigArea.AutoCompleteMaxWidth = 0
+		  Self.ConfigArea.AutoCompleteSeparator = 32
+		  Self.ConfigArea.AutoCompleteSetFillUps("=")
+		  Self.ConfigArea.AutoCompleteShow(CurrentLine.Length, String.FromArray(Matches, " "))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ToggleComment()
+		  Var FirstLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionStart)
+		  Var LastLineNum As Integer = Self.ConfigArea.LineFromPosition(Self.ConfigArea.SelectionEnd)
+		  Var AddComment As Boolean = Not Self.SelectionIsCommented
 		  
-		  SelContent = SelLines.Join(EOL)
+		  Var NewLines() As String
+		  For LineNum As Integer = FirstLineNum To LastLineNum
+		    Var Line As String = Self.ConfigArea.Line(LineNum)
+		    If Line.BeginsWith("//") = True And AddComment = False Then
+		      Line = Line.Middle(2).Trim
+		    ElseIf Line.BeginsWith("//") = False And AddComment = True Then
+		      Line = "// " + Line.Trim
+		    Else
+		      Line = Line.Trim
+		    End If
+		    NewLines.Add(Line)
+		  Next LineNum
 		  
-		  Self.ConfigArea.Text = PreContent + SelContent + PostContent
-		  Self.ConfigArea.SelectionStart = PreContent.Length
-		  Self.ConfigArea.SelectionLength = SelContent.Length
+		  Var EOL As String = Self.ConfigArea.Text.DetectLineEnding
+		  Self.ConfigArea.SelectionStart = Self.ConfigArea.LineStart(FirstLineNum)
+		  Self.ConfigArea.SelectionEnd = Self.ConfigArea.LineEndPosition(LastLineNum)
+		  Self.ConfigArea.ReplaceSelection(String.FromArray(NewLines, EOL))
+		  
+		  // Select again when done
+		  Self.ConfigArea.SelectionStart = Self.ConfigArea.LineStart(FirstLineNum)
+		  Self.ConfigArea.SelectionEnd = Self.ConfigArea.LineEndPosition(LastLineNum)
 		  
 		  Self.UpdateCommentButton()
 		End Sub
@@ -404,6 +400,25 @@ End
 		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateAutoComplete()
+		  Var CurrentFile As String = Self.CurrentFile
+		  Var CurrentHeader As String = Self.CurrentHeader
+		  Var CurrentLocation As String = CurrentFile + ":" + CurrentHeader
+		  If CurrentLocation = Self.mLastAutocompleteHeader Then
+		    Return
+		  End If
+		  
+		  Var Configs() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys(CurrentFile, CurrentHeader, "", False)
+		  Self.mAutocompleteWords.ResizeTo(Configs.LastRowIndex)
+		  For Idx As Integer = Configs.FirstRowIndex To Configs.LastRowIndex
+		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
+		  Next Idx
+		  
+		  Self.mLastAutocompleteHeader = CurrentLocation
 		End Sub
 	#tag EndMethod
 
@@ -455,12 +470,12 @@ End
 		  Var Source As String = Self.ConfigArea.Text
 		  Var Tag As String = Ark.Configs.CustomContent.EncryptedTag
 		  Var TagLen As Integer = Tag.Length
-		  Var Styles As StyledText = Self.ConfigArea.StyledText
-		  If Styles <> Nil Then
-		    Styles.TextColor(0, Source.Length) = SystemColors.LabelColor
-		    Styles.Bold(0, Source.Length) = False
-		    Styles.Italic(0, Source.Length) = False
-		  End If
+		  // Var Styles As StyledText = Self.ConfigArea.StyledText
+		  // If Styles <> Nil Then
+		  // Styles.TextColor(0, Source.Length) = SystemColors.LabelColor
+		  // Styles.Bold(0, Source.Length) = False
+		  // Styles.Italic(0, Source.Length) = False
+		  // End If
 		  
 		  Do
 		    Pos = Source.IndexOf(Pos, Tag)
@@ -476,14 +491,14 @@ End
 		    
 		    Self.mEncryptedRanges.Add(New Beacon.Range(StartPos, EndPos))
 		    
-		    If Styles <> Nil Then
-		      Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
-		      Styles.Italic(StartPos - TagLen, TagLen) = True
-		      Styles.TextColor(StartPos, EndPos - StartPos) = SystemColors.SystemGreenColor
-		      Styles.Bold(StartPos, EndPos - StartPos) = True
-		      Styles.TextColor(EndPos, Min(TagLen, Source.Length - EndPos)) = SystemColors.TertiaryLabelColor
-		      Styles.Italic(EndPos, Min(TagLen, Source.Length - EndPos)) = True
-		    End If
+		    // If Styles <> Nil Then
+		    // Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
+		    // Styles.Italic(StartPos - TagLen, TagLen) = True
+		    // Styles.TextColor(StartPos, EndPos - StartPos) = SystemColors.SystemGreenColor
+		    // Styles.Bold(StartPos, EndPos - StartPos) = True
+		    // Styles.TextColor(EndPos, Min(TagLen, Source.Length - EndPos)) = SystemColors.TertiaryLabelColor
+		    // Styles.Italic(EndPos, Min(TagLen, Source.Length - EndPos)) = True
+		    // End If
 		    
 		    Pos = EndPos + TagLen
 		  Loop
@@ -521,6 +536,18 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private mAutocompleteWords() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCachedHeader As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCachedHeaderLine As Integer = -1
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEncryptedRanges() As Beacon.Range
 	#tag EndProperty
 
@@ -532,6 +559,10 @@ End
 		Private mGameUserSettingsIniState As TextAreaState
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mLastAutocompleteHeader As String
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -539,6 +570,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.UpdateTextColors()
+		  Self.UpdateAutoComplete()
 		  
 		  If Self.SettingUp Then
 		    Return
@@ -567,6 +599,23 @@ End
 		Sub SelChange()
 		  Self.UpdateEncryptButton()
 		  Self.UpdateCommentButton()
+		  Self.UpdateAutoComplete()
+		  
+		  #if DebugBuild
+		    System.DebugLog("Selection start is " + Me.SelectionStart.ToString + ", end is " + Me.SelectionEnd.ToString + ", length is " + Me.SelectionLength.ToString + ".")
+		  #endif
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CharacterAdded(Character as Integer, CharacterSource as Integer)
+		  If Me.SelectionEnd = Me.SelectionStart And Me.SelectionStart > 0 And Me.AutoCompleteActive = False Then
+		    Self.ShowAutocomplete()
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SetupNeeded()
+		  Ark.SetupCodeEditor(Me)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -611,6 +660,7 @@ End
 		    End Select
 		    Me.Item("GameIniButton").Toggled = (Item.Name = "GameIniButton")
 		    Me.Item("GameUserSettingsIniButton").Toggled = (Item.Name = "GameUserSettingsIniButton")
+		    Self.mCachedHeaderLine = -1
 		    Self.SettingUp = SettingUp
 		  End Select
 		End Sub
