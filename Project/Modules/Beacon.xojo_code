@@ -489,7 +489,7 @@ Protected Module Beacon
 		    Return Temp.ToString(Pretty)
 		  #else
 		    Var Result As String = Xojo.GenerateJSON(Source, Pretty)
-		    #if TargetARM
+		    #if TargetARM And XojoVersion < 2022.01
 		      If Pretty Then
 		        // feedback://showreport?report_id=66705
 		        Var Temp As New JSONMBS(Result)
