@@ -33,8 +33,11 @@ Inherits Beacon.Project
 		    Try
 		      Var InternalName As String = Entry.Key
 		      Var GroupData As Dictionary = Entry.Value
-		      If InternalName = "LootScale" Then
+		      Select Case InternalName
+		      Case "LootScale"
 		        ConvertLootScale = GroupData
+		      Case "Metadata"
+		        Break
 		      Else
 		        Var EncryptedGroupData As Dictionary
 		        If EncryptedData.HasKey(InternalName) Then
@@ -48,7 +51,7 @@ Inherits Beacon.Project
 		        If (Instance Is Nil) = False Then
 		          SetDict.Value(InternalName) = Instance
 		        End If
-		      End If
+		      End Select
 		    Catch Err As RuntimeException
 		      App.Log("Unable to load config group " + Entry.Key + " from project " + Self.UUID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		    End Try
@@ -127,6 +130,8 @@ Inherits Beacon.Project
 		  End If
 		  
 		  #Pragma Warning "Attach an account uuid to profiles that are missing them"
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 

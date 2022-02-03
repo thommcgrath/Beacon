@@ -4726,6 +4726,9 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
+		  
 		  Var PlayersButton As OmniBarItem = OmniBarItem.CreateTab("PlayersButton", "Players")
 		  PlayersButton.Toggled = True
 		  

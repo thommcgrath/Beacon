@@ -318,7 +318,7 @@ Inherits Ark.ConfigGroup
 		    Var Suffix As String = Input.Right(Input.Length - EndPos)
 		    Var EncryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
 		    Var DecryptedContent As String
-		    If Rainbow.HasKey(EncryptedContent) Then
+		    If (Rainbow Is Nil) = False And Rainbow.HasKey(EncryptedContent) Then
 		      DecryptedContent = Rainbow.Value(EncryptedContent)
 		    End If
 		    

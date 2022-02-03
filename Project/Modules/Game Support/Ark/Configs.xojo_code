@@ -81,10 +81,15 @@ Protected Module Configs
 		  
 		  Var RequiresOmni As Boolean
 		  If mConfigOmniCache.HasKey(InternalName) = False Then
-		    Var Instance As Ark.ConfigGroup = CreateInstance(InternalName)
-		    If (Instance Is Nil) = False Then
-		      RequiresOmni = Instance.RequiresOmni
-		    End If
+		    Select Case InternalName
+		    Case NameServersPseudo, NameMetadataPsuedo, NameAccountsPsuedo
+		      RequiresOmni = False
+		    Else
+		      Var Instance As Ark.ConfigGroup = CreateInstance(InternalName)
+		      If (Instance Is Nil) = False Then
+		        RequiresOmni = Instance.RequiresOmni
+		      End If
+		    End Select
 		    mConfigOmniCache.Value(InternalName) = RequiresOmni
 		  Else
 		    RequiresOmni = mConfigOmniCache.Value(InternalName)

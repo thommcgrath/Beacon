@@ -344,6 +344,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event SaveComplete()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ShouldSave() As Boolean
 	#tag EndHook
 

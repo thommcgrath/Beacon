@@ -1752,6 +1752,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function InternalName() As String
+		  Return Ark.Configs.NameBreedingMultipliers
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub PlaceControlGroups()
 		  // 919px minimum width

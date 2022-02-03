@@ -194,6 +194,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function InternalName() As String
+		  Return Ark.Configs.NameDinoAdjustments
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub ShowAdd()
 		  // If this returns true, the config will have changed so we should make sure it gets

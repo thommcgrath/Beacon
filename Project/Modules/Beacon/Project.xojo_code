@@ -264,6 +264,7 @@ Implements ObservationKit.Observable
 		  Self.mConfigSets = New Dictionary
 		  Self.mConfigSets.Value(Self.BaseConfigSetName) = New Dictionary
 		  Self.mActiveConfigSet = Self.BaseConfigSetName
+		  Self.mUseCompression = True
 		End Sub
 	#tag EndMethod
 

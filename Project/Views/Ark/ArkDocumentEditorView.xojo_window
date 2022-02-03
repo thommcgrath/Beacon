@@ -344,6 +344,15 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub SaveComplete()
+		  // I don't know how project could be nil after a save, but check just in case
+		  If (Self.Project Is Nil) = False Then
+		    Preferences.LastUsedConfigName(Self.Project.UUID) = Self.CurrentConfigName
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function ShouldSave() As Boolean
 		  If Self.mUpdateUITag <> "" Then
 		    CallLater.Cancel(Self.mUpdateUITag)
@@ -892,13 +901,15 @@ End
 		  Var ActiveConfigSet As String = Self.ActiveConfigSet
 		  Var IsBase As Boolean = ActiveConfigSet = Beacon.Project.BaseConfigSetName
 		  If IsBase Then
+		    Var PsuedoTags() As String = Array(Ark.Configs.NameMetadataPsuedo, Ark.Configs.NameAccountsPsuedo)
 		    // Show everything
 		    #if DeployEnabled
-		      Labels.Add("Servers")
-		      Tags.Add("deployments")
+		      PsuedoTags.Add(Ark.Configs.NameServersPseudo)
 		    #endif
-		    Labels.Add("Accounts")
-		    Tags.Add("accounts")
+		    For Each Tag As String In PsuedoTags
+		      Labels.Add(Language.LabelForConfig(Tag))
+		      Tags.Add(Tag)
+		    Next Tag
 		  End If
 		  
 		  Var Names() As String = Ark.Configs.AllNames
@@ -986,10 +997,6 @@ End
 			  Var Embed As Boolean
 			  If Value.IsEmpty = False Then
 			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
-			    
-			    If (Self.Project Is Nil) = False Then
-			      Preferences.LastUsedConfigName(Self.Project.UUID) = Value
-			    End If
 			    
 			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
 			    If HistoryIndex > 0 Then

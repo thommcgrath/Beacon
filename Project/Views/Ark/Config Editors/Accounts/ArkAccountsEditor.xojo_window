@@ -164,7 +164,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function InternalName() As String
-		  Return "accounts"
+		  Return Ark.Configs.NameAccountsPsuedo
 		End Function
 	#tag EndMethod
 
