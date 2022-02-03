@@ -581,18 +581,20 @@ Protected Module Ark
 		  
 		  Target.InitializeLexer("props")
 		  
-		  Var BackgroundColor As Color = SystemColors.ControlBackgroundColor
+		  If Color.IsDarkMode Then
+		    Target.Style(SCE_PROPS_SECTION).ForeColor = &cFB4A4B
+		    Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = &cCBCBCB
+		    Target.Style(SCE_PROPS_KEY).ForeColor = &c106AFE
+		  Else
+		    Target.Style(SCE_PROPS_SECTION).ForeColor = &c7D1012
+		    Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = &c515151
+		    Target.Style(SCE_PROPS_KEY).ForeColor = &c106AFE
+		  End If
 		  
-		  Target.Style(SCE_PROPS_DEFAULT).ForeColor = SystemColors.LabelColor.OpaqueColor(BackgroundColor)
-		  Target.Style(SCE_PROPS_DEFAULT).BackColor = BackgroundColor
-		  // Target.Style(SCE_PROPS_COMMENT).ForeColor = SystemColors.SecondaryLabelColor.OpaqueColor(BackgroundColor)
-		  Target.Style(SCE_PROPS_SECTION).ForeColor = SystemColors.SystemRedColor.OpaqueColor(BackgroundColor)
 		  Target.Style(SCE_PROPS_SECTION).Bold = True
-		  Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = SystemColors.TertiaryLabelColor.OpaqueColor(BackgroundColor) // Equals sign
-		  Target.Style(SCE_PROPS_KEY).ForeColor = SystemColors.SystemBlueColor.OpaqueColor(BackgroundColor)
 		  
-		  // Unknown colors
-		  Target.Style(SCE_PROPS_DEFVAL).ForeColor = SystemColors.SystemPinkColor.OpaqueColor(BackgroundColor)
+		  // Unknown colors, make sure they stand out so they can be discovered more readily
+		  Target.Style(SCE_PROPS_DEFVAL).ForeColor = &cFF00FF
 		End Sub
 	#tag EndMethod
 

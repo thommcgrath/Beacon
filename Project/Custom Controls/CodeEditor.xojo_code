@@ -20,8 +20,6 @@ Implements NotificationKit.Receiver
 		  
 		  RaiseEvent Open
 		  
-		  Self.UpdateLineNumbersGutter()
-		  
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndEvent
@@ -49,6 +47,16 @@ Implements NotificationKit.Receiver
 
 
 	#tag Method, Flags = &h0
+		Sub Copy()
+		  If IsEventImplemented("ShouldCopy") And RaiseEvent ShouldCopy() = False Then
+		    Return
+		  End If
+		  
+		  Super.Copy()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
@@ -73,24 +81,32 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub RunSetup()
 		  Var BaseStyle As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonDefault)
-		  BaseStyle.BackColor = SystemColors.ControlBackgroundColor
-		  BaseStyle.ForeColor = SystemColors.LabelColor
+		  If Color.IsDarkMode Then
+		    BaseStyle.BackColor = &c161616
+		    BaseStyle.ForeColor = &cFFFFFF
+		  Else
+		    BaseStyle.BackColor = &cFFFFFF
+		    BaseStyle.ForeColor = &c000000
+		  End If
 		  BaseStyle.Font = "Source Code Pro"
 		  BaseStyle.Size = 12
 		  
 		  Self.StyleClearAll()
 		  
-		  Self.CaretForeColor = SystemColors.LabelColor
+		  Self.CaretForeColor = BaseStyle.ForeColor
 		  
 		  Var MarginStyle As ScintillaStyleMBS = Self.Style(ScintillaStyleMBS.kStylesCommonLineNumber)
 		  If Color.IsDarkMode Then
-		    MarginStyle.BackColor = SystemColors.ControlBackgroundColor.BlendWith(&cFFFFFF, 0.1)
+		    MarginStyle.BackColor = &c222222
+		    MarginStyle.ForeColor = &cCBCBCB
 		  Else
-		    MarginStyle.BackColor = SystemColors.ControlBackgroundColor.BlendWith(&c000000, 0.1)
+		    MarginStyle.BackColor = &cF9F9F9
+		    MarginStyle.ForeColor = &c515151
 		  End If
-		  MarginStyle.ForeColor = SystemColors.SecondaryLabelColor
 		  
 		  RaiseEvent SetupNeeded()
+		  
+		  Self.UpdateLineNumbersGutter()
 		End Sub
 	#tag EndMethod
 
@@ -103,7 +119,7 @@ Implements NotificationKit.Receiver
 		  Measure.Graphics.FontSize = Style.Size
 		  Measure.Graphics.FontUnit = FontUnits.Point
 		  
-		  Var GutterWidth As Integer = Ceiling(Measure.Graphics.TextWidth(LineCount)) + 10
+		  Var GutterWidth As Integer = Ceiling(Measure.Graphics.TextWidth(LineCount)) + 14
 		  Var Margin As ScintillaMarginMBS = Self.Margin(0)
 		  Margin.Width = GutterWidth
 		End Sub
