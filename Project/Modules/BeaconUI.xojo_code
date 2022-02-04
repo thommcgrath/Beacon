@@ -604,8 +604,8 @@ Protected Module BeaconUI
 		Protected Function WebContentSupported() As Boolean
 		  #if TargetMacOS
 		    Return SystemInformationMBS.IsHighSierra(True)
-		  #elseif TargetWindows
-		    Return WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Or SystemInformationMBS.IsWindows10(True)
+		  #else
+		    Return True
 		  #endif
 		End Function
 	#tag EndMethod

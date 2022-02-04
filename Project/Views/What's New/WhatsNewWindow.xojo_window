@@ -35,14 +35,14 @@ Begin Window WhatsNewWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   0
+      Renderer        =   1
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
-      Visible         =   False
+      Visible         =   True
       Width           =   660
    End
    Begin URLConnection PreflightSocket
@@ -52,45 +52,6 @@ Begin Window WhatsNewWindow
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-   End
-   Begin WebView2ControlMBS WinViewer
-      AdditionalBrowserArguments=   ""
-      AllowSingleSignOnUsingOSPrimaryAccount=   False
-      areBrowserAcceleratorKeysEnabled=   False
-      AreDefaultContextMenusEnabled=   False
-      AreDefaultScriptDialogsEnabled=   True
-      AreDevToolsEnabled=   False
-      AreHostObjectsAllowed=   True
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   413
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsBuiltInErrorPageEnabled=   True
-      IsGeneralAutofillEnabled=   True
-      IsPasswordAutosaveEnabled=   False
-      IsPinchZoomEnabled=   False
-      IsScriptEnabled =   True
-      IsStatusBarEnabled=   False
-      IsWebMessageEnabled=   True
-      IsZoomControlEnabled=   False
-      Language        =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TargetCompatibleBrowserVersion=   ""
-      Tooltip         =   ""
-      Top             =   -457
-      UserAgent       =   ""
-      Visible         =   False
-      Width           =   660
    End
 End
 #tag EndWindow
@@ -189,11 +150,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowConfirmedURL()
 		  Try
-		    If Self.WinViewer.Visible Then
-		      Self.WinViewer.LoadURL(Self.mConfirmedURL)
-		    ElseIf Self.Viewer.Visible Then
-		      Self.Viewer.LoadURL(Self.mConfirmedURL)
-		    End If
+		    Self.Viewer.LoadURL(Self.mConfirmedURL)
 		  Catch Err As RuntimeException
 		  End Try
 		End Sub
@@ -269,70 +226,10 @@ End
 		  If HTTPStatus = 200 Then
 		    Self.mConfirmedURL = URL
 		    Self.Visible = True
-		    
-		    Dim WebView2Activated As Boolean
-		    
-		    Try
-		      If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
-		        Self.Viewer.Visible = False
-		        Self.WinViewer.Top = 0
-		        Self.WinViewer.Left = 0
-		        Self.WinViewer.Width = Self.Width
-		        Self.WinViewer.Height = Self.Height
-		        Self.WinViewer.UserAgent = App.UserAgent
-		        Self.WinViewer.Visible = True
-		        WebView2Activated = True
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
-		    
-		    If WebView2Activated = False Then
-		      Self.Viewer.Visible = True
-		      Self.WinViewer.Visible = False
-		    End If
-		    
 		    Call CallLater.Schedule(250, AddressOf ShowConfirmedURL)
 		  Else
 		    Self.Close
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WinViewer
-	#tag Event
-		Sub NavigationCompleted(isSuccess as Boolean, ErrorStatus as Integer, NavigationID as UInt64)
-		  #Pragma Unused NavigationID
-		  
-		  If isSuccess Then
-		    Self.Visible = True
-		    Self.Show
-		    Me.Refresh
-		  Else
-		    App.Log("Unable to load welcome content: " + ErrorStatus.ToString("0"))
-		    
-		    Self.Close
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DocumentTitleChanged()
-		  Self.SetTitle(Me.DocumentTitle)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function NavigationStarting(URL as String, IsUserInitiated as Boolean, IsRedirected as Boolean, NavigationID as UInt64) As Boolean
-		  #Pragma Unused IsUserInitiated
-		  #Pragma Unused IsRedirected
-		  #Pragma Unused NavigationID
-		  
-		  If Self.ShouldCancel(URL) Then
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Configure()
-		  Me.UserDataFolder = App.ApplicationSupport.Child("BrowserData").NativePath
 		End Sub
 	#tag EndEvent
 #tag EndEvents

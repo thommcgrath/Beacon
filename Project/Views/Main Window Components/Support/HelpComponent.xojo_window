@@ -37,7 +37,7 @@ Begin BeaconSubview HelpComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   0
+      Renderer        =   1
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -47,63 +47,10 @@ Begin BeaconSubview HelpComponent
       Visible         =   True
       Width           =   738
    End
-   Begin WebView2ControlMBS WinViewer
-      AdditionalBrowserArguments=   ""
-      AllowSingleSignOnUsingOSPrimaryAccount=   False
-      areBrowserAcceleratorKeysEnabled=   False
-      AreDefaultContextMenusEnabled=   True
-      AreDefaultScriptDialogsEnabled=   False
-      AreDevToolsEnabled=   False
-      AreHostObjectsAllowed=   True
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   101
-      Index           =   -2147483648
-      InitialParent   =   ""
-      IsBuiltInErrorPageEnabled=   True
-      IsGeneralAutofillEnabled=   True
-      IsPasswordAutosaveEnabled=   False
-      IsPinchZoomEnabled=   False
-      IsScriptEnabled =   True
-      IsStatusBarEnabled=   False
-      IsWebMessageEnabled=   False
-      IsZoomControlEnabled=   False
-      Language        =   ""
-      Left            =   462
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TargetCompatibleBrowserVersion=   ""
-      Tooltip         =   ""
-      Top             =   -151
-      UserAgent       =   ""
-      Visible         =   False
-      Width           =   267
-   End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
-		    Self.WinViewer.Visible = True
-		    Self.HelpViewer.Visible = False
-		    Self.WinViewer.Top = 0
-		    Self.WinViewer.Left = 0
-		    Self.WinViewer.Width = Self.Width
-		    Self.WinViewer.Height = Self.Height
-		    Self.WinViewer.UserAgent = App.UserAgent
-		  End If
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
@@ -134,11 +81,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.WinViewer.Visible Then
-		    Self.WinViewer.LoadURL(URL)
-		  Else
-		    Self.HelpViewer.LoadURL(URL)
-		  End If
+		  Self.HelpViewer.LoadURL(URL)
 		End Sub
 	#tag EndMethod
 
@@ -219,42 +162,6 @@ End
 	#tag Event
 		Sub Open()
 		  Me.UserAgent = App.UserAgent
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WinViewer
-	#tag Event
-		Sub NavigationCompleted(isSuccess as Boolean, ErrorStatus as Integer, NavigationID as UInt64)
-		  #Pragma Unused ErrorStatus
-		  #Pragma Unused NavigationID
-		  
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.HasProgressIndicator = False
-		  End If
-		  If isSuccess Then
-		    Self.mHelpLoaded = True
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function NavigationStarting(URL as String, IsUserInitiated as Boolean, IsRedirected as Boolean, NavigationID as UInt64) As Boolean
-		  #Pragma Unused IsUserInitiated
-		  #Pragma Unused IsRedirected
-		  #Pragma Unused NavigationID
-		  
-		  If Self.ShouldCancel(URL) Then
-		    Return True
-		  End If
-		  
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.HasProgressIndicator = True
-		    Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Configure()
-		  Me.UserDataFolder = App.ApplicationSupport.Child("BrowserData").NativePath
 		End Sub
 	#tag EndEvent
 #tag EndEvents
