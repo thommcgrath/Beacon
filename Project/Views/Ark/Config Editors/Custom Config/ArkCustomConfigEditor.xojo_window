@@ -667,6 +667,8 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateTab("GameUserSettingsIniButton", "GameUserSettings.ini"))
 		  Me.Append(OmniBarItem.CreateTab("GameIniButton", "Game.ini"))
 		  Me.Append(OmniBarItem.CreateSeparator)

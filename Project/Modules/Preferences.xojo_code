@@ -38,26 +38,62 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h21
 		Private Sub Init()
-		  If mManager = Nil Then
+		  If mManager Is Nil Then
 		    mManager = New PreferencesManager(App.ApplicationSupport.Child("Preferences.json"))
+		    mManager.ClearValue("Last Used Config")
+		    
+		    // Cleanup project states
+		    Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
+		    Var Timestamps() As Double
+		    Var Map As New Dictionary
+		    For Each Entry As DictionaryEntry In Dict
+		      Try
+		        Var ProjectUUID As String = Entry.Key.StringValue
+		        Var State As Dictionary = Entry.Value
+		        Var Timestamp as Double = State.Value("Timestamp").DoubleValue
+		        
+		        Timestamps.Add(Timestamp)
+		        Map.Value(Timestamp) = ProjectUUID
+		      Catch Err As RuntimeException
+		      End Try
+		    Next Entry
+		    
+		    Var Changed As Boolean
+		    Timestamps.Sort
+		    Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
+		    Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
+		    For Idx As Integer = Timestamps.LastRowIndex DownTo Timestamps.FirstRowIndex
+		      If Timestamps(Idx) < CutoffSeconds Then
+		        Timestamps.Remove(Idx)
+		        Changed = True
+		      End If
+		    Next Idx
+		    While Timestamps.Count > 20
+		      Timestamps.Remove(Timestamps.LastRowIndex)
+		      Changed = True
+		    Wend
+		    
+		    If Changed Then
+		      Var Replacement As New Dictionary
+		      For Each Timestamp As Double In Timestamps
+		        Var ProjectUUID As String = Map.Value(Timestamp)
+		        Replacement.Value(ProjectUUID) = Dict.Value(ProjectUUID)
+		      Next Timestamp
+		      mManager.DictionaryValue("Project State") = Replacement
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LastUsedConfigName(DocumentID As String) As String
-		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
-		  If Dict.HasKey(DocumentID) Then
-		    Return Dict.Value(DocumentID)
-		  End If
+		Attributes( Deprecated = "ProjectState" ) Protected Function LastUsedConfigName(DocumentID As String) As String
+		  Return ProjectState(DocumentID, "Last Config", Ark.Configs.NameLootDrops)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub LastUsedConfigName(DocumentID As String, Assigns ConfigName As String)
-		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
-		  Dict.Value(DocumentID) = ConfigName
-		  mManager.DictionaryValue("Last Used Config") = Dict
+		Attributes( Deprecated = "ProjectState" ) Protected Sub LastUsedConfigName(DocumentID As String, Assigns ConfigName As String)
+		  ProjectState(DocumentID, "Last Config") = ConfigName
 		End Sub
 	#tag EndMethod
 
@@ -127,6 +163,41 @@ Protected Module Preferences
 		    Win.Bounds = New Rect(Left, Top, Width, Height)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ProjectState(ProjectUUID As String, Key As String, Assigns Value As Variant)
+		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
+		  Var State As Dictionary
+		  If Dict.HasKey(ProjectUUID) Then
+		    State = Dict.Value(ProjectUUID)
+		  Else
+		    State = New Dictionary
+		  End If
+		  
+		  State.Value("Timestamp") = DateTime.Now.SecondsFrom1970
+		  State.Value(Key) = Value
+		  Dict.Value(ProjectUUID) = State
+		  mManager.DictionaryValue("Project State") = Dict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ProjectState(ProjectUUID As String, Key As String, Default As Variant) As Variant
+		  Var Dict As Dictionary = mManager.DictionaryValue("Project State", New Dictionary)
+		  Var State As Dictionary
+		  If Dict.HasKey(ProjectUUID) Then
+		    State = Dict.Value(ProjectUUID)
+		  Else
+		    State = New Dictionary
+		  End If
+		  
+		  If State.HasKey(Key) Then
+		    Return State.Value(Key)
+		  Else
+		    Return Default
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

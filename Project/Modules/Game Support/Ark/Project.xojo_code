@@ -37,7 +37,6 @@ Inherits Beacon.Project
 		      Case "LootScale"
 		        ConvertLootScale = GroupData
 		      Case "Metadata"
-		        Break
 		      Else
 		        Var EncryptedGroupData As Dictionary
 		        If EncryptedData.HasKey(InternalName) Then

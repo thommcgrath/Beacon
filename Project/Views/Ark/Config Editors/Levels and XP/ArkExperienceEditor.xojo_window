@@ -630,6 +630,8 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateTab("PlayersTab", "Players"))
 		  Me.Append(OmniBarItem.CreateTab("TamesTab", "Tames"))
 		  Me.Append(OmniBaritem.CreateSeparator)

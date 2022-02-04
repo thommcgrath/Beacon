@@ -330,24 +330,18 @@ End
 		Sub Open()
 		  If (Self.Project Is Nil) = False Then
 		    Var UUID As String = Self.Project.UUID
-		    Var LastConfig As String = Preferences.LastUsedConfigName(UUID)
-		    If LastConfig.IsEmpty Then
+		    Var LastConfigName As String = Preferences.ProjectState(UUID, "Editor", "")
+		    Var LastConfigSet As String = Preferences.ProjectState(UUID, "Config Set", "")
+		    If LastConfigName.IsEmpty Or LastConfigSet.IsEmpty Then
 		      If Self.URL.Scheme = Beacon.ProjectURL.TypeWeb Then
-		        LastConfig = Ark.Configs.NameMetadataPsuedo
+		        LastConfigName = Ark.Configs.NameMetadataPsuedo
 		      Else
-		        LastConfig = Ark.Configs.NameLootDrops
+		        LastConfigName = Ark.Configs.NameLootDrops
 		      End If
+		      LastConfigSet = Beacon.Project.BaseConfigSetName
 		    End If
-		    Self.CurrentConfigName = LastConfig
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub SaveComplete()
-		  // I don't know how project could be nil after a save, but check just in case
-		  If (Self.Project Is Nil) = False Then
-		    Preferences.LastUsedConfigName(Self.Project.UUID) = Self.CurrentConfigName
+		    Self.ActiveConfigSet = LastConfigSet
+		    Self.CurrentConfigName = LastConfigName
 		  End If
 		End Sub
 	#tag EndEvent
@@ -969,6 +963,10 @@ End
 			  Self.ConfigSetPicker.Invalidate
 			  Self.UpdateConfigList
 			  
+			  If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
+			    Preferences.ProjectState(Self.Project.UUID, "Config Set") = Value
+			  End If
+			  
 			  Self.CurrentConfigName = ConfigName
 			End Set
 		#tag EndSetter
@@ -997,6 +995,10 @@ End
 			  Var Embed As Boolean
 			  If Value.IsEmpty = False Then
 			    Var CacheKey As String = Self.ActiveConfigSet + ":" + Value
+			    
+			    If (Self.Project Is Nil) = False And Self.Controller.URL.Scheme <> Beacon.ProjectURL.TypeTransient Then
+			      Preferences.ProjectState(Self.Project.UUID, "Editor") = Value
+			    End If
 			    
 			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(CacheKey)
 			    If HistoryIndex > 0 Then

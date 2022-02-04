@@ -2088,6 +2088,8 @@ End
 #tag Events ConfigToolbar
 	#tag Event
 		Sub Open()
+		  Me.Append(OmniBarItem.CreateTitle("ConfigTitle", Self.ConfigLabel))
+		  Me.Append(OmniBarItem.CreateSeparator)
 		  Me.Append(OmniBarItem.CreateTab("DecayButton", "Decay"))
 		  Me.Append(OmniBarItem.CreateTab("SpoilButton", "Spoil"))
 		  
