@@ -627,7 +627,7 @@ End
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
-		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "harvestable")
+		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "{""required"":[""harvestable""],""excluded"":[]}")
 		  For Each Engram As Beacon.Engram In Engrams
 		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
 		      Continue
