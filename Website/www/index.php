@@ -9,7 +9,7 @@ $public_build = BeaconCommon::MinVersion();
 $hero_img_prefix = $public_build >= 10500300 ? 'hero15' : 'hero';
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
+$results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM ark.loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
 while (!$results->EOF()) {
 	if ($results->Field('experimental')) {
 		$unofficial_source_count = $results->Field('loot_source_count');

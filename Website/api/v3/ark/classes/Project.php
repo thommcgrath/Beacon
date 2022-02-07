@@ -2,7 +2,7 @@
 
 namespace Ark;
 
-class Document extends \BeaconAPI\Ark\Document {
+class Project extends \BeaconAPI\Ark\Project {
 	public function Versions() {
 		$path = self::GenerateCloudStoragePath($this->OwnerID(), $this->DocumentID());
 		$versions = BeaconCloudStorage::VersionsForFile($path);

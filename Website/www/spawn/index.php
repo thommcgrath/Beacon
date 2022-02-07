@@ -39,7 +39,7 @@ if ($results->RecordCount() == 1) {
 	$build = 0;
 }
 
-$results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
+$results = $database->Query("SELECT MAX(last_update) FROM ark.objects WHERE min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 $include_mod_names = true;
 $cache_key = 'spawn_' . (is_null($mod_id) ? 'all' : $mod_id) . '_' . $build . '_' . $last_database_update->format('U');

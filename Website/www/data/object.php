@@ -13,9 +13,9 @@ if (isset($_GET['object_id'])) {
 	$database = BeaconCommon::Database();
 	try {
 		if (isset($_GET['workshop_id'])) {
-			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 AND ABS(mods.workshop_id) = $2 ORDER BY blueprints.label;', $_GET['class_string'], abs($_GET['workshop_id']));
+			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 AND ABS(mods.workshop_id) = $2 ORDER BY blueprints.label;', $_GET['class_string'], abs($_GET['workshop_id']));
 		} else {
-			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 ORDER BY blueprints.label;', $_GET['class_string']);
+			$results = $database->Query('SELECT object_id, label, mods.name AS mod_name FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE class_string = $1 ORDER BY blueprints.label;', $_GET['class_string']);
 		}
 		if ($results->RecordCount() === 1) {
 			$object_id = $results->Field('object_id');

@@ -46,8 +46,8 @@ if (array_key_exists('console_safe', $_GET)) {
 }
 
 $start_time = microtime(true);
-$document_count = \Ark\Document::Search($search_keys, $sort_order, $limit, $offset, true);
-$documents = \Ark\Document::Search($search_keys, $sort_order, $limit, $offset, false);
+$project_count = \Ark\Project::Search($search_keys, $sort_order, $limit, $offset, true);
+$projects = \Ark\Project::Search($search_keys, $sort_order, $limit, $offset, false);
 $end_time = microtime(true);
 
 $maps = \Ark\Map::GetAll();
@@ -100,26 +100,26 @@ foreach ($maps as $map) {
 </div>
 <?php
 
-if ($document_count == 0) {
+if ($project_count == 0) {
 	echo '<p class="text-center">No documents found</p>';
 	exit;
 }
 
-if (count($documents) > 0) {
+if (count($projects) > 0) {
 	echo '<table id="browse_results" class="generic">';
 	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Updated</th><th class="low-priority">Revision</th></thead><tbody>';
-	foreach ($documents as $document) {
+	foreach ($projects as $project) {
 		echo '<tr>';
-		echo '<td><a href="' . urlencode($document->DocumentID()) . '?map_filter=' . $selected_maps . '" class="document_name">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="row-details"><span class="detail">Updated: ' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</span></div></td>';
-		echo '<td class="text-right low-priority">' . number_format($document->DownloadCount()) . '</td>';
-		echo '<td class="nowrap text-center low-priority"><time datetime="' . $document->LastUpdated()->format('c') . '">' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
-		echo '<td class="text-right low-priority">' . number_format($document->Revision()) . '</td>';
+		echo '<td><a href="' . urlencode($project->ProjectID()) . '?map_filter=' . $selected_maps . '" class="document_name">' . htmlentities($project->Title()) . '</a><br><span class="document_description">' . htmlentities($project->Description()) . '</span><div class="row-details"><span class="detail">Updated: ' . $project->LastUpdated()->format('M jS, Y g:i A') . ' UTC</span></div></td>';
+		echo '<td class="text-right low-priority">' . number_format($project->DownloadCount()) . '</td>';
+		echo '<td class="nowrap text-center low-priority"><time datetime="' . $project->LastUpdated()->format('c') . '">' . $project->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
+		echo '<td class="text-right low-priority">' . number_format($project->Revision()) . '</td>';
 		echo '</tr>';
 	}
 	echo '</tbody></table>';
 }
 
-if ($document_count > count($documents)) {
+if ($project_count > count($projects)) {
 	// navigation
 	if ($offset > 0) {
 		$prev = $_GET;
@@ -129,7 +129,7 @@ if ($document_count > count($documents)) {
 		$prev_link = '&laquo; Previous';
 	}
 	
-	if ($offset + $limit < $document_count) {
+	if ($offset + $limit < $project_count) {
 		$next = $_GET;
 		$next['offset'] = $offset + $limit;
 		$next_link = '<a href="?' . http_build_query($next) . '">More &raquo;</a>';
