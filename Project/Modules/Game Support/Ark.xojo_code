@@ -581,16 +581,21 @@ Protected Module Ark
 		  
 		  Target.InitializeLexer("props")
 		  
+		  Var SectionColor, AssignmentColor, KeywordColor As Color
+		  
 		  If Color.IsDarkMode Then
-		    Target.Style(SCE_PROPS_SECTION).ForeColor = &cFB4A4B
-		    Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = &cCBCBCB
-		    Target.Style(SCE_PROPS_KEY).ForeColor = &c106AFE
+		    SectionColor = &cFF7778
+		    AssignmentColor = &cCBCBCB
+		    KeywordColor = &c19A9FF
 		  Else
-		    Target.Style(SCE_PROPS_SECTION).ForeColor = &c7D1012
-		    Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = &c515151
-		    Target.Style(SCE_PROPS_KEY).ForeColor = &c106AFE
+		    SectionColor = &c7D1012
+		    AssignmentColor = &c515151
+		    KeywordColor = &c0C51C3
 		  End If
 		  
+		  Target.Style(SCE_PROPS_SECTION).ForeColor = SectionColor
+		  Target.Style(SCE_PROPS_ASSIGNMENT).ForeColor = AssignmentColor
+		  Target.Style(SCE_PROPS_KEY).ForeColor = KeywordColor
 		  Target.Style(SCE_PROPS_SECTION).Bold = True
 		  
 		  // Unknown colors, make sure they stand out so they can be discovered more readily

@@ -600,10 +600,6 @@ End
 		  Self.UpdateEncryptButton()
 		  Self.UpdateCommentButton()
 		  Self.UpdateAutoComplete()
-		  
-		  #if DebugBuild
-		    System.DebugLog("Selection start is " + Me.SelectionStart.ToString + ", end is " + Me.SelectionEnd.ToString + ", length is " + Me.SelectionLength.ToString + ".")
-		  #endif
 		End Sub
 	#tag EndEvent
 	#tag Event
