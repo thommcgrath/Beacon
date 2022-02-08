@@ -601,7 +601,7 @@ End
 		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "harvestable")
+		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "{""required"":[""harvestable""],""excluded"":[]}")
 		  For Each Engram As Ark.Engram In Engrams
 		    If SkippedEngrams.HasKey(Engram.ObjectID) Then
 		      Continue

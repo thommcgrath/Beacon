@@ -821,7 +821,7 @@ End
 		    EngramDict.Value(Engram.ObjectID) = Engram
 		  Next
 		  
-		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "blueprintable NOT generic")
+		  Engrams = Ark.DataSource.SharedInstance.GetEngrams("", Self.Project.ContentPacks, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
 		  For Each Engram As Ark.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close
