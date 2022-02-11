@@ -502,7 +502,7 @@ End
 		  Var Filter As String = Self.EngramFilterField.Text.Trim
 		  If Filter.IsEmpty = False Then
 		    Var Filtered() As Ark.Engram
-		    For Idx As Integer = Engrams.FirstRowIndex To Engrams.LastRowIndex
+		    For Idx As Integer = Engrams.FirstIndex To Engrams.LastIndex
 		      If Engrams(Idx).Label.IndexOf(Filter) > -1 Or Engrams(Idx).ClassString.IndexOf(Filter) > -1 Or Engrams(Idx).Path.IndexOf(Filter) > -1 Or ((Engrams(Idx).AlternateLabel Is Nil) = False And Engrams(Idx).AlternateLabel.IndexOf(Filter) > -1) Then
 		        Filtered.Add(Engrams(Idx))
 		      End If

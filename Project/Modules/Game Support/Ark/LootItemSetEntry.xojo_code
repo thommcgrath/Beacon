@@ -662,7 +662,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		Function SafeForContentPacks(ContentPacks As Beacon.StringList) As Boolean
 		  // This method kind of sucks, but yes it is needed for preset generation.
 		  
-		  If ContentPacks.Count = CType(0, UInteger) Then
+		  If ContentPacks.Count = 0 Then
 		    Return True
 		  End If
 		  

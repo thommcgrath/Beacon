@@ -62,14 +62,14 @@ Protected Module Preferences
 		    Timestamps.Sort
 		    Var Cutoff As DateTime = DateTime.Now - New DateInterval(0, 6)
 		    Var CutoffSeconds As Double = Cutoff.SecondsFrom1970
-		    For Idx As Integer = Timestamps.LastRowIndex DownTo Timestamps.FirstRowIndex
+		    For Idx As Integer = Timestamps.LastIndex DownTo Timestamps.FirstIndex
 		      If Timestamps(Idx) < CutoffSeconds Then
-		        Timestamps.Remove(Idx)
+		        Timestamps.RemoveAt(Idx)
 		        Changed = True
 		      End If
 		    Next Idx
 		    While Timestamps.Count > 20
-		      Timestamps.Remove(Timestamps.LastRowIndex)
+		      Timestamps.RemoveAt(Timestamps.LastIndex)
 		      Changed = True
 		    Wend
 		    

@@ -413,8 +413,8 @@ End
 		  End If
 		  
 		  Var Configs() As Ark.ConfigKey = Ark.DataSource.SharedInstance.GetConfigKeys(CurrentFile, CurrentHeader, "", False)
-		  Self.mAutocompleteWords.ResizeTo(Configs.LastRowIndex)
-		  For Idx As Integer = Configs.FirstRowIndex To Configs.LastRowIndex
+		  Self.mAutocompleteWords.ResizeTo(Configs.LastIndex)
+		  For Idx As Integer = Configs.FirstIndex To Configs.LastIndex
 		    Self.mAutocompleteWords(Idx) = Configs(Idx).Key
 		  Next Idx
 		  

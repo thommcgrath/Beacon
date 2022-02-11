@@ -33,8 +33,8 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Count() As UInteger
-		  Return CType(Self.mItems.LastIndex + 1, UInteger)
+		Function Count() As Integer
+		  Return Self.mItems.Count
 		End Function
 	#tag EndMethod
 

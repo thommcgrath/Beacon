@@ -1149,7 +1149,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetCreaturesByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.Creature()
 		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.class_string = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND creatures.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1164,7 +1164,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetCreaturesByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.Creature()
 		  Var SQL As String = Self.CreatureSelectSQL + " WHERE creatures.path = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND creatures.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1254,7 +1254,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetEngramsByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.Engram()
 		  Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.class_string = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND engrams.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1300,7 +1300,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetEngramsByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.Engram()
 		  Var SQL As String = Self.EngramSelectSQL + " WHERE engrams.path = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND engrams.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1317,7 +1317,7 @@ Inherits Beacon.DataSource
 		  // I hate the name of this method
 		  
 		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    Var List() As String
 		    For Each ContentPackUUID As String In ContentPacks
 		      List.Add("'" + ContentPackUUID + "'")
@@ -1560,7 +1560,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetLootContainersByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.LootContainer()
 		  Var SQL As String = Self.LootContainerSelectSQL + " WHERE loot_containers.class_string = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND loot_containers.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1575,7 +1575,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetLootContainersByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.LootContainer()
 		  Var SQL As String = Self.LootContainerSelectSQL + " WHERE loot_containers.path = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND loot_containers.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1753,7 +1753,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetSpawnPointsByClass(ClassString As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint()
 		  Var SQL As String = Self.SpawnPointSelectSQL + " WHERE spawn_points.class_string = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND spawn_points.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"
@@ -1768,7 +1768,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetSpawnPointsByPath(Path As String, ContentPacks As Beacon.StringList) As Ark.SpawnPoint()
 		  Var SQL As String = Self.SpawnPointSelectSQL + " WHERE spawn_points.path = ?1"
-		  If (ContentPacks Is Nil) = False And ContentPacks.Count > CType(0, UInteger) Then
+		  If (ContentPacks Is Nil) = False And ContentPacks.Count > 0 Then
 		    SQL = SQL + " AND spawn_points.content_pack_id IN (" + ContentPacks.SQLValue + ")"
 		  End If
 		  SQL = SQL + ";"

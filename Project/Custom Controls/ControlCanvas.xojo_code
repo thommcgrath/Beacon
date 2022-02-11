@@ -136,6 +136,10 @@ Implements AnimationKit.Scrollable,AnimationKit.ValueAnimator
 
 	#tag Event
 		Sub Open()
+		  #if XojoVersion >= 2022.01
+		    Self.AllowFocusRing = False
+		  #endif
+		  
 		  RaiseEvent Open
 		  
 		  #if XojoVersion >= 2018.01
