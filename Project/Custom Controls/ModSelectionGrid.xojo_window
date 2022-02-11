@@ -26,7 +26,7 @@ Begin ContainerControl ModSelectionGrid
    Transparent     =   True
    Visible         =   True
    Width           =   300
-   BeginSegmentedButton SegmentedButton ViewSelector
+   BeginDesktopSegmentedButton DesktopSegmentedButton ViewSelector
       Enabled         =   True
       Height          =   24
       Index           =   -2147483648

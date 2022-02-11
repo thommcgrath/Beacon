@@ -285,14 +285,14 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ResizeCells(Extends Target As SegmentedButton)
+		Sub ResizeCells(Extends Target As DesktopSegmentedButton)
 		  #if TargetMacOS
-		    Var Handle As Integer = Target.Handle
+		    Var Handle As Ptr = Target.Handle
 		    
 		    Declare Function sel_registerName Lib "/usr/lib/libobjc.dylib" (Name As CString) As Ptr
-		    Declare Function RespondsToSelector Lib "Cocoa.framework" Selector "respondsToSelector:" (Target As Integer, Sel As Ptr) As Boolean
+		    Declare Function RespondsToSelector Lib "Cocoa.framework" Selector "respondsToSelector:" (Target As Ptr, Sel As Ptr) As Boolean
 		    If RespondsToSelector(Handle, sel_registerName("setSegmentDistribution:")) Then
-		      Declare Sub SetSegmentDistribution Lib "AppKit" Selector "setSegmentDistribution:" (Target As Integer, Value As Integer)
+		      Declare Sub SetSegmentDistribution Lib "AppKit" Selector "setSegmentDistribution:" (Target As Ptr, Value As Integer)
 		      SetSegmentDistribution(Handle, 2)
 		      
 		      Var CellCount As Integer = Target.SegmentCount

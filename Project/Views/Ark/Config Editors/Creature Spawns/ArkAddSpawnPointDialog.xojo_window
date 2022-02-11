@@ -217,7 +217,7 @@ Begin BeaconDialog ArkAddSpawnPointDialog
       Visible         =   True
       Width           =   560
    End
-   BeginSegmentedButton SegmentedButton FilterSelector
+   BeginDesktopSegmentedButton DesktopSegmentedButton FilterSelector
       Enabled         =   True
       Height          =   24
       Index           =   -2147483648
@@ -700,14 +700,14 @@ End
 #tag EndEvents
 #tag Events FilterSelector
 	#tag Event
-		Sub Open()
-		  Me.Width = Me.SegmentCount * 100
-		  Me.ResizeCells
+		Sub Pressed(segmentIndex as integer)
+		  Self.FilterMode = SegmentIndex
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(segmentIndex as integer)
-		  Self.FilterMode = SegmentIndex
+		Sub Opening()
+		  Me.Width = Me.SegmentCount * 100
+		  Me.ResizeCells
 		End Sub
 	#tag EndEvent
 #tag EndEvents

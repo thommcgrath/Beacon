@@ -50,7 +50,7 @@ Begin TemplateEditorView ArkLootTemplateEditorView
       Value           =   0
       Visible         =   True
       Width           =   740
-      BeginSegmentedButton SegmentedButton MapSelector
+      BeginDesktopSegmentedButton DesktopSegmentedButton MapSelector
          Enabled         =   True
          Height          =   24
          Index           =   -2147483648
