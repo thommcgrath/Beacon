@@ -29,8 +29,20 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub Close()
-		  If mInstance = Self Then
-		    mInstance = Nil
+		  If (mInstances Is Nil) = False Then
+		    For Each Entry As DictionaryEntry In mInstances
+		      If Entry.Value IsA Ark.DataSource Then
+		        If Ark.DataSource(Entry.Value) = Self Then
+		          mInstances.Remove(Entry.Key)
+		          Exit For Entry
+		        End If
+		      ElseIf Entry.Value IsA WeakRef And WeakRef(Entry.Value).Value IsA Ark.DataSource Then
+		        If Ark.DataSource(WeakRef(Entry.Value).Value) = Self Then
+		          mInstances.Remove(Entry.Key)
+		          Exit For Entry
+		        End If
+		      End If
+		    Next Entry
 		  End If
 		End Sub
 	#tag EndEvent
@@ -685,6 +697,12 @@ Inherits Beacon.DataSource
 		  
 		  Super.Constructor()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateInstance() As Ark.DataSource
+		  Return SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -2499,11 +2517,51 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SharedInstance(Create As Boolean = True) As Ark.DataSource
-		  If mInstance Is Nil And Create = True Then
-		    mInstance = New Ark.DataSource
+		Shared Function SharedInstance(Flags As Integer = 3) As Ark.DataSource
+		  Const MainThreadID = "Main"
+		  
+		  Var CurrentThread As Thread = Thread.Current
+		  Var ThreadID As String = If(CurrentThread Is Nil, MainThreadID, CurrentThread.ThreadID.ToHex)
+		  
+		  If mInstances Is Nil Then
+		    mInstances = New Dictionary
 		  End If
-		  Return mInstance
+		  
+		  Var Value As Variant
+		  If mInstances.HasKey(ThreadID) Then
+		    Value = mInstances.Value(ThreadID)
+		  ElseIf (Flags And FlagFallbackToMainThread) = FlagFallbackToMainThread And ThreadID <> MainThreadID Then
+		    ThreadID = MainThreadID
+		    If mInstances.HasKey(MainThreadID) Then
+		      Value = mInstances.Value(MainThreadID)
+		    End If
+		  End If
+		  
+		  Var Instance As Ark.DataSource
+		  If Value IsA Ark.DataSource Then
+		    Instance = Value
+		  ElseIf Value IsA WeakRef Then
+		    Var Ref As WeakRef = WeakRef(Value)
+		    If (Ref.Value Is Nil) = False And Ref.Value IsA Ark.DataSource Then
+		      Instance = Ark.DataSource(Ref.Value)
+		    End If
+		  End If
+		  
+		  If Instance Is Nil Then
+		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
+		      Instance = New Ark.DataSource
+		      // Main thread instance is always a hard reference
+		      If (Flags And FlagUseWeakRef) = FlagUseWeakRef And ThreadID <> MainThreadID Then
+		        mInstances.Value(ThreadID) = New WeakRef(Instance)
+		      Else
+		        mInstances.Value(ThreadID) = Instance
+		      End If
+		    Else
+		      Return Nil
+		    End If
+		  End If
+		  
+		  Return Instance
 		End Function
 	#tag EndMethod
 
@@ -2637,7 +2695,7 @@ Inherits Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared mInstance As Ark.DataSource
+		Private Shared mInstances As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -840,8 +840,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SetupDatabases()
 		  Try
-		    Self.mDataSources.Add(Ark.DataSource.SharedInstance(True))
-		    Self.mDataSources.Add(Beacon.CommonData.SharedInstance(True))
+		    Self.mDataSources.Add(Ark.DataSource.SharedInstance)
+		    Self.mDataSources.Add(Beacon.CommonData.SharedInstance)
 		  Catch Err As RuntimeException
 		    // Something is still wrong
 		    BeaconUI.ShowAlert("Beacon cannot start due to a problem with a local database.", "Beacon is unable to create or repair a local database. The database error was: `" + Err.Message + "`.")

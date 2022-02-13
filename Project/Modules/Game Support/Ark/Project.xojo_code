@@ -316,7 +316,7 @@ Inherits Beacon.Project
 		  Self.mMapMask = 1 // Play it safe, do not bother calling Ark.Maps here in case database access is fubar
 		  Self.mContentPacks = New Dictionary
 		  
-		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance(False)
+		  Var DataSource As Ark.DataSource = Ark.DataSource.SharedInstance(Ark.DataSource.FlagFallbackToMainThread)
 		  If (DataSource Is Nil) = False Then
 		    Var Packs() As Ark.ContentPack = DataSource.GetContentPacks
 		    For Idx As Integer = 0 To Packs.LastIndex

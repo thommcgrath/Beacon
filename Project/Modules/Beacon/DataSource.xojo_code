@@ -861,6 +861,15 @@ Protected Class DataSource
 	#tag Constant, Name = DeltaFormat, Type = Double, Dynamic = False, Default = \"5", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = FlagCreateIfNeeded, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagFallbackToMainThread, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagUseWeakRef, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public
 	#tag EndConstant
 

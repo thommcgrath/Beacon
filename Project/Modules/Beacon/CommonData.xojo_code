@@ -11,8 +11,20 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Sub Close()
-		  If mInstance = Self Then
-		    mInstance = Nil
+		  If (mInstances Is Nil) = False Then
+		    For Each Entry As DictionaryEntry In mInstances
+		      If Entry.Value IsA Beacon.CommonData Then
+		        If Beacon.CommonData(Entry.Value) = Self Then
+		          mInstances.Remove(Entry.Key)
+		          Exit For Entry
+		        End If
+		      ElseIf Entry.Value IsA WeakRef And WeakRef(Entry.Value).Value IsA Beacon.CommonData Then
+		        If Beacon.CommonData(WeakRef(Entry.Value).Value) = Self Then
+		          mInstances.Remove(Entry.Key)
+		          Exit For Entry
+		        End If
+		      End If
+		    Next Entry
 		  End If
 		End Sub
 	#tag EndEvent
@@ -51,6 +63,12 @@ Inherits Beacon.DataSource
 		  Self.mTemplateCache = New Dictionary
 		  Super.Constructor
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateInstance() As Beacon.CommonData
+		  Return SharedInstance(Beacon.DataSource.FlagCreateIfNeeded Or Beacon.DataSource.FlagUseWeakRef)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -320,11 +338,51 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SharedInstance(Create As Boolean = True) As Beacon.CommonData
-		  If mInstance Is Nil And Create = True Then
-		    mInstance = New Beacon.CommonData
+		Shared Function SharedInstance(Flags As Integer = 3) As Beacon.CommonData
+		  Const MainThreadID = "Main"
+		  
+		  Var CurrentThread As Global.Thread = Thread.Current
+		  Var ThreadID As String = If(CurrentThread Is Nil, MainThreadID, CurrentThread.ThreadID.ToHex)
+		  
+		  If mInstances Is Nil Then
+		    mInstances = New Dictionary
 		  End If
-		  Return mInstance
+		  
+		  Var Value As Variant
+		  If mInstances.HasKey(ThreadID) Then
+		    Value = mInstances.Value(ThreadID)
+		  ElseIf (Flags And FlagFallbackToMainThread) = FlagFallbackToMainThread And ThreadID <> MainThreadID Then
+		    ThreadID = MainThreadID
+		    If mInstances.HasKey(MainThreadID) Then
+		      Value = mInstances.Value(MainThreadID)
+		    End If
+		  End If
+		  
+		  Var Instance As Beacon.CommonData
+		  If Value IsA Beacon.CommonData Then
+		    Instance = Value
+		  ElseIf Value IsA WeakRef Then
+		    Var Ref As WeakRef = WeakRef(Value)
+		    If (Ref.Value Is Nil) = False And Ref.Value IsA Beacon.CommonData Then
+		      Instance = Beacon.CommonData(Ref.Value)
+		    End If
+		  End If
+		  
+		  If Instance Is Nil Then
+		    If (Flags And FlagCreateIfNeeded) = FlagCreateIfNeeded Then
+		      Instance = New Beacon.CommonData
+		      // Main thread instance is always a hard reference
+		      If (Flags And FlagUseWeakRef) = FlagUseWeakRef And ThreadID <> MainThreadID Then
+		        mInstances.Value(ThreadID) = New WeakRef(Instance)
+		      Else
+		        mInstances.Value(ThreadID) = Instance
+		      End If
+		    Else
+		      Return Nil
+		    End If
+		  End If
+		  
+		  Return Instance
 		End Function
 	#tag EndMethod
 
@@ -432,7 +490,7 @@ Inherits Beacon.DataSource
 
 
 	#tag Property, Flags = &h21
-		Private Shared mInstance As Beacon.CommonData
+		Private Shared mInstances As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
