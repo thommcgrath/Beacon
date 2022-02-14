@@ -294,7 +294,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Beacon.DataSource.Notification_DatabaseUpdated, Beacon.DataSource.Notification_ImportStarted, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, Beacon.DataSource.Notification_SyncStarted, Beacon.DataSource.Notification_SyncFinished)
+		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -308,7 +308,7 @@ End
 		  Self.MinimumHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinimumWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, Beacon.DataSource.Notification_DatabaseUpdated, Beacon.DataSource.Notification_ImportStarted, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged, Beacon.DataSource.Notification_SyncStarted, Beacon.DataSource.Notification_SyncFinished)
+		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped, IdentityManager.Notification_IdentityChanged)
 		  
 		  Self.UpdateEngramStatus
 		End Sub
@@ -357,7 +357,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case Beacon.DataSource.Notification_DatabaseUpdated, Beacon.DataSource.Notification_ImportFailed, Beacon.DataSource.Notification_ImportStarted, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_SyncStarted, Beacon.DataSource.Notification_SyncFinished
+		  Case DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped
 		    Var LastSync As DateTime = Notification.UserData
 		    Self.UpdateEngramStatus(LastSync)
 		  Case IdentityManager.Notification_IdentityChanged
@@ -368,21 +368,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEngramStatus(LastSync As DateTime = Nil)
-		  Var Sources() As Beacon.DataSource = App.DataSources
-		  For Each Source As Beacon.DataSource In Sources
-		    If Source.Syncing Then
-		      Self.SyncLabel.Text = Source.Identifier + ": Checking for game data updates…"
-		      Self.EngramImportIndicator.Visible = True
-		      Return
-		    ElseIf Source.Importing Then
-		      Self.SyncLabel.Text = Source.Identifier + ": Importing game data…"
-		      Self.EngramImportIndicator.Visible = True
-		      Return
-		    End If
-		  Next Source
+		  If DataUpdater.IsCheckingOnline Then
+		    Self.SyncLabel.Text = "Checking for database updates…"
+		    Self.EngramImportIndicator.Visible = True
+		    Return
+		  ElseIf DataUpdater.IsImporting Then
+		    Self.SyncLabel.Text = "Importing database updates…"
+		    Self.EngramImportIndicator.Visible = True
+		    Return
+		  End If
 		  
 		  If IsNull(LastSync) Then
-		    LastSync = App.NewestSyncDate
+		    LastSync = Preferences.LastSyncDateTime
 		  End If
 		  If IsNull(LastSync) Then
 		    Self.SyncLabel.Text = "Databases are empty"
@@ -443,11 +440,11 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Var LastSync As DateTime = Ark.DataSource.SharedInstance.LastSync
+		  Var LastSync As DateTime = Preferences.LastSyncDateTime
 		  If IsNull(LastSync) Then
-		    Me.Text = "No engram data available"
+		    Me.Text = "Databases have not been updated"
 		  Else
-		    Me.Text = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
+		    Me.Text = "Databases updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
 	#tag EndEvent

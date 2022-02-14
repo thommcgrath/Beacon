@@ -92,7 +92,7 @@ Inherits Beacon.DataSource
 		    Return
 		  End Try
 		  
-		  Self.Import(Content)
+		  #Pragma Warning "Not sure how to handle initial import, but this isn't it."
 		End Sub
 	#tag EndEvent
 
@@ -106,7 +106,7 @@ Inherits Beacon.DataSource
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
-		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
+		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers")
 		  For Each RequiredKey As String In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import blueprints because key '" + RequiredKey + "' is missing.")
@@ -2448,7 +2448,7 @@ Inherits Beacon.DataSource
 		          Var TagsToAdd() As String = CurrentTags.NewMembers(DesiredTags)
 		          Var TagsToRemove() As String = DesiredTags.NewMembers(CurrentTags)
 		          For Each Tag As String In TagsToAdd
-		            Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
+		            Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
 		          Next Tag
 		          For Each Tag As String In TagsToRemove
 		            Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", UpdateObjectID, Tag)
@@ -2469,7 +2469,7 @@ Inherits Beacon.DataSource
 		        
 		        Var Tags() As String = Blueprint.Tags
 		        For Each Tag As String In Tags
-		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
+		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
 		        Next Tag
 		      End If
 		      Self.CommitTransaction()
@@ -2562,25 +2562,6 @@ Inherits Beacon.DataSource
 		  End If
 		  
 		  Return Instance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SyncURL(ForceRefresh As Boolean) As String
-		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Self.DeltaFormat.ToString(Locale.Raw, "0") + "&game=" + Self.Identifier.Lowercase)
-		  
-		  If ForceRefresh = False Then
-		    Var LastSync As String = Self.Variable("sync_time")
-		    If LastSync.IsEmpty = False Then
-		      CheckURL = CheckURL + "&since=" + EncodeURLComponent(LastSync)
-		    End If
-		  End If
-		  
-		  If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
-		  End If
-		  
-		  Return CheckURL
 		End Function
 	#tag EndMethod
 

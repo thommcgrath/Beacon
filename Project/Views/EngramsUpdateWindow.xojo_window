@@ -134,18 +134,15 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Beacon.DataSource.Notification_SyncFinished, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed)
+		  NotificationKit.Ignore(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  NotificationKit.Watch(Self, Beacon.DataSource.Notification_SyncFinished, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed)
+		  NotificationKit.Watch(Self, DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped)
 		  
-		  Var Sources() As Beacon.DataSource = App.DataSources
-		  For Each DataSource As Beacon.DataSource In Sources
-		    DataSource.Sync(Self.mForceRefresh)
-		  Next DataSource
+		  DataUpdater.CheckNow(Self.mForceRefresh)
 		End Sub
 	#tag EndEvent
 
@@ -165,30 +162,34 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsActive() As Boolean
+		  Return DataUpdater.IsCheckingOnline Or DataUpdater.IsImporting
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case Beacon.DataSource.Notification_SyncFinished, Beacon.DataSource.Notification_ImportSuccess, Beacon.DataSource.Notification_ImportFailed
-		    Var Sources() As Beacon.DataSource = App.DataSources
-		    For Each Source As Beacon.DataSource In Sources
-		      If Source.Importing Or Source.Syncing Then
-		        // Not done yet
-		        Return
-		      End If
-		    Next Source
+		  Case DataUpdater.Notification_OnlineCheckError
+		    
+		  Case DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckStopped
+		    If Self.IsActive Then
+		      // Not done yet
+		      Return
+		    End If
 		    
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
-		    
-		    Var ImportDate As DateTime = App.NewestSyncDate
+		    Var ImportDate As DateTime = Preferences.LastSyncDateTime
 		    
 		    Var Message, Explanation As String
 		    If IsNull(ImportDate) Then
-		      Message = "Blueprint definitions have not been updated"
-		      Explanation = "No blueprint definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
+		      Message = "Databases have not been updated"
+		      Explanation = "Beacon's databases do not have data. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
 		    Else
-		      Message = "Blueprint definitions have been updated"
-		      Explanation = "Blueprints are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
+		      Message = "Databases have been updated"
+		      Explanation = "Beacon's database are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
 		    End If
 		    Self.Hide
 		    BeaconUI.ShowAlert(Message, Explanation)
@@ -219,13 +220,10 @@ End
 		Sub Action()
 		  // Make sure the window is only shown if there is a database syncing
 		  
-		  Var Sources() As Beacon.DataSource = App.DataSources
-		  For Each Source As Beacon.DataSource In Sources
-		    If Source.Syncing Or Source.Importing Then
-		      Self.Show()
-		      Return
-		    End If
-		  Next Source
+		  If Self.IsActive Then
+		    Self.Show()
+		    Return
+		  End If
 		  
 		  // Nothing is syncing, so just close the window
 		  Self.Close()

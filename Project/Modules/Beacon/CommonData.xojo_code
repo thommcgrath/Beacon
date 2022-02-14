@@ -45,6 +45,18 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		  #if DebugBuild
+		    #Pragma Unused ChangeDict
+		    #Pragma Unused StatusData
+		    Return True
+		  #else
+		    #Pragma Error "Does not import common data"
+		  #endif
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub IndexesBuilt()
 		  Self.SQLExecute("DROP VIEW IF EXISTS loot_templates;")
 		  Self.SQLExecute("CREATE VIEW loot_templates AS SELECT * FROM custom_loot_templates UNION SELECT * FROM official_loot_templates WHERE object_id NOT IN (SELECT object_id FROM custom_loot_templates);")

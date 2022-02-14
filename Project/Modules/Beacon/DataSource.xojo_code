@@ -1,22 +1,5 @@
 #tag Class
 Protected Class DataSource
-	#tag Method, Flags = &h21
-		Private Sub AdvanceDeltaQueue()
-		  If Self.mDeltaDownloadQueue.Count = 0 Then
-		    Self.Syncing = False
-		    Return
-		  End If
-		  
-		  Var Downloader As New URLConnection
-		  AddHandler Downloader.ContentReceived, WeakAddressOf mDeltaDownload_ContentReceived
-		  AddHandler Downloader.Error, WeakAddressOf mDeltaDownload_Error
-		  AddHandler Downloader.ReceivingProgressed, WeakAddressOf mDeltaDownload_ReceivingProgressed
-		  Downloader.Send("GET", Self.mDeltaDownloadQueue(0))
-		  Self.mDeltaDownloadQueue.RemoveAt(0)
-		  Self.mDeltaDownloader = Downloader
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub BeginTransaction()
 		  Self.ObtainLock()
@@ -112,11 +95,6 @@ Protected Class DataSource
 		Sub Constructor()
 		  Self.mLock = New CriticalSection
 		  
-		  Self.mUpdateCheckTimer = New Timer
-		  Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Off
-		  Self.mUpdateCheckTimer.Period = 60000
-		  AddHandler mUpdateCheckTimer.Action, WeakAddressOf mUpdateCheckTimer_Action
-		  
 		  Const YieldInterval = 100
 		  
 		  Var DatafileName As String = Self.DatafileName
@@ -148,7 +126,6 @@ Protected Class DataSource
 		    Self.mDatabase.CreateDatabase
 		    Self.ConnectionCount = Self.ConnectionCount + 1
 		    
-		    Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		    Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		    
 		    Self.BeginTransaction()
@@ -161,6 +138,7 @@ Protected Class DataSource
 		  
 		  Self.SQLExecute("PRAGMA cache_size = -100000;")
 		  Self.SQLExecute("PRAGMA analysis_limit = 0;")
+		  Self.ForeignKeys = True
 		  
 		  RaiseEvent Open()
 		End Sub
@@ -210,6 +188,66 @@ Protected Class DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ForeignKeys() As Boolean
+		  Try
+		    Var Tmp As RowSet = Self.SQLSelect("PRAGMA foreign_keys;")
+		    Return Tmp.ColumnAt(0).IntegerValue = 1
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Checking foreign key status")
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ForeignKeys(Assigns Value As Boolean)
+		  If Self.ForeignKeys = Value Then
+		    Return
+		  End If
+		  
+		  If Value Then
+		    Var Rows As RowSet
+		    Try
+		      Rows = Self.SQLSelect("PRAGMA foreign_key_check;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Getting list of broken foreign keys")
+		    End Try
+		    If (Rows Is Nil) = False Then
+		      While Rows.AfterLastRow = False
+		        Var TransactionStarted As Boolean
+		        Try
+		          Var TableName As String = Rows.Column("table").StringValue
+		          Var RowID As Integer = Rows.Column("rowid").IntegerValue
+		          Self.BeginTransaction
+		          TransactionStarted = True
+		          Self.SQLExecute("DELETE FROM """ + TableName.ReplaceAll("""", """""") + """ WHERE rowid = ?1;", RowID)
+		          Self.CommitTransaction
+		          TransactionStarted = False
+		        Catch Err As RuntimeException
+		          App.Log(Err, CurrentMethodName, "Deleting broken foreign key row")
+		          If TransactionStarted Then
+		            Self.RollbackTransaction
+		          End If
+		        End Try
+		        Rows.MoveToNextRow
+		      Wend
+		    End If
+		    Try
+		      Self.SQLExecute("PRAGMA foreign_keys = ON;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Turning on foreign keys")
+		    End Try
+		  Else
+		    Try
+		      Self.SQLExecute("PRAGMA foreign_keys = OFF;")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Turning off foreign keys")
+		    End Try
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Identifier() As String
 		  Var Err As New RuntimeException
@@ -219,30 +257,59 @@ Protected Class DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Import(Content As String)
-		  Self.mImporting = True
-		  Self.mPendingImports.Add(Content)
+		Function Import(Data As Dictionary, ShouldTruncate As Boolean) As Boolean
+		  // The DataUpdater module will call this method inside a thread with its own database connection
 		  
-		  If Self.mImportThread = Nil Then
-		    Self.mImportThread = New Thread
-		    Self.mImportThread.DebugIdentifier = "Import"
-		    Self.mImportThread.Priority = Thread.LowestPriority
-		    AddHandler Self.mImportThread.Run, WeakAddressOf Self.mImportThread_Run
+		  If Data.HasKey(Self.Identifier.Lowercase) = False Then
+		    Return True
 		  End If
 		  
-		  If Self.mImportThread.ThreadState = Thread.ThreadStates.NotRunning Then
-		    Self.mImportThread.Start
+		  Var StatusData As New Dictionary
+		  Var OriginalDepth As Integer = Self.TransactionDepth
+		  Self.BeginTransaction()
+		  
+		  If ShouldTruncate Then
+		    Try
+		      RaiseEvent ImportTruncate
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Truncating")
+		      While Self.TransactionDepth > OriginalDepth
+		        Self.RollbackTransaction
+		      Wend
+		      Return False
+		    End Try
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Importing() As Boolean
-		  Return Self.mImporting
+		  
+		  Try
+		    Var ChangeDict As Dictionary = Data.Value(Self.Identifier.Lowercase)
+		    If Import(ChangeDict, StatusData) Then
+		      Self.CommitTransaction
+		    Else
+		      Self.RollbackTransaction
+		      Return False
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Importing")
+		    While Self.TransactionDepth > OriginalDepth
+		      Self.RollbackTransaction
+		    Wend
+		    Return False
+		  End Try
+		  
+		  Try
+		    RaiseEvent ImportCleanup(StatusData)
+		    Return True
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Cleaning up after import")
+		    While Self.TransactionDepth > OriginalDepth
+		      Self.RollbackTransaction
+		    Wend
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 		Private Function ImportInner(Content As String) As Boolean
 		  If Content.Bytes < 2 Then
 		    Return False
@@ -319,23 +386,6 @@ Protected Class DataSource
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function LastSync() As DateTime
-		  Var LastSync As String = Self.Variable("sync_time")
-		  If LastSync.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Return NewDateFromSQLDateTime(LastSync)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub LastSync(Assigns Value As DateTime)
-		  Self.Variable("sync_time") = Value.SQLDateTimeWithOffset
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function MassageValues(Values() As Variant) As Variant()
 		  Var FinalValues() As Variant
@@ -376,48 +426,7 @@ Protected Class DataSource
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub mDeltaDownload_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
-		  #Pragma Unused Sender
-		  #Pragma Unused URL
-		  
-		  Self.mDeltaDownloader = Nil
-		  
-		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
-		    Self.mDeltaDownloadQueue.RemoveAll
-		    App.Log("Failed to download sync delta: HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
-		    Self.Syncing = False
-		    Return
-		  End If
-		  
-		  Self.Import(Content)
-		  Self.AdvanceDeltaQueue()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mDeltaDownload_Error(Sender As URLConnection, Err As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  Self.mDeltaDownloader = Nil
-		  Self.mDeltaDownloadQueue.RemoveAll
-		  
-		  App.Log("Failed to download sync delta: " + Err.Message)
-		  Self.Syncing = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mDeltaDownload_ReceivingProgressed(Sender As URLConnection, BytesReceived As Int64, TotalBytes As Int64, NewData As String)
-		  #Pragma Unused Sender
-		  #Pragma Unused TotalBytes
-		  #Pragma Unused NewData
-		  
-		  Self.mDeltaDownloadedBytes = Self.mDeltaDownloadedBytes + CType(BytesReceived, UInt64)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 		Private Sub mImportThread_Run(Sender As Thread)
 		  If Self.mPendingImports.LastIndex = -1 Then
 		    Self.mImporting = False
@@ -461,88 +470,17 @@ Protected Class DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdateCheckTimer_Action(Sender As Timer)
-		  #Pragma Unused Sender
-		  
-		  // Check every four hours
-		  If DateTime.Now.SecondsFrom1970 - Self.mUpdateCheckTime.SecondsFrom1970 >= 14400 Then
-		    Self.Sync(False)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mUpdater_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
-		  #Pragma Unused Sender
-		  #Pragma Unused URL
-		  
-		  Self.mUpdater = Nil
-		  
-		  If HTTPStatus <> 200 Then
-		    App.Log("Sync returned HTTP " + HTTPStatus.ToString(Locale.Raw, "0"))
-		    Self.Syncing = False
-		    Return
-		  End If
-		  
-		  Try
-		    Var Parsed As Variant = Beacon.ParseJSON(Content)
-		    If Parsed Is Nil Or (Parsed IsA Dictionary) = False Then
-		      App.Log("No changes available.")
-		      Self.Syncing = False
-		      Return
-		    End If
-		    
-		    Var Dict As Dictionary = Parsed
-		    If Not Dict.HasAllKeys("total_size", "files") Then
-		      App.Log("Sync data is missing keys.")
-		      Self.Syncing = False
-		      Return
-		    End If
-		    
-		    Self.mDeltaDownloadedBytes = 0
-		    Self.mDeltaDownloadTotalBytes = Dict.Value("total_size")
-		    
-		    Var Files() As Object = Dict.Value("files")
-		    For Each FileInfo As Object In Files
-		      Var UpdateURL As String = Dictionary(FileInfo).Lookup("url", "")
-		      If UpdateURL.IsEmpty Then
-		        Continue
-		      End If
-		      
-		      Self.mDeltaDownloadQueue.Add(UpdateURL)
-		    Next
-		    
-		    If Self.mDeltaDownloadQueue.Count = 0 Then
-		      App.Log("No changes available.")
-		      Self.Syncing = False
-		      Return
-		    End If
-		    
-		    Self.AdvanceDeltaQueue
-		  Catch Err As RuntimeException
-		    App.Log("Unable to parse sync delta JSON: " + Err.Message)
-		    Self.Syncing = False
-		    Return
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  Self.mUpdater = Nil
-		  
-		  App.Log("Sync error: " + Error.Message)
-		  Self.Syncing = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ObtainLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
 		  Self.mLock.Enter
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Optimize()
+		  Self.SQLExecute("ANALYZE;")
+		  Self.SQLExecute("VACUUM;")
 		End Sub
 	#tag EndMethod
 
@@ -624,71 +562,6 @@ Protected Class DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Sync(ForceRefresh As Boolean = False)
-		  Var CheckURL As String = Self.SyncURL(ForceRefresh)
-		  If CheckURL.IsEmpty Then
-		    Return
-		  End If
-		  
-		  If Self.Syncing Then
-		    Return
-		  End If
-		  
-		  If Self.Importing And ForceRefresh = False Then
-		    Self.mSyncAfterImport = True
-		    Return
-		  End If
-		  
-		  Self.mUpdater = New URLConnection
-		  Self.mUpdater.AllowCertificateValidation = True
-		  Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
-		  Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
-		  AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
-		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
-		  
-		  Self.Syncing = True
-		  Self.mUpdateCheckTime = DateTime.Now
-		  If Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Off Then
-		    Self.mUpdateCheckTimer.RunMode = Timer.RunModes.Multiple
-		  End If
-		  App.Log("Syncing " + Self.Identifier + " database with " + CheckURL)
-		  Self.mUpdater.Send("GET", CheckURL)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Syncing() As Boolean
-		  Return Self.mSyncing
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Syncing(Assigns Value As Boolean)
-		  If Self.mSyncing = Value Then
-		    Return
-		  End If
-		  
-		  Self.mSyncing = Value
-		  If Value Then
-		    NotificationKit.Post(Self.Notification_SyncStarted, Nil)
-		  Else
-		    NotificationKit.Post(Self.Notification_SyncFinished, Self.LastSync)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SyncURL(ForceRefresh As Boolean) As String
-		  #Pragma Unused ForceRefresh
-		  
-		  Var Err As New RuntimeException
-		  Err.Message = "DataSource.SyncURL was not overridden"
-		  Raise Err
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function TestPerformance(AttemptRepair As Boolean, ThresholdMicroseconds As Double = 250000) As Beacon.DataSource.PerformanceResults
 		  Var StartTime As Double = System.Microseconds
 		  RaiseEvent TestPerformance()
@@ -711,6 +584,12 @@ Protected Class DataSource
 		  Else
 		    Return PerformanceResults.CouldNotRepair
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function TransactionDepth() As Integer
+		  Return Self.mTransactions.Count
 		End Function
 	#tag EndMethod
 
@@ -794,30 +673,6 @@ Protected Class DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeltaDownloadedBytes As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDeltaDownloader As URLConnection
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDeltaDownloadQueue() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDeltaDownloadTotalBytes As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mImporting As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mImportThread As Thread
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mIndexes() As Beacon.DataIndex
 	#tag EndProperty
 
@@ -830,36 +685,9 @@ Protected Class DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPendingImports() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSyncAfterImport As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSyncing As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mTransactions() As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUpdateCheckTime As DateTime
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUpdateCheckTimer As Timer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUpdater As URLConnection
-	#tag EndProperty
-
-
-	#tag Constant, Name = DeltaFormat, Type = Double, Dynamic = False, Default = \"5", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = FlagCreateIfNeeded, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
@@ -868,24 +696,6 @@ Protected Class DataSource
 	#tag EndConstant
 
 	#tag Constant, Name = FlagUseWeakRef, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_ImportFailed, Type = String, Dynamic = False, Default = \"Import Failed", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_ImportStarted, Type = String, Dynamic = False, Default = \"Import Started", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_ImportSuccess, Type = String, Dynamic = False, Default = \"Import Success", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_SyncFinished, Type = String, Dynamic = False, Default = \"Sync Finished", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_SyncStarted, Type = String, Dynamic = False, Default = \"Sync Started", Scope = Public
 	#tag EndConstant
 
 

@@ -148,7 +148,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  
 		  SystemColors.Init
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, Beacon.DataSource.Notification_ImportSuccess)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished, Preferences.Notification_OnlineStateChanged, DataUpdater.Notification_ImportStopped)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + Beacon.FileExtensionIdentity)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
@@ -1068,18 +1068,8 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NewestSyncDate() As DateTime
-		  Var SecondsFrom1970 As Double
-		  For Each Source As Beacon.DataSource In Self.mDataSources
-		    Var SyncDate As DateTime = Source.LastSync
-		    If (SyncDate Is Nil) = False Then
-		      SecondsFrom1970 = Max(SecondsFrom1970, SyncDate.SecondsFrom1970)
-		    End If
-		  Next Source
-		  If SecondsFrom1970 = 0 Then
-		    Return Nil
-		  End If
-		  Return New DateTime(SecondsFrom1970, New TimeZone(0))
+		Attributes( Deprecated = "Preferences.LastSyncDateTime" )  Function NewestSyncDate() As DateTime
+		  Return Preferences.LastSyncDateTime
 		End Function
 	#tag EndMethod
 
@@ -1113,7 +1103,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    HelpSyncCloudFiles.Enabled = True
 		  Case Preferences.Notification_OnlineStateChanged
 		    UpdatesKit.IsCheckingAutomatically = Preferences.OnlineEnabled
-		  Case Beacon.DataSource.Notification_ImportSuccess
+		  Case DataUpdater.Notification_ImportStopped
 		    If Self.mHasTestedDatabases = False Then
 		      For Each Source As Beacon.DataSource In Self.mDataSources
 		        Var Result As Beacon.DataSource.PerformanceResults = Source.TestPerformance(True)
@@ -1143,21 +1133,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  End If
 		  
 		  If File.ExtensionMatches(Beacon.FileExtensionDelta) Or File.ExtensionMatches(Beacon.FileExtensionJSON) Then
-		    Var Content As String
-		    Try
-		      Content = File.Read(Encodings.UTF8)
-		    Catch Err As RuntimeException
-		      Self.Log(Err, CurrentMethodName, "Reading update file")
-		    End Try
-		    If Content.IsEmpty = False Then
-		      For Each Source As Beacon.DataSource In Self.mDataSources
-		        Try
-		          Source.Import(Content)
-		        Catch Err As RuntimeException
-		          Self.Log(Err, CurrentMethodName, "Scheduling update file import")
-		        End Try
-		      Next Source
-		    End If
+		    DataUpdater.ImportFile(File)
 		    Return
 		  End If
 		  
@@ -1318,9 +1294,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Return
 		    End If
 		    
-		    For Each Source As Beacon.DataSource In Self.mDataSources
-		      Source.Sync(ForceRefresh)
-		    Next Source
+		    DataUpdater.CheckNow(ForceRefresh)
 		    Return
 		  End If
 		  
