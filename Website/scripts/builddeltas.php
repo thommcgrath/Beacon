@@ -52,14 +52,22 @@ foreach ($required_versions as $version) {
 	echo "Building delta for version $version...\n";
 	
 	$full_data = DataForVersion($version, null);
-	$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+	if ($version === 5) {
+		$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+	} else {
+		$full_data['timestamp'] = $last_database_update->getTimestamp();
+	}
 	
 	$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
 	if (is_null($results->Field('since')) == false) {
 		$since = new DateTime($results->Field('since'));
 		
 		$delta_data = DataForVersion($version, $since);
-		$delta_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+		if ($version === 5) {
+			$delta_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+		} else {
+			$delta_data['timestamp'] = $last_database_update->getTimestamp();
+		}
 	} else {
 		$delta_data = null;
 	}
