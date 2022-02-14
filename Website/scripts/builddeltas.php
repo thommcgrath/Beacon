@@ -11,7 +11,7 @@ define('MIN_VERSION', 99999999);
 
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
-$rows = $database->Query('UPDATE mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
+$rows = $database->Query('UPDATE ark.mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
 if ($rows->RecordCount() > 0) {
 	$database->Commit();
 } else {
