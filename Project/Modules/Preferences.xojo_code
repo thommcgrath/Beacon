@@ -534,40 +534,6 @@ Protected Module Preferences
 		Protected LastStopMessage As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Var Timestamp As String = LastSyncTime
-			  If Timestamp.IsEmpty Then
-			    Return Nil
-			  End If
-			  
-			  Try
-			    Return NewDateFromSQLDateTime(Timestamp)
-			  Catch Err As RuntimeException
-			    Return Nil
-			  End Try
-			End Get
-		#tag EndGetter
-		Protected LastSyncDateTime As DateTime
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.StringValue("Last Sync Time", "")
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.StringValue("Last Sync Time") = Value
-			End Set
-		#tag EndSetter
-		Protected LastSyncTime As String
-	#tag EndComputedProperty
-
 	#tag ComputedProperty, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		#tag Getter
 			Get

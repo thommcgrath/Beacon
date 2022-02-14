@@ -358,8 +358,7 @@ End
 		  
 		  Select Case Notification.Name
 		  Case DataUpdater.Notification_ImportBegin, DataUpdater.Notification_ImportStopped, DataUpdater.Notification_OnlineCheckBegin, DataUpdater.Notification_OnlineCheckError, DataUpdater.Notification_OnlineCheckStopped
-		    Var LastSync As DateTime = Notification.UserData
-		    Self.UpdateEngramStatus(LastSync)
+		    Self.UpdateEngramStatus()
 		  Case IdentityManager.Notification_IdentityChanged
 		    Self.TitleCanvas.Invalidate
 		  End Select
@@ -379,7 +378,7 @@ End
 		  End If
 		  
 		  If IsNull(LastSync) Then
-		    LastSync = Preferences.LastSyncDateTime
+		    LastSync = App.OldestSyncDateTime
 		  End If
 		  If IsNull(LastSync) Then
 		    Self.SyncLabel.Text = "Databases are empty"
@@ -440,11 +439,12 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Var LastSync As DateTime = Preferences.LastSyncDateTime
-		  If IsNull(LastSync) Then
+		  Var LastSync As Double = App.OldestSync
+		  If LastSync = 0 Then
 		    Me.Text = "Databases have not been updated"
 		  Else
-		    Me.Text = "Databases updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
+		    Var SyncTime As New DateTime(LastSync, New TimeZone(0))
+		    Me.Text = "Databases updated " + SyncTime.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
 	#tag EndEvent

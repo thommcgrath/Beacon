@@ -840,6 +840,15 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SetupDatabases()
 		  Try
+		    Var DataFile As FolderItem = Self.ResourcesFolder.Child("Complete.beacondata")
+		    If (DataFile Is Nil) = False And DataFile.Exists Then
+		      DataUpdater.ImportFile()
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Importing local data archive")
+		  End Try
+		  
+		  Try
 		    Self.mDataSources.Add(Ark.DataSource.SharedInstance)
 		    Self.mDataSources.Add(Beacon.CommonData.SharedInstance)
 		  Catch Err As RuntimeException
@@ -1068,12 +1077,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Preferences.LastSyncDateTime" )  Function NewestSyncDate() As DateTime
-		  Return Preferences.LastSyncDateTime
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub NextLaunchQueueTask()
 		  If Self.mLaunchQueue.LastIndex = -1 Then
 		    Return
@@ -1120,6 +1123,34 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    End If
 		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OldestSync() As Double
+		  Var MinValue As Double
+		  For Idx As Integer = Self.mDataSources.FirstIndex To Self.mDataSources.LastIndex
+		    If Idx = Self.mDataSources.FirstIndex Then
+		      MinValue = Self.mDataSources(Idx).LastSyncTimestamp
+		    Else
+		      MinValue = Min(MinValue, Self.mDataSources(Idx).LastSyncTimestamp)
+		    End If
+		  Next Idx
+		  Return MinValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OldestSyncDateTime(Local As Boolean = False) As DateTime
+		  Var Value As Double = Self.OldestSync
+		  If Value = 0 Then
+		    Return Nil
+		  End If
+		  If Local Then
+		    Return New DateTime(Value, New TimeZone(0))
+		  Else
+		    Return New DateTime(Value)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

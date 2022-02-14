@@ -14,9 +14,9 @@ Protected Module DataUpdater
 		  
 		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Version.ToString(Locale.Raw, "0"))
 		  If Refresh = False Then
-		    Var LastSync As String = Preferences.LastSyncTime
-		    If LastSync.IsEmpty = False Then
-		      CheckURL = CheckURL + "&since=" + EncodeURLComponent(LastSync)
+		    Var LastSync As Double = App.OldestSync
+		    If LastSync > 0 Then
+		      CheckURL = CheckURL + "&since=" + EncodeURLComponent(LastSync.ToString(Locale.Raw, "0"))
 		    End If
 		  End If
 		  If (App.IdentityManager Is Nil) = False And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
@@ -194,6 +194,8 @@ Protected Module DataUpdater
 		  Sources(0) = Beacon.CommonData.SharedInstance(Flags)
 		  Sources(1) = Ark.DataSource.SharedInstance(Flags)
 		  
+		  Var SourcesToOptimize() As Beacon.DataSource
+		  
 		  While mPendingImports.Count > 0
 		    Var Content As String = mPendingImports(mPendingImports.FirstIndex)
 		    mPendingImports.RemoveAt(mPendingImports.FirstIndex)
@@ -203,11 +205,9 @@ Protected Module DataUpdater
 		    End If
 		    
 		    Var Parsed As Dictionary
-		    Var Timestamp As String
 		    Var IsFull As Boolean
 		    Try
 		      Parsed = Beacon.ParseJSON(Content)
-		      Timestamp = Parsed.Value("timestamp")
 		      IsFull = Parsed.Value("is_full").BooleanValue
 		      
 		      Var FileVersion As Integer = Parsed.Value("beacon_version")
@@ -221,31 +221,32 @@ Protected Module DataUpdater
 		    
 		    For Each Source As Beacon.DataSource In Sources
 		      Var Imported As Boolean
+		      Var OriginalChangeCount As Integer = Source.TotalChanges()
 		      Try
 		        Imported = Source.Import(Parsed, IsFull)
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Trying to import delta updates for " + Source.Identifier)
 		      End Try
 		      
+		      If Imported And Source.TotalChanges() > OriginalChangeCount Then
+		        SourcesToOptimize.Add(Source)
+		      End If
+		      
 		      If Imported = False Then
 		        // Something has gone wrong
 		        mPendingImports.ResizeTo(-1)
 		        If IsFull = False Then
 		          // Perform a full refresh
-		          Preferences.LastSyncTime = ""
+		          Source.LastSyncTimestamp = 0
 		          CheckNow(True)
 		        End If
 		        Continue While
 		      End If
 		    Next Source
 		    
-		    If Parsed.HasKey("timestamp") Then
-		      Preferences.LastSyncTime = Parsed.Value("timestamp")
-		    End If
-		    
 		    If mPendingImports.Count = 0 Then
 		      // About to finish up, but if something gets added to mPendingImports, then the loop will restart to avoid missing anything
-		      For Each Source As Beacon.DataSource In Sources
+		      For Each Source As Beacon.DataSource In SourcesToOptimize
 		        Source.Optimize()
 		      Next Source
 		    End If

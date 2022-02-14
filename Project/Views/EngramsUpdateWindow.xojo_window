@@ -181,7 +181,7 @@ End
 		    End If
 		    
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
-		    Var ImportDate As DateTime = Preferences.LastSyncDateTime
+		    Var ImportDate As DateTime = App.OldestSyncDateTime
 		    
 		    Var Message, Explanation As String
 		    If IsNull(ImportDate) Then

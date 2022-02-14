@@ -97,7 +97,8 @@ Protected Class DataSource
 		  
 		  Const YieldInterval = 100
 		  
-		  Var DatafileName As String = Self.DatafileName
+		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
+		  Var DatafileName As String = Self.Identifier + ".sqlite"
 		  Var DatabaseFile As FolderItem = App.LibrariesFolder.Child(DatafileName)
 		  Self.mDatabase = New SQLiteDatabase
 		  Self.mDatabase.ThreadYieldInterval = YieldInterval
@@ -106,31 +107,50 @@ Protected Class DataSource
 		  If DatabaseFile.Exists Then
 		    Try
 		      Self.mDatabase.Connect
-		      Self.ConnectionCount = Self.ConnectionCount + 1
 		      Connected = True
 		    Catch Err As RuntimeException
 		      Self.mDatabase.Close
-		      If Self.ConnectionCount = 0 Then
-		        Var Parent As FolderItem = DatabaseFile.Parent
-		        Var Bound As Integer = Parent.Count - 1
-		        For Idx As Integer = Bound DownTo 0
-		          If Parent.ChildAt(Idx).Name.BeginsWith(DatafileName) Then
-		            Parent.ChildAt(Idx).Remove
-		          End If
-		        Next Idx
-		      End If
+		      
+		      Var Parent As FolderItem = DatabaseFile.Parent
+		      Var Bound As Integer = Parent.Count - 1
+		      For Idx As Integer = Bound DownTo 0
+		        If Parent.ChildAt(Idx).Name.BeginsWith(DatafileName) Then
+		          Parent.ChildAt(Idx).Remove
+		        End If
+		      Next Idx
 		    End Try
 		  End If
 		  
-		  If Not Connected Then
+		  Var BuildSchema As Boolean
+		  Try
+		    If Connected Then
+		      If Self.mDatabase.UserVersion <> SchemaVersion Then
+		        Self.mDatabase.ExecuteSQL("PRAGMA writable_schema = 1;")
+		        Self.mDatabase.ExecuteSQL("DELETE FROM sqlite_master;")
+		        Self.mDatabase.ExecuteSQL("PRAGMA writable_schema = 0;")
+		        Self.mDatabase.ExecuteSQL("VACUUM;")
+		        
+		        BuildSchema = True
+		      End If
+		    Else
+		      Self.mDatabase.CreateDatabase
+		      BuildSchema = True
+		    End If
+		  Catch Err As RuntimeException
+		    // I guess we'll use an in-memory database
+		    Self.mDatabase = New SQLiteDatabase
+		    Self.mDatabase.ThreadYieldInterval = YieldInterval
 		    Self.mDatabase.CreateDatabase
-		    Self.ConnectionCount = Self.ConnectionCount + 1
-		    
+		    BuildSchema = True
+		  End Try
+		  
+		  If BuildSchema Then
 		    Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		    
 		    Self.BeginTransaction()
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
 		    RaiseEvent BuildSchema
+		    Self.mDatabase.UserVersion = SchemaVersion
 		    RaiseEvent DoInitialImport
 		    Self.BuildIndexes
 		    Self.CommitTransaction()
@@ -142,14 +162,6 @@ Protected Class DataSource
 		  
 		  RaiseEvent Open()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DatafileName() As String
-		  Var Identifier As String = Self.Identifier
-		  Var Version As Integer = RaiseEvent GetSchemaVersion
-		  Return Identifier + " " + Version.ToString(Locale.Raw, "0") + ".sqlite"
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -264,6 +276,19 @@ Protected Class DataSource
 		    Return True
 		  End If
 		  
+		  Var Timestamp As Double
+		  Try
+		    Timestamp = Data.Value("timestamp").DoubleValue
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Invalid timestamp value")
+		    Return False
+		  End Try
+		  
+		  If Timestamp <= Self.LastSyncTimestamp Then
+		    // Already imported
+		    Return True
+		  End If
+		  
 		  Var StatusData As New Dictionary
 		  Var OriginalDepth As Integer = Self.TransactionDepth
 		  Self.BeginTransaction()
@@ -283,6 +308,7 @@ Protected Class DataSource
 		  Try
 		    Var ChangeDict As Dictionary = Data.Value(Self.Identifier.Lowercase)
 		    If Import(ChangeDict, StatusData) Then
+		      Self.LastSyncTimestamp = Timestamp
 		      Self.CommitTransaction
 		    Else
 		      Self.RollbackTransaction
@@ -384,6 +410,52 @@ Protected Class DataSource
 		Protected Function InTransaction() As Boolean
 		  Return Self.mTransactions.Count > 0
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LastSyncDateTime(Assigns Value As DateTime)
+		  If Value Is Nil Then
+		    Self.LastSyncTimestamp = 0
+		  Else
+		    Self.LastSyncTimestamp = Value.SecondsFrom1970
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastSyncDateTime(Local As Boolean) As DateTime
+		  Var Timestamp As Double = Self.LastSyncTimestamp
+		  If Timestamp = 0 Then
+		    Return Nil
+		  End If
+		  
+		  If Local Then
+		    Return New DateTime(Timestamp)
+		  Else
+		    Return New DateTime(Timestamp, New TimeZone(0))
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastSyncTimestamp() As Double
+		  Var Value As String = Self.Variable("Last Sync")
+		  If Value.IsEmpty Then
+		    Return 0
+		  End If
+		  
+		  Try
+		    Return Double.FromString(Value, Locale.Raw)
+		  Catch Err As RuntimeException
+		    Return 0
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LastSyncTimestamp(Assigns Value As Double)
+		  Self.Variable("Last Sync") = Value.ToString(Locale.Raw, "0")
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -584,6 +656,13 @@ Protected Class DataSource
 		  Else
 		    Return PerformanceResults.CouldNotRepair
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TotalChanges() As Integer
+		  Var Rows As RowSet = Self.SQLSelect("SELECT total_changes();")
+		  Return Rows.ColumnAt(0).IntegerValue
 		End Function
 	#tag EndMethod
 
