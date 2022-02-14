@@ -51,7 +51,7 @@ class GenericObject implements \JsonSerializable {
 		}
 		
 		$table = static::TableName();
-		$sql = 'SELECT ' . $table . '.tableoid::regclass AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $table . ' INNER JOIN ark.mods ON (' . $table . '.mod_id = mods.mod_id)';
+		$sql = 'SELECT SUBSTRING(' . $table . '.tableoid::regclass::TEXT, 5) AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $table . ' INNER JOIN ark.mods ON (' . $table . '.mod_id = mods.mod_id)';
 		if (count($clauses) != 0) {
 			$sql .= ' WHERE ' . implode(' AND ', $clauses);
 		}
