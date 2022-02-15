@@ -3,10 +3,13 @@
 namespace Ark;
 
 class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
+	protected $populations = null;
+	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
 		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(sets_template))) FROM (SELECT spawn_point_set_id, label, weight, spawn_offset, min_distance_from_players_multiplier, min_distance_from_structures_multiplier, min_distance_from_tamed_dinos_multiplier, spread_radius, water_only_minimum_height, offset_before_multiplier, (SELECT array_to_json(array_agg(row_to_json(entries_template))) FROM (SELECT spawn_point_set_entry_id, creature_id, weight, override, min_level_multiplier, max_level_multiplier, min_level_offset, max_level_offset, spawn_offset, (SELECT array_to_json(array_agg(row_to_json(levels_template))) FROM (SELECT difficulty, min_level, max_level FROM ark.spawn_point_set_entry_levels WHERE ark.spawn_point_set_entry_levels.spawn_point_set_entry_id = ark.spawn_point_set_entries.spawn_point_set_entry_id) AS levels_template) AS level_overrides FROM ark.spawn_point_set_entries WHERE ark.spawn_point_set_entries.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id) AS entries_template) AS entries, (SELECT array_to_json(array_agg(row_to_json(replacements_template))) FROM (SELECT target_creature_id AS creature_id, json_object(array_agg(array[replacement_creature_id::text, weight::text])) AS choices FROM ark.spawn_point_set_replacements WHERE ark.spawn_point_set_replacements.spawn_point_set_id = ark.spawn_point_sets.spawn_point_set_id GROUP BY target_creature_id) AS replacements_template) AS replacements FROM ark.spawn_point_sets WHERE ark.spawn_point_sets.spawn_point_id = ark.spawn_points.object_id) AS sets_template) AS spawn_sets';
 		$columns[] = 'json_object(array(SELECT array[ark.creatures.object_id::text, max_percentage::text] FROM ark.spawn_point_limits INNER JOIN ark.creatures ON (ark.spawn_point_limits.creature_id = ark.creatures.object_id) WHERE ark.spawn_point_limits.spawn_point_id = ark.spawn_points.object_id)) AS spawn_limits';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(pop_template))) FROM (SELECT ark_identifier, instances_on_map, max_population FROM ark.spawn_point_populations INNER JOIN ark.maps ON (spawn_point_populations.map_id = maps.map_id) WHERE spawn_point_populations.spawn_point_id = spawn_points.object_id ORDER BY ark_identifier) AS pop_template) AS populations';
 		return $columns;
 	}
 	
@@ -46,6 +49,19 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 			}
 		}
 		
+		if (is_null($row->Field('populations'))) {
+			$obj->populations = null;
+		} else {
+			$decoded = json_decode($row->Field('populations'), true);
+			$obj->populations = [];
+			foreach ($decoded as $popdata) {
+				$obj->populations[$popdata['ark_identifier']] = [
+					'instances' => $popdata['instances_on_map'],
+					'target_population' => $popdata['max_population']
+				];
+			}
+		}
+		
 		return $obj;
 	}
 	
@@ -60,6 +76,11 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 			$json['limits'] = null;
 		} else {
 			$json['limits'] = $this->limits;
+		}
+		if (is_null($this->populations) || count($this->populations) == 0) {
+			$json['populations'] = null;
+		} else {
+			$json['populations'] = $this->populations;
 		}
 		return $json;
 	}
