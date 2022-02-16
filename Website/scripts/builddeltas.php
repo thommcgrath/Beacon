@@ -1,6 +1,9 @@
 #!/usr/bin/php -q
 <?php
 
+// More memory is needed
+ini_set('memory_limit','512M');
+
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 while (ob_get_level() > 0) {
