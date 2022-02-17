@@ -14,7 +14,12 @@ $paths = [];
 $total = 0;
 if (isset($_GET['since'])) {
 	try {
-		$since = new DateTime($_GET['since']);
+		if (is_numeric($_GET['since'])) {
+			$since = new DateTime();
+			$since->setTimestamp($_GET['since']);
+		} else {
+			$since = new DateTime($_GET['since']);
+		}
 	} catch (Exception $err) {
 		BeaconAPI::ReplyError('Unable to parse timestamp', $err->getMessage(), 400);
 	}
