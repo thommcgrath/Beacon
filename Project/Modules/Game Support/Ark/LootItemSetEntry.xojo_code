@@ -877,6 +877,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Values.Add("MaxQuantity=" + Self.MaxQuantity.ToString)
 		  Values.Add("MinQuality=" + MinQuality.PrettyText)
 		  Values.Add("MaxQuality=" + MaxQuality.PrettyText)
+		  Values.Add("QualityPower=1.0")
 		  If Self.SingleItemQuantity Then
 		    Values.Add("bApplyQuantityToSingleItem=True")
 		  End If
