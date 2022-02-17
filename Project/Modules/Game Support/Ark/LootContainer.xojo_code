@@ -104,6 +104,22 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContentsString(Pretty As Boolean = False) As String
+		  Var Objects() As Variant
+		  For Each Set As Ark.LootItemSet In Self.mItemSets
+		    If (Set Is Nil) = False Then
+		      Objects.Add(Set.SaveData)
+		    End If
+		  Next
+		  Try
+		    Return Beacon.GenerateJSON(Objects, Pretty)
+		  Catch Err As RuntimeException
+		    Return ""
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  // Part of the Beacon.Countable interface.
 		  
@@ -456,6 +472,12 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		Sub Pack(Dict As Dictionary)
 		  // Part of the Ark.Blueprint interface.
 		  
+		  Var Sets() As Dictionary
+		  Sets.ResizeTo(Self.mItemSets.LastIndex)
+		  For Idx As Integer = Self.mItemSets.FirstIndex To Self.mItemSets.LastIndex
+		    Sets(Idx) = Self.mItemSets(Idx).Pack
+		  Next Idx
+		  
 		  Dict.Value("multipliers") = New Dictionary("min": Self.mMultipliers.Min, "max": Self.mMultipliers.Max)
 		  Dict.Value("ui_color") = Self.mUIColor.ToHex
 		  Dict.Value("icon") = Self.mIconID
@@ -463,6 +485,10 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Dict.Value("experimental") = Self.mExperimental
 		  Dict.Value("notes") = Self.mNotes
 		  Dict.Value("requirements") = Beacon.GenerateJSON(Self.mRequirements, False)
+		  Dict.Value("min_item_sets") = Self.mMinItemSets
+		  Dict.Value("max_item_sets") = Self.mMaxItemSets
+		  Dict.Value("prevent_duplicates") = Self.mPreventDuplicates
+		  Dict.Value("contents") = Sets
 		End Sub
 	#tag EndMethod
 

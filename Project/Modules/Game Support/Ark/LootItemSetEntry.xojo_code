@@ -166,7 +166,19 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var Entry As New Ark.MutableLootItemSetEntry
 		  
 		  Try
-		    If Dict.HasKey("Weight") Then
+		    If Dict.HasKey("loot_item_set_entry_id") Then
+		      Entry.UUID = Dict.Value("loot_item_set_entry_id")
+		    ElseIf Dict.HasKey("UUID") Then
+		      Entry.UUID = Dict.Value("UUID")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading UUID value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("weight") Then
+		      Entry.RawWeight = Dict.Value("weight")
+		    ElseIf Dict.HasKey("Weight") Then
 		      Entry.RawWeight = Dict.Value("Weight")
 		    ElseIf Dict.HasKey("EntryWeight") Then
 		      Entry.RawWeight = Dict.Value("EntryWeight") * 1000.0
@@ -176,7 +188,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("MinQuality") Then
+		    If Dict.HasKey("min_quality") Then
+		      Entry.MinQuality = Ark.Qualities.ForKey(Dict.Value("min_quality"))
+		    ElseIf Dict.HasKey("MinQuality") Then
 		      Entry.MinQuality = Ark.Qualities.ForKey(Dict.Value("MinQuality"))
 		    End If
 		  Catch Err As RuntimeException
@@ -184,7 +198,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("MaxQuality") Then
+		    If Dict.HasKey("max_quality") Then
+		      Entry.MaxQuality = Ark.Qualities.ForKey(Dict.Value("max_quality"))
+		    ElseIf Dict.HasKey("MaxQuality") Then
 		      Entry.MaxQuality = Ark.Qualities.ForKey(Dict.Value("MaxQuality"))
 		    End If
 		  Catch Err As RuntimeException
@@ -192,7 +208,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("MinQuantity") Then
+		    If Dict.HasKey("min_quantity") Then
+		      Entry.MinQuantity = Dict.Value("min_quantity")
+		    ElseIf Dict.HasKey("MinQuantity") Then
 		      Entry.MinQuantity = Dict.Value("MinQuantity")
 		    End If
 		  Catch Err As RuntimeException
@@ -200,7 +218,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("MaxQuantity") Then
+		    If Dict.HasKey("max_quantity") Then
+		      Entry.MaxQuantity = Dict.Value("max_quantity")
+		    ElseIf Dict.HasKey("MaxQuantity") Then
 		      Entry.MaxQuantity = Dict.Value("MaxQuantity")
 		    End If
 		  Catch Err As RuntimeException
@@ -208,35 +228,40 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		    If Dict.HasKey("blueprint_chance") Then
+		      Entry.ChanceToBeBlueprint = Dict.Value("blueprint_chance")
+		    ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
 		      Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading ChangeToBeBlueprintOverride value")
 		  End Try
 		  
-		  If Dict.HasKey("Items") Then
-		    Var Children() As Dictionary
-		    Try
+		  Var Children() As Dictionary
+		  Try
+		    If Dict.HasKey("options") And Dict.Value("options").IsNull = False Then
+		      Children = Dict.Value("options").DictionaryArrayValue
+		    ElseIf Dict.HasKey("Items") Then
 		      Children = Dict.Value("Items").DictionaryArrayValue
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Casting Items to array")
+		  End Try
+		  For Idx As Integer = 0 To Children.LastIndex
+		    Try
+		      Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)))
+		      If (Option Is Nil) = False Then
+		        Entry.Add(Option)
+		      End If
 		    Catch Err As RuntimeException
-		      App.Log(Err, CurrentMethodName, "Casting Items to array")
+		      App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
 		    End Try
-		    
-		    For Idx As Integer = 0 To Children.LastIndex
-		      Try
-		        Var Option As Ark.LootItemSetEntryOption = Ark.LootItemSetEntryOption.FromSaveData(Dictionary(Children(Idx)))
-		        If (Option Is Nil) = False Then
-		          Entry.Add(Option)
-		        End If
-		      Catch Err As RuntimeException
-		        App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Idx.ToString(Locale.Raw, "0"))
-		      End Try
-		    Next
-		  End If
+		  Next Idx
 		  
 		  Try
-		    If Dict.HasKey("PreventGrinding") Then
+		    If Dict.HasKey("prevent_grinding") Then
+		      Entry.PreventGrinding = Dict.Value("prevent_grinding")
+		    ElseIf Dict.HasKey("PreventGrinding") Then
 		      Entry.PreventGrinding = Dict.Value("PreventGrinding")
 		    End If
 		  Catch Err As RuntimeException
@@ -244,7 +269,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("StatClampMultiplier") Then
+		    If Dict.HasKey("stat_clamp_multiplier") Then
+		      Entry.StatClampMultiplier = Dict.Value("stat_clamp_multiplier")
+		    ElseIf Dict.HasKey("StatClampMultiplier") Then
 		      Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
 		    End If
 		  Catch Err As RuntimeException
@@ -252,7 +279,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("SingleItemQuantity") Then
+		    If Dict.HasKey("single_item_quantity") Then
+		      Entry.SingleItemQuantity = Dict.Value("single_item_quantity")
+		    ElseIf Dict.HasKey("SingleItemQuantity") Then
 		      Entry.SingleItemQuantity = Dict.Value("SingleItemQuantity")
 		    End If
 		  Catch Err As RuntimeException
@@ -621,6 +650,30 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Options() As Dictionary
+		  Options.ResizeTo(Self.mOptions.LastIndex)
+		  For Idx As Integer = Self.mOptions.FirstIndex To Self.mOptions.LastIndex
+		    Options(Idx) = Self.mOptions(Idx).Pack
+		  Next Idx
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("loot_item_set_entry_id") = Self.mUUID
+		  Dict.Value("min_quantity") = Self.mMinQuantity
+		  Dict.Value("max_quantity") = Self.mMaxQuantity
+		  Dict.Value("min_quality") = Self.mMinQuality.Key
+		  Dict.Value("max_quality") = Self.mMaxQuality.Key
+		  Dict.Value("blueprint_chance") = Self.mChanceToBeBlueprint
+		  Dict.Value("weight") = Self.mWeight
+		  Dict.Value("single_item_quantity") = Self.mSingleItemQuantity
+		  Dict.Value("prevent_grinding") = Self.mPreventGrinding
+		  Dict.Value("stat_clamp_multiplier") = Self.mStatClampMultiplier
+		  Dict.Value("options") = Options
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PreventGrinding() As Boolean
 		  Return Self.mPreventGrinding
 		End Function
@@ -684,6 +737,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next
 		  
 		  Var Keys As New Dictionary
+		  Keys.Value("UUID") = Self.mUUID
 		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
 		  Keys.Value("Items") = Children
 		  Keys.Value("MinQuality") = Self.MinQuality.Key

@@ -82,6 +82,28 @@ Implements Ark.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ContentsString(Assigns JSON As String)
+		  Var Parsed As Variant
+		  Try
+		    Parsed = Beacon.ParseJSON(JSON)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var Children() As Variant = Parsed
+		  Self.mItemSets.ResizeTo(-1)
+		  For Each SaveData As Dictionary In Children
+		    Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(SaveData)
+		    If (Set Is Nil) = False Then
+		      Self.mItemSets.Add(Set)
+		    End If
+		  Next
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Experimental(Assigns Value As Boolean)
 		  Self.mExperimental = Value
 		  Self.Modified = True
@@ -324,6 +346,33 @@ Implements Ark.MutableBlueprint
 		      Self.mRequirements = Requirements
 		    Catch Err As RuntimeException
 		    End Try
+		  End If
+		  
+		  If Dict.HasKey("min_item_sets") Then
+		    Self.mMinItemSets = Dict.Value("min_item_sets").IntegerValue
+		  End If
+		  
+		  If Dict.HasKey("max_item_sets") Then
+		    Self.mMaxItemSets = Dict.Value("max_item_sets").IntegerValue
+		  End If
+		  
+		  If Dict.HasKey("prevent_duplicates") Then
+		    Self.mPreventDuplicates = Dict.Value("prevent_duplicates").BooleanValue
+		  End If
+		  
+		  If Dict.HasKey("contents") And Dict.Value("contents").IsNull = False Then
+		    Var Sets() As Dictionary
+		    Try
+		      Sets = Dict.Value("contents").DictionaryArrayValue
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Unpacking item sets")
+		    End Try
+		    For Each PackedSet As Dictionary In Sets
+		      Var Set As Ark.LootItemSet = Ark.LootItemSet.FromSaveData(PackedSet)
+		      If (Set Is Nil) = False Then
+		        Self.mItemSets.Add(Set)
+		      End If
+		    Next
 		  End If
 		End Sub
 	#tag EndMethod

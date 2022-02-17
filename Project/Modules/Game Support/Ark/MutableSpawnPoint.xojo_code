@@ -262,7 +262,7 @@ Implements Ark.MutableBlueprint
 		  
 		  Self.mSets.ResizeTo(-1)
 		  If Dict.HasKey("sets") And Dict.Value("sets").IsNull = False Then
-		    Var Sets() As Dictionary = Dict.Value("sets").DictionaryArrayValue
+		    Var Sets() As Dictionary
 		    Try
 		      Sets = Dict.Value("sets").DictionaryArrayValue
 		    Catch Err As RuntimeException

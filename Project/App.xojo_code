@@ -842,7 +842,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  Try
 		    Var DataFile As FolderItem = Self.ResourcesFolder.Child("Complete.beacondata")
 		    If (DataFile Is Nil) = False And DataFile.Exists Then
-		      DataUpdater.ImportFile()
+		      DataUpdater.ImportFile(DataFile)
 		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Importing local data archive")

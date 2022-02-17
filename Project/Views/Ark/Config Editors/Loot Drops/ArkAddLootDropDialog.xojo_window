@@ -48,7 +48,7 @@ Begin BeaconDialog ArkAddLootDropDialog
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -593,7 +593,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   0
-         Height          =   262
+         Height          =   230
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -722,6 +722,38 @@ Begin BeaconDialog ArkAddLootDropDialog
          VisualState     =   0
          Width           =   394
       End
+      Begin CheckBox LoadDefaultsCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Load Default Contents When Available"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   296
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   510
+      End
    End
 End
 #tag EndWindow
@@ -741,6 +773,11 @@ End
 		    Self.SourceList.Height = (Self.SelectionExperimentalCheck.Top + Self.SelectionExperimentalCheck.Height) - Self.SourceList.Top
 		  End If
 		  Self.BuildSourceList()
+		  
+		  If Self.mShowAsDuplicate Then
+		    Self.LoadDefaultsCheckbox.Visible = False
+		    Self.SourceList.Height = Self.SourceList.Height + 32
+		  End If
 		  
 		  If (Self.mSource Is Nil) = False Then
 		    If Self.mShowAsDuplicate Then
@@ -986,6 +1023,19 @@ End
 	#tag Event
 		Sub Action()
 		  Self.ChooseSelectedLootSources()
+		  
+		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
+		    // Skip the customize step, load defaults, and finish
+		    Var Instance As Ark.DataSource = Ark.DataSource.SharedInstance
+		    For Each Destination As Ark.LootContainer In Self.mDestinations
+		      Var Mutable As New Ark.MutableLootContainer(Destination)
+		      Instance.LoadDefaults(Mutable)
+		      Self.mConfig.Add(Mutable)
+		    Next
+		    
+		    Self.mCancelled = False
+		    Self.Hide
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

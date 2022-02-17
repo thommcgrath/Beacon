@@ -284,7 +284,7 @@ Protected Class DataSource
 		    Return False
 		  End Try
 		  
-		  If Timestamp <= Self.LastSyncTimestamp Then
+		  If Timestamp <= Self.LastSyncTimestamp And ShouldTruncate = False Then
 		    // Already imported
 		    Return True
 		  End If
@@ -742,6 +742,10 @@ Protected Class DataSource
 		Event TestPerformance()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h0
+		DebugIdentifier As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mConnectionCounts As Dictionary

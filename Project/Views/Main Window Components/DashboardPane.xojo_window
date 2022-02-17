@@ -436,19 +436,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events SyncLabel
-	#tag Event
-		Sub Open()
-		  Var LastSync As Double = App.OldestSync
-		  If LastSync = 0 Then
-		    Me.Text = "Databases have not been updated"
-		  Else
-		    Var SyncTime As New DateTime(LastSync, New TimeZone(0))
-		    Me.Text = "Databases updated " + SyncTime.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events TitleCanvas
 	#tag Event
 		Sub Paint(G As Graphics, Areas() As REALbasic.Rect, Highlighted As Boolean, SafeArea As Rect)

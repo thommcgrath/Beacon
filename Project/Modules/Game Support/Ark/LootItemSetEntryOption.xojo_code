@@ -2,15 +2,20 @@
 Protected Class LootItemSetEntryOption
 Implements Beacon.Validateable
 	#tag Method, Flags = &h0
-		Sub Constructor(Reference As Ark.BlueprintReference, Weight As Double)
+		Sub Constructor(Reference As Ark.BlueprintReference, Weight As Double, UUID As String = "")
+		  If UUID.IsEmpty Then
+		    UUID = New v4UUID
+		  End If
+		  
+		  Self.mUUID = UUID
 		  Self.mEngram = Reference
 		  Self.mWeight = Weight
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Engram As Ark.Engram, Weight As Double)
-		  Self.Constructor(New Ark.BlueprintReference(Engram), Weight)
+		Sub Constructor(Engram As Ark.Engram, Weight As Double, UUID As String = "")
+		  Self.Constructor(New Ark.BlueprintReference(Engram), Weight, UUID)
 		End Sub
 	#tag EndMethod
 
@@ -19,6 +24,7 @@ Implements Beacon.Validateable
 		  Self.mEngram = Source.mEngram
 		  Self.mHash = Source.mHash
 		  Self.mWeight = Source.mWeight
+		  Self.mUUID = Source.mUUID
 		End Sub
 	#tag EndMethod
 
@@ -30,26 +36,47 @@ Implements Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Ark.LootItemSetEntryOption
+		  Var UUID As String
+		  Try
+		    If Dict.HasKey("loot_item_set_entry_option_id") Then
+		      UUID = Dict.Value("loot_item_set_entry_option_id")
+		    ElseIf Dict.HasKey("UUID") Then
+		      UUID = Dict.Value("UUID")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading UUID value")
+		  End Try
+		  
 		  Var Weight As Double = 0.5
 		  Try
-		    Weight = Dict.Value("Weight")
+		    If Dict.HasKey("weight") Then
+		      Weight = Dict.Value("weight")
+		    ElseIf Dict.HasKey("Weight") Then
+		      Weight = Dict.Value("Weight")
+		    End If
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading Weight value")
 		  End Try
 		  
 		  Var Option As Ark.LootItemSetEntryOption
-		  If Dict.HasKey("Blueprint") Then
+		  If Dict.HasKey("engram_id") Then
+		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict.Value("engram_id").StringValue, "", "", Nil)
+		    If Engram Is Nil Then
+		      Return Nil
+		    End If
+		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
+		  ElseIf Dict.HasKey("Blueprint") Then
 		    Var Reference As Ark.BlueprintReference = Ark.BlueprintReference.FromSaveData(Dict.Value("Blueprint"))
 		    If Reference Is Nil Then
 		      Return Nil
 		    End If
-		    Option = New Ark.LootItemSetEntryOption(Reference, Weight)
+		    Option = New Ark.LootItemSetEntryOption(Reference, Weight, UUID)
 		  ElseIf Dict.HasAnyKey("UUID", "Path", "Class") Then
 		    Var Engram As Ark.Engram = Ark.ResolveEngram(Dict, "UUID", "Path", "Class", Nil)
 		    If Engram Is Nil Then
 		      Return Nil
 		    End If
-		    Option = New Ark.LootItemSetEntryOption(Engram, Weight)
+		    Option = New Ark.LootItemSetEntryOption(Engram, Weight, UUID)
 		  End If
 		  
 		  Return Option
@@ -80,6 +107,16 @@ Implements Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Dict As Dictionary
+		  Dict.Value("loot_item_set_entry_option_id") = Self.mUUID
+		  Dict.Value("engram_id") = Self.mEngram.ObjectID
+		  Dict.Value("weight") = Self.mWeight
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Reference() As Ark.BlueprintReference
 		  Return Self.mEngram
 		End Function
@@ -88,9 +125,16 @@ Implements Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Keys As New Dictionary
+		  Keys.Value("UUID") = Self.mUUID
 		  Keys.Value("Blueprint") = Self.mEngram.SaveData
 		  Keys.Value("Weight") = Self.mWeight
 		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UUID() As String
+		  Return Self.mUUID
 		End Function
 	#tag EndMethod
 
@@ -129,6 +173,10 @@ Implements Beacon.Validateable
 
 	#tag Property, Flags = &h21
 		Private mHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUUID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

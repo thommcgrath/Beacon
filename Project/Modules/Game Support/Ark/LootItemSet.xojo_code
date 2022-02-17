@@ -48,6 +48,15 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
+		  Try
+		    If Dict.HasKey("loot_item_set_id") Then
+		      Set.UUID = Dict.Value("loot_item_set_id")
+		    ElseIf Dict.HasKey("UUID") Then
+		      Set.UUID = Dict.Value("UUID")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading UUID value")
+		  End Try
 		  
 		  Try
 		    If Dict.HasKey("NumItemsPower") Then
@@ -58,7 +67,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("Weight") Then
+		    If Dict.HasKey("weight") Then
+		      Set.RawWeight = Dict.Value("weight")
+		    ElseIf Dict.HasKey("Weight") Then
 		      Set.RawWeight = Dict.Value("Weight")
 		    ElseIf Dict.HasKey("SetWeight") Then
 		      Set.RawWeight = Dict.Value("SetWeight") * 1000.0
@@ -68,7 +79,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("bItemsRandomWithoutReplacement") Then
+		    If Dict.HasKey("prevent_duplicates") Then
+		      Set.ItemsRandomWithoutReplacement = Dict.Value("prevent_duplicates")
+		    ElseIf Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		      Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
 		    ElseIf Dict.HasKey("ItemsRandomWithoutReplacement") Then
 		      Set.ItemsRandomWithoutReplacement = Dict.Value("ItemsRandomWithoutReplacement")
@@ -78,7 +91,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("Label") Then
+		    If Dict.HasKey("label") Then
+		      Set.Label = Dict.Value("label")
+		    ElseIf Dict.HasKey("Label") Then
 		      Set.Label = Dict.Value("Label")
 		    ElseIf Dict.HasKey("SetName") Then
 		      Set.Label = Dict.Value("SetName")
@@ -89,7 +104,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  
 		  Var Children() As Dictionary
 		  Try
-		    If Dict.HasKey("ItemEntries") Then
+		    If Dict.HasKey("entries") Then
+		      Children = Dict.Value("entries").DictionaryArrayValue
+		    ElseIf Dict.HasKey("ItemEntries") Then
 		      Children = Dict.Value("ItemEntries").DictionaryArrayValue
 		    ElseIf Dict.HasKey("Items") Then
 		      Children = Dict.Value("Items").DictionaryArrayValue
@@ -110,7 +127,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next
 		  
 		  Try
-		    If Dict.HasKey("MinNumItems") Then
+		    If Dict.HasKey("min_entries") Then
+		      Set.MinNumItems = Dict.Value("min_entries")
+		    ElseIf Dict.HasKey("MinNumItems") Then
 		      Set.MinNumItems = Dict.Value("MinNumItems")
 		    End If
 		  Catch Err As RuntimeException
@@ -118,7 +137,9 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End Try
 		  
 		  Try
-		    If Dict.HasKey("MaxNumItems") Then
+		    If Dict.HasKey("max_entries") Then
+		      Set.MaxNumItems = Dict.Value("max_entries")
+		    ElseIf Dict.HasKey("MaxNumItems") Then
 		      Set.MaxNumItems = Dict.Value("MaxNumItems")
 		    End If
 		  Catch Err As RuntimeException
@@ -467,6 +488,26 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Pack() As Dictionary
+		  Var Entries() As Dictionary
+		  Entries.ResizeTo(Self.mEntries.LastIndex)
+		  For Idx As Integer = Self.mEntries.FirstIndex To Self.mEntries.LastIndex
+		    Entries(Idx) = Self.mEntries(Idx).Pack
+		  Next Idx
+		  
+		  Var Dict As Dictionary
+		  Dict.Value("loot_item_set_id") = Self.mUUID
+		  Dict.Value("label") = Self.mLabel
+		  Dict.Value("min_entries") = Self.mMinNumItems
+		  Dict.Value("max_entries") = Self.mMaxNumItems
+		  Dict.Value("weight") = Self.mSetWeight
+		  Dict.Value("prevent_duplicates") = Self.mItemsRandomWithoutReplacement
+		  Dict.Value("entries") = Entries
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RawWeight() As Double
 		  Return Self.mSetWeight
 		End Function
@@ -511,6 +552,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Next
 		  
 		  Var Keys As New Dictionary
+		  Keys.Value("UUID") = Self.mUUID
 		  Keys.Value("ItemEntries") = Children
 		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
 		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
@@ -702,8 +744,8 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		Protected mTemplateUUID As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUUID As String
+	#tag Property, Flags = &h1
+		Protected mUUID As String
 	#tag EndProperty
 
 

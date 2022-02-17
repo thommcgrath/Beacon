@@ -75,6 +75,7 @@ Protected Module DataUpdater
 		    If mImportThread Is Nil Then
 		      mImportThread = New Thread
 		      mImportThread.Priority = Thread.LowestPriority
+		      mImportThread.DebugIdentifier = "DataUpdater.mImportThread"
 		      AddHandler mImportThread.Run, AddressOf mImportThread_Run
 		    End If
 		    

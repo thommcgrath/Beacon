@@ -133,6 +133,13 @@ Inherits Ark.LootItemSet
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UUID(Assigns Value As String)
+		  Self.mUUID = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
 
 End Class
 #tag EndClass
