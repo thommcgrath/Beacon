@@ -158,6 +158,20 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DefaultItemSetWeight() As Double
+		  If Self.mItemSets.Count = 0 Then
+		    Return 500
+		  End If
+		  
+		  Var Sum As Double
+		  For Idx As Integer = Self.mItemSets.FirstIndex To Self.mItemSets.LastIndex
+		    Sum = Sum + Self.mItemSets(Idx).RawWeight
+		  Next Idx
+		  Return Sum / Self.mItemSets.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Experimental() As Boolean
 		  Return Self.mExperimental
 		End Function

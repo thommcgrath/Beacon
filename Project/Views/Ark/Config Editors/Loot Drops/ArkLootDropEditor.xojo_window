@@ -628,8 +628,9 @@ End
 		    If SelectedPreset <> Nil Then
 		      Set = Ark.LootItemSet.FromTemplate(SelectedPreset, Container, Mask, ContentPacks)
 		    End If
-		    If Set = Nil Then
+		    If Set Is Nil Then
 		      Set = New Ark.MutableLootItemSet()
+		      Ark.MutableLootItemSet(Set).RawWeight = Container.DefaultItemSetWeight
 		    End If
 		    
 		    Container.Add(Set)
@@ -1423,7 +1424,9 @@ End
 		  
 		  Select Case Item.Name
 		  Case "AddSetButton"
-		    Self.AddSet(New Ark.MutableLootItemSet)
+		    Var Set As New Ark.MutableLootItemSet
+		    Set.RawWeight = Self.mContainers(0).DefaultItemSetWeight
+		    Self.AddSet(Set)
 		  Case "SimulatorButton"
 		    If Self.SimulatorVisible Then
 		      Self.SimulatorVisible = False

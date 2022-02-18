@@ -163,7 +163,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		Shared Function FromTemplate(Template As Ark.LootTemplate, ForLootContainer As Ark.LootContainer, Mask As UInt64, ContentPacks As Beacon.StringList) As Ark.LootItemSet
 		  Var Set As New Ark.MutableLootItemSet
 		  Set.Label = Template.Label
-		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
+		  Set.RawWeight = ForLootContainer.DefaultItemSetWeight
 		  Set.TemplateUUID = Template.UUID
 		  
 		  Var ActiveModifiers() As String = Template.ActiveSelectorIDs
