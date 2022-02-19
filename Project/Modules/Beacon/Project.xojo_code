@@ -914,6 +914,22 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ServerProfiles(Filter As String = "") As Beacon.ServerProfile()
+		  Filter = Filter.Trim
+		  
+		  Var Results() As Beacon.ServerProfile
+		  For Idx As Integer = Self.mServerProfiles.FirstIndex To Self.mServerProfiles.LastIndex
+		    If Filter.IsEmpty = False And Self.mServerProfiles(Idx).Name.IndexOf(Filter) = -1 And Self.mServerProfiles(Idx).SecondaryName.IndexOf(Filter) = -1 Then
+		      Continue
+		    End If
+		    
+		    Results.Add(Self.mServerProfiles(Idx).Clone)
+		  Next Idx
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Title() As String
 		  Return Self.mTitle
 		End Function

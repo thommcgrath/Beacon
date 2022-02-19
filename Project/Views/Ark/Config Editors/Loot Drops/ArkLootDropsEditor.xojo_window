@@ -79,7 +79,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   374
+      Height          =   333
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -105,7 +105,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   82
       Transparent     =   True
       TypeaheadColumn =   1
       Underline       =   False
@@ -300,6 +300,64 @@ Begin ArkConfigEditor ArkLootDropsEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Drops"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   9
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   50
+      Transparent     =   False
+      Visible         =   True
+      Width           =   232
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   81
       Transparent     =   True
       Visible         =   True
       Width           =   250
@@ -610,6 +668,8 @@ End
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.List.Width = ListWidth
 		  Self.StatusBar1.Width = ListWidth
+		  Self.FilterSeparator.Width = ListWidth
+		  Self.FilterField.Width = ListWidth - (Self.FilterField.Left * 2)
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		  
@@ -655,7 +715,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateContainerList(SelectedContainers() As Ark.LootContainer = Nil)
-		  Var VisibleContainers() As Ark.LootContainer = Self.Config(False).Containers
+		  Var VisibleContainers() As Ark.LootContainer = Self.Config(False).Containers(Self.FilterField.Text)
 		  Var Labels As Dictionary = VisibleContainers.Disambiguate(Self.Project.MapMask)
 		  VisibleContainers.Sort
 		  
@@ -1029,6 +1089,17 @@ End
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.UpdateContainerList()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

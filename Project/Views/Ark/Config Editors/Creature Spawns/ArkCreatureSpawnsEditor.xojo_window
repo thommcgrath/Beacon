@@ -56,7 +56,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   486
+      Height          =   445
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
@@ -75,7 +75,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   41
+      Top             =   82
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -304,6 +304,64 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       Visible         =   True
       Width           =   250
    End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Spawns"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   9
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   50
+      Transparent     =   False
+      Visible         =   True
+      Width           =   232
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   81
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
@@ -446,6 +504,8 @@ End
 		  Self.MainSeparator.Left = ListWidth
 		  Self.List.Width = ListWidth
 		  Self.ListStatus.Width = ListWidth
+		  Self.FilterSeparator.Width = ListWidth
+		  Self.FilterField.Width = ListWidth - (Self.FilterField.Left * 2)
 		  Self.Pages.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
 		  Self.Pages.Width = EditorWidth
 		End Sub
@@ -467,7 +527,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectedPoints() As Ark.SpawnPoint)
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(False)
-		  Var SpawnPoints() As Ark.SpawnPoint = Config.All
+		  Var SpawnPoints() As Ark.SpawnPoint = Config.SpawnPoints(Self.FilterField.Text)
 		  Var Selected As New Dictionary
 		  For Each SpawnPoint As Ark.SpawnPoint In SelectedPoints
 		    Selected.Value(SpawnPoint.UniqueKey) = True
@@ -476,8 +536,8 @@ End
 		  Var Labels As Dictionary = Ark.DataSource.SharedInstance.GetSpawnPointLabels(Self.Project.MapMask)
 		  
 		  Self.List.SelectionChangeBlocked = True
-		  Self.List.RowCount = Config.Count
-		  For I As Integer = 0 To SpawnPoints.LastIndex
+		  Self.List.RowCount = SpawnPoints.Count
+		  For I As Integer = SpawnPoints.FirstIndex To SpawnPoints.LastIndex
 		    Var Prefix As String
 		    Select Case SpawnPoints(I).Mode
 		    Case Ark.SpawnPoint.ModeOverride
@@ -496,7 +556,7 @@ End
 		    Self.List.CellValueAt(I, 0) = RowLabel
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
 		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)
-		  Next
+		  Next I
 		  Self.List.SortingColumn = 0
 		  Self.List.Sort
 		  Self.List.SelectionChangeBlocked = False
@@ -796,6 +856,17 @@ End
 		  #Pragma Unused DraggedResizer
 		  
 		  Preferences.SpawnPointsSplitterPosition = Self.List.Width
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

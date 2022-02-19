@@ -175,10 +175,17 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Containers() As Ark.LootContainer()
+		Function Containers(Filter As String = "") As Ark.LootContainer()
+		  Filter = Filter.Trim
+		  
 		  Var Results() As Ark.LootContainer
 		  For Each Entry As DictionaryEntry In Self.mContainers
-		    Results.Add(Ark.LootContainer(Entry.Value).ImmutableVersion)
+		    Var Container As Ark.LootContainer = Entry.Value
+		    If Filter.IsEmpty = False And Container.Label.IndexOf(Filter) = -1 Then
+		      Continue
+		    End If
+		    
+		    Results.Add(Container.ImmutableVersion)
 		  Next
 		  Return Results
 		End Function

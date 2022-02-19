@@ -118,7 +118,65 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   730
+      Width           =   462
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Creatures"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   470
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   9
+      Transparent     =   False
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   461
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   269
    End
 End
 #tag EndWindow
@@ -278,7 +336,7 @@ End
 		Private Sub UpdateList(Selections() As String)
 		  Self.List.RemoveAllRows
 		  
-		  Var Behaviors() As Ark.CreatureBehavior = Self.Config(False).All
+		  Var Behaviors() As Ark.CreatureBehavior = Self.Config(False).Behaviors(Self.FilterField.Text)
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Var Creature As Ark.Creature = Behavior.TargetCreature
 		    Var Label As String = Creature.Label
@@ -479,6 +537,13 @@ End
 		  Case "Duplicate"
 		    Self.ShowDuplicate()
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateList
 		End Sub
 	#tag EndEvent
 #tag EndEvents

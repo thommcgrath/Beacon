@@ -129,13 +129,8 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function All() As Ark.CreatureBehavior()
-		  Var Behaviors() As Ark.CreatureBehavior
-		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Var Behavior As Ark.CreatureBehavior = Entry.Value
-		    Behaviors.Add(New Ark.CreatureBehavior(Behavior))
-		  Next
-		  Return Behaviors
+		Attributes( Deprecated = "Behaviors" )  Function All() As Ark.CreatureBehavior()
+		  Return Self.Behaviors
 		End Function
 	#tag EndMethod
 
@@ -155,6 +150,23 @@ Inherits Ark.ConfigGroup
 		  Self.mBehaviors.Value(Creature.ObjectID) = New Ark.CreatureBehavior(Behavior)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Behaviors(Filter As String = "") As Ark.CreatureBehavior()
+		  Filter = Filter.Trim
+		  
+		  Var Behaviors() As Ark.CreatureBehavior
+		  For Each Entry As DictionaryEntry In Self.mBehaviors
+		    Var Behavior As Ark.CreatureBehavior = Entry.Value
+		    If Filter.IsEmpty = False And (Behavior.TargetCreature Is Nil Or Behavior.TargetCreature.Label.IndexOf(Filter) = -1) Then
+		      Continue
+		    End If
+		    
+		    Behaviors.Add(New Ark.CreatureBehavior(Behavior))
+		  Next
+		  Return Behaviors
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

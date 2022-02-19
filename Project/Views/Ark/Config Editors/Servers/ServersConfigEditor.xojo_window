@@ -48,7 +48,7 @@ Begin ArkConfigEditor ServersConfigEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   465
+      Height          =   424
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -74,7 +74,7 @@ Begin ArkConfigEditor ServersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   82
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -147,6 +147,64 @@ Begin ArkConfigEditor ServersConfigEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   299
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Servers"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   9
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   50
+      Transparent     =   False
+      Visible         =   True
+      Width           =   280
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   81
       Transparent     =   True
       Visible         =   True
       Width           =   299
@@ -324,8 +382,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub UpdateList(SelectProfiles() As Ark.ServerProfile, WithChangeEvent As Boolean)
+		  Var Profiles() As Beacon.ServerProfile = Self.Project.ServerProfiles(Self.FilterField.Text)
+		  
 		  Self.ServerList.SelectionChangeBlocked = True
-		  Self.ServerList.RowCount = Self.Project.ServerProfileCount
+		  Self.ServerList.RowCount = Profiles.Count
 		  
 		  Var SelectIDs() As String
 		  For Each Profile As Ark.ServerProfile In SelectProfiles
@@ -340,8 +400,8 @@ End
 		  AddressMatcher.SearchPattern = "^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d{1,5})$"
 		  
 		  Var Names As Dictionary = Self.ProfileNames()
-		  For Idx As Integer = 0 To Self.ServerList.LastRowIndex
-		    Var Profile As Beacon.ServerProfile = Self.Project.ServerProfile(Idx)
+		  For Idx As Integer = Profiles.FirstIndex To Profiles.LastIndex
+		    Var Profile As Beacon.ServerProfile = Profiles(Idx)
 		    Var SortName As String = Names.Value(Profile.ProfileID)
 		    Var Name As String = SortName + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Var Selected As Boolean = SelectIDs.IndexOf(Profile.ProfileID) > -1
@@ -768,6 +828,17 @@ End
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.UpdateList()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
