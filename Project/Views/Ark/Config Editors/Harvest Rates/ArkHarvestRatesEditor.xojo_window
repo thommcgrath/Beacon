@@ -527,7 +527,65 @@ Begin ArkConfigEditor ArkHarvestRatesEditor
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   764
+      Width           =   496
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Rates"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   505
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   9
+      Transparent     =   False
+      Visible         =   True
+      Width           =   250
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   496
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   269
    End
 End
 #tag EndWindow
@@ -701,14 +759,20 @@ End
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  
 		  Self.List.RemoveAllRows()
 		  For Each Engram As Ark.Engram In Engrams
+		    If Filter.IsEmpty = False And Engram.Label.IndexOf(Filter) = -1 Then
+		      Continue
+		    End If
+		    
 		    Var Rate As Double = Config.Override(Engram)
 		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(Engram.Label, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = Selections.IndexOf(Engram.ObjectID) > -1
-		  Next
+		  Next Engram
 		  
 		  Self.List.Sort
 		  Self.List.ScrollPosition = ScrollPosition
@@ -985,6 +1049,13 @@ End
 		  Case "Duplicate"
 		    Self.ShowDuplicateOverride()
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  Self.UpdateList
 		End Sub
 	#tag EndEvent
 #tag EndEvents

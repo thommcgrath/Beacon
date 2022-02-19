@@ -81,7 +81,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   334
+      Height          =   293
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -107,7 +107,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   82
       Transparent     =   True
       TypeaheadColumn =   0
       Underline       =   False
@@ -170,7 +170,7 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   399
       Begin ArkCraftingCostEditor Editor
@@ -270,7 +270,6 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread FibercraftBuilderThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -282,7 +281,6 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
    End
    Begin Thread AdjusterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -326,6 +324,64 @@ Begin ArkConfigEditor ArkCraftingCostsEditor
       Transparent     =   True
       Visible         =   True
       Width           =   250
+   End
+   Begin OmniBarSeparator FilterSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   1
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollingEnabled=   False
+      ScrollSpeed     =   20
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   81
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin DelayedSearchField FilterField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowRecentItems=   False
+      ClearMenuItemValue=   "Clear"
+      DelayPeriod     =   250
+      Enabled         =   True
+      Height          =   22
+      Hint            =   "Filter Recipes"
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   9
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumRecentItems=   -1
+      RecentItemsValue=   "Recent Searches"
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   50
+      Transparent     =   False
+      Visible         =   True
+      Width           =   232
    End
 End
 #tag EndWindow
@@ -471,6 +527,8 @@ End
 		  Self.List.Width = ListWidth
 		  Self.ListSeparator.Left = ListWidth
 		  Self.ListStatusBar.Width = ListWidth
+		  Self.FilterSeparator.Width = ListWidth
+		  Self.FilterField.Width = ListWidth - (Self.FilterField.Left * 2)
 		  Self.Panel.Left = Self.ListSeparator.Left + Self.ListSeparator.Width
 		  Self.Panel.Width = EditorWidth
 		End Sub
@@ -566,15 +624,21 @@ End
 		    ObjectIDs.Add(Item.ObjectID)
 		  Next
 		  
+		  Var Filter As String = Self.FilterField.Text.Trim
+		  
 		  Self.List.RemoveAllRows
 		  Var Config As Ark.Configs.CraftingCosts = Self.Config(False)
 		  Var Engrams() As Ark.Engram = Config.Engrams
-		  For I As Integer = 0 To Engrams.LastIndex
-		    Var Cost As Ark.CraftingCost = Config.Cost(Engrams(I))
+		  For Idx As Integer = Engrams.FirstIndex To Engrams.LastIndex
+		    If Filter.IsEmpty = False And Engrams(Idx).Label.IndexOf(Filter) = -1 Then
+		      Continue
+		    End If
+		    
+		    Var Cost As Ark.CraftingCost = Config.Cost(Engrams(Idx))
 		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
-		  Next
+		  Next Idx
 		  
 		  Self.List.Sort
 		  Self.List.ScrollPosition = ScrollPosition
@@ -989,6 +1053,17 @@ End
 		  #Pragma Unused DraggedResizer
 		  
 		  Preferences.CraftingSplitterPosition = Me.Width
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FilterField
+	#tag Event
+		Sub TextChanged()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
