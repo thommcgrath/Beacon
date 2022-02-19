@@ -750,6 +750,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          Top             =   296
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   510
@@ -761,8 +762,11 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Var ListHeight As Integer = (Self.SelectionActionButton.Top - 20) - (Self.FilterField.Top + Self.FilterField.Height + 20)
+		  
 		  If Self.mShowAsDuplicate Then
 		    Self.SelectionMessageLabel.Text = "Duplicate Loot Container"
+		    Self.LoadDefaultsCheckbox.Visible = False
 		  End If
 		  
 		  Var HasExperimentalSources As Boolean = Ark.DataSource.SharedInstance.HasExperimentalLootContainers(Self.mContentPacks)
@@ -770,14 +774,10 @@ End
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
 		  Else
 		    Self.SelectionExperimentalCheck.Visible = False
-		    Self.SourceList.Height = (Self.SelectionExperimentalCheck.Top + Self.SelectionExperimentalCheck.Height) - Self.SourceList.Top
 		  End If
-		  Self.BuildSourceList()
 		  
-		  If Self.mShowAsDuplicate Then
-		    Self.LoadDefaultsCheckbox.Visible = False
-		    Self.SourceList.Height = Self.SourceList.Height + 32
-		  End If
+		  Self.ResizeUI()
+		  Self.BuildSourceList()
 		  
 		  If (Self.mSource Is Nil) = False Then
 		    If Self.mShowAsDuplicate Then
@@ -917,6 +917,26 @@ End
 		  
 		  Return Not Cancelled
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResizeUI()
+		  Var CheckboxBottom As Integer = Self.Height - 20
+		  Var ListBottom As Integer = Self.Height - 60
+		  If Self.SelectionExperimentalCheck.Visible Then
+		    Self.SelectionExperimentalCheck.Top = CheckboxBottom - Self.SelectionExperimentalCheck.Height
+		    CheckboxBottom = Self.SelectionExperimentalCheck.Top - 12
+		    ListBottom = Min(ListBottom, Self.SelectionExperimentalCheck.Top - 20)
+		  End If
+		  If Self.LoadDefaultsCheckbox.Visible Then
+		    Self.LoadDefaultsCheckbox.Top = CheckboxBottom - Self.LoadDefaultsCheckbox.Height
+		    CheckboxBottom = Self.LoadDefaultsCheckbox.Top - 12
+		    ListBottom = Min(ListBottom, Self.LoadDefaultsCheckbox.Top - 20)
+		  End If
+		  
+		  Self.SourceList.Top = 60
+		  Self.SourceList.Height = ListBottom - Self.SourceList.Top
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1209,6 +1229,16 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LoadDefaultsCheckbox
+	#tag Event
+		Sub Action()
+		  Var Caption As String = If(Me.Value, "Done", "Next")
+		  If Self.SelectionActionButton.Caption <> Caption Then
+		    Self.SelectionActionButton.Caption = Caption
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

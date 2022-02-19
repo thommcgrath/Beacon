@@ -1853,13 +1853,13 @@ Inherits Beacon.DataSource
 		  Var Results As RowSet
 		  If Category.IsEmpty = False Then
 		    If Mods.Count > 0 Then
-		      Results = Self.SQLSelect("SELECT DISTINCT tags_" + Category + ".tag FROM tags_" + Category + " INNER JOIN " + Category + " ON (tags_" + Category + ".object_id = " + Category + ".object_id) WHERE " + Category + ".mod_id IN ('" + Mods.Join("','") + "') ORDER BY tags_" + Category + ".tag;")
+		      Results = Self.SQLSelect("SELECT DISTINCT tags_" + Category + ".tag FROM tags_" + Category + " INNER JOIN " + Category + " ON (tags_" + Category + ".object_id = " + Category + ".object_id) WHERE " + Category + ".content_pack_id IN ('" + Mods.Join("','") + "') ORDER BY tags_" + Category + ".tag;")
 		    Else
 		      Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags_" + Category + " ORDER BY tag;")
 		    End If
 		  Else
 		    If Mods.Count > 0 Then
-		      Results = Self.SQLSelect("SELECT DISTINCT tags.tag FROM tags INNER JOIN blueprints ON (tags.object_id = blueprints.object_id) WHERE blueprints.mod_id IN ('" + Mods.Join("','") + "') ORDER BY tags.tag;")
+		      Results = Self.SQLSelect("SELECT DISTINCT tags.tag FROM tags INNER JOIN blueprints ON (tags.object_id = blueprints.object_id) WHERE blueprints.content_pack_id IN ('" + Mods.Join("','") + "') ORDER BY tags.tag;")
 		    Else
 		      Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags ORDER BY tag;")
 		    End If

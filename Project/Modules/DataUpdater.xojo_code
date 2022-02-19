@@ -208,7 +208,14 @@ Protected Module DataUpdater
 		    Var Parsed As Dictionary
 		    Var IsFull As Boolean
 		    Try
+		      #if DebugBuild
+		        Var StartTime As Double = System.Microseconds
+		      #endif
 		      Parsed = Beacon.ParseJSON(Content)
+		      #if DebugBuild
+		        Var ParseTime As Double = System.Microseconds - StartTime
+		        System.DebugLog("Took " + ParseTime.ToString(Locale.Raw, "0") + " microseconds to parse " + Beacon.BytesToString(Content.Bytes) + " of JSON.")
+		      #endif
 		      IsFull = Parsed.Value("is_full").BooleanValue
 		      
 		      Var FileVersion As Integer = Parsed.Value("beacon_version")
