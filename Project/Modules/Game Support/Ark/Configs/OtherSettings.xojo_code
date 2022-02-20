@@ -120,6 +120,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Try
 		    Self.mSettings = SaveData.Value("Settings")
 		  Catch Err As RuntimeException
@@ -130,6 +132,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("Settings") = Self.mSettings
 		End Sub
 	#tag EndEvent

@@ -54,6 +54,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If Not SaveData.HasKey("Points") Then
 		    Return
 		  End If
@@ -73,6 +75,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Var Points() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
 		    Points.Add(Ark.SpawnPoint(Entry.Value).SaveData)

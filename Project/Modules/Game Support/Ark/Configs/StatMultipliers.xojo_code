@@ -116,6 +116,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("PlayerStats") And SaveData.Value("PlayerStats") IsA Dictionary Then
 		    Self.PlayerStats = SaveData.Value("PlayerStats")
 		  End If
@@ -142,6 +144,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If Self.PlayerStats.KeyCount > 0 Then
 		    SaveData.Value("PlayerStats") = Self.PlayerStats
 		  End If

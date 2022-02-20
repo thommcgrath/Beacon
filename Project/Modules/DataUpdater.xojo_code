@@ -184,6 +184,8 @@ Protected Module DataUpdater
 
 	#tag Method, Flags = &h21
 		Private Sub mImportThread_Run(Sender As Thread)
+		  #Pragma Unused Sender
+		  
 		  If mPendingImports.Count = 0 Then
 		    Return
 		  End If

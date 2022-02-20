@@ -94,6 +94,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Self.mAutoDestroyDecayedDinos = SaveData.Value("AutoDestroyDecayedDinos")
 		  Self.mAutoDestroyOldStructuresMultiplier = SaveData.Value("AutoDestroyOldStructuresMultiplier")
 		  Self.mAutoDestroyStructures = SaveData.Value("AutoDestroyStructures")
@@ -118,6 +120,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("AutoDestroyDecayedDinos") = Self.mAutoDestroyDecayedDinos
 		  SaveData.Value("AutoDestroyOldStructuresMultiplier") = Self.mAutoDestroyOldStructuresMultiplier
 		  SaveData.Value("AutoDestroyStructures") = Self.mAutoDestroyStructures

@@ -78,25 +78,6 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
-		Sub DoInitialImport()
-		  Var LocalDataFile As FolderItem = App.ResourcesFolder.Child("Ark.beacondata")
-		  If LocalDataFile.Exists = False Then
-		    Return
-		  End If
-		  
-		  Var Content As String
-		  Try
-		    Content = LocalDataFile.Read
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Reading local data file")
-		    Return
-		  End Try
-		  
-		  #Pragma Warning "Not sure how to handle initial import, but this isn't it."
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Function GetSchemaVersion() As Integer
 		  Return 100
 		End Function
@@ -1542,51 +1523,16 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetLootContainers(SearchText As String = "", ContentPacks As Beacon.StringList = Nil, Tags As String = "", IncludeExperimental As Boolean = False) As Ark.LootContainer()
-		  #Pragma Unused Tags
-		  #Pragma Warning "Tags could be used here"
-		  
+		  If ContentPacks Is Nil Then
+		    ContentPacks = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Ark.Blueprint = Self.GetBlueprints(Ark.CategoryLootContainers, SearchText, ContentPacks, Tags)
 		  Var Containers() As Ark.LootContainer
-		  
-		  Try
-		    Var Clauses() As String
-		    Var Values As New Dictionary
-		    Var NextPlaceholder As Integer = 1
-		    If (ContentPacks Is Nil) = False And CType(ContentPacks.Count, Integer) > 0 Then
-		      Var Placeholders() As String
-		      For Each ContentPackUUID As String In ContentPacks
-		        Placeholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		        Values.Value(NextPlaceholder) = ContentPackUUID
-		        NextPlaceholder = NextPlaceholder + 1
-		      Next
-		      Clauses.Add("content_packs.content_pack_id IN (" + Placeholders.Join(", ") + ")")
+		  For Each Blueprint As Ark.Blueprint In Blueprints
+		    If Blueprint IsA Ark.LootContainer And (IncludeExperimental = True Or Ark.LootContainer(Blueprint).Experimental = False) Then
+		      Containers.Add(Ark.LootContainer(Blueprint))
 		    End If
-		    If SearchText.IsEmpty = False Then
-		      Clauses.Add("label LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\' OR class_string LIKE ?" + NextPlaceholder.ToString(Locale.Raw, "0") + " ESCAPE '\'")
-		      Values.Value(NextPlaceholder) = "%" + Self.EscapeLikeValue(SearchText) + "%"
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    If IncludeExperimental = False Then
-		      Clauses.Add("experimental = 0")
-		    End If
-		    
-		    Var SQL As String = Self.LootContainerSelectSQL
-		    If Clauses.LastIndex > -1 Then
-		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
-		    End If
-		    SQL = SQL + " ORDER BY loot_containers.sort_order, loot_containers.label;"
-		    
-		    Var Results As RowSet
-		    If Values.KeyCount > 0 Then
-		      Results = Self.SQLSelect(SQL, Values)
-		    Else
-		      Results = Self.SQLSelect(SQL)
-		    End If
-		    
-		    Containers = Self.RowSetToLootContainer(Results)
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
+		  Next
 		  Return Containers
 		End Function
 	#tag EndMethod
@@ -2781,6 +2727,14 @@ Inherits Beacon.DataSource
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="DebugIdentifier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

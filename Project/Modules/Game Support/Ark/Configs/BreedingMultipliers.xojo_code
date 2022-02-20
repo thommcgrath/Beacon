@@ -74,6 +74,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Self.mBabyCuddleGracePeriodMultiplier = SaveData.Lookup("BabyCuddleGracePeriodMultiplier", 1.0)
 		  Self.mBabyCuddleIntervalMultiplier = SaveData.Lookup("BabyCuddleIntervalMultiplier", 1.0)
 		  Self.mBabyCuddleLoseImprintQualitySpeedMultiplier = SaveData.Lookup("BabyCuddleLoseImprintQualitySpeedMultiplier", 1.0)
@@ -101,6 +103,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("BabyCuddleGracePeriodMultiplier") = Self.mBabyCuddleGracePeriodMultiplier
 		  SaveData.Value("BabyCuddleIntervalMultiplier") = Self.mBabyCuddleIntervalMultiplier
 		  SaveData.Value("BabyCuddleLoseImprintQualitySpeedMultiplier") = Self.mBabyCuddleLoseImprintQualitySpeedMultiplier

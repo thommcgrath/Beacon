@@ -1073,7 +1073,7 @@ End
 		    Return False
 		  End If
 		  
-		  Var ConfiguredBehaviors() As Ark.CreatureBehavior = Config.All
+		  Var ConfiguredBehaviors() As Ark.CreatureBehavior = Config.Behaviors
 		  Var ConfiguredCreatures(), DisabledCreatures() As Ark.Creature
 		  For Each Behavior As Ark.CreatureBehavior In ConfiguredBehaviors
 		    If Behavior.TargetCreature = EditCreature Then

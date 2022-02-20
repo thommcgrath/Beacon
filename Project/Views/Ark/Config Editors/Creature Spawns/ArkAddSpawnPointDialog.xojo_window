@@ -472,7 +472,7 @@ End
 		  If Project.HasConfigGroup(Ark.Configs.NameSpawnPoints) Then
 		    Var Config As Ark.Configs.SpawnPoints = Ark.Configs.SpawnPoints(Project.ConfigGroup(Ark.Configs.NameSpawnPoints, False))
 		    If Config <> Nil Then
-		      Var SpawnPoints() As Ark.SpawnPoint = Config.All
+		      Var SpawnPoints() As Ark.SpawnPoint = Config.Points
 		      For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
 		        Self.mDefinedSpawns.Value(SpawnPoint.UniqueKey) = True
 		      Next

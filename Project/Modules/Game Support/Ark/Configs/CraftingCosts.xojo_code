@@ -43,6 +43,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("Costs") Then
 		    Var Costs() As Dictionary = SaveData.Value("Costs").DictionaryArrayValue
 		    For Each CostData As Dictionary In Costs
@@ -57,6 +59,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Var Costs() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mCosts
 		    Costs.Add(Ark.CraftingCost(Entry.Value).Export)

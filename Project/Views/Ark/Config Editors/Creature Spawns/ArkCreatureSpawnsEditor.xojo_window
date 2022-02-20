@@ -388,7 +388,7 @@ End
 		    Return True
 		  End If
 		  
-		  Self.HandlePastedSpawnPoints(ParsedConfig.All)
+		  Self.HandlePastedSpawnPoints(ParsedConfig.Points)
 		  Return True
 		End Function
 	#tag EndEvent

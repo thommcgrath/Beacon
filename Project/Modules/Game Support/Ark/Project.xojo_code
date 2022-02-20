@@ -18,6 +18,8 @@ Inherits Beacon.Project
 
 	#tag Event
 		Sub AddSaveData(PlainData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  PlainData.Value("AllowUCS") = Self.AllowUCS2
 		  PlainData.Value("IsConsole") = Self.ConsoleSafe
 		  PlainData.Value("Map") = Self.MapMask
@@ -80,6 +82,11 @@ Inherits Beacon.Project
 
 	#tag Event
 		Function ReadSaveData(PlainData As Dictionary, EncryptedData As Dictionary, SaveDataVersion As Integer, SavedWithVersion As Integer, ByRef FailureReason As String) As Boolean
+		  #Pragma Unused EncryptedData
+		  #Pragma Unused SaveDataVersion
+		  #Pragma Unused SavedWithVersion
+		  #Pragma Unused FailureReason
+		  
 		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
 		  Self.ConsoleSafe = PlainData.Lookup("IsConsole", Self.ConsoleSafe).BooleanValue
 		  
@@ -385,7 +392,7 @@ Inherits Beacon.Project
 		  Var SpawnConfig As Ark.Configs.SpawnPoints // Don't create it yet
 		  
 		  Var CountChanges As Integer
-		  Var Behaviors() As Ark.CreatureBehavior = DinoConfig.All
+		  Var Behaviors() As Ark.CreatureBehavior = DinoConfig.Behaviors
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Var ReplacedCreature As Ark.Creature = Behavior.TargetCreature
 		    Var ReplacementCreature As Ark.Creature = Behavior.ReplacementCreature

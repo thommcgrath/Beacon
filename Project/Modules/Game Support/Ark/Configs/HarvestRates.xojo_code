@@ -61,6 +61,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  // There is a slight performance impact here, since DoubleValue will check HasKey too,
 		  // but this way is safe.
 		  If SaveData.HasKey("Harvest Amount Multiplier") Then
@@ -104,6 +106,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
 		  SaveData.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier
 		  SaveData.Value("Multipliers") = Self.mOverrides.SaveData

@@ -4,7 +4,7 @@ Inherits Ark.ConfigGroup
 	#tag Event
 		Sub CopyFrom(Other As Ark.ConfigGroup)
 		  Var Source As Ark.Configs.DinoAdjustments = Ark.Configs.DinoAdjustments(Other)
-		  Var Behaviors() As Ark.CreatureBehavior = Source.All
+		  Var Behaviors() As Ark.CreatureBehavior = Source.Behaviors
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Self.Add(Behavior)
 		  Next
@@ -17,7 +17,7 @@ Inherits Ark.ConfigGroup
 		  
 		  Var Values() As Ark.ConfigValue
 		  
-		  Var Behaviors() As Ark.CreatureBehavior = Self.All
+		  Var Behaviors() As Ark.CreatureBehavior = Self.Behaviors
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    If Behavior.TargetCreature.ValidForProject(Project) = False Then
 		      Continue
@@ -91,6 +91,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Self.mBehaviors = New Dictionary
 		  
 		  If Not SaveData.HasKey("Creatures") Then
@@ -111,6 +113,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Var Dicts() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Var Behavior As Ark.CreatureBehavior = Entry.Value

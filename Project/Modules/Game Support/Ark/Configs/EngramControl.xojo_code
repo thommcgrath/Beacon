@@ -162,6 +162,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("Whitelist Mode") Then
 		    Self.mOnlyAllowSpecifiedEngrams = SaveData.Value("Whitelist Mode").BooleanValue
 		  End If
@@ -204,6 +206,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If Self.mOverrides.Count > 0 Then
 		    SaveData.Value("Overrides") = Self.mOverrides.SaveData
 		  End If

@@ -64,6 +64,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  Self.mGlobalMultiplier = SaveData.DoubleValue("Global", 1.0)
 		  
 		  If SaveData.HasKey("Sizes") Then
@@ -95,6 +97,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("Global") = Self.mGlobalMultiplier
 		  SaveData.Value("Sizes") = Self.mOverrides.SaveData
 		End Sub

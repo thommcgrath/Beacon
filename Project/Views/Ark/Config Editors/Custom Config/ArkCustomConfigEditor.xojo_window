@@ -626,6 +626,8 @@ End
 	#tag Event
 		Sub DWellStart(Position as Integer, X as Integer, Y as Integer)
 		  #Pragma Unused Position
+		  #Pragma Unused X
+		  #Pragma Unused Y
 		  
 		  If Position = -1 Then
 		    Me.CallTipCancel

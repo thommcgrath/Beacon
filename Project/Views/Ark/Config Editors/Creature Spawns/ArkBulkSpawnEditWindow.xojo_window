@@ -950,7 +950,7 @@ End
 		  Next Creature
 		  
 		  // Next, process everything
-		  Var Points() As Ark.SpawnPoint = Self.mConfig.All
+		  Var Points() As Ark.SpawnPoint = Self.mConfig.Points
 		  Var PointCount As Integer = Points.Count
 		  Var TotalPointsText As String = Language.NounWithQuantity(PointCount, "spawn point", "spawn points")
 		  Var PointsProcessed As Integer

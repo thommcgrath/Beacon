@@ -75,6 +75,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("Player Levels") Then
 		    Var Value As Variant = SaveData.Value("Player Levels")
 		    If Value.IsNull = False Then
@@ -119,6 +121,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  #Pragma Unused Project
+		  
 		  Var Locale As Locale = Locale.Current
 		  
 		  If Self.mPlayerLevels.LastIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
@@ -153,6 +157,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("Player Levels") = Self.mPlayerLevels
 		  SaveData.Value("Dino Levels") = Self.mDinoLevels
 		End Sub

@@ -30,6 +30,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("MaxDinoLevel") Then
 		    Self.mMaxDinoLevel = SaveData.Value("MaxDinoLevel")
 		  End If
@@ -38,6 +40,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub Validate(Location As String, Issues As Beacon.ProjectValidationResults, Project As Beacon.Project)
+		  #Pragma Unused Project
+		  
 		  If Self.mMaxDinoLevel <= 0 Then
 		    Issues.Add(New Beacon.Issue(Location + ".MaxDinoLevel", "Difficulty must be greater than zero."))
 		  End If
@@ -46,6 +50,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("MaxDinoLevel") = Self.mMaxDinoLevel
 		End Sub
 	#tag EndEvent

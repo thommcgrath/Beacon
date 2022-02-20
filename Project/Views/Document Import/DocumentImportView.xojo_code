@@ -15,7 +15,11 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub Import(File As FolderItem)
-		  
+		  #if DebugBuild
+		    #Pragma Warning "Incomplete file import implementation"
+		  #else
+		    #Pragma Error "Incomplete file import implementation"
+		  #endif
 		End Sub
 	#tag EndMethod
 

@@ -151,7 +151,6 @@ Protected Class DataSource
 		    Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
 		    RaiseEvent BuildSchema
 		    Self.mDatabase.UserVersion = SchemaVersion
-		    RaiseEvent DoInitialImport
 		    Self.BuildIndexes
 		    Self.CommitTransaction()
 		  End If
@@ -711,10 +710,6 @@ Protected Class DataSource
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event DoInitialImport()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event GetSchemaVersion() As Integer
 	#tag EndHook
 
@@ -830,6 +825,14 @@ Protected Class DataSource
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DebugIdentifier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

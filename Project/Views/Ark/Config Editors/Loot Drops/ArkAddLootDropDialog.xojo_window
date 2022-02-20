@@ -762,8 +762,6 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Var ListHeight As Integer = (Self.SelectionActionButton.Top - 20) - (Self.FilterField.Top + Self.FilterField.Height + 20)
-		  
 		  If Self.mShowAsDuplicate Then
 		    Self.SelectionMessageLabel.Text = "Duplicate Loot Container"
 		    Self.LoadDefaultsCheckbox.Visible = False

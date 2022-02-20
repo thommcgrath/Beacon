@@ -156,6 +156,8 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -167,6 +169,7 @@ Begin ArkConfigEditor ArkDinoAdjustmentsEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -194,7 +197,7 @@ End
 		  End If
 		  
 		  Var Config As Ark.Configs.DinoAdjustments = Self.Config(True)
-		  Var Behaviors() As Ark.CreatureBehavior = OtherConfig.All
+		  Var Behaviors() As Ark.CreatureBehavior = OtherConfig.Behaviors
 		  Var Selections() As String
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Config.Add(Behavior)
@@ -285,7 +288,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Behaviors() As Ark.CreatureBehavior = Config.All
+		  Var Behaviors() As Ark.CreatureBehavior = Config.Behaviors
 		  Var CurrentCreatures() As Ark.Creature
 		  For Each Behavior As Ark.CreatureBehavior In Behaviors
 		    Var Creature As Ark.Creature = Behavior.TargetCreature

@@ -33,6 +33,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("Day") Then
 		    Self.mDaySpeedMultiplier = SaveData.Value("Day").DoubleValue
 		  End If
@@ -44,6 +46,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  SaveData.Value("Day") = Self.mDaySpeedMultiplier
 		  SaveData.Value("Night") = Self.mNightSpeedMultiplier
 		End Sub

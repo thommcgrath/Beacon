@@ -47,6 +47,7 @@ Begin Window WhatsNewWindow
    End
    Begin URLConnection PreflightSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -98,9 +99,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(PreviousBuildNumber As Integer)
-		  Self.mPreviousVersion = Preferences.NewestUsedBuild
+		  Self.mPreviousVersion = PreviousBuildNumber
 		  Super.Constructor
-		  
 		End Sub
 	#tag EndMethod
 

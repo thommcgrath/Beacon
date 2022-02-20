@@ -45,6 +45,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub ReadSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If SaveData.HasKey("Armor") Then
 		    Self.mValues(Self.StatArmor) = SaveData.Value("Armor").DoubleValue
 		  End If
@@ -81,6 +83,8 @@ Inherits Ark.ConfigGroup
 
 	#tag Event
 		Sub WriteSaveData(SaveData As Dictionary, EncryptedData As Dictionary)
+		  #Pragma Unused EncryptedData
+		  
 		  If (Self.mValues(Self.StatArmor) Is Nil) = False Then
 		    SaveData.Value("Armor") = Self.mValues(Self.StatArmor).DoubleValue
 		  End If
