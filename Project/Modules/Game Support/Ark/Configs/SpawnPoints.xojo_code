@@ -93,7 +93,7 @@ Inherits Ark.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Attributes( Deprecated = "SpawnPoints" )  Function All() As Ark.SpawnPoint()
-		  Return Self.SpawnPoints
+		  Return Self.Points
 		End Function
 	#tag EndMethod
 
@@ -603,6 +603,23 @@ Inherits Ark.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Points(Filter As String = "") As Ark.SpawnPoint()
+		  Filter = Filter.Trim
+		  
+		  Var Results() As Ark.SpawnPoint
+		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
+		    Var Point As Ark.SpawnPoint = Entry.Value
+		    If Filter.IsEmpty = False And Point.Label.IndexOf(Filter) = -1 Then
+		      Continue
+		    End If
+		    
+		    Results.Add(Point.ImmutableVersion)
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(SpawnPoint As Ark.SpawnPoint)
 		  If (SpawnPoint Is Nil) = False Then
 		    Self.Remove(SpawnPoint.UniqueKey)
@@ -624,23 +641,6 @@ Inherits Ark.ConfigGroup
 		  Self.mSpawnPoints = New Dictionary
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SpawnPoints(Filter As String = "") As Ark.SpawnPoint()
-		  Filter = Filter.Trim
-		  
-		  Var Results() As Ark.SpawnPoint
-		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
-		    Var Point As Ark.SpawnPoint = Entry.Value
-		    If Filter.IsEmpty = False And Point.Label.IndexOf(Filter) = -1 Then
-		      Continue
-		    End If
-		    
-		    Results.Add(Point.ImmutableVersion)
-		  Next
-		  Return Results
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

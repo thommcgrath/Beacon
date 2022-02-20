@@ -340,6 +340,8 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -351,6 +353,7 @@ Begin ArkConfigEditor ArkCreatureSpawnsEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   7
@@ -527,7 +530,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectedPoints() As Ark.SpawnPoint)
 		  Var Config As Ark.Configs.SpawnPoints = Self.Config(False)
-		  Var SpawnPoints() As Ark.SpawnPoint = Config.SpawnPoints(Self.FilterField.Text)
+		  Var SpawnPoints() As Ark.SpawnPoint = Config.Points(Self.FilterField.Text)
 		  Var Selected As New Dictionary
 		  For Each SpawnPoint As Ark.SpawnPoint In SelectedPoints
 		    Selected.Value(SpawnPoint.UniqueKey) = True
