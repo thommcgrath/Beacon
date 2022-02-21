@@ -4,31 +4,42 @@ Protected Class PopoverController
 		Sub Constructor(Title As String, Container As ContainerControl)
 		  Self.mContainer = Container
 		  
-		  Var ContainerBound As Integer = Container.ControlCount - 1
-		  Var MinX, MinY As Integer
-		  Var Initial As Boolean = True
-		  For Idx As Integer = 0 To ContainerBound
-		    If (Container.Control(Idx) IsA RectControl) = False Then
-		      Continue
-		    End If
-		    
-		    Var Ctl As RectControl = RectControl(Container.Control(Idx))
-		    If Initial Then
-		      MinX = Ctl.Left
-		      MinY = Ctl.Top
-		      Initial = False
-		    Else
-		      MinX = Min(MinX, Ctl.Left)
-		      MinY = Min(MinY, Ctl.Top)
-		    End If
-		  Next
-		  Self.mPaddingX = 20 - MinX
-		  Self.mPaddingY = 20 - MinY
+		  If Container IsA PopoverContainer Then
+		    Var L, R, T, B As Integer
+		    PopoverContainer(Container).GetPadding(L, T, R, B)
+		    Self.mPaddingLeft = L
+		    Self.mPaddingTop = T
+		    Self.mPaddingRight = R
+		    Self.mPaddingBottom = B
+		  Else
+		    Var MinX, MinY As Integer
+		    Var ContainerBound As Integer = Container.ControlCount - 1
+		    Var Initial As Boolean = True
+		    For Idx As Integer = 0 To ContainerBound
+		      If (Container.Control(Idx) IsA RectControl) = False Then
+		        Continue
+		      End If
+		      
+		      Var Ctl As RectControl = RectControl(Container.Control(Idx))
+		      If Initial Then
+		        MinX = Ctl.Left
+		        MinY = Ctl.Top
+		        Initial = False
+		      Else
+		        MinX = Min(MinX, Ctl.Left)
+		        MinY = Min(MinY, Ctl.Top)
+		      End If
+		    Next
+		    Self.mPaddingLeft = 20 - MinX
+		    Self.mPaddingTop = 20 - MinY
+		    Self.mPaddingRight = Self.mPaddingLeft
+		    Self.mPaddingBottom = Self.mPaddingTop
+		  End If
 		  
 		  Self.mDialog = New PopoverDialog(Self)
 		  Self.mDialog.Visible = False
 		  Self.mDialog.Title = Title
-		  Var Instance As RectControl = Self.mDialog.Embed(Container, Self.mPaddingX, Self.mPaddingY)
+		  Var Instance As RectControl = Self.mDialog.Embed(Container, Self.mPaddingLeft, Self.mPaddingTop)
 		  #if Not TargetMacOS
 		    #Pragma Unused Instance
 		  #endif
@@ -50,11 +61,11 @@ Protected Class PopoverController
 		    If NSPopoverMBS.Available Then
 		      Var ViewController As New NSViewControllerMBS
 		      ViewController.View = Instance.NSViewMBS
-		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingX * -1, Self.mPaddingY)) // No idea why the X should be negative here
+		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingLeft * -1, Self.mPaddingTop)) // No idea why the X should be negative here
 		      
 		      Self.mPopover = New BeaconPopover
 		      Self.mPopover.ContentViewController = ViewController
-		      Self.mPopover.ContentSize = New NSSizeMBS(Container.Width + (Self.mPaddingX * 2), Container.Height + (Self.mPaddingY * 2))
+		      Self.mPopover.ContentSize = New NSSizeMBS(Container.Width + (Self.mPaddingLeft + Self.mPaddingRight), Container.Height + (Self.mPaddingTop + Self.mPaddingBottom))
 		      Self.mPopover.Animates = True
 		      Self.mPopover.Behavior = NSPopoverMBS.NSPopoverBehaviorSemitransient
 		      
@@ -73,8 +84,8 @@ Protected Class PopoverController
 	#tag Method, Flags = &h21
 		Private Sub Container_Resize(Sender As ContainerControl)
 		  Var CurrentWidth As Integer = Self.mDialog.Width
-		  Var TargetWidth As Integer = Sender.Width + (Self.mPaddingX * 2)
-		  Var TargetHeight As Integer = Sender.Height + (Self.mPaddingY * 2) + 40
+		  Var TargetWidth As Integer = Sender.Width + Self.mPaddingLeft + Self.mPaddingRight
+		  Var TargetHeight As Integer = Sender.Height + Self.mPaddingTop + Self.mPaddingBottom + 40
 		  Var DeltaX As Integer = CurrentWidth - TargetWidth
 		  
 		  Self.mDialog.MaximumWidth = TargetWidth
@@ -94,7 +105,7 @@ Protected Class PopoverController
 		  If (Self.mPopover Is Nil) = False Then
 		    Self.mPopover.Animates = False
 		    Self.mPopover.ContentViewController.View.SetBoundsOrigin(New NSPointMBS(0, 0))
-		    Self.mPopover.ContentSize = New NSSizeMBS(Sender.Width + (Self.mPaddingX * 2), Sender.Height + (Self.mPaddingY * 2))
+		    Self.mPopover.ContentSize = New NSSizeMBS(Sender.Width + Self.mPaddingLeft + Self.mPaddingRight, Sender.Height + Self.mPaddingTop + Self.mPaddingBottom)
 		    Self.mPopover.Animates = True
 		  End If
 		End Sub
@@ -212,11 +223,19 @@ Protected Class PopoverController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPaddingX As Integer
+		Private mPaddingBottom As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPaddingY As Integer
+		Private mPaddingLeft As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPaddingRight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPaddingTop As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

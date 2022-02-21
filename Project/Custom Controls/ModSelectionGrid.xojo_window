@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl ModSelectionGrid
+Begin ContainerControl ModSelectionGrid Implements PopoverContainer
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -204,6 +204,17 @@ End
 		  For Each ModID As String In List
 		    Self.mModStates.Value(ModID) = True
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GetPadding(ByRef PaddingLeft As Integer, ByRef PaddingTop As Integer, ByRef PaddingRight As Integer, ByRef PaddingBottom As Integer)
+		  // Part of the PopoverContainer interface.
+		  
+		  PaddingLeft = 10
+		  PaddingTop = 10
+		  PaddingRight = 10
+		  PaddingBottom = 10
 		End Sub
 	#tag EndMethod
 
