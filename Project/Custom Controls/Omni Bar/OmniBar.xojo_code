@@ -743,6 +743,30 @@ Implements ObservationKit.Observer,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RectForItem(Idx As Integer) As Rect
+		  Return Self.mItemRects(Idx)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RectForItem(Item As OmniBarItem) As Rect
+		  Var Idx As Integer = Self.IndexOf(Item)
+		  If Idx > -1 Then
+		    Return Self.RectForItem(Idx)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RectForItem(Name As String) As Rect
+		  Var Idx As Integer = Self.IndexOf(Name)
+		  If Idx > -1 Then
+		    Return Self.RectForItem(Idx)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  If Idx >= 0 And Idx <= Self.mItems.LastIndex Then
 		    Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")

@@ -116,7 +116,7 @@ Begin BeaconDialog ResolveIssuesDialog
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   296
+      Height          =   280
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -142,7 +142,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   60
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False

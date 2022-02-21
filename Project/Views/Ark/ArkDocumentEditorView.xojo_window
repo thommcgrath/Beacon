@@ -735,9 +735,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mValidationResultsDialog_GoToIssue(Sender As ResolveIssuesDialog, Issue As Beacon.Issue)
-		  Break
+		  Sender.Close
 		  
-		  #Pragma Warning "Implementation incomplete"
+		  Select Case Issue.Location
+		  Case "MapMask"
+		    Self.ShowMapPicker()
+		    Return
+		  End Select
+		  
+		  Var Parts() As String = Issue.Location.Split(".")
+		  If Parts.Count <> 3 Then
+		    Break
+		    App.Log("Unknown issue path " + Issue.Location)
+		    Return
+		  End If
+		  
+		  Var ConfigSet As String = Parts(0)
+		  Var ConfigName As String = Parts(1)
+		  Self.ActiveConfigSet = ConfigSet
+		  Self.CurrentConfigName = ConfigName
+		  Self.CurrentPanel.GoToIssue(Issue)
 		End Sub
 	#tag EndMethod
 
@@ -767,7 +784,7 @@ End
 		  If Results.Count > 0 Then
 		    Var Dialog As New ResolveIssuesDialog(Results)
 		    AddHandler Dialog.GoToIssue, WeakAddressOf mValidationResultsDialog_GoToIssue
-		    Dialog.ShowWithin(Self)
+		    Dialog.ShowWithin(Self.TrueWindow)
 		    Self.mValidationResultsDialog = New WeakRef(Dialog)
 		    Return False
 		  End If
@@ -885,6 +902,39 @@ End
 		Private Sub ServersEditor_ShouldDeployProfiles(Sender As ServersConfigEditor, SelectedProfiles() As Ark.ServerProfile)
 		  #Pragma Unused Sender
 		  Self.BeginDeploy(SelectedProfiles)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowMapPicker()
+		  Var Item As OmniBarItem = Self.OmniBar1.Item("MapsButton")
+		  If Item Is Nil Then
+		    Return
+		  End If
+		  
+		  Var ItemRect As Rect = Self.OmniBar1.RectForItem(Item)
+		  Self.ShowMapPicker(Item, ItemRect)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowMapPicker(Item As OmniBarItem, ItemRect As Rect)
+		  If (Self.mMapsPopoverController Is Nil) = False And Self.mMapsPopoverController.Visible Then
+		    Self.mMapsPopoverController.Dismiss(False)
+		    Self.mMapsPopoverController = Nil
+		    Item.Toggled = False
+		    Return
+		  End If
+		  
+		  Var Editor As New MapSelectionGrid
+		  Var Controller As New PopoverController("Select Maps", Editor)
+		  Editor.Mask = Self.Project.MapMask
+		  Controller.Show(Self.OmniBar1, ItemRect)
+		  
+		  Item.Toggled = True
+		  
+		  AddHandler Controller.Finished, WeakAddressOf MapsPopoverController_Finished
+		  Self.mMapsPopoverController = Controller
 		End Sub
 	#tag EndMethod
 
@@ -1296,22 +1346,7 @@ End
 		  Case "DeployButton"
 		    Self.BeginDeploy()
 		  Case "MapsButton"
-		    If (Self.mMapsPopoverController Is Nil) = False And Self.mMapsPopoverController.Visible Then
-		      Self.mMapsPopoverController.Dismiss(False)
-		      Self.mMapsPopoverController = Nil
-		      Item.Toggled = False
-		      Return
-		    End If
-		    
-		    Var Editor As New MapSelectionGrid
-		    Var Controller As New PopoverController("Select Maps", Editor)
-		    Editor.Mask = Self.Project.MapMask
-		    Controller.Show(Me, ItemRect)
-		    
-		    Item.Toggled = True
-		    
-		    AddHandler Controller.Finished, WeakAddressOf MapsPopoverController_Finished
-		    Self.mMapsPopoverController = Controller
+		    Self.ShowMapPicker(Item, ItemRect)
 		  Case "ModsButton"
 		    If (Self.mModsPopoverController Is Nil) = False And Self.mModsPopoverController.Visible Then
 		      Self.mModsPopoverController.Dismiss(False)
