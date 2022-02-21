@@ -158,12 +158,10 @@ Implements NotificationKit.Receiver,ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Shared Function Create(Controller As Beacon.ProjectController) As DocumentEditorView
-		  #if DebugBuild
-		    #Pragma Warning "Does not detect project type"
-		  #else
-		    #Pragma Error "Does not detect project type"
-		  #endif
-		  Return New ArkDocumentEditorView(Controller)
+		  Select Case Controller.GameID
+		  Case Ark.Identifier
+		    Return New ArkDocumentEditorView(Controller)
+		  End Select
 		End Function
 	#tag EndMethod
 

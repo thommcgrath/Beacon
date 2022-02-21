@@ -90,21 +90,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(ImportView As DocumentImportView, ImportCallback As ImportFinishedDelegate, DestinationProject As Beacon.Project, OtherProjects() As Beacon.Project) As DocumentImportWindow
+		Shared Function Present(ImportView As DocumentImportView, ImportCallback As ImportFinishedDelegate, DestinationProject As Beacon.Project, OtherProjects() As Beacon.Project, File As FolderItem = Nil) As DocumentImportWindow
 		  Var Win As New DocumentImportWindow(ImportView, ImportCallback)
 		  ImportView.PullValuesFromProject(DestinationProject) // Give discovery views a chance to get stuff like oauth keys
 		  ImportView.SetOtherProjects(OtherProjects)
 		  Win.Show
-		  Return Win
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Present(ImportView As DocumentImportView, ImportCallback As ImportFinishedDelegate, DestinationProject As Beacon.Project, File As FolderItem) As DocumentImportWindow
-		  Var Win As New DocumentImportWindow(ImportView, ImportCallback)
-		  ImportView.PullValuesFromProject(DestinationProject) // Give discovery views a chance to get stuff like oauth keys
-		  ImportView.Import(File)
-		  Win.Show
+		  If (File Is Nil) = False And File.Exists Then
+		    ImportView.Import(File)
+		  End If
 		  Return Win
 		End Function
 	#tag EndMethod

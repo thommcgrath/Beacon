@@ -135,8 +135,6 @@ Inherits Beacon.Project
 		    End If
 		  End If
 		  
-		  #Pragma Warning "Attach an account uuid to profiles that are missing them"
-		  
 		  Return True
 		End Function
 	#tag EndEvent

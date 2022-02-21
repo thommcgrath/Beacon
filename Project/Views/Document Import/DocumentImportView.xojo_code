@@ -15,11 +15,7 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub Import(File As FolderItem)
-		  #if DebugBuild
-		    #Pragma Warning "Incomplete file import implementation"
-		  #else
-		    #Pragma Error "Incomplete file import implementation"
-		  #endif
+		  RaiseEvent ImportFile(File)
 		End Sub
 	#tag EndMethod
 
@@ -50,6 +46,10 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event ImportFile(File As FolderItem)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ProjectsImported(Projects() As Beacon.Project)

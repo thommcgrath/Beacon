@@ -71,7 +71,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mObjectID = Source.mObjectID
 		  Self.mPath = Source.mPath
 		  Self.mPreventDuplicates = Source.mPreventDuplicates
-		  Self.mRequirements = Source.mRequirements.Clone
+		  Self.mRequirements = If(Source.mRequirements Is Nil, Nil, Source.mRequirements.Clone)
 		  Self.mSortValue = Source.mSortValue
 		  Self.mUIColor = Source.mUIColor
 		  

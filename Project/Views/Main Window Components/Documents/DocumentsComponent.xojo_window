@@ -421,10 +421,16 @@ End
 		    Return
 		  End If
 		  
+		  Var OtherProjects() As Beacon.Project
+		  Var DocumentEditors() As DocumentEditorView = Self.DocumentEditors
+		  For Each Editor As DocumentEditorView In DocumentEditors
+		    OtherProjects.Add(Editor.Project)
+		  Next Editor
+		  
 		  Select Case GameID
 		  Case Ark.Identifier
 		    Var ImportView As New ArkImportView
-		    Call DocumentImportWindow.Present(ImportView, WeakAddressOf LoadImportedDocuments, New Ark.Project, File)
+		    Call DocumentImportWindow.Present(ImportView, WeakAddressOf LoadImportedDocuments, New Ark.Project, OtherProjects, File)
 		  End Select
 		End Sub
 	#tag EndMethod

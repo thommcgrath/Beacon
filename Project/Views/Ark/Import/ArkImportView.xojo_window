@@ -47,7 +47,7 @@ Begin DocumentImportView ArkImportView
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   6
       Visible         =   True
       Width           =   600
       Begin RadioButton SourceRadio
@@ -810,6 +810,14 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub ImportFile(File As FolderItem)
+		  Self.QuickCancel = True
+		  Self.Views.SelectedPanelIndex = 3
+		  Self.LocalDiscoveryView1.AddFile(File)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  RaiseEvent Open
 		  
@@ -906,14 +914,6 @@ End
 		    Super.Finish(Projects)
 		  End If
 		  Self.Dismiss
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Import(File As FolderItem)
-		  Self.QuickCancel = True
-		  Self.Views.SelectedPanelIndex = 3
-		  Self.LocalDiscoveryView1.AddFile(File)
 		End Sub
 	#tag EndMethod
 
