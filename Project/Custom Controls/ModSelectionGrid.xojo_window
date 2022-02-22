@@ -25,13 +25,13 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   370
    BeginDesktopSegmentedButton DesktopSegmentedButton ViewSelector
       Enabled         =   True
       Height          =   24
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   10
+      Left            =   45
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -45,7 +45,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   False
       Tooltip         =   ""
-      Top             =   10
+      Top             =   20
       Transparent     =   False
       Visible         =   True
       Width           =   280
@@ -64,7 +64,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       Index           =   0
       InitialParent   =   ""
       Italic          =   False
-      Left            =   10
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -75,7 +75,7 @@ Begin ContainerControl ModSelectionGrid Implements PopoverContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   64
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -102,6 +102,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildCheckboxes()
 		  Self.mSettingUp = True
+		  
+		  Const EdgePadding = 20
 		  
 		  Const PageUniversal = 0
 		  Const PageSteam = 1
@@ -171,8 +173,8 @@ End
 		    End If
 		  Next
 		  
-		  Self.Width = (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + 20
-		  Self.Height = (RowCount * 20) + ((RowCount - 1) * 12) + 64
+		  Self.Width = (ColumnCount * CheckboxWidth) + ((ColumnCount - 1) * 12) + (EdgePadding * 2)
+		  Self.Height = (RowCount * 20) + ((RowCount - 1) * 12) + (Self.ViewSelector.Height + (EdgePadding * 3))
 		  Self.ViewSelector.Left = (Self.Width - Self.ViewSelector.Width) / 2
 		  
 		  Self.mSettingUp = False
@@ -211,10 +213,10 @@ End
 		Sub GetPadding(ByRef PaddingLeft As Integer, ByRef PaddingTop As Integer, ByRef PaddingRight As Integer, ByRef PaddingBottom As Integer)
 		  // Part of the PopoverContainer interface.
 		  
-		  PaddingLeft = 10
-		  PaddingTop = 10
-		  PaddingRight = 10
-		  PaddingBottom = 10
+		  PaddingLeft = 0
+		  PaddingTop = 0
+		  PaddingRight = 0
+		  PaddingBottom = 0
 		End Sub
 	#tag EndMethod
 
