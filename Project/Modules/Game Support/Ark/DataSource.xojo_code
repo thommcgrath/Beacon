@@ -697,6 +697,34 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CountContentPacks(Filter As String, Type As Ark.ContentPack.Types) As Integer
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  Select Case Type
+		  Case Ark.ContentPack.Types.Universal
+		    Clauses.Add("is_local = 0 AND console_safe = 1")
+		  Case Ark.ContentPack.Types.Steam
+		    Clauses.Add("is_local = 0 AND console_safe = 0")
+		  Case Ark.ContentPack.Types.Custom
+		    Clauses.Add("is_local = 1")
+		  End Select
+		  
+		  Var SQL As String = "SELECT COUNT(content_pack_id) FROM content_packs"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
+		  End If
+		  SQL = SQL + ";"
+		  
+		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
+		  Return Results.ColumnAt(0).IntegerValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateInstance() As Ark.DataSource
 		  Return SharedInstance(Ark.DataSource.FlagCreateIfNeeded Or Ark.DataSource.FlagUseWeakRef)
 		End Function
@@ -1047,14 +1075,69 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetContentPacks() As Ark.ContentPack()
+		Function GetContentPacks(Type As Ark.ContentPack.Types) As Ark.ContentPack()
+		  Return Self.GetContentPacks("", Type, 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Type As Ark.ContentPack.Types, Offset As Integer, Limit As Integer) As Ark.ContentPack()
+		  Return Self.GetContentPacks("", Type, Offset, Limit)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String = "") As Ark.ContentPack()
+		  Return Self.GetContentPacks(Filter, CType(-1, Ark.ContentPack.Types), 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Ark.ContentPack.Types) As Ark.ContentPack()
+		  Return Self.GetContentPacks(Filter, Type, 0, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Type As Ark.ContentPack.Types, Offset As Integer, Limit As Integer) As Ark.ContentPack()
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  If Filter.IsEmpty = False Then
+		    Clauses.Add("name LIKE :filter ESCAPE '\'")
+		    Values.Add("%" + Self.EscapeLikeValue(Filter) + "%")
+		  End If
+		  Select Case Type
+		  Case Ark.ContentPack.Types.Universal
+		    Clauses.Add("is_local = 0 AND console_safe = 1")
+		  Case Ark.ContentPack.Types.Steam
+		    Clauses.Add("is_local = 0 AND console_safe = 0")
+		  Case Ark.ContentPack.Types.Custom
+		    Clauses.Add("is_local = 1")
+		  End Select
+		  
+		  Var SQL As String = "SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + String.FromArray(Clauses, " AND ")
+		  End If
+		  SQL = SQL + " ORDER BY name"
+		  If Limit > 0 Then
+		    SQL = SQL + " LIMIT " + Limit.ToString(Locale.Raw, "0") + " OFFSET " + Offset.ToString(Locale.Raw, "0")
+		  End If
+		  SQL = SQL + ";"
+		  
 		  Var Packs() As Ark.ContentPack
-		  Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id, name, console_safe, default_enabled, workshop_id, is_local FROM content_packs ORDER BY name;")
+		  Var Results As RowSet = Self.SQLSelect(SQL, Values)
 		  While Not Results.AfterLastRow
 		    Packs.Add(New Ark.ContentPack(Results.Column("content_pack_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("is_local").BooleanValue, NullableDouble.FromVariant(Results.Column("workshop_id").Value)))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetContentPacks(Filter As String, Offset As Integer, Limit As Integer) As Ark.ContentPack()
+		  Return Self.GetContentPacks(Filter, CType(-1, Ark.ContentPack.Types), Offset, Limit)
 		End Function
 	#tag EndMethod
 
@@ -2733,7 +2816,7 @@ Inherits Beacon.DataSource
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
