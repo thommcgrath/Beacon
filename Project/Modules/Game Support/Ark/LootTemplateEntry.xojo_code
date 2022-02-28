@@ -29,6 +29,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mRespectQualityOffsets = True
 		  Self.mRespectQuantityMultipliers = True
 		  Self.mRespectBlueprintChanceMultipliers = True
+		  Self.mUUID = New v4UUID
 		End Sub
 	#tag EndMethod
 
@@ -49,6 +50,9 @@ Implements Beacon.Countable,Iterable
 		  Self.mRespectQuantityMultipliers = Source.mRespectQuantityMultipliers
 		  Self.mWeight = Source.mWeight
 		  Self.mUUID = Source.mUUID
+		  Self.mPreventGrinding = Source.mPreventGrinding
+		  Self.mSingleItemQuantity = Source.mSingleItemQuantity
+		  Self.mStatClampMultiplier = Source.mStatClampMultiplier
 		  
 		  Self.mOptions.ResizeTo(Source.LastIndex)
 		  For Idx As Integer = 0 To Self.mOptions.LastIndex
@@ -167,6 +171,30 @@ Implements Beacon.Countable,Iterable
 		      End Try
 		    Next
 		  End If
+		  
+		  Try
+		    If Dict.HasKey("PreventGrinding") Then
+		      Entry.PreventGrinding = Dict.Value("PreventGrinding")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading PreventGrinding value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("StatClampMultiplier") Then
+		      Entry.StatClampMultiplier = Dict.Value("StatClampMultiplier")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading StatClampMultiplier value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("SingleItemQuantity") Then
+		      Entry.SingleItemQuantity = Dict.Value("SingleItemQuantity")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading SingleItemQuantity value")
+		  End Try
 		  
 		  Entry.Modified = False
 		  Return Entry
@@ -305,27 +333,60 @@ Implements Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As Ark.LootItemSetEntry
-		  #if DebugBuild
-		    #Pragma Warning "Incomplete"
-		  #else
-		    #Pragma Error "Incomplete"
-		  #endif
+		  Var Entry As New Ark.MutableLootItemSetEntry
+		  Entry.ChanceToBeBlueprint = Self.mChanceToBeBlueprint
+		  Entry.MaxQuality = Self.mMaxQuality
+		  Entry.MaxQuantity = Self.mMaxQuantity
+		  Entry.MinQuality = Self.mMinQuality
+		  Entry.MinQuantity = Self.mMinQuantity
+		  Entry.PreventGrinding = Self.mPreventGrinding
+		  Entry.SingleItemQuantity = Self.mSingleItemQuantity
+		  Entry.StatClampMultiplier = Self.mStatClampMultiplier
+		  Entry.RawWeight = Self.mWeight
+		  Entry.Modified = False
+		  
+		  // It's ok to reference the source objects here, they are not mutable
+		  For Each Option As Ark.LootItemSetEntryOption In Self.mOptions
+		    Entry.Add(Option)
+		  Next Option
+		  
+		  Return Entry
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Source As Ark.LootItemSetEntry)
-		  #if DebugBuild
-		    #Pragma Warning "Incomplete"
-		  #else
-		    #Pragma Error "Incomplete"
-		  #endif
+		  Self.Constructor()
+		  
+		  Self.mChanceToBeBlueprint = Source.ChanceToBeBlueprint
+		  Self.mMaxQuality = Source.MaxQuality
+		  Self.mMaxQuantity = Source.MaxQuantity
+		  Self.mMinQuality = Source.MinQuality
+		  Self.mMinQuantity = Source.MinQuantity
+		  Self.mPreventGrinding = Source.PreventGrinding
+		  Self.mSingleItemQuantity = Source.SingleItemQuantity
+		  Self.mStatClampMultiplier = Source.StatClampMultiplier
+		  Self.mWeight = Source.RawWeight
+		  
+		  // It's ok to reference the source objects here, they are not mutable
+		  For Each Option As Ark.LootItemSetEntryOption In Source
+		    Self.mOptions.Add(Option)
+		  Next Option
+		  
+		  // Just in case
+		  Self.mModified = False
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Subscript(Idx As Integer) As Ark.LootItemSetEntryOption
 		  Return Self.mOptions(Idx)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PreventGrinding() As Boolean
+		  Return Self.mPreventGrinding
 		End Function
 	#tag EndMethod
 
@@ -393,7 +454,28 @@ Implements Beacon.Countable,Iterable
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultipliers
 		  Dict.Value("Weight") = Self.RawWeight
 		  Dict.Value("UUID") = Self.UUID
+		  Dict.Value("PreventGrinding") = Self.PreventGrinding
+		  Dict.Value("StatClampMultiplier") = Self.StatClampMultiplier
+		  Dict.Value("SingleItemQuantity") = Self.SingleItemQuantity
 		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SingleItemQuantity(Actual As Boolean = False) As Boolean
+		  // If Actual is true, the caller is looking for the true state of the setting and not the effective state
+		  
+		  If Actual Then
+		    Return Self.mSingleItemQuantity
+		  Else
+		    Return Self.mSingleItemQuantity Or Self.mOptions.Count = 1
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatClampMultiplier() As Double
+		  Return Self.mStatClampMultiplier
 		End Function
 	#tag EndMethod
 
@@ -453,6 +535,10 @@ Implements Beacon.Countable,Iterable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mPreventGrinding As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mRespectBlueprintChanceMultipliers As Boolean
 	#tag EndProperty
 
@@ -462,6 +548,14 @@ Implements Beacon.Countable,Iterable
 
 	#tag Property, Flags = &h1
 		Protected mRespectQuantityMultipliers As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSingleItemQuantity As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStatClampMultiplier As Double = 1.0
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

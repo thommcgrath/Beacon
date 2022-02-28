@@ -628,11 +628,6 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
@@ -666,20 +661,18 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
-		    Var Entries() As Ark.LootItemSetEntry
-		    For I As Integer = 0 To Me.RowCount - 1
-		      If Me.Selected(I) Then
-		        Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(I)).MutableClone)
+		    Var Entries() As Ark.MutableLootItemSetEntry
+		    For Idx As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(Idx) Then
+		        Entries.Add(Ark.LootItemSetEntry(Me.RowTagAt(Idx)).MutableClone)
 		      End If
-		    Next
+		    Next Idx
 		    
-		    Var CreatedEntries() As Ark.LootItemSetEntry = Self.LootItemSet.AddBlueprintEntries(Entries)
-		    If CreatedEntries.Count = 0 Then
-		      Return True
+		    Var BlueprintEntry As Ark.LootItemSetEntry = Self.LootItemSet.AddBlueprintEntry(Entries)
+		    If (BlueprintEntry Is Nil) = False Then
+		      Self.UpdateEntryList(BlueprintEntry)
+		      RaiseEvent Updated
 		    End If
-		    
-		    Self.UpdateEntryList(CreatedEntries)
-		    RaiseEvent Updated
 		    Return True
 		  Case "splitengrams"
 		    Var ItemSet As Ark.MutableLootItemSet = Self.LootItemSet

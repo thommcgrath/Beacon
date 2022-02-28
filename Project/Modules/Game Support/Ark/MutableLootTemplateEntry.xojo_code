@@ -96,6 +96,13 @@ Inherits Ark.LootTemplateEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PreventGrinding(Assigns Value As Boolean)
+		  Self.mPreventGrinding = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RawWeight(Assigns Value As Double)
 		  If Self.mWeight <> Value Then
 		    Self.mWeight = Value
@@ -144,6 +151,20 @@ Inherits Ark.LootTemplateEntry
 		    Self.mRespectQuantityMultipliers = Value
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SingleItemQuantity(Assigns Value As Boolean)
+		  Self.mSingleItemQuantity = Value
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StatClampMultiplier(Assigns Value As Double)
+		  Self.mStatClampMultiplier = Value
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 

@@ -9,12 +9,63 @@ Inherits Ark.LootItemSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AddBlueprintEntries(Sources() As Ark.LootItemSetEntry) As Ark.LootItemSetEntry()
-		  #if DebugBuild
-		    #Pragma Warning "Does not create blueprint entries"
-		  #else
-		    #Pragma Error "Does not create blueprint entries"
-		  #endif
+		Function AddBlueprintEntry(Sources() As Ark.LootItemSetEntry) As Ark.LootItemSetEntry
+		  If Sources.Count = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var UUIDs() As String
+		  For Idx As Integer = Sources.FirstIndex To Sources.LastIndex
+		    UUIDs.Add(Sources(Idx).UUID)
+		  Next Idx
+		  
+		  Var MissingWeight, MinQualitySum, MaxQualitySum As Double
+		  Var EntryCount As Double
+		  Var References As New Dictionary
+		  For Idx As Integer = Self.mEntries.FirstIndex To Sources.LastIndex
+		    If UUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
+		      Continue
+		    End If
+		    
+		    For Each Option As Ark.LootItemSetEntryOption In Self.mEntries(Idx)
+		      If References.HasKey(Option.Reference.ObjectID) = False Then
+		        References.Value(Option.Reference.ObjectID) = Option
+		      End If
+		    Next Option
+		    
+		    Var AdjustedWeight As Double = Self.mEntries(Idx).RawWeight * (1 - Self.mEntries(Idx).ChanceToBeBlueprint)
+		    MissingWeight = MissingWeight + (Self.mEntries(Idx).RawWeight - AdjustedWeight)
+		    
+		    EntryCount = EntryCount + 1
+		    MinQualitySum = MinQualitySum + Self.mEntries(Idx).MinQuality.BaseValue
+		    MaxQualitySum = MaxQualitySum + Self.mEntries(Idx).MaxQuality.BaseValue
+		    
+		    Var MutableEntry As New Ark.MutableLootItemSetEntry(Self.mEntries(Idx))
+		    MutableEntry.ChanceToBeBlueprint = 0
+		    MutableEntry.RawWeight = AdjustedWeight
+		    Self.mEntries(Idx) = MutableEntry
+		    Self.Modified = True
+		  Next Idx
+		  
+		  If References.KeyCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var BlueprintEntry As New Ark.MutableLootItemSetEntry
+		  BlueprintEntry.ChanceToBeBlueprint = 1
+		  BlueprintEntry.RawWeight = MissingWeight
+		  BlueprintEntry.MinQuantity = 1
+		  BlueprintEntry.MaxQuantity = 1
+		  BlueprintEntry.MinQuality = Ark.Qualities.ForBaseValue(MinQualitySum / EntryCount)
+		  BlueprintEntry.MaxQuality = Ark.Qualities.ForBaseValue(MaxQualitySum / EntryCount)
+		  BlueprintEntry.SingleItemQuantity = True
+		  For Each ReferenceEntry As DictionaryEntry In References
+		    BlueprintEntry.Add(References.Value(ReferenceEntry.Key))
+		  Next ReferenceEntry
+		  Self.mEntries.Add(BlueprintEntry.ImmutableVersion)
+		  Self.Modified = True
+		  
+		  Return Self.mEntries(Self.mEntries.LastIndex)
 		End Function
 	#tag EndMethod
 

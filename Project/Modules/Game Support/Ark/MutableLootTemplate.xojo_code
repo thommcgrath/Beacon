@@ -14,68 +14,78 @@ Inherits Ark.LootTemplate
 
 	#tag Method, Flags = &h0
 		Function AddBlueprintEntries(Sources() As Ark.LootTemplateEntry) As Ark.LootTemplateEntry()
-		  #if DebugBuild
-		    #Pragma Warning "Does not create blueprint entries"
-		  #else
-		    #Pragma Error "Does not create blueprint entries"
-		  #endif
+		  Var MatchingUUIDs() As String
+		  For Idx As Integer = 0 To Sources.LastIndex
+		    MatchingUUIDs.Add(Sources(Idx).UUID)
+		  Next Idx
 		  
-		  #if false
-		    Var MatchingUUIDs() As String
-		    For Idx As Integer = 0 To Sources.LastIndex
-		      MatchingUUIDs.Add(Sources(Idx).UUID)
-		    Next Idx
+		  Var MissingWeight, MinQualitySum, MaxQualitySum As Double
+		  Var EntryCount As Double
+		  Var References As New Dictionary
+		  For Idx As Integer = Self.mEntries.FirstIndex To Self.mEntries.LastIndex
+		    If MatchingUUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
+		      Continue
+		    End If
 		    
-		    Var References As New Dictionary
-		    For Idx As Integer = 0 To Self.mEntries.LastIndex
-		      If MatchingUUIDs.IndexOf(Self.mEntries(Idx).UUID) = -1 Or Self.mEntries(Idx).ChanceToBeBlueprint = 0 Then
-		        Continue
+		    For Each Option As Ark.LootItemSetEntryOption In Self.mEntries(Idx)
+		      If References.HasKey(Option.Reference.ObjectID) = False Then
+		        References.Value(Option.Reference.ObjectID) = Option.Reference
 		      End If
-		      
-		      For Each Option As Ark.LootItemSetEntryOption In Self.mEntries(Idx)
-		        If References.HasKey(Option.Reference.ObjectID) = False Then
-		          References.Value(Option.Reference.ObjectID) = Option.Reference
-		        End If
-		      Next Option
-		      
-		      Var Mutable As New Ark.MutableLootTemplateEntry(Self.mEntries(Idx))
-		      Mutable.ChanceToBeBlueprint = 0
-		      Self.mEntries(Idx) = New Ark.LootTemplateEntry(Mutable)
-		    Next Idx
+		    Next Option
 		    
-		    Var UniqueMasks() As UInt64
+		    Var AdjustedWeight As Double = Self.mEntries(Idx).RawWeight * (1 - Self.mEntries(Idx).ChanceToBeBlueprint)
+		    MissingWeight = MissingWeight + (Self.mEntries(Idx).RawWeight - AdjustedWeight)
+		    
+		    EntryCount = EntryCount + 1
+		    MinQualitySum = MinQualitySum + Self.mEntries(Idx).MinQuality.BaseValue
+		    MaxQualitySum = MaxQualitySum + Self.mEntries(Idx).MaxQuality.BaseValue
+		    
+		    Var Mutable As New Ark.MutableLootTemplateEntry(Self.mEntries(Idx))
+		    Mutable.ChanceToBeBlueprint = 0
+		    Mutable.RawWeight = AdjustedWeight
+		    Mutable.RespectBlueprintChanceMultipliers = False
+		    Self.mEntries(Idx) = New Ark.LootTemplateEntry(Mutable)
+		  Next Idx
+		  
+		  Var UniqueMasks() As UInt64
+		  For Each Entry As DictionaryEntry In References
+		    Var Reference As Ark.BlueprintReference = Entry.Value
+		    Var Engram As Ark.Engram = Ark.Engram(Reference.Resolve)
+		    Var EngramMask As UInt64 = Engram.Availability
+		    If UniqueMasks.IndexOf(EngramMask) = -1 Then
+		      UniqueMasks.Add(EngramMask)
+		    End If
+		  Next Entry
+		  
+		  Var BlueprintEntries() As Ark.LootTemplateEntry
+		  For MaskIdx As Integer = UniqueMasks.FirstIndex To UniqueMasks.LastIndex
+		    Var EngramMask As UInt64 = UniqueMasks(MaskIdx)
+		    Var Blueprint As New Ark.MutableLootTemplateEntry
+		    Blueprint.ChanceToBeBlueprint = 1
+		    Blueprint.RespectBlueprintChanceMultipliers = False
+		    Blueprint.RespectQuantityMultipliers = False
+		    Blueprint.Availability = EngramMask
+		    Blueprint.ChanceToBeBlueprint = 1
+		    Blueprint.RawWeight = MissingWeight
+		    Blueprint.MinQuantity = 1
+		    Blueprint.MaxQuantity = 1
+		    Blueprint.MinQuality = Ark.Qualities.ForBaseValue(MinQualitySum / EntryCount)
+		    Blueprint.MaxQuality = Ark.Qualities.ForBaseValue(MaxQualitySum / EntryCount)
+		    Blueprint.SingleItemQuantity = True
 		    For Each Entry As DictionaryEntry In References
 		      Var Reference As Ark.BlueprintReference = Entry.Value
 		      Var Engram As Ark.Engram = Ark.Engram(Reference.Resolve)
-		      Var EngramMask As UInt64 = Mask And Engram.Availability
-		      If UniqueMasks.IndexOf(EngramMask) = -1 Then
-		        UniqueMasks.Add(EngramMask)
+		      If (Engram.Availability And EngramMask) > CType(0, UInt64) Then
+		        Blueprint.Add(New Ark.LootItemSetEntryOption(Engram, 10))
 		      End If
 		    Next Entry
 		    
-		    Var BlueprintEntries() As Ark.LootTemplateEntry
-		    For MaskIdx As Integer = 0 To UniqueMasks.LastIndex
-		      Var EngramMask As UInt64 = UniqueMasks(MaskIdx)
-		      Var Blueprint As New Ark.MutableLootTemplateEntry
-		      Blueprint.ChanceToBeBlueprint = 1
-		      Blueprint.RespectBlueprintChanceMultipliers = False
-		      Blueprint.RespectQuantityMultipliers = False
-		      Blueprint.Availability = EngramMask
-		      For Each Entry As DictionaryEntry In References
-		        Var Reference As Ark.BlueprintReference = Entry.Value
-		        Var Engram As Ark.Engram = Ark.Engram(Reference.Resolve)
-		        If (Engram.Availability And EngramMask) > 0 Then
-		          Blueprint.Add(New Ark.LootItemSetEntryOption(Engram, 10))
-		        End If
-		      Next Entry
-		      
-		      Var Immutable As New Ark.LootTemplateEntry(Blueprint)
-		      Self.mEntries.Add(Immutable)
-		      BlueprintEntries.Add(Immutable)
-		    Next MaskIdx
-		    
-		    Return BlueprintEntries
-		  #endif
+		    Var Immutable As New Ark.LootTemplateEntry(Blueprint)
+		    Self.mEntries.Add(Immutable)
+		    BlueprintEntries.Add(Immutable)
+		  Next MaskIdx
+		  
+		  Return BlueprintEntries
 		End Function
 	#tag EndMethod
 
