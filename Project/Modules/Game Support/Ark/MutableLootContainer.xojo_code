@@ -221,7 +221,7 @@ Implements Ark.MutableBlueprint
 		    End If
 		    
 		    Var Mutable As Ark.MutableLootItemSet = Self.mItemSets(Idx).MutableVersion
-		    If Template.RebuildLootItemSet(Mutable, Self, ContentPacks) = False Then
+		    If Template.RebuildLootItemSet(Mutable, Mask, Self, ContentPacks) = False Then
 		      Continue
 		    End If
 		    

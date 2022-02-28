@@ -604,6 +604,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CharacterAdded(Character as Integer, CharacterSource as Integer)
+		  #Pragma Unused Character
+		  #Pragma Unused CharacterSource
+		  
 		  If Me.SelectionEnd = Me.SelectionStart And Me.SelectionStart > 0 And Me.AutoCompleteActive = False Then
 		    Self.ShowAutocomplete()
 		  End If

@@ -425,16 +425,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function ActiveMask() As UInt64
-		  Var CombinedMask As UInt64
-		  For Each Container As Ark.LootContainer In Self.mContainers
-		    CombinedMask = CombinedMask Or Container.Availability
-		  Next
-		  Return CombinedMask And Self.Project.MapMask
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub AddSet(ParamArray Sets() As Ark.LootItemSet)
 		  Self.AddSets(Sets)
 		End Sub
@@ -1193,7 +1183,7 @@ End
 		  
 		  Select Case HitItem.Name
 		  Case "createpreset"
-		    If Targets.LastIndex = 0 Then
+		    If Targets.Count = 1 Then
 		      Var Organizer As Ark.LootItemSetOrganizer = Targets(0)
 		      
 		      Var NewTemplate As Ark.LootTemplate = App.MainWindow.Templates.CreateTemplate(Organizer.Template)
@@ -1201,6 +1191,7 @@ End
 		        Return True
 		      End If
 		      
+		      Var Mask As UInt64 = Self.Project.MapMask
 		      Var AffectedItemSets() As Ark.LootItemSet
 		      Var Containers() As Ark.MutableLootContainer = Organizer.Containers
 		      For Each Container As Ark.MutableLootContainer In Containers
@@ -1210,7 +1201,7 @@ End
 		        End If
 		        
 		        Var MutableSet As Ark.MutableLootItemSet = Set.MutableVersion
-		        If NewTemplate.RebuildLootItemSet(MutableSet, Container, Self.Project.ContentPacks) Then
+		        If NewTemplate.RebuildLootItemSet(MutableSet, Mask, Container, Self.Project.ContentPacks) Then
 		          Var Idx As Integer = Container.IndexOf(Set)
 		          Container(Idx) = MutableSet
 		          AffectedItemSets.Add(MutableSet)
@@ -1227,6 +1218,7 @@ End
 		    Var Templates As New Dictionary
 		    For Each Organizer As Ark.LootItemSetOrganizer In Targets
 		      Var Containers() As Ark.MutableLootContainer = Organizer.Containers
+		      Var Mask As UInt64 = Self.Project.MapMask
 		      
 		      For Each Container As Ark.MutableLootContainer In Containers
 		        Var Set As Ark.LootItemSet = Organizer.SetForContainer(Container)
@@ -1244,7 +1236,7 @@ End
 		        
 		        Var MutableSet As Ark.MutableLootItemSet = Set.MutableVersion
 		        Var Template As Ark.LootTemplate = Templates.Value(Set.TemplateUUID)
-		        If Template.RebuildLootItemSet(MutableSet, Container, Self.Project.ContentPacks) Then
+		        If Template.RebuildLootItemSet(MutableSet, Mask, Container, Self.Project.ContentPacks) Then
 		          Var Idx As Integer = Container.IndexOf(Set)
 		          Container(Idx) = MutableSet
 		          AffectedItemSets.Add(MutableSet)
