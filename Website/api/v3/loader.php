@@ -27,6 +27,13 @@ spl_autoload_register(function($class_name) {
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+if (isset($_SERVER['REQUEST_URI'])) {
+	$root = explode('/', $_SERVER['REQUEST_URI'])[1];
+	if (strlen($root) === 2 && substr($root, 0, 1) === 'v') {
+		BeaconAPI::SetAPIVersion(intval(substr($root, 1, 1)));
+	}
+}
+
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
 header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-Beacon-Upgrade-Encryption,X-Beacon-Token,Authorization');

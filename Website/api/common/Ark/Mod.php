@@ -165,9 +165,9 @@ class Mod implements \JsonSerializable {
 			'workshop_url' => \BeaconWorkshopItem::URLForModID($this->workshop_id),
 			'confirmed' => $this->confirmed,
 			'confirmation_code' => $this->confirmation_code,
-			'resource_url' => \BeaconAPI::URL('/mod/' . $this->workshop_id),
-			'confirm_url' => \BeaconAPI::URL('/mod/' . $this->workshop_id . '?action=confirm'),
-			'engrams_url' => \BeaconAPI::URL('/engram?mod_id=' . $this->workshop_id),
+			'resource_url' => \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/mod/' . $this->workshop_id),
+			'confirm_url' => \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/mod/' . $this->workshop_id . '?action=confirm'),
+			'engrams_url' => \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/engram?mod_id=' . $this->workshop_id),
 			'spawncodes_url' => \BeaconCommon::AbsoluteURL('/spawn/?mod_id=' . $this->workshop_id),
 			'pull_url' => $this->pull_url,
 			'min_version' => $this->min_version

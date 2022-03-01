@@ -212,7 +212,7 @@ class Creature extends \Ark\Blueprint {
 		$json['related_object_ids'] = $this->RelatedObjectIDs();
 		$json['incubation_time'] = $this->incubation_time;
 		$json['mature_time'] = $this->mature_time;
-		$json['resource_url'] = \BeaconAPI::URL('/creature/' . urlencode($this->ObjectID()));
+		$json['resource_url'] = \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/creature/' . urlencode($this->ObjectID()));
 		$json['stats'] = $this->stats;
 		$json['used_stats'] = $this->used_stats;
 		$json['mating_interval_min'] = $this->mating_interval_min;

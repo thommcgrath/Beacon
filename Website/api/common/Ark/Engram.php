@@ -97,7 +97,7 @@ class Engram extends \Ark\Blueprint {
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
 		$json['can_blueprint'] = $this->CanBlueprint();
-		$json['resource_url'] = \BeaconAPI::URL('/engram/' . urlencode($this->ObjectID()));
+		$json['resource_url'] = \BeaconAPI::URL((\BeaconAPI::GetAPIVersion() >= 3 ? '/ark' : '') . '/engram/' . urlencode($this->ObjectID()));
 		$json['entry_string'] = $this->EntryString();
 		$json['required_points'] = $this->RequiredPoints();
 		$json['required_level'] = $this->RequiredLevel();

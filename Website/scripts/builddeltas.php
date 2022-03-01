@@ -120,15 +120,16 @@ foreach ($required_versions as $version) {
 exit;
 
 function DataForVersion(int $version, $since) {
+	$api_version = BeaconAPI::GetAPIVersion();
+	$arr = null;
 	switch ($version) {
 	case 6:
-		return [
+		BeaconAPI::SetAPIVersion(3);
+		$arr = [
 			'ark' => [
 				'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
 				'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
 				'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
-				'presets' => Ark\Preset::GetAll(MIN_VERSION, $since, true),
-				'preset_modifiers' => Ark\PresetModifier::GetAll(MIN_VERSION, $since, true),
 				'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
 				'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
 				'game_variables' => Ark\GameVariable::GetAll($since),
@@ -142,7 +143,9 @@ function DataForVersion(int $version, $since) {
 				'color_sets' => Ark\ColorSet::GetAll($since)
 			],
 			'common' => [
-				'help_topics' => BeaconHelpTopic::GetAll($since)
+				'help_topics' => BeaconHelpTopic::GetAll($since),
+				'templates' => \BeaconAPI\Template::GetAll(MIN_VERSION, $since, true),
+				'template_selectors' => BeaconAPI\TemplateSelector::GetAll(MIN_VERSION, $since, true)
 			],
 			'beacon_version' => $version,
 			'is_full' => is_null($since) ? true : false,
@@ -150,7 +153,8 @@ function DataForVersion(int $version, $since) {
 		];
 		break;
 	case 5:
-		return [
+		BeaconAPI::SetAPIVersion(2);
+		$arr = [
 			'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
 			'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
 			'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
@@ -174,6 +178,8 @@ function DataForVersion(int $version, $since) {
 		];
 		break;
 	}
+	BeaconAPI::SetAPIVersion($api_version);
+	return $arr;
 }
 
 function UploadFile(string $path, string $data) {
