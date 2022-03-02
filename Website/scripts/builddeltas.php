@@ -76,13 +76,15 @@ foreach ($required_versions as $version) {
 	}
 	
 	$prefix = '/v' . $version;
+	$timestamp = $last_database_update->format('U');
 	if (BeaconCommon::InProduction() == false) {
 		$prefix .= '/' . BeaconCommon::EnvironmentName();
+		$timestamp += rand(-1800,1800);
 	}
 	
 	$database->BeginTransaction();
 	
-	$full_path = $prefix . '/Complete.beacondata?t=' . $last_database_update->format('U') . '&bcdn_filename=Complete.beacondata';
+	$full_path = $prefix . '/Complete.beacondata?t=' . $timestamp . '&bcdn_filename=Complete.beacondata';
 	$full_prepared = gzencode(json_encode($full_data));
 	$full_size = strlen($full_prepared);
 	if (UploadFile($full_path, $full_prepared) === false) {
@@ -126,6 +128,7 @@ function DataForVersion(int $version, $since) {
 	case 6:
 		BeaconAPI::SetAPIVersion(3);
 		$arr = [
+			'deletions' => BeaconAPI::Deletions(MIN_VERSION, $since),
 			'ark' => [
 				'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
 				'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
@@ -134,7 +137,6 @@ function DataForVersion(int $version, $since) {
 				'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
 				'game_variables' => Ark\GameVariable::GetAll($since),
 				'mods' => Ark\Mod::GetLive($since),
-				'deletions' => Ark\GenericObject::Deletions(MIN_VERSION, $since),
 				'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
 				'spawn_points' => Ark\SpawnPoint::GetAll(MIN_VERSION, $since),
 				'maps' => Ark\Map::GetAll($since),
@@ -144,8 +146,8 @@ function DataForVersion(int $version, $since) {
 			],
 			'common' => [
 				'help_topics' => BeaconHelpTopic::GetAll($since),
-				'templates' => \BeaconAPI\Template::GetAll(MIN_VERSION, $since, true),
-				'template_selectors' => BeaconAPI\TemplateSelector::GetAll(MIN_VERSION, $since, true)
+				'templates' => \BeaconAPI\Template::GetAll(MIN_VERSION, $since),
+				'template_selectors' => BeaconAPI\TemplateSelector::GetAll(MIN_VERSION, $since)
 			],
 			'beacon_version' => $version,
 			'is_full' => is_null($since) ? true : false,
