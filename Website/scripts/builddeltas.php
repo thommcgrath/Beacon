@@ -128,7 +128,7 @@ function DataForVersion(int $version, $since) {
 	case 6:
 		BeaconAPI::SetAPIVersion(3);
 		$arr = [
-			'deletions' => BeaconAPI::Deletions(MIN_VERSION, $since),
+			'deletions' => is_null($since) ? [] : BeaconAPI::Deletions(MIN_VERSION, $since),
 			'ark' => [
 				'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
 				'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
