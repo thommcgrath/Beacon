@@ -199,6 +199,37 @@ Protected Class DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ExportCloudFiles()
+		  // This way changing lots of engrams rapidly won't require a write to disk
+		  // after each action
+		  
+		  If Self.mExportCloudFilesCallbackKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mExportCloudFilesCallbackKey)
+		    Self.mExportCloudFilesCallbackKey = ""
+		  End If
+		  
+		  Self.mExportCloudFilesCallbackKey = CallLater.Schedule(250, AddressOf ExportCloudFiles_Delayed)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ExportCloudFiles_Delayed()
+		  If Self.mExportCloudFilesCallbackKey.IsEmpty = False Then
+		    CallLater.Cancel(Self.mExportCloudFilesCallbackKey)
+		    Self.mExportCloudFilesCallbackKey = ""
+		  End If
+		  
+		  If Self.Importing Then
+		    // Don't write while importing, so wait a little longer
+		    Self.ExportCloudFiles()
+		    Return
+		  End If
+		  
+		  RaiseEvent ExportCloudFiles()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function ForeignKeys() As Boolean
 		  Try
@@ -268,7 +299,7 @@ Protected Class DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(Data As Dictionary, ShouldTruncate As Boolean) As Boolean
+		Function Import(Data As Dictionary, ShouldTruncate As Boolean, Deletions() As Dictionary) As Boolean
 		  // The DataUpdater module will call this method inside a thread with its own database connection
 		  
 		  If Data.HasKey(Self.Identifier.Lowercase) = False Then
@@ -291,6 +322,7 @@ Protected Class DataSource
 		  Var StatusData As New Dictionary
 		  Var OriginalDepth As Integer = Self.TransactionDepth
 		  Self.BeginTransaction()
+		  Self.mImporting = True
 		  
 		  If ShouldTruncate Then
 		    Try
@@ -300,17 +332,19 @@ Protected Class DataSource
 		      While Self.TransactionDepth > OriginalDepth
 		        Self.RollbackTransaction
 		      Wend
+		      Self.mImporting = False
 		      Return False
 		    End Try
 		  End If
 		  
 		  Try
 		    Var ChangeDict As Dictionary = Data.Value(Self.Identifier.Lowercase)
-		    If Import(ChangeDict, StatusData) Then
+		    If Import(ChangeDict, StatusData, Deletions) Then
 		      Self.LastSyncTimestamp = Timestamp
 		      Self.CommitTransaction
 		    Else
 		      Self.RollbackTransaction
+		      Self.mImporting = False
 		      Return False
 		    End If
 		  Catch Err As RuntimeException
@@ -318,90 +352,37 @@ Protected Class DataSource
 		    While Self.TransactionDepth > OriginalDepth
 		      Self.RollbackTransaction
 		    Wend
+		    Self.mImporting = False
 		    Return False
 		  End Try
 		  
 		  Try
 		    RaiseEvent ImportCleanup(StatusData)
+		    If ShouldTruncate Then
+		      RaiseEvent ImportCloudFiles()
+		    End If
+		    Self.mImporting = False
 		    Return True
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Cleaning up after import")
 		    While Self.TransactionDepth > OriginalDepth
 		      Self.RollbackTransaction
 		    Wend
+		    Self.mImporting = False
 		    Return False
 		  End Try
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
-		Private Function ImportInner(Content As String) As Boolean
-		  If Content.Bytes < 2 Then
-		    Return False
-		  End If
-		  
-		  Var StartTime As Double = System.Microseconds
-		  Content = Beacon.Decompress(Content)
-		  
-		  Var StatusData As New Dictionary
-		  
-		  Var ChangeDict As Dictionary
-		  Try
-		    ChangeDict = Beacon.ParseJSON(Content)
-		  Catch Err As RuntimeException
-		    App.Log("Cannot import because the data is not valid JSON.")
-		    Return False
-		  End Try
-		  
-		  If ChangeDict.HasKey("game") And ChangeDict.Value("game").IsNull = False And ChangeDict.Value("game").Type = Variant.TypeString And ChangeDict.Value("game").StringValue <> Self.Identifier Then
-		    App.Log("Cannot import because the data is for the wrong game.")
-		    Return False
-		  End If
-		  
-		  Var FileVersion As Integer = ChangeDict.Value("beacon_version")
-		  If FileVersion <> Self.DeltaFormat Then
-		    App.Log("Cannot import because file format is not correct for this version. Get a correct file from " + Self.SyncURL(True))
-		    Return False
-		  End If
-		  
-		  Var ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
-		  Var PayloadTimestamp As DateTime = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
-		  Var LastSync As DateTime = Self.LastSync
-		  If ShouldTruncate = False And IsNull(LastSync) = False And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
-		    Return False
-		  End If
-		  
-		  Try
-		    Self.BeginTransaction()
-		    If ShouldTruncate Then
-		      RaiseEvent ImportTruncate
-		    End If
-		    If RaiseEvent Import(ChangeDict, StatusData) Then
-		      Self.LastSync = PayloadTimestamp
-		      Self.CommitTransaction()
-		    Else
-		      Self.RollbackTransaction()
-		      Return False
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Importing")
-		    While Self.InTransaction
-		      Self.RollbackTransaction
-		    Wend
-		  End Try
-		  
-		  Var Duration As Double = (System.Microseconds - StartTime) / 1000000
-		  System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms import data")
-		  
-		  Try
-		    RaiseEvent ImportCleanup(StatusData)
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Cleaning up after import")
-		  End Try
-		  
-		  App.Log("Imported delta update. Sync date is " + PayloadTimestamp.SQLDateTimeWithOffset)
-		  
-		  Return True
+	#tag Method, Flags = &h0
+		Sub ImportCloudFiles()
+		  RaiseEvent ImportCloudFiles()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Importing() As Boolean
+		  Return Self.mImporting
 		End Function
 	#tag EndMethod
 
@@ -710,15 +691,23 @@ Protected Class DataSource
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ExportCloudFiles()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event GetSchemaVersion() As Integer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		Event Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ImportCleanup(StatusData As Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ImportCloudFiles()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -748,6 +737,14 @@ Protected Class DataSource
 
 	#tag Property, Flags = &h21
 		Private mDatabase As SQLiteDatabase
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExportCloudFilesCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImporting As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

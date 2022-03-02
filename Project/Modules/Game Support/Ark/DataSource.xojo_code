@@ -78,16 +78,98 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub ExportCloudFiles()
+		  Var Packed() As Dictionary
+		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks()
+		  If UserPacks.Count > 0 Then
+		    Var Packs As New Beacon.StringList()
+		    For Each Pack As Ark.ContentPack In UserPacks
+		      If Pack.IsLocal = False Then
+		        Continue
+		      End If
+		      
+		      Packs.Append(Pack.UUID)
+		      
+		      Var Dict As New Dictionary
+		      Dict.Value("mod_id") = Pack.UUID
+		      Dict.Value("name") = Pack.Name
+		      If Pack.WorkshopID Is Nil Then
+		        Dict.Value("workshop_id") = Nil
+		      Else
+		        Dict.Value("workshop_id") = Pack.WorkshopID.IntegerValue
+		      End If
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
+		    For Each Engram As Ark.Engram In Engrams
+		      Var Dict As Dictionary = Engram.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
+		    For Each Creature As Ark.Creature In Creatures
+		      Var Dict As Dictionary = Creature.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
+		    For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
+		      Var Dict As Dictionary = SpawnPoint.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		    
+		    Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
+		    For Each Container As Ark.LootContainer In Containers
+		      Var Dict As Dictionary = Container.Pack
+		      If Dict Is Nil Then
+		        Continue
+		      End If
+		      
+		      Packed.Add(Dict)
+		    Next
+		  End If
+		  
+		  If Packed.Count > 0 Then
+		    Var Content As String
+		    Try
+		      Content = Beacon.GenerateJSON(Packed, True)
+		      Call UserCloud.Write("/Ark/Blueprints.json", Content)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to write packed blueprints to disk.")
+		    End Try
+		  Else
+		    Call UserCloud.Delete("/Ark/Blueprints.json")
+		  End If
+		  
+		  // Clean up legacy stuff
+		  Call UserCloud.Delete("/Blueprints.json")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function GetSchemaVersion() As Integer
 		  Return 100
 		End Function
 	#tag EndEvent
 
 	#tag Event
-		Function Import(ChangeDict As Dictionary, StatusData As Dictionary) As Boolean
+		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
 		  Var BuildNumber As Integer = App.BuildNumber
 		  
-		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers")
+		  Var RequiredKeys() As String = Array("mods", "loot_source_icons")
 		  For Each RequiredKey As String In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import blueprints because key '" + RequiredKey + "' is missing.")
@@ -115,12 +197,11 @@ Inherits Beacon.DataSource
 		    Else
 		      Self.SQLExecute("INSERT INTO content_packs (content_pack_id, name, console_safe, default_enabled, workshop_id, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", ModID, ModName, ConsoleSafe, DefaultEnabled, WorkshopID, False)
 		    End If
-		  Next
+		  Next ModData
 		  
 		  Var EngramsChanged As Boolean
 		  
 		  // When deleting, loot_icons must be done after loot_sources
-		  Var Deletions() As Variant = ChangeDict.Value("deletions")
 		  Var DeleteIcons() As String
 		  Var BlueprintsToDelete() As String
 		  For Each Deletion As Dictionary In Deletions
@@ -130,8 +211,6 @@ Inherits Beacon.DataSource
 		      BlueprintsToDelete.Add(ObjectID)
 		    Case "loot_icons"
 		      DeleteIcons.Add(ObjectID)
-		    Case "presets"
-		      Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
 		    Case "mods"
 		      Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ObjectID)
 		    Case "maps"
@@ -141,10 +220,10 @@ Inherits Beacon.DataSource
 		    Case "events"
 		      Self.SQLExecute("DELETE FROM events WHERE event_id = ?1;", ObjectID)
 		    End Select
-		  Next
+		  Next Deletion
 		  For Each IconID As String In DeleteIcons
 		    Self.SQLExecute("DELETE FROM loot_icons WHERE icon_id = ?1;", IconID)
-		  Next
+		  Next IconID
 		  If Self.SaveBlueprints(Nil, BlueprintsToDelete, Nil, False) Then
 		    EngramsChanged = True
 		  End If
@@ -169,7 +248,7 @@ Inherits Beacon.DataSource
 		    Else
 		      Self.SQLExecute("INSERT INTO loot_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
 		    End If
-		  Next
+		  Next Dict
 		  If LootSourceIcons.LastIndex > -1 Then
 		    Self.mIconCache = New Dictionary
 		  End If
@@ -324,7 +403,7 @@ Inherits Beacon.DataSource
 		        // Insert
 		        Self.SQLExecute("INSERT INTO ini_options (object_id, label, content_pack_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, nitrado_deploy_style, tags, ui_group, custom_sort, constraints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19);", Values)
 		      End If
-		    Next
+		    Next Dict
 		  End If
 		  
 		  If ChangeDict.HasKey("maps") Then
@@ -345,41 +424,9 @@ Inherits Beacon.DataSource
 		      Else
 		        Self.SQLExecute("INSERT INTO maps (object_id, content_pack_id, label, ark_identifier, difficulty_scale, official, mask, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", MapID, ModID, Label, Identifier, Difficulty, Official, Mask, Sort)
 		      End If
-		    Next
+		    Next MapDict
 		    Ark.Maps.ClearCache
 		  End If
-		  
-		  #if Not DebugBuild
-		    #Pragma Error "This won't work"
-		  #endif
-		  Var PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
-		  For Each Dict As Dictionary In PresetModifiers
-		    If Dict.Value("min_version") > BuildNumber Then
-		      Continue
-		    End If
-		    
-		    Var ObjectID As v4UUID = Dict.Value("id").StringValue
-		    Var Label As String = Dict.Value("label")
-		    Var Pattern As String = Dict.Value("pattern")
-		    Var AdvancedPattern As String = Dict.Lookup("advanced_pattern", "")
-		    Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
-		    
-		    Var Language, Code As String
-		    If AdvancedPattern.IsEmpty Then
-		      Language = Ark.LootContainerSelector.LanguageJavaScript
-		      Code = AdvancedPattern
-		    Else
-		      Language = Ark.LootContainerSelector.LanguageRegEx
-		      Code = Pattern
-		    End If
-		    
-		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_container_selectors WHERE object_id = ?1;", ObjectID.StringValue)
-		    If Results.RowCount = 1 Then
-		      Self.SQLExecute("UPDATE loot_container_selectors SET label = ?2, content_pack_id = ?3, language = ?4, code = ?5 WHERE object_id = ?1;", ObjectID.StringValue, Label, ModID.StringValue, Language, Code)
-		    Else
-		      Self.SQLExecute("INSERT INTO loot_container_selectors (object_id, label, content_pack_id, language, code) VALUES (?1, ?2, ?3, ?4, ?5);", ObjectID.StringValue, Label, ModID.StringValue, Language, Code)
-		    End If
-		  Next
 		  
 		  If ChangeDict.HasKey("help_topics") Then
 		    Var HelpTopics() As Variant = ChangeDict.Value("help_topics")
@@ -400,7 +447,7 @@ Inherits Beacon.DataSource
 		      Else
 		        Self.SQLExecute("INSERT INTO config_help (config_name, title, body, detail_url) VALUES (?1, ?2, ?3, ?4);", ConfigName, Title, Body, DetailURL)
 		      End If
-		    Next
+		    Next Dict
 		  End If
 		  
 		  If ChangeDict.HasKey("game_variables") Then
@@ -415,7 +462,7 @@ Inherits Beacon.DataSource
 		      Else
 		        Self.SQLExecute("INSERT INTO game_variables (key, value) VALUES (?1, ?2);", Key, Value)
 		      End If
-		    Next
+		    Next Dict
 		  End If
 		  
 		  If ChangeDict.HasKey("colors") Then
@@ -432,7 +479,7 @@ Inherits Beacon.DataSource
 		      Else
 		        Self.SQLExecute("INSERT INTO colors (color_id, color_uuid, label, hex_value) VALUES (?1, ?2, ?3, ?4);", ColorID, ColorUUID, Label, HexValue)
 		      End If
-		    Next
+		    Next Dict
 		  End If
 		  
 		  If ChangeDict.HasKey("color_sets") Then
@@ -448,7 +495,7 @@ Inherits Beacon.DataSource
 		      Else
 		        Self.SQLExecute("INSERT INTO color_sets (color_set_id, label, class_string) VALUES (?1, ?2, ?3);", SetUUID, Label, ClassString)
 		      End If
-		    Next
+		    Next Dict
 		  End If
 		  
 		  If ChangeDict.HasKey("events") Then
@@ -467,7 +514,7 @@ Inherits Beacon.DataSource
 		      Else
 		        Self.SQLExecute("INSERT INTO events (event_id, label, ark_code, rates, colors, engrams) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", EventID, Label, ArkCode, Rates, Colors, Engrams)
 		      End If
-		    Next
+		    Next Dict
 		  End If
 		  
 		  Self.BuildIndexes()
@@ -494,10 +541,93 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub ImportCloudFiles()
+		  Var LegacyMode As Boolean
+		  Var PossibleFilenames() As String = Array("/Ark/Blueprints.json", "/Blueprints.json", "/Engrams.json")
+		  Var EngramsContent As MemoryBlock
+		  For Each Filename As String In PossibleFilenames
+		    EngramsContent = UserCloud.Read(Filename)
+		    If EngramsContent Is Nil Then
+		      Continue
+		    End If
+		    LegacyMode = (Filename = "Engrams.json")
+		    Exit For Filename
+		  Next Filename
+		  If EngramsContent Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Blueprints() As Variant
+		  Try
+		    Var StringContent As String = EngramsContent
+		    Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  If Not LegacyMode Then
+		    Var Packs As New Beacon.StringList(0)
+		    Var Unpacked() As Ark.Blueprint
+		    For Each Dict As Dictionary In Blueprints
+		      Try
+		        Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
+		        If (Blueprint Is Nil) = False Then
+		          Unpacked.Add(Blueprint)
+		          If Packs.IndexOf(Blueprint.ContentPackUUID) = -1 Then
+		            Packs.Append(Blueprint.ContentPackUUID)
+		          End If
+		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
+		          Self.BeginTransaction()
+		          Self.SQLExecute("INSERT OR REPLACE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_local) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id"), False, False, True)
+		          Self.CommitTransaction()
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName)
+		      End Try
+		    Next
+		    
+		    Call Self.SaveBlueprints(Unpacked, Self.GetBlueprints("", Packs, ""), Nil)
+		  Else
+		    Self.BeginTransaction()
+		    Self.DeleteDataForContentPack(Ark.UserContentPackUUID)
+		    
+		    For Each Dict As Dictionary In Blueprints
+		      Try
+		        Var Category As String = Dict.Value("category")
+		        Var Path As String = Dict.Value("path") 
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE path = ?1;", Path)
+		        If Results.RowCount <> 0 Then
+		          Continue
+		        End If
+		        
+		        Var ObjectID As String = Dict.Value("object_id").StringValue
+		        Var ClassString As String = Dict.Value("class_string")
+		        Var Label As String = Dict.Value("label")         
+		        Var Availability As UInt64 = Dict.Value("availability")
+		        Var Tags() As String = Dict.Value("tags").StringValue.Split(",")
+		        Var TagObjectIdx As Integer = Tags.IndexOf("object")
+		        If TagObjectIdx > -1 Then
+		          Tags.RemoveAt(TagObjectIdx)
+		        End If
+		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, String.FromArray(Tags, ","), Ark.UserContentPackUUID)     
+		        For Each Tag As String In Tags
+		          Self.SQLExecute("INSERT OR IGNORE INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		        Next Tag
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName)
+		      End Try
+		    Next
+		    Self.CommitTransaction()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ImportTruncate()
-		  Self.SQLExecute("DELETE FROM blueprints WHERE content_pack_id != ?1;", Ark.UserContentPackUUID)
-		  Self.SQLExecute("DELETE FROM ini_options WHERE content_pack_id != ?1;", Ark.UserContentPackUUID)
-		  Self.SQLExecute("DELETE FROM content_packs WHERE is_local = 0") // Mods must be deleted last
+		  // Icons and content packs must be deleted last
+		  Var TableNames() As String = Array("color_sets", "colors", "config_help", "content_packs", "creatures", "engrams", "events", "game_variables", "ini_options", "loot_containers", "maps", "spawn_points", "loot_icons", "content_packs")
+		  For Each TableName As String In TableNames
+		    Self.SQLExecute("DELETE FROM " + Self.EscapeIdentifier(TableName) + ";")
+		  Next TableName
 		End Sub
 	#tag EndEvent
 
@@ -738,7 +868,7 @@ Inherits Beacon.DataSource
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR IGNORE INTO content_packs (content_pack_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", PackUUID, PackName, WorkshopID, True, False, True)
 		  Self.CommitTransaction()
-		  Self.SyncUserEngrams()
+		  Self.ExportCloudFiles()
 		  Return Details
 		End Function
 	#tag EndMethod
@@ -762,7 +892,7 @@ Inherits Beacon.DataSource
 		  Self.DeleteDataForContentPack(ContentPackUUID)
 		  Self.SQLExecute("DELETE FROM content_packs WHERE content_pack_id = ?1;", ContentPackUUID)
 		  Self.CommitTransaction()
-		  Self.SyncUserEngrams()
+		  Self.ExportCloudFiles()
 		  
 		  Return True
 		End Function
@@ -2581,7 +2711,7 @@ Inherits Beacon.DataSource
 		  If CountErrors = 0 And CountSuccess > 0 Then
 		    Self.CommitTransaction()
 		    
-		    Self.SyncUserEngrams()
+		    Self.ExportCloudFiles()
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		    
 		    Return True
@@ -2642,91 +2772,6 @@ Inherits Beacon.DataSource
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub SyncUserEngrams()
-		  // This way changing lots of engrams rapidly won't require a write to disk
-		  // after each action
-		  
-		  If Self.mSyncUserEngramsKey <> "" Then
-		    CallLater.Cancel(Self.mSyncUserEngramsKey)
-		    Self.mSyncUserEngramsKey = ""
-		  End If
-		  
-		  Self.mSyncUserEngramsKey = CallLater.Schedule(250, AddressOf SyncUserEngramsActual)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SyncUserEngramsActual()
-		  Var Packed() As Dictionary
-		  
-		  Var UserPacks() As Ark.ContentPack = Self.GetContentPacks()
-		  If UserPacks.Count > 0 Then
-		    Var Packs As New Beacon.StringList()
-		    For Each Pack As Ark.ContentPack In UserPacks
-		      If Pack.IsLocal = False Then
-		        Continue
-		      End If
-		      
-		      Packs.Append(Pack.UUID)
-		      
-		      Var Dict As New Dictionary
-		      Dict.Value("content_pack_id") = Pack.UUID
-		      Dict.Value("name") = Pack.Name
-		      Dict.Value("workshop_id") = Pack.WorkshopID
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Engrams() As Ark.Engram = Self.GetEngrams("", Packs, "")
-		    For Each Engram As Ark.Engram In Engrams
-		      Var Dict As Dictionary = Engram.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Creatures() As Ark.Creature = Self.GetCreatures("", Packs, "")
-		    For Each Creature As Ark.Creature In Creatures
-		      Var Dict As Dictionary = Creature.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var SpawnPoints() As Ark.SpawnPoint = Self.GetSpawnPoints("", Packs, "")
-		    For Each SpawnPoint As Ark.SpawnPoint In SpawnPoints
-		      Var Dict As Dictionary = SpawnPoint.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Dict)
-		    Next
-		    
-		    Var Containers() As Ark.LootContainer = Self.GetLootContainers("", Packs, "")
-		    For Each Container As Ark.LootContainer In Containers
-		      Var Dict As Dictionary = Container.Pack
-		      If Dict Is Nil Then
-		        Continue
-		      End If
-		      
-		      Packed.Add(Dict)
-		    Next
-		  End If
-		  
-		  If Packed.Count > 0 Then
-		    Var Content As String = Beacon.GenerateJSON(Packed, True)
-		    Call UserCloud.Write("Blueprints.json", Content)
-		  Else
-		    Call UserCloud.Delete("Blueprints.json")
-		  End If
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mConfigKeyCache As Dictionary
@@ -2774,10 +2819,6 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mSpawnPointCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSyncUserEngramsKey As String
 	#tag EndProperty
 
 

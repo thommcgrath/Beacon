@@ -39,7 +39,7 @@ Inherits Beacon.Template
 
 	#tag Method, Flags = &h0
 		Function Kind() As String
-		  
+		  Return "LootTemplate"
 		End Function
 	#tag EndMethod
 

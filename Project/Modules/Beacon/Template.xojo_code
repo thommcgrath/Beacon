@@ -30,7 +30,7 @@ Protected Class Template
 		Shared Function FromSaveData(File As FolderItem) As Beacon.Template
 		  Var Source As String
 		  Try
-		    Source = File.Read
+		    Source = File.Read(Encodings.UTF8)
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Reading template file contents")
 		    Return Nil

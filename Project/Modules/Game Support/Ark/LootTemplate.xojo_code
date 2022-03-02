@@ -102,11 +102,28 @@ Implements Beacon.Countable,Iterable
 		    Return Beacon.Template.FromSaveData(Dict)
 		  End If
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Fill in loot template loading"
-		  #else
-		    #Pragma Error "Fill in loot template loading"
-		  #endif
+		  If Dict.HasKey("MinVersion") And Dict.Value("MinVersion").IntegerValue > 3 Then
+		    Return Nil
+		  End If
+		  
+		  Var Template As New Ark.LootTemplate
+		  Template.mGrouping = Dict.Value("Grouping").StringValue
+		  Template.mMaxEntriesSelected = Dict.Value("Max").IntegerValue
+		  Template.mMinEntriesSelected = Dict.Value("Min").IntegerValue
+		  Template.mModifierValues = Dict.Value("Modifiers")
+		  
+		  Var Members() As Variant
+		  If Dict.HasKey("ItemSets") Then
+		    Members = Dict.Value("ItemSets")
+		  ElseIf Dict.HasKey("Entries") Then
+		    Members = Dict.Value("Entries")
+		  End If
+		  For Each Member As Dictionary In Members
+		    Var Entry As Ark.LootTemplateEntry = Ark.LootTemplateEntry.FromSaveData(Member)
+		    Template.mEntries.Add(Entry)
+		  Next Member
+		  
+		  Return Template
 		End Function
 	#tag EndMethod
 

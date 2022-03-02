@@ -209,6 +209,7 @@ Protected Module DataUpdater
 		    
 		    Var Parsed As Dictionary
 		    Var IsFull As Boolean
+		    Var Deletions() As Dictionary
 		    Try
 		      #if DebugBuild
 		        Var StartTime As Double = System.Microseconds
@@ -224,6 +225,16 @@ Protected Module DataUpdater
 		      If FileVersion <> Version Then
 		        Continue While
 		      End If
+		      
+		      If IsFull = False Then
+		        Var Temp() As Variant = Parsed.Value("deletions")
+		        For Each Member As Variant In Temp
+		          Try
+		            Deletions.Add(Member)
+		          Catch MemberErr As RuntimeException
+		          End Try
+		        Next Member
+		      End If
 		    Catch Err As RuntimeException
 		      App.Log(Err, CurrentMethodName, "Parsing imported JSON")
 		      Continue While
@@ -233,7 +244,7 @@ Protected Module DataUpdater
 		      Var Imported As Boolean
 		      Var OriginalChangeCount As Integer = Source.TotalChanges()
 		      Try
-		        Imported = Source.Import(Parsed, IsFull)
+		        Imported = Source.Import(Parsed, IsFull, Deletions)
 		      Catch Err As RuntimeException
 		        App.Log(Err, CurrentMethodName, "Trying to import delta updates for " + Source.Identifier)
 		      End Try

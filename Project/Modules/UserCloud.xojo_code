@@ -230,7 +230,11 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub RemoveFileFrom(LocalFile As FolderItem, RemotePath As String, IsRemote As Boolean)
 		  If LocalFile.Exists Then
-		    LocalFile.Remove
+		    Try
+		      LocalFile.Remove
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Trying to delete local cloud file")
+		    End Try
 		  End If
 		  
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))

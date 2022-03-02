@@ -247,15 +247,15 @@ Implements Ark.Blueprint
 		      
 		      Var PackedStats As New Dictionary
 		      PackedStats.Value("stat_index") = StatIndex
-		      PackedStats.Value("base_value") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue)
-		      PackedStats.Value("per_level_wild_multiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue)
-		      PackedStats.Value("per_level_tamed_multiplier") = StatInfo.Lookup(Self.KeyTamed, Self.MissingStatValue)
-		      PackedStats.Value("add_multiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue)
-		      PackedStats.Value("affinity_multiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue)
+		      PackedStats.Value("base_value") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("per_level_wild_multiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("per_level_tamed_multiplier") = StatInfo.Lookup(Self.KeyTamed, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("add_multiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue).DoubleValue
+		      PackedStats.Value("affinity_multiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue).DoubleValue
 		      
 		      Stats.Add(PackedStats)
 		      Indexes.Add(StatIndex)
-		    Next
+		    Next Entry
 		    
 		    Indexes.SortWith(Stats)
 		    Dict.Value("stats") = Stats
