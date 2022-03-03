@@ -317,24 +317,38 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(TemplateSelector As Beacon.TemplateSelector)
-		  If TemplateSelector Is Nil Then
-		    Return
-		  End If
-		  
-		  Self.DeleteTemplateSelector(TemplateSelector.UUID)
+		Sub DeleteTemplateSelector(ParamArray TemplateSelectors() As Beacon.TemplateSelector)
+		  Self.DeleteTemplateSelector(TemplateSelectors)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteTemplateSelector(SelectorUUID As String)
+		Sub DeleteTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector)
+		  Var SelectorUUIDs() As String
+		  For Idx As Integer = TemplateSelectors.FirstIndex To TemplateSelectors.LastIndex
+		    SelectorUUIDs.Add(TemplateSelectors(Idx).UUID)
+		  Next Idx
+		  Self.DeleteTemplateSelector(SelectorUUIDs)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteTemplateSelector(ParamArray SelectorUUIDs() As String)
+		  Self.DeleteTemplateSelector(SelectorUUIDs)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteTemplateSelector(SelectorUUIDs() As String)
 		  Var UserID As String = App.IdentityManager.CurrentUserID
-		  If Self.mSelectorCache.HasKey(UserID + ":" + SelectorUUID) Then
-		    Self.mSelectorCache.Remove(UserID + ":" + SelectorUUID)
-		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM custom_template_selectors WHERE object_id = ?1 AND user_id = ?2;", SelectorUUID, UserID)
+		  For Idx As Integer = SelectorUUIDs.FirstIndex To SelectorUUIDs.LastIndex
+		    If Self.mSelectorCache.HasKey(UserID + ":" + SelectorUUIDs(Idx)) Then
+		      Self.mSelectorCache.Remove(UserID + ":" + SelectorUUIDs(Idx))
+		    End If
+		    Self.SQLExecute("DELETE FROM custom_template_selectors WHERE object_id = ?1 AND user_id = ?2;", SelectorUUIDs(Idx), UserID)
+		  Next Idx
 		  Self.CommitTransaction()
 		  
 		  Self.ExportCloudFiles()
@@ -632,6 +646,39 @@ Inherits Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SaveTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector)
+		  Self.SaveTemplateSelector(TemplateSelectors, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SaveTemplateSelector(TemplateSelectors() As Beacon.TemplateSelector, Official As Boolean)
+		  Self.BeginTransaction()
+		  For Each TemplateSelector As Beacon.TemplateSelector In TemplateSelectors
+		    If TemplateSelector Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var CacheKey As String
+		    If Official Then
+		      CacheKey = v4UUID.CreateNull + ":" + TemplateSelector.UUID
+		      Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
+		    Else
+		      Var UserID As String = App.IdentityManager.CurrentUserID
+		      CacheKey = UserID + ":" + TemplateSelector.UUID
+		      Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
+		    End If
+		    Self.mSelectorCache.Value(CacheKey) = TemplateSelector
+		  Next TemplateSelector
+		  Self.CommitTransaction()
+		  
+		  If Official = False Then
+		    Self.ExportCloudFiles()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SaveTemplateSelector(TemplateSelector As Beacon.TemplateSelector)
 		  Self.SaveTemplateSelector(TemplateSelector, False)
 		End Sub
@@ -643,23 +690,9 @@ Inherits Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Self.BeginTransaction()
-		  Var CacheKey As String
-		  If Official Then
-		    CacheKey = v4UUID.CreateNull + ":" + TemplateSelector.UUID
-		    Self.SQLExecute("INSERT OR REPLACE INTO official_template_selectors (object_id, game_id, label, language, code) VALUES (:object_id, :game_id, :label, :language, :code);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code)
-		  Else
-		    Var UserID As String = App.IdentityManager.CurrentUserID
-		    CacheKey = UserID + ":" + TemplateSelector.UUID
-		    Self.SQLExecute("INSERT OR REPLACE INTO custom_template_selectors (object_id, game_id, label, language, code, user_id) VALUES (:object_id, :game_id, :label, :language, :code, :user_id);", TemplateSelector.UUID, TemplateSelector.GameID, TemplateSelector.Label, Beacon.TemplateSelector.LanguageToString(TemplateSelector.Language), TemplateSelector.Code, UserID)
-		  End If
-		  Self.CommitTransaction()
-		  
-		  Self.mSelectorCache.Value(CacheKey) = TemplateSelector
-		  
-		  If Official = False Then
-		    Self.ExportCloudFiles() 
-		  End If
+		  Var Arr(0) As Beacon.TemplateSelector
+		  Arr(0) = TemplateSelector
+		  Self.SaveTemplateSelector(Arr, Official)
 		End Sub
 	#tag EndMethod
 

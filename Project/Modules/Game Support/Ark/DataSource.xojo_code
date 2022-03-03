@@ -659,63 +659,6 @@ Inherits Beacon.DataSource
 
 
 	#tag Method, Flags = &h0
-		Sub AddLootContainerSelector(ParamArray LootSelectors() As Ark.LootContainerSelector)
-		  Self.AddLootContainerSelector(LootSelectors)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddLootContainerSelector(LootSelectors() As Ark.LootContainerSelector)
-		  If LootSelectors Is Nil Or LootSelectors.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Self.BeginTransaction()
-		  
-		  Var Rows As RowSet = Self.SQLSelect("SELECT changes();")
-		  Var PreChanges As Integer = Rows.ColumnAt(0).IntegerValue
-		  
-		  For Each LootSelector As Ark.LootContainerSelector In LootSelectors
-		    Var Results As RowSet = Self.SQLSelect("SELECT content_pack_id FROM loot_container_selectors WHERE object_id = ?1;", LootSelector.UUID)
-		    If Results.RowCount = 1 Then
-		      If Results.Column("content_pack_id").StringValue = Ark.UserContentPackUUID Then
-		        Self.SQLExecute("UPDATE loot_container_selectors SET label = ?2, code = ?3, language = ?4 WHERE object_id = ?1 AND (label != ?2 OR code != OR language != ?4);", LootSelector.UUID, LootSelector.Label, LootSelector.Code, LootSelector.Language)
-		      End If
-		    Else
-		      Self.SQLExecute("INSERT INTO loot_container_selectors (object_id, content_pack_id, label, code, language) VALUES (?1, ?2, ?3, ?4, ?5);", LootSelector.UUID, Ark.UserContentPackUUID, LootSelector.Label, LootSelector.Code, LootSelector.Language)
-		    End If
-		  Next
-		  
-		  Rows = Self.SQLSelect("SELECT changes();")
-		  Var PostChanges As Integer = Rows.ColumnAt(0).IntegerValue
-		  
-		  Self.CommitTransaction()
-		  
-		  If PreChanges <> PostChanges Then
-		    Self.BackupLootContainerSelectors()
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub BackupLootContainerSelectors()
-		  If Self.InTransaction Then
-		    // Do not write to disk while there is still a transaction running
-		    Return
-		  End If
-		  
-		  Var LootSelectors() As Ark.LootContainerSelector = Self.GetLootContainerSelectors(False, True)
-		  Var Dictionaries() As Dictionary
-		  For Each LootSelector As Ark.LootContainerSelector In LootSelectors
-		    Dictionaries.Add(LootSelector.SaveData(False))
-		  Next
-		  
-		  Var Content As String = Beacon.GenerateJSON(Dictionaries, True)
-		  Call UserCloud.Write("/Modifiers.json", Content)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function BlueprintIsCustom(Item As Ark.Blueprint) As Boolean
 		  If Item Is Nil Then
 		    Return False
@@ -905,25 +848,6 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1;", ContentPackUUID)
 		  Self.CommitTransaction()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DeleteLootContainerSelector(ParamArray LootSelectors() As Ark.LootContainerSelector) As Boolean
-		  Return Self.DeleteLootContainerSelector(LootSelectors)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DeleteLootContainerSelector(LootSelectors() As Ark.LootContainerSelector) As Boolean
-		  Self.BeginTransaction()
-		  For Each LootSelector As Ark.LootContainerSelector In LootSelectors
-		    // Make sure this modifier is not in use
-		    Self.SQLExecute("DELETE FROM loot_container_selectors WHERE content_pack_id = ?1 AND object_id = ?2;", Ark.UserContentPackUUID, LootSelector.UUID)
-		  Next
-		  Self.CommitTransaction()
-		  Self.BackupLootContainerSelectors()
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1777,40 +1701,6 @@ Inherits Beacon.DataSource
 		  Var LootContainers() As Ark.LootContainer = Self.RowSetToLootContainer(Rows)
 		  Self.Cache(LootContainers)
 		  Return LootContainers
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetLootContainerSelector(SelectorUUID As String) As Ark.LootContainerSelector
-		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, language, code FROM loot_container_selectors WHERE object_id = ?1;", SelectorUUID)
-		  If Results.RowCount <> 1 Then
-		    Return Nil
-		  End If
-		  
-		  Return New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetLootContainerSelectors(IncludeOfficial As Boolean = True, IncludeCustom As Boolean = True) As Ark.LootContainerSelector()
-		  Var Selectors() As Ark.LootContainerSelector
-		  
-		  Var SQL As String = "SELECT object_id, label, language, code FROM loot_container_selectors"
-		  If IncludeOfficial = False And IncludeCustom = True Then
-		    SQL = SQL + " WHERE content_pack_id = '" + Ark.UserContentPackUUID + "'"
-		  ElseIf IncludeOfficial = True And IncludeCustom = False Then
-		    SQL = SQL + " WHERE content_pack_id != '" + Ark.UserContentPackUUID + "'"
-		  ElseIf IncludeOfficial = False And IncludeCustom = False Then
-		    Return Selectors
-		  End If
-		  SQL = SQL + " ORDER BY label;"
-		  
-		  Var Results As RowSet = Self.SQLSelect(SQL)
-		  While Not Results.AfterLastRow
-		    Selectors.Add(New Ark.LootContainerSelector(Results.Column("object_id").StringValue, Results.Column("label").StringValue, Results.Column("language").StringValue, Results.Column("code").StringValue))
-		    Results.MoveToNextRow
-		  Wend
-		  Return Selectors
 		End Function
 	#tag EndMethod
 

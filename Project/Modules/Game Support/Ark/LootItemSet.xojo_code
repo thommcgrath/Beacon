@@ -172,14 +172,19 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  Var MaxQualityModifiers() As Integer
 		  Var BlueprintMultipliers() As Double
 		  For Each LootSelectorUUID As String In ActiveModifiers
-		    Var LootSelector As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelector(LootSelectorUUID)
-		    If (LootSelector Is Nil) = False And LootSelector.Matches(ForLootContainer) Then
+		    Var TemplateSelector As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectorByUUID(LootSelectorUUID)
+		    If TemplateSelector Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var LootSelector As New Ark.LootContainerSelector(TemplateSelector)
+		    If LootSelector.Matches(ForLootContainer) Then
 		      QuantityMultipliers.Add(Template.QuantityMultiplier(LootSelectorUUID))
 		      MinQualityModifiers.Add(Template.MinQualityOffset(LootSelectorUUID))
 		      MaxQualityModifiers.Add(Template.MaxQualityOffset(LootSelectorUUID))
 		      BlueprintMultipliers.Add(Template.BlueprintChanceMultiplier(LootSelectorUUID))
 		    End If
-		  Next
+		  Next LootSelectorUUID
 		  
 		  Var Qualities() As Ark.Quality = Ark.Qualities.All
 		  

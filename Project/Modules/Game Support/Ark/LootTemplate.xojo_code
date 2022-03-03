@@ -35,8 +35,8 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BlueprintChanceMultiplier(LootSelector As Ark.LootContainerSelector) As Double
-		  Return Self.BlueprintChanceMultiplier(LootSelector.UUID)
+		Function BlueprintChanceMultiplier(TemplateSelector As Beacon.TemplateSelector) As Double
+		  Return Self.BlueprintChanceMultiplier(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
 
@@ -182,8 +182,8 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MaxQualityOffset(LootSelector As Ark.LootContainerSelector) As Integer
-		  Return Self.MaxQualityOffset(LootSelector.UUID)
+		Function MaxQualityOffset(TemplateSelector As Beacon.TemplateSelector) As Integer
+		  Return Self.MaxQualityOffset(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
 
@@ -205,8 +205,8 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MinQualityOffset(LootSelector As Ark.LootContainerSelector) As Integer
-		  Return Self.MinQualityOffset(LootSelector.UUID)
+		Function MinQualityOffset(TemplateSelector As Beacon.TemplateSelector) As Integer
+		  Return Self.MinQualityOffset(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
 
@@ -256,8 +256,8 @@ Implements Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function QuantityMultiplier(LootSelector As Ark.LootContainerSelector) As Double
-		  Return Self.QuantityMultiplier(LootSelector.UUID)
+		Function QuantityMultiplier(TemplateSelector As Beacon.TemplateSelector) As Double
+		  Return Self.QuantityMultiplier(TemplateSelector.UUID)
 		End Function
 	#tag EndMethod
 

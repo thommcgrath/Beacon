@@ -1,5 +1,6 @@
 #tag Class
 Protected Class TemplateSelector
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Code() As String
 		  Return Self.mCode
@@ -34,7 +35,7 @@ Protected Class TemplateSelector
 		  Var Language As Beacon.TemplateSelector.Languages
 		  Var Code As String
 		  If Dict.HasKey("Language") And Dict.HasKey("Code") Then
-		    Code = Dict.Value("Language")
+		    Code = Dict.Value("Code")
 		    Language = StringToLanguage(Dict.Value("Language").StringValue)
 		  ElseIf Dict.HasKey("Advanced Pattern") Then
 		    Code = Dict.Value("Advanced Pattern")
@@ -182,14 +183,6 @@ Protected Class TemplateSelector
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mSelectorUUID"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

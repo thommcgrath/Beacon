@@ -531,9 +531,9 @@ End
 #tag Events GroupMenu
 	#tag Event
 		Sub Open()
-		  Var Selectors() As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelectors
+		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectors("", Ark.Identifier)
 		  Var Actives() As String = Self.mTemplate.ActiveSelectorIDs()
-		  For Each LootSelector As Ark.LootContainerSelector In Selectors
+		  For Each LootSelector As Beacon.TemplateSelector In Selectors
 		    Var Editing As Boolean = (LootSelector.UUID = Self.mEditID)
 		    If Editing = True Or Actives.IndexOf(LootSelector.UUID) = -1 Then
 		      Me.AddRow(LootSelector.Label, LootSelector)
@@ -577,7 +577,7 @@ End
 		    Return
 		  End If
 		  
-		  Var LootSelector As Ark.LootContainerSelector = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
+		  Var LootSelector As Beacon.TemplateSelector = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
 		  
 		  Self.mTemplate.ClearSelector(Self.mEditID)
 		  Self.mTemplate.MinQualityOffset(LootSelector) = MinQualityModifier

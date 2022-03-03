@@ -1,5 +1,6 @@
 #tag Class
 Protected Class Template
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mUUID = New v4UUID

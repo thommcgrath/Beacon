@@ -90,26 +90,26 @@ Inherits Ark.LootTemplate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BlueprintChanceMultiplier(LootSelector As Ark.LootContainerSelector, Assigns Value As Double)
-		  Self.BlueprintChanceMultiplier(LootSelector.UUID) = Value
+		Sub BlueprintChanceMultiplier(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Double)
+		  Self.BlueprintChanceMultiplier(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BlueprintChanceMultiplier(LootSelectorUUID As String, Assigns Value As Double)
+		Sub BlueprintChanceMultiplier(TemplateSelectorUUID As String, Assigns Value As Double)
 		  If Self.mModifierValues Is Nil Then
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mModifierValues.Lookup(LootSelectorUUID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
 		  Dict.Value("Blueprint Chance Multiplier") = Value
-		  Self.mModifierValues.Value(LootSelectorUUID) = Dict
+		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ClearSelector(ContainerSelector As Ark.LootContainerSelector)
-		  Self.ClearSelector(ContainerSelector.UUID)
+		Sub ClearSelector(TemplateSelector As Beacon.TemplateSelector)
+		  Self.ClearSelector(TemplateSelector.UUID)
 		End Sub
 	#tag EndMethod
 
@@ -146,20 +146,20 @@ Inherits Ark.LootTemplate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MaxQualityOffset(LootSelector As Ark.LootContainerSelector, Assigns Value As Integer)
-		  Self.MaxQualityOffset(LootSelector.UUID) = Value
+		Sub MaxQualityOffset(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Integer)
+		  Self.MaxQualityOffset(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MaxQualityOffset(LootSelectorUUID As String, Assigns Value As Integer)
+		Sub MaxQualityOffset(TemplateSelectorUUID As String, Assigns Value As Integer)
 		  If Self.mModifierValues Is Nil Then
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mModifierValues.Lookup(LootSelectorUUID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
 		  Dict.Value("Max Quality Offset") = Value
-		  Self.mModifierValues.Value(LootSelectorUUID) = Dict
+		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
 
@@ -170,20 +170,20 @@ Inherits Ark.LootTemplate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MinQualityOffset(LootSelector As Ark.LootContainerSelector, Assigns Value As Integer)
-		  Self.MinQualityOffset(LootSelector.UUID) = Value
+		Sub MinQualityOffset(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Integer)
+		  Self.MinQualityOffset(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MinQualityOffset(LootSelectorUUID As String, Assigns Value As Integer)
+		Sub MinQualityOffset(TemplateSelectorUUID As String, Assigns Value As Integer)
 		  If Self.mModifierValues Is Nil Then
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mModifierValues.Lookup(LootSelectorUUID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
 		  Dict.Value("Min Quality Offset") = Value
-		  Self.mModifierValues.Value(LootSelectorUUID) = Dict
+		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
 
@@ -200,20 +200,20 @@ Inherits Ark.LootTemplate
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub QuantityMultiplier(LootSelector As Ark.LootContainerSelector, Assigns Value As Double)
-		  Self.QuantityMultiplier(LootSelector.UUID) = Value
+		Sub QuantityMultiplier(TemplateSelector As Beacon.TemplateSelector, Assigns Value As Double)
+		  Self.QuantityMultiplier(TemplateSelector.UUID) = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub QuantityMultiplier(LootSelectorUUID As String, Assigns Value As Double)
+		Sub QuantityMultiplier(TemplateSelectorUUID As String, Assigns Value As Double)
 		  If Self.mModifierValues Is Nil Then
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Var Dict As Dictionary = Self.mModifierValues.Lookup(LootSelectorUUID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
 		  Dict.Value("Quantity Multiplier") = Value
-		  Self.mModifierValues.Value(LootSelectorUUID) = Dict
+		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
 

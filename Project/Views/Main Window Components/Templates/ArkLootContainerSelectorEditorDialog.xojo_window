@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconDialog PresetModifierEditorDialog
+Begin BeaconDialog ArkLootContainerSelectorEditorDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -453,14 +453,14 @@ End
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
 		  
-		  If (Self.mSourceModifier Is Nil) = False Then
-		    If Self.mSourceModifier.Language = Ark.LootContainerSelector.LanguageJavaScript Then
+		  If (Self.mSourceSelector Is Nil) = False Then
+		    If Self.mSourceSelector.Language = Beacon.TemplateSelector.Languages.JavaScript Then
 		      Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS
 		    Else
 		      Self.SyntaxMenu.SelectedRowIndex = Self.IndexRegEx
 		    End If
-		    Self.CodeField.Text = Self.mSourceModifier.Code
-		    Self.NameField.Text = Self.mSourceModifier.Label
+		    Self.CodeField.Text = Self.mSourceSelector.Code
+		    Self.NameField.Text = Self.mSourceSelector.Label
 		    Call Self.RunTest(True)
 		  End If
 		End Sub
@@ -481,27 +481,55 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Modifier As Ark.LootContainerSelector)
-		  Self.mSourceModifier = Modifier
+		Sub Constructor(TemplateSelector As Beacon.TemplateSelector)
+		  Self.mSourceSelector = TemplateSelector
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function CreateTemplateSelector() As Beacon.TemplateSelector
+		  Var SelectorUUID As String
+		  If Self.mSourceSelector Is Nil Then
+		    SelectorUUID = New v4UUID
+		  Else
+		    SelectorUUID = Self.mSourceSelector.UUID
+		  End If
+		  
+		  Var Label As String = Self.NameField.Text
+		  Var Code As String = Self.CodeField.Text
+		  
+		  Var Language As Beacon.TemplateSelector.Languages
+		  If Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS Then
+		    Language = Beacon.TemplateSelector.Languages.JavaScript
+		  Else
+		    Language = Beacon.TemplateSelector.Languages.RegEx
+		  End If
+		  
+		  Return New Beacon.TemplateSelector(SelectorUUID, Label, Ark.Identifier, Language, Code)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Modifier As Ark.LootContainerSelector = Nil) As Ark.LootContainerSelector
+		Shared Function Present(Parent As Window, TemplateSelector As Beacon.TemplateSelector = Nil) As Beacon.TemplateSelector
 		  If Parent Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var Win As New PresetModifierEditorDialog(Modifier)
+		  If (TemplateSelector Is Nil) = False And TemplateSelector.GameID <> Ark.Identifier Then
+		    // Can't edit this one
+		    Return Nil
+		  End If
+		  
+		  Var Win As New ArkLootContainerSelectorEditorDialog(TemplateSelector)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
 		    Return Nil
 		  End If
-		  Var NewModifier As Ark.LootContainerSelector = Win.mNewModifier
+		  Var NewSelector As Beacon.TemplateSelector = Win.mNewSelector
 		  Win.Close
-		  Return NewModifier
+		  Return NewSelector
 		End Function
 	#tag EndMethod
 
@@ -520,19 +548,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RunTest(Silent As Boolean) As Boolean
-		  Var Modifier As New Ark.MutableLootContainerSelector
-		  Modifier.Code = Self.CodeField.Text
-		  If Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS Then
-		    Modifier.Language = Ark.LootContainerSelector.LanguageJavaScript
-		  Else
-		    Modifier.Language = Ark.LootContainerSelector.LanguageRegEx
+		Private Function RunTest(Silent As Boolean, TemplateSelector As Beacon.TemplateSelector = Nil) As Boolean
+		  If TemplateSelector Is Nil Then
+		    TemplateSelector = Self.CreateTemplateSelector()
 		  End If
 		  
 		  Var Message As String
-		  If Modifier.TestCode(Message) Then
+		  Var LootSelector As New Ark.LootContainerSelector(TemplateSelector)
+		  If LootSelector.TestCode(Message) Then
 		    Var Sources() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainers("", New Beacon.StringList, "", True)
-		    Var Matches() As Ark.LootContainer = Modifier.Matches(Sources)
+		    Var Matches() As Ark.LootContainer = LootSelector.Matches(Sources)
 		    Self.MatchList.RemoveAllRows
 		    For Each Source As Ark.LootContainer In Matches
 		      Self.MatchList.AddRow(Source.Label)
@@ -553,11 +578,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNewModifier As Ark.LootContainerSelector
+		Private mNewSelector As Beacon.TemplateSelector
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSourceModifier As Ark.LootContainerSelector
+		Private mSourceSelector As Beacon.TemplateSelector
 	#tag EndProperty
 
 
@@ -573,30 +598,14 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  If Not Self.RunTest(False) Then
+		  Var TemplateSelector As Beacon.TemplateSelector = Self.CreateTemplateSelector()
+		  
+		  If Not Self.RunTest(False, TemplateSelector) Then
 		    Return
 		  End If
 		  
 		  Self.mCancelled = False
-		  
-		  Var Modifier As Ark.MutableLootContainerSelector
-		  If Self.mSourceModifier Is Nil Then
-		    Modifier = New Ark.MutableLootContainerSelector
-		  Else
-		    Modifier = New Ark.MutableLootContainerSelector(Self.mSourceModifier)
-		  End If
-		  
-		  Modifier.Label = Self.NameField.Text
-		  Modifier.Code = Self.CodeField.Text
-		  
-		  If Self.SyntaxMenu.SelectedRowIndex = Self.IndexJS Then
-		    Modifier.Language = Ark.LootContainerSelector.LanguageJavaScript
-		  Else
-		    Modifier.Language = Ark.LootContainerSelector.LanguageRegEx
-		  End If
-		  
-		  Self.mNewModifier = New Ark.LootContainerSelector(Modifier)
-		  
+		  Self.mNewSelector = TemplateSelector
 		  Self.Hide
 		End Sub
 	#tag EndEvent

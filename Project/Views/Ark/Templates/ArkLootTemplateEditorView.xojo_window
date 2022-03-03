@@ -1107,17 +1107,17 @@ End
 		  Self.UpdateMinAndMaxFields
 		  
 		  Var AppliedModifiers() As String = Self.mTemplate.ActiveSelectorIDs
-		  Var Modifiers() As Ark.LootContainerSelector = Ark.DataSource.SharedInstance.GetLootContainerSelectors
+		  Var Selectors() As Beacon.TemplateSelector = Beacon.CommonData.SharedInstance.GetTemplateSelectors("", Ark.Identifier)
 		  Self.ModifiersList.RemoveAllRows()
-		  For Each Modifier As Ark.LootContainerSelector In Modifiers
-		    If AppliedModifiers.IndexOf(Modifier.UUID) = -1 Then
+		  For Each TemplateSelector As Beacon.TemplateSelector In Selectors
+		    If AppliedModifiers.IndexOf(TemplateSelector.UUID) = -1 Then
 		      Continue
 		    End If
 		    
-		    Var QuantityMultiplier As Double = Self.mTemplate.QuantityMultiplier(Modifier)
-		    Var MinQualityModifier As Integer = Self.mTemplate.MinQualityOffset(Modifier)
-		    Var MaxQualityModifier As Integer = Self.mTemplate.MaxQualityOffset(Modifier)
-		    Var BlueprintMultiplier As Double = Self.mTemplate.BlueprintChanceMultiplier(Modifier)
+		    Var QuantityMultiplier As Double = Self.mTemplate.QuantityMultiplier(TemplateSelector)
+		    Var MinQualityModifier As Integer = Self.mTemplate.MinQualityOffset(TemplateSelector)
+		    Var MaxQualityModifier As Integer = Self.mTemplate.MaxQualityOffset(TemplateSelector)
+		    Var BlueprintMultiplier As Double = Self.mTemplate.BlueprintChanceMultiplier(TemplateSelector)
 		    
 		    Var QuantityLabel As String = "x " + QuantityMultiplier.PrettyText(True)
 		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.PrettyText(True)
@@ -1133,9 +1133,9 @@ End
 		      MaxQualityLabel = MaxQualityModifier.ToString(Locale.Current, "+0;-0") + " Tier" + If(Abs(MaxQualityModifier) <> 1, "s", "")
 		    End If
 		    
-		    Self.ModifiersList.AddRow(Modifier.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
-		    Self.ModifiersList.RowTagAt(Self.ModifiersList.LastAddedRowIndex) = Modifier.UUID
-		  Next
+		    Self.ModifiersList.AddRow(TemplateSelector.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
+		    Self.ModifiersList.RowTagAt(Self.ModifiersList.LastAddedRowIndex) = TemplateSelector.UUID
+		  Next TemplateSelector
 		  
 		  Self.mUpdating = False
 		End Sub
