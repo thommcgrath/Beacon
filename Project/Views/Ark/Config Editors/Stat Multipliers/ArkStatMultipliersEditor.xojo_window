@@ -1536,7 +1536,7 @@ Begin ArkConfigEditor ArkStatMultipliersEditor
          Top             =   433
          Transparent     =   False
          Underline       =   False
-         Value           =   "Crafting Speed:"
+         Value           =   "Crafting:"
          Visible         =   True
          Width           =   100
       End

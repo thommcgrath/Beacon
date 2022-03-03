@@ -914,10 +914,10 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       Visible         =   True
       Width           =   80
    End
-   Begin CheckBox AllowGrindingCheck
+   Begin CheckBox PreventGrindingCheck
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Allow Grinding"
+      Caption         =   "Prevent Grinding"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -935,19 +935,19 @@ Begin BeaconContainer ArkLootEntryPropertiesEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   0
       TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   "#HelpTagAllowGrinding"
+      Tooltip         =   "#HelpTagPreventGrinding"
       Top             =   245
       Transparent     =   False
       Underline       =   False
-      Value           =   True
+      Value           =   False
       Visible         =   True
       Width           =   244
    End
-   Begin CheckBox EditAllowGrindingCheck
+   Begin CheckBox EditPreventGrindingCheck
       AllowAutoDeactivate=   True
       Bold            =   False
       Caption         =   "Edit"
@@ -1020,7 +1020,7 @@ End
 		  Var BlueprintChance As Double = ChanceSlider.Value / 100
 		  Var Weight As Double = WeightField.DoubleValue
 		  Var StatClampMultiplier As Double = StatClampMultiplierField.DoubleValue
-		  Var PreventGrinding As Boolean = Not AllowGrindingCheck.Value
+		  Var PreventGrinding As Boolean = PreventGrindingCheck.Value
 		  
 		  For Idx As Integer = 0 To Entries.LastIndex
 		    If Self.EditMaxQuantityCheck.Value Then
@@ -1035,7 +1035,7 @@ End
 		    If EditWeightCheck.Value Then
 		      Entries(Idx).RawWeight = Weight
 		    End If
-		    If EditAllowGrindingCheck.Value Then
+		    If EditPreventGrindingCheck.Value Then
 		      Entries(Idx).PreventGrinding = PreventGrinding
 		    End If
 		    If EditStatClampMultiplierCheck.Value Then
@@ -1126,7 +1126,7 @@ End
 		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.LastIndex))
 		  WeightSlider.Value = TotalWeight / Entries.Count
 		  WeightField.DoubleValue = TotalWeight / Entries.Count
-		  AllowGrindingCheck.Value = Not PreventGrinding
+		  PreventGrindingCheck.Value = PreventGrinding
 		  StatClampMultiplierField.DoubleValue = TotalStatClamMultiplier / Entries.Count
 		  Self.mIgnoreChanges = False
 		  
@@ -1138,7 +1138,7 @@ End
 		    EditMinQuantityCheck.Visible = True
 		    EditWeightCheck.Visible = True
 		    EditStatClampMultiplierCheck.Visible = True
-		    EditAllowGrindingCheck.Visible = True
+		    EditPreventGrindingCheck.Visible = True
 		  End If
 		  
 		  EditChanceCheck.Value = Not EditChanceCheck.Visible
@@ -1183,7 +1183,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = HelpTagAllowGrinding, Type = String, Dynamic = False, Default = \"If unchecked\x2C the items cannot be fed to the industrial grinder.", Scope = Private
+	#tag Constant, Name = HelpTagPreventGrinding, Type = String, Dynamic = False, Default = \"If checked\x2C the items cannot be fed to the industrial grinder.", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = HelpTagStatClampMultiplier, Type = String, Dynamic = False, Default = \"If item stat limiting is used on the server\x2C this setting will allow the items to generate above or below the item stat limit. For example\x2C if damage is limited to 1000 in the Item Stat Limits editor\x2C a multiplier of 0.5 would limit to 500 and a multiplier of 2.0 would limit to 1000.", Scope = Private
@@ -1333,11 +1333,11 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AllowGrindingCheck
+#tag Events PreventGrindingCheck
 	#tag Event
 		Sub Action()
 		  If Not Self.mIgnoreChanges Then
-		    EditAllowGrindingCheck.Value = True
+		    EditPreventGrindingCheck.Value = True
 		    RaiseEvent Changed
 		  End If
 		End Sub
