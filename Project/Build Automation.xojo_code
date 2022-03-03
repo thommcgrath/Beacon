@@ -37,7 +37,7 @@
 				Begin BuildProjectStep Build
 				End
 				Begin IDEScriptBuildStep UpdateInfoPlist , AppliesTo = 0, Architecture = 0, Target = 0
-					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app/Contents/Info"""
+					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + "/Contents/Info"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + " ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + " ""LSMinimumSystemVersion"" ""10.12.0""")
 					Call DoShellCommand("/usr/bin/plutil -insert UTExportedTypeDeclarations.0.UTTypeIcons -json '{""UTTypeIconBackgroundName"":""ProjectBackgroundFill"",""UTTypeIconBadgeName"":""ProjectCenterIcon""}' " + App + ".plist")
@@ -79,24 +79,24 @@
 				End
 				Begin IDEScriptBuildStep BuildMacAssets , AppliesTo = 0, Architecture = 0, Target = 0
 					If TargetMacOS Then
-					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
 					Call DoShellCommand("actool --compile " + App + "/Contents/Resources --platform macosx --minimum-deployment-target 10.11 ""${PROJECT_PATH}/Assets.xcassets""")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3, Architecture = 0, Target = 0
 					If TargetMacOS Then
-					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
 					Call DoShellCommand("/usr/bin/curl -L 'https://lab.usebeacon.app/download/complete?version=" + ConstantValue("DataUpdater.Version") + "' > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildMac , AppliesTo = 2, Architecture = 0, Target = 0
 					If TargetMacOS Then
-					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
 					Call DoShellCommand("/usr/bin/curl -L 'https://usebeacon.app/download/complete?game=ark&version=" + ConstantValue("DataUpdater.Version") + "' > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 1, Architecture = 0, Target = 0
-					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
 					Call DoShellCommand("xattr -clr " + App)
 					Call DoShellCommand("codesign -f --options=runtime --deep --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.dylib")
 					Call DoShellCommand("codesign -f --options=runtime --deep --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.framework")
