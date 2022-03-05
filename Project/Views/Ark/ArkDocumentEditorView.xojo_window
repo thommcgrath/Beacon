@@ -410,7 +410,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
-		  Var PreselectServers() As Ark.ServerProfile
+		  Var PreselectServers() As Beacon.ServerProfile
 		  Self.BeginDeploy(PreselectServers)
 		End Sub
 	#tag EndMethod
@@ -799,7 +799,12 @@ End
 		    Return
 		  End If
 		  
-		  Var PreselectServers() As Beacon.ServerProfile = UserData
+		  Var PreselectServers() As Beacon.ServerProfile
+		  Try
+		    PreselectServers = UserData
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Casting UserData into PreselectServers")
+		  End Try
 		  Var Win As DeployManager = New DeployManager(Self.Project, PreselectServers)
 		  Self.mDeployWindow = New WeakRef(Win)
 		  Win.BringToFront()

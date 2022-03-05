@@ -265,7 +265,7 @@ Begin BeaconAutopositionWindow DeployManager
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   329
+         Top             =   361
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -490,6 +490,7 @@ Begin BeaconAutopositionWindow DeployManager
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   416
+         HorizontalScrollPosition=   0
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   301
@@ -499,12 +500,14 @@ Begin BeaconAutopositionWindow DeployManager
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         SelectionLength =   0
          ShowInfoBar     =   False
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          Tooltip         =   ""
          Top             =   73
+         VerticalScrollPosition=   0
          Visible         =   True
          Width           =   499
       End
@@ -636,6 +639,39 @@ Begin BeaconAutopositionWindow DeployManager
          Visible         =   True
          Width           =   499
       End
+      Begin CheckBox NukeConfigCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Erase server Game.ini and GameUserSetting.ini files"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   321
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   329
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   459
+      End
    End
    Begin Timer DeployWatcher
       Enabled         =   True
@@ -723,46 +759,33 @@ End
 		Sub UpdateControlPositions()
 		  Const MaxOptionsWidth = 460
 		  
+		  Var OptionCheckboxes() As CheckBox = Array(Self.CreateBackupCheckbox, Self.NukeConfigCheckbox, Self.ReviewChangesCheckbox, Self.RunAdvisorCheckbox)
+		  For Idx As Integer = OptionCheckboxes.LastIndex DownTo OptionCheckboxes.FirstIndex
+		    If OptionCheckboxes(Idx).Visible = False Then
+		      OptionCheckboxes.RemoveAt(Idx)
+		    End If
+		  Next Idx
+		  
 		  Var AvailableWidth As Integer = Self.Pages.Width - 20
 		  Var OptionsWidth As Integer = Min(AvailableWidth, MaxOptionsWidth)
-		  Var OptionsLeft As Integer = Round((AvailableWidth - OptionsWidth) / 2)
-		  Self.OptionsMessageLabel.Left = Self.Pages.Left + OptionsLeft
+		  Var OptionsLeft As Integer = Self.Pages.Left + Round((AvailableWidth - OptionsWidth) / 2)
+		  Var Position As Integer = Self.OptionsMessageLabel.Top + Self.OptionsMessageLabel.Height + 12
+		  Self.OptionsMessageLabel.Left = OptionsLeft
 		  Self.OptionsMessageLabel.Width = OptionsWidth
-		  Self.CreateBackupCheckbox.Left = Self.Pages.Left + OptionsLeft
-		  Self.CreateBackupCheckbox.Width = OptionsWidth
-		  Self.ReviewChangesCheckbox.Left = Self.Pages.Left + OptionsLeft
-		  Self.ReviewChangesCheckbox.Width = OptionsWidth
-		  Self.RunAdvisorCheckbox.Left = Self.Pages.Left + OptionsLeft
-		  Self.RunAdvisorCheckbox.Width = OptionsWidth
-		  Self.OptionsActionButton.Left = (Self.Pages.Left + OptionsLeft + OptionsWidth) - Self.OptionsActionButton.Width
+		  For Idx As Integer = OptionCheckboxes.FirstIndex To OptionCheckboxes.LastIndex
+		    OptionCheckboxes(Idx).Left = OptionsLeft
+		    OptionCheckboxes(Idx).Width = OptionsWidth
+		    OptionCheckboxes(Idx).Top = Position
+		    Position = Position + OptionCheckboxes(Idx).Height + 12
+		  Next Idx
+		  Self.OptionsActionButton.Top = Position
+		  Self.OptionsActionButton.Left = (OptionsLeft + OptionsWidth) - Self.OptionsActionButton.Width
 		  
-		  Var OptionControlsHeight As Integer = Self.OptionsMessageLabel.Height + 12 + Self.OptionsActionButton.Height
-		  If Self.CreateBackupCheckbox.Visible Then
-		    OptionControlsHeight = OptionControlsHeight + 12 + Self.CreateBackupCheckbox.Height
-		  End If
-		  If Self.ReviewChangesCheckbox.Visible Then
-		    OptionControlsHeight = OptionControlsHeight + 12 + Self.ReviewChangesCheckbox.Height
-		  End If
-		  If Self.RunAdvisorCheckbox.Visible Then
-		    OptionControlsHeight = OptionControlsHeight + 12 + Self.RunAdvisorCheckbox.Height
-		  End If
-		  
-		  Var OptionControlsTop As Integer = Round((Self.Pages.Height - OptionControlsHeight) / 2) + Self.Pages.Top
-		  Self.OptionsMessageLabel.Top = OptionControlsTop
-		  Var Pos As Integer = Self.OptionsMessageLabel.Top + Self.OptionsMessageLabel.Height
-		  If Self.CreateBackupCheckbox.Visible Then
-		    Self.CreateBackupCheckbox.Top = Pos + 12
-		    Pos = Pos + 12 + Self.CreateBackupCheckbox.Height
-		  End If
-		  If Self.ReviewChangesCheckbox.Visible Then
-		    Self.ReviewChangesCheckbox.Top = Pos + 12
-		    Pos = Pos + 12 + Self.ReviewChangesCheckbox.Height
-		  End If
-		  If Self.RunAdvisorCheckbox.Visible Then
-		    Self.RunAdvisorCheckbox.Top = Pos + 12
-		    Pos = Pos + 12 + Self.RunAdvisorCheckbox.Height
-		  End If
-		  Self.OptionsActionButton.Top = Pos + 12
+		  Var Group As New ControlGroup(Self.OptionsMessageLabel, Self.OptionsActionButton)
+		  For Idx As Integer = OptionCheckboxes.FirstIndex To OptionCheckboxes.LastIndex
+		    Group.Append(OptionCheckboxes(Idx))
+		  Next Idx
+		  Group.Top = Self.Pages.Top + Round((Self.Pages.Height - Group.Height) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -878,6 +901,9 @@ End
 		  End If
 		  If Self.RunAdvisorCheckbox.Value Then
 		    Options = Options Or CType(Beacon.IntegrationEngine.OptionAnalyze, UInt64)
+		  End If
+		  If Self.NukeConfigCheckbox.Value Then
+		    Options = Options Or CType(Beacon.IntegrationEngine.OptionNuke, UInt64)
 		  End If
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
@@ -1301,6 +1327,9 @@ End
 		  If Self.Opened Then
 		    Preferences.DeployCreateBackup = Me.Value
 		  End If
+		  If Me.Value = False Then
+		    Self.NukeConfigCheckbox.Value = False
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1406,6 +1435,15 @@ End
 		    Self.ReviewArea.Text = UserData.Lookup(Ark.ConfigFileGame, "").StringValue
 		  End Select
 		  Self.UpdatingReviewContent = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NukeConfigCheckbox
+	#tag Event
+		Sub Action()
+		  If Me.Value Then
+		    Self.CreateBackupCheckbox.Value = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

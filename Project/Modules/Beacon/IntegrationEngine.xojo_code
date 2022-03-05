@@ -240,6 +240,13 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NukeEnabled() As Boolean
+		  // Backup must be enabled for nuke to be enabled
+		  Return (Self.mOptions And CType(Self.OptionNuke Or Self.OptionBackup, UInt64)) = CType(Self.OptionNuke Or Self.OptionBackup, UInt64)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
 		  Return Self.mProfile
 		End Function
@@ -868,6 +875,9 @@ Protected Class IntegrationEngine
 	#tag EndConstant
 
 	#tag Constant, Name = OptionBackup, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = OptionNuke, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = OptionReview, Type = Double, Dynamic = False, Default = \"4", Scope = Public
