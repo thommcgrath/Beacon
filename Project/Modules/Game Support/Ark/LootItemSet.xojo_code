@@ -202,10 +202,10 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    If TemplateEntry.RespectQualityOffsets Then
 		      Var MinQualityIndex, MaxQualityIndex As Integer
 		      For I As Integer = 0 To Qualities.LastIndex
-		        If Qualities(I) = Entry.MinQuality Then
+		        If Qualities(I) = TemplateEntry.MinQuality Then
 		          MinQualityIndex = I
 		        End If
-		        If Qualities(I) = Entry.MaxQuality Then
+		        If Qualities(I) = TemplateEntry.MaxQuality Then
 		          MaxQualityIndex = I
 		        End If
 		      Next
@@ -226,8 +226,8 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    End If
 		    
 		    If TemplateEntry.RespectQuantityMultipliers Then
-		      Var MinQuantityRaw As Double = Entry.MinQuantity
-		      Var MaxQuantityRaw As Double = Entry.MaxQuantity
+		      Var MinQuantityRaw As Double = TemplateEntry.MinQuantity
+		      Var MaxQuantityRaw As Double = TemplateEntry.MaxQuantity
 		      For Each Multiplier As Double In QuantityMultipliers
 		        MinQuantityRaw = MinQuantityRaw * Multiplier
 		        MaxQuantityRaw = MaxQuantityRaw * Multiplier
@@ -240,7 +240,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    End If
 		    
 		    If TemplateEntry.CanBeBlueprint And TemplateEntry.RespectBlueprintChanceMultipliers Then
-		      Var BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
+		      Var BlueprintChanceRaw As Double = TemplateEntry.ChanceToBeBlueprint
 		      For Each Multiplier As Double In BlueprintMultipliers
 		        BlueprintChanceRaw = BlueprintChanceRaw * Multiplier
 		      Next
