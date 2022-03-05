@@ -1136,6 +1136,8 @@ End
 		    Self.ModifiersList.AddRow(TemplateSelector.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
 		    Self.ModifiersList.RowTagAt(Self.ModifiersList.LastAddedRowIndex) = TemplateSelector.UUID
 		  Next TemplateSelector
+		  Self.ModifiersList.HeadingIndex = 0
+		  Self.ModifiersList.Sort
 		  
 		  Self.mUpdating = False
 		End Sub

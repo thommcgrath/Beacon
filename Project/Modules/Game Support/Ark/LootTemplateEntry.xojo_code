@@ -43,7 +43,7 @@ Implements Beacon.Countable,Iterable
 		  Self.mMaxQuality = Source.mMaxQuality
 		  Self.mMaxQuantity = Source.mMaxQuantity
 		  Self.mMinQuality = Source.mMinQuality
-		  Self.mMinQuality = Source.mMinQuality
+		  Self.mMinQuantity = Source.mMinQuantity
 		  Self.mModified = Source.mModified
 		  Self.mRespectBlueprintChanceMultipliers = Source.mRespectBlueprintChanceMultipliers
 		  Self.mRespectQualityOffsets = Source.mRespectQualityOffsets
@@ -65,7 +65,7 @@ Implements Beacon.Countable,Iterable
 		Function Count() As Integer
 		  // Part of the Beacon.Countable interface.
 		  
-		  
+		  Return Self.mOptions.Count
 		End Function
 	#tag EndMethod
 

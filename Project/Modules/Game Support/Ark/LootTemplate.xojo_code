@@ -47,7 +47,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Value(LootSelectorUUID)
-		  Return Dict.Lookup("Blueprint Chance Multiplier", 1.0)
+		  Return Dict.Lookup(Self.ModifierBlueprintChance, 1.0)
 		End Function
 	#tag EndMethod
 
@@ -194,7 +194,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Value(LootSelectorUUID)
-		  Return Dict.Lookup("Max Quality Offset", 0)
+		  Return Dict.Lookup(Self.ModifierMaxQuality, 0)
 		End Function
 	#tag EndMethod
 
@@ -217,7 +217,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Value(LootSelectorUUID)
-		  Return Dict.Lookup("Min Quality Offset", 0)
+		  Return Dict.Lookup(Self.ModifierMinQuality, 0)
 		End Function
 	#tag EndMethod
 
@@ -268,7 +268,7 @@ Implements Beacon.Countable,Iterable
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Value(LootSelectorUUID)
-		  Return Dict.Lookup("Quantity Multiplier", 1.0)
+		  Return Dict.Lookup(Self.ModifierQuantity, 1.0)
 		End Function
 	#tag EndMethod
 
@@ -325,6 +325,18 @@ Implements Beacon.Countable,Iterable
 		Protected mModifierValues As Dictionary
 	#tag EndProperty
 
+
+	#tag Constant, Name = ModifierBlueprintChance, Type = String, Dynamic = False, Default = \"Blueprint", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ModifierMaxQuality, Type = String, Dynamic = False, Default = \"MaxQuality", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ModifierMinQuality, Type = String, Dynamic = False, Default = \"MinQuality", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ModifierQuantity, Type = String, Dynamic = False, Default = \"Quantity", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = Version, Type = Double, Dynamic = False, Default = \"3", Scope = Public
 	#tag EndConstant

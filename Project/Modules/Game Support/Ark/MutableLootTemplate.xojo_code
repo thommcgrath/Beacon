@@ -102,7 +102,7 @@ Inherits Ark.LootTemplate
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
-		  Dict.Value("Blueprint Chance Multiplier") = Value
+		  Dict.Value(Self.ModifierBlueprintChance) = Value
 		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
@@ -158,7 +158,7 @@ Inherits Ark.LootTemplate
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
-		  Dict.Value("Max Quality Offset") = Value
+		  Dict.Value(Self.ModifierMaxQuality) = Value
 		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
@@ -182,7 +182,7 @@ Inherits Ark.LootTemplate
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
-		  Dict.Value("Min Quality Offset") = Value
+		  Dict.Value(Self.ModifierMinQuality) = Value
 		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
@@ -212,7 +212,7 @@ Inherits Ark.LootTemplate
 		  End If
 		  
 		  Var Dict As Dictionary = Self.mModifierValues.Lookup(TemplateSelectorUUID, New Dictionary)
-		  Dict.Value("Quantity Multiplier") = Value
+		  Dict.Value(Self.ModifierQuantity) = Value
 		  Self.mModifierValues.Value(TemplateSelectorUUID) = Dict
 		End Sub
 	#tag EndMethod
