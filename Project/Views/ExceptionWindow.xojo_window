@@ -799,6 +799,11 @@ End
 		  
 		  App.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
 		  
+		  If Location.BeginsWith("Delegate.IM_Invoke") Then
+		    // Ignore this one
+		    Return Nil
+		  End If
+		  
 		  Var Lines() As String
 		  For Each Frame As StackFrame In Stack
 		    Lines.Add(Frame.Name)
@@ -822,8 +827,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Err As RuntimeException)
-		  Self.mExceptionFields = Self.BuildPostFields(Err, "")
+		Private Sub Constructor(ExceptionFields As Dictionary)
+		  Self.mExceptionFields = ExceptionFields
 		  Self.mExceptionHash = Self.mExceptionFields.Value("hash")
 		  
 		  Var WriteFile As Boolean = True
@@ -850,7 +855,12 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Err As RuntimeException)
-		  Var Win As New ExceptionWindow(Err)
+		  Var Fields As Dictionary = BuildPostFields(Err, "")
+		  If Fields Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Win As New ExceptionWindow(Fields)
 		  Win.ShowModal()
 		End Sub
 	#tag EndMethod
