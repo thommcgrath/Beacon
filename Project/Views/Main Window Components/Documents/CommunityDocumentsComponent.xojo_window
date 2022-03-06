@@ -152,7 +152,6 @@ Begin DocumentsComponentView CommunityDocumentsComponent
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -327,7 +326,7 @@ End
 		    Params.Value("direction") = "asc"
 		  End If
 		  
-		  Var Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocuments)
+		  Var Request As New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocuments)
 		  Self.APISocket.Start(Request)
 		End Sub
 	#tag EndEvent

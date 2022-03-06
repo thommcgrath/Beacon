@@ -9,7 +9,7 @@ Protected Class Document
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary)
 		  Self.mDescription = Source.Value("description")
-		  Self.mDocumentID = Source.Value("document_id")
+		  Self.mDocumentID = Source.Value("project_id")
 		  Self.mDownloadCount = Source.Value("download_count")
 		  Self.mLastUpdated = NewDateFromSQLDateTime(Source.Value("last_updated"))
 		  Self.mName = Source.Value("name")

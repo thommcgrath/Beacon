@@ -473,7 +473,6 @@ Begin DocumentsComponentView CloudDocumentsComponent Implements NotificationKit.
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -591,7 +590,7 @@ End
 		    Var Params As New Dictionary
 		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		    
-		    Var NewAttempt As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		    Var NewAttempt As New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
 		    NewAttempt.Sign(App.IdentityManager.CurrentIdentity)
 		    Self.APISocket.Start(NewAttempt)
 		    Return
@@ -679,10 +678,10 @@ End
 		  Var Request As BeaconAPI.Request
 		  Var Token As String = Preferences.OnlineToken
 		  If Token.IsEmpty Then
-		    Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		    Request = New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
 		    Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Else
-		    Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
+		    Request = New BeaconAPI.Request("ark/project", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
 		    Request.Authenticate(Token)
 		  End If
 		  Self.APISocket.Start(Request)
