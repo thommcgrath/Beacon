@@ -16,7 +16,7 @@ class Project implements \JsonSerializable {
 	protected $title = '';
 	protected $description = '';
 	protected $console_safe = true;
-	protected $last_updated = null;
+	protected $last_update = null;
 	protected $revision = 1;
 	protected $download_count = 0;
 	protected $published = self::PUBLISH_STATUS_PRIVATE;
@@ -57,13 +57,14 @@ class Project implements \JsonSerializable {
 	public function jsonSerialize() {
 		return [
 			'project_id' => $this->project_id,
+			'game_id' => $this->game_id,
 			'user_id' => $this->user_id,
 			'owner_id' => $this->owner_id,
-			'name' => $this->name,
+			'name' => $this->title,
 			'description' => $this->description,
 			'revision' => $this->revision,
 			'download_count' => $this->download_count,
-			'last_updated' => $this->last_updated->format('Y-m-d H:i:sO'),
+			'last_updated' => $this->last_update->format('Y-m-d H:i:sO'),
 			'console_safe' => $this->console_safe,
 			'resource_url' => $this->ResourceURL()
 		];
@@ -108,7 +109,7 @@ class Project implements \JsonSerializable {
 	}
 	
 	public function LastUpdated() {
-		return $this->last_updated;
+		return $this->last_update;
 	}
 	
 	public function Revision() {
@@ -360,7 +361,7 @@ class Project implements \JsonSerializable {
 		$project->description = $results->Field('description');
 		$project->revision = intval($results->Field('revision'));
 		$project->download_count = intval($results->Field('download_count'));
-		$project->last_updated = new \DateTime($results->Field('last_update'));
+		$project->last_update = new \DateTime($results->Field('last_update'));
 		$project->user_id = $results->Field('user_id');
 		$project->owner_id = $results->Field('owner_id');
 		$project->published = $results->Field('published');

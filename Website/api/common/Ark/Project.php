@@ -18,7 +18,6 @@ class Project extends \BeaconAPI\Project {
 			unset($columns[$key]);
 		}
 		$columns[] = "'Ark' AS game_id";
-		$columns[] = 'last_update';
 		$columns[] = 'map';
 		$columns[] = 'difficulty';
 		$columns[] = 'mods';
@@ -26,11 +25,23 @@ class Project extends \BeaconAPI\Project {
 		return $columns;
 	}
 	
+	protected static function GetFromResult(\BeaconRecordSet $results) {
+		$project = parent::GetFromResult($results);
+		$project->map_mask = intval($results->Field('map'));
+		$project->difficulty_value = floatval($results->Field('difficulty'));
+		$project->mod_ids = is_null($results->Field('mods')) ? '{}' : $results->Field('mods');
+		$project->editors = is_null($results->Field('included_editors')) ? '{}' : $results->Field('included_editors');
+		return $project;
+	}
+	
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
-		$project_id = $json['project_id'];
-		unset($project['project_id']);
-		$json['document_id'] = $project_id;
+		if (\BeaconAPI::GetAPIVersion() < 3) {
+			$project_id = $json['project_id'];
+			unset($json['project_id']);
+			unset($json['game_id']);
+			$json['document_id'] = $project_id;
+		}
 		$json['map_mask'] = $this->map_mask;
 		$json['difficulty_value'] = $this->difficulty_value;
 		return $json;
@@ -244,6 +255,14 @@ class Project extends \BeaconAPI\Project {
 		}
 		
 		return self::SaveFromArray($project, $user, $file_content_compressed, $reason);
+	}
+	
+	public function ResourceURL() {
+		if (\BeaconAPI::GetAPIVersion() >= 3) {
+			return \BeaconAPI::URL('/ark/project/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
+		} else {
+			return \BeaconAPI::URL('/document/' . urlencode($this->project_id) . '?name=' . urlencode($this->title));
+		}
 	}
 }
 
