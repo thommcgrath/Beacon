@@ -577,9 +577,16 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  If Self.mModified = False Then
-		    Self.mModified = Value
-		    RaiseEvent SaveComplete()
+		  Self.mModified = Value
+		  
+		  If Value = False Then
+		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		      Profile.Modified = False
+		    Next Profile
+		    
+		    If (Self.mAccounts Is Nil) = False Then
+		      Self.mAccounts.Modified = False
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod

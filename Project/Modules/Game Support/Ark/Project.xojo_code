@@ -685,6 +685,48 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Super.Modified Then
+		    Return True
+		  End If
+		  
+		  Var ConfigSetNames() As String = Self.ConfigSetNames
+		  For Each ConfigSetName As String In ConfigSetNames
+		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSetName)
+		    If SetDict Is Nil Then
+		      Continue
+		    End If
+		    For Each GroupEntry As DictionaryEntry In SetDict
+		      Var Group As Ark.ConfigGroup = GroupEntry.Value
+		      If Group.Modified Then
+		        Return True
+		      End If
+		    Next GroupEntry
+		  Next ConfigSetName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Super.Modified = Value
+		  
+		  If Value = False Then
+		    Var ConfigSetNames() As String = Self.ConfigSetNames
+		    For Each ConfigSetName As String In ConfigSetNames
+		      Var SetDict As Dictionary = Self.ConfigSet(ConfigSetName)
+		      If SetDict Is Nil Then
+		        Continue
+		      End If
+		      For Each GroupEntry As DictionaryEntry In SetDict
+		        Var Group As Ark.ConfigGroup = GroupEntry.Value
+		        Group.Modified = False
+		      Next GroupEntry
+		    Next ConfigSetName
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(Group As Ark.ConfigGroup)
 		  If Group Is Nil Then
 		    Return
