@@ -20,14 +20,10 @@ Protected Class LootContainerSelector
 		  End If
 		  
 		  Var Engine As New JavascriptEngineMBS
-		  Engine.GlobalProperty("ColorWhite") = "FFFFFF00"
-		  Engine.GlobalProperty("ColorGreen") = "00FF0000"
-		  Engine.GlobalProperty("ColorBlue") = "88C8FF00"
-		  Engine.GlobalProperty("ColorPurple") = "E6BAFF00"
-		  Engine.GlobalProperty("ColorYellow") = "FFF02A00"
-		  Engine.GlobalProperty("ColorRed") = "FFBABA00"
-		  Engine.GlobalProperty("ColorCyan") = "00FFFF00"
-		  Engine.GlobalProperty("ColorOrange") = "FFA50000"
+		  Var LootColors() As Pair = Ark.LootColors
+		  For Each LootColor As Pair In LootColors
+		    Engine.GlobalProperty("Color" + LootColor.Left.StringValue) = LootColor.Right.StringValue
+		  Next LootColor
 		  
 		  Var Maps() As Ark.Map = Ark.Maps.All
 		  For Each Map As Ark.Map In Maps

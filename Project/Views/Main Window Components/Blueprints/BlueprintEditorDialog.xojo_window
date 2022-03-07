@@ -36,7 +36,7 @@ Begin BeaconDialog BlueprintEditorDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   6
       Panels          =   ""
       Scope           =   2
       TabIndex        =   1
@@ -45,7 +45,7 @@ Begin BeaconDialog BlueprintEditorDialog
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   4
       Visible         =   True
       Width           =   540
       Begin MapSelectionGrid MapSelector
@@ -179,7 +179,7 @@ Begin BeaconDialog BlueprintEditorDialog
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Engram\nCreature\nSpawn Point"
+         InitialValue    =   "Engram\nCreature\nSpawn Point\nLoot Drop"
          Italic          =   False
          Left            =   152
          ListIndex       =   -1
@@ -1427,6 +1427,635 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   540
       End
+      Begin RangeField LootMinMultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "1.0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   58
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin RangeField LootMaxMultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "1.0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin PopupMenu LootIconColorMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   7
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   158
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   155
+      End
+      Begin PopupMenu LootIconMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   5
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   155
+      End
+      Begin CheckBox LootExperimentalCheckbox
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Experimental"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   8
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   190
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         VisualState     =   0
+         Width           =   155
+      End
+      Begin UITweaks.ResizedLabel LootMinMultiplierLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Minimum Multiplier:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   58
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin UITweaks.ResizedLabel LootMaxMultiplierLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Maximum Multiplier:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin UITweaks.ResizedLabel LootIconColorLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Icon Color:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   158
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin UITweaks.ResizedLabel LootIconLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Icon:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin ArkLootDropEditor DropEditor
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   405
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   6
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   540
+      End
+      Begin RangeField LootRequiredItemSetsField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "1"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   222
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin TextArea LootNotesArea
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   True
+         AllowStyledText =   True
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         Height          =   50
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Multiline       =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   ""
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   256
+         Transparent     =   False
+         Underline       =   False
+         UnicodeMode     =   1
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   356
+      End
+      Begin UITweaks.ResizedLabel LootRequiredItemSetsLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   11
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Minimum Item Sets:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   222
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin UITweaks.ResizedLabel LootNotesLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   12
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Notes:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   256
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin RangeField LootSortField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   164
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   13
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "0"
+         TextAlignment   =   2
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   318
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel LootSortLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   14
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Text            =   "Sort Order:"
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   318
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   132
+      End
+      Begin PushButton LootSortSuggestButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Suggest"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   256
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   15
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   319
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
    End
    Begin OmniBar PageSelector
       Alignment       =   1
@@ -1485,7 +2114,7 @@ Begin BeaconDialog BlueprintEditorDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -1517,7 +2146,7 @@ Begin BeaconDialog BlueprintEditorDialog
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -1549,7 +2178,7 @@ Begin BeaconDialog BlueprintEditorDialog
       ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -1575,7 +2204,7 @@ End
 		    Case IsA Ark.SpawnPoint
 		      Self.TypeMenu.SelectByCaption("Spawn Point")
 		    Case IsA Ark.LootContainer
-		      Self.TypeMenu.SelectByCaption("Loot Container")
+		      Self.TypeMenu.SelectByCaption("Loot Drop")
 		    End Select
 		    Self.TypeMenu.Enabled = False
 		    Self.PathField.Text = Self.mOriginalBlueprint.Path
@@ -1585,13 +2214,13 @@ End
 		    
 		    Select Case Self.mOriginalBlueprint
 		    Case IsA Ark.Engram
-		      Self.LoadEngram(Ark.Engram(Self.mOriginalBlueprint))
+		      Self.LoadBlueprint(Ark.Engram(Self.mOriginalBlueprint))
 		    Case IsA Ark.Creature
-		      Self.LoadCreature(Ark.Creature(Self.mOriginalBlueprint))
+		      Self.LoadBlueprint(Ark.Creature(Self.mOriginalBlueprint))
 		    Case IsA Ark.SpawnPoint
-		      Self.LoadSpawnPoint(Ark.SpawnPoint(Self.mOriginalBlueprint))
+		      Self.LoadBlueprint(Ark.SpawnPoint(Self.mOriginalBlueprint))
 		    Case IsA Ark.LootContainer
-		      Self.LoadLootContainer(Ark.LootContainer(Self.mOriginalBlueprint))
+		      Self.LoadBlueprint(Ark.LootContainer(Self.mOriginalBlueprint))
 		    End Select
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
@@ -1649,7 +2278,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadCreature(Creature As Ark.Creature)
+		Private Sub LoadBlueprint(Creature As Ark.Creature)
 		  If Creature.IncubationTime > 0 Then
 		    Self.CreatureIncubationTimeField.Text = Beacon.SecondsToString(Creature.IncubationTime)
 		  End If
@@ -1682,7 +2311,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadEngram(Engram As Ark.Engram)
+		Private Sub LoadBlueprint(Engram As Ark.Engram)
 		  Self.EngramEntryStringField.Text = Engram.EntryString
 		  
 		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
@@ -1709,17 +2338,33 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadLootContainer(Container As Ark.LootContainer)
-		  #if DebugBuild
-		    #Pragma Warning "Incomplete"
-		  #else
-		    #Pragma Error "Incomplete"
-		  #endif
+		Private Sub LoadBlueprint(Container As Ark.LootContainer)
+		  Self.LootMinMultiplierField.DoubleValue = Container.Multipliers.Min
+		  Self.LootMaxMultiplierField.DoubleValue = Container.Multipliers.Max
+		  Try
+		    Self.LootIconMenu.SelectByTag(Container.IconID)
+		  Catch Err As RuntimeException
+		  End Try
+		  Try
+		    Self.LootIconColorMenu.SelectByTag(Container.UIColor.ToHex)
+		  Catch Err As RuntimeException
+		  End Try
+		  Self.LootExperimentalCheckbox.Value = Container.Experimental
+		  Self.LootRequiredItemSetsField.DoubleValue = Container.RequiredItemSetCount
+		  Self.LootNotesArea.Text = Container.Notes
+		  Self.LootSortField.DoubleValue = Container.SortValue
+		  
+		  Var Mutable As Ark.MutableLootContainer = Container.MutableVersion
+		  Ark.DataSource.SharedInstance.LoadDefaults(Mutable)
+		  
+		  Var Drops(0) As Ark.LootContainer
+		  Drops(0) = Mutable
+		  Self.DropEditor.Containers = Drops
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadSpawnPoint(Point As Ark.SpawnPoint)
+		Private Sub LoadBlueprint(Point As Ark.SpawnPoint)
 		  Var Mutable As Ark.MutableSpawnPoint = Point.MutableVersion
 		  Ark.DataSource.SharedInstance.LoadDefaults(Mutable)
 		  
@@ -1795,6 +2440,16 @@ End
 		  End If
 		  Win.Close
 		  Return EditedBlueprint
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SampleProject() As Ark.Project
+		  If Self.mSampleProject Is Nil Then
+		    Self.mSampleProject = New Ark.Project
+		    Self.mSampleProject.MapMask = Ark.Maps.UniversalMask
+		  End If
+		  Return Self.mSampleProject
 		End Function
 	#tag EndMethod
 
@@ -1877,19 +2532,19 @@ End
 		  
 		  Select Case Blueprint
 		  Case IsA Ark.MutableEngram
-		    If Not Self.UpdateEngram(Ark.MutableEngram(Blueprint)) Then
+		    If Not Self.UpdateBlueprint(Ark.MutableEngram(Blueprint)) Then
 		      Return False
 		    End If
 		  Case IsA Ark.MutableCreature
-		    If Not Self.UpdateCreature(Ark.MutableCreature(Blueprint)) Then
+		    If Not Self.UpdateBlueprint(Ark.MutableCreature(Blueprint)) Then
 		      Return False
 		    End If
 		  Case IsA Ark.MutableSpawnPoint
-		    If Not Self.UpdateSpawnPoint(Ark.MutableSpawnPoint(Blueprint)) Then
+		    If Not Self.UpdateBlueprint(Ark.MutableSpawnPoint(Blueprint)) Then
 		      Return False
 		    End If
 		  Case IsA Ark.MutableLootContainer
-		    If Not Self.UpdateLootContainer(Ark.MutableLootContainer(Blueprint)) Then
+		    If Not Self.UpdateBlueprint(Ark.MutableLootContainer(Blueprint)) Then
 		      Return False
 		    End If
 		  End Select
@@ -1924,7 +2579,39 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateCreature(Creature As Ark.MutableCreature) As Boolean
+		Private Function SuggestLootSortValue(Label As String) As Integer
+		  Var SortValue As Integer
+		  If Label.IndexOf("White") > -1 Then
+		    SortValue = 1
+		  ElseIf Label.IndexOf("Green") > -1 Then
+		    SortValue = 3
+		  ElseIf Label.IndexOf("Blue") > -1 Then
+		    SortValue = 5
+		  ElseIf Label.IndexOf("Purple") > -1 Then
+		    SortValue = 7
+		  ElseIf Label.IndexOf("Yellow") > -1 Then
+		    SortValue = 9
+		  ElseIf Label.IndexOf("Red") > -1 Then
+		    SortValue = 11
+		  ElseIf Label.IndexOf("Cyan") > -1 Then
+		    SortValue = 13
+		  ElseIf Label.IndexOf("Orange") > -1 Then
+		    SortValue = 15
+		  End If
+		  If Label.IndexOf("Bonus") > -1 Then
+		    SortValue = SortValue + 1
+		  ElseIf Label.IndexOf("Cave") > -1 Then
+		    SortValue = SortValue + 14
+		  End If
+		  If SortValue = 0 Then
+		    SortValue = 199
+		  End If
+		  Return SortValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UpdateBlueprint(Creature As Ark.MutableCreature) As Boolean
 		  Const ParseInstructions = "Use a format like ""2 days 3 hours 4 minutes 5 seconds"" to specify an amount of time. Short versions such as ""2d3h4m5s"" may also be used. Omit any units that are not needed. Decimal values may only be used on the seconds field."
 		  
 		  Var IncubationString As String = Self.CreatureIncubationTimeField.Text.Trim
@@ -1989,7 +2676,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateEngram(Engram As Ark.MutableEngram) As Boolean
+		Private Function UpdateBlueprint(Engram As Ark.MutableEngram) As Boolean
 		  Var EntryString As String = Self.EngramEntryStringField.Text.Trim
 		  Var RequiredLevelString As String = Self.EngramPlayerLevelField.Text.Trim
 		  Var RequiredPointsString As String = Self.EngramRequiredPointsField.Text.Trim
@@ -2068,17 +2755,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateLootContainer(Container As Ark.MutableLootContainer) As Boolean
-		  #if DebugBuild
-		    #Pragma Warning "Incomplete"
-		  #else
-		    #Pragma Error "Incomplete"
-		  #endif
+		Private Function UpdateBlueprint(Container As Ark.MutableLootContainer) As Boolean
+		  Var Containers() As Ark.LootContainer = Self.DropEditor.Containers
+		  If Containers.Count <> 1 Then
+		    Return False
+		  End If
+		  
+		  Var Source As Ark.LootContainer = Containers(0)
+		  Container.Unpack(Source.Pack)
+		  
+		  Container.Multipliers = New Beacon.Range(Self.LootMinMultiplierField.DoubleValue, Self.LootMaxMultiplierField.DoubleValue)
+		  Container.Experimental = Self.LootExperimentalCheckbox.Value
+		  Container.IconID = Self.LootIconMenu.SelectedRowTag
+		  Container.UIColor = Self.LootIconColorMenu.SelectedRowTag.StringValue.ToColor
+		  Container.RequiredItemSetCount = Round(Self.LootRequiredItemSetsField.DoubleValue)
+		  Container.Notes = Self.LootNotesArea.Text.Trim
+		  Container.SortValue = Round(Self.LootSortField.DoubleValue)
+		  If Container.SortValue = 0 Then
+		    Container.SortValue = Self.SuggestLootSortValue(Container.Label)
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function UpdateSpawnPoint(Point As Ark.MutableSpawnPoint) As Boolean
+		Private Function UpdateBlueprint(Point As Ark.MutableSpawnPoint) As Boolean
 		  Var Points() As Ark.SpawnPoint = Self.SpawnPointEditor1.SpawnPoints
 		  If Points.Count <> 1 Then
 		    Return False
@@ -2171,6 +2873,9 @@ End
 	#tag Constant, Name = PageEngramSettings, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageLootContents, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageLootSettings, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
@@ -2222,8 +2927,13 @@ End
 		  Case Self.IndexCreature
 		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageCreature", "Advanced"))
 		  Case Self.IndexSpawnPoint
-		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageSpawn", "Advanced"))
-		    TargetWidth = ArkSpawnPointEditor.MinEditorWidth
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageSpawnContents", "Contents"))
+		    TargetWidth = Max(TargetWidth, ArkSpawnPointEditor.MinEditorWidth, ArkLootDropEditor.MinEditorWidth)
+		    MinHeight = Max(640, Self.AbsoluteMinimumHeight)
+		  Case Self.IndexLootContainer
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageLootSettings", "Advanced"))
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageLootContents", "Contents"))
+		    TargetWidth = Max(TargetWidth, ArkSpawnPointEditor.MinEditorWidth, ArkLootDropEditor.MinEditorWidth)
 		    MinHeight = Max(640, Self.AbsoluteMinimumHeight)
 		  End Select
 		  
@@ -2567,15 +3277,143 @@ End
 	#tag EndEvent
 	#tag Event
 		Function GetProject() As Ark.Project
-		  If Self.mSampleProject Is Nil Then
-		    Self.mSampleProject = New Ark.Project
-		  End If
-		  Return Self.mSampleProject
+		  Return Self.SampleProject()
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub Changed()
 		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootMinMultiplierField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 1000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootMaxMultiplierField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 1000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootIconColorMenu
+	#tag Event
+		Sub Open()
+		  Var LootColors() As Pair = Ark.LootColors
+		  For Each LootColor As Pair In LootColors
+		    Me.AddRow(LootColor.Left.StringValue, LootColor.Right.StringValue)
+		  Next LootColor
+		  Me.SelectedRowIndex = 0
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootIconMenu
+	#tag Event
+		Sub Open()
+		  Var Icons() As Ark.LootContainerIcon = Ark.DataSource.SharedInstance.GetLootContainerIcons
+		  If Icons.Count = 0 Then
+		    Me.AddRow("Generic", "3a1f5d12-0b50-4761-9f89-277492dc00e0")
+		    Return
+		  End If
+		  For Each Icon As Ark.LootContainerIcon In Icons
+		    Me.AddRow(Icon.Label, Icon.UUID)
+		  Next Icon
+		  Try
+		    Me.SelectRowWithTag("84d76c41-4386-467d-83e7-841dcaa4007d")
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootExperimentalCheckbox
+	#tag Event
+		Sub Action()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DropEditor
+	#tag Event
+		Function GetProject() As Ark.Project
+		  Return Self.SampleProject()
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Var Drops(0) As Ark.LootContainer
+		  Drops(0) = New Ark.MutableLootContainer(Ark.UnknownBlueprintPath("LootContainers", "BlueprintEditor_C"), "8e25c4be-d496-4c94-b1bc-d4bef54834ad")
+		  Me.Containers = Drops
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Updated()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootRequiredItemSetsField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 1
+		  MaxValue = 1000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootNotesArea
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootSortField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 1
+		  MaxValue = 1000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootSortSuggestButton
+	#tag Event
+		Sub Action()
+		  Self.LootSortField.DoubleValue = Self.SuggestLootSortValue(Self.NameField.Text.Trim)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2602,8 +3440,12 @@ End
 		    Self.Pages.SelectedPanelIndex = Self.PageEngramSettings
 		  Case "PageCreature"
 		    Self.Pages.SelectedPanelIndex = Self.PageCreatureSettings
-		  Case "PageSpawn"
+		  Case "PageSpawnContents"
 		    Self.Pages.SelectedPanelIndex = Self.PageSpawnSettings
+		  Case "PageLootSettings"
+		    Self.Pages.SelectedPanelIndex = Self.PageLootSettings
+		  Case "PageLootContents"
+		    Self.Pages.SelectedPanelIndex = Self.PageLootContents
 		  End Select
 		End Sub
 	#tag EndEvent

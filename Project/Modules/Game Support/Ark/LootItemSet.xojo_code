@@ -500,7 +500,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		    Entries(Idx) = Self.mEntries(Idx).Pack
 		  Next Idx
 		  
-		  Var Dict As Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("loot_item_set_id") = Self.mUUID
 		  Dict.Value("label") = Self.mLabel
 		  Dict.Value("min_entries") = Self.mMinNumItems

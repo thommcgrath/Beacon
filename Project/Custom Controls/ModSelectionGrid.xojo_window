@@ -350,7 +350,6 @@ End
 	#tag Method, Flags = &h1
 		Protected Sub EnabledMods(Assigns List As Beacon.StringList)
 		  Self.mModStates = New Dictionary
-		  Self.mModStates.Value(Ark.UserContentPackUUID) = True
 		  
 		  For Each ModID As String In List
 		    Self.mModStates.Value(ModID) = True
@@ -377,7 +376,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub ModEnabled(ModID As String, Assigns Value As Boolean)
-		  Self.mModStates.Value(ModID) = Value Or ModID = Ark.UserContentPackUUID
+		  Self.mModStates.Value(ModID) = Value
 		End Sub
 	#tag EndMethod
 

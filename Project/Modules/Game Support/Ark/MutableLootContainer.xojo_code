@@ -45,10 +45,8 @@ Implements Ark.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mRequirements = New Dictionary
-		  
+		  // Making it public
 		  Super.Constructor
-		  
 		End Sub
 	#tag EndMethod
 
@@ -57,7 +55,6 @@ Implements Ark.MutableBlueprint
 		  Self.mObjectID = ObjectID
 		  Self.mPath = Path
 		  Self.mClassString = Beacon.ClassStringFromPath(Path)
-		  Self.mRequirements = New Dictionary
 		  
 		  Super.Constructor()
 		End Sub

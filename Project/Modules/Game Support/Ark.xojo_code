@@ -147,6 +147,21 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function LootColors() As Pair()
+		  Var Colors() As Pair
+		  Colors.Add("White" : "FFFFFF00")
+		  Colors.Add("Green" : "00FF0000")
+		  Colors.Add("Blue" : "88C8FF00")
+		  Colors.Add("Purple" : "E6BAFF00")
+		  Colors.Add("Yellow" : "FFF02A00")
+		  Colors.Add("Red" : "FFBABA00")
+		  Colors.Add("Cyan" : "00FFFF00")
+		  Colors.Add("Orange" : "FFA50000")
+		  Return Colors
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Mask(Extends Maps() As Ark.Map) As UInt64
 		  Var Bits As UInt64

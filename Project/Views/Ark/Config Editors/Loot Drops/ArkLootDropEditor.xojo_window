@@ -401,6 +401,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  RaiseEvent Open()
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -898,6 +899,10 @@ End
 
 	#tag Hook, Flags = &h0
 		Event GetProject() As Ark.Project
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

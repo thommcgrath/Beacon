@@ -131,7 +131,6 @@ Begin BeaconSubview ModEditorView
    End
    Begin Thread ImporterThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

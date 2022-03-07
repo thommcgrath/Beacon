@@ -48,6 +48,8 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mMinItemSets = 1
 		  Self.mMaxItemSets = 1
 		  Self.mPreventDuplicates = True
+		  Self.mMultipliers = New Beacon.Range(1.0, 1.0)
+		  Self.mRequirements = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -73,6 +75,7 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 		  Self.mPreventDuplicates = Source.mPreventDuplicates
 		  Self.mRequirements = If(Source.mRequirements Is Nil, Nil, Source.mRequirements.Clone)
 		  Self.mSortValue = Source.mSortValue
+		  Self.mIconID = Source.mIconID
 		  Self.mUIColor = Source.mUIColor
 		  
 		  Self.mItemSets.ResizeTo(Source.mItemSets.LastIndex)

@@ -108,7 +108,7 @@ Implements Beacon.Validateable
 
 	#tag Method, Flags = &h0
 		Function Pack() As Dictionary
-		  Var Dict As Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("loot_item_set_entry_option_id") = Self.mUUID
 		  Dict.Value("engram_id") = Self.mEngram.ObjectID
 		  Dict.Value("weight") = Self.mWeight
