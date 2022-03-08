@@ -24,7 +24,7 @@ Begin BeaconDialog ArkAddLootDropDialog
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
-   Title           =   "Add Loot Source"
+   Title           =   "Add Loot Drop"
    Visible         =   True
    Width           =   550
    Begin PagePanel Panel
@@ -138,7 +138,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Add Loot Container"
+         Text            =   "Add Loot Drop"
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -237,7 +237,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Customize Loot Container"
+         Text            =   "Customize Loot Drop"
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -511,7 +511,7 @@ Begin BeaconDialog ArkAddLootDropDialog
       Begin CheckBox SelectionExperimentalCheck
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Show Experimental Loot Containers"
+         Caption         =   "Show Experimental Loot Drops"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -549,7 +549,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          DelayPeriod     =   250
          Enabled         =   True
          Height          =   22
-         Hint            =   "Search Loot Containers"
+         Hint            =   "Search Loot Drops"
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   281
@@ -763,7 +763,7 @@ End
 	#tag Event
 		Sub Open()
 		  If Self.mShowAsDuplicate Then
-		    Self.SelectionMessageLabel.Text = "Duplicate Loot Container"
+		    Self.SelectionMessageLabel.Text = "Duplicate Loot Drop"
 		    Self.LoadDefaultsCheckbox.Visible = False
 		  End If
 		  
@@ -902,7 +902,7 @@ End
 		  
 		  Var Maps() As Ark.Map = Ark.Maps.ForMask(Mask)
 		  If Maps.LastIndex = -1 Then
-		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the maps button at the top of the project to set the maps.")
+		    Parent.ShowAlert("Beacon does not know which loot drops to show because no maps have been selected.", "Use the maps button at the top of the project to set the maps.")
 		    Return False
 		  End If
 		  

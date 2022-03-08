@@ -340,6 +340,8 @@ Begin ArkConfigEditor ArkLootDropsEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      ContentHeight   =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -351,6 +353,7 @@ Begin ArkConfigEditor ArkLootDropsEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollActive    =   False
       ScrollingEnabled=   False
       ScrollSpeed     =   20
       TabIndex        =   8
@@ -393,7 +396,7 @@ End
 		  
 		  Var Replace As Boolean = True
 		  If DuplicateContainerCount > 0 Then
-		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateContainerCount, "loot container", "loot containers") + "?", DuplicateContainerCount.ToString + " of " + Language.NounWithQuantity(TotalNewContainers, " loot container has already been defined in this project. Would you like to replace it?", " loot containers are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
+		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateContainerCount, "loot drop", "loot drops") + "?", DuplicateContainerCount.ToString + " of " + Language.NounWithQuantity(TotalNewContainers, " loot drop has already been defined in this project. Would you like to replace it?", " loot drops are already defined in this project. Would you like to replace them?"), "Replace", "Cancel")
 		  End If
 		  
 		  Var AddedContainers() As Ark.LootContainer
@@ -770,7 +773,7 @@ End
 		  Var TotalCount As Integer = Self.List.RowCount
 		  Var SelectedCount As Integer = Self.List.SelectedRowCount
 		  
-		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Loot Container", "Loot Containers")
+		  Var Caption As String = TotalCount.ToString(Locale.Current, ",##0") + " " + If(TotalCount = 1, "Loot Drop", "Loot Drops")
 		  If SelectedCount > 0 Then
 		    Caption = SelectedCount.ToString(Locale.Current, ",##0") + " of " + Caption + " Selected"
 		  End If
@@ -857,7 +860,7 @@ End
 		    Containers.Add(Self.List.RowTagAt(I))
 		  Next
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Containers, "loot container", "loot containers") = False Then
+		  If Warn And Self.ShowDeleteConfirmation(Containers, "loot drop", "loot drops") = False Then
 		    Return
 		  End If
 		  

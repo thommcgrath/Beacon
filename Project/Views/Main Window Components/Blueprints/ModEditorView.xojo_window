@@ -825,7 +825,7 @@ End
 		    Case IsA Ark.SpawnPoint
 		      Type = "Spawn"
 		    Case IsA Ark.LootContainer
-		      Type = "Loot Container"
+		      Type = "Loot Drop"
 		    End Select
 		    
 		    Self.BlueprintList.CellValueAt(Row, 0) = Blueprint.Label

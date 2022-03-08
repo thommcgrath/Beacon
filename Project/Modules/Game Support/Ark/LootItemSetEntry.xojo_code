@@ -808,7 +808,7 @@ Implements Beacon.Countable,Iterable,Ark.Weighted,Beacon.Validateable
 		  End If
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
-		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
+		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot drop
 		  // definitions are based on PrimalSupplyCrateItemSets and others on PrimalSupplyCrateItemSet.
 		  // There's no common parent between them. Seems like Wildcard messed this up. I think
 		  // PrimalSupplyCrateItemSets uses ChanceToActuallyGiveItem, and PrimalSupplyCrateItemSet

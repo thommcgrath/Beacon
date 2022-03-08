@@ -171,10 +171,10 @@ Protected Module Language
 	#tag Constant, Name = ExperimentalWarningCancelCaption, Type = String, Dynamic = False, Default = \"Cancel", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ExperimentalWarningExplanation, Type = String, Dynamic = False, Default = \"The \"\?1\" loot source is only partially supported by Beacon. Its behavior may be unpredictable\x2C both in terms of item quality and quantity. Are you sure you want to continue\?", Scope = Protected
+	#tag Constant, Name = ExperimentalWarningExplanation, Type = String, Dynamic = False, Default = \"The \"\?1\" loot drop is only partially supported by Beacon. Its behavior may be unpredictable\x2C both in terms of item quality and quantity. Are you sure you want to continue\?", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ExperimentalWarningMessage, Type = String, Dynamic = False, Default = \"You are adding an experimental loot source.", Scope = Protected
+	#tag Constant, Name = ExperimentalWarningMessage, Type = String, Dynamic = False, Default = \"You are adding an experimental loot drop.", Scope = Protected
 	#tag EndConstant
 
 

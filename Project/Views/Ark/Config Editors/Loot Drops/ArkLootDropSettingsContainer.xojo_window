@@ -362,7 +362,7 @@ Begin ContainerControl ArkLootDropSettingsContainer
       DataSource      =   ""
       Enabled         =   True
       Height          =   20
-      HelpTag         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
+      HelpTag         =   "When checked, the item sets are added to the default loot drop contents. When unchecked, the item sets completely replace the loot drop contents."
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False

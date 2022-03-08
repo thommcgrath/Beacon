@@ -156,7 +156,7 @@ Begin BeaconDialog ArkLootContainerSelectorEditorDialog
       Height          =   280
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Matched Loot Sources"
+      InitialValue    =   "Matched Loot Drops"
       Italic          =   False
       Left            =   355
       LockBottom      =   True

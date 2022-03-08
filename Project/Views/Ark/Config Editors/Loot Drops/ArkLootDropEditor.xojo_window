@@ -1091,10 +1091,10 @@ End
 		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
 		    Var Contents As String = Board.Text
 		    If Contents.Left(2) = "((" Then
-		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot container
+		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot drop
 		      // No additional wrapping necessary, but we need to make sure the next clause is not hit
 		    ElseIf Contents.Left(1) = "(" Then
-		      // This may be a single item set from the dev kit, so wrap it up like a full loot container
+		      // This may be a single item set from the dev kit, so wrap it up like a full loot drop
 		      Contents = "(" + Contents + ")"
 		    End If
 		    
@@ -1308,7 +1308,7 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  // The set needs to be cloned into each loot container
+		  // The set needs to be cloned into each loot drop
 		  
 		  If SetList.SelectedRowCount <> 1 Then
 		    Return
@@ -1403,7 +1403,7 @@ End
 		  Me.Append(OmniBarItem.CreateTitle("Title", "Item Sets"))
 		  Me.Append(OmniBarItem.CreateSeparator("TitleSeparator"))
 		  Me.Append(OmniBarItem.CreateButton("AddSetButton", "New Item Set", IconToolbarAddMenu, "Add a new empty item set. Hold to add a preset from a menu."))
-		  Me.Append(OmniBarItem.CreateButton("SimulatorButton", "Simulator", IconToolbarSimulate, "Simulate loot selection for this loot container.", False))
+		  Me.Append(OmniBarItem.CreateButton("SimulatorButton", "Simulator", IconToolbarSimulate, "Simulate loot selection for this loot drop.", False))
 		  Me.Append(OmniBarItem.CreateFlexibleSpace)
 		  Me.Append(OmniBarItem.CreateHorizontalResizer("Resizer"))
 		  
