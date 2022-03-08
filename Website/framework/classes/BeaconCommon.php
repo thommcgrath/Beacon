@@ -710,6 +710,28 @@ abstract class BeaconCommon {
 			return date('Y-m-d H:i:sO', $results->Field('published'));
 		}
 	}
+	
+	public static function CreateUniqueSort(string $sort, array &$counters): string {
+		if (array_key_exists($sort, $counters)) {
+			$counter = $counters[$sort] + 1;
+		} else {
+			$counter = 0;
+		}
+		$counters[$sort] = $counter;
+		return $sort . ':' . number_format($counter, 0, '.', '');
+	}
+	
+	public static function SortInteger(int $value): string {
+		return str_pad(number_format($value, 0, '', ''), 3, '0', STR_PAD_LEFT);
+	}
+	
+	public static function SortDouble(float $value): string {
+		return str_pad(number_format($value, 6, '.', ''), 10, '0', STR_PAD_LEFT);
+	}
+	
+	public static function SortString(string $value): string {
+		return strtolower($value);
+	}
 }
 
 ?>

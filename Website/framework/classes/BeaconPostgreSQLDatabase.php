@@ -264,7 +264,11 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 	
 	public function EscapeIdentifier(string $identifier) {
 		$this->Connect();
-		return pg_escape_identifier($this->connection, $identifier);
+		$pieces = explode('.', $identifier);
+		for ($idx = 0; $idx < count($pieces); $idx++) {
+			$pieces[$idx] = pg_escape_identifier($this->connection, $pieces[$idx]);
+		}
+		return implode('.', $pieces);
 	}
 	
 	public function EscapeLiteral(string $literal) {

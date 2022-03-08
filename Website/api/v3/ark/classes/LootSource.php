@@ -73,8 +73,8 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 				throw new \Exception('Prevent duplicates must be a boolean.');
 			}
 		}
-		if (array_key_exists('item_sets', $json)) {
-			$sets = $json['item_sets'];
+		if (array_key_exists('contents', $json)) {
+			$sets = $json['contents'];
 			if (is_null($sets) || (is_array($sets) && \BeaconCommon::IsAssoc($sets) === false)) {
 				$this->item_sets = $sets;
 			} else {
@@ -91,6 +91,8 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 			return $this->max_item_sets;
 		case 'prevent_duplicates':
 			return $this->prevent_duplicates;
+		case 'item_sets':
+			return $this->item_sets;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -102,7 +104,106 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		$this->SaveItemSets($database);
 	}
 	
-	protected function SaveItemSets(\BeaconDatabase $database) {
+	protected function SaveItemSets(\BeaconDatabase $database): void {
+		$loot_source_id = $this->ObjectID();
+		$keep_sets = [];
+		$counters = [];
+		if (is_null($this->item_sets) === false) {
+			foreach ($this->item_sets as $item_set) {
+				$loot_item_set_id = $item_set['loot_item_set_id'];
+				if (\BeaconCommon::IsUUID($loot_item_set_id)) {
+					$keep_sets[] = $loot_item_set_id;
+				} else {
+					throw new \Exception('Item set ID is not a v4 UUID.');
+				}
+				
+				$item_set['sync_sort_key'] = \BeaconCommon::CreateUniqueSort(implode(',', [
+					\BeaconCommon::SortString($item_set['label']),
+					\BeaconCommon::SortDouble($item_set['weight'])
+				]), $counters);
+				$item_set['loot_source_id'] = $loot_source_id;
+				$entries = $item_set['entries'];
+				unset($item_set['entries']);
+				
+				$database->Upsert('ark.loot_item_sets', $item_set, ['loot_item_set_id']);
+				$this->SaveItemSetEntries($database, $loot_item_set_id, $entries);
+			}
+		}
+		
+		if (count($keep_sets) > 0) {
+			$database->Query('DELETE FROM ark.loot_item_sets WHERE loot_source_id = $1 AND loot_item_set_id NOT IN (\'' . implode('\', \'', $keep_sets) . '\');', $loot_source_id);
+		} else {
+			$database->Query('DELETE FROM ark.loot_item_sets WHERE loot_source_id = $1;', $loot_source_id);
+		}
+	}
+	
+	protected function SaveItemSetEntries(\BeaconDatabase $database, string $loot_item_set_id, array|null $entries) {
+		$keep_entries = [];
+		$counters = [];
+		if (is_null($entries) === false) {
+			foreach ($entries as $entry) {
+				$loot_item_set_entry_id = $entry['loot_item_set_entry_id'];
+				if (\BeaconCommon::IsUUID($loot_item_set_entry_id)) {
+					$keep_entries[] = $loot_item_set_entry_id;
+				} else {
+					throw new \Exception('Entry ID is not a v4 UUID.');
+				}
+				
+				$entry['sync_sort_key'] = \BeaconCommon::CreateUniqueSort(implode(',', [
+					\BeaconCommon::SortDouble($entry['weight']),
+					\BeaconCommon::SortInteger($entry['min_quantity']),
+					\BeaconCommon::SortInteger($entry['max_quantity']),
+					\BeaconCommon::SortDouble($entry['blueprint_chance']),
+					\BeaconCommon::SortString($entry['min_quality']),
+					\BeaconCommon::SortString($entry['max_quality'])
+				]), $counters);
+				$entry['loot_item_set_id'] = $loot_item_set_id;
+				$options = $entry['options'];
+				unset($entry['options']);
+				
+				$database->Upsert('ark.loot_item_set_entries', $entry, ['loot_item_set_entry_id']);
+				$this->SaveItemSetEntryOptions($database, $loot_item_set_entry_id, $options);
+			}
+		}
+		if (count($keep_entries) > 0) {
+			$database->Query('DELETE FROM ark.loot_item_set_entries WHERE loot_item_set_id = $1 AND loot_item_set_entry_id NOT IN (\'' . implode('\', \'', $keep_entries) . '\');', $loot_item_set_id);
+		} else {
+			$database->Query('DELETE FROM ark.loot_item_set_entries WHERE loot_item_set_id = $1;', $loot_item_set_id);
+		}
+	}
+	
+	protected function SaveItemSetEntryOptions(\BeaconDatabase $database, string $loot_item_set_entry_id, array|null $options) {
+		$keep_options = [];
+		$counters = [];
+		if (is_null($options) === false) {
+			foreach ($options as $option) {
+				$loot_item_set_entry_option_id = $option['loot_item_set_entry_option_id'];
+				if (\BeaconCommon::IsUUID($loot_item_set_entry_option_id)) {
+					$keep_options[] = $loot_item_set_entry_option_id;
+				} else {
+					throw new \Exception('Option ID is not a v4 UUID.');
+				}
+				
+				$rows = $database->Query('SELECT class_string FROM ark.engrams WHERE object_id = $1;', $option['engram_id']);
+				if ($rows->RecordCount() !== 1) {
+					throw new \Exception('Unable to find engram by UUID.');
+				}
+				$class_string = $rows->Field('class_string');
+				
+				$option['sync_sort_key'] = \BeaconCommon::CreateUniqueSort(implode(',', [
+					\BeaconCommon::SortString($class_string),
+					\BeaconCommon::SortDouble($option['weight'])
+				]), $counters);
+				$option['loot_item_set_entry_id'] = $loot_item_set_entry_id;
+				
+				$database->Upsert('ark.loot_item_set_entry_options', $option, ['loot_item_set_entry_option_id']);
+			}
+		}
+		if (count($keep_options) > 0) {
+			$database->Query('DELETE FROM ark.loot_item_set_entry_options WHERE loot_item_set_entry_id = $1 AND loot_item_set_entry_option_id NOT IN (\'' . implode('\', \'', $keep_options) . '\');', $loot_item_set_entry_id);
+		} else {
+			$database->Query('DELETE FROM ark.loot_item_set_entry_options WHERE loot_item_set_entry_id = $1;', $loot_item_set_entry_id);
+		}	
 	}
 }
 

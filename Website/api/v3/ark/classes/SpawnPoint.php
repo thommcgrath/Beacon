@@ -136,7 +136,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 					$set['spawn_offset'] = '(' . $offset['x'] . ',' . $offset['y'] . ',' . $offset['z'] . ')';	
 				}
 				
-				$database->Upsert('spawn_point_sets', $set, ['spawn_point_set_id']);
+				$database->Upsert('ark.spawn_point_sets', $set, ['spawn_point_set_id']);
 				
 				$this->SaveSetEntries($database, $set['spawn_point_set_id'], $entries);
 				$this->SaveSetReplacements($database, $set['spawn_point_set_id'], $replacements);
@@ -153,7 +153,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		$keep_entries = [];
 		if (is_null($entries) === false) {
 			foreach ($entries as $entry) {
-				$inserted = $database->Upsert('spawn_point_set_entries', [
+				$inserted = $database->Upsert('ark.spawn_point_set_entries', [
 					'spawn_point_set_entry_id' => $entry['spawn_point_set_entry_id'],
 					'spawn_point_set_id' => $spawn_point_set_id,
 					'creature_id' => $entry['creature_id'],
@@ -181,7 +181,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 		$keep_levels = [];
 		if (is_null($levels) === false) {
 			foreach ($levels as $level) {
-				$inserted = $database->Upsert('spawn_point_set_entry_levels', [
+				$inserted = $database->Upsert('ark.spawn_point_set_entry_levels', [
 					'spawn_point_set_entry_id' => $spawn_point_set_entry_id,
 					'difficulty' => $level['difficulty'],
 					'min_level' => $level['min_level'],
@@ -204,7 +204,7 @@ class SpawnPoint extends \BeaconAPI\Ark\SpawnPoint {
 				$target_creature_id = $replacement['creature_id'];
 				$choices = $replacement['choices'];
 				foreach ($choices as $replacement_creature_id => $weight) {
-					$inserted = $database->Upsert('spawn_point_set_replacements', [
+					$inserted = $database->Upsert('ark.spawn_point_set_replacements', [
 						'spawn_point_set_id' => $spawn_point_set_id,
 						'target_creature_id' => $target_creature_id,
 						'replacement_creature_id' => $replacement_creature_id,
