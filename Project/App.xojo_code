@@ -669,7 +669,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Var Idx As Integer = URL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
 		      Var DocID As String = URL.Middle(Idx + LegacyURL.Length)
-		      URL = BeaconAPI.URL("/document/" + DocID)
+		      URL = BeaconAPI.URL("/project/" + DocID)
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL

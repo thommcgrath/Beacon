@@ -734,7 +734,7 @@ End
 #tag Events DownloadLinkLabel
 	#tag Event
 		Sub Open()
-		  Me.Text = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
+		  Me.Text = BeaconAPI.URL("/project/" + EncodeURLComponent(Self.mProject.UUID) + "?name=" + EncodeURLComponent(Self.mProject.Title))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

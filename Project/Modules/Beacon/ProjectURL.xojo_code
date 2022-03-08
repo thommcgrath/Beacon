@@ -230,21 +230,21 @@ Protected Class ProjectURL
 		  End If
 		  
 		  Var Pattern As New Regex
-		  Pattern.SearchPattern = "((beaconapp\.cc)|(usebeacon\.app))/v\d/document/([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})(/versions/([^\?/]+))?"
+		  Pattern.SearchPattern = "((beaconapp\.cc)|(usebeacon\.app))/v\d/([0-9A-Za-z]+/)?((document)|(project))/([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})(/versions/([^\?/]+))?"
 		  
 		  Var Matches As RegexMatch = Pattern.Search(Self.mOriginalURL)
 		  If Matches Is Nil Then
 		    Return Self.mOriginalURL
 		  End If
 		  
-		  Var UUID As String = Matches.SubExpressionString(4)
-		  Var Path As String = "/document/" + UUID.Lowercase
+		  Var UUID As String = Matches.SubExpressionString(8)
+		  Var Path As String = "/project/" + UUID.Lowercase
 		  
 		  Select Case Purpose
 		  Case Beacon.ProjectURL.URLTypes.Reading
 		    // Return simplified url with version
-		    If Matches.SubExpressionCount >= 6 Then
-		      Path = Path + "/versions/" + Matches.SubExpressionString(6)
+		    If Matches.SubExpressionCount >= 10 Then
+		      Path = Path + "/versions/" + Matches.SubExpressionString(10)
 		    End If
 		    Return BeaconAPI.URL(Path)
 		  Case Beacon.ProjectURL.URLTypes.Writing
