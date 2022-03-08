@@ -146,6 +146,12 @@ class Mod implements \JsonSerializable {
 		return self::GetFromResults($results);
 	}
 	
+	public static function GetConfirmedMods() {
+		$database = \BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('confirmed = TRUE AND workshop_id IS NOT NULL AND workshop_id > 0'));
+		return self::GetFromResults($results);
+	}
+		
 	protected static function BuildSQL(string $clause = '') {
 		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url, last_pull_hash, console_safe, default_enabled, min_version FROM ark.mods';
 		if ($clause !== '') {

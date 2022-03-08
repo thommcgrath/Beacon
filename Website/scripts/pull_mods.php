@@ -3,7 +3,7 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
-$mods = \Ark\Mod::GetPullMods();
+$mods = \Ark\Mod::GetConfirmedMods();
 if (count($mods) == 0) {
 	exit;
 }
@@ -14,9 +14,17 @@ foreach ($mods as $mod) {
 	} catch (Exception $e) {
 		SendAlert($mod, 'Exception: ' . $e->getMessage());
 	}
+	try {
+		UpdateTitle($mod);
+	} catch (Exception $e) {
+		SendAlert($mod, 'Exception: ' . $e->getMessage());
+	}
 }
 
 function PullMod(\Ark\Mod $mod) {
+	if (is_null($mod->PullURL())) {
+		return;
+	}
 	$mod_description = $mod->Name() . ' (' . $mod->ModID() . ')';
 	$mod_id = $mod->ModID();
 	
@@ -176,6 +184,20 @@ function PullMod(\Ark\Mod $mod) {
 	$database->Commit();
 }
 
+function UpdateTitle(\Ark\Mod $mod) {
+	$workshop_item = \BeaconWorkshopItem::Load($mod->WorkshopID());
+	if (is_null($workshop_item)) {
+		return;
+	}
+	
+	if ($workshop_item->Name() !== $mod->Name()) {
+		$database = \BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('UPDATE ark.mods SET name = $2 WHERE mod_id = $1;', $mod->ModID(), $workshop_item->Name());
+		$database->Commit();
+	}
+}
+
 function SendAlert(\Ark\Mod $mod, string $message) {
 	$message_with_name = $mod->Name() . ' (' . $mod->WorkshopID() . '): ' . $message;
 	if (getenv('SSH_CLIENT')) {
@@ -183,16 +205,18 @@ function SendAlert(\Ark\Mod $mod, string $message) {
 	} else {
 		BeaconCommon::PostSlackMessage($message_with_name);
 		
-		$fields = array(
-			'mod_id' => $mod->WorkshopID(),
-			'message' => $message
-		);
-		
-		$http = curl_init($mod->PullURL());
-		curl_setopt($http, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($http, CURLOPT_POSTFIELDS, $fields);
-		curl_exec($http);
-		curl_close($http);
+		if (is_null($mod->PullURL()) === false) {
+			$fields = [
+				'mod_id' => $mod->WorkshopID(),
+				'message' => $message
+			];
+			
+			$http = curl_init($mod->PullURL());
+			curl_setopt($http, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($http, CURLOPT_POSTFIELDS, $fields);
+			curl_exec($http);
+			curl_close($http);
+		}
 	}
 }
 
