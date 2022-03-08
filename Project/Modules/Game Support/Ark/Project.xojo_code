@@ -509,7 +509,7 @@ Inherits Beacon.Project
 		Function CreateConfigOrganizer(Identity As Beacon.Identity, Profile As Ark.ServerProfile) As Ark.ConfigOrganizer
 		  Try
 		    If Identity.IsBanned Then
-		      Return Self.CreateTrollConfigOrganizer()
+		      Return Self.CreateTrollConfigOrganizer(Profile)
 		    End If
 		    
 		    Var Organizer As New Ark.ConfigOrganizer
@@ -540,6 +540,23 @@ Inherits Beacon.Project
 		      Organizer.Add(Group.GenerateConfigValues(Self, Identity, Profile))
 		    Next
 		    
+		    Organizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
+		    
+		    If (Profile.MessageOfTheDay Is Nil) = False And Profile.MessageOfTheDay.IsEmpty = False Then
+		      Organizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Message=" + Profile.MessageOfTheDay.ArkMLValue))
+		      Organizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=" + Profile.MessageDuration.ToString))
+		    End If
+		    
+		    If (Profile.AdminPassword Is Nil) = False Then
+		      Organizer.Add(New Ark.ConfigValue("CommandLineOption", "?", "ServerAdminPassword=" + Profile.AdminPassword.StringValue))
+		    End If
+		    If (Profile.SpectatorPassword Is Nil) = False Then
+		      Organizer.Add(New Ark.ConfigValue("CommandLineOption", "?", "SpectatorPassword=" + Profile.SpectatorPassword.StringValue))
+		    End If
+		    If (Profile.ServerPassword Is Nil) = False Then
+		      Organizer.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, Ark.HeaderServerSettings, "ServerPassword=" + Profile.ServerPassword.StringValue))
+		    End If
+		    
 		    Return Organizer
 		  Catch Err As RuntimeException
 		    App.Log(Err, CurrentMethodName, "Generating a config organizer")
@@ -549,8 +566,12 @@ Inherits Beacon.Project
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateTrollConfigOrganizer() As Ark.ConfigOrganizer
+		Function CreateTrollConfigOrganizer(Profile As Ark.ServerProfile) As Ark.ConfigOrganizer
 		  Var Values As New Ark.ConfigOrganizer
+		  
+		  If (Profile Is Nil) = False Then
+		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "SessionSettings", "SessionName=" + Profile.Name))
+		  End If
 		  
 		  Var Messages() As String
 		  Messages.Add("My dog has no nose.\nHow does he smell?\nBad.")
@@ -590,6 +611,50 @@ Inherits Beacon.Project
 		  Else
 		    Values.Add(New Ark.ConfigValue(Ark.ConfigFileGameUserSettings, "MessageOfTheDay", "Duration=30"))
 		  End If
+		  
+		  Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "PlayerHarvestingDamageMultiplier=0.000001"))
+		  Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "DinoHarvestingDamageMultiplier=0.0000001"))
+		  
+		  Var Packs As Beacon.StringList = Self.ContentPacks
+		  Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainers("", Packs, "", True)
+		  Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("41ec2dab-ed50-4c67-bb8a-3b253789fa87")
+		  Var Mask As UInt64 = Self.MapMask
+		  For Each Container As Ark.LootContainer In Containers
+		    If Container.ValidForMask(Mask) = False Then
+		      Continue For Container
+		    End If
+		    
+		    Var Entry As New Ark.MutableLootItemSetEntry
+		    Entry.Add(New Ark.LootItemSetEntryOption(Engram, 1.0))
+		    Entry.MinQuantity = 300
+		    Entry.MaxQuantity = 300
+		    Entry.MinQuality = Ark.Qualities.Tier1
+		    Entry.MaxQuality = Ark.Qualities.Tier1
+		    Entry.ChanceToBeBlueprint = 0
+		    Entry.SingleItemQuantity = True
+		    
+		    Var ItemSet As New Ark.MutableLootItemSet
+		    ItemSet.Label = "Turds"
+		    ItemSet.MinNumItems = 1
+		    ItemSet.MaxNumItems = 1
+		    ItemSet.Add(Entry)
+		    
+		    Var Mutable As Ark.MutableLootContainer = Container.MutableVersion
+		    Mutable.MinItemSets = 1
+		    Mutable.MaxItemSets = 1
+		    Mutable.PreventDuplicates = True
+		    Mutable.AppendMode = False
+		    Mutable.Add(ItemSet)
+		    
+		    Ark.Configs.LootDrops.BuildOverrides(Mutable, Values, 5.0)
+		  Next Container
+		  
+		  Var Craftable() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		  For Each CraftableEngram As Ark.Engram In Craftable
+		    Var Cost As New Ark.MutableCraftingCost(CraftableEngram)
+		    Cost.Add(Engram, 300.0, False)
+		    Values.Add(Ark.Configs.CraftingCosts.ConfigValueForCraftingCost(Cost))
+		  Next CraftableEngram
 		  
 		  Return Values
 		End Function

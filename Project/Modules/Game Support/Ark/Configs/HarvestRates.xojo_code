@@ -29,9 +29,8 @@ Inherits Ark.ConfigGroup
 		  Var Engrams() As Ark.Engram = Self.Engrams
 		  For Each Engram As Ark.Engram In Engrams
 		    If Engram.ValidForProject(Project) Then
-		      Var ClassString As String = Engram.ClassString
 		      Var Rate As Double = Self.mOverrides.Value(Engram, Self.RateAttribute)
-		      Values.Add(New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "HarvestResourceItemAmountClassMultipliers=(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")", "HarvestResourceItemAmountClassMultipliers:" + ClassString))
+		      Values.Add(Self.GenerateOverrideConfig(Engram, Rate))
 		    End If
 		  Next
 		  
@@ -219,6 +218,12 @@ Inherits Ark.ConfigGroup
 		  Config.UseOptimizedRates = UseOptimizedRates
 		  Config.mOverrides = Overrides
 		  Return Config
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function GenerateOverrideConfig(Engram As Ark.Engram, Rate As Double) As Ark.ConfigValue
+		  Return New Ark.ConfigValue(Ark.ConfigFileGame, Ark.HeaderShooterGame, "HarvestResourceItemAmountClassMultipliers=(ClassName=""" + Engram.ClassString + """,Multiplier=" + Rate.PrettyText + ")", "HarvestResourceItemAmountClassMultipliers:" + Engram.ClassString)
 		End Function
 	#tag EndMethod
 

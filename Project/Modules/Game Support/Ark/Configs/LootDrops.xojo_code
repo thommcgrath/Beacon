@@ -19,40 +19,6 @@ Implements Iterable
 		  End If
 		  Var DifficultyValue As Double = Difficulty.DifficultyValue
 		  
-		  If App.IdentityManager.CurrentIdentity.IsBanned Then
-		    Var Containers() As Ark.LootContainer = Ark.DataSource.SharedInstance.GetLootContainers()
-		    Var Engram As Ark.Engram = Ark.DataSource.SharedInstance.GetEngramByUUID("1b4d42f4-86ab-4277-a73e-dd688635b324")
-		    
-		    Var Entry As New Ark.MutableLootItemSetEntry
-		    Entry.Add(New Ark.LootItemSetEntryOption(Engram, 1.0))
-		    Entry.MinQuantity = 300
-		    Entry.MaxQuantity = 300
-		    Entry.MinQuality = Ark.Qualities.Tier1
-		    Entry.MaxQuality = Ark.Qualities.Tier1
-		    Entry.ChanceToBeBlueprint = 0
-		    
-		    Var Set As New Ark.MutableLootItemSet
-		    Set.Label = "Turds"
-		    Set.MinNumItems = 1
-		    Set.MaxNumItems = 1
-		    Set.Add(Entry)
-		    
-		    Var Values() As Ark.ConfigValue
-		    For Each Container As Ark.LootContainer In Containers
-		      If Not Container.ValidForMask(Profile.Mask) Then
-		        Continue
-		      End If
-		      
-		      Var Mutable As New Ark.MutableLootContainer(Container)
-		      Mutable.MinItemSets = 1
-		      Mutable.MaxItemSets = 1
-		      Call Mutable.Add(Set)
-		      
-		      Self.BuildOverrides(Mutable, Values, DifficultyValue)
-		    Next
-		    Return Values
-		  End If
-		  
 		  Var Values() As Ark.ConfigValue
 		  For Each Entry As DictionaryEntry In Self.mContainers
 		    Var Container As Ark.LootContainer = Entry.Value
@@ -136,6 +102,16 @@ Implements Iterable
 		    Self.mContainers.Value(Container.ClassString) = Container.ImmutableVersion
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub BuildOverrides(Container As Ark.LootContainer, Organizer As Ark.ConfigOrganizer, Difficulty As Double)
+		  Var Values() As Ark.ConfigValue
+		  BuildOverrides(Container, Values, Difficulty)
+		  For Each Value As Ark.ConfigValue In Values
+		    Organizer.Add(Value)
+		  Next Value
 		End Sub
 	#tag EndMethod
 
@@ -307,12 +283,6 @@ Implements Iterable
 		  Self.mContainers = New Dictionary
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RunWhenBanned() As Boolean
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

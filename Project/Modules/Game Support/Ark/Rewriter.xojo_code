@@ -26,7 +26,7 @@ Inherits Global.Thread
 		  
 		  If Self.mOrganizer Is Nil Or Self.mRebuildOrganizer Then
 		    If (Self.mOutputFlags And Self.FlagForceTrollMode) = Self.FlagForceTrollMode Then
-		      Self.mOrganizer = Project.CreateTrollConfigOrganizer()
+		      Self.mOrganizer = Project.CreateTrollConfigOrganizer(Profile)
 		    Else
 		      Self.mOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
 		    End If
