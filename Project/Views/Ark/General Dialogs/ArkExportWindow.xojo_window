@@ -64,6 +64,7 @@ Begin BeaconDialog ArkExportWindow
       Enabled         =   True
       Height          =   428
       HelpTag         =   ""
+      HorizontalScrollPosition=   0
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   251
@@ -73,11 +74,13 @@ Begin BeaconDialog ArkExportWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      SelectionLength =   0
       ShowInfoBar     =   False
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   111
+      VerticalScrollPosition=   0
       Visible         =   True
       Width           =   597
    End
@@ -795,11 +798,11 @@ End
 		  Case Ark.Rewriter.ModeGameIni
 		    Self.SharedRewriter.InitialGameIniContent = ClipboardContents
 		    Self.SharedRewriter.Source = Ark.Rewriter.Sources.SmartCopy
-		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameIni)
+		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameIni Or If(Self.mForceTrollMode, Ark.Rewriter.FlagForceTrollMode, 0))
 		  Case Ark.Rewriter.ModeGameUserSettingsIni
 		    Self.SharedRewriter.InitialGameUserSettingsIniContent = ClipboardContents
 		    Self.SharedRewriter.Source = Ark.Rewriter.Sources.SmartCopy
-		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameUserSettingsIni)
+		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameUserSettingsIni Or If(Self.mForceTrollMode, Ark.Rewriter.FlagForceTrollMode, 0))
 		  End Select
 		  
 		  Self.CheckButtons()
@@ -856,11 +859,11 @@ End
 		  Case Ark.Rewriter.ModeGameIni
 		    Self.SharedRewriter.InitialGameIniContent = Content
 		    Self.SharedRewriter.Source = Ark.Rewriter.Sources.SmartSave
-		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameIni)
+		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameIni Or If(Self.mForceTrollMode, Ark.Rewriter.FlagForceTrollMode, 0))
 		  Case Ark.Rewriter.ModeGameUserSettingsIni
 		    Self.SharedRewriter.InitialGameUserSettingsIniContent = Content
 		    Self.SharedRewriter.Source = Ark.Rewriter.Sources.SmartSave
-		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameUserSettingsIni)
+		    Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameUserSettingsIni Or If(Self.mForceTrollMode, Ark.Rewriter.FlagForceTrollMode, 0))
 		  End Select
 		  
 		  Self.CheckButtons()
@@ -893,9 +896,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Project As Ark.Project)
+		Shared Sub Present(Parent As Window, Project As Ark.Project, ForceTrollMode As Boolean = False)
 		  Var Win As New ArkExportWindow
 		  Win.mProject = Project
+		  Win.mForceTrollMode = ForceTrollMode
+		  
+		  If ForceTrollMode Then
+		    TrollActivated.Play
+		  End If
 		  
 		  Var ProfileBound As Integer = Project.ServerProfileCount - 1
 		  If ProfileBound > -1 Then
@@ -1026,7 +1034,7 @@ End
 		    // It's not important
 		  End Try
 		  
-		  Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameIni Or Ark.Rewriter.FlagCreateGameUserSettingsIni Or Ark.Rewriter.FlagCreateCommandLine)
+		  Self.SharedRewriter.Rewrite(Ark.Rewriter.FlagCreateGameIni Or Ark.Rewriter.FlagCreateGameUserSettingsIni Or Ark.Rewriter.FlagCreateCommandLine Or If(Self.mForceTrollMode, Ark.Rewriter.FlagForceTrollMode, 0))
 		  
 		  Self.RefreshContentArea()
 		  Self.CheckButtons()
@@ -1158,6 +1166,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mFileDestination As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mForceTrollMode As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

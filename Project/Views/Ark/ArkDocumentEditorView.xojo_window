@@ -817,7 +817,7 @@ End
 		    Return
 		  End If
 		  
-		  ArkExportWindow.Present(Self, Self.Project)
+		  ArkExportWindow.Present(Self, Self.Project, Keyboard.AsyncOptionKey And Keyboard.AsyncShiftKey)
 		End Sub
 	#tag EndMethod
 

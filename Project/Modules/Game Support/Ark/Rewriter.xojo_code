@@ -25,7 +25,11 @@ Inherits Global.Thread
 		  Var InitialGameUserSettingsIni As String = Self.mInitialGameUserSettingsIniContent
 		  
 		  If Self.mOrganizer Is Nil Or Self.mRebuildOrganizer Then
-		    Self.mOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
+		    If (Self.mOutputFlags And Self.FlagForceTrollMode) = Self.FlagForceTrollMode Then
+		      Self.mOrganizer = Project.CreateTrollConfigOrganizer()
+		    Else
+		      Self.mOrganizer = Project.CreateConfigOrganizer(Identity, Profile)
+		    End If
 		    Self.mRebuildOrganizer = False
 		  End If
 		  
@@ -400,7 +404,7 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Sub Rewrite(Flags As Integer)
-		  Self.mOutputFlags = Flags And (Self.FlagCreateGameIni Or Self.FlagCreateGameUserSettingsIni Or Self.FlagCreateCommandLine)
+		  Self.mOutputFlags = Flags And (Self.FlagCreateGameIni Or Self.FlagCreateGameUserSettingsIni Or Self.FlagCreateCommandLine Or Self.FlagForceTrollMode)
 		  Super.Start
 		End Sub
 	#tag EndMethod
@@ -635,6 +639,9 @@ Inherits Global.Thread
 	#tag EndConstant
 
 	#tag Constant, Name = FlagCreateGameUserSettingsIni, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = FlagForceTrollMode, Type = Double, Dynamic = False, Default = \"8", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = ModeGameIni, Type = String, Dynamic = False, Default = \"Game.ini", Scope = Public

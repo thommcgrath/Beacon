@@ -550,7 +550,7 @@ Inherits Beacon.Project
 
 	#tag Method, Flags = &h0
 		Function CreateTrollConfigOrganizer() As Ark.ConfigOrganizer
-		  Var Values As Ark.ConfigOrganizer
+		  Var Values As New Ark.ConfigOrganizer
 		  
 		  Var Messages() As String
 		  Messages.Add("My dog has no nose.\nHow does he smell?\nBad.")
