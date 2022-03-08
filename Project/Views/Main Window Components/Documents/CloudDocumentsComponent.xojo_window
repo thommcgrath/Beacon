@@ -1016,7 +1016,7 @@ End
 		  If HitItem.Tag.IsNull = False And HitItem.Tag.Type = Variant.TypeString And HitItem.Tag.StringValue = "versions" Then
 		    If Me.SelectedRowCount = 1 Then
 		      Var Document As BeaconAPI.Document = Me.RowTagAt(Me.SelectedRowIndex)
-		      Var Request As New BeaconAPI.Request("/document/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
+		      Var Request As New BeaconAPI.Request("project/" + Document.DocumentID + "/versions", "GET", WeakAddressOf APICallback_ListVersions)
 		      Request.Authenticate(Preferences.OnlineToken)
 		      BeaconAPI.Send(Request)
 		      

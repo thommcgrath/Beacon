@@ -890,12 +890,14 @@ Begin BeaconDialog RegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1114,7 +1116,7 @@ End
 		  Dict.Value("mod_id") = ModID
 		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
-		  Var Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
+		  Var Request As New BeaconAPI.Request("ark/mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.RegisterSocket.Start(Request)
 		End Sub

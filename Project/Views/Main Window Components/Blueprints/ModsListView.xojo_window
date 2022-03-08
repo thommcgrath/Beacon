@@ -180,9 +180,9 @@ End
 		    Next
 		  End If
 		  
-		  Var Packs() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks
+		  Var Packs() As Ark.ContentPack = Ark.DataSource.SharedInstance.GetContentPacks(Ark.ContentPack.Types.Custom)
 		  For Each Pack As Ark.ContentPack In Packs
-		    Self.ModsList.AddRow(Pack.Name, If(Pack.IsLocal = False, "Built-In", "Custom"))
+		    Self.ModsList.AddRow(Pack.Name, "Custom")
 		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTagAt(Idx) = New BeaconAPI.WorkshopMod(Pack)
 		    If SelectedModID = Pack.UUID Then
@@ -248,7 +248,7 @@ End
 		  
 		  Self.StartJob()
 		  
-		  Var Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
+		  Var Request As New BeaconAPI.Request("ark/mod", "GET", AddressOf APICallback_ListMods)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
@@ -359,7 +359,7 @@ End
 		    Self.StartJob()
 		    
 		    Var Body As String = WorkshopIDs.Join(",")
-		    Var Request As New BeaconAPI.Request("/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
+		    Var Request As New BeaconAPI.Request("ark/mod", "DELETE", Body, "text/plain", AddressOf APICallback_DeleteMods)
 		    Request.Authenticate(Preferences.OnlineToken)
 		    BeaconAPI.Send(Request)
 		  End If

@@ -37,7 +37,7 @@ Begin BeaconSubview ModEditorView
       AllowRowReordering=   False
       Bold            =   False
       ColumnCount     =   2
-      ColumnWidths    =   "*,80"
+      ColumnWidths    =   "*,120"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
@@ -408,9 +408,17 @@ End
 		    Try
 		      Var Dict As Dictionary = Dictionaries(Idx)
 		      Var Blueprint As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
-		      If (Blueprint Is Nil) = False Then
-		        Self.mFoundBlueprints.Add(Blueprint)
-		        
+		      If Blueprint Is Nil Then
+		        Continue
+		      End If
+		      
+		      Self.mFoundBlueprints.Add(Blueprint)
+		      
+		      If Blueprint.ContentPackName.IsEmpty = False Then
+		        If Self.mFoundModNames.IndexOf(Blueprint.ContentPackName) = -1 Then
+		          Self.mFoundModNames.Add(Blueprint.ContentPackName)
+		        End If
+		      Else
 		        Var Path As String = Blueprint.Path
 		        If Path.BeginsWith("/Game/Mods/") Then
 		          Var ModName As String = Path.NthField("/", 4)
@@ -1031,7 +1039,7 @@ End
 #tag Events ImporterThread
 	#tag Event
 		Sub Run()
-		  If (Self.ImportAsDataDumper(Self.mContentToImport) Or Self.ImportAsJSON(Self.mContentToImport)) = False Then
+		  If (Self.ImportAsDataDumper(Self.mContentToImport) = False And Self.ImportAsJSON(Self.mContentToImport)) = False Then
 		    Self.ImportAsPlain(Self.mContentToImport)
 		  End If
 		  

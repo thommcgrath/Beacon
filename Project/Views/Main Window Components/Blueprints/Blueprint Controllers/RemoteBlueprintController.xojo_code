@@ -59,7 +59,7 @@ Inherits BlueprintController
 		    Return
 		  End Try
 		  
-		  Var Request As New BeaconAPI.Request("blueprint", "POST", Body, "application/json", WeakAddressOf APICallback_SaveBlueprints)
+		  Var Request As New BeaconAPI.Request("ark/blueprint", "POST", Body, "application/json", WeakAddressOf APICallback_SaveBlueprints)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		  
@@ -73,7 +73,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Var Request As New BeaconAPI.Request("blueprint?mod_id=" + EncodeURLComponent(Self.ModID), "GET", WeakAddressOf APICallback_LoadBlueprints)
+		  Var Request As New BeaconAPI.Request("ark/blueprint?mod_id=" + EncodeURLComponent(Self.ModID), "GET", WeakAddressOf APICallback_LoadBlueprints)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
