@@ -22,7 +22,7 @@ class Diet extends \Ark\GenericObject implements \ArrayAccess {
 	}
 	
 	protected static function TableName() {
-		return 'ark.diets';
+		return 'diets';
 	}
 	
 	public function jsonSerialize() {
