@@ -650,11 +650,28 @@ Inherits Beacon.Project
 		  Next Container
 		  
 		  Var Craftable() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
-		  For Each CraftableEngram As Ark.Engram In Craftable
-		    Var Cost As New Ark.MutableCraftingCost(CraftableEngram)
-		    Cost.Add(Engram, 300.0, False)
-		    Values.Add(Ark.Configs.CraftingCosts.ConfigValueForCraftingCost(Cost))
-		  Next CraftableEngram
+		  Var CoinFlip As Integer = Rand.InRange(0, 1)
+		  If CoinFlip = 0 Then
+		    // Turdcraft
+		    For Each CraftableEngram As Ark.Engram In Craftable
+		      Var Cost As New Ark.MutableCraftingCost(CraftableEngram)
+		      Cost.Add(Engram, 300.0, False)
+		      Values.Add(Ark.Configs.CraftingCosts.ConfigValueForCraftingCost(Cost))
+		    Next CraftableEngram
+		  Else
+		    // Randomcraft
+		    Var Choices() As Ark.Engram = Ark.DataSource.SharedInstance.GetEngrams("", Packs, "{""required"":[""blueprintable""],""excluded"":[""generic""]}")
+		    For Each CraftableEngram As Ark.Engram In Craftable
+		      Var Idx As Integer = Rand.InRange(Choices.FirstIndex, Choices.LastIndex)
+		      
+		      Var Cost As New Ark.MutableCraftingCost(CraftableEngram)
+		      Cost.Add(Choices(Idx), 1, False)
+		      Choices.RemoveAt(Idx)
+		      
+		      Values.Add(Ark.Configs.CraftingCosts.ConfigValueForCraftingCost(Cost))
+		    Next CraftableEngram
+		  End If
+		  
 		  
 		  Return Values
 		End Function
