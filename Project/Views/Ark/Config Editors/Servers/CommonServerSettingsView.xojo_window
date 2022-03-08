@@ -945,7 +945,13 @@ End
 		  
 		  Self.ServerNameField.Text = Profile.Name
 		  
-		  Self.MessageOfTheDayArea.RTFData = Profile.MessageOfTheDay.RTFValue
+		  Var MOTD As Ark.ArkML
+		  If (Profile.MessageOfTheDay Is Nil) = False Then
+		    MOTD = Profile.MessageOfTheDay
+		  Else
+		    MOTD = New Ark.ArkML
+		  End If
+		  Self.MessageOfTheDayArea.RTFData = MOTD.RTFValue
 		  Self.MessageDurationField.DoubleValue = Profile.MessageDuration
 		  
 		  If Profile.AdminPassword Is Nil Then

@@ -70,16 +70,18 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  For Idx As Integer = 0 To Self.mServerProfiles.LastIndex
-		    If Self.mServerProfiles(Idx) = Profile Then
-		      Self.mServerProfiles(Idx) = Profile.Clone
-		      Self.Modified = True
+		    If Self.mServerProfiles(Idx).ProfileID = Profile.ProfileID Then
+		      Self.mServerProfiles(Idx) = Profile // They might compare to the same UUID, but could be different objects.
+		      If Profile.Modified Then
+		        Self.Modified = True
+		      End If
 		      Return
 		    End If
 		  Next
 		  
 		  RaiseEvent AddingProfile(Profile)
 		  
-		  Self.mServerProfiles.Add(Profile.Clone)
+		  Self.mServerProfiles.Add(Profile)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -903,13 +905,13 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ServerProfile(Idx As Integer) As Beacon.ServerProfile
-		  Return Self.mServerProfiles(Idx).Clone
+		  Return Self.mServerProfiles(Idx)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ServerProfile(Idx As Integer, Assigns Profile As Beacon.ServerProfile)
-		  Self.mServerProfiles(Idx) = Profile.Clone
+		  Self.mServerProfiles(Idx) = Profile
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -930,7 +932,7 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Results.Add(Self.mServerProfiles(Idx).Clone)
+		    Results.Add(Self.mServerProfiles(Idx))
 		  Next Idx
 		  Return Results
 		End Function
