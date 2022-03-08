@@ -30,7 +30,7 @@ class LootSource extends \Ark\Blueprint {
 	}
 	
 	protected static function TableName() {
-		return 'ark.loot_sources';
+		return 'loot_sources';
 	}
 	
 	protected static function SortColumn() {
@@ -43,7 +43,7 @@ class LootSource extends \Ark\Blueprint {
 			return $this->multiplier_min;
 		case 'multiplier_max':
 			return $this->multiplier_max;
-		case 'ui_color':
+		case 'uicolor':
 			return $this->ui_color;
 		case 'icon':
 			return $this->icon_id;
@@ -62,7 +62,7 @@ class LootSource extends \Ark\Blueprint {
 		case 'simple_label':
 			return $this->simple_label;
 		default:
-			parent::GetColumnValue($column);
+			return parent::GetColumnValue($column);
 		}
 	}
 	
@@ -164,6 +164,75 @@ class LootSource extends \Ark\Blueprint {
 	
 	public function SetNotes(bool $notes) {
 		$this->notes = $notes;
+	}
+	
+	public function ConsumeJSON(array $json) {
+		parent::ConsumeJSON($json);
+			
+		if (array_key_exists('multipliers', $json)) {
+			$multipliers = $json['multipliers'];
+			if (\BeaconCommon::IsAssoc($multipliers) && \BeaconCommon::HasAllKeys($multipliers, 'min', 'max') && is_float($multipliers['min']) && is_float($multipliers['max'])) {
+				$this->multiplier_min = $multipliers['min'];
+				$this->multiplier_max = $multipliers['max'];
+			} else {
+				throw new \Exception('Multipliers must be an object with min and max keys and floating point values.');
+			}
+		}
+		
+		if (array_key_exists('ui_color', $json)) {
+			$ui_color = $json['ui_color'];
+			if (is_string($ui_color) && strlen($ui_color) === 8) {
+				$this->ui_color = strtoupper($ui_color);
+			} else {
+				throw new \Exception('Icon color must be an 8-character hex color, such as RRGGBBAA.');
+			}
+		}
+		
+		if (array_key_exists('icon', $json)) {
+			$icon_id = $json['icon'];
+			if (\BeaconCommon::IsUUID($icon_id)) {
+				$this->icon_id = $icon_id;
+			} else {
+				throw new \Exception('Icon ID must be a v4 UUID.');
+			}
+		}
+		
+		if (array_key_exists('sort', $json)) {
+			$sort = $json['sort'];
+			if (is_int($sort)) {
+				$this->modern_sort_order = $sort;
+				$this->sort_order = null;
+			} else {
+				throw new \Exception('Sort order must be numeric.');
+			}
+		}
+		
+		if (array_key_exists('experimental', $json)) {
+			$experimental = $json['experimental'];
+			if (is_bool($experimental)) {
+				$this->experimental = $experimental;
+			} else {
+				throw new \Exception('Experimental flag must be a boolean.');
+			}
+		}
+		
+		if (array_key_exists('notes', $json)) {
+			$notes = $json['notes'];
+			if (is_string($notes)) {
+				$this->notes = trim($notes);
+			} else {
+				throw new \Exception('Notes must be a string.');
+			}
+		}
+		
+		if (array_key_exists('requirements', $json)) {
+			$requirements = $json['requirements'];
+			if (is_string($requirements)) {
+				$this->requirements = trim($requirements);
+			} else {
+				throw new \Exception('Requirements must be a JSON string.');
+			}
+		}
 	}
 }
 

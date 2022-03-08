@@ -12,7 +12,7 @@ class PresetModifier extends \Ark\GenericObject {
 	}
 	
 	protected static function TableName() {
-		return 'ark.preset_modifiers';
+		return 'preset_modifiers';
 	}
 	
 	protected static function FromRow(\BeaconRecordSet $row) {

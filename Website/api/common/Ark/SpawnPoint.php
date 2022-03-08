@@ -7,7 +7,7 @@ class SpawnPoint extends \Ark\Blueprint {
 	protected $limits = null;
 	
 	protected static function TableName() {
-		return 'ark.spawn_points';
+		return 'spawn_points';
 	}
 	
 	protected function GetColumnValue(string $column) {

@@ -129,7 +129,7 @@ class Mod implements \JsonSerializable {
 	}
 	
 	public static function GetLive($since = null) {
-		$sql =  'ark.mods.confirmed = TRUE AND ark.mods.include_in_deltas = TRUE';
+		$sql =  'mods.confirmed = TRUE AND mods.include_in_deltas = TRUE';
 		
 		$database = \BeaconCommon::Database();
 		if (is_null($since)) {

@@ -98,7 +98,7 @@ class Map implements \JsonSerializable {
 	}
 	
 	protected static function SQLColumns() {
-		return ['ark.maps.map_id', 'ark.maps.mod_id', 'ark.maps.label', 'ark.maps.ark_identifier', 'ark.maps.difficulty_scale', 'ark.maps.official', 'ark.maps.mask', 'ark.maps.sort'];
+		return ['maps.map_id', 'maps.mod_id', 'maps.label', 'maps.ark_identifier', 'maps.difficulty_scale', 'maps.official', 'maps.mask', 'maps.sort'];
 	}
 	
 	public static function GetAll(\DateTime $since = null) {
@@ -106,7 +106,7 @@ class Map implements \JsonSerializable {
 			$since = new \DateTime('2000-01-01');
 		}
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (ark.maps.mod_id = ark.mods.mod_id) WHERE ark.mods.confirmed = TRUE AND ark.maps.last_update > $1 ORDER BY ark.maps.official DESC, ark.maps.sort;', $since->format('Y-m-d H:i:sO'));
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND maps.last_update > $1 ORDER BY maps.official DESC, maps.sort;', $since->format('Y-m-d H:i:sO'));
 		$maps = [];
 		while (!$results->EOF()) {
 			$maps[] = new static($results);
@@ -117,7 +117,7 @@ class Map implements \JsonSerializable {
 	
 	public static function GetForMapID(string $map_id) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (ark.maps.mod_id = ark.mods.mod_id) WHERE ark.mods.confirmed = TRUE AND ark.maps.map_id = $1 ORDER BY ark.maps.official DESC, ark.maps.sort;', $map_id);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND maps.map_id = $1 ORDER BY maps.official DESC, maps.sort;', $map_id);
 		$maps = [];
 		while (!$results->EOF()) {
 			$maps[] = new static($results);
@@ -132,7 +132,7 @@ class Map implements \JsonSerializable {
 		}
 		
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (ark.maps.mod_id = ark.mods.mod_id) WHERE ark.mods.confirmed = TRUE AND (ark.maps.mask & $1) = ark.maps.mask ORDER BY ark.maps.official DESC, ark.maps.sort;', $mask);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND (maps.mask & $1) = maps.mask ORDER BY maps.official DESC, maps.sort;', $mask);
 		$maps = [];
 		while (!$results->EOF()) {
 			$maps[] = new static($results);
@@ -143,7 +143,7 @@ class Map implements \JsonSerializable {
 	
 	public static function GetNamed(string $name) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (ark.maps.mod_id = ark.mods.mod_id) WHERE ark.mods.confirmed = TRUE AND ark.maps.label = $1 OR ark.maps.ark_identifier = $1 ORDER BY ark.maps.official DESC, ark.maps.sort;', $name);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE AND maps.label = $1 OR maps.ark_identifier = $1 ORDER BY maps.official DESC, maps.sort;', $name);
 		$maps = [];
 		while (!$results->EOF()) {
 			$maps[] = new static($results);

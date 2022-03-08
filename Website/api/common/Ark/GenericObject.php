@@ -11,7 +11,7 @@ class GenericObject implements \JsonSerializable {
 	protected $mod_id;
 	protected $mod_name;
 	protected $mod_workshop_id;
-	protected $tags = array();
+	protected $tags = [];
 	
 	const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
@@ -25,7 +25,7 @@ class GenericObject implements \JsonSerializable {
 	
 	protected static function SQLColumns() {
 		$table = static::TableName();
-		return array(
+		return [
 			$table . '.object_id',
 			$table . '.label',
 			$table . '.alternate_label',
@@ -34,15 +34,19 @@ class GenericObject implements \JsonSerializable {
 			'ark.mods.mod_id',
 			'ark.mods.name AS mod_name',
 			'ABS(ark.mods.workshop_id) AS mod_workshop_id'
-		);
+		];
 	}
 	
 	protected static function SortColumn() {
 		return 'label';
 	}
 	
+	protected static function SchemaName() {
+		return 'ark';
+	}
+	
 	protected static function TableName() {
-		return 'ark.objects';
+		return 'objects';
 	}
 	
 	protected static function BuildSQL(...$clauses) {
@@ -50,8 +54,9 @@ class GenericObject implements \JsonSerializable {
 			$clauses = $clauses[0];
 		}
 		
+		$schema = static::SchemaName();
 		$table = static::TableName();
-		$sql = 'SELECT SUBSTRING(' . $table . '.tableoid::regclass::TEXT, 5) AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $table . ' INNER JOIN ark.mods ON (' . $table . '.mod_id = mods.mod_id)';
+		$sql = 'SELECT SUBSTRING(' . $table . '.tableoid::regclass::TEXT, 5) AS table_name, ' . implode(', ', static::SQLColumns()) . ' FROM ' . $schema . '.' . $table . ' INNER JOIN ark.mods ON (' . $table . '.mod_id = mods.mod_id)';
 		if (count($clauses) != 0) {
 			$sql .= ' WHERE ' . implode(' AND ', $clauses);
 		}
@@ -113,51 +118,53 @@ class GenericObject implements \JsonSerializable {
 	}
 	
 	public function Save() {
+		$schema = static::SchemaName();
 		$table = static::TableName();
 		
 		$database = \BeaconCommon::Database();
-		$results = $database->Query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = $1;", $table);
-		$types = array();
+		$results = $database->Query("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2;", $schema, $table);
+		$types = [];
 		while (!$results->EOF()) {
 			$types[$results->Field('column_name')] = $results->Field('data_type');
 			$results->MoveNext();
 		}
 		
 		$c = 1;
-		$values = array();
-		$active_columns = array();
-		$set_pairs = array();
+		$values = [];
+		$active_columns = [];
+		$set_pairs = [];
 		foreach ($types as $column => $type) {
 			$value = $this->GetColumnValue($column);
-			if ($value !== self::COLUMN_NOT_EXISTS) {
-				$type = isset($types[$column]) ? $types[$column] : 'text';
-				$active_columns[] = $column;
-				
-				$placeholder = '$' . $c++;
-				
-				switch ($type) {
-				case 'bytea':
-					$placeholder = 'decode(' . $placeholder . ', \'hex\')';
-					$values[$placeholder] = bin2hex($value);
-					break;
-				default:
-					$values[$placeholder] = $value;
-					break;
-				}
-				
-				$set_pairs[] = $column . ' = ' . $placeholder;
+			if ($value === self::COLUMN_NOT_EXISTS) {
+				continue;
 			}
+			
+			$type = isset($types[$column]) ? $types[$column] : 'text';
+			$active_columns[] = $column;
+			$placeholder = '$' . $c++;
+			
+			switch ($type) {
+			case 'bytea':
+				$placeholder = 'decode(' . $placeholder . ', \'hex\')';
+				$values[$placeholder] = bin2hex($value);
+				break;
+			default:
+				$values[$placeholder] = $value;
+				break;
+			}
+			
+			$set_pairs[] = $column . ' = ' . $placeholder;
 		}
 		
 		$placeholders = array_keys($values);
 		$values = array_values($values);
 		
 		$database->BeginTransaction();
-		$results = $database->Query('SELECT object_id FROM ark.objects WHERE object_id = $1;', $this->object_id);
+		$results = $database->Query('SELECT object_id FROM ' . $this->SchemaName() . '.' . $this->TableName() . ' WHERE object_id = $1;', $this->object_id);
 		if ($results->RecordCount() == 0) {
-			$database->Query('INSERT INTO ' . $table . ' (' . implode(', ', $active_columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
+			$database->Query('INSERT INTO ' . $schema . '.' . $table . ' (' . implode(', ', $active_columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
 		} else {
-			$database->Query('UPDATE ' . $table . ' SET ' . implode(', ', $set_pairs) . ' WHERE object_id = ' . $database->EscapeLiteral($results->Field('object_id')) . ';', $values);
+			$database->Query('UPDATE ' . $schema . '.' . $table . ' SET ' . implode(', ', $set_pairs) . ' WHERE object_id = ' . $database->EscapeLiteral($results->Field('object_id')) . ';', $values);
 		}
 		$this->SaveChildrenHook($database);
 		$database->Commit();
@@ -331,13 +338,14 @@ class GenericObject implements \JsonSerializable {
 	
 	public static function LastUpdate(int $min_version = -1) {
 		$database = \BeaconCommon::Database();
+		$schema = static::SchemaName();
 		$table = static::TableName();
 		
 		if ($min_version == -1) {
 			$min_version = \BeaconCommon::MinVersion();
 		}
 		
-		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $table . ' WHERE min_version <= $1;', $min_version);
+		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $schema . '.' . $table . ' WHERE min_version <= $1;', $min_version);
 		if ($results->Field('most_recent_change') !== null) {
 			$change_time = new \DateTime($results->Field('most_recent_change'));
 		} else {
@@ -345,9 +353,9 @@ class GenericObject implements \JsonSerializable {
 		}
 		
 		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ark.deletions WHERE min_version <= $1;', $min_version);
+			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ' . $schema . '.deletions WHERE min_version <= $1;', $min_version);
 		} else {
-			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ark.deletions WHERE min_version <= $1 AND from_table = $2;', $min_version, $table);
+			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM ' . $schema . '.deletions WHERE min_version <= $1 AND from_table = $2;', $min_version, $table);
 		}
 		if ($results->Field('most_recent_delete') !== null) {
 			$delete_time = new \DateTime($results->Field('most_recent_delete'));
@@ -367,12 +375,13 @@ class GenericObject implements \JsonSerializable {
 		}
 		
 		$database = \BeaconCommon::Database();
+		$schema = static::SchemaName();
 		$table = static::TableName();
 		
 		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT * FROM ark.deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
+			$results = $database->Query('SELECT * FROM ' . $schema . '.deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
 		} else {
-			$results = $database->Query('SELECT * FROM ark.deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
+			$results = $database->Query('SELECT * FROM ' . $schema . '.deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
 		}
 		$arr = array();
 		while (!$results->EOF()) {
@@ -485,10 +494,11 @@ class GenericObject implements \JsonSerializable {
 	
 	public static function DeleteObjects(string $object_id, string $user_id) {
 		$database = \BeaconCommon::Database();
+		$escaped_schema = $database->EscapeIdentifier(static::SchemaName());
 		$escaped_table = $database->EscapeIdentifier(static::TableName());
 		
 		$database->BeginTransaction();
-		$results = $database->Query('SELECT mods.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_table . ' INNER JOIN mods ON (' . $escaped_table . '.mod_id = mods.mod_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
+		$results = $database->Query('SELECT mods.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_schema . '.' . $escaped_table . ' INNER JOIN ' . $escaped_schema . '.mods ON (' . $escaped_table . '.mod_id = mods.mod_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
 		$objects = array();
 		while (!$results->EOF()) {
 			if ($results->Field('user_id') !== $user_id) {
@@ -502,7 +512,7 @@ class GenericObject implements \JsonSerializable {
 			$database->Rollback();
 			return true;
 		}
-		$database->Query('DELETE FROM ' . $escaped_table . ' WHERE object_id = ANY($1);', '{' . implode(',', $objects) . '}');
+		$database->Query('DELETE FROM ' . $escaped_schema . '.' . $escaped_table . ' WHERE object_id = ANY($1);', '{' . implode(',', $objects) . '}');
 		$database->Commit();
 		return true;
 	}

@@ -41,7 +41,7 @@ class Creature extends \Ark\Blueprint {
 	}
 	
 	protected static function TableName() {
-		return 'ark.creatures';
+		return 'creatures';
 	}
 	
 	protected function GetColumnValue(string $column) {

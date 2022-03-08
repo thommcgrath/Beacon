@@ -12,7 +12,7 @@ class Preset extends \Ark\GenericObject {
 	}
 	
 	protected static function TableName() {
-		return 'ark.presets';
+		return 'presets';
 	}
 	
 	protected static function FromRow(\BeaconRecordSet $row) {

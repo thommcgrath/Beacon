@@ -189,7 +189,7 @@ if ($method === 'GET') {
 		}
 	}
 	if (count($deletions) > 0) {
-		$rows = $database->Query('SELECT ark.blueprints.tableoid::regclass AS tablename, ark.blueprints.object_id FROM ark.blueprints WHERE ark.blueprints.object_id IN (\'' . implode('\',\'', $deletions) . '\');');
+		$rows = $database->Query('SELECT blueprints.tableoid::regclass AS tablename, blueprints.object_id FROM ark.blueprints WHERE blueprints.object_id IN (\'' . implode('\',\'', $deletions) . '\');');
 		while (!$rows->EOF()) {
 			$database->Query('DELETE FROM ' . $rows->Field('tablename') . ' WHERE object_id = $1;', $rows->Field('object_id'));
 			$rows->MoveNext();

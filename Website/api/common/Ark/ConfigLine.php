@@ -56,7 +56,7 @@ class ConfigLine extends \Ark\GenericObject {
 	}
 	
 	protected static function TableName() {
-		return 'ark.ini_options';
+		return 'ini_options';
 	}
 	
 	protected static function FromRow(\BeaconRecordSet $row) {

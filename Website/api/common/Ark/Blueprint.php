@@ -41,7 +41,7 @@ class Blueprint extends \Ark\GenericObject {
 	
 	public function ConsumeJSON(array $json) {
 		parent::ConsumeJSON($json);
-		
+			
 		if (array_key_exists('path', $json)) {
 			$this->path = $json['path'];
 		}
@@ -161,7 +161,7 @@ class Blueprint extends \Ark\GenericObject {
 		for ($len = 2; $len <= strlen($simple_class_string); $len++) {
 			for ($offset = 0; $offset < strlen($simple_class_string) - ($len - 1); $offset++) {
 				$chunk = substr($simple_class_string, $offset, $len);
-				$rows = $database->Query('SELECT object_id FROM ark.engrams WHERE mod_id IN (SELECT mod_id FROM ark.mods WHERE is_official = TRUE AND confirmed = TRUE) AND class_string LIKE $1 AND class_string != $2;', '%' . $chunk . '%', $this->class_string);
+				$rows = $database->Query('SELECT object_id FROM ' . $this->SchemaName() . '.engrams WHERE mod_id IN (SELECT mod_id FROM ' . $this->SchemaName() . '.mods WHERE is_official = TRUE AND confirmed = TRUE) AND class_string LIKE $1 AND class_string != $2;', '%' . $chunk . '%', $this->class_string);
 				if ($rows->RecordCount() === 0) {
 					$perfect = true;
 					return $chunk;

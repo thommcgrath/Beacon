@@ -11,7 +11,7 @@ class Engram extends \Ark\Blueprint {
 	protected $recipe = null;
 	
 	protected static function TableName() {
-		return 'ark.engrams';
+		return 'engrams';
 	}
 	
 	protected static function SQLColumns() {

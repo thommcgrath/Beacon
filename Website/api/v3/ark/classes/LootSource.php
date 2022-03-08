@@ -48,6 +48,62 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 		}
 		return $json;
 	}
+	
+	public function ConsumeJSON(array $json) {
+		parent::ConsumeJSON($json);
+			
+		if (array_key_exists('min_item_sets', $json)) {
+			if (is_numeric($json['min_item_sets'])) {
+				$this->min_item_sets = intval($json['min_item_sets']);
+			} else {
+				throw new \Exception('Minimum item sets must be a number greater than or equal to zero.');
+			}
+		}
+		if (array_key_exists('max_item_sets', $json)) {
+			if (is_numeric($json['max_item_sets'])) {
+				$this->max_item_sets = intval($json['max_item_sets']);
+			} else {
+				throw new \Exception('Maximum item sets must be a number greater than or equal to zero.');
+			}
+		}
+		if (array_key_exists('prevent_duplicates', $json)) {
+			if (is_bool($json['prevent_duplicates'])) {
+				$this->prevent_duplicates = boolval($json['prevent_duplicates']);
+			} else {
+				throw new \Exception('Prevent duplicates must be a boolean.');
+			}
+		}
+		if (array_key_exists('item_sets', $json)) {
+			$sets = $json['item_sets'];
+			if (is_null($sets) || (is_array($sets) && \BeaconCommon::IsAssoc($sets) === false)) {
+				$this->item_sets = $sets;
+			} else {
+				throw new \Exception('Item sets must be an array of loot item sets.');
+			}
+		}
+	}
+	
+	protected function GetColumnValue(string $column) {
+		switch ($column) {
+		case 'min_item_sets':
+			return $this->min_item_sets;
+		case 'max_item_sets':
+			return $this->max_item_sets;
+		case 'prevent_duplicates':
+			return $this->prevent_duplicates;
+		default:
+			return parent::GetColumnValue($column);
+		}
+	}
+	
+	protected function SaveChildrenHook(\BeaconDatabase $database) {
+		parent::SaveChildrenHook($database);
+		
+		$this->SaveItemSets($database);
+	}
+	
+	protected function SaveItemSets(\BeaconDatabase $database) {
+	}
 }
 
 ?>
