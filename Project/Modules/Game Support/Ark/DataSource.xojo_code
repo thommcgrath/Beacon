@@ -11,9 +11,10 @@ Inherits Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
 		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE spawn_point_populations (population_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, spawn_point_id TEXT COLLATE NOCASE NOT NULL REFERENCES spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, map_id TEXT COLLATE NOCASE NOT NULL REFERENCES maps(ark_identifier) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, instances INTEGER NOT NULL, target_population INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, content_pack_id TEXT COLLATE NOCASE NOT NULL REFERENCES content_packs(content_pack_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
 		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE color_sets (color_set_id TEXT COLLATE NOCASE PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL);")
@@ -72,6 +73,9 @@ Inherits Beacon.DataSource
 		  Indexes.Add(New Beacon.DataIndex("colors", False, "label"))
 		  Indexes.Add(New Beacon.DataIndex("color_sets", False, "label"))
 		  Indexes.Add(New Beacon.DataIndex("color_sets", True, "class_string"))
+		  
+		  Indexes.Add(New Beacon.DataIndex("spawn_point_populations", False, "spawn_point_id"))
+		  Indexes.Add(New Beacon.DataIndex("spawn_point_populations", True, "spawn_point_id", "map_id"))
 		  
 		  Return Indexes
 		End Function
@@ -319,6 +323,28 @@ Inherits Beacon.DataSource
 		      Var Point As Ark.Blueprint = Ark.UnpackBlueprint(Dict)
 		      If (Point Is Nil) = False Then
 		        Blueprints.Add(Point)
+		        
+		        Try
+		          If Dict.HasKey("populations") And Dict.Value("populations").IsNull = False Then
+		            Var Populations As Dictionary = Dict.Value("populations")
+		            For Each Entry As DictionaryEntry In Populations
+		              Var Figures As Dictionary = Entry.Value
+		              Var MapIdentifier As String = Entry.Key
+		              Var Instances As Integer = Figures.Value("instances")
+		              Var TargetPopulation As Integer = Figures.Value("target_population")
+		              
+		              Var Rows As RowSet = Self.SQLSelect("SELECT population_id FROM spawn_point_populations WHERE spawn_point_id = ?1 AND map_id = ?2;", Point.ObjectID, MapIdentifier)
+		              If Rows.RowCount = 1 Then
+		                Var PopulationID As String = Rows.Column("population_id").StringValue
+		                Self.SQLExecute("UPDATE spawn_point_populations SET instances = ?2, target_population = ?3 WHERE population_id = ?1 AND (instances != ?2 OR target_population != ?3);", PopulationID, Instances, TargetPopulation)
+		              Else
+		                Self.SQLExecute("INSERT INTO spawn_point_populations (population_id, spawn_point_id, map_id, instances, target_population) VALUES (?1, ?2, ?3, ?4, ?5);", v4UUID.Create.StringValue, Point.ObjectId, MapIdentifier, Instances, TargetPopulation)
+		              End If
+		            Next Entry
+		          End If
+		        Catch Err As RuntimeException
+		          App.Log(Err, CurrentMethodName, "Parsing population figures")
+		        End Try
 		      End If
 		    Next Dict
 		    If Self.SaveBlueprints(Blueprints, Nil, Nil, False) Then
@@ -1773,6 +1799,30 @@ Inherits Beacon.DataSource
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Maps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetPopulationFigures(Point As Ark.SpawnPoint) As Ark.PopulationFigures()
+		  Var Figures() As Ark.PopulationFigures
+		  Var Rows As RowSet = Self.SQLSelect("SELECT map_id, instances, target_population FROM spawn_point_populations WHERE spawn_point_id = ?1;", Point.ObjectID)
+		  While Rows.AfterLastRow = False
+		    Figures.Add(New Ark.PopulationFigures(Rows.Column("map_id").StringValue, Rows.Column("instances").IntegerValue, Rows.Column("target_population").IntegerValue))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Figures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetPopulationFigures(Point As Ark.SpawnPoint, Map As Ark.Map) As Ark.PopulationFigures()
+		  Var Figures() As Ark.PopulationFigures
+		  Var Rows As RowSet = Self.SQLSelect("SELECT map_id, instances, target_population FROM spawn_point_populations WHERE spawn_point_id = ?1 AND map_id = ?2;", Point.ObjectID, Map.Identifier)
+		  While Rows.AfterLastRow = False
+		    Figures.Add(New Ark.PopulationFigures(Rows.Column("map_id").StringValue, Rows.Column("instances").IntegerValue, Rows.Column("target_population").IntegerValue))
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Figures
 		End Function
 	#tag EndMethod
 
