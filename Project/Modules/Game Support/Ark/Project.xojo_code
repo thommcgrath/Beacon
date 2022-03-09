@@ -2,6 +2,31 @@
 Protected Class Project
 Inherits Beacon.Project
 	#tag Event
+		Sub AddCloudSaveData(Dict As Dictionary)
+		  Var Difficulty As Ark.Configs.Difficulty = Ark.Configs.Difficulty(Self.ConfigGroup(Ark.Configs.NameDifficulty, Self.BaseConfigSetName, True))
+		  Dict.Value("difficulty") = Difficulty.DifficultyValue
+		  
+		  Dict.Value("map") = Self.MapMask
+		  
+		  Var ConfigSets() As String = Self.ConfigSetNames
+		  Var Editors() As String
+		  For Each ConfigSet As String In ConfigSets
+		    Var SetDict As Dictionary = Self.ConfigSet(ConfigSet)
+		    For Each Entry As DictionaryEntry In SetDict
+		      Var ConfigName As String = Entry.Key.StringValue
+		      If Editors.IndexOf(ConfigName) = -1 Then
+		        Editors.Add(ConfigName)
+		      End If
+		    Next Entry
+		  Next ConfigSet
+		  Editors.Sort
+		  Dict.Value("editors") = String.FromArray(Editors, ",")
+		  
+		  Dict.Value("mods") = Self.ContentPacks.Join(",")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub AddingProfile(Profile As Beacon.ServerProfile)
 		  If Profile.IsConsole Then
 		    Self.ConsoleSafe = True
@@ -206,6 +231,12 @@ Inherits Beacon.Project
 		    Self.Modified = True
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function APIPathComponent() As String
+		  Return "ark"
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

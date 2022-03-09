@@ -222,10 +222,6 @@ Inherits BeaconSubview
 		  Self.SettingUp = True
 		  Var FocusControl As RectControl = Self.Focus
 		  Self.SetFocus()
-		  #if DebugBuild
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
-		    System.DebugLog(Info.Name + ".SetupUI")
-		  #endif
 		  RaiseEvent SetupUI
 		  If FocusControl <> Nil Then
 		    FocusControl.SetFocus()

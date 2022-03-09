@@ -94,6 +94,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function APIPathComponent() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Identity As Beacon.Identity) As Beacon.Project
 		  // Yes, run this through JSON first to ensure parsing is exactly as compatible as coming from the
 		  // disk or cloud. The object types put into the dictionary are not always the same as comes back
