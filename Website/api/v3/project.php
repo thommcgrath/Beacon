@@ -285,13 +285,15 @@ case 'DELETE':
 			// is not particularly important.
 			if ($role === 'Owner' || $role === 'Team') {
 				$database->BeginTransaction();
-				$guest_results = $database->Query('SELECT user_id FROM ' . $class_name::SchemaName() . '.' . $class_name::GuestTableName() . ' WHERE project_id = $1;', $project_id);
+				$guest_results = $database->Query('SELECT user_id FROM ' . $class_name::SchemaName() . '.' . $class_name::GuestTableName() . ' WHERE project_id = $1 AND user_id != $2;', $project_id, $user_id);
 				if ($guest_results->RecordCount() == 0) {
+					// There are no other guests, so delete it
 					$database->Query('UPDATE ' . $class_name::SchemaName() . '.' . $class_name::TableName() . ' SET deleted = TRUE WHERE project_id = $1;', $project_id);
 				} else {
+					// There is at least one guest, transfer ownership
 					$guest_user_id = $guest_results->Field('user_id');
 					$database->Query('UPDATE ' . $class_name::SchemaName() . '.' . $class_name::TableName() . ' SET user_id = $1 WHERE project_id = $2;', $guest_user_id, $project_id);
-					$database->Query('DELETE FROM ' . $class_name::SchemaName() . '.' . $class_name::GuestTableName() . ' WHERE project_id = $2 AND user_id = $1;', $guest_user_id, $project_id);
+					$database->Query('DELETE FROM ' . $class_name::SchemaName() . '.' . $class_name::GuestTableName() . ' WHERE project_id = $2 AND user_id IN ($1, $3);', $guest_user_id, $project_id, $user_id);
 				}
 				$database->Commit();
 				$success = true;

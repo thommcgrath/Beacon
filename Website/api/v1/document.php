@@ -18,7 +18,7 @@ if (is_null($subobject) == false) {
 	
 	BeaconAPI::Authorize(true);
 	
-	$project = \Ark\Document::GetSharedDocumentByID($project_id, BeaconAPI::UserID());
+	$project = \Ark\Project::GetSharedDocumentByID($project_id, BeaconAPI::UserID());
 	if (is_null($project) || count($project) != 1) {
 		BeaconAPI::ReplyError('Document not found', null, 404);
 	}
@@ -60,7 +60,7 @@ case 'HEAD':
 	header('Content-Type: application/json');
 	
 	if ($project_id !== null) {
-		$results = $database->Query('SELECT project_id, user_id FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE project_id = $1 AND deleted = FALSE;', $project_id);
+		$results = $database->Query('SELECT project_id, user_id FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE project_id = $1 AND deleted = FALSE;', $project_id);
 		if ($results->RecordCount() == 1) {
 			http_response_code(200);
 		} else {
@@ -91,7 +91,7 @@ case 'GET':
 		} else {
 			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
 		}
-		$sql = 'SELECT ' . implode(', ', \Ark\Document::DatabaseColumns()) . ' FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses);
+		$sql = 'SELECT ' . implode(', ', \Ark\Project::SQLColumns()) . ' FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' WHERE ' . implode(' AND ', $clauses);
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -122,13 +122,13 @@ case 'GET':
 		}
 		
 		$results = $database->Query($sql, $values);
-		$projects = \Ark\Document::GetFromResults($results);
+		$projects = \Ark\Project::GetFromResults($results);
 		BeaconAPI::ReplySuccess($projects);
 	} else {
 		$simple = isset($_GET['simple']);
 		
 		// specific document(s)
-		$projects = \Ark\Document::GetSharedDocumentByID($project_id, $user_id);
+		$projects = \Ark\Project::GetSharedDocumentByID($project_id, $user_id);
 		if (count($projects) === 0) {
 			BeaconAPI::ReplyError('No document found', null, 404);
 		} elseif (count($projects) > 1) {
@@ -138,11 +138,11 @@ case 'GET':
 		if ($simple === false) {
 			$database->BeginTransaction();
 			if (is_null($user_id)) {
-				$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' SET download_count = download_count + 1 WHERE project_id = ANY($1);', '{' . $project_id . '}');
+				$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::TableName() . ' SET download_count = download_count + 1 WHERE project_id = ANY($1);', '{' . $project_id . '}');
 			} else {
 				foreach ($projects as $project) {
 					if ($project->UserID() !== $user_id) {
-						$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' SET download_count = download_count + 1 WHERE project_id = $1;', $project->ProjectID());
+						$database->Query('UPDATE ' .  Ark\Project::SchemaName() . '.' . Ark\Project::TableName() . ' SET download_count = download_count + 1 WHERE project_id = $1;', $project->ProjectID());
 					}
 				}
 			}
@@ -217,7 +217,7 @@ case 'POST':
 	$file_content = BeaconAPI::Body();
 	$user = BeaconAPI::User();
 	$reason = '';
-	if (\Ark\Document::SaveFromContent($project_id, $user, $file_content, $reason) === false) {
+	if (\Ark\Project::SaveFromContent($project_id, $user, $file_content, $reason) === false) {
 		BeaconAPI::ReplyError($reason);
 	}
 	
@@ -246,12 +246,12 @@ case 'DELETE':
 			// is not particularly important.
 			if ($role === 'Owner' || $role === 'Team') {
 				$database->BeginTransaction();
-				$guest_results = $database->Query('SELECT user_id FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::GuestTableName() . ' WHERE project_id = $1;', $project_id);
+				$guest_results = $database->Query('SELECT user_id FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::GuestTableName() . ' WHERE project_id = $1 AND user_id != $2;', $project_id, $user_id);
 				if ($guest_results->RecordCount() == 0) {
-					$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' SET deleted = TRUE WHERE project_id = $1;', $project_id);
+					$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::TableName() . ' SET deleted = TRUE WHERE project_id = $1;', $project_id);
 				} else {
 					$guest_user_id = $guest_results->Field('user_id');
-					$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::SchemaName() . '.' . Ark\Project::AllowedTableName() . ' SET user_id = $1 WHERE project_id = $2;', $guest_user_id, $project_id);
+					$database->Query('UPDATE ' . Ark\Project::SchemaName() . '.' . Ark\Project::TableName() . ' SET user_id = $1 WHERE project_id = $2;', $guest_user_id, $project_id);
 					$database->Query('DELETE FROM ' . Ark\Project::SchemaName() . '.' . Ark\Project::GuestTableName() . ' WHERE project_id = $2 AND user_id = $1;', $guest_user_id, $project_id);
 				}
 				$database->Commit();
