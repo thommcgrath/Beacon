@@ -398,6 +398,14 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin ApplicationMenuItem HelpShowWhatsNewWindow
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "What's New in Beacon…"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
       Begin ApplicationMenuItem HelpCheckforUpdates
          SpecialMenu = 0
          Index = -2147483648

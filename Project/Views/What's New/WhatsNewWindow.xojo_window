@@ -47,7 +47,6 @@ Begin Window WhatsNewWindow
    End
    Begin URLConnection PreflightSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -85,8 +84,18 @@ End
 		    Win.TitleVisibility = NSWindowMBS.NSWindowTitleHidden
 		  #endif
 		  
+		  Var Platform As String
+		  #if TargetMacOS
+		    Platform = "macos"
+		  #elseif TargetWindows
+		    Platform = "windows"
+		  #elseif TargetLinux
+		    Platform = "linux"
+		  #else
+		    Platform = "any"
+		  #endif
 		  PreflightSocket.RequestHeader("User-Agent") = App.UserAgent
-		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Self.mPreviousVersion.ToString("0") + "&to=" + App.BuildNumber.ToString))
+		  PreflightSocket.Send("HEAD", Beacon.WebURL("/welcome/?from=" + Self.mPreviousVersion.ToString("0") + "&to=" + App.BuildNumber.ToString + "&platform=" + Platform))
 		End Sub
 	#tag EndEvent
 
@@ -106,7 +115,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(PreviousBuildNumber As Integer)
-		  If PreviousBuildNumber >= App.BuildNumber Then
+		  If PreviousBuildNumber < 99999999 And PreviousBuildNumber >= App.BuildNumber Then
 		    // No reason to check
 		    Return
 		  End If
@@ -137,6 +146,8 @@ End
 		    Call CallLater.Schedule(1, AddressOf CloseLater)
 		    Return True
 		  ElseIf URL.BeginsWith("res://") Then
+		    Return True
+		  ElseIf URL.BeginsWith("https://") = False Then
 		    Return True
 		  End If
 		  
@@ -224,7 +235,7 @@ End
 	#tag Event
 		Sub HeadersReceived(URL As String, HTTPStatus As Integer)
 		  If HTTPStatus = 200 Then
-		    Self.mConfirmedURL = URL
+		    Self.mConfirmedURL = URL.MakeUTF8
 		    Self.Visible = True
 		    Call CallLater.Schedule(250, AddressOf ShowConfirmedURL)
 		  Else

@@ -361,6 +361,13 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpShowWhatsNewWindow() As Boolean Handles HelpShowWhatsNewWindow.Action
+			WhatsNewWindow.Present(99999999)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpSyncCloudFiles() As Boolean Handles HelpSyncCloudFiles.Action
 			UserCloud.Sync(True)
 			Return True
