@@ -16,6 +16,7 @@ Implements NotificationKit.Receiver
 		    Self.Margin(Idx).Width = 0
 		  Next Idx
 		  
+		  Self.ScrollWidthTracking = True
 		  Self.RunSetup()
 		  
 		  RaiseEvent Open
