@@ -490,7 +490,7 @@ class Project implements \JsonSerializable {
 		}
 		$project['EncryptionKeys'] = $keys;
 		
-		if (static::HookAddProjectValues($project, $reason) === false) {
+		if (static::HookMultipartAddProjectValues($project, $reason) === false) {
 			return false;
 		}
 		
@@ -500,8 +500,7 @@ class Project implements \JsonSerializable {
 	public static function SaveFromContent(string $project_id, \BeaconUser $user, $file_content, string &$reason) {
 	}
 	
-	public static function HookRowSaveData(array $project, array &$row_values) {
-		
+	protected static function HookRowSaveData(array $project, array &$row_values) {
 	}
 	
 	protected static function SaveFromArray(array $project, \BeaconUser $user, $contents, string &$reason) {
@@ -623,6 +622,29 @@ class Project implements \JsonSerializable {
 		}
 		
 		return true;
+	}
+	
+	public function Versions(): array {
+		$path = self::GenerateCloudStoragePath($this->OwnerID(), $this->DocumentID());
+		$versions = \BeaconCloudStorage::VersionsForFile($path);
+		if ($versions === false) {
+			return [];
+		}
+		$api_path = $this->ResourceURL();
+		$api_query = '';
+		$pos = strpos($api_path, '?');
+		if ($pos !== false) {
+			$api_query = substr($api_path, $pos + 1);
+			$api_path = substr($api_path, 0, $pos);
+		}
+		if ($api_query !== '') {
+			$api_query = '?' . $api_query;
+		}
+		for ($idx = 0; $idx < count($versions); $idx++) {
+			$url = $this->ResourceURL();
+			$versions[$idx]['resource_url'] = $api_path . '/versions/' . urlencode($versions[$idx]['version_id']) . $api_query;
+		}
+		return $versions;
 	}
 }
 	

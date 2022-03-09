@@ -162,7 +162,7 @@ class Project extends \BeaconAPI\Project {
 		$row_values['map'] = isset($project['Map']) ? $project['Map'] : 4;
 		$row_values['console_safe'] = $console_safe;
 		$row_values['mods'] = '{' . implode(',', $mod_ids) . '}';
-		$row_values['included_editors'] = '{' . implode(',', $document['EditorNames']) . '}';
+		$row_values['included_editors'] = '{' . implode(',', $project['EditorNames']) . '}';
 	}
 	
 	public static function SaveFromContent(string $project_id, \BeaconUser $user, $file_content, string &$reason) {
