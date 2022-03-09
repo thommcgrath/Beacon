@@ -496,6 +496,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  If Project.ReadSaveData(SaveData, SecureDict, Version, SavedWithVersion, FailureReason) = False Then
+		    App.Log(FailureReason)
 		    Return Nil
 		  End If
 		  

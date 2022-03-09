@@ -112,6 +112,31 @@ Inherits Beacon.Project
 		  #Pragma Unused SavedWithVersion
 		  #Pragma Unused FailureReason
 		  
+		  If SaveDataVersion < 2 Then
+		    FailureReason = "This project is too old to be opened with this version of Beacon."
+		    Return False
+		  ElseIf SaveDataVersion = 2 And PlainData.HasAllKeys("DifficultyValue", "LootSources") Then
+		    Var DifficultyValue As Double = PlainData.Value("DifficultyValue")
+		    Var LootSources() As Variant = PlainData.Value("LootSources")
+		    
+		    Var Loot As New Ark.Configs.LootDrops
+		    For Each Source As Variant In LootSources
+		      Try
+		        Var Container As Ark.LootContainer = Ark.LootContainer.FromSaveData(Dictionary(Source))
+		        If (Container Is Nil) = False Then
+		          Loot.Add(Container)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next Source
+		    
+		    Var ConfigSet As New Dictionary
+		    ConfigSet.Value(Ark.Configs.NameDifficulty) = New Ark.Configs.Difficulty(DifficultyValue)
+		    ConfigSet.Value(Ark.Configs.NameLootDrops) = Loot
+		    
+		    Self.ConfigSet(BaseConfigSetName) = ConfigSet
+		  End If
+		  
 		  Self.AllowUCS2 = PlainData.Lookup("AllowUCS", Self.AllowUCS2).BooleanValue
 		  Self.ConsoleSafe = PlainData.Lookup("IsConsole", Self.ConsoleSafe).BooleanValue
 		  
