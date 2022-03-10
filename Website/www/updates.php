@@ -94,6 +94,7 @@ $values = array(
 	'preview' => ($current_build < 10500000) ? 'Beacon\'s biggest update ever is here!' : $results->Field('preview'),
 	'notes_url' => BeaconCommon::AbsoluteURL('/history' . (intval($results->Field('stage')) != 3 ? '?stage=' . $results->Field('stage') : '')),
 	'required' => $required,
+	'build_date' => BeaconCommon::BuildDateForVersion(intval($results->Field('build_number'))),
 	'mac' => array(
 		'url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
 		'signature' => $results->Field('mac_signature')

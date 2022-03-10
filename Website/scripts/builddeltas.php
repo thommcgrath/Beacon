@@ -1,6 +1,9 @@
 #!/usr/bin/php -q
 <?php
 
+// More memory is needed
+ini_set('memory_limit','512M');
+
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 while (ob_get_level() > 0) {
@@ -11,7 +14,7 @@ define('MIN_VERSION', 99999999);
 
 $database = BeaconCommon::Database();
 $database->BeginTransaction();
-$rows = $database->Query('UPDATE mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
+$rows = $database->Query('UPDATE ark.mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
 if ($rows->RecordCount() > 0) {
 	$database->Commit();
 } else {
@@ -29,7 +32,7 @@ if ($last_database_update >= $cutoff) {
 	exit;
 }
 
-$required_versions = [5];
+$required_versions = [6, 5];
 $results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1 AND type = \'Delta\';', $last_database_update->format('Y-m-d H:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
@@ -52,26 +55,36 @@ foreach ($required_versions as $version) {
 	echo "Building delta for version $version...\n";
 	
 	$full_data = DataForVersion($version, null);
-	$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+	if ($version === 5) {
+		$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+	} else {
+		$full_data['timestamp'] = $last_database_update->getTimestamp();
+	}
 	
 	$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
 	if (is_null($results->Field('since')) == false) {
 		$since = new DateTime($results->Field('since'));
 		
 		$delta_data = DataForVersion($version, $since);
-		$delta_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+		if ($version === 5) {
+			$delta_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+		} else {
+			$delta_data['timestamp'] = $last_database_update->getTimestamp();
+		}
 	} else {
 		$delta_data = null;
 	}
 	
 	$prefix = '/v' . $version;
+	$timestamp = $last_database_update->format('U');
 	if (BeaconCommon::InProduction() == false) {
 		$prefix .= '/' . BeaconCommon::EnvironmentName();
+		$timestamp += rand(-1800,1800);
 	}
 	
 	$database->BeginTransaction();
 	
-	$full_path = $prefix . '/Complete.beacondata?t=' . $last_database_update->format('U') . '&bcdn_filename=Complete.beacondata';
+	$full_path = $prefix . '/Complete.beacondata?t=' . $timestamp . '&bcdn_filename=Complete.beacondata';
 	$full_prepared = gzencode(json_encode($full_data));
 	$full_size = strlen($full_prepared);
 	if (UploadFile($full_path, $full_prepared) === false) {
@@ -109,28 +122,65 @@ foreach ($required_versions as $version) {
 exit;
 
 function DataForVersion(int $version, $since) {
-	return array(
-		'loot_sources' => BeaconLootSource::GetAll(MIN_VERSION, $since, true),
-		'loot_source_icons' => BeaconLootSourceIcon::GetAll(MIN_VERSION, $since, true),
-		'engrams' => BeaconEngram::GetAll(MIN_VERSION, $since, true),
-		'presets' => BeaconPreset::GetAll(MIN_VERSION, $since, true),
-		'preset_modifiers' => BeaconPresetModifier::GetAll(MIN_VERSION, $since, true),
-		'creatures' => BeaconCreature::GetAll(MIN_VERSION, $since, true),
-		'diets' => BeaconDiet::GetAll(MIN_VERSION, $since, true),
-		'help_topics' => BeaconHelpTopic::GetAll($since),
-		'game_variables' => BeaconGameVariable::GetAll($since),
-		'mods' => BeaconMod::GetLive($since),
-		'deletions' => BeaconObject::Deletions(MIN_VERSION, $since),
-		'ini_options' => BeaconConfigLine::GetAll(MIN_VERSION, $since),
-		'spawn_points' => BeaconSpawnPoint::GetAll(MIN_VERSION, $since),
-		'maps' => BeaconMap::GetAll($since),
-		'events' => BeaconEvent::GetAll($since),
-		'colors' => BeaconColor::GetAll($since),
-		'color_sets' => BeaconColorSet::GetAll($since),
-		'beacon_version' => $version,
-		'is_full' => is_null($since) ? true : false,
-		'min_version' => 0
-	);
+	$api_version = BeaconAPI::GetAPIVersion();
+	$arr = null;
+	switch ($version) {
+	case 6:
+		BeaconAPI::SetAPIVersion(3);
+		$arr = [
+			'deletions' => is_null($since) ? [] : BeaconAPI::Deletions(MIN_VERSION, $since),
+			'ark' => [
+				'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
+				'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
+				'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
+				'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
+				'game_variables' => Ark\GameVariable::GetAll($since),
+				'mods' => Ark\Mod::GetLive($since),
+				'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
+				'spawn_points' => Ark\SpawnPoint::GetAll(MIN_VERSION, $since),
+				'maps' => Ark\Map::GetAll($since),
+				'events' => Ark\Event::GetAll($since),
+				'colors' => Ark\Color::GetAll($since),
+				'color_sets' => Ark\ColorSet::GetAll($since)
+			],
+			'common' => [
+				'help_topics' => BeaconHelpTopic::GetAll($since),
+				'templates' => \BeaconAPI\Template::GetAll(MIN_VERSION, $since),
+				'template_selectors' => BeaconAPI\TemplateSelector::GetAll(MIN_VERSION, $since)
+			],
+			'beacon_version' => $version,
+			'is_full' => is_null($since) ? true : false,
+			'min_version' => 0
+		];
+		break;
+	case 5:
+		BeaconAPI::SetAPIVersion(2);
+		$arr = [
+			'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
+			'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
+			'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
+			'presets' => Ark\Preset::GetAll(MIN_VERSION, $since, true),
+			'preset_modifiers' => Ark\PresetModifier::GetAll(MIN_VERSION, $since, true),
+			'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
+			'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
+			'help_topics' => BeaconHelpTopic::GetAll($since),
+			'game_variables' => Ark\GameVariable::GetAll($since),
+			'mods' => Ark\Mod::GetLive($since),
+			'deletions' => Ark\GenericObject::Deletions(MIN_VERSION, $since),
+			'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
+			'spawn_points' => Ark\SpawnPoint::GetAll(MIN_VERSION, $since),
+			'maps' => Ark\Map::GetAll($since),
+			'events' => Ark\Event::GetAll($since),
+			'colors' => Ark\Color::GetAll($since),
+			'color_sets' => Ark\ColorSet::GetAll($since),
+			'beacon_version' => $version,
+			'is_full' => is_null($since) ? true : false,
+			'min_version' => 0
+		];
+		break;
+	}
+	BeaconAPI::SetAPIVersion($api_version);
+	return $arr;
 }
 
 function UploadFile(string $path, string $data) {

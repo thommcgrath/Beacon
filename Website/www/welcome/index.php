@@ -2,6 +2,8 @@
 
 $original_version = intval($_GET['from']);
 $current_version = intval($_GET['to']);
+$platform = isset($_GET['platform']) ? $_GET['platform'] : 'any';
+$show_latest = ($original_version > $current_version); // this means show the latest	
 $pages = [];
 $page_direction = 'left';
 
@@ -57,6 +59,21 @@ if ($original_version < 1) {
 		
 		StartPage('New Hosting Provider');
 		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon151-gameserverapp.png" width="298" height="130" alt=""></div><div class="duo-text"><h1>GameServerApp.com Integration</h1><p>Beacon can now automatically import and update your GameServerApp.com config templates!</p></div></div>';
+		EndPage();
+	}
+	if ($show_latest || ($current_version >= 10600000 && $original_version < 10600000)) {
+		if ($platform === 'windows') {
+			StartPage('Dark Mode Support');
+			echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon16-windows-dark.png" width="298" height="186" alt=""></div><div class="duo-text"><h1>Dark Mode Support</h1><p>For users on Windows 10 and 11, Beacon will follow the colors chosen in system settings.</p></div></div>';
+			EndPage();
+		}
+		
+		StartPage('Loot Defaults');
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon16-loot-defaults.png" width="298" height="186" alt=""></div><div class="duo-text"><h1>Loot Defaults</h1><p>Beacon now knows the default loot drop contents for nearly every drop Beacon supports.</p></div></div>';
+		EndPage();
+		
+		StartPage('New Code Editor');
+		echo '<div class="duo duo-' . $page_direction . '"><div class="duo-image"><img src="beacon16-code-editor.png" width="298" height="186" alt=""></div><div class="duo-text"><h1>New Code Editor</h1><p>Based on Scintilla, the same text engine that runs Notepad++, Beacon\'s code fields now support syntax coloring, autocomplete, and better performance.</p></div></div>';
 		EndPage();
 	}
 }

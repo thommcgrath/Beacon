@@ -2,7 +2,7 @@
 
 require(dirname(__FILE__) . '/loader.php');
 
-$manager = new BeaconObjectManager('BeaconConfigLine');
+$manager = new BeaconObjectManager('\Ark\ConfigLine');
 $manager->HandleAPIRequest();
 
 ?>

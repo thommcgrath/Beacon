@@ -107,6 +107,7 @@ abstract class BeaconCloudStorage {
 		switch ($extension) {
 		case 'beacon':
 		case 'beaconpreset':
+		case 'beacontemplate':
 		case 'beaconidentity':
 		case 'txt':
 		case 'json':

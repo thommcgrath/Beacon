@@ -12,8 +12,7 @@ $email = isset($_GET['email']) ? $_GET['email'] : '';
 $response = [
 	'error' => false,
 	'email' => $email,
-	'omni' => false,
-	'child' => false,
+	'purchases' => [],
 	'verified' => false,
 ];
 
@@ -37,8 +36,7 @@ function lookupEmail($email, &$response) {
 		$user = BeaconUser::GetByEmail($email);
 		if (is_null($user) === false) {
 			$response['verified'] = true;
-			$response['omni'] = $user->OmniVersion() >= 1;
-			$response['child'] = $user->IsChildAccount();
+			$response['purchases'] = $user->Licenses();
 			return;
 		}
 	} catch (Exception $e) {

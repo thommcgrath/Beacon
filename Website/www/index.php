@@ -9,7 +9,7 @@ $public_build = BeaconCommon::MinVersion();
 $hero_img_prefix = $public_build >= 10500300 ? 'hero15' : 'hero';
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
+$results = $database->Query('SELECT COUNT(object_id) AS loot_source_count, experimental FROM ark.loot_sources WHERE min_version <= $1 GROUP BY experimental;', $public_build);
 while (!$results->EOF()) {
 	if ($results->Field('experimental')) {
 		$unofficial_source_count = $results->Field('loot_source_count');
@@ -88,7 +88,6 @@ BeaconTemplate::StartStyles();
 	height: 0px;
 }
 
-<?php if ($hero_img_prefix === 'hero15') { ?>
 #hero.mac {
 	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
 	padding-top: calc(764 / 1312 * 100%);
@@ -98,17 +97,6 @@ BeaconTemplate::StartStyles();
 	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
 	padding-top: calc(764 / 1312 * 100%);
 }
-<?php } else { ?>
-#hero.mac {
-	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
-	padding-top: calc(493 / 800 * 100%);
-}
-
-#hero.windows {
-	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
-	padding-top: calc(523 / 800 * 100%);
-}
-<?php } ?>
 
 #nitrado_container {
 	margin-bottom: 2.5%;
@@ -134,10 +122,6 @@ BeaconTemplate::StartStyles();
 		margin-bottom: 20px;
 		padding-top: 20px;
 	}
-	
-	/*#nitrado_logo {
-		padding-top: calc(110 / 800 * 100%);
-	}*/
 }
 
 @media (prefers-color-scheme: dark) {

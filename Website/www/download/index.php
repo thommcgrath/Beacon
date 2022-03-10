@@ -198,6 +198,7 @@ function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results
 	$build = intval($results->Field('build_number'));
 	$delta_version = intval($results->Field('delta_version'));
 	$stage = intval($results->Field('stage'));
+	$build_date = BeaconCommon::BuildDateForVersion($build);
 	
 	$data = [
 		'mac_url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
@@ -206,6 +207,7 @@ function BuildLinksForResults(BeaconDatabase $database, BeaconRecordSet $results
 		'win_32_url' => BeaconCommon::SignDownloadURL($results->Field('win_32_url')),
 		'build_display' => $results->Field('build_display'),
 		'build_number' => $build,
+		'build_date' => $build_date,
 		'stage' => $stage
 	];
 	

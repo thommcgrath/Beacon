@@ -3,7 +3,7 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
-$mods = BeaconMod::GetPullMods();
+$mods = \Ark\Mod::GetPullMods();
 if (count($mods) == 0) {
 	exit;
 }
@@ -16,7 +16,7 @@ foreach ($mods as $mod) {
 	}
 }
 
-function PullMod(BeaconMod $mod) {
+function PullMod(\Ark\Mod $mod) {
 	$mod_description = $mod->Name() . ' (' . $mod->ModID() . ')';
 	$mod_id = $mod->ModID();
 	
@@ -100,7 +100,7 @@ function PullMod(BeaconMod $mod) {
 				$item_tags = array();
 			}
 			foreach ($item['tags'] as $tag) {
-				$tags[] = BeaconObject::NormalizeTag($tag);
+				$tags[] = \Ark\GenericObject::NormalizeTag($tag);
 			}
 		} else {
 			if (isset($item['can_blueprint']) && BeaconCommon::BooleanValue($item['can_blueprint'])) {
@@ -176,7 +176,7 @@ function PullMod(BeaconMod $mod) {
 	$database->Commit();
 }
 
-function SendAlert(BeaconMod $mod, string $message) {
+function SendAlert(\Ark\Mod $mod, string $message) {
 	$message_with_name = $mod->Name() . ' (' . $mod->WorkshopID() . '): ' . $message;
 	if (getenv('SSH_CLIENT')) {
 		echo "$message_with_name\n";

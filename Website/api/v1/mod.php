@@ -14,10 +14,10 @@ $database = BeaconCommon::Database();
 switch ($method) {
 case 'GET':
 	if (is_null($workshop_id)) {
-		$mods = BeaconMod::GetAll($user_id);
+		$mods = \Ark\Mod::GetAll($user_id);
 		BeaconAPI::ReplySuccess($mods);
 	} else {
-		$mods = BeaconMod::GetByWorkshopID($user_id, $workshop_id);
+		$mods = \Ark\Mod::GetByWorkshopID($user_id, $workshop_id);
 		if (count($mods) == 0) {
 			BeaconAPI::ReplyError('Mod not found', null, 404);
 		}
@@ -101,7 +101,7 @@ case 'POST':
 			}
 		}
 		
-		$mods[] = BeaconMod::GetByWorkshopID(BeaconAPI::UserID(), $workshop_id)[0];
+		$mods[] = \Ark\Mod::GetByWorkshopID(BeaconAPI::UserID(), $workshop_id)[0];
 	}
 	$database->Commit();
 		
@@ -116,7 +116,7 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No mod specified');
 	}
 	
-	$mods = BeaconMod::GetByWorkshopID($user_id, $workshop_id);
+	$mods = \Ark\Mod::GetByWorkshopID($user_id, $workshop_id);
 	if (count($mods) == 0) {
 		BeaconAPI::ReplyError('No mods found.', null, 404);
 	}

@@ -26,7 +26,7 @@ if ($applicant_count == 0) {
 }
 
 $num = random_int(1, $applicant_count);
-$results = $database->Query('SELECT applicant_id, encrypted_email, email_id FROM stw_applicants WHERE generated_purchase_id IS NULL OFFSET $1 LIMIT 1;', $num - 1);
+$results = $database->Query('SELECT applicant_id, encrypted_email, email_id, desired_product FROM stw_applicants WHERE generated_purchase_id IS NULL OFFSET $1 LIMIT 1;', $num - 1);
 if ($results->RecordCount() == 0) {
 	echo "Something went wrong, a winner was not selected.\n";
 	exit;
@@ -34,6 +34,7 @@ if ($results->RecordCount() == 0) {
 
 $applicant_id = $results->Field('applicant_id');
 $email_id = $results->Field('email_id');
+$product_id = $results->Field('desired_product');
 try {
 	$email = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), base64_decode($results->Field('encrypted_email')));
 } catch (Exception $e) {
@@ -42,17 +43,9 @@ try {
 }
 
 // Make the purchase record in the database
-$results = $database->Query('SELECT product_id, retail_price FROM products WHERE product_id = \'972f9fc5-ad64-4f9c-940d-47062e705cc5\';');
-$product_id = $results->Field('product_id');
-$retail_price = $results->Field('retail_price');
-$subtotal = $retail_price;
-$total = 0;
-$generated_purchase_id = BeaconCommon::GenerateUUID();
 $database->BeginTransaction();
-$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, currency) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);', $generated_purchase_id, $email_id, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id, 'USD');
-$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total, currency) VALUES ($1, $2, $3, $4, $5, $6, $7);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 1, 0, 'USD');
+$generated_purchase_id = BeaconShop::CreateGiftPurchase($email_id, $product_id, 1, 'STW Winner', true);
 $database->Query('UPDATE stw_applicants SET generated_purchase_id = $2, encrypted_email = NULL WHERE applicant_id = $1;', $applicant_id, $generated_purchase_id);
-$database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE stw_id = $1;', $stw_id, $generated_purchase_id);
 $database->Commit();
 
 // See if the recipient already has an account

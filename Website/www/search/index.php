@@ -55,6 +55,8 @@ foreach ($results as $result) {
 			$type = 'Creature';
 			break;
 		}
+	} elseif ($type == 'Document') {
+		$type = 'Project';
 	}
 	
 	$item = [
