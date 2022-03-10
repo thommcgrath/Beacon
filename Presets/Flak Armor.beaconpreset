@@ -13,6 +13,36 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalBoots.PrimalItemArmor_MetalBoots",
+                        "UUID": "25925572-4303-44ca-b4f1-8cfb782ba0cb",
+                        "Class": "PrimalItemArmor_MetalBoots_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalShirt.PrimalItemArmor_MetalShirt",
                         "UUID": "b0cc8932-0469-4a6b-9c0c-81eb06f9bb3a",
                         "Class": "PrimalItemArmor_MetalShirt_C",
@@ -29,88 +59,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalGloves.PrimalItemArmor_MetalGloves",
-                        "UUID": "a7372063-b752-47af-bade-6b060cfa12f1",
-                        "Class": "PrimalItemArmor_MetalGloves_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_MetalShield.PrimalItemArmor_MetalShield",
-                        "UUID": "419e00c5-5201-43a6-bcfe-639f1073eb86",
-                        "Class": "PrimalItemArmor_MetalShield_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalPants.PrimalItemArmor_MetalPants",
-                        "UUID": "f99d63a0-9171-4ffb-beaf-4f2bf8acf963",
-                        "Class": "PrimalItemArmor_MetalPants_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -209,37 +161,13 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalBoots.PrimalItemArmor_MetalBoots",
-                        "UUID": "25925572-4303-44ca-b4f1-8cfb782ba0cb",
-                        "Class": "PrimalItemArmor_MetalBoots_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
         },
         {
             "ChanceToBeBlueprintOverride": 0.0,
@@ -275,7 +203,100 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalPants.PrimalItemArmor_MetalPants",
+                        "UUID": "f99d63a0-9171-4ffb-beaf-4f2bf8acf963",
+                        "Class": "PrimalItemArmor_MetalPants_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_MetalShield.PrimalItemArmor_MetalShield",
+                        "UUID": "419e00c5-5201-43a6-bcfe-639f1073eb86",
+                        "Class": "PrimalItemArmor_MetalShield_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalGloves.PrimalItemArmor_MetalGloves",
+                        "UUID": "a7372063-b752-47af-bade-6b060cfa12f1",
+                        "Class": "PrimalItemArmor_MetalGloves_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -286,6 +307,29 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalBoots.PrimalItemArmor_MetalBoots",
+                    "Class": "PrimalItemArmor_MetalBoots_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
                     "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalShirt.PrimalItemArmor_MetalShirt",
                     "Class": "PrimalItemArmor_MetalShirt_C",
                     "Weight": 1.0
@@ -297,67 +341,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalGloves.PrimalItemArmor_MetalGloves",
-                    "Class": "PrimalItemArmor_MetalGloves_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_MetalShield.PrimalItemArmor_MetalShield",
-                    "Class": "PrimalItemArmor_MetalShield_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalPants.PrimalItemArmor_MetalPants",
-                    "Class": "PrimalItemArmor_MetalPants_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -407,30 +394,13 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalBoots.PrimalItemArmor_MetalBoots",
-                    "Class": "PrimalItemArmor_MetalBoots_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
         },
         {
             "ChanceToBeBlueprintOverride": 0.0,
@@ -452,7 +422,79 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalPants.PrimalItemArmor_MetalPants",
+                    "Class": "PrimalItemArmor_MetalPants_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_MetalShield.PrimalItemArmor_MetalShield",
+                    "Class": "PrimalItemArmor_MetalShield_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalGloves.PrimalItemArmor_MetalGloves",
+                    "Class": "PrimalItemArmor_MetalGloves_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true

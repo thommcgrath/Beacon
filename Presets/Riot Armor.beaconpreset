@@ -13,9 +13,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotGloves.PrimalItemArmor_RiotGloves",
-                        "UUID": "bba4a91a-80e9-499a-9fb9-824c82212d90",
-                        "Class": "PrimalItemArmor_RiotGloves_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield",
+                        "UUID": "f40512df-c37f-4fcc-af62-bc805cac2736",
+                        "Class": "PrimalItemArmor_TransparentRiotShield_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
@@ -29,34 +29,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotBoots.PrimalItemArmor_RiotBoots",
-                        "UUID": "0f32bc56-825f-41db-b391-ee2dbf5ceb66",
-                        "Class": "PrimalItemArmor_RiotBoots_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -83,61 +59,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotHelmet.PrimalItemArmor_RiotHelmet",
-                        "UUID": "de23cf5e-c8d0-4de6-8f3f-eb05d40ea91d",
-                        "Class": "PrimalItemArmor_RiotHelmet_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt",
-                        "UUID": "ac1a9096-df5e-4148-9d84-a30f17564f3c",
-                        "Class": "PrimalItemArmor_RiotShirt_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -224,7 +149,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
@@ -235,9 +163,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield",
-                        "UUID": "f40512df-c37f-4fcc-af62-bc805cac2736",
-                        "Class": "PrimalItemArmor_TransparentRiotShield_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotBoots.PrimalItemArmor_RiotBoots",
+                        "UUID": "0f32bc56-825f-41db-b391-ee2dbf5ceb66",
+                        "Class": "PrimalItemArmor_RiotBoots_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
@@ -251,7 +179,100 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotGloves.PrimalItemArmor_RiotGloves",
+                        "UUID": "bba4a91a-80e9-499a-9fb9-824c82212d90",
+                        "Class": "PrimalItemArmor_RiotGloves_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt",
+                        "UUID": "ac1a9096-df5e-4148-9d84-a30f17564f3c",
+                        "Class": "PrimalItemArmor_RiotShirt_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotHelmet.PrimalItemArmor_RiotHelmet",
+                        "UUID": "de23cf5e-c8d0-4de6-8f3f-eb05d40ea91d",
+                        "Class": "PrimalItemArmor_RiotHelmet_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -262,8 +283,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotGloves.PrimalItemArmor_RiotGloves",
-                    "Class": "PrimalItemArmor_RiotGloves_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield",
+                    "Class": "PrimalItemArmor_TransparentRiotShield_C",
                     "Weight": 1.0
                 }
             ],
@@ -273,27 +294,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotBoots.PrimalItemArmor_RiotBoots",
-                    "Class": "PrimalItemArmor_RiotBoots_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -313,47 +317,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotHelmet.PrimalItemArmor_RiotHelmet",
-                    "Class": "PrimalItemArmor_RiotHelmet_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt",
-                    "Class": "PrimalItemArmor_RiotShirt_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -398,7 +365,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
@@ -407,8 +377,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield",
-                    "Class": "PrimalItemArmor_TransparentRiotShield_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotBoots.PrimalItemArmor_RiotBoots",
+                    "Class": "PrimalItemArmor_RiotBoots_C",
                     "Weight": 1.0
                 }
             ],
@@ -418,7 +388,79 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotGloves.PrimalItemArmor_RiotGloves",
+                    "Class": "PrimalItemArmor_RiotGloves_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt",
+                    "Class": "PrimalItemArmor_RiotShirt_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotHelmet.PrimalItemArmor_RiotHelmet",
+                    "Class": "PrimalItemArmor_RiotHelmet_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true

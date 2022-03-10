@@ -10,7 +10,7 @@ if (empty($_GET['tag'])) {
 
 $tag = $_GET['tag'];
 $tag_human = ucwords(str_replace('_', ' ', $tag));
-$objects = BeaconBlueprint::GetWithTag($tag, BeaconCommon::MinVersion());
+$objects = \Ark\Blueprint::GetWithTag($tag, BeaconCommon::MinVersion());
 if (count($objects) == 0) {
 	echo '<h1>No Objects Tagged &quot;' . htmlentities($tag_human) . '&quot;</h1>';
 	echo '<p>Sorry</p>';

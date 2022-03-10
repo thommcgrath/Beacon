@@ -13,33 +13,6 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinGloves.PrimalItemArmor_ChitinGloves",
-                        "UUID": "de94b37b-e827-4dd3-b447-166c8007abfe",
-                        "Class": "PrimalItemArmor_ChitinGloves_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
                         "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinHelmet.PrimalItemArmor_ChitinHelmet",
                         "UUID": "3e007d0d-5b9f-4d08-af79-aa75b0d89f7f",
                         "Class": "PrimalItemArmor_ChitinHelmet_C",
@@ -56,61 +29,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinShirt.PrimalItemArmor_ChitinShirt",
-                        "UUID": "f8608f38-b6ca-49b0-af9c-11d43a846fe1",
-                        "Class": "PrimalItemArmor_ChitinShirt_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinBoots.PrimalItemArmor_ChitinBoots",
-                        "UUID": "4b0152fb-777f-4eaa-a9e2-3e0bf5d2a644",
-                        "Class": "PrimalItemArmor_ChitinBoots_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -185,10 +107,43 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinBoots.PrimalItemArmor_ChitinBoots",
+                        "UUID": "4b0152fb-777f-4eaa-a9e2-3e0bf5d2a644",
+                        "Class": "PrimalItemArmor_ChitinBoots_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
         },
         {
             "ChanceToBeBlueprintOverride": 0.0,
@@ -212,7 +167,70 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinShirt.PrimalItemArmor_ChitinShirt",
+                        "UUID": "f8608f38-b6ca-49b0-af9c-11d43a846fe1",
+                        "Class": "PrimalItemArmor_ChitinShirt_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinGloves.PrimalItemArmor_ChitinGloves",
+                        "UUID": "de94b37b-e827-4dd3-b447-166c8007abfe",
+                        "Class": "PrimalItemArmor_ChitinGloves_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -223,26 +241,6 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinGloves.PrimalItemArmor_ChitinGloves",
-                    "Class": "PrimalItemArmor_ChitinGloves_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
                     "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinHelmet.PrimalItemArmor_ChitinHelmet",
                     "Class": "PrimalItemArmor_ChitinHelmet_C",
                     "Weight": 1.0
@@ -254,47 +252,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinShirt.PrimalItemArmor_ChitinShirt",
-                    "Class": "PrimalItemArmor_ChitinShirt_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": false,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinBoots.PrimalItemArmor_ChitinBoots",
-                    "Class": "PrimalItemArmor_ChitinBoots_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier3",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true
@@ -334,10 +295,36 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinBoots.PrimalItemArmor_ChitinBoots",
+                    "Class": "PrimalItemArmor_ChitinBoots_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
         },
         {
             "ChanceToBeBlueprintOverride": 0.0,
@@ -354,7 +341,56 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 1023,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinShirt.PrimalItemArmor_ChitinShirt",
+                    "Class": "PrimalItemArmor_ChitinShirt_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": false,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinGloves.PrimalItemArmor_ChitinGloves",
+                    "Class": "PrimalItemArmor_ChitinGloves_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier3",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 2047,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": true

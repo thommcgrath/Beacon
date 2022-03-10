@@ -7,23 +7,23 @@ if (empty($_REQUEST['document_id'])) {
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
-$document_id = $_REQUEST['document_id'];
+$project_id = $_REQUEST['document_id'];
 $search_keys = array(
 	'public' => true,
-	'document_id' => $document_id
+	'document_id' => $project_id
 );
 
-$documents = BeaconDocument::Search($search_keys);
-if (count($documents) != 1) {
+$projects = \Ark\Project::Search($search_keys);
+if (count($projects) != 1) {
 	http_response_code(404);
 	BeaconTemplate::SetTitle('Document Not Found');
 	echo '<h1>Document not found</h1><p><a href="/browse/">Browse community documents</a></p>';
 	exit;
 }
 
-$document = $documents[0];
+$project = $projects[0];
 
-$generator = new BeaconGenerator($document);
+$generator = new \Ark\Generator($project);
 if (array_key_exists('quality_scale', $_REQUEST)) {
 	$generator->SetQualityScale(floatval($_REQUEST['quality_scale']));
 }

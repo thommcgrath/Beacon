@@ -36,7 +36,7 @@ default:
 }
 
 $info = new finfo(FILEINFO_MIME_TYPE);
-if ($info->file($_FILES['file']['tmp_name']) != 'text/plain') {
+if ($info->file($_FILES['file']['tmp_name']) != 'application/json') {
 	ExitWithError(400, 'Wrong file content');
 }
 

@@ -8,411 +8,6 @@
     "Max": 6,
     "ItemSets": [
         {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
-                        "UUID": "b461fce9-666c-4801-b13f-6155dc603b60",
-                        "Class": "PrimalItemStructure_AdobeFrameGate_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
-                        "UUID": "6190df29-716d-4623-8d9c-e1b9cbbb7041",
-                        "Class": "PrimalItemStructure_AdobeFloor_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
-                        "UUID": "01fd42d8-2847-4234-8de0-e6c1dc4d0e4d",
-                        "Class": "PrimalItemStructure_AdobeRoof_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
-                        "UUID": "e3d4782c-747f-4733-bd0e-121cb7a6b478",
-                        "Class": "PrimalItemStructure_AdobeGateframe_Large_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
-                        "UUID": "20cb64ab-bf6e-404d-b9ee-00c9cc1d3398",
-                        "Class": "PrimalItemStructure_AdobeRamp_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
-                        "UUID": "7098f99d-7247-4437-81bf-981496ce8848",
-                        "Class": "PrimalItemStructure_AdobeRailing_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 20,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
-                        "UUID": "0f24d807-59e7-4b8c-b7eb-0df63f66215e",
-                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 2,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
-                        "UUID": "bf6fe1e9-4f4c-4646-8c9d-1f2823500059",
-                        "Class": "PrimalItemStructure_AdobePillar_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
-                        "UUID": "3d95abe5-04bd-4a4c-8566-19ce190c25df",
-                        "Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
-                        "UUID": "069e3f2f-4874-4b28-ada7-19328e5d4fc5",
-                        "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 2,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
-                        "UUID": "3eff5487-e40a-40ec-8e75-18407ff771c4",
-                        "Class": "PrimalItemStructure_AdobeWindow_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
-                        "UUID": "f355f9b4-06f3-4aa6-8aa1-a55635adacfc",
-                        "Class": "PrimalItemStructure_AdobeDoor_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 2,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
-                        "UUID": "c5b5114e-ef36-408e-8c80-8d59c2b18ad6",
-                        "Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
-                        "UUID": "9d5ebcac-a6df-43cf-9e0f-7104f8671b4c",
-                        "Class": "PrimalItemStructure_AdobeWall_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 32,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
-                        "UUID": "f3503733-b0ba-4f88-befd-c17b24982170",
-                        "Class": "PrimalItemStructure_AdobeFenceFoundation_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
             "ChanceToBeBlueprintOverride": 1.0,
             "Items": [
                 {
@@ -710,8 +305,11 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 1354,
+            "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
         },
@@ -721,9 +319,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
-                        "UUID": "d056b3d7-6314-4de7-a472-5d6b34c04a8f",
-                        "Class": "PrimalItemStructure_AdobeGateDoor_C",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
+                        "UUID": "01fd42d8-2847-4234-8de0-e6c1dc4d0e4d",
+                        "Class": "PrimalItemStructure_AdobeRoof_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
                         "Version": 1
@@ -734,10 +332,13 @@
             "MinQuality": "Tier1",
             "MaxQuality": "Tier1",
             "MinQuantity": 1,
-            "MaxQuantity": 1,
+            "MaxQuantity": 16,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -748,9 +349,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
-                        "UUID": "d2ff5bc5-c84b-4065-99a1-a6bd490d5478",
-                        "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
+                        "UUID": "f355f9b4-06f3-4aa6-8aa1-a55635adacfc",
+                        "Class": "PrimalItemStructure_AdobeDoor_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
                         "Version": 1
@@ -761,64 +362,13 @@
             "MinQuality": "Tier1",
             "MaxQuality": "Tier1",
             "MinQuantity": 1,
-            "MaxQuantity": 4,
+            "MaxQuantity": 2,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
-                        "UUID": "01f2168c-e493-4326-b292-a38c6b2c5323",
-                        "Class": "PrimalItemStructure_AdobeLader_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 6,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
-                        "UUID": "30f91f23-f521-4717-9725-b4f0c0c362aa",
-                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 2,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -845,7 +395,100 @@
             "MaxQuantity": 16,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
+                        "UUID": "01f2168c-e493-4326-b292-a38c6b2c5323",
+                        "Class": "PrimalItemStructure_AdobeLader_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 6,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
+                        "UUID": "c5b5114e-ef36-408e-8c80-8d59c2b18ad6",
+                        "Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
+                        "UUID": "b461fce9-666c-4801-b13f-6155dc603b60",
+                        "Class": "PrimalItemStructure_AdobeFrameGate_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -872,7 +515,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -883,36 +529,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
-                        "UUID": "bbf7c70d-9c52-431e-894b-57199135600c",
-                        "Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
-                        "UUID": "f47bc7c7-6c9e-476b-9684-b6b6858bf617",
-                        "Class": "PrimalItemStructure_AdobeTrapdoor_C",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
+                        "UUID": "6190df29-716d-4623-8d9c-e1b9cbbb7041",
+                        "Class": "PrimalItemStructure_AdobeFloor_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
                         "Version": 1
@@ -926,7 +545,40 @@
             "MaxQuantity": 16,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
+                        "UUID": "069e3f2f-4874-4b28-ada7-19328e5d4fc5",
+                        "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 2,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -953,7 +605,430 @@
             "MaxQuantity": 2,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
+                        "UUID": "bbf7c70d-9c52-431e-894b-57199135600c",
+                        "Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
+                        "UUID": "d056b3d7-6314-4de7-a472-5d6b34c04a8f",
+                        "Class": "PrimalItemStructure_AdobeGateDoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
+                        "UUID": "9d5ebcac-a6df-43cf-9e0f-7104f8671b4c",
+                        "Class": "PrimalItemStructure_AdobeWall_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 32,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
+                        "UUID": "e3d4782c-747f-4733-bd0e-121cb7a6b478",
+                        "Class": "PrimalItemStructure_AdobeGateframe_Large_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
+                        "UUID": "7098f99d-7247-4437-81bf-981496ce8848",
+                        "Class": "PrimalItemStructure_AdobeRailing_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 20,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
+                        "UUID": "30f91f23-f521-4717-9725-b4f0c0c362aa",
+                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 2,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
+                        "UUID": "3d95abe5-04bd-4a4c-8566-19ce190c25df",
+                        "Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
+                        "UUID": "bf6fe1e9-4f4c-4646-8c9d-1f2823500059",
+                        "Class": "PrimalItemStructure_AdobePillar_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
+                        "UUID": "d2ff5bc5-c84b-4065-99a1-a6bd490d5478",
+                        "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
+                        "UUID": "3eff5487-e40a-40ec-8e75-18407ff771c4",
+                        "Class": "PrimalItemStructure_AdobeWindow_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
+                        "UUID": "0f24d807-59e7-4b8c-b7eb-0df63f66215e",
+                        "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 2,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
+                        "UUID": "20cb64ab-bf6e-404d-b9ee-00c9cc1d3398",
+                        "Class": "PrimalItemStructure_AdobeRamp_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
+                        "UUID": "f3503733-b0ba-4f88-befd-c17b24982170",
+                        "Class": "PrimalItemStructure_AdobeFenceFoundation_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
+                        "UUID": "f47bc7c7-6c9e-476b-9684-b6b6858bf617",
+                        "Class": "PrimalItemStructure_AdobeTrapdoor_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -961,306 +1036,6 @@
     ],
     "Entries": [
         {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
-                    "Class": "PrimalItemStructure_AdobeFrameGate_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
-                    "Class": "PrimalItemStructure_AdobeFloor_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
-                    "Class": "PrimalItemStructure_AdobeRoof_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
-                    "Class": "PrimalItemStructure_AdobeGateframe_Large_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
-                    "Class": "PrimalItemStructure_AdobeRamp_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
-                    "Class": "PrimalItemStructure_AdobeRailing_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 20,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
-                    "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 2,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
-                    "Class": "PrimalItemStructure_AdobePillar_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
-                    "Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
-                    "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 2,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
-                    "Class": "PrimalItemStructure_AdobeWindow_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
-                    "Class": "PrimalItemStructure_AdobeDoor_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 2,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
-                    "Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
-                    "Class": "PrimalItemStructure_AdobeWall_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 32,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
-                    "Class": "PrimalItemStructure_AdobeFenceFoundation_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 16,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
             "ChanceToBeBlueprintOverride": 1.0,
             "Items": [
                 {
@@ -1390,8 +1165,11 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": false,
+            "Availability": 1354,
+            "RespectQualityModifier": true,
             "RespectQuantityMultiplier": false,
             "RespectBlueprintMultiplier": false
         },
@@ -1399,18 +1177,21 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
-                    "Class": "PrimalItemStructure_AdobeGateDoor_C",
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
+                    "Class": "PrimalItemStructure_AdobeRoof_C",
                     "Weight": 1.0
                 }
             ],
             "MinQuality": "Tier1",
             "MaxQuality": "Tier1",
             "MinQuantity": 1,
-            "MaxQuantity": 1,
+            "MaxQuantity": 16,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -1419,58 +1200,21 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
-                    "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
+                    "Class": "PrimalItemStructure_AdobeDoor_C",
                     "Weight": 1.0
                 }
             ],
             "MinQuality": "Tier1",
             "MaxQuality": "Tier1",
             "MinQuantity": 1,
-            "MaxQuantity": 4,
+            "MaxQuantity": 2,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
-                    "Class": "PrimalItemStructure_AdobeLader_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 6,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
-                    "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 2,
-            "MaxQuantity": 4,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -1490,7 +1234,79 @@
             "MaxQuantity": 16,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
+                    "Class": "PrimalItemStructure_AdobeLader_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 6,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
+                    "Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
+                    "Class": "PrimalItemStructure_AdobeFrameGate_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -1510,7 +1326,10 @@
             "MaxQuantity": 1,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -1519,28 +1338,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
-                    "Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
-                    "Weight": 1.0
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 1000.0,
-            "EntryWeight": 1.0,
-            "Availability": 330,
-            "RespectQualityModifier": false,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
-                    "Class": "PrimalItemStructure_AdobeTrapdoor_C",
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
+                    "Class": "PrimalItemStructure_AdobeFloor_C",
                     "Weight": 1.0
                 }
             ],
@@ -1550,7 +1349,33 @@
             "MaxQuantity": 16,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
+                    "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 2,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -1570,7 +1395,332 @@
             "MaxQuantity": 2,
             "Weight": 1000.0,
             "EntryWeight": 1.0,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
+                    "Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
+                    "Class": "PrimalItemStructure_AdobeGateDoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
+                    "Class": "PrimalItemStructure_AdobeWall_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 32,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
+                    "Class": "PrimalItemStructure_AdobeGateframe_Large_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
+                    "Class": "PrimalItemStructure_AdobeRailing_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 20,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
+                    "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 2,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
+                    "Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
+                    "Class": "PrimalItemStructure_AdobePillar_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
+                    "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
+                    "Class": "PrimalItemStructure_AdobeWindow_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
+                    "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 2,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
+                    "Class": "PrimalItemStructure_AdobeRamp_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 4,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
+                    "Class": "PrimalItemStructure_AdobeFenceFoundation_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
+            "RespectQualityModifier": false,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
+                    "Class": "PrimalItemStructure_AdobeTrapdoor_C",
+                    "Weight": 1.0
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 16,
+            "Weight": 1000.0,
+            "EntryWeight": 1.0,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1354,
             "RespectQualityModifier": false,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true

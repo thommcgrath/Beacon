@@ -5,7 +5,7 @@
 
 require(dirname(__FILE__) . '/loader.php');
 
-$manager = new BeaconObjectManager('BeaconEngram');
+$manager = new BeaconObjectManager('\Ark\Engram');
 $manager->HandleAPIRequest();
 
 ?>

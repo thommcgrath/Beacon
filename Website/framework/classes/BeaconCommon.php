@@ -65,7 +65,7 @@ abstract class BeaconCommon {
 	
 	public static function NewestUpdateTimestamp(int $build = 99999999) {
 		$database = static::Database();
-		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables) UNION (SELECT MAX(last_update) AS stamp FROM mods WHERE min_version <= $1 AND confirmed = TRUE AND include_in_deltas = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM maps INNER JOIN mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(last_update) AS stamp FROM events) UNION (SELECT MAX(last_update) AS stamp FROM colors) UNION (SELECT MAX(last_update) AS stamp FROM color_sets)) AS merged;', $build);
+		$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE GREATEST(objects.min_version, mods.min_version) <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM ark.deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM ark.game_variables) UNION (SELECT MAX(last_update) AS stamp FROM ark.mods WHERE min_version <= $1 AND confirmed = TRUE AND include_in_deltas = TRUE) UNION (SELECT MAX(maps.last_update) AS stamp FROM ark.maps INNER JOIN ark.mods ON (maps.mod_id = mods.mod_id) WHERE mods.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(last_update) AS stamp FROM ark.events) UNION (SELECT MAX(last_update) AS stamp FROM ark.colors) UNION (SELECT MAX(last_update) AS stamp FROM ark.color_sets)) AS merged;', $build);
 		return new DateTime($results->Field('stamp'));
 	}
 	
@@ -301,11 +301,11 @@ abstract class BeaconCommon {
 		
 		$database = static::Database();
 		if (static::IsUUID($object_id)) {
-			$results = $database->Query('SELECT objects.object_id, objects.tableoid::regclass AS tablename FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.object_id = $1 AND mods.confirmed = TRUE;', $object_id);
+			$results = $database->Query('SELECT objects.object_id, objects.tableoid::regclass AS tablename FROM ark.objects INNER JOIN ark.mods ON (objects.mod_id = mods.mod_id) WHERE objects.object_id = $1 AND mods.confirmed = TRUE;', $object_id);
 		} elseif ($workshop_id > 0) {
-			$results = $database->Query('SELECT blueprints.object_id, blueprints.tableoid::regclass AS tablename FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE blueprints.class_string = $1 AND mods.confirmed = TRUE AND ABS(mods.workshop_id) = $2 LIMIT 1;', $object_id, $workshop_id);
+			$results = $database->Query('SELECT blueprints.object_id, blueprints.tableoid::regclass AS tablename FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE blueprints.class_string = $1 AND mods.confirmed = TRUE AND ABS(mods.workshop_id) = $2 LIMIT 1;', $object_id, $workshop_id);
 		} else {
-			$results = $database->Query('SELECT blueprints.object_id, blueprints.tableoid::regclass AS tablename FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE blueprints.class_string = $1 AND mods.confirmed = TRUE;', $object_id);
+			$results = $database->Query('SELECT blueprints.object_id, blueprints.tableoid::regclass AS tablename FROM ark.blueprints INNER JOIN ark.mods ON (blueprints.mod_id = mods.mod_id) WHERE blueprints.class_string = $1 AND mods.confirmed = TRUE;', $object_id);
 		}
 		if ($results->RecordCount() == 0) {
 			return null;
@@ -318,23 +318,23 @@ abstract class BeaconCommon {
 			$id = $results->Field('object_id');
 			$tablename = $results->Field('tablename');
 			switch ($tablename) {
-			case 'creatures':
-				$obj = BeaconCreature::GetByObjectID($id, $build_number);
+			case 'ark.creatures':
+				$obj = \Ark\Creature::GetByObjectID($id, $build_number);
 				break;
-			case 'diets':
-				$obj = BeaconDiet::GetByObjectID($id, $build_number);
+			case 'ark.diets':
+				$obj = \Ark\Diet::GetByObjectID($id, $build_number);
 				break;
-			case 'engrams':
-				$obj = BeaconEngram::GetByObjectID($id, $build_number);
+			case 'ark.engrams':
+				$obj = \Ark\Engram::GetByObjectID($id, $build_number);
 				break;
-			case 'loot_sources':
-				$obj = BeaconLootSource::GetByObjectID($id, $build_number);
+			case 'ark.loot_sources':
+				$obj = \Ark\LootSource::GetByObjectID($id, $build_number);
 				break;
-			case 'presets':
-				$obj = BeaconPreset::GetByObjectID($id, $build_number);
+			case 'ark.presets':
+				$obj = \Ark\Preset::GetByObjectID($id, $build_number);
 				break;
-			case 'spawn_points':
-				$obj = BeaconSpawnPoint::GetByObjectID($id, $build_number);
+			case 'ark.spawn_points':
+				$obj = \Ark\SpawnPoint::GetByObjectID($id, $build_number);
 				break;
 			default:
 				$obj = null;
@@ -353,7 +353,7 @@ abstract class BeaconCommon {
 			return $objects[0];
 		} else {
 			foreach ($objects as $obj) {
-				if ($obj instanceof BeaconBlueprint) {
+				if ($obj instanceof \Ark\Blueprint) {
 					BeaconCache::Set($obj->ModWorkshopID() . '|' . $obj->ClassString(), $obj, 3600);
 				}
 			}
@@ -709,6 +709,28 @@ abstract class BeaconCommon {
 		} else {
 			return date('Y-m-d H:i:sO', $results->Field('published'));
 		}
+	}
+	
+	public static function CreateUniqueSort(string $sort, array &$counters): string {
+		if (array_key_exists($sort, $counters)) {
+			$counter = $counters[$sort] + 1;
+		} else {
+			$counter = 0;
+		}
+		$counters[$sort] = $counter;
+		return $sort . ':' . number_format($counter, 0, '.', '');
+	}
+	
+	public static function SortInteger(int $value): string {
+		return str_pad(number_format($value, 0, '', ''), 3, '0', STR_PAD_LEFT);
+	}
+	
+	public static function SortDouble(float $value): string {
+		return str_pad(number_format($value, 6, '.', ''), 10, '0', STR_PAD_LEFT);
+	}
+	
+	public static function SortString(string $value): string {
+		return strtolower($value);
 	}
 }
 

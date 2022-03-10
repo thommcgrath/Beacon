@@ -14,7 +14,7 @@ $search_keys = array(
 );
 	
 
-$documents = BeaconDocument::Search($search_keys);
+$documents = \Ark\Document::Search($search_keys);
 if (count($documents) != 1) {
 	http_response_code(404);
 	BeaconTemplate::SetTitle('Document Not Found');
@@ -36,7 +36,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 $author_id = $document->UserID();
 $author = BeaconUser::GetByUserID($author_id);
 $author_name = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
-$maps = BeaconMaps::Masks($document->MapMask());
+$maps = \Ark\Maps::Masks($document->MapMask());
 
 ?><h1><?php echo htmlentities($document->Name()); ?><br><span class="subtitle">By <?php echo htmlentities($author_name); ?><span class="user-suffix">#<?php echo htmlentities($author->Suffix()); ?></span></span></h1>
 <h3>Description</h3>
@@ -62,7 +62,7 @@ if (count($map_names) >= 3) {
 		
 	$database = BeaconCommon::Database();
 	$mod_ids = $document->RequiredMods(false);
-	$results = $database->Query('SELECT workshop_id, name FROM mods WHERE array_position($1, mod_id) IS NOT NULL;', $mod_ids);
+	$results = $database->Query('SELECT workshop_id, name FROM ark.mods WHERE array_position($1, mod_id) IS NOT NULL;', $mod_ids);
 	$unknown_mods = false;
 	$mod_links = array();
 	while (!$results->EOF()) {

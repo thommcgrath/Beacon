@@ -4,25 +4,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function AddBlueprintToDatabase(Category As String, BlueprintData As Dictionary, ExtraValues As Dictionary = Nil) As Boolean
 		  Try
-		    Var ObjectID As v4UUID = BlueprintData.Value("id").StringValue
+		    Var ObjectID As String = BlueprintData.Value("id").StringValue
 		    Var Label As String = BlueprintData.Value("label")
 		    Var AlternateLabel As Variant = BlueprintData.Lookup("alternate_label", Nil)
-		    Var ModID As v4UUID = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue
+		    Var ModID As String = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue
 		    Var Availability As Integer = BlueprintData.Value("availability").IntegerValue
 		    Var Path As String = BlueprintData.Value("path").StringValue
 		    Var ClassString As String = BlueprintData.Value("class_string").StringValue
-		    Var TagString, TagStringForSearching As String
+		    Var Tags() As String
 		    Try
-		      Var Tags() As String
 		      Var Temp() As Variant = BlueprintData.Value("tags")
 		      For Each Tag As String In Temp
-		        Tags.Add(Tag)
+		        Tags.Add(Tag.Lowercase)
 		      Next
-		      TagString = Tags.Join(",")
-		      Tags.AddAt(0, "object")
-		      TagStringForSearching = Tags.Join(",")
+		      Tags.Sort
 		    Catch Err As RuntimeException
-		      
 		    End Try
 		    
 		    // Set the extra values first so our values take priority without
@@ -33,16 +29,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Columns.Value(Entry.Key) = Entry.Value
 		      Next
 		    End If
-		    Columns.Value("object_id") = ObjectID.StringValue
-		    Columns.Value("mod_id") = ModID.StringValue
+		    Columns.Value("object_id") = ObjectID
+		    Columns.Value("mod_id") = ModID
 		    Columns.Value("label") = Label
 		    Columns.Value("alternate_label") = AlternateLabel
 		    Columns.Value("availability") = Availability
 		    Columns.Value("path") = Path
 		    Columns.Value("class_string") = ClassString
-		    Columns.Value("tags") = TagString
+		    Columns.Value("tags") = Tags.Join(",")
 		    
-		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR path = ?2;", ObjectID.StringValue, Path)
+		    Var Results As RowSet = Self.SQLSelect("SELECT object_id, tags FROM " + Category + " WHERE object_id = ?1 OR path = ?2;", ObjectID, Path)
 		    If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		      Var Assignments() As String
 		      Var Values() As Variant
@@ -59,11 +55,27 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		      
 		      Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = ?3;", ObjectID.StringValue, TagStringForSearching, Category)
+		      
+		      If Results.Column("tags").StringValue <> Columns.Value("tags").StringValue Then
+		        Var TagRows As RowSet = Self.SQLSelect("SELECT tag FROM tags_" + Category + " WHERE object_id = ?1 ORDER BY tag;", ObjectID)
+		        Var CurrentTags() As String
+		        While TagRows.AfterLastRow = False
+		          CurrentTags.Add(TagRows.Column("tag").StringValue)
+		          TagRows.MoveToNextRow
+		        Wend
+		        
+		        Var TagsToAdd() As String = CurrentTags.NewMembers(Tags)
+		        Var TagsToRemove() As String = Tags.NewMembers(CurrentTags)
+		        For Each Tag As String In TagsToAdd
+		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		        Next Tag
+		        For Each Tag As String In TagsToRemove
+		          Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", ObjectID, Tag)
+		        Next Tag
+		      End If
 		    Else
 		      If Results.RowCount = 1 Then
 		        Self.SQLExecute("DELETE FROM " + Category + " WHERE object_id = ?1;", Results.Column("object_id").StringValue)
-		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = ?2;", Results.Column("object_id").StringValue, Category)
 		      End If
 		      
 		      Var ColumnNames(), Placeholders() As String
@@ -77,7 +89,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		      
 		      Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, TagStringForSearching, Category)
+		      For Each Tag As String In Tags
+		        Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		      Next Tag
 		    End If
 		    
 		    Return True
@@ -158,18 +172,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function AllTags(Category As String = "") As String()
 		  Var Results As RowSet
-		  If Category <> "" Then
-		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = ?1 AND tags != '';", Category)
+		  If Category.IsEmpty = False Then
+		    Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags_" + Category + " ORDER BY tag;")
 		  Else
-		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
+		    Results = Self.SQLSelect("SELECT DISTINCT tag FROM tags ORDER BY tag;")
 		  End If
 		  Var Dict As New Dictionary
 		  While Not Results.AfterLastRow
-		    Var Tags() As String = Results.Column("tags").StringValue.Split(",")
+		    Var Tags() As String = Results.Column("tag").StringValue.Split(",")
 		    For Each Tag As String In Tags
-		      If Tag <> "object" Then
-		        Dict.Value(Tag) = True
-		      End If
+		      Dict.Value(Tag) = True
 		    Next
 		    Results.MoveToNextRow
 		  Wend
@@ -259,12 +271,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  // When changing these, don't forget to update the DROP INDEX statements in ImportInner.
 		  
 		  Var Categories() As String = Beacon.Categories
+		  Var TagUnions() As String
 		  For Each Category As String In Categories
 		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_uidx ON " + Category + "(mod_id, path);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_path_idx ON " + Category + "(path);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_mod_id_idx ON " + Category + "(mod_id);")
 		    Self.SQLExecute("CREATE INDEX " + Category + "_label_idx ON " + Category + "(label);")
+		    Self.SQLExecute("CREATE INDEX tags_" + Category + "_object_id_idx ON tags_" + Category + "(object_id);")
+		    Self.SQLExecute("CREATE INDEX tags_" + Category + "_tag_idx ON tags_" + Category + "(tag);")
+		    TagUnions.Add("SELECT object_id, tag FROM tags_" + Category)
 		  Next
 		  
 		  Self.SQLExecute("CREATE INDEX maps_mod_id_idx ON maps(mod_id);")
@@ -285,14 +301,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE INDEX color_sets_label_idx ON color_sets(label);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX color_sets_class_string_uidx ON color_sets(class_string);")
 		  
-		  // For performance, rebuild the blueprints view too.
+		  // For performance, rebuild the views too.
 		  Self.SQLExecute("DROP VIEW IF EXISTS blueprints;")
 		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
 		  Var DeleteStatements() As String
 		  For Each Category As String In Categories
 		    DeleteStatements.Add("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
-		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
+		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " END;")
+		  
+		  Self.SQLExecute("DROP VIEW IF EXISTS tags;")
+		  Self.SQLExecute("CREATE VIEW tags AS " + TagUnions.Join(" UNION ") + ";")
 		End Sub
 	#tag EndMethod
 
@@ -301,36 +320,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Var ModsOnDelete As String
-		  #if DebugBuild
-		    ModsOnDelete = "RESTRICT"
-		  #else
-		    ModsOnDelete = "CASCADE"
-		  #endif
-		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, name TEXT COLLATE NOCASE NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL, workshop_id INTEGER NOT NULL UNIQUE, is_user_mod BOOLEAN NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT COLLATE NOCASE NOT NULL, sort_order INTEGER NOT NULL, icon TEXT COLLATE NOCASE NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}', tags TEXT COLLATE NOCASE NOT NULL DEFAULT '');")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', entry_string TEXT COLLATE NOCASE, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT COLLATE NOCASE NOT NULL, object_id TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, contents TEXT COLLATE NOCASE NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL, advanced_pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, pattern TEXT NOT NULL, advanced_pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT COLLATE NOCASE NOT NULL, body TEXT COLLATE NOCASE NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE news (uuid TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, title TEXT NOT NULL, detail TEXT, url TEXT, min_version INTEGER, max_version INTEGER, moment TEXT NOT NULL, min_os_version TEXT);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
-		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, availability INTEGER NOT NULL, path TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, alternate_label TEXT COLLATE NOCASE, tags TEXT COLLATE NOCASE NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT COLLATE NOCASE NOT NULL, header TEXT COLLATE NOCASE NOT NULL, key TEXT COLLATE NOCASE NOT NULL, value_type TEXT COLLATE NOCASE NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT COLLATE NOCASE, nitrado_format TEXT COLLATE NOCASE, nitrado_deploy_style TEXT COLLATE NOCASE, ui_group TEXT COLLATE NOCASE, custom_sort TEXT COLLATE NOCASE, constraints TEXT);")
+		  Self.SQLExecute("CREATE TABLE maps (object_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, mod_id TEXT COLLATE NOCASE NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT COLLATE NOCASE NOT NULL, ark_identifier TEXT COLLATE NOCASE NOT NULL UNIQUE, difficulty_scale REAL NOT NULL, official BOOLEAN NOT NULL, mask BIGINT NOT NULL UNIQUE, sort INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE events (event_id TEXT COLLATE NOCASE NOT NULL PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, ark_code TEXT NOT NULL, rates TEXT NOT NULL, colors TEXT NOT NULL, engrams TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE colors (color_id INTEGER NOT NULL PRIMARY KEY, color_uuid TEXT COLLATE NOCASE NOT NULL, label TEXT COLLATE NOCASE NOT NULL, hex_value TEXT COLLATE NOCASE NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE color_sets (color_set_id TEXT COLLATE NOCASE PRIMARY KEY, label TEXT COLLATE NOCASE NOT NULL, class_string TEXT COLLATE NOCASE NOT NULL);")
 		  
-		  Self.BuildIndexes()
+		  Var Categories() As String = Beacon.Categories
+		  For Each Category As String In Categories
+		    Self.SQLExecute("CREATE TABLE tags_" + Category + " (object_id TEXT COLLATE NOCASE NOT NULL REFERENCES " + Category + "(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, tag TEXT COLLATE NOCASE NOT NULL, PRIMARY KEY (object_id, tag));")
+		  Next Category
 		  
-		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
+		  Self.BuildIndexes()
 		  
 		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled, workshop_id, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Beacon.UserModID, Beacon.UserModName, True, True, Beacon.UserModWorkshopID, True)
 		  Self.Commit()
@@ -1620,13 +1635,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		            Mods.Append(Blueprint.ModID)
 		          End If
 		        ElseIf Dict.HasAllKeys("mod_id", "name", "workshop_id") Then
+		          Self.BeginTransaction()
 		          Self.SQLExecute("INSERT OR IGNORE INTO mods (mod_id, name, workshop_id, console_safe, default_enabled, is_user_mod) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Dict.Value("mod_id").StringValue, Dict.Value("name").StringValue, Dict.Value("workshop_id").UInt32Value, False, False, True)
+		          Self.Commit()
 		        End If
 		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName)
 		      End Try
 		    Next
 		    
-		    Call Self.SaveBlueprints(Unpacked, Beacon.Data.SearchForBlueprints("", Mods, ""), Nil)
+		    // BlueprintsToDelete will run first, so this first clears out the additions before adding the unpacked blueprints
+		    Var Errors As New Dictionary
+		    If Self.SaveBlueprints(Unpacked, Self.SearchForBlueprints("", Mods, ""), Errors) = False Then
+		      For Each Entry As DictionaryEntry In Errors
+		        Var Blueprint As Beacon.Blueprint = Entry.Key
+		        Var Err As RuntimeException = Entry.Value
+		        App.Log(Err, CurrentMethodName, Blueprint.Path)
+		      Next Entry
+		    End If
 		  Else
 		    Self.BeginTransaction()
 		    Self.DeleteDataForMod(Beacon.UserModID)
@@ -1640,15 +1666,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Continue
 		        End If
 		        
-		        Var ObjectID As v4UUID = Dict.Value("object_id").StringValue
+		        Var ObjectID As String = Dict.Value("object_id").StringValue
 		        Var ClassString As String = Dict.Value("class_string")
 		        Var Label As String = Dict.Value("label")         
 		        Var Availability As UInt64 = Dict.Value("availability")
-		        Var Tags As String = Dict.Value("tags")
-		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Beacon.UserModID)      
-		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
+		        Var Tags() As String = Dict.Value("tags").StringValue.Split(",")
+		        Var TagObjectIdx As Integer = Tags.IndexOf("object")
+		        If TagObjectIdx > -1 Then
+		          Tags.RemoveAt(TagObjectIdx)
+		        End If
+		        Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, Tags, Beacon.UserModID)      
+		        For Each Tag As String In Tags
+		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", ObjectID, Tag)
+		        Next Tag
 		        EngramsUpdated = True
 		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName)
 		      End Try
 		    Next
 		    Self.Commit()
@@ -1767,6 +1800,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_class_string_idx;")
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_mod_id_idx;")
 		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_label_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS tags_" + Category + "_object_id_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS tags_" + Category + "_tag_idx;")
 		    Next
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_sort_order_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_label_idx;")
@@ -2226,13 +2261,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Duration As Double = (System.Microseconds - StartTime) / 1000000
 		    System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms import data")
 		    
-		    // Force analyze
-		    StartTime = System.Microseconds
-		    Self.SQLExecute("ANALYZE;")
-		    Self.SQLExecute("VACUUM;")
-		    Duration = (System.Microseconds - StartTime) / 1000000
-		    System.DebugLog("Took " + Duration.ToString(Locale.Raw, "0.00") + "ms to optimize")
-		    
 		    If ReloadPresets Then
 		      StartTime = System.Microseconds
 		      Self.LoadPresets()
@@ -2514,6 +2542,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  If Success Then
+		    Self.SQLExecute("ANALYZE;")
+		    Self.SQLExecute("VACUUM;")
+		    App.Log("Database optimized")
+		    
 		    NotificationKit.Post(Self.Notification_ImportSuccess, SyncNew)
 		  Else
 		    NotificationKit.Post(Self.Notification_ImportFailed, SyncNew)
@@ -3090,14 +3122,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  For Each Blueprint As Beacon.Blueprint In BlueprintsToSave
 		    Var TransactionStarted As Boolean
 		    Try
-		      Var UpdateObjectID As String
-		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id IN (SELECT mod_id FROM mods WHERE is_user_mod = 1) AS is_user_blueprint FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
+		      Var UpdateObjectID, CurrentTagString As String
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id IN (SELECT mod_id FROM mods WHERE is_user_mod = 1) AS is_user_blueprint, tags FROM blueprints WHERE object_id = ?1;", Blueprint.ObjectID)
 		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
 		        If Results.Column("is_user_blueprint").BooleanValue = False Then
 		          Continue
 		        End If
 		        UpdateObjectID = Results.Column("object_id").StringValue
+		        CurrentTagString = Results.Column("tags").StringValue
 		      ElseIf Results.RowCount > 1 Then
 		        // What the hell?
 		        Continue
@@ -3192,7 +3225,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, UpdateObjectID, Blueprint.TagString)
+		        
+		        If Columns.Value("tags").StringValue <> CurrentTagString Then
+		          Var DesiredTags() As String = Blueprint.Tags
+		          Var CurrentTags() As String
+		          Var TagRows As RowSet = Self.SQLSelect("SELECT tag FROM tags_" + Category + " WHERE object_id = ?1;", UpdateObjectID)
+		          While TagRows.AfterLastRow = False
+		            CurrentTags.Add(TagRows.Column("tag").StringValue)
+		            TagRows.MoveToNextRow
+		          Wend
+		          Var TagsToAdd() As String = CurrentTags.NewMembers(DesiredTags)
+		          Var TagsToRemove() As String = DesiredTags.NewMembers(CurrentTags)
+		          For Each Tag As String In TagsToAdd
+		            Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", UpdateObjectID, Tag)
+		          Next Tag
+		          For Each Tag As String In TagsToRemove
+		            Self.SQLExecute("DELETE FROM tags_" + Category + " WHERE object_id = ?1 AND tag = ?2;", UpdateObjectID, Tag)
+		          Next Tag
+		        End If
 		      Else
 		        Var ColumnNames(), Placeholders() As String
 		        Var Values() As Variant
@@ -3205,7 +3255,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, Blueprint.ObjectID, Blueprint.TagString)
+		        
+		        Var Tags() As String = Blueprint.Tags
+		        For Each Tag As String In Tags
+		          Self.SQLExecute("INSERT INTO tags_" + Category + " (object_id, tag) VALUES (?1, ?2);", Blueprint.ObjectID, Tag)
+		        Next Tag
 		      End If
 		      Self.Commit()
 		      TransactionStarted = False
@@ -3316,11 +3370,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		      Clauses.Add("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
-		    If Tags <> "" Then
-		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
-		      Clauses.Add("searchable_tags.tags MATCH ?" + NextPlaceholder.ToString(Locale.Raw, "0"))
-		      Values.Value(NextPlaceholder) = Tags
-		      NextPlaceholder = NextPlaceholder + 1
+		    If Tags.IsEmpty = False Then
+		      Var RequiredTags(), ExcludedTags() As String
+		      TagPicker.ParseSpec(Tags, RequiredTags, ExcludedTags)
+		      Var ObjectTagIndex As Integer = RequiredTags.IndexOf("object")
+		      If ObjectTagIndex > -1 Then
+		        RequiredTags.RemoveAt(ObjectTagIndex)
+		      End If
+		      
+		      If RequiredTags.Count > 0 Or ExcludedTags.Count > 0 Then
+		        If RequiredTags.Count > 0 Then
+		          For Each Tag As String In RequiredTags
+		            Clauses.Add(Category + ".object_id IN (SELECT object_id FROM tags_" + Category + " WHERE tag = ?" + NextPlaceholder.ToString(Locale.Raw, "0") + ")")
+		            Values.Value(NextPlaceholder) = Tag
+		            NextPlaceholder = NextPlaceholder + 1
+		          Next Tag
+		        End If
+		        If ExcludedTags.Count > 0 Then
+		          Var TagPlaceholders() As String
+		          For Each Tag As String In ExcludedTags
+		            TagPlaceholders.Add("?" + NextPlaceholder.ToString(Locale.Raw, "0"))
+		            Values.Value(NextPlaceholder) = Tag
+		            NextPlaceholder = NextPlaceholder + 1
+		          Next Tag
+		          Clauses.Add(Category + ".object_id NOT IN (SELECT object_id FROM tags_" + Category + " WHERE tag IN (" + TagPlaceholders.Join(",") + "))")
+		        End If
+		      End If
 		    End If
 		    
 		    If ExtraClauses.LastIndex > -1 And ExtraClauses.LastIndex = ExtraValues.LastIndex Then
@@ -4118,7 +4193,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"23", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"24", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

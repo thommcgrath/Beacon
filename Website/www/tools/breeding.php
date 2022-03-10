@@ -122,7 +122,7 @@ BeaconTemplate::FinishStyles();
 			$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM updates;');
 			$min_version = $results->Field('newest_build');
 			
-			$creatures = BeaconCreature::GetAll($min_version);
+			$creatures = \Ark\Creature::GetAll($min_version);
 			foreach ($creatures as $creature) {
 				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
 					continue;

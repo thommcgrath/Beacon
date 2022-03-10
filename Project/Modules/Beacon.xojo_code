@@ -1112,6 +1112,22 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function NewMembers(Extends LeftMembers() As String, RightMembers() As String) As String()
+		  Var Dict As New Dictionary
+		  For Each Member As String In LeftMembers
+		    Dict.Value(Member) = 1
+		  Next Member
+		  Var Unique() As String
+		  For Each Member As String In RightMembers
+		    If Dict.HasKey(Member) = False Then
+		      Unique.Add(Member)
+		    End If
+		  Next Member
+		  Return Unique
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function NormalizeBlueprintPath(Path As String, FolderName As String) As String
 		  Path = Path.Trim

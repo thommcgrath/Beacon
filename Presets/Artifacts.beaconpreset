@@ -13,36 +13,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_01.PrimalItemArtifactSE_01",
-                        "UUID": "eddf3970-b0ad-4c53-8b83-d70ffe5f4afb",
-                        "Class": "PrimalItemArtifactSE_01_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 330,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_03.PrimalItemArtifact_03",
-                        "UUID": "9dbdbbbb-a1fc-442c-994a-f3a833cde049",
-                        "Class": "PrimalItemArtifact_03_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_02.PrimalItemArtifact_02",
+                        "UUID": "d31c76ec-1fa9-4065-812f-89d30e2a6d5a",
+                        "Class": "PrimalItemArtifact_02_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
@@ -56,7 +29,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -67,9 +43,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_08.PrimalItemArtifact_08",
-                        "UUID": "421a4240-f1cc-462e-99e0-1d26f5a07c2d",
-                        "Class": "PrimalItemArtifact_08_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_06.PrimalItemArtifact_06",
+                        "UUID": "1a66c824-70f4-4fc0-bf01-be1b2f9bf716",
+                        "Class": "PrimalItemArtifact_06_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
@@ -83,7 +59,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -110,7 +89,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -121,9 +103,249 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_ForestKaiju.PrimalItemArtifact_Extinction_ForestKaiju",
-                        "UUID": "87a5c38b-1ce3-4daa-bd73-47240b742cd8",
-                        "Class": "PrimalItemArtifact_Extinction_ForestKaiju_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_12.PrimalItemArtifact_12",
+                        "UUID": "995cabc0-a3c1-45eb-9c97-223d02da15b0",
+                        "Class": "PrimalItemArtifact_12_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_01.PrimalItemArtifactSE_01",
+                        "UUID": "eddf3970-b0ad-4c53-8b83-d70ffe5f4afb",
+                        "Class": "PrimalItemArtifactSE_01_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 322,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_02.PrimalItemArtifactSE_02",
+                        "UUID": "412d4e46-a11b-46d3-af9c-fdf7d1771aff",
+                        "Class": "PrimalItemArtifactSE_02_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 322,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_08.PrimalItemArtifact_08",
+                        "UUID": "421a4240-f1cc-462e-99e0-1d26f5a07c2d",
+                        "Class": "PrimalItemArtifact_08_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_09.PrimalItemArtifact_09",
+                        "UUID": "ed9fc58a-3b0f-4be3-9949-f1818489f6f8",
+                        "Class": "PrimalItemArtifact_09_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_11.PrimalItemArtifact_11",
+                        "UUID": "7796bafa-034d-4a6d-8bdd-341073f3bfb0",
+                        "Class": "PrimalItemArtifact_11_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_01.PrimalItemArtifact_01",
+                        "UUID": "46c2f2fc-c2b7-4f7d-9cd8-4372852dae0f",
+                        "Class": "PrimalItemArtifact_01_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1293,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB.PrimalItemArtifactAB",
+                        "UUID": "9bbd0974-3b7e-4c20-9489-a4926f79b0be",
+                        "Class": "PrimalItemArtifactAB_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_DesertKaiju.PrimalItemArtifact_Extinction_DesertKaiju",
+                        "UUID": "a0c3a9bf-51a7-4e9c-8d3f-d596db48a328",
+                        "Class": "PrimalItemArtifact_Extinction_DesertKaiju_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
                         "Version": 1
@@ -137,6 +359,9 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
             "Availability": 32,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
@@ -164,7 +389,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1293,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -175,11 +403,11 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_3.PrimalItemArtifactAB_3",
-                        "UUID": "201f0806-0eab-4146-8ed2-5c3a29fd7e03",
-                        "Class": "PrimalItemArtifactAB_3_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_03.PrimalItemArtifact_03",
+                        "UUID": "9dbdbbbb-a1fc-442c-994a-f3a833cde049",
+                        "Class": "PrimalItemArtifact_03_C",
                         "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
                         "Version": 1
                     },
                     "Weight": 0.5
@@ -191,34 +419,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_DesertKaiju.PrimalItemArtifact_Extinction_DesertKaiju",
-                        "UUID": "a0c3a9bf-51a7-4e9c-8d3f-d596db48a328",
-                        "Class": "PrimalItemArtifact_Extinction_DesertKaiju_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 32,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1293,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -245,7 +449,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1292,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -256,11 +463,11 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_2.PrimalItemArtifactAB_2",
-                        "UUID": "9aad91b9-c36a-4794-9532-5544ae391f19",
-                        "Class": "PrimalItemArtifactAB_2_C",
+                        "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_ForestKaiju.PrimalItemArtifact_Extinction_ForestKaiju",
+                        "UUID": "87a5c38b-1ce3-4daa-bd73-47240b742cd8",
+                        "Class": "PrimalItemArtifact_Extinction_ForestKaiju_C",
                         "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "ModUUID": "687cce7c-f1c4-440d-9bea-bd80f2717e2b",
                         "Version": 1
                     },
                     "Weight": 0.5
@@ -272,196 +479,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_01.PrimalItemArtifact_01",
-                        "UUID": "46c2f2fc-c2b7-4f7d-9cd8-4372852dae0f",
-                        "Class": "PrimalItemArtifact_01_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_11.PrimalItemArtifact_11",
-                        "UUID": "7796bafa-034d-4a6d-8bdd-341073f3bfb0",
-                        "Class": "PrimalItemArtifact_11_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_02.PrimalItemArtifact_02",
-                        "UUID": "d31c76ec-1fa9-4065-812f-89d30e2a6d5a",
-                        "Class": "PrimalItemArtifact_02_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_12.PrimalItemArtifact_12",
-                        "UUID": "995cabc0-a3c1-45eb-9c97-223d02da15b0",
-                        "Class": "PrimalItemArtifact_12_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_06.PrimalItemArtifact_06",
-                        "UUID": "1a66c824-70f4-4fc0-bf01-be1b2f9bf716",
-                        "Class": "PrimalItemArtifact_06_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_02.PrimalItemArtifactSE_02",
-                        "UUID": "412d4e46-a11b-46d3-af9c-fdf7d1771aff",
-                        "Class": "PrimalItemArtifactSE_02_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 330,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Blueprint": {
-                        "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_03.PrimalItemArtifactSE_03",
-                        "UUID": "8db2b6a7-0879-4045-b352-15542eaad97a",
-                        "Class": "PrimalItemArtifactSE_03_C",
-                        "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
-                        "Version": 1
-                    },
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 32,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -488,7 +509,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -515,6 +539,9 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
             "Availability": 32,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
@@ -526,11 +553,11 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_09.PrimalItemArtifact_09",
-                        "UUID": "ed9fc58a-3b0f-4be3-9949-f1818489f6f8",
-                        "Class": "PrimalItemArtifact_09_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_03.PrimalItemArtifactSE_03",
+                        "UUID": "8db2b6a7-0879-4045-b352-15542eaad97a",
+                        "Class": "PrimalItemArtifactSE_03_C",
                         "Schema": "Beacon.BlueprintReference",
-                        "ModUUID": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+                        "ModUUID": "55dd6a68-7041-46aa-9405-9adc5ae1825f",
                         "Version": 1
                     },
                     "Weight": 0.5
@@ -542,7 +569,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 322,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -553,9 +583,9 @@
                 {
                     "Blueprint": {
                         "Kind": "Engram",
-                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB.PrimalItemArtifactAB",
-                        "UUID": "9bbd0974-3b7e-4c20-9489-a4926f79b0be",
-                        "Class": "PrimalItemArtifactAB_C",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_3.PrimalItemArtifactAB_3",
+                        "UUID": "201f0806-0eab-4146-8ed2-5c3a29fd7e03",
+                        "Class": "PrimalItemArtifactAB_3_C",
                         "Schema": "Beacon.BlueprintReference",
                         "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
                         "Version": 1
@@ -569,7 +599,40 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Blueprint": {
+                        "Kind": "Engram",
+                        "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_2.PrimalItemArtifactAB_2",
+                        "UUID": "9aad91b9-c36a-4794-9532-5544ae391f19",
+                        "Class": "PrimalItemArtifactAB_2_C",
+                        "Schema": "Beacon.BlueprintReference",
+                        "ModUUID": "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8",
+                        "Version": 1
+                    },
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -580,8 +643,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_01.PrimalItemArtifactSE_01",
-                    "Class": "PrimalItemArtifactSE_01_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_02.PrimalItemArtifact_02",
+                    "Class": "PrimalItemArtifact_02_C",
                     "Weight": 0.5
                 }
             ],
@@ -591,7 +654,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -600,8 +666,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_03.PrimalItemArtifact_03",
-                    "Class": "PrimalItemArtifact_03_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_06.PrimalItemArtifact_06",
+                    "Class": "PrimalItemArtifact_06_C",
                     "Weight": 0.5
                 }
             ],
@@ -611,27 +677,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_08.PrimalItemArtifact_08",
-                    "Class": "PrimalItemArtifact_08_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -651,7 +700,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -660,8 +712,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_ForestKaiju.PrimalItemArtifact_Extinction_ForestKaiju",
-                    "Class": "PrimalItemArtifact_Extinction_ForestKaiju_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_12.PrimalItemArtifact_12",
+                    "Class": "PrimalItemArtifact_12_C",
                     "Weight": 0.5
                 }
             ],
@@ -671,6 +723,193 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_01.PrimalItemArtifactSE_01",
+                    "Class": "PrimalItemArtifactSE_01_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 322,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_02.PrimalItemArtifactSE_02",
+                    "Class": "PrimalItemArtifactSE_02_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 322,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_08.PrimalItemArtifact_08",
+                    "Class": "PrimalItemArtifact_08_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_09.PrimalItemArtifact_09",
+                    "Class": "PrimalItemArtifact_09_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_11.PrimalItemArtifact_11",
+                    "Class": "PrimalItemArtifact_11_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_01.PrimalItemArtifact_01",
+                    "Class": "PrimalItemArtifact_01_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1293,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB.PrimalItemArtifactAB",
+                    "Class": "PrimalItemArtifactAB_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_DesertKaiju.PrimalItemArtifact_Extinction_DesertKaiju",
+                    "Class": "PrimalItemArtifact_Extinction_DesertKaiju_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
             "Availability": 32,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
@@ -691,7 +930,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1293,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -700,8 +942,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_3.PrimalItemArtifactAB_3",
-                    "Class": "PrimalItemArtifactAB_3_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_03.PrimalItemArtifact_03",
+                    "Class": "PrimalItemArtifact_03_C",
                     "Weight": 0.5
                 }
             ],
@@ -711,27 +953,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_DesertKaiju.PrimalItemArtifact_Extinction_DesertKaiju",
-                    "Class": "PrimalItemArtifact_Extinction_DesertKaiju_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 32,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1293,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -751,7 +976,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1292,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -760,8 +988,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_2.PrimalItemArtifactAB_2",
-                    "Class": "PrimalItemArtifactAB_2_C",
+                    "Path": "/Game/Extinction/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_Extinction_ForestKaiju.PrimalItemArtifact_Extinction_ForestKaiju",
+                    "Class": "PrimalItemArtifact_Extinction_ForestKaiju_C",
                     "Weight": 0.5
                 }
             ],
@@ -771,147 +999,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_01.PrimalItemArtifact_01",
-                    "Class": "PrimalItemArtifact_01_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_11.PrimalItemArtifact_11",
-                    "Class": "PrimalItemArtifact_11_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_02.PrimalItemArtifact_02",
-                    "Class": "PrimalItemArtifact_02_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_12.PrimalItemArtifact_12",
-                    "Class": "PrimalItemArtifact_12_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_06.PrimalItemArtifact_06",
-                    "Class": "PrimalItemArtifact_06_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 333,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_02.PrimalItemArtifactSE_02",
-                    "Class": "PrimalItemArtifactSE_02_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 330,
-            "RespectQualityModifier": true,
-            "RespectQuantityMultiplier": true,
-            "RespectBlueprintMultiplier": true
-        },
-        {
-            "ChanceToBeBlueprintOverride": 0.0,
-            "Items": [
-                {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_03.PrimalItemArtifactSE_03",
-                    "Class": "PrimalItemArtifactSE_03_C",
-                    "Weight": 0.5
-                }
-            ],
-            "MinQuality": "Tier1",
-            "MaxQuality": "Tier1",
-            "MinQuantity": 1,
-            "MaxQuantity": 1,
-            "Weight": 250.0,
-            "EntryWeight": 0.25,
-            "Availability": 330,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 32,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -931,7 +1022,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 1357,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -951,6 +1045,9 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
             "Availability": 32,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
@@ -960,8 +1057,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifact_09.PrimalItemArtifact_09",
-                    "Class": "PrimalItemArtifact_09_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactSE_03.PrimalItemArtifactSE_03",
+                    "Class": "PrimalItemArtifactSE_03_C",
                     "Weight": 0.5
                 }
             ],
@@ -971,7 +1068,10 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 333,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 322,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true
@@ -980,8 +1080,8 @@
             "ChanceToBeBlueprintOverride": 0.0,
             "Items": [
                 {
-                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB.PrimalItemArtifactAB",
-                    "Class": "PrimalItemArtifactAB_C",
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_3.PrimalItemArtifactAB_3",
+                    "Class": "PrimalItemArtifactAB_3_C",
                     "Weight": 0.5
                 }
             ],
@@ -991,7 +1091,33 @@
             "MaxQuantity": 1,
             "Weight": 250.0,
             "EntryWeight": 0.25,
-            "Availability": 336,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
+            "RespectQualityModifier": true,
+            "RespectQuantityMultiplier": true,
+            "RespectBlueprintMultiplier": true
+        },
+        {
+            "ChanceToBeBlueprintOverride": 0.0,
+            "Items": [
+                {
+                    "Path": "/Game/PrimalEarth/CoreBlueprints/Items/Artifacts/PrimalItemArtifactAB_2.PrimalItemArtifactAB_2",
+                    "Class": "PrimalItemArtifactAB_2_C",
+                    "Weight": 0.5
+                }
+            ],
+            "MinQuality": "Tier1",
+            "MaxQuality": "Tier1",
+            "MinQuantity": 1,
+            "MaxQuantity": 1,
+            "Weight": 250.0,
+            "EntryWeight": 0.25,
+            "PreventGrinding": false,
+            "StatClampMultiplier": 1.0,
+            "SingleItemQuantity": true,
+            "Availability": 272,
             "RespectQualityModifier": true,
             "RespectQuantityMultiplier": true,
             "RespectBlueprintMultiplier": true

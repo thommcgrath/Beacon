@@ -47,7 +47,6 @@ Begin Window WhatsNewWindow
    End
    Begin URLConnection PreflightSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -265,15 +264,23 @@ End
 		    Self.mConfirmedURL = URL
 		    Self.Visible = True
 		    
-		    If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
-		      Self.Viewer.Visible = False
-		      Self.WinViewer.Top = 0
-		      Self.WinViewer.Left = 0
-		      Self.WinViewer.Width = Self.Width
-		      Self.WinViewer.Height = Self.Height
-		      Self.WinViewer.UserAgent = App.UserAgent
-		      Self.WinViewer.Visible = True
-		    Else
+		    Dim WebView2Activated As Boolean
+		    
+		    Try
+		      If WebView2ControlMBS.AvailableCoreWebView2BrowserVersionString.IsEmpty = False Then
+		        Self.Viewer.Visible = False
+		        Self.WinViewer.Top = 0
+		        Self.WinViewer.Left = 0
+		        Self.WinViewer.Width = Self.Width
+		        Self.WinViewer.Height = Self.Height
+		        Self.WinViewer.UserAgent = App.UserAgent
+		        Self.WinViewer.Visible = True
+		        WebView2Activated = True
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    If WebView2Activated = False Then
 		      Self.Viewer.Visible = True
 		      Self.WinViewer.Visible = False
 		    End If
