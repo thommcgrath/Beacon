@@ -7,10 +7,12 @@
 		MacType=
 		Name=Apple Disk Image
 		UTI=com.apple.disk-image
-		UTIConformsTo=
+		UTIConformsTo=,public.data
 		Description=
 		MimeType=application/x-apple-diskimage
 		Imported=True
+		HandlerRank=&h9
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -21,10 +23,12 @@
 		MacType=
 		Name=Windows Executable
 		UTI=
-		UTIConformsTo=
+		UTIConformsTo=,public.data
 		Description=
 		MimeType=application/vnd.microsoft.portable-executable
 		Imported=True
+		HandlerRank=&h9
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 #tag EndFileTypeSet

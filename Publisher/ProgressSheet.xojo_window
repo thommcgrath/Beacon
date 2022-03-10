@@ -1,30 +1,30 @@
-#tag Window
-Begin Window ProgressSheet
-   BackColor       =   &cFFFFFF00
+#tag DesktopWindow
+Begin DesktopWindow ProgressSheet
    Backdrop        =   0
-   CloseButton     =   False
+   BackgroundColor =   &cFFFFFF00
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   1
    FullScreen      =   False
-   FullScreenButton=   False
-   HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   92
    ImplicitInstance=   False
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
-   MinimizeButton  =   False
-   MinWidth        =   64
-   Placement       =   1
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    Resizeable      =   False
    Title           =   "Progress"
+   Type            =   8
    Visible         =   True
    Width           =   500
-   Begin ProgressBar Bar
+   Begin DesktopProgressBar Bar
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -42,13 +42,14 @@ Begin Window ProgressSheet
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Transparent     =   False
       Value           =   0.0
       Visible         =   True
       Width           =   382
    End
-   Begin Label CaptionLabel
+   Begin DesktopLabel CaptionLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -72,7 +73,7 @@ Begin Window ProgressSheet
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Uploading"
-      TextAlign       =   1
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -84,7 +85,7 @@ Begin Window ProgressSheet
       Width           =   460
    End
 End
-#tag EndWindow
+#tag EndDesktopWindow
 
 #tag WindowCode
 	#tag ComputedProperty, Flags = &h0
@@ -106,12 +107,12 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Bar.Value / Bar.Maximum
+			  Return Bar.Value / Bar.MaximumValue
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim IntValue As Integer = Max(Min(Bar.Maximum * Value, Bar.Maximum), 0)
+			  Var IntValue As Integer = Max(Min(Bar.MaximumValue * Value, Bar.MaximumValue), 0)
 			  If Bar.Value <> IntValue Then
 			    Bar.Value = IntValue
 			  End If
@@ -374,6 +375,6 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior
