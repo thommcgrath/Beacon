@@ -32,6 +32,10 @@ abstract class BeaconDatabase {
 		$this->username = $username;
 		$this->password = $password;
 	}
+	
+	public function DatabaseName(): string {
+		return $this->databasename;
+	}
 }
 
 ?>

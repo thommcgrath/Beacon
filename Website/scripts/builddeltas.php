@@ -10,9 +10,15 @@ while (ob_get_level() > 0) {
 	ob_end_clean();
 }
 
+$database = BeaconCommon::Database();
+$sem = sem_get(crc32($database->DatabaseName()), 1);
+if (sem_acquire($sem) === false) {
+	echo "Could not acquire semaphore\n";
+	exit;
+}
+
 define('MIN_VERSION', 99999999);
 
-$database = BeaconCommon::Database();
 $database->BeginTransaction();
 $rows = $database->Query('UPDATE ark.mods SET include_in_deltas = TRUE WHERE include_in_deltas = FALSE AND confirmed = TRUE AND (SELECT COUNT(object_id) FROM ark.objects WHERE objects.mod_id = mods.mod_id) > 0 RETURNING mod_id;');
 if ($rows->RecordCount() > 0) {
@@ -29,6 +35,7 @@ if ($last_database_update >= $cutoff) {
 	$ready = clone $last_database_update;
 	$ready->add(new DateInterval('PT15M'));
 	echo "Database has changes that will be ready at " . $ready->format('Y-m-d H:i:s') . " UTC if nothing else changes.\n";
+	sem_release($sem);
 	exit;
 }
 
@@ -48,11 +55,18 @@ if ($results->RecordCount() > 0) {
 }
 if (count($required_versions) == 0) {
 	echo "All deltas have been produced.\n";
+	sem_release($sem);
 	exit;
 }
 
+$api_version = BeaconAPI::GetAPIVersion();
 foreach ($required_versions as $version) {
 	echo "Building delta for version $version...\n";
+	if ($version >= 6) {
+		BeaconAPI::SetAPIVersion(3);
+	} else {
+		BeaconAPI::SetAPIVersion(2);
+	}
 	
 	$full_data = DataForVersion($version, null);
 	if ($version === 5) {
@@ -118,15 +132,15 @@ foreach ($required_versions as $version) {
 	
 	echo "Delta for version $version uploaded to $delta_path\n";
 }
+BeaconAPI::SetAPIVersion($api_version);
 
+sem_release($sem);
 exit;
 
 function DataForVersion(int $version, $since) {
-	$api_version = BeaconAPI::GetAPIVersion();
 	$arr = null;
 	switch ($version) {
 	case 6:
-		BeaconAPI::SetAPIVersion(3);
 		$arr = [
 			'deletions' => is_null($since) ? [] : BeaconAPI::Deletions(MIN_VERSION, $since),
 			'ark' => [
@@ -154,7 +168,6 @@ function DataForVersion(int $version, $since) {
 		];
 		break;
 	case 5:
-		BeaconAPI::SetAPIVersion(2);
 		$arr = [
 			'loot_sources' => Ark\LootSource::GetAll(MIN_VERSION, $since, true),
 			'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
@@ -179,7 +192,6 @@ function DataForVersion(int $version, $since) {
 		];
 		break;
 	}
-	BeaconAPI::SetAPIVersion($api_version);
 	return $arr;
 }
 
