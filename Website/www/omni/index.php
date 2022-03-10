@@ -27,7 +27,6 @@ if (isset($_SESSION['store_currency_options']) === false) {
 			switch ($currency_code) {
 			case 'USD':
 			case 'EUR':
-			case 'GBP':
 				$currency_options[] = $currency_code;
 				break;
 			}
