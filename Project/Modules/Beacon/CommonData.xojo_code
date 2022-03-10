@@ -99,10 +99,6 @@ Inherits Beacon.DataSource
 
 	#tag Event
 		Function Import(ChangeDict As Dictionary, StatusData As Dictionary, Deletions() As Dictionary) As Boolean
-		  #if Not DebugBuild
-		    #Pragma Error "Does not import common data"
-		  #endif
-		  
 		  Var BuildNumber As Integer = App.BuildNumber
 		  Self.DropIndexes()
 		  
