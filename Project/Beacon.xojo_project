@@ -320,7 +320,6 @@ Class=DiscoveredData;Modules/Beacon/DiscoveredData.xojo_code;&h00000000420FAFFF;
 MultiImage=IconCloudTab;Icons/IconCloudTab.xojo_image;&h00000000627C47FF;&h0000000007F977FF;false
 MultiImage=IconCommunityTab;Icons/IconCommunityTab.xojo_image;&h000000000883A7FF;&h0000000007F977FF;false
 Class=NullableString;Modules/FrameworkExtensions/NullableString.xojo_code;&h000000000DC77FFF;&h0000000053D607FF;false
-Class=ScrollCanvas;Custom Controls/ScrollCanvas.xojo_code;&h0000000064A3DFFF;&h0000000030DCFFFF;false
 Window=ArkMLEditor;Custom Controls/ArkMLEditor.xojo_window;&h0000000006CA9FFF;&h0000000030DCFFFF;false
 MultiImage=IconToolbarView;Icons/IconToolbarView.xojo_image;&h0000000005A29FFF;&h0000000007F977FF;false
 MultiImage=IconToolbarPaint;Icons/IconToolbarPaint.xojo_image;&h000000006F244FFF;&h0000000007F977FF;false
