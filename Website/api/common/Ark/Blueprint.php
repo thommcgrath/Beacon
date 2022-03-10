@@ -23,7 +23,7 @@ class Blueprint extends \Ark\GenericObject {
 	}
 	
 	protected static function TableName() {
-		return 'ark.blueprints';
+		return 'blueprints';
 	}
 	
 	protected function GetColumnValue(string $column) {
