@@ -1,6 +1,6 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
-BeaconTemplate::SetTitle('Browse Documents');
+BeaconTemplate::SetTitle('Browse Projects');
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.scss'));
 
 $search_keys = array(
@@ -56,7 +56,7 @@ foreach ($maps as $map) {
 	$map_checkboxes[] = '<div><label class="checkbox"><input type="checkbox" name="maps[]" value="' . $map->Mask() . '" id="map_checkbox_' . $map->Mask() . '"' . (($selected_maps & $map->Mask()) == $map->Mask() ? ' checked' : '') . '><span></span>' . htmlentities($map->Name()) . '</label></div>';
 }
 
-?><h1>Browse Documents</h1>
+?><h1>Browse Projects</h1>
 <div id="search_form" class="separator-color">
 	<form action="" method="get">
 		<table id="options_table">
@@ -80,7 +80,7 @@ foreach ($maps as $map) {
 			<tr>
 				<td class="label">Compatibility</td>
 				<td>
-					<label class="checkbox"><input type="checkbox" name="console_safe" value="true" id="console_checkbox"<?php if (isset($search_keys['console_safe']) && boolval($search_keys['console_safe'])) { echo ' checked'; } ?>><span></span>Show only console-compatible documents</label>
+					<label class="checkbox"><input type="checkbox" name="console_safe" value="true" id="console_checkbox"<?php if (isset($search_keys['console_safe']) && boolval($search_keys['console_safe'])) { echo ' checked'; } ?>><span></span>Show only console-compatible projects</label>
 				</td>
 			</tr>
 			<tr>
@@ -101,7 +101,7 @@ foreach ($maps as $map) {
 <?php
 
 if ($project_count == 0) {
-	echo '<p class="text-center">No documents found</p>';
+	echo '<p class="text-center">No projects found</p>';
 	exit;
 }
 

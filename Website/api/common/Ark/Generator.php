@@ -5,7 +5,7 @@ namespace BeaconAPI\Ark;
 class Generator {
 	protected $document, $quality_scale, $map_mask, $difficulty_value;
 	
-	public function __construct(\Ark\Document $document) {
+	public function __construct(\Ark\Project $document) {
 		$this->document = $document;
 		$this->quality_scale = 1.0;
 		$this->map_mask = $document->MapMask();

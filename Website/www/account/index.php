@@ -97,7 +97,7 @@ $teams_enabled = BeaconCommon::TeamsEnabled();
 
 ?><h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
 <div id="account_toolbar_menu" class="separator-color">
-	<div id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Documents</a></div>
+	<div id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Projects</a></div>
 	<div id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></div>
 	<div id="account_toolbar_menu_settings"><a href="#settings" id="toolbar_settings_button">Settings</a></div>
 	<div id="account_toolbar_menu_sessions"><a href="#sessions" id="toolbar_sessions_button">Sessions</a></div>

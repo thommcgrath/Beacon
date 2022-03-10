@@ -88,7 +88,6 @@ BeaconTemplate::StartStyles();
 	height: 0px;
 }
 
-<?php if ($hero_img_prefix === 'hero15') { ?>
 #hero.mac {
 	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
 	padding-top: calc(764 / 1312 * 100%);
@@ -98,17 +97,6 @@ BeaconTemplate::StartStyles();
 	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
 	padding-top: calc(764 / 1312 * 100%);
 }
-<?php } else { ?>
-#hero.mac {
-	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-mac.png'); ?>);
-	padding-top: calc(493 / 800 * 100%);
-}
-
-#hero.windows {
-	background-image: url(<?php echo BeaconCommon::AssetURI($hero_img_prefix . '-windows.png'); ?>);
-	padding-top: calc(523 / 800 * 100%);
-}
-<?php } ?>
 
 #nitrado_container {
 	margin-bottom: 2.5%;
@@ -134,10 +122,6 @@ BeaconTemplate::StartStyles();
 		margin-bottom: 20px;
 		padding-top: 20px;
 	}
-	
-	/*#nitrado_logo {
-		padding-top: calc(110 / 800 * 100%);
-	}*/
 }
 
 @media (prefers-color-scheme: dark) {
@@ -194,7 +178,7 @@ BeaconTemplate::FinishStyles();
 
 ?>
 <div id="nitrado_container">
-	<a href="https://nitra.do/beaconapp"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png" alt="Get your server from Nitrado"></a>
+	<a href="https://www.nitrado-aff.com/5LMHK7/D42TT/"><img id="nitrado_logo" class="white-on-dark" src="/assets/images/spacer.png" alt="Get your server from Nitrado"></a>
 </div>
 <div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png" alt="Beacon main window"></div>
 <div id="index_body">

@@ -11,18 +11,18 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			var resource_url = this.getAttribute('beacon-resource-url');
 			var resource_name = this.getAttribute('beacon-resource-name');
 			
-			dialog.confirm('Are you sure you want to delete the document "' + resource_name + '?"', 'The document will be deleted immediately and cannot be recovered.', 'Delete', 'Cancel', function() {
+			dialog.confirm('Are you sure you want to delete the project "' + resource_name + '?"', 'The project will be deleted immediately and cannot be recovered.', 'Delete', 'Cancel', function() {
 				request.start('DELETE', resource_url, '', '', function(obj) {
-					dialog.show('Document deleted', '"' + resource_name + '" has been deleted.', function() {
+					dialog.show('Project deleted', '"' + resource_name + '" has been deleted.', function() {
 						window.location.reload(true);
 					});
 				}, function(http_status) {
 					switch (http_status) {
 					case 401:
-						dialog.show('Document not deleted', 'There was an authentication error');
+						dialog.show('Project not deleted', 'There was an authentication error');
 						break;
 					default:
-						dialog.show('Document not deleted', 'Sorry, there was a ' + http_status + ' error.');
+						dialog.show('Project not deleted', 'Sorry, there was a ' + http_status + ' error.');
 						break;
 					}
 				}, {'Authorization': <?php echo json_encode('Session ' . $session->SessionID()); ?>});
@@ -76,7 +76,7 @@ if (count($projects) > 0) {
 	}
 	echo '</table>';
 } else {
-	echo '<div class="small_section"><p>You have not created any documents yet!<span class="text-lighter smaller"><br>(Or at least haven\'t saved any to Beacon\'s Cloud.)</span></p></div>';
+	echo '<div class="small_section"><p>You have not created any projects yet!<span class="text-lighter smaller"><br>(Or at least haven\'t saved any to Beacon\'s Cloud.)</span></p></div>';
 }
 
 ?>

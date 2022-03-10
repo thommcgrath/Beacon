@@ -14,11 +14,11 @@ $search_keys = array(
 );
 	
 
-$documents = \Ark\Document::Search($search_keys);
+$documents = \Ark\Project::Search($search_keys);
 if (count($documents) != 1) {
 	http_response_code(404);
-	BeaconTemplate::SetTitle('Document Not Found');
-	echo '<h1>Document not found</h1><p><a href="/browse/">Browse community documents</a></p>';
+	BeaconTemplate::SetTitle('Project Not Found');
+	echo '<h1>Project not found</h1><p><a href="/browse/">Browse community projects</a></p>';
 	exit;
 }
 
@@ -62,7 +62,7 @@ if (count($map_names) >= 3) {
 		
 	$database = BeaconCommon::Database();
 	$mod_ids = $document->RequiredMods(false);
-	$results = $database->Query('SELECT workshop_id, name FROM ark.mods WHERE array_position($1, mod_id) IS NOT NULL;', $mod_ids);
+	$results = $database->Query('SELECT workshop_id, name FROM ark.mods WHERE array_position($1, mod_id) IS NOT NULL ORDER BY name;', $mod_ids);
 	$unknown_mods = false;
 	$mod_links = array();
 	while (!$results->EOF()) {
@@ -81,45 +81,68 @@ if (count($map_names) >= 3) {
 	$editor_names = array();
 	foreach ($editors as $name) {
 		switch ($name) {
-		case 'LootDrops':
-			$editor_names[] = 'Loot Drop Contents';
-			break;
-		case 'LootScale':
-			$editor_names[] = 'Loot Quality Scaling';
-			break;
-		case 'ExperienceCurves':
-			$editor_names[] = 'Player and Tame Levels';
+		case 'BreedingMultipliers':
+			$editor_names[] = 'Breeding Multipliers';
 			break;
 		case 'CraftingCosts':
 			$editor_names[] = 'Crafting Costs';
 			break;
-		case 'StackSizes':
-			$editor_names[] = 'Stack Sizes';
+		case 'CustomContent':
+			$editor_names[] = 'Custom Config';
 			break;
-		case 'BreedingMultipliers':
-			$editor_names[] = 'Breeding Multipliers';
-			break;
-		case 'HarvestRates':
-			$editor_names[] = 'Harvest Rates';
+		case 'DayCycle':
+			$editor_names[] = 'Day and Night Cycle';
 			break;
 		case 'DinoAdjustments':
 			$editor_names[] = 'Creature Adjustments';
 			break;
+		case 'EngramControl':
+			$editor_names[] = 'Engram Control';
+			break;
+		case 'ExperienceCurves':
+			$editor_names[] = 'Levels and XP';
+			break;
+		case 'HarvestRates':
+			$editor_names[] = 'Harvest Rates';
+			break;
+		case 'LootDrops':
+			$editor_names[] = 'Loot Drops';
+			break;
+		case 'LootScale':
+		case 'OtherSettings':
+			$editor_names[] = 'General Settings';
+			break;
+		case 'SpawnPoints':
+			$editor_names[] = 'Creature Spawns';
+			break;
+		case 'SpoilTimers':
+			$editor_names[] = 'Decay and Spoil';
+			break;
+		case 'StackSizes':
+			$editor_names[] = 'Stack Sizes';
+			break;
+		case 'StatLimits':
+			$editor_names[] = 'Item Stat Limits';
+			break;
+		case 'StatMultipliers':
+			$editor_names[] = 'Stat Multipliers';
+			break;
 		}
 	}
 	if (count($editor_names) > 0) {
-		echo '<p>Contains Configs: ' . BeaconCommon::ArrayToEnglish($editor_names) . '</p>';
+		sort($editor_names);
+		echo '<p>Contains Configs: ' . BeaconCommon::ArrayToEnglish(array_unique($editor_names)) . '</p>';
 	}
 		
 	?>
 </div>
 <h3>Download</h3>
 <div class="indent">
-	<p><a href="<?php echo $document->ResourceURL(); ?>" rel="nofollow">Download original document</a> or <a href="<?php echo str_replace('https://', 'beacon://', $document->ResourceURL()); ?>" rel="nofollow">Open document in Beacon</a></p>
+	<p><a href="<?php echo $document->ResourceURL(); ?>" rel="nofollow">Download original project</a> or <a href="<?php echo str_replace('https://', 'beacon://', $document->ResourceURL()); ?>" rel="nofollow">Open project in Beacon</a></p>
 </div>
 <h3>Create Game.ini</h3>
 <div class="indent">
-	<p>Create a customized Game.ini from this document.</p>
+	<p>Create a customized Game.ini from this project.</p>
 	<div id="mode_tabs"><div id="mode_tabs_new" class="selected">Create New</div><div id="mode_tabs_paste">Paste Text</div><div id="mode_tabs_upload">Upload File</div></div>
 	<div id="mode_customizations">
 		<input type="hidden" id="map_mask" name="map_mask" value="<?php echo ($map_filter & $document->MapMask()); ?>">
@@ -140,7 +163,7 @@ if (count($map_names) >= 3) {
 		<div id="mode_view_new">
 			<p>This option creates a new Game.ini from scratch. Use this if your server has no customizations.</p>
 			<form action="generate" method="get">
-				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
+				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->ProjectID()); ?>">
 				<input type="hidden" name="difficulty_value" value="" id="create_difficulty_value">
 				<p class="text-center"><label class="radio"><input type="radio" name="mode" value="inline" id="create_inline_check" checked><span></span>Show new Game.ini in browser</label><br><label class="radio"><input type="radio" name="mode" value="download" id="create_download_check"><span></span>Download new Game.ini</label></p>
 				<p class="text-center"><input type="submit" value="Generate"></p>
@@ -149,7 +172,7 @@ if (count($map_names) >= 3) {
 		<div id="mode_view_paste">
 			<p>Paste your current Game.ini here and a customized version will be produced for you.</p>
 			<form action="generate" method="post">
-				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
+				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->ProjectID()); ?>">
 				<input type="hidden" name="mode" value="inline">
 				<input type="hidden" name="difficulty_value" value="" id="paste_difficulty_value">
 				<textarea name="content" rows="20" wrap="off"></textarea>
@@ -159,7 +182,7 @@ if (count($map_names) >= 3) {
 		<div id="mode_view_upload">
 			<p>Upload your current Game.ini to download a customized version.</p>
 			<form action="generate" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
+				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->ProjectID()); ?>">
 				<input type="hidden" name="mode" value="download">
 				<input type="hidden" name="difficulty_value" value="" id="upload_difficulty_value">
 				<input type="file" name="content" accept=".ini" id="upload_file_selector">

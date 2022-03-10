@@ -134,7 +134,6 @@ function DataForVersion(int $version, $since) {
 				'loot_source_icons' => Ark\LootSourceIcon::GetAll(MIN_VERSION, $since, true),
 				'engrams' => Ark\Engram::GetAll(MIN_VERSION, $since, true),
 				'creatures' => Ark\Creature::GetAll(MIN_VERSION, $since, true),
-				'diets' => Ark\Diet::GetAll(MIN_VERSION, $since, true),
 				'game_variables' => Ark\GameVariable::GetAll($since),
 				'mods' => Ark\Mod::GetLive($since),
 				'ini_options' => Ark\ConfigLine::GetAll(MIN_VERSION, $since),
