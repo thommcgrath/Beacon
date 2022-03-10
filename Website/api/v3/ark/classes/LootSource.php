@@ -38,13 +38,17 @@ class LootSource extends \BeaconAPI\Ark\LootSource {
 	
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
-		$json['min_item_sets'] = $this->min_item_sets;
-		$json['max_item_sets'] = $this->max_item_sets;
-		$json['prevent_duplicates'] = $this->prevent_duplicates;
-		if (is_null($this->item_sets) || count($this->item_sets) == 0) {
-			$json['contents'] = null;
-		} else {
-			$json['contents'] = $this->item_sets;
+		if (\BeaconAPI::GetAPIVersion() >= 3) {
+			// You'd think it would be enough to only implement in the v3 class,
+			// but PHP will load it first when building deltas.
+			$json['min_item_sets'] = $this->min_item_sets;
+			$json['max_item_sets'] = $this->max_item_sets;
+			$json['prevent_duplicates'] = $this->prevent_duplicates;
+			if (is_null($this->item_sets) || count($this->item_sets) == 0) {
+				$json['contents'] = null;
+			} else {
+				$json['contents'] = $this->item_sets;
+			}
 		}
 		return $json;
 	}
