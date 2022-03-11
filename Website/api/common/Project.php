@@ -198,7 +198,7 @@ class Project implements \JsonSerializable {
 		}
 		if ($new_status != $current_status) {
 			$database->BeginTransaction();
-			$database->Query('UPDATE ' . static::SchemaName() . '.' . static::AllowedTableName() . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
+			$database->Query('UPDATE ' . static::SchemaName() . '.' . static::TableName() . ' SET published = $2 WHERE project_id = $1;', $this->project_id, $new_status);
 			$database->Commit();
 		}
 		$this->published = $new_status;
