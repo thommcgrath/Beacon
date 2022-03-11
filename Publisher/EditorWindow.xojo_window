@@ -25,90 +25,53 @@ Begin DesktopWindow EditorWindow
    Visible         =   True
    Width           =   720
    Begin URLConnection UploadSocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin DesktopButton SelectWin32Button
-      AutoDeactivate  =   True
+   Begin DesktopButton SelectFolderButton
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
-      Caption         =   "Select"
+      Caption         =   "Select Build Folder"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   620
+      Left            =   469
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   123
+      Tooltip         =   ""
+      Top             =   166
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   139
    End
-   Begin DesktopTextField Win32PathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   122
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin DesktopLabel Win32PathLabel
-      AutoDeactivate  =   True
+   Begin DesktopLabel ShortPreviewLabel
+      AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -121,305 +84,68 @@ Begin DesktopWindow EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Windows 32-bit File:"
-      TextAlign       =   3
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   122
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin DesktopButton SelectWin64Button
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   89
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin DesktopTextField Win64PathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin DesktopLabel Win64PathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Windows 64-bit File:"
-      TextAlign       =   3
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin DesktopButton SelectFolderButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select Installers Folder"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   179
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   18
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   258
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   169
-   End
-   Begin DesktopButton SelectMacButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   21
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin DesktopButton SelectWinComboButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Select"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   620
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   55
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin DesktopLabel ShortPreviewLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Banner Text:"
-      TextAlign       =   3
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   224
+      Tooltip         =   ""
+      Top             =   234
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   147
    End
    Begin DesktopTextField ShortPreviewField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   179
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   224
+      Tooltip         =   ""
+      Top             =   234
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   521
    End
    Begin DesktopCanvas HorizontalSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       Backdrop        =   0
       Enabled         =   True
       Height          =   1
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -429,100 +155,102 @@ Begin DesktopWindow EditorWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   20
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   298
+      Tooltip         =   ""
+      Top             =   308
       Transparent     =   False
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   720
    End
    Begin DesktopButton ActionButton
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Begin"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   620
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   19
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   258
+      Tooltip         =   ""
+      Top             =   268
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin DesktopTextArea NotesArea
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   True
+      AllowStyledText =   True
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
-      Height          =   279
-      HelpTag         =   ""
+      HasBorder       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      Height          =   269
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
       Left            =   0
-      LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollbarVertical=   True
-      Styled          =   True
-      TabIndex        =   21
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   299
+      Tooltip         =   ""
+      Top             =   309
       Transparent     =   True
       Underline       =   False
       UnicodeMode     =   0
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   720
    End
    Begin DesktopLabel VersionLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -535,68 +263,68 @@ Begin DesktopWindow EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Short Version:"
-      TextAlign       =   3
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   156
+      Tooltip         =   ""
+      Top             =   166
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   147
    End
    Begin DesktopTextField VersionField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   179
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   156
+      Tooltip         =   ""
+      Top             =   166
       Transparent     =   True
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   176
    End
    Begin DesktopLabel BuildLabel
-      AutoDeactivate  =   True
+      AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
-      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -609,242 +337,270 @@ Begin DesktopWindow EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   14
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build:"
-      TextAlign       =   3
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   190
+      Tooltip         =   ""
+      Top             =   200
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   147
    End
    Begin DesktopTextField BuildNumberField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
-      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   179
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   0
       TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   190
+      Tooltip         =   ""
+      Top             =   200
       Transparent     =   True
       Underline       =   False
-      UseFocusRing    =   True
+      ValidationMask  =   ""
       Visible         =   True
       Width           =   176
    End
-   Begin DesktopTextField WinComboPathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
+   Begin DesktopListBox FileList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
+      ColumnCount     =   5
+      ColumnWidths    =   "*,120,60,60,60"
+      DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   134
       Index           =   -2147483648
+      InitialValue    =   "File	Platform	ARM64	x86	x86_64"
       Italic          =   False
-      Left            =   179
-      LimitText       =   0
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
+      RequiresSelection=   False
+      RowSelectionType=   1
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   680
+      _ScrollWidth    =   -1
+   End
+   Begin DesktopButton AddFileButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Add File"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
-   End
-   Begin DesktopLabel WinComboPathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Windows Combo File:"
-      TextAlign       =   3
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   True
+      Tooltip         =   ""
+      Top             =   166
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   147
-   End
-   Begin DesktopLabel MacPathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Mac File:"
-      TextAlign       =   3
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   147
-   End
-   Begin DesktopTextField MacPathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   179
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   429
+      Width           =   80
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  #if TargetMacOS
+		    Var Win As NSWindowMBS = Self.NSWindowMBS
+		    Win.TitlebarAppearsTransparent = True
+		  #endif
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub AddFile(File As FolderItem, Arch As Integer = 0)
+		  Var Platform As String
+		  If File.Name.EndsWith(".exe") Then
+		    Platform = Download.PlatformWindows
+		  ElseIf File.Name.EndsWith(".dmg") Then
+		    Platform = Download.PlatformMac
+		  End If
+		  
+		  Var Version As String = Self.VersionField.Text.Trim
+		  Var Path As String = File.Name
+		  Var Temp As FolderItem = File.Parent
+		  While (Temp Is Nil) = False
+		    Path = Temp.Name + "/" + Path
+		    If Temp.Name <> Version Then
+		      Temp = Temp.Parent
+		    Else
+		      Temp = Nil
+		    End If
+		  Wend
+		  
+		  Self.FileList.AddRow(Path, Platform)
+		  Var RowIdx As Integer = Self.FileList.LastAddedRowIndex
+		  Self.FileList.RowTagAt(RowIdx) = File
+		  If (Arch And Download.ArchARM64) = Download.ArchARM64 Then
+		    Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnARM64) = True
+		  End If
+		  If (Arch And Download.ArchIntel32) = Download.ArchIntel32 Then
+		    Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel32) = True
+		  End If
+		  If (Arch And Download.ArchIntel64) = Download.ArchIntel64 Then
+		    Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel64) = True
+		  End
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddFiles(Folder As FolderItem, Arch As Integer = 0)
+		  If Folder.IsFolder = False Then
+		    Self.AddFile(Folder, Arch)
+		    Return
+		  End If
+		  
+		  For Each File As FolderItem In Folder.Children
+		    Select Case File.Name
+		    Case "Beacon.dmg"
+		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchARM64 Or Download.ArchIntel64))
+		    Case "Install_Beacon.exe"
+		      Self.AddFile(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
+		    Case "Combo"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32 Or Download.ArchIntel64))
+		    Case "x64", "x86_64"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel64))
+		    Case "x86"
+		      Self.AddFiles(File, If(Arch <> 0, Arch, Download.ArchIntel32))
+		    End Select
+		  Next File
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Begin()
-		  Self.mMacPath = ""
-		  Self.mMacSignature = ""
-		  Self.mWinComboPath = ""
-		  Self.mWinComboSignature = ""
-		  Self.mWin64Path = ""
-		  Self.mWin64Signature = ""
-		  Self.mWin32Path = ""
-		  Self.mWin32Signature = ""
+		  Var HumanVersion As String = Self.VersionField.Text.Trim
 		  
-		  Self.mUploadQueue = New Dictionary
-		  If Self.mMacFile <> Nil And Self.mMacFile.Exists Then
-		    Self.mMacPath = EncodeURLComponent(Self.mMacFile.Name)
-		    Self.mUploadQueue.Value(Self.mMacPath) = Self.mMacFile
-		  End If
-		  If Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists Then
-		    Self.mWinComboPath = EncodeURLComponent(Self.mWinComboFile.Name)
-		    Self.mUploadQueue.Value(Self.mWinComboPath) = Self.mWinComboFile
-		  End If
-		  If Self.mWin64File <> Nil And Self.mWin64File.Exists Then
-		    Self.mWin64Path = "x86_64/" + EncodeURLComponent(Self.mWin64File.Name)
-		    Self.mUploadQueue.Value(Self.mWin64Path) = Self.mWin64File
-		  End If
-		  If Self.mWin32File <> Nil And Self.mWin32File.Exists Then
-		    Self.mWin32Path = "x86/" + EncodeURLComponent(Self.mWin32File.Name)
-		    Self.mUploadQueue.Value(Self.mWin32Path) = Self.mWin32File
-		  End If
+		  Var RSAKey As String = App.PrivateKey
+		  Var DSAKey As Chilkat.DSA = App.DSAKey
+		  Var EdDSA As Chilkat.PrivateKey = App.EdDSAKey
+		  
+		  Var Queue As New Dictionary
+		  Var Downloads() As Download
+		  For RowIdx As Integer = 0 To Self.FileList.LastRowIndex
+		    Var File As FolderItem = Self.FileList.RowTagAt(RowIdx)
+		    Var Platform As String = Self.FileList.CellTextAt(RowIdx, Self.ColumnPlatform)
+		    Var Arch As Integer
+		    If Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnARM64) Then
+		      Arch = Arch Or Download.ArchARM64
+		    End If
+		    If Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel32) Then
+		      Arch = Arch Or Download.ArchIntel32
+		    End If
+		    If Self.FileList.CellCheckBoxValueAt(RowIdx, Self.ColumnIntel64) Then
+		      Arch = Arch Or Download.ArchIntel64
+		    End If
+		    
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As MemoryBlock = Stream.ReadAll
+		    Stream.Close
+		    
+		    Var RSASignature As String = Self.SignRSA(RSAKey, Contents)
+		    If RSASignature.IsEmpty Then
+		      MessageBox("No RSA signature for " + File.NativePath + " generated")
+		      Return
+		    End If
+		    Var DSASignature As String = Self.SignDSA(DSAKey, Contents)
+		    If DSASignature.IsEmpty Then
+		      MessageBox("No DSA signature for " + File.NativePath + " generated")
+		      Return
+		    End If
+		    Var EdDSASignature As String = Self.SignEdDSA(EdDSA, Contents)
+		    If EdDSASignature.IsEmpty Then
+		      MessageBox("No EdDSA signature for " + File.NativePath + " generated")
+		      Return
+		    End If
+		    
+		    Var Path As String = Download.SuggestedPath(Arch, Platform)
+		    Var URL As String = "https://releases.usebeacon.app/" + If(DebugBuild, "Debug/", "") + HumanVersion + "/" + Path
+		    Var DownloadObj As New Download(Contents, URL, Arch, Platform)
+		    DownloadObj.AddSignature(New DownloadSignature(RSASignature, DownloadSignature.SignatureRSA))
+		    DownloadObj.AddSignature(New DownloadSignature(DSASignature, DownloadSignature.SignatureDSA))
+		    DownloadObj.AddSignature(New DownloadSignature(EdDSASignature, DownloadSignature.SignatureEdDSA))
+		    Queue.Value(DownloadObj.UUID) = DownloadObj
+		    Downloads.Add(DownloadObj)
+		  Next RowIdx
+		  
+		  Self.mUploadQueue = Queue
+		  Self.mDownloads = Downloads
+		  Self.mDisplayVersion = HumanVersion
 		  
 		  Self.mProgress = New ProgressSheet
 		  Self.mProgress.Show(Self)
@@ -856,16 +612,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Var Enabled As Boolean = True
-		  Var HasWindowsFile As Boolean = (Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists) Or (Self.mWin64File <> Nil And Self.mWin64File.Exists) Or (Self.mWin32File <> Nil And Self.mWin32File.Exists)
+		  Var HasMacFile, HasWindowsFile As Boolean
+		  For RowIdx As Integer = 0 To Self.FileList.LastRowIndex
+		    Select Case Self.FileList.CellTextAt(RowIdx, Self.ColumnPlatform)
+		    Case Download.PlatformMac
+		      HasMacFile = True
+		    Case Download.PlatformWindows
+		      HasWindowsFile = True
+		    End Select
+		  Next RowIdx
+		  
+		  Var Enabled As Boolean = HasMacFile And HasWindowsFile
 		  
 		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.KeyCount > 0 Then
-		    Enabled = False
-		  End If
-		  If Enabled And (Self.mMacFile = Nil Or Self.mMacFile.Exists = False) Then
-		    Enabled = False
-		  End If
-		  If Enabled And HasWindowsFile = False Then
 		    Enabled = False
 		  End If
 		  If Enabled And Self.mBannerText = "" Then
@@ -888,6 +647,18 @@ End
 		    Self.ActionButton.Enabled = Enabled
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function DictionaryToInsertSQL(TableName As String, Dict As Dictionary) As String
+		  Var Columns(), Values() As String
+		  For Each Entry As DictionaryEntry In Dict
+		    Columns.Add("""" + Entry.Key + """")
+		    Values.Add(Entry.Value)
+		  Next Entry
+		  
+		  Return "INSERT INTO """ + TableName + """ (" + String.FromArray(Columns, ", ") + ") VALUES (" + String.FromArray(Values, ", ") + ");"
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -916,7 +687,6 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  Var Root As String = "https://releases.beaconapp.cc/" + EncodeURLComponent(Self.mDisplayVersion)
 		  Var DeltaVersion As Integer = 4
 		  If Self.mBuildNumber = 10600000 Then
 		    DeltaVersion = 6
@@ -924,7 +694,11 @@ End
 		    DeltaVersion = 5
 		  End If
 		  
+		  Var Statements() As String
+		  
+		  Var UpdateUUID As String = New v4UUID
 		  Var InsertData As New Dictionary
+		  InsertData.Value("update_id") = "'" + UpdateUUID + "'"
 		  InsertData.Value("build_number") = Str(Self.mBuildNumber, "-0")
 		  InsertData.Value("build_display") = "'" + Self.mDisplayVersion + "'"
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
@@ -934,39 +708,32 @@ End
 		  InsertData.Value("min_win_version") = "'6.1.7601'"
 		  InsertData.Value("delta_version") = DeltaVersion
 		  InsertData.Value("published") = "'" + DateTime.Now.SQLDateTime + "'"
+		  Statements.Add(Self.DictionaryToInsertSQL("updates", InsertData))
 		  
-		  If Self.mMacFile <> Nil And Self.mMacFile.Exists And Self.mMacSignature <> "" And Self.mMacPath <> "" Then
-		    Var URL As String = Root + "/" + Self.mMacPath
-		    InsertData.Value("mac_url") = "'" + URL.ReplaceAll("'", "''") + "'"
-		    InsertData.Value("mac_signature") = "'" + Self.mMacSignature + "'"
-		  End If
-		  If Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists And Self.mWinComboSignature <> "" And Self.mWinComboPath <> "" Then
-		    Var URL As String = Root + "/" + Self.mWinComboPath
-		    InsertData.Value("win_combo_url") = "'" + URL.ReplaceAll("'", "''") + "'"
-		    InsertData.Value("win_combo_signature") = "'" + Self.mWinComboSignature + "'"
-		  End If
-		  If Self.mWin64File <> Nil And Self.mWin64File.Exists And Self.mWin64Signature <> "" And Self.mWin64Path <> "" Then
-		    Var URL As String = Root + "/" + Self.mWin64Path
-		    InsertData.Value("win_64_url") = "'" + URL.ReplaceAll("'", "''") + "'"
-		    InsertData.Value("win_64_signature") = "'" + Self.mWin64Signature + "'"
-		  End If
-		  If Self.mWin32File <> Nil And Self.mWin32File.Exists And Self.mWin32Signature <> "" And Self.mWin32Path <> "" Then
-		    Var URL As String = Root + "/" + Self.mWin32Path
-		    InsertData.Value("win_32_url") = "'" + URL.ReplaceAll("'", "''") + "'"
-		    InsertData.Value("win_32_signature") = "'" + Self.mWin32Signature + "'"
-		  End If
+		  For Each DownloadObj As Download In Self.mDownloads
+		    Var Dict As New Dictionary
+		    Dict.Value("download_id") = "'" + DownloadObj.UUID + "'"
+		    Dict.Value("update_id") = "'" + UpdateUUID + "'"
+		    Dict.Value("url") = "'" + DownloadObj.URL + "'"
+		    Dict.Value("platform") = "'" + DownloadObj.Platform + "'"
+		    Dict.Value("arch") = DownloadObj.Arch
+		    Statements.Add(Self.DictionaryToInsertSQL("download_urls", Dict))
+		    
+		    Var Signatures() As DownloadSignature = DownloadObj.Signatures
+		    For Each Signature As DownloadSignature In Signatures
+		      Var SignData As New Dictionary
+		      SignData.Value("signature_id") = "'" + Signature.UUID + "'"
+		      SignData.Value("download_id") = "'" + DownloadObj.UUID + "'"
+		      SignData.Value("format") = "'" + Signature.Format + "'"
+		      SignData.Value("signature") = "'" + Signature.Signature + "'"
+		      Statements.Add(Self.DictionaryToInsertSQL("download_signatures", SignData))
+		    Next Signature
+		  Next DownloadObj
 		  
-		  Var Columns(), Values() As String
-		  For Each InsertEntry As DictionaryEntry In InsertData
-		    Columns.Add("""" + InsertEntry.Key + """")
-		    Values.Add(InsertEntry.Value)
-		  Next InsertEntry
-		  
-		  Var SQL As String = "INSERT INTO ""updates"" (" + String.FromArray(Columns, ", ") + ") VALUES (" + String.FromArray(Values, ", ") + ");"
 		  Var Board As New Clipboard
-		  Board.Text = SQL
+		  Board.Text = String.FromArray(Statements, EndOfLine)
 		  
-		  MessageBox("Insert statement has been copied to the clipboard.")
+		  MessageBox("Insert statements have been copied to the clipboard.")
 		  
 		  Self.CheckEnabled
 		End Sub
@@ -979,45 +746,69 @@ End
 		    Return
 		  End If
 		  
-		  Var Path As String = Self.mUploadQueue.Key(0)
-		  Var File As FolderItem = Self.mUploadQueue.Value(Path)
-		  Self.mUploadQueue.Remove(Path)
+		  Var UUID As String = Self.mUploadQueue.Key(0)
+		  Var DownloadObj As Download = Self.mUploadQueue.Value(UUID)
+		  Self.mUploadQueue.Remove(UUID)
 		  
-		  Var Stream As BinaryStream = BinaryStream.Open(File, False)
-		  Var Contents As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
+		  Var Host As String = "storage.bunnycdn.com"
 		  
-		  Var Host As String
-		  #if DebugBuild
-		    Host = "private-anon-166a449bae-bunnycdnstorage.apiary-mock.com"
-		  #else
-		    Host = "storage.bunnycdn.com"
-		  #endif
-		  
-		  Var ParentURL As String = "https://" + Host + "/beacon-releases/" + EncodeURLComponent(Self.mDisplayVersion)
-		  Var UploadURL As String = ParentURL + "/" + Path
+		  Var Path As String = DownloadObj.Path + "/" + DownloadObj.Filename
+		  Var UploadURL As String = "https://" + Host + "/beacon-releases/" + DownloadObj.Path + "/" + DownloadObj.Filename
 		  
 		  Self.mProgress.Caption = "Uploading " + Path
 		  
 		  Self.UploadSocket.ClearRequestHeaders()
-		  Self.UploadSocket.SetRequestContent(Contents, "application/octet-stream")
-		  Self.UploadSocket.RequestHeader("AccessKey") = App.APIKey.ToText
-		  Self.UploadSocket.Send("PUT", UploadURL.ToText)
+		  Self.UploadSocket.SetRequestContent("Checksum", DownloadObj.Checksum)
+		  Self.UploadSocket.SetRequestContent(DownloadObj.Contents, "application/octet-stream")
+		  Self.UploadSocket.RequestHeader("AccessKey") = App.APIKey
+		  Self.UploadSocket.Send("PUT", UploadURL)
 		  System.DebugLog("Uploading to " + UploadURL)
-		  
-		  Var Signature As String = EncodeHex(Crypto.RSASign(Contents, App.PrivateKey)).Lowercase
-		  
-		  Select Case Path
-		  Case Self.mMacPath
-		    Self.mMacSignature = Signature
-		  Case Self.mWinComboPath
-		    Self.mWinComboSignature = Signature
-		  Case Self.mWin64Path
-		    Self.mWin64Signature = Signature
-		  Case Self.mWin32Path
-		    Self.mWin32Signature = Signature
-		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignDSA(Key As Chilkat.DSA, Content As MemoryBlock) As String
+		  Var Crypt As New Chilkat.Crypt2
+		  Crypt.EncodingMode = "hex"
+		  Crypt.HashAlgorithm = "sha-1"
+		  Var Hash As MemoryBlock = Crypt.HashBytes(Content)
+		  If Hash Is Nil Or Crypt.LastMethodSuccess = False Then
+		    System.DebugLog(Crypt.LastErrorText)
+		    Return ""
+		  End If
+		  
+		  If Key.SetEncodedHash("hex", Hash) = False Or Key.SignHash() = False Then
+		    System.DebugLog(Key.LastErrorText)
+		    Return ""
+		  End If
+		  
+		  Return Key.GetEncodedSignature("base64")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignEdDSA(Key As Chilkat.PrivateKey, Content As MemoryBlock) As String
+		  Var Binary As New Chilkat.BinData
+		  If Binary.AppendBinary(Content) = False Then
+		    System.DebugLog("Unable to append binary")
+		    Return ""
+		  End If
+		  
+		  Var EdDSA As New Chilkat.EdDSA
+		  Var Signature As String = EdDSA.SignBdENC(Binary, "base64", Key)
+		  If EdDSA.LastMethodSuccess = False Then
+		    System.DebugLog(EdDSA.LastErrorText)
+		    Return ""
+		  End If
+		  
+		  Return Signature
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SignRSA(Key As String, Content As MemoryBlock) As String
+		  Return EncodeHex(Crypto.RSASign(Content, Key)).Lowercase
+		End Function
 	#tag EndMethod
 
 
@@ -1034,15 +825,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMacFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMacPath As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMacSignature As String
+		Private mDownloads() As Download
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1061,41 +844,21 @@ End
 		Private mUploadQueue As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mWin32File As FolderItem
-	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mWin32Path As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnARM64, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin32Signature As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnFile, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin64File As FolderItem
-	#tag EndProperty
+	#tag Constant, Name = ColumnIntel32, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin64Path As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnIntel64, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
 
-	#tag Property, Flags = &h21
-		Private mWin64Signature As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWinComboFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWinComboPath As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWinComboSignature As String
-	#tag EndProperty
+	#tag Constant, Name = ColumnPlatform, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -1125,166 +888,19 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events SelectWin32Button
-	#tag Event
-		Sub Pressed()
-		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = "Install_Beacon.exe"
-		  Dialog.Filter = AppFileTypes.WindowsExecutable
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mWin32File = File
-		  Self.Win32PathField.Text = File.NativePath
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Win32PathField
-	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
-		    End If
-		    
-		    Self.mWin32File = Obj.FolderItem
-		    Me.Text = Self.mWin32File.NativePath
-		    Self.CheckEnabled
-		    Return
-		  Loop Until Obj.NextItem = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.AcceptFileDrop(AppFileTypes.WindowsExecutable)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectWin64Button
-	#tag Event
-		Sub Pressed()
-		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = "Install_Beacon.exe"
-		  Dialog.Filter = AppFileTypes.WindowsExecutable
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mWin64File = File
-		  Self.Win64PathField.Text = File.NativePath
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Win64PathField
-	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
-		    End If
-		    
-		    Self.mWin64File = Obj.FolderItem
-		    Me.Text = Self.mWin64File.NativePath
-		    Self.CheckEnabled
-		    Return
-		  Loop Until Obj.NextItem = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.AcceptFileDrop(AppFileTypes.WindowsExecutable)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SelectFolderButton
 	#tag Event
 		Sub Pressed()
 		  Var Dialog As New SelectFolderDialog
-		  Dialog.SuggestedFileName = "Installers"
+		  Dialog.SuggestedFileName = Self.VersionField.Text
 		  
 		  Var Folder As FolderItem = Dialog.ShowModal(Self)
-		  If Folder = Nil Then
+		  If Folder Is Nil Then
 		    Return
 		  End If
 		  
-		  Try
-		    Self.mMacFile = Folder.Child("Mac").Child("Output").Child("Beacon.dmg")
-		    Self.MacPathField.Text = Self.mMacFile.NativePath
-		  Catch Err As RuntimeException
-		    Self.mMacFile = Nil
-		    Self.MacPathField.Text = ""
-		  End Try
-		  
-		  Try
-		    Self.mWinComboFile = Folder.Child("Windows").Child("Output").Child("Combo").Child("Install_Beacon.exe")
-		    Self.WinComboPathField.Text = Self.mWinComboFile.NativePath
-		  Catch Err As RuntimeException
-		    Self.mWinComboFile = Nil
-		    Self.WinComboPathField.Text = ""
-		  End Try
-		  
-		  Try
-		    Self.mWin64File = Folder.Child("Windows").Child("Output").Child("x64").Child("Install_Beacon.exe")
-		    Self.Win64PathField.Text = Self.mWin64File.NativePath
-		  Catch Err As RuntimeException
-		    Self.mWin64File = Nil
-		    Self.Win64PathField.Text = ""
-		  End Try
-		  
-		  Try
-		    Self.mWin32File = Folder.Child("Windows").Child("Output").Child("x86").Child("Install_Beacon.exe")
-		    Self.Win32PathField.Text = Self.mWin32File.NativePath
-		  Catch Err As RuntimeException
-		    Self.mWin32File = Nil
-		    Self.Win32PathField.Text = ""
-		  End Try
-		  
-		  Self.CheckEnabled()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectMacButton
-	#tag Event
-		Sub Pressed()
-		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = "Beacon.dmg"
-		  Dialog.Filter = AppFileTypes.DiskImage
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mMacFile = File
-		  Self.MacPathField.Text = File.NativePath
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectWinComboButton
-	#tag Event
-		Sub Pressed()
-		  Var Dialog As New OpenFileDialog
-		  Dialog.SuggestedFileName = "Install_Beacon.exe"
-		  Dialog.Filter = AppFileTypes.WindowsExecutable
-		  
-		  Var File As FolderItem = Dialog.ShowModal(Self)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mWinComboFile = File
-		  Self.WinComboPathField.Text = File.NativePath
-		  Self.CheckEnabled
+		  Self.VersionField.Text = Folder.Name
+		  Self.AddFiles(Folder)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1363,10 +979,18 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events WinComboPathField
+#tag Events FileList
 	#tag Event
 		Sub Opening()
-		  Me.AcceptFileDrop(AppFileTypes.WindowsExecutable)
+		  Me.AcceptFileDrop(AppFileTypes.DiskImage + AppFileTypes.WindowsExecutable)
+		  
+		  Me.ColumnTypeAt(Self.ColumnARM64) = DesktopListBox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnIntel32) = DesktopListbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnIntel64) = DesktopListbox.CellTypes.CheckBox
+		  
+		  Me.ColumnAlignmentAt(Self.ColumnARM64) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnIntel32) = DesktopListbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnIntel64) = DesktopListbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1377,33 +1001,39 @@ End
 		      Continue
 		    End If
 		    
-		    Self.mWinComboFile = Obj.FolderItem
-		    Me.Text = Self.mWinComboFile.NativePath
-		    Self.CheckEnabled
+		    If Obj.FolderItem.IsFolder Then
+		      Self.VersionField.Text = Obj.FolderItem.Name
+		    End If
+		    Self.AddFiles(Obj.FolderItem)
 		    Return
 		  Loop Until Obj.NextItem = False
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function KeyDown(key As String) As Boolean
+		  If Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127) Then
+		    For RowIdx As Integer = Me.LastRowIndex DownTo 0
+		      If Me.RowSelectedAt(RowIdx) Then
+		        Me.RemoveRowAt(RowIdx)
+		      End If
+		    Next RowIdx
+		    Return True
+		  End If
+		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events MacPathField
+#tag Events AddFileButton
 	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  #Pragma Unused Action
-		  Do
-		    If Obj.FolderItemAvailable = False Then
-		      Continue
-		    End If
-		    
-		    Self.mMacFile = Obj.FolderItem
-		    Me.Text = Self.mMacFile.NativePath
-		    Self.CheckEnabled
+		Sub Pressed()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = AppFileTypes.WindowsExecutable + AppFileTypes.DiskImage
+		  
+		  Var File As FolderItem = Dialog.ShowModal(Self)
+		  If File Is Nil Then
 		    Return
-		  Loop Until Obj.NextItem = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.AcceptFileDrop(AppFileTypes.DiskImage)
+		  End If
+		  
+		  Self.AddFile(File)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1521,8 +1151,8 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType="Color"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1585,7 +1215,7 @@ End
 		Visible=true
 		Group="Menus"
 		InitialValue=""
-		Type="MenuBar"
+		Type="DesktopMenuBar"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
