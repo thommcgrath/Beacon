@@ -10,7 +10,7 @@ Protected Module BeaconAPI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function URL(Path As String = "/") As String
+		Protected Function URL(Path As String = "/", Versioned As Boolean = True) As String
 		  #if DebugBuild
 		    Var Domain As String = "https://lab-api.usebeacon.app"
 		  #else
@@ -19,7 +19,7 @@ Protected Module BeaconAPI
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If
-		  Return Domain + "/v" + Version.ToString + Path
+		  Return Domain + If(Versioned, "/v" + Version.ToString, "") + Path
 		End Function
 	#tag EndMethod
 

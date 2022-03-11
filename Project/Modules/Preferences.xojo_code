@@ -375,6 +375,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.BooleanValue("Automatic Updates", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Automatic Updates") = Value
+			End Set
+		#tag EndSetter
+		Protected AutomaticUpdates As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.StringValue("Breeding Tuner Creatures", "*")
 			End Get
 		#tag EndGetter

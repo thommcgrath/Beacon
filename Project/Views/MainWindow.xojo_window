@@ -460,6 +460,7 @@ End
 		    End If
 		  #endif
 		  
+		  UpdatesKit.Init()
 		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  

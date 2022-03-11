@@ -443,7 +443,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub CheckForUpdates()
 		  If Self.GetOnlinePermission() Then
-		    UpdateWindow.Present()
+		    #if UpdatesKit.UseSparkle
+		      UpdatesKit.Check
+		    #else
+		      UpdateWindow.Present()
+		    #endif
 		  End If
 		End Sub
 	#tag EndMethod
@@ -474,6 +478,22 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Sources(Idx) = Self.mDataSources(Idx)
 		  Next Idx
 		  Return Sources
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FrameworksFolder() As FolderItem
+		  #if TargetMacOS
+		    Return Self.ExecutableFile.Parent.Parent.Child("Frameworks")
+		  #elseif TargetWindows
+		    Var FolderNames() As String = Array(Self.ExecutableFile.NameWithoutExtensionMBS + " Libs", "Libs")
+		    For Each FolderName As String In FolderNames
+		      Var Folder As New FolderItem(FolderName)
+		      If Folder.Exists Then
+		        Return Folder
+		      End If
+		    Next FolderName
+		  #endif
 		End Function
 	#tag EndMethod
 

@@ -52,6 +52,7 @@
 					Call DoShellCommand("/usr/bin/plutil -insert CFBundleDocumentTypes.8.CFBundleTypeIconSystemGenerated -bool YES " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert NSAppAccentColorName -string 'BeaconBrand' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert ATSApplicationFontsPath -string 'Fonts/' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert SUPublicEDKey -string 'E8nLS+ZV7vehv1LV7BOrGFpvVk6SKFdG7JxMvluk4FU=' " + App + ".plist")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
@@ -60,6 +61,14 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
+				End
+				Begin CopyFilesBuildStep CopyMacFrameworks
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 2
+					Subdirectory = 
+					FolderItem = Li4vLi4vU3BhcmtsZS9TcGFya2xlLmZyYW1ld29yay8=
 				End
 				Begin CopyFilesBuildStep CopyDebugResourcesMac
 					AppliesTo = 1
