@@ -29,8 +29,8 @@ case 'publish_document':
 	
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
-	$database->Query('UPDATE ark.projects SET published = $2 WHERE document_id = $1;', $document_id, $new_status);
-	$results = $database->Query('SELECT title FROM ark.projects WHERE document_id = $1;', $document_id);
+	$database->Query('UPDATE ark.projects SET published = $2 WHERE project_id = $1;', $document_id, $new_status);
+	$results = $database->Query('SELECT title FROM ark.projects WHERE project_id = $1;', $document_id);
 	$title = $results->Field('title');
 	$database->Commit();
 	
