@@ -6,6 +6,15 @@
 			Begin BuildStepList Mac OS X
 				Begin BuildProjectStep Build
 				End
+				Begin CopyFilesBuildStep CopyMacSignTool
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 4
+					Subdirectory = Helpers
+					FolderItem = Li4vLi4vU3BhcmtsZS9zaWduX3VwZGF0ZQ==
+					FolderItem = Li4vLi4vU3BhcmtsZS9zaWduX3VwZGF0ZV9sZWdhY3k=
+				End
 				Begin IDEScriptBuildStep SignBuild , AppliesTo = 0, Architecture = 0, Target = 0
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("xattr -clr " + App)

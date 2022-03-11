@@ -42,80 +42,6 @@ Inherits DesktopApplication
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DSAKey() As Chilkat.DSA
-		  Var File As FolderItem = Self.ApplicationSupport.Child("DSA.pem")
-		  If File.Exists Then
-		    Var Stream As TextInputStream = TextInputStream.Open(File)
-		    Var Contents As MemoryBlock = Stream.ReadAll
-		    Stream.Close
-		    
-		    Var DSA As New Chilkat.DSA
-		    If DSA.FromPem(Contents) = False Or DSA.VerifyKey = False Then
-		      System.DebugLog(DSA.LastErrorText)
-		      Return Nil
-		    End If
-		    
-		    Return DSA
-		  Else
-		    Var DSA As New Chilkat.DSA
-		    If DSA.GenKey(2048) = False Then
-		      System.DebugLog(DSA.LastErrorText)
-		      Return Nil
-		    End If
-		    
-		    Var PEM As String = DSA.ToPem
-		    If DSA.LastMethodSuccess = False Then
-		      System.DebugLog(DSA.LastErrorText)
-		      Return Nil
-		    End If
-		    Var Stream As TextOutputStream = TextOutputStream.Create(File)
-		    Stream.Write(PEM)
-		    Stream.Close
-		    
-		    Return DSA
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function EdDSAKey() As Chilkat.PrivateKey
-		  Var File As FolderItem = Self.ApplicationSupport.Child("EdDSA.pem")
-		  If File.Exists Then
-		    Var Stream As TextInputStream = TextInputStream.Open(File)
-		    Var Contents As MemoryBlock = Stream.ReadAll
-		    Stream.Close
-		    
-		    Var Key As New Chilkat.PrivateKey
-		    If Key.LoadPem(Contents) = False Then
-		      System.DebugLog(Key.LastErrorText)
-		      Return Nil
-		    End If
-		    
-		    Return Key
-		  Else
-		    Var Key As New Chilkat.PrivateKey
-		    Var Generator As New Chilkat.Prng
-		    Var EdDSA As New Chilkat.EdDSA
-		    If EdDSA.GenEd25519Key(Generator, Key) = False Then
-		      System.DebugLog(EdDSA.LastErrorText)
-		      Return Nil
-		    End If
-		    
-		    Var PEM As String = Key.GetPkcs8Pem
-		    If Key.LastMethodSuccess = False Then
-		      System.DebugLog(Key.LastErrorText)
-		      Return Nil
-		    End If
-		    Var Stream As TextOutputStream = TextOutputStream.Create(File)
-		    Stream.Write(PEM)
-		    Stream.Close
-		    
-		    Return Key
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function PrivateKey() As String
 		  Var File As FolderItem = Self.ApplicationSupport.Child("Key.json")
 		  If File.Exists Then
@@ -152,6 +78,12 @@ Inherits DesktopApplication
 		    
 		    Return PrivateKey
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SignTool(Legacy As Boolean) As FolderItem
+		  Return App.ExecutableFile.Parent.Parent.Child("Helpers").Child("sign_update" + If(Legacy, "_legacy", ""))
 		End Function
 	#tag EndMethod
 

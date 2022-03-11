@@ -436,6 +436,7 @@ Begin DesktopWindow EditorWindow
       Underline       =   False
       Visible         =   True
       Width           =   680
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin DesktopButton AddFileButton
@@ -479,6 +480,8 @@ End
 		    Var Win As NSWindowMBS = Self.NSWindowMBS
 		    Win.TitlebarAppearsTransparent = True
 		  #endif
+		  
+		  App.AllowAutoQuit = True
 		End Sub
 	#tag EndEvent
 
@@ -549,8 +552,6 @@ End
 		  Var HumanVersion As String = Self.VersionField.Text.Trim
 		  
 		  Var RSAKey As String = App.PrivateKey
-		  Var DSAKey As Chilkat.DSA = App.DSAKey
-		  Var EdDSA As Chilkat.PrivateKey = App.EdDSAKey
 		  
 		  Var Queue As New Dictionary
 		  Var Downloads() As Download
@@ -577,12 +578,12 @@ End
 		      MessageBox("No RSA signature for " + File.NativePath + " generated")
 		      Return
 		    End If
-		    Var DSASignature As String = Self.SignDSA(DSAKey, Contents)
+		    Var DSASignature As String = Self.SignDSA(File)
 		    If DSASignature.IsEmpty Then
 		      MessageBox("No DSA signature for " + File.NativePath + " generated")
 		      Return
 		    End If
-		    Var EdDSASignature As String = Self.SignEdDSA(EdDSA, Contents)
+		    Var EdDSASignature As String = Self.SignEdDSA(File)
 		    If EdDSASignature.IsEmpty Then
 		      MessageBox("No EdDSA signature for " + File.NativePath + " generated")
 		      Return
@@ -688,21 +689,22 @@ End
 		  End If
 		  
 		  Var DeltaVersion As Integer = 4
-		  If Self.mBuildNumber = 10600000 Then
+		  If Self.mBuildNumber >= 10600000 Then
 		    DeltaVersion = 6
-		  ElseIf Self.mBuildNumber = 10500000 Then
+		  ElseIf Self.mBuildNumber >= 10500000 Then
 		    DeltaVersion = 5
 		  End If
 		  
 		  Var Statements() As String
+		  Statements.Add("DELETE FROM updates WHERE build_number = " + Self.mBuildNumber.ToString(Locale.Raw, "0") + ";")
 		  
 		  Var UpdateUUID As String = New v4UUID
 		  Var InsertData As New Dictionary
 		  InsertData.Value("update_id") = "'" + UpdateUUID + "'"
-		  InsertData.Value("build_number") = Str(Self.mBuildNumber, "-0")
+		  InsertData.Value("build_number") = Self.mBuildNumber.ToString(Locale.Raw, "0")
 		  InsertData.Value("build_display") = "'" + Self.mDisplayVersion + "'"
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
-		  InsertData.Value("stage") = Str(Self.mStageCode, "-0")
+		  InsertData.Value("stage") = Self.mStageCode.ToString(Locale.Raw, "0")
 		  InsertData.Value("preview") = "'" + Self.mBannerText.ReplaceAll("'", "''") + "'"
 		  InsertData.Value("min_mac_version") = "'10.12.0'"
 		  InsertData.Value("min_win_version") = "'6.1.7601'"
@@ -716,7 +718,7 @@ End
 		    Dict.Value("update_id") = "'" + UpdateUUID + "'"
 		    Dict.Value("url") = "'" + DownloadObj.URL + "'"
 		    Dict.Value("platform") = "'" + DownloadObj.Platform + "'"
-		    Dict.Value("arch") = DownloadObj.Arch
+		    Dict.Value("architectures") = DownloadObj.Arch
 		    Statements.Add(Self.DictionaryToInsertSQL("download_urls", Dict))
 		    
 		    Var Signatures() As DownloadSignature = DownloadObj.Signatures
@@ -767,41 +769,33 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SignDSA(Key As Chilkat.DSA, Content As MemoryBlock) As String
-		  Var Crypt As New Chilkat.Crypt2
-		  Crypt.EncodingMode = "hex"
-		  Crypt.HashAlgorithm = "sha-1"
-		  Var Hash As MemoryBlock = Crypt.HashBytes(Content)
-		  If Hash Is Nil Or Crypt.LastMethodSuccess = False Then
-		    System.DebugLog(Crypt.LastErrorText)
-		    Return ""
-		  End If
-		  
-		  If Key.SetEncodedHash("hex", Hash) = False Or Key.SignHash() = False Then
-		    System.DebugLog(Key.LastErrorText)
-		    Return ""
-		  End If
-		  
-		  Return Key.GetEncodedSignature("base64")
+		Private Function SignDSA(File As FolderItem) As String
+		  Var Sh As New Shell
+		  Sh.Execute(App.SignTool(True).ShellPath + " " + File.ShellPath + " " + App.ApplicationSupport.Child("dsa_priv.pem").ShellPath)
+		  Return Sh.Result.Trim
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SignEdDSA(Key As Chilkat.PrivateKey, Content As MemoryBlock) As String
-		  Var Binary As New Chilkat.BinData
-		  If Binary.AppendBinary(Content) = False Then
-		    System.DebugLog("Unable to append binary")
+		Private Function SignEdDSA(File As FolderItem) As String
+		  Var Sh As New Shell
+		  Sh.Execute(App.SignTool(False).ShellPath + " -f " + App.ApplicationSupport.Child("ed25519").ShellPath + " " + File.ShellPath)
+		  
+		  Var Result As String = Sh.Result.Trim
+		  Var StartPos As Integer = Result.IndexOf("sparkle:edSignature=""")
+		  If StartPos = -1 Then
+		    // There is a problem
 		    Return ""
 		  End If
 		  
-		  Var EdDSA As New Chilkat.EdDSA
-		  Var Signature As String = EdDSA.SignBdENC(Binary, "base64", Key)
-		  If EdDSA.LastMethodSuccess = False Then
-		    System.DebugLog(EdDSA.LastErrorText)
-		    Return ""
+		  StartPos = StartPos + 21
+		  Var EndPos As Integer = Result.IndexOf(StartPos, """")
+		  If EndPos = -1 Then
+		    // What?
+		    EndPos = Result.Length
 		  End If
 		  
-		  Return Signature
+		  Return Result.Middle(StartPos, EndPos - StartPos)
 		End Function
 	#tag EndMethod
 
