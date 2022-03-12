@@ -65,6 +65,11 @@ Protected Module UpdatesKit
 		      
 		      mMacSparkle.CheckForUpdates
 		    #elseif TargetWindows
+		      If mWinSparkle Is Nil Then
+		        Return
+		      End If
+		      
+		      mWinSparkle.CheckUpdateWithUI
 		    #endif
 		  #else
 		    If mChecking Then
@@ -82,43 +87,18 @@ Protected Module UpdatesKit
 		    mSocket.RequestHeader("Cache-Control") = "no-cache"
 		    mSocket.RequestHeader("User-Agent") = App.UserAgent
 		    
-		    Var Params As New Dictionary
-		    Params.Value("build") = App.BuildNumber.ToString
-		    Params.Value("stage") = App.StageCode.ToString
-		    If IsARM Then
-		      If Is64Bit Then
-		        Params.Value("arch") = "arm64"
-		      Else
-		        Params.Value("arch") = "arm"
-		      End If
-		    Else
-		      If Is64Bit Then
-		        Params.Value("arch") = "x64"
-		      Else
-		        Params.Value("arch") = "x86"
-		      End If
-		    End If
-		    
-		    Params.Value("osversion") = OSVersion
-		    #if TargetMacOS
-		      Params.Value("platform") = "mac"
-		    #elseif TargetWin32
-		      Params.Value("platform") = "win"
-		    #elseif TargetLinux
-		      Params.Value("platform") = "lin"
-		      
-		      Try
-		        Var DebianFile As New FolderItem("/etc/debian_version", FolderItem.PathModes.Native)
-		        Params.Value("installer_format") = If(DebianFile.Exists, "deb", "rpm")
-		      Catch Err As RuntimeException
-		        Params.Value("installer_format") = "rpm"
-		      End Try
-		    #endif
-		    If App.IsPortableMode Then
-		      Params.Value("portable") = "true"
-		    End If
-		    
+		    Var Params As Dictionary = UpdateCheckParams()
 		    mSocket.Send("GET", Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)))
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Cleanup()
+		  #if UseSparkle And TargetWindows
+		    If (mWinSparkle Is Nil) = False Then
+		      mWinSparkle.Cleanup
+		    End If
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -126,26 +106,23 @@ Protected Module UpdatesKit
 	#tag Method, Flags = &h1
 		Protected Sub Init()
 		  #if UseSparkle
-		    Var Arch As String
-		    If Is64Bit() Then
-		      If IsARM() Then
-		        Arch = "arm64"
-		      Else
-		        Arch = "x64"
-		      End If
-		    Else
-		      If IsARM() Then
-		        Arch = "arm"
-		      Else
-		        Arch = "x86"
-		      End If
-		    End If
+		    Var Params As Dictionary = UpdateCheckParams()
+		    Var URL As String = BeaconAPI.URL("/sparkle.php?" + SimpleHTTP.BuildFormData(Params), False)
+		    App.Log("Appcast URL is " + URL)
+		    
+		    Var CheckInterval As Integer
+		    #if DebugBuild
+		      CheckInterval = 3600
+		    #else
+		      CheckInterval = 86400
+		    #endif
 		    
 		    #if TargetMacOS
 		      If SUUpdaterMBS.IsFrameworkLoaded = False Then
 		        Var SparkleFramework As FolderItem = App.FrameworksFolder.Child("Sparkle.framework")
 		        If Not SUUpdaterMBS.LoadFramework(SparkleFramework) Then
 		          App.Log("Unable to load Sparkle framework")
+		          Return
 		        End If
 		      End If
 		      
@@ -154,15 +131,32 @@ Protected Module UpdatesKit
 		      End If
 		      
 		      Var Updater As New SUUpdaterMBS
-		      Updater.FeedURL = BeaconAPI.URL("/sparkle.php?arch=" + Arch + "&stage=" + App.NonReleaseVersion.ToString(Locale.Raw, "0"), False)
+		      Updater.FeedURL = URL
 		      Updater.AutomaticallyChecksForUpdates = True
 		      Updater.AutomaticallyDownloadsUpdates = Preferences.AutomaticUpdates
-		      Updater.UpdateCheckInterval = If(DebugBuild, 20, 86400)
+		      Updater.UpdateCheckInterval = CheckInterval
 		      Updater.SendsSystemProfile = False
 		      Updater.UserAgentString = App.UserAgent
 		      mMacSparkle = Updater
 		    #elseif TargetWindows
+		      Var SparkleDLL As FolderItem = App.FrameworksFolder.Child("WinSparkle.dll")
+		      If WinSparkleMBS.LoadLibrary(SparkleDLL) = False Then
+		        App.Log("Could not load Sparkle framework from " + SparkleDLL.NativePath)
+		        Return
+		      End If
 		      
+		      Var Updater As New WinSparkleMBS
+		      Updater.AppCastURL = URL
+		      Updater.AppName = "Beacon"
+		      Updater.AppVersion = App.Version
+		      Updater.AutomaticCheckForUpdates = True
+		      Updater.BuildVersion = App.MajorVersion.ToString(Locale.Raw, "0") + "." + App.MinorVersion.ToString(Locale.Raw, "0") + "." + App.BugVersion.ToString(Locale.Raw, "0") + "." + App.StageCode.ToString(Locale.Raw, "0") + "." + App.NonReleaseVersion.ToString(Locale.Raw, "0")
+		      Updater.CanShutdown = True
+		      Updater.CompanyName = "The ZAZ Studios"
+		      Updater.DSAPubPEM = PublicKey
+		      Updater.UpdateCheckInterval = CheckInterval
+		      Updater.Initialize
+		      mWinSparkle = Updater
 		    #endif
 		  #endif
 		End Sub
@@ -232,6 +226,7 @@ Protected Module UpdatesKit
 		        Return Preferences.AutomaticUpdates
 		      End If
 		    #elseif TargetWindows
+		      Return Preferences.AutomaticUpdates
 		    #endif
 		  #else
 		    Return (mAutoCheckTimer Is Nil) = False And mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
@@ -248,6 +243,7 @@ Protected Module UpdatesKit
 		      End If
 		      Preferences.AutomaticUpdates = Value
 		    #elseif TargetWindows
+		      Preferences.AutomaticUpdates = Value
 		    #endif
 		  #else
 		    If IsCheckingAutomatically = Value Then
@@ -431,6 +427,48 @@ Protected Module UpdatesKit
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function UpdateCheckParams() As Dictionary
+		  Var Params As New Dictionary
+		  Params.Value("build") = App.BuildNumber.ToString
+		  Params.Value("stage") = App.StageCode.ToString
+		  If IsARM Then
+		    If Is64Bit Then
+		      Params.Value("arch") = "arm64"
+		    Else
+		      Params.Value("arch") = "arm"
+		    End If
+		  Else
+		    If Is64Bit Then
+		      Params.Value("arch") = "x64"
+		    Else
+		      Params.Value("arch") = "x86"
+		    End If
+		  End If
+		  
+		  Params.Value("osversion") = OSVersion
+		  #if TargetMacOS
+		    Params.Value("platform") = "mac"
+		  #elseif TargetWin32
+		    Params.Value("platform") = "win"
+		  #elseif TargetLinux
+		    Params.Value("platform") = "lin"
+		    
+		    Try
+		      Var DebianFile As New FolderItem("/etc/debian_version", FolderItem.PathModes.Native)
+		      Params.Value("installer_format") = If(DebianFile.Exists, "deb", "rpm")
+		    Catch Err As RuntimeException
+		      Params.Value("installer_format") = "rpm"
+		    End Try
+		  #endif
+		  If App.IsPortableMode Then
+		    Params.Value("portable") = "true"
+		  End If
+		  
+		  Return Params
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function VerifyFile(File As Global.FolderItem, Signature As String) As Boolean
 		  If File = Nil Or File.Exists = False Then
@@ -510,9 +548,12 @@ Protected Module UpdatesKit
 	#tag EndConstant
 
 	#tag Constant, Name = PublicKey, Type = String, Dynamic = False, Default = \"30820120300D06092A864886F70D01010105000382010D003082010802820101008F9D9B313D28FDE0FD2100032D2E1A7F968A2E4975AF93A507823A95EFFE6A73176BD76D1286CC5DE513D3F4163F6F4E3D2A2FC472D540533020035FA0ED3FDFA33CBA289A94753D70546544459BE69E99B3B08AACBF489DEFA45BA1CC04DE0976DE2DABDC523A13FCEAE701468D994FEC116F30D44B307FD80AB13B1E15E76EA8B1366EC22E814F15D8021993FAE0BA39DF440EEF17550BC3A6CE2831A1B479E93088F2CAACFD19179D1C0744F0293A94C06D8F7D1D73C089D950F86953C2605F70462A889C4A1160B70192C1F97964F0741ED74713E10FF9CDC5BE6205385E5245297D41C31A75067699CB85D9FA6F806E8C770C5E91D706BCD5426C3080B1020111", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"-----BEGIN PUBLIC KEY-----\nMIIDOjCCAi0GByqGSM44BAEwggIgAoIBAQDI6xZ9nrExgcaSvbX/4gfS7bZQKM05\nHIw++81r7YlxOGw+GQEZzD73m/qq2P++jZttHwvIl0AWiILlTsdTeqoykceoz0jm\nyag6hZWFwo6jbyB0lvO59JipKyaygov1gx3TGFMxN/BRoKEPoBGkfbB00vS/9pQZ\nwk4+28+MeBQQwO4Z1BCm4xZ9l/rCqrfDyPSc1zEIfEHxB/7r5rERsxzIp+Z7bSSs\naF1JFwIQb7NISFBWB3S5p+vpGIeGZkE/0fZ9NkUHxpTL/7Er/cVZxAVH+yZgFg3h\ndTKwgWE1Hh6oA+31c19J/Oivd+zZVccvu//UXvJ8v1N0u723RaiDIptxAhUA/MRp\n4RFNsVJ01KI4K52HuGeuvXUCggEAR1KjYB6sFT2Q23H5afwNq/dsfbiUIq0Vnu7i\nE32sa5EQUynMJ07hVi9n4tpDqVvo/GRvqWMLk775aqcw40QYv1XHX3FZoSU7iu4z\nVBGqd5VgiCpKsLXGWnDypt+WHv2S1xnsWTGAa7lFldJjbuGL3EOE7tQwaSMeeteA\nJD3kl23s8FOVbRkLextddYMdh1adzggRItkHHMuq0Nj+/TkSOiQ9AHrlLJML32hV\nGyDqp8sTGt/z7y7jRM49U9V+s18kBNSz3iCnKYaN2iZ3zzE+B2BVH6iLC0TGZRZZ\npMM/5vwLTkuzEFjqvj53ZSRupmAF94mt3goXj6nQiMItx78KrQOCAQUAAoIBAD/P\ndHzac4YzhZXuz/WZN+J6OKzniYVmU9C41HMpd2Ovl9isDdugg6uulRHXgMtJTkP0\nItRb355Eb4eOvJJu3FOrIqfLMk83dX123pMW3URjnQjRf6MQpq/IsmqV2eoOlcN8\nfOC0OBHg4TvlTTMui81PtAoM/99qwJn48CGaZj4rZ8pIHWIyvGUHKiJx06chN2Tu\npIi2OH084SsAFZ5YQaDPOZciuVYVZUiCZglpEr4ojvG8Gscp36EFjJHZHwEfgnSv\nPEkqXo/MqfRXOH868Wk011vRaQyPqdbtc2fbXrcTUe6x37ZN4HQ0nsMt7GDKnfcg\nnAfZb9LE8GoPjNBvYQE\x3D\n-----END PUBLIC KEY-----\n"
 	#tag EndConstant
 
 	#tag Constant, Name = UseSparkle, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"True"
 	#tag EndConstant
 
 

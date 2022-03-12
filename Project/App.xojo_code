@@ -22,13 +22,17 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Self.mDataSources(Idx).Close
 		  Next Idx
 		  
+		  UpdatesKit.Cleanup
+		  
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
 		  End If
 		  
-		  If Self.mLaunchOnQuit Then
-		    Self.LaunchUpdate(Self.mUpdateFile)
-		  End If
+		  #if UpdatesKit.UseSparkle = False
+		    If Self.mLaunchOnQuit Then
+		      Self.LaunchUpdate(Self.mUpdateFile)
+		    End If
+		  #endif
 		  
 		  Self.Log("Beacon finished gracefully")
 		End Sub

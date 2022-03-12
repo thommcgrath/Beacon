@@ -272,6 +272,19 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Open()
+		  #if UpdatesKit.UseSparkle
+		    Self.UpdateSoundCheck.Visible = False
+		    
+		    Var Delta As Integer = Self.UpdateSoundCheck.Height + 12
+		    Self.SoundsGroup.Height = Self.SoundsGroup.Height - Delta
+		    Self.ConnectionsGroup.Top = Self.ConnectionsGroup.Top - Delta
+		    Self.Height = Self.Height - Delta
+		  #endif
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()

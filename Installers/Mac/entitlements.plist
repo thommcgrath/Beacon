@@ -10,5 +10,10 @@
 	<true/>
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
+	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+	<array>
+	    <string>com.thezaz.beacon-spks</string>
+	    <string>com.thezaz.beacon-spki</string>
+	</array>
 </dict>
 </plist>

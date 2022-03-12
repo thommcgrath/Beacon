@@ -53,6 +53,7 @@
 					Call DoShellCommand("/usr/bin/plutil -insert NSAppAccentColorName -string 'BeaconBrand' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert ATSApplicationFontsPath -string 'Fonts/' " + App + ".plist")
 					Call DoShellCommand("/usr/bin/plutil -insert SUPublicEDKey -string 'E8nLS+ZV7vehv1LV7BOrGFpvVk6SKFdG7JxMvluk4FU=' " + App + ".plist")
+					Call DoShellCommand("/usr/bin/plutil -insert SUEnableInstallerLauncherService -bool YES " + App + ".plist")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
@@ -104,12 +105,20 @@
 					Call DoShellCommand("/usr/bin/curl -L 'https://usebeacon.app/download/complete?game=ark&version=" + ConstantValue("DataUpdater.Version") + "' > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
-				Begin IDEScriptBuildStep Sign , AppliesTo = 1, Architecture = 0, Target = 0
+				Begin IDEScriptBuildStep SignCorrectly , AppliesTo = 0, Architecture = 0, Target = 0
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
+					Call DoShellCommand("codesign --remove-signature " + App)
 					Call DoShellCommand("xattr -clr " + App)
-					Call DoShellCommand("codesign -f --options=runtime --deep --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.dylib")
-					Call DoShellCommand("codesign -f --options=runtime --deep --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.framework")
-					Call DoShellCommand("codesign -f --options=runtime --deep --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App)
+					Call DoShellCommand("mv " + App + "/Contents/Frameworks/Sparkle.framework " + App + "/Contents/Frameworks/Sparkle")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --options runtime --deep --force --timestamp " + App + "/Contents/Frameworks/*.dylib")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --options runtime --deep --force --timestamp " + App + "/Contents/Frameworks/*.framework")
+					Call DoShellCommand("mv " + App + "/Contents/Frameworks/Sparkle " + App + "/Contents/Frameworks/Sparkle.framework")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp " + App + "/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/org.sparkle-project.InstallerLauncher.xpc")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/org.sparkle-project.Downloader.entitlements"" " + App + "/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/org.sparkle-project.Downloader.xpc")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp " + App + "/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp " + App + "/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --force --options runtime --timestamp " + App + "/Contents/Frameworks/Sparkle.framework")
+					Call DoShellCommand("codesign --sign 'Developer ID Application: Thom McGrath' --options runtime --timestamp --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" " + App)
 				End
 				Begin SignProjectStep Sign
 				  DeveloperID=
@@ -133,6 +142,16 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vR1NBSUQudHh0
+				End
+				Begin CopyFilesBuildStep CopyWindowsFrameworks
+					AppliesTo = 1
+					Architecture = 0
+					Target = 0
+					Destination = 2
+					Subdirectory = 
+					FolderItem = Li4vLi4vU3BhcmtsZS9XaW5kb3dzJTIweDg2L1dpblNwYXJrbGUuZGxs
+					FolderItem = Li4vLi4vU3BhcmtsZS9XaW5kb3dzJTIweDg2L1dpblNwYXJrbGUubGli
+					FolderItem = Li4vLi4vU3BhcmtsZS9XaW5kb3dzJTIweDg2L1dpblNwYXJrbGUucGRi
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebugWin , AppliesTo = 3, Architecture = 0, Target = 0
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
