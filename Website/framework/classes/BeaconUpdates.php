@@ -25,7 +25,7 @@ abstract class BeaconUpdates {
 	public static function FindUpdates(int $current_build, int $device_mask, int $channel): array {
 		$database = BeaconCommon::Database();
 		$updates = [];
-		$sql = 'SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, CASE WHEN UPPER_INC(lock_versions) THEN UPPER(lock_versions) ELSE UPPER(lock_versions) - 1 END AS critical_version FROM updates WHERE stage >= $1 AND build_number > $2 ORDER BY build_number DESC';
+		$sql = 'SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version, CASE WHEN UPPER_INC(lock_versions) THEN UPPER(lock_versions) ELSE UPPER(lock_versions) - 1 END AS critical_version FROM updates WHERE stage >= $1 AND build_number > $2 ORDER BY build_number DESC';
 		if ($current_build <= 0) {
 			$sql .= ' LIMIT 10';
 		}
@@ -82,6 +82,7 @@ abstract class BeaconUpdates {
 					'min_mac_version' => $rows->Field('min_mac_version'),
 					'min_win_version' => $rows->Field('min_win_version'),
 					'publish_time' => $rows->Field('release_date'),
+					'delta_version' => $rows->Field('delta_version'),
 					'required_if_below' => $rows->Field('critical_version'),
 					'files' => $best_downloads
 				];
@@ -90,6 +91,49 @@ abstract class BeaconUpdates {
 			$rows->MoveNext();
 		}
 		return $updates;
+	}
+	
+	public static function FindLatestInChannel(int $channel): array {
+		$database = BeaconCommon::Database();
+		$rows = $database->Query('SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version FROM updates WHERE stage = $1 ORDER BY build_number DESC LIMIT 1;', $channel);
+		$updates = null;
+		if ($rows->RecordCount() === 0) {
+			return $updates;
+		}
+		
+		$update_id = $rows->Field('update_id');
+		$files = [];
+		$downloads = $database->Query('SELECT DISTINCT url, platform, architectures FROM download_urls WHERE update_id = $1;', $update_id);
+		while ($downloads->EOF() === false) {
+			$platform = $downloads->Field('platform');
+			$url = $downloads->Field('url');
+			$architectures = $downloads->Field('architectures');
+			
+			$platform_array = [];
+			if (array_key_exists($platform, $files)) {
+				$platform_array = $files[$platform];
+			}
+			$platform_array[$url] = $architectures;
+			$files[$platform] = $platform_array;
+			
+			$downloads->MoveNext();
+		}
+		
+		$update = [
+			'update_id' => $update_id,
+			'build_number' => $rows->Field('build_number'),
+			'build_display' => $rows->Field('build_display'),
+			'stage' => $rows->Field('stage'),
+			'preview' => $rows->Field('preview'),
+			'notes' => $rows->Field('notes'),
+			'min_mac_version' => $rows->Field('min_mac_version'),
+			'min_win_version' => $rows->Field('min_win_version'),
+			'publish_time' => $rows->Field('release_date'),
+			'delta_version' => $rows->Field('delta_version'),
+			'files' => $files
+		];
+		
+		return $update;
 	}
 	
 	protected static function ArchitecturesInMask(int $mask): array {
