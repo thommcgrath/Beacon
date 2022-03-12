@@ -4,81 +4,71 @@ require(dirname(__FILE__, 2) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
 $stage = 3;
-$current_build = 0;
-$arch_priority = array('combo', '64', '32');
-if (isset($_GET['build'])) {
-	$current_build = intval($_GET['build']);
-}
 if (isset($_GET['stage'])) {
 	$stage = intval($_GET['stage']);
 }
+
+$current_build = 0;
+if (isset($_GET['build'])) {
+	$current_build = intval($_GET['build']);
+}
+
+$html_mode = false;
 if (isset($_GET['html'])) {
 	$html_mode = true;
 	header('Content-Type: text/html');
 } else {
-	$html_mode = false;
 	header('Content-Type: application/json');
 }
+
 // Beacon 1.2.0 and its betas did not report architecture correctly
+$device_mask = BeaconUpdates::ARCH_INTEL32;
 if ($current_build >= 10201300 && isset($_GET['arch'])) {
 	switch ($_GET['arch']) {
-	case 'x86_64':
-	case 'arm_64':
-	case 'arm64':
-	case 'x64':
-		$arch_priority = array('64', 'combo');
-		break;
 	case 'x86':
+		$device_mask = BeaconUpdates::ARCH_INTEL32;
+		break;
+	case 'x86_64':
+	case 'x64':
+		$device_mask = BeaconUpdates::ARCH_INTEL64;
+		break;
 	case 'arm':
-		$arch_priority = array('32', 'combo');
+		$device_mask = BeaconUpdates::ARCH_ARM32;
 		break;
-	}
-}
-if (isset($_GET['platform']) && isset($_GET['osversion']) && preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,6}$/', $_GET['osversion']) === 1) {
-	switch ($_GET['platform']) {
-	case 'mac':
-		$version_column = 'min_mac_version';
-		$os_version = $_GET['osversion'];
-		break;
-	case 'win':
-		$version_column = 'min_win_version';
-		$os_version = $_GET['osversion'];
+	case 'arm64':
+	case 'arm_64':
+		$device_mask = BeaconUpdates::ARCH_ARM64;
 		break;
 	}
 }
 
+$updates = BeaconUpdates::FindUpdates($current_build, $device_mask, $stage);
+	
 $include_notices = $current_build > 33;
-
 $database = BeaconCommon::Database();
 if ($include_notices) {
-	$notices = array();
+	$database = BeaconCommon::Database();
+	$notices = [];
 	if ($html_mode === false) {
 		$results = $database->Query('SELECT message, secondary_message, action_url FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) AND last_update > CURRENT_TIMESTAMP - \'3 weeks\'::INTERVAL ORDER BY last_update DESC LIMIT 5;', $current_build);
 		while (!$results->EOF()) {
-			$notices[] = array(
+			$notices[] = [
 				'message' => $results->Field('message'),
 				'secondary_message' => $results->Field('secondary_message'),
 				'action_url' => $results->Field('action_url')
-			);
+			];
 			$results->MoveNext();
 		}
 	}
 }
 
-if (isset($version_column) && isset($os_version)) {
-	$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 AND os_version_as_integer(' . $version_column . ') <= os_version_as_integer($3) ORDER BY build_number DESC;', $current_build, $stage, $os_version);
-	$required = $database->Query('SELECT COUNT(update_id) AS num_required_updates FROM updates WHERE stage >= $2 AND build_number >= $1 AND $1 <@ lock_versions AND os_version_as_integer(' . $version_column . ') <= os_version_as_integer($3);', $current_build, $stage, $os_version)->Field('num_required_updates') > 0;
-} else {
-	$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 ORDER BY build_number DESC;', $current_build, $stage);
-	$required = $database->Query('SELECT COUNT(update_id) AS num_required_updates FROM updates WHERE stage >= $2 AND build_number >= $1 AND $1 <@ lock_versions;', $current_build, $stage)->Field('num_required_updates') > 0;
-}
-if ($results->RecordCount() == 0) {
+if (count($updates) === 0) {
 	if ($html_mode) {
 		echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beacon Update</title></head><body><h1>No update</h1></body></html>';
 	} elseif ($include_notices) {
-		$values = array(
+		$values = [
 			'notices' => $notices
-		);
+		];
 		echo json_encode($values, JSON_PRETTY_PRINT);
 	} else {
 		echo '{}';
@@ -86,48 +76,51 @@ if ($results->RecordCount() == 0) {
 	exit;
 }
 
-
-
-$values = array(
-	'build' => intval($results->Field('build_number')),
-	'version' => $results->Field('build_display'),
-	'preview' => ($current_build < 10500000) ? 'Beacon\'s biggest update ever is here!' : $results->Field('preview'),
-	'notes_url' => BeaconCommon::AbsoluteURL('/history' . (intval($results->Field('stage')) != 3 ? '?stage=' . $results->Field('stage') : '')),
-	'required' => $required,
-	'build_date' => BeaconCommon::BuildDateForVersion(intval($results->Field('build_number'))),
-	'mac' => array(
-		'url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
-		'signature' => $results->Field('mac_signature')
-	)
-);
-
-$notes_path = '/history';
-if ($results->Field('stage') < 3) {
-	// It may seem odd, but preview releases should show notes for both alphas and betas.
-	$notes_path .= '?stage=1';
-}
-$notes_path .= '#build' . $results->Field('build_number');
-
-foreach ($arch_priority as $part) {
-	if (is_null($results->Field('win_' . $part . '_url')) === false) {
-		$values['win'] = array(
-			'url' => BeaconCommon::SignDownloadURL($results->Field('win_' . $part . '_url')),
-			'signature' => $results->Field('win_' . $part . '_signature')
-		);
-		break;
-	}
-}
+$update = $updates[0];
+$values = [
+	'build' => $update['build_number'],
+	'version' => $update['build_display'],
+	'preview' => ($current_build < 10500000) ? 'Beacon\'s biggest update ever is here!' : $update['preview'],
+	'required' => (is_null($update['required_if_below']) === false && $current_build <= $update['required_if_below'] ? true : false),
+	'build_date' => date('Y-m-d H:i:sO', $update['publish_time']),
+];
 
 if ($include_notices) {
 	$values['notices'] = $notices;
 }
 
+foreach ($update['files'] as $platform => $files) {
+	$key = '';
+	switch ($platform) {
+	case BeaconUpdates::PLATFORM_MACOS:
+		$key = 'mac';
+		break;
+	case BeaconUpdates::PLATFORM_WINDOWS:
+		$key = 'win';
+		break;
+	default:
+		continue;
+	}
+	
+	foreach ($files as $url => $signatures) {
+		if (array_key_exists(BeaconUpdates::SIGNATURE_RSA, $signatures) === false) {
+			continue;
+		}
+		
+		$values[$key] = [
+			'url' => BeaconCommon::SignDownloadURL($url),
+			'signature' => $signatures[BeaconUpdates::SIGNATURE_RSA]
+		];
+		break;
+	}
+}
+
 $markdown = '';
-while (!$results->EOF()) {
+foreach ($updates as $update) {
 	if ($markdown === '') {
-		$markdown = "# Beacon " . $results->Field('build_display') . " is now available\n\n" . $results->Field('notes');
+		$markdown = "# Beacon " . $update['build_display'] . " is now available\n\n" . $update['notes'];
 	} else {
-		$markdown .= "\n\n## Changes in " . $results->Field('build_display') . "\n\n" . $results->Field('notes');
+		$markdown .= "\n\n## Changes in " . $update['build_display'] . "\n\n" . $update['notes'];
 	}
 	$results->MoveNext();
 }
@@ -156,6 +149,12 @@ HTML;
 if ($html_mode) {
 	echo $html;
 } else {
+	$notes_path = '/history';
+	if ($updates[0]['stage'] < 3) {
+		// It may seem odd, but preview releases should show notes for both alphas and betas.
+		$notes_path .= '?stage=1';
+	}
+	$notes_path .= '#build' . $updates[0]['build_number'];
 	$values['notes'] = $html;
 	$values['notes_url'] = BeaconCommon::AbsoluteURL($notes_path);
 	echo json_encode($values, JSON_PRETTY_PRINT);
