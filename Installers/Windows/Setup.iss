@@ -62,6 +62,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Sparkle\Windows x64\*.dll"; DestDir: "{app}\Beacon Libs"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Sparkle\Windows x64\*"; Excludes: "*.dll"; DestDir: "{app}\Beacon Libs"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: Is64BitInstallMode And IsAdminInstallMode;
 Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitInstallMode And IsAdminInstallMode;
 #endif
@@ -69,6 +71,8 @@ Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitIn
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
 Source: "..\..\Project\Builds - Beacon\Windows\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Sparkle\Windows x86\*.dll"; DestDir: "{app}\Beacon Libs"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Sparkle\Windows x86\*"; Excludes: "*.dll"; DestDir: "{app}\Beacon Libs"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: (Not Is64BitInstallMode) And IsAdminInstallMode;
 Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: (Not Is64BitInstallMode) And IsAdminInstallMode;
 #endif
