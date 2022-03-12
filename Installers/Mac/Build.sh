@@ -23,11 +23,6 @@ find "${DEST}/${APPNAME}.app" -type d -exec chmod 755 {} +;
 find "${DEST}/${APPNAME}.app" -type f -exec chmod 644 {} +;
 chmod 755 "${DEST}/${APPNAME}.app/Contents/MacOS/${APPNAME}";
 
-xattr -clr "${DEST}/${APPNAME}.app";
-codesign -f --options=runtime --deep --timestamp --entitlements "${PARENT}/entitlements.plist" -s 'Developer ID Application: Thom McGrath' "${DEST}/${APPNAME}.app"/Contents/Frameworks/*.dylib;
-codesign -f --options=runtime --deep --timestamp --entitlements "${PARENT}/entitlements.plist" -s 'Developer ID Application: Thom McGrath' "${DEST}/${APPNAME}.app"/Contents/Frameworks/*.framework;
-codesign -f --options=runtime --deep --timestamp --entitlements "${PARENT}/entitlements.plist" -s 'Developer ID Application: Thom McGrath' "${DEST}/${APPNAME}.app";
-
 hdiutil eject "${DEST}";
 if [ -e "${OUTPUT}/${APPNAME}.dmg" ]; then
 	rm -rf "${OUTPUT}/${APPNAME}.dmg";

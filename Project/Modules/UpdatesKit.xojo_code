@@ -146,6 +146,7 @@ Protected Module UpdatesKit
 		      End If
 		      
 		      Var Updater As New WinSparkleMBS
+		      AddHandler Updater.ShutdownRequest, AddressOf mWinSparkle_ShutdownRequest
 		      Updater.AppCastURL = URL
 		      Updater.AppName = "Beacon"
 		      Updater.AppVersion = App.Version
@@ -384,6 +385,14 @@ Protected Module UpdatesKit
 		    NotificationKit.Post(Notification_Error, "The update definition was not found.")
 		    Return
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mWinSparkle_ShutdownRequest(Sender As WinSparkleMBS)
+		  #Pragma Unused Sender
+		  
+		  Quit
 		End Sub
 	#tag EndMethod
 
