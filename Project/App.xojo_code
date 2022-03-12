@@ -871,15 +871,6 @@ Implements NotificationKit.Receiver,Beacon.Application
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SetupDatabases()
 		  Try
-		    Var DataFile As FolderItem = Self.ResourcesFolder.Child("Complete.beacondata")
-		    If (DataFile Is Nil) = False And DataFile.Exists Then
-		      DataUpdater.ImportFile(DataFile)
-		    End If
-		  Catch Err As RuntimeException
-		    App.Log(Err, CurrentMethodName, "Importing local data archive")
-		  End Try
-		  
-		  Try
 		    Self.mDataSources.Add(Ark.DataSource.SharedInstance)
 		    Self.mDataSources.Add(Beacon.CommonData.SharedInstance)
 		  Catch Err As RuntimeException
@@ -892,6 +883,24 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Quit
 		    Return
 		  End Try
+		  
+		  Var ShouldImportLocal As Boolean
+		  For Idx As Integer = Self.mDataSources.FirstIndex To Self.mDataSources.LastIndex
+		    If Self.mDataSources(Idx).HasContent = False Then
+		      ShouldImportLocal = True
+		      Exit
+		    End If
+		  Next Idx
+		  If ShouldImportLocal Then
+		    Try
+		      Var DataFile As FolderItem = Self.ResourcesFolder.Child("Complete.beacondata")
+		      If (DataFile Is Nil) = False And DataFile.Exists Then
+		        DataUpdater.ImportFile(DataFile)
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Importing local data archive")
+		    End Try
+		  End If
 		  
 		  Self.NextLaunchQueueTask()
 		End Sub

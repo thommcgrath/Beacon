@@ -676,6 +676,18 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub ObtainLock()
+		  mLock.Enter
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReleaseLock()
+		  mLock.Leave
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub TestPerformance()
 		  Var TestDoc As New Ark.Project
 		  Var Packs As Beacon.StringList = TestDoc.ContentPacks
@@ -791,6 +803,10 @@ Inherits Beacon.DataSource
 		  Self.mIconCache = New Dictionary
 		  Self.mContainerLabelCacheDict = New Dictionary
 		  Self.mContainerLabelCacheMask = 0
+		  
+		  If mLock Is Nil Then
+		    mLock = New CriticalSection
+		  End If
 		  
 		  Super.Constructor()
 		End Sub
@@ -2754,6 +2770,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mInstances As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

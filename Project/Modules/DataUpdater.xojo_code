@@ -23,6 +23,7 @@ Protected Module DataUpdater
 		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
 		  End If
 		  
+		  mForceImport = Refresh
 		  mCheckingOnline = True
 		  NotificationKit.Post(Notification_OnlineCheckBegin, Nil)
 		  App.Log("Check for data updates from " + CheckURL)
@@ -187,6 +188,7 @@ Protected Module DataUpdater
 		  #Pragma Unused Sender
 		  
 		  If mPendingImports.Count = 0 Then
+		    mForceImport = False
 		    Return
 		  End If
 		  
@@ -210,6 +212,7 @@ Protected Module DataUpdater
 		    Var Parsed As Dictionary
 		    Var IsFull As Boolean
 		    Var Deletions() As Dictionary
+		    Var PayloadTimestamp As Double
 		    Try
 		      #if DebugBuild
 		        Var StartTime As Double = System.Microseconds
@@ -226,6 +229,8 @@ Protected Module DataUpdater
 		        Continue While
 		      End If
 		      
+		      PayloadTimestamp = Parsed.Value("timestamp").DoubleValue
+		      
 		      If IsFull = False Then
 		        Var Temp() As Variant = Parsed.Value("deletions")
 		        For Each Member As Variant In Temp
@@ -241,6 +246,11 @@ Protected Module DataUpdater
 		    End Try
 		    
 		    For Each Source As Beacon.DataSource In Sources
+		      If mForceImport = False And Source.LastSyncTimestamp >= PayloadTimestamp Then
+		        // No need to import this one
+		        Continue
+		      End If
+		      
 		      Var Imported As Boolean
 		      Var OriginalChangeCount As Integer = Source.TotalChanges()
 		      Try
@@ -274,6 +284,7 @@ Protected Module DataUpdater
 		  Wend
 		  
 		  NotificationKit.Post(Notification_ImportStopped, Nil)
+		  mForceImport = False
 		  
 		  If mCheckOnlineAfterImporting Then
 		    mCheckOnlineAfterImporting = False
@@ -293,6 +304,10 @@ Protected Module DataUpdater
 
 	#tag Property, Flags = &h21
 		Private mContentURLs() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mForceImport As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

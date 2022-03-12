@@ -93,8 +93,6 @@ Protected Class DataSource
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mLock = New CriticalSection
-		  
 		  Const YieldInterval = 100
 		  
 		  Var SchemaVersion As Integer = RaiseEvent GetSchemaVersion
@@ -291,6 +289,13 @@ Protected Class DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasContent() As Boolean
+		  Var Rows As RowSet = Self.SQLSelect("SELECT EXISTS(SELECT 1 FROM variables) AS populated;")
+		  Return Rows.Column("populated").BooleanValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Identifier() As String
 		  Var Err As New RuntimeException
 		  Err.Message = "DataSource.Identifier was not overridden"
@@ -478,54 +483,11 @@ Protected Class DataSource
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
-		Private Sub mImportThread_Run(Sender As Thread)
-		  If Self.mPendingImports.LastIndex = -1 Then
-		    Self.mImporting = False
-		    Return
-		  End If
-		  
-		  NotificationKit.Post(Self.Notification_ImportStarted, Nil)
-		  
-		  Sender.Sleep(500)
-		  
-		  Var SyncOriginal As DateTime = Self.LastSync
-		  Var Success As Boolean
-		  While Self.mPendingImports.Count > 0
-		    Var Content As String = Self.mPendingImports(0)
-		    Self.mPendingImports.RemoveAt(0)
-		    
-		    Success = Self.ImportInner(Content) Or Success
-		  Wend
-		  Self.mImporting = False
-		  Var SyncNew As DateTime = Self.LastSync
-		  
-		  If SyncOriginal <> SyncNew Then
-		    NotificationKit.Post(Self.Notification_DatabaseUpdated, SyncNew)
-		  End If
-		  
-		  If Success Then
-		    Self.SQLExecute("ANALYZE;")
-		    Self.SQLExecute("VACUUM;")
-		    App.Log("Database optimized")
-		    
-		    NotificationKit.Post(Self.Notification_ImportSuccess, SyncNew)
-		  Else
-		    NotificationKit.Post(Self.Notification_ImportFailed, SyncNew)
-		  End If
-		  
-		  If Self.mSyncAfterImport Then
-		    Self.mSyncAfterImport = False
-		    Self.Sync()
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub ObtainLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
-		  Self.mLock.Enter
+		  RaiseEvent ObtainLock
 		End Sub
 	#tag EndMethod
 
@@ -546,7 +508,7 @@ Protected Class DataSource
 		Private Sub ReleaseLock()
 		  // This method exists to provide easy insertion points for debug data
 		  
-		  Self.mLock.Leave
+		  RaiseEvent ReleaseLock
 		End Sub
 	#tag EndMethod
 
@@ -719,7 +681,15 @@ Protected Class DataSource
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ObtainLock()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ReleaseLock()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -753,10 +723,6 @@ Protected Class DataSource
 
 	#tag Property, Flags = &h21
 		Private mLastCommitTime As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

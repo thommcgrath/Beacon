@@ -267,8 +267,20 @@ Inherits Beacon.DataSource
 	#tag EndEvent
 
 	#tag Event
+		Sub ObtainLock()
+		  mLock.Enter
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.UpdateNews()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReleaseLock()
+		  mLock.Leave
 		End Sub
 	#tag EndEvent
 
@@ -277,6 +289,11 @@ Inherits Beacon.DataSource
 		Sub Constructor()
 		  Self.mTemplateCache = New Dictionary
 		  Self.mSelectorCache = New Dictionary
+		  
+		  If mLock Is Nil Then
+		    mLock = New CriticalSection
+		  End If
+		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -751,7 +768,7 @@ Inherits Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub UpdateNews()
-		  If (Self.mUpdateNewsThread Is Nil) = False Then
+		  If (Self.mUpdateNewsThread Is Nil) = False And Self.mUpdateNewsThread.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Return
 		  End If
 		  
@@ -773,6 +790,7 @@ Inherits Beacon.DataSource
 		  Var Content As String = Socket.SendSync("GET", Beacon.WebURL("/news?stage=" + App.StageCode.ToString))
 		  
 		  If Socket.HTTPStatusCode <> 200 Then
+		    Self.mUpdateNewsThread = Nil
 		    Return
 		  End If
 		  
@@ -780,6 +798,7 @@ Inherits Beacon.DataSource
 		  Try
 		    Parsed = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
+		    Self.mUpdateNewsThread = Nil
 		    Return
 		  End Try
 		  
@@ -787,6 +806,7 @@ Inherits Beacon.DataSource
 		  Try
 		    Items = Parsed.DictionaryArrayValue
 		  Catch Err As RuntimeException
+		    Self.mUpdateNewsThread = Nil
 		    Return
 		  End Try
 		  
@@ -846,6 +866,10 @@ Inherits Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private Shared mInstances As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
