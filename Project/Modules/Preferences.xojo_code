@@ -375,16 +375,17 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.BooleanValue("Automatic Updates", True)
+			  Return mManager.BooleanValue("Automatically Downloads Updates", True)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  Init
-			  mManager.BooleanValue("Automatic Updates") = Value
+			  mManager.BooleanValue("Automatically Downloads Updates") = Value
+			  UpdatesKit.RefreshSettings()
 			End Set
 		#tag EndSetter
-		Protected AutomaticUpdates As Boolean
+		Protected AutomaticallyDownloadsUpdates As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -652,6 +653,7 @@ Protected Module Preferences
 			  
 			  mManager.BooleanValue("Online Enabled") = Value
 			  NotificationKit.Post(Notification_OnlineStateChanged, Value)
+			  UpdatesKit.RefreshSettings()
 			End Set
 		#tag EndSetter
 		Protected OnlineEnabled As Boolean
@@ -865,6 +867,23 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected SpawnPointsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Updates Channel", 0)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Updates Channel") = Value
+			  UpdatesKit.RefreshSettings()
+			End Set
+		#tag EndSetter
+		Protected UpdateChannel As Integer
 	#tag EndComputedProperty
 
 

@@ -132,8 +132,8 @@ Protected Module UpdatesKit
 		      
 		      Var Updater As New SUUpdaterMBS
 		      Updater.FeedURL = URL
-		      Updater.AutomaticallyChecksForUpdates = True
-		      Updater.AutomaticallyDownloadsUpdates = Preferences.AutomaticUpdates
+		      Updater.AutomaticallyChecksForUpdates = Preferences.OnlineEnabled
+		      Updater.AutomaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
 		      Updater.UpdateCheckInterval = CheckInterval
 		      Updater.SendsSystemProfile = False
 		      Updater.UserAgentString = App.UserAgent
@@ -150,7 +150,7 @@ Protected Module UpdatesKit
 		      Updater.AppCastURL = URL
 		      Updater.AppName = "Beacon"
 		      Updater.AppVersion = App.Version
-		      Updater.AutomaticCheckForUpdates = True
+		      Updater.AutomaticCheckForUpdates = Preferences.OnlineEnabled
 		      Updater.BuildVersion = App.MajorVersion.ToString(Locale.Raw, "0") + "." + App.MinorVersion.ToString(Locale.Raw, "0") + "." + App.BugVersion.ToString(Locale.Raw, "0") + "." + App.StageCode.ToString(Locale.Raw, "0") + "." + App.NonReleaseVersion.ToString(Locale.Raw, "0")
 		      Updater.CanShutdown = True
 		      Updater.CompanyName = "The ZAZ Studios"
@@ -222,12 +222,12 @@ Protected Module UpdatesKit
 		  #if UseSparkle
 		    #if TargetMacOS
 		      If (mMacSparkle Is Nil) = False Then
-		        Return mMacSparkle.AutomaticallyDownloadsUpdates
-		      Else
-		        Return Preferences.AutomaticUpdates
+		        Return mMacSparkle.AutomaticallyChecksForUpdates
 		      End If
 		    #elseif TargetWindows
-		      Return Preferences.AutomaticUpdates
+		      If (mWinSparkle Is Nil) = False Then
+		        Return mWinSparkle.AutomaticCheckForUpdates
+		      End If
 		    #endif
 		  #else
 		    Return (mAutoCheckTimer Is Nil) = False And mAutoCheckTimer.RunMode = Timer.RunModes.Multiple
@@ -240,11 +240,12 @@ Protected Module UpdatesKit
 		  #if UseSparkle
 		    #if TargetMacOS
 		      If (mMacSparkle Is Nil) = False Then
-		        mMacSparkle.AutomaticallyDownloadsUpdates = Value
+		        mMacSparkle.AutomaticallyChecksForUpdates = Value
 		      End If
-		      Preferences.AutomaticUpdates = Value
 		    #elseif TargetWindows
-		      Preferences.AutomaticUpdates = Value
+		      If (mWinSparkle Is Nil) = False Then
+		        mWinSparkle.AutomaticCheckForUpdates = Value
+		      End If
 		    #endif
 		  #else
 		    If IsCheckingAutomatically = Value Then
@@ -436,11 +437,38 @@ Protected Module UpdatesKit
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub RefreshSettings()
+		  IsCheckingAutomatically = Preferences.OnlineEnabled
+		  
+		  #if UseSparkle
+		    Var Params As Dictionary = UpdateCheckParams()
+		    Var URL As String = BeaconAPI.URL("/sparkle.php?" + SimpleHTTP.BuildFormData(Params), False)
+		    App.Log("Appcast URL is " + URL)
+		    
+		    #if TargetMacOS
+		      If (mMacSparkle Is Nil) = False Then
+		        mMacSparkle.FeedURL = URL
+		        mMacSparkle.automaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
+		      End If
+		    #elseif TargetWindows
+		      If (mWinSparkle Is Nil) = False Then
+		        mWinSparkle.AppCastURL = URL
+		      End If
+		    #endif
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function UpdateCheckParams() As Dictionary
 		  Var Params As New Dictionary
-		  Params.Value("build") = App.BuildNumber.ToString
-		  Params.Value("stage") = App.StageCode.ToString
+		  Params.Value("build") = App.BuildNumber.ToString(Locale.Raw, "0")
+		  If Preferences.UpdateChannel = 0 Then
+		    Params.Value("stage") = App.StageCode.ToString(Locale.Raw, "0")
+		  Else
+		    Params.Value("stage") = Preferences.UpdateChannel.ToString(Locale.Raw, "0")
+		  End If
 		  If IsARM Then
 		    If Is64Bit Then
 		      Params.Value("arch") = "arm64"
