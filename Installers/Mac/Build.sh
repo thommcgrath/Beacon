@@ -22,6 +22,11 @@ cp -R "${SOURCE}/${APPNAME}.app/Contents" "${DEST}/${APPNAME}.app";
 find "${DEST}/${APPNAME}.app" -type d -exec chmod 755 {} +;
 find "${DEST}/${APPNAME}.app" -type f -exec chmod 644 {} +;
 chmod 755 "${DEST}/${APPNAME}.app/Contents/MacOS/${APPNAME}";
+chmod 755 "${DEST}/${APPNAME}.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate";
+chmod 755 "${DEST}/${APPNAME}.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater";
+chmod 755 "${DEST}/${APPNAME}.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/org.sparkle-project.Downloader.xpc/Contents/MacOS/org.sparkle-project.Downloader";
+chmod 755 "${DEST}/${APPNAME}.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/org.sparkle-project.InstallerLauncher.xpc/Contents/MacOS/org.sparkle-project.InstallerLauncher";
+chmod 755 "${DEST}/${APPNAME}.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle";
 
 hdiutil eject "${DEST}";
 if [ -e "${OUTPUT}/${APPNAME}.dmg" ]; then
