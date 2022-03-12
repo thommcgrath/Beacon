@@ -564,6 +564,7 @@ Class=TemplateSelector;Modules/Beacon/TemplateSelector.xojo_code;&h0000000018420
 Class=LootContainerIcon;Modules/Game Support/Ark/LootContainerIcon.xojo_code;&h000000001202C7FF;&h0000000016B997FF;false
 Sound=TrollActivated;../Sounds/TrollActivated.wav;&h0000000014168FFF;&h0000000041DD7FFF;false
 Class=PopulationFigures;Modules/Game Support/Ark/PopulationFigures.xojo_code;&h0000000065C9B7FF;&h0000000016B997FF;false
+Window=ArkAIGeneratorDialog;Views/Ark/Config Editors/Crafting Costs/ArkAIGeneratorDialog.xojo_window;&h000000004E45CFFF;&h00000000068D0FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=6

@@ -1393,6 +1393,15 @@ End
 		    End If
 		    
 		    Var Tool As Ark.ProjectTool = Choice.Tag
+		    If Tool.UUID = "c5c14eb8-41c9-4fd3-8f92-582e843ac9a0" Then
+		      Var Phrase As String = ArkAIGeneratorDialog.Present(Self)
+		      If Phrase.IsEmpty Then
+		        Return
+		      End If
+		      Self.CurrentConfigName = Ark.Configs.NameCraftingCosts
+		      Call Self.CurrentPanel.RunTool("94eced5b-be7d-441a-a5b3-f4a9bf40a856")
+		      Return
+		    End If
 		    If Tool.IsRelevantForGroup(Self.CurrentConfigName) = False Then
 		      Self.CurrentConfigName = Tool.FirstGroup
 		    End If
