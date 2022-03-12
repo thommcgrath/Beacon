@@ -10,20 +10,20 @@ Begin BeaconWindow SupportTicketWindow
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   574
+   Height          =   606
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   574
-   MinimumWidth    =   600
+   MinimumHeight   =   606
+   MinimumWidth    =   800
    Resizeable      =   True
    Title           =   "New Support Ticket"
    Type            =   0
    Visible         =   True
-   Width           =   600
+   Width           =   800
    Begin GroupBox DisclosureGroup
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -36,22 +36,22 @@ Begin BeaconWindow SupportTicketWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   28
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   402
+      Top             =   434
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   552
+      Width           =   760
       Begin Label DisclosureLabel
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -65,7 +65,7 @@ Begin BeaconWindow SupportTicketWindow
          Index           =   -2147483648
          InitialParent   =   "DisclosureGroup"
          Italic          =   False
-         Left            =   48
+         Left            =   40
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -80,12 +80,12 @@ Begin BeaconWindow SupportTicketWindow
          TextAlignment   =   0
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   422
+         Top             =   454
          Transparent     =   False
          Underline       =   False
          Value           =   "For diagnostic purposes, this support ticket will include Beacon's recent log files, the selected Beacon project, and any backed up ini files."
          Visible         =   True
-         Width           =   512
+         Width           =   720
       End
       Begin CheckBox AgreeCheckbox
          AllowAutoDeactivate=   True
@@ -101,7 +101,7 @@ Begin BeaconWindow SupportTicketWindow
          Index           =   -2147483648
          InitialParent   =   "DisclosureGroup"
          Italic          =   False
-         Left            =   48
+         Left            =   40
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -112,13 +112,13 @@ Begin BeaconWindow SupportTicketWindow
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   474
+         Top             =   506
          Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
          VisualState     =   0
-         Width           =   512
+         Width           =   720
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
@@ -135,7 +135,7 @@ Begin BeaconWindow SupportTicketWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   700
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -143,11 +143,11 @@ Begin BeaconWindow SupportTicketWindow
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   534
+      Top             =   566
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -167,7 +167,7 @@ Begin BeaconWindow SupportTicketWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   408
+      Left            =   608
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -175,471 +175,18 @@ Begin BeaconWindow SupportTicketWindow
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   534
+      Top             =   566
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin UITweaks.ResizedTextField EmailField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   155
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   54
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   425
-   End
-   Begin UITweaks.ResizedLabel EmailLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   54
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "E-Mail Address:"
-      Visible         =   True
-      Width           =   123
-   End
-   Begin UITweaks.ResizedTextField NameField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   155
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   425
-   End
-   Begin UITweaks.ResizedLabel NameLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Name:"
-      Visible         =   True
-      Width           =   123
-   End
-   Begin UITweaks.ResizedPopupMenu PlatformMenu
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Steam\nEpic Games Store\nXbox / Windows Store\nPlayStation\nSwitch / Mobile / Other"
-      Italic          =   False
-      Left            =   155
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      SelectedRowIndex=   -1
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   88
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   203
-   End
-   Begin UITweaks.ResizedLabel PlatformLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   88
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Platform:"
-      Visible         =   True
-      Width           =   123
-   End
-   Begin UITweaks.ResizedTextField HostField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   "Nitrado, GPortal, single player, self-hosted, etc."
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   155
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   120
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   425
-   End
-   Begin UITweaks.ResizedLabel HostLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   120
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Hosting Provider:"
-      Visible         =   True
-      Width           =   123
-   End
-   Begin TextArea BodyField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   True
-      AllowStyledText =   True
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
-      Height          =   156
-      HideSelection   =   True
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   28
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Multiline       =   True
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   226
-      Transparent     =   False
-      Underline       =   False
-      UnicodeMode     =   0
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   552
-   End
-   Begin Label BodyLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   28
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   194
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Please describe your issue with as much detail as possible."
-      Visible         =   True
-      Width           =   552
-   End
-   Begin UITweaks.ResizedPopupMenu DocumentMenu
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   155
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      SelectedRowIndex=   0
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   154
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   203
-   End
-   Begin UITweaks.ResizedLabel DocumentLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   3
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   154
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Document:"
-      Visible         =   True
-      Width           =   123
-   End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -657,6 +204,603 @@ Begin BeaconWindow SupportTicketWindow
       RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin GroupBox AttachmentsGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Attachments (Optional)"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   210
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   461
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   319
+      Begin BeaconListbox AttachmentsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowInfiniteScroll=   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   1
+         ColumnWidths    =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   0
+         GridLinesVerticalStyle=   0
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   0
+         Height          =   122
+         Index           =   -2147483648
+         InitialParent   =   "AttachmentsGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   481
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   1
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         Width           =   279
+         _ScrollWidth    =   -1
+      End
+      Begin UITweaks.ResizedPushButton AddAttachmentButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Add File"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AttachmentsGroup"
+         Italic          =   False
+         Left            =   670
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         MacButtonStyle  =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   190
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+   End
+   Begin GroupBox DetailsGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Details"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   210
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   429
+      Begin UITweaks.ResizedLabel HostLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   156
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Hosting Provider:"
+         Visible         =   True
+         Width           =   116
+      End
+      Begin UITweaks.ResizedTextField HostField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   "Nitrado, single player, self-hosted, etc."
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   168
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   156
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   261
+      End
+      Begin UITweaks.ResizedLabel PlatformLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   124
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Platform:"
+         Visible         =   True
+         Width           =   116
+      End
+      Begin UITweaks.ResizedPopupMenu PlatformMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         InitialValue    =   "Steam\nEpic Games Store\nXbox / Windows Store\nPlayStation\nSwitch / Mobile / Other"
+         Italic          =   False
+         Left            =   168
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   -1
+         TabIndex        =   5
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   124
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   203
+      End
+      Begin UITweaks.ResizedLabel NameLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Name:"
+         Visible         =   True
+         Width           =   116
+      End
+      Begin UITweaks.ResizedTextField NameField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   168
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   56
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   261
+      End
+      Begin UITweaks.ResizedLabel EmailLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   90
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "E-Mail Address:"
+         Visible         =   True
+         Width           =   116
+      End
+      Begin UITweaks.ResizedTextField EmailField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   168
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   90
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   261
+      End
+      Begin UITweaks.ResizedPopupMenu DocumentMenu
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   168
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         SelectedRowIndex=   0
+         TabIndex        =   9
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   190
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   203
+      End
+      Begin UITweaks.ResizedLabel DocumentLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "DetailsGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   3
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   190
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Project:"
+         Visible         =   True
+         Width           =   116
+      End
+   End
+   Begin GroupBox BodyGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Please describe your issue with as much detail as possible."
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   180
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   242
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   760
+      Begin TextArea BodyField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   True
+         AllowStyledText =   True
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         Height          =   124
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "BodyGroup"
+         Italic          =   False
+         Left            =   40
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Multiline       =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   278
+         Transparent     =   False
+         Underline       =   False
+         UnicodeMode     =   0
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   720
+      End
    End
 End
 #tag EndWindow
@@ -684,6 +828,41 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub AddAttachment(File As FolderItem)
+		  Var Files(0) As FolderItem
+		  Files(0) = File
+		  Self.AddAttachments(Files)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddAttachments(Files() As FolderItem)
+		  Var SelectionCleared As Boolean
+		  For Each File As FolderItem In Files
+		    If File Is Nil Then
+		      Continue
+		    End If
+		    
+		    If SelectionCleared = False Then
+		      Self.AttachmentsList.SelectedRowIndex = -1
+		      SelectionCleared = True
+		    End If
+		    
+		    Self.mAttachments.Add(File)
+		    
+		    Self.AttachmentsList.AddRow(File.Name)
+		    Self.AttachmentsList.RowTagAt(Self.AttachmentsList.LastAddedRowIndex) = File
+		    Self.AttachmentsList.Selected(Self.AttachmentsList.LastAddedRowIndex) = True
+		  Next File
+		  Self.AttachmentsList.Sort
+		  
+		  If SelectionCleared Then
+		    Self.AttachmentsList.EnsureSelectionIsVisible
+		  End If
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function AddToArchive(Path As String, File As FolderItem) As Boolean
@@ -793,6 +972,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mAttachments() As FolderItem
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProgress As ProgressWindow
@@ -948,64 +1131,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events EmailField
-	#tag Event
-		Sub TextChange()
-		  If Self.Opened Then
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NameField
-	#tag Event
-		Sub TextChange()
-		  If Self.Opened Then
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PlatformMenu
-	#tag Event
-		Sub Change()
-		  If Self.Opened Then
-		    Self.Changed = True
-		  End If
-		  
-		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Text.IsEmpty Then
-		    Self.HostField.Text = "Nitrado"
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events HostField
-	#tag Event
-		Sub TextChange()
-		  If Self.Opened Then
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BodyField
-	#tag Event
-		Sub TextChange()
-		  If Self.Opened Then
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DocumentMenu
-	#tag Event
-		Sub Change()
-		  If Self.Opened Then
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SubmitThread
 	#tag Event
 		Sub Run()
@@ -1071,6 +1196,17 @@ End
 		        Return
 		      End If
 		    Next
+		  End If
+		  
+		  If Self.mAttachments.Count > 0 Then
+		    Self.mProgress.Detail = "Attaching other files…"
+		    For Idx As Integer = Self.mAttachments.FirstIndex To Self.mAttachments.LastIndex
+		      Self.mProgress.Detail = "Attaching " + Self.mAttachments(Idx).Name + "…"
+		      If Not Self.AddToArchive("Other", Self.mAttachments(Idx)) Then
+		        // Error will have been set already
+		        Return
+		      End If
+		    Next Idx
 		  End If
 		  
 		  Self.mTicketArchive.Close
@@ -1164,6 +1300,123 @@ End
 		  
 		  Self.ShowAlert("Your ticket has been submitted", "You should receive an email confirmation shortly.")
 		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AttachmentsList
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  #Pragma Unused Warn
+		  
+		  For RowIdx As Integer = 0 To Me.LastRowIndex
+		    If Me.Selected(RowIdx) = False Then
+		      Continue
+		    End If
+		    
+		    Var File As FolderItem = Me.RowTagAt(RowIdx)
+		    Var Idx As Integer = Self.mAttachments.IndexOf(File)
+		    If Idx > -1 Then
+		      Self.mAttachments.RemoveAt(Idx)
+		      Me.RemoveRowAt(RowIdx)
+		    End If
+		  Next RowIdx
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DropObject(obj As DragItem, action As Integer)
+		  Var Files() As FolderItem
+		  Do
+		    If Obj.FolderItemAvailable Then
+		      Files.Add(Obj.FolderItem)
+		    End If
+		  Loop Until Obj.NextItem = False
+		  Self.AddAttachments(Files)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.AcceptFileDrop("")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddAttachmentButton
+	#tag Event
+		Sub Action()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.AllowMultipleSelections = True
+		  
+		  Call Dialog.ShowModal(Self)
+		  
+		  Var Files() As FolderItem
+		  For Each File As FolderItem In Dialog.SelectedFiles
+		    Files.Add(File)
+		  Next File
+		  If Files.Count > 0 Then
+		    Self.AddAttachments(Files)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HostField
+	#tag Event
+		Sub TextChange()
+		  If Self.Opened Then
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlatformMenu
+	#tag Event
+		Sub Change()
+		  If Self.Opened Then
+		    Self.Changed = True
+		  End If
+		  
+		  If Me.SelectedRowIndex = Self.PlatformXbox And Self.HostField.Text.IsEmpty Then
+		    Self.HostField.Text = "Nitrado"
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NameField
+	#tag Event
+		Sub TextChange()
+		  If Self.Opened Then
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EmailField
+	#tag Event
+		Sub TextChange()
+		  If Self.Opened Then
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DocumentMenu
+	#tag Event
+		Sub Change()
+		  If Self.Opened Then
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BodyField
+	#tag Event
+		Sub TextChange()
+		  If Self.Opened Then
+		    Self.Changed = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
