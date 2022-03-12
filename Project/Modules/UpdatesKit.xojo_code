@@ -87,10 +87,20 @@ Protected Module UpdatesKit
 		    mSocket.RequestHeader("Cache-Control") = "no-cache"
 		    mSocket.RequestHeader("User-Agent") = App.UserAgent
 		    
-		    Var Params As Dictionary = UpdateCheckParams()
-		    mSocket.Send("GET", Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)))
+		    mSocket.Send("GET", CheckURL())
 		  #endif
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckURL() As String
+		  Var Params As Dictionary = UpdateCheckParams()
+		  #if UseSparkle
+		    Return BeaconAPI.URL("/sparkle.php?" + SimpleHTTP.BuildFormData(Params), False)
+		  #else
+		    Return Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)
+		  #endif
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -106,10 +116,6 @@ Protected Module UpdatesKit
 	#tag Method, Flags = &h1
 		Protected Sub Init()
 		  #if UseSparkle
-		    Var Params As Dictionary = UpdateCheckParams()
-		    Var URL As String = BeaconAPI.URL("/sparkle.php?" + SimpleHTTP.BuildFormData(Params), False)
-		    App.Log("Appcast URL is " + URL)
-		    
 		    Var CheckInterval As Integer
 		    #if DebugBuild
 		      CheckInterval = 3600
@@ -131,7 +137,7 @@ Protected Module UpdatesKit
 		      End If
 		      
 		      Var Updater As New SUUpdaterMBS
-		      Updater.FeedURL = URL
+		      Updater.FeedURL = CheckURL()
 		      Updater.AutomaticallyChecksForUpdates = Preferences.OnlineEnabled
 		      Updater.AutomaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
 		      Updater.UpdateCheckInterval = CheckInterval
@@ -147,7 +153,7 @@ Protected Module UpdatesKit
 		      
 		      Var Updater As New WinSparkleMBS
 		      AddHandler Updater.ShutdownRequest, AddressOf mWinSparkle_ShutdownRequest
-		      Updater.AppCastURL = URL
+		      Updater.AppCastURL = CheckURL()
 		      Updater.AppName = "Beacon"
 		      Updater.AppVersion = App.Version
 		      Updater.AutomaticCheckForUpdates = Preferences.OnlineEnabled
@@ -442,18 +448,14 @@ Protected Module UpdatesKit
 		  IsCheckingAutomatically = Preferences.OnlineEnabled
 		  
 		  #if UseSparkle
-		    Var Params As Dictionary = UpdateCheckParams()
-		    Var URL As String = BeaconAPI.URL("/sparkle.php?" + SimpleHTTP.BuildFormData(Params), False)
-		    App.Log("Appcast URL is " + URL)
-		    
 		    #if TargetMacOS
 		      If (mMacSparkle Is Nil) = False Then
-		        mMacSparkle.FeedURL = URL
+		        mMacSparkle.FeedURL = CheckURL()
 		        mMacSparkle.automaticallyDownloadsUpdates = Preferences.OnlineEnabled And Preferences.AutomaticallyDownloadsUpdates
 		      End If
 		    #elseif TargetWindows
 		      If (mWinSparkle Is Nil) = False Then
-		        mWinSparkle.AppCastURL = URL
+		        mWinSparkle.AppCastURL = CheckURL()
 		      End If
 		    #endif
 		  #endif
