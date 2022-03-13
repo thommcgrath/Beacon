@@ -98,7 +98,7 @@ Protected Module UpdatesKit
 		  #if UseSparkle
 		    Return BeaconAPI.URL("/sparkle.php?" + SimpleHTTP.BuildFormData(Params), False)
 		  #else
-		    Return Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)
+		    Return Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params))
 		  #endif
 		End Function
 	#tag EndMethod
@@ -160,7 +160,7 @@ Protected Module UpdatesKit
 		      Updater.BuildVersion = App.MajorVersion.ToString(Locale.Raw, "0") + "." + App.MinorVersion.ToString(Locale.Raw, "0") + "." + App.BugVersion.ToString(Locale.Raw, "0") + "." + App.StageCode.ToString(Locale.Raw, "0") + "." + App.NonReleaseVersion.ToString(Locale.Raw, "0")
 		      Updater.CanShutdown = True
 		      Updater.CompanyName = "The ZAZ Studios"
-		      Updater.DSAPubPEM = PublicKey
+		      Updater.DSAPubPEM = WinSparklePublicKey
 		      Updater.UpdateCheckInterval = CheckInterval
 		      Updater.Initialize
 		      mWinSparkle = Updater
@@ -587,12 +587,13 @@ Protected Module UpdatesKit
 	#tag EndConstant
 
 	#tag Constant, Name = PublicKey, Type = String, Dynamic = False, Default = \"30820120300D06092A864886F70D01010105000382010D003082010802820101008F9D9B313D28FDE0FD2100032D2E1A7F968A2E4975AF93A507823A95EFFE6A73176BD76D1286CC5DE513D3F4163F6F4E3D2A2FC472D540533020035FA0ED3FDFA33CBA289A94753D70546544459BE69E99B3B08AACBF489DEFA45BA1CC04DE0976DE2DABDC523A13FCEAE701468D994FEC116F30D44B307FD80AB13B1E15E76EA8B1366EC22E814F15D8021993FAE0BA39DF440EEF17550BC3A6CE2831A1B479E93088F2CAACFD19179D1C0744F0293A94C06D8F7D1D73C089D950F86953C2605F70462A889C4A1160B70192C1F97964F0741ED74713E10FF9CDC5BE6205385E5245297D41C31A75067699CB85D9FA6F806E8C770C5E91D706BCD5426C3080B1020111", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"-----BEGIN PUBLIC KEY-----\nMIIDOjCCAi0GByqGSM44BAEwggIgAoIBAQDI6xZ9nrExgcaSvbX/4gfS7bZQKM05\nHIw++81r7YlxOGw+GQEZzD73m/qq2P++jZttHwvIl0AWiILlTsdTeqoykceoz0jm\nyag6hZWFwo6jbyB0lvO59JipKyaygov1gx3TGFMxN/BRoKEPoBGkfbB00vS/9pQZ\nwk4+28+MeBQQwO4Z1BCm4xZ9l/rCqrfDyPSc1zEIfEHxB/7r5rERsxzIp+Z7bSSs\naF1JFwIQb7NISFBWB3S5p+vpGIeGZkE/0fZ9NkUHxpTL/7Er/cVZxAVH+yZgFg3h\ndTKwgWE1Hh6oA+31c19J/Oivd+zZVccvu//UXvJ8v1N0u723RaiDIptxAhUA/MRp\n4RFNsVJ01KI4K52HuGeuvXUCggEAR1KjYB6sFT2Q23H5afwNq/dsfbiUIq0Vnu7i\nE32sa5EQUynMJ07hVi9n4tpDqVvo/GRvqWMLk775aqcw40QYv1XHX3FZoSU7iu4z\nVBGqd5VgiCpKsLXGWnDypt+WHv2S1xnsWTGAa7lFldJjbuGL3EOE7tQwaSMeeteA\nJD3kl23s8FOVbRkLextddYMdh1adzggRItkHHMuq0Nj+/TkSOiQ9AHrlLJML32hV\nGyDqp8sTGt/z7y7jRM49U9V+s18kBNSz3iCnKYaN2iZ3zzE+B2BVH6iLC0TGZRZZ\npMM/5vwLTkuzEFjqvj53ZSRupmAF94mt3goXj6nQiMItx78KrQOCAQUAAoIBAD/P\ndHzac4YzhZXuz/WZN+J6OKzniYVmU9C41HMpd2Ovl9isDdugg6uulRHXgMtJTkP0\nItRb355Eb4eOvJJu3FOrIqfLMk83dX123pMW3URjnQjRf6MQpq/IsmqV2eoOlcN8\nfOC0OBHg4TvlTTMui81PtAoM/99qwJn48CGaZj4rZ8pIHWIyvGUHKiJx06chN2Tu\npIi2OH084SsAFZ5YQaDPOZciuVYVZUiCZglpEr4ojvG8Gscp36EFjJHZHwEfgnSv\nPEkqXo/MqfRXOH868Wk011vRaQyPqdbtc2fbXrcTUe6x37ZN4HQ0nsMt7GDKnfcg\nnAfZb9LE8GoPjNBvYQE\x3D\n-----END PUBLIC KEY-----\n"
 	#tag EndConstant
 
 	#tag Constant, Name = UseSparkle, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"True"
+	#tag EndConstant
+
+	#tag Constant, Name = WinSparklePublicKey, Type = String, Dynamic = False, Default = \"-----BEGIN PUBLIC KEY-----\r\nMIIDOjCCAi0GByqGSM44BAEwggIgAoIBAQDI6xZ9nrExgcaSvbX/4gfS7bZQKM05\r\nHIw++81r7YlxOGw+GQEZzD73m/qq2P++jZttHwvIl0AWiILlTsdTeqoykceoz0jm\r\nyag6hZWFwo6jbyB0lvO59JipKyaygov1gx3TGFMxN/BRoKEPoBGkfbB00vS/9pQZ\r\nwk4+28+MeBQQwO4Z1BCm4xZ9l/rCqrfDyPSc1zEIfEHxB/7r5rERsxzIp+Z7bSSs\r\naF1JFwIQb7NISFBWB3S5p+vpGIeGZkE/0fZ9NkUHxpTL/7Er/cVZxAVH+yZgFg3h\r\ndTKwgWE1Hh6oA+31c19J/Oivd+zZVccvu//UXvJ8v1N0u723RaiDIptxAhUA/MRp\r\n4RFNsVJ01KI4K52HuGeuvXUCggEAR1KjYB6sFT2Q23H5afwNq/dsfbiUIq0Vnu7i\r\nE32sa5EQUynMJ07hVi9n4tpDqVvo/GRvqWMLk775aqcw40QYv1XHX3FZoSU7iu4z\r\nVBGqd5VgiCpKsLXGWnDypt+WHv2S1xnsWTGAa7lFldJjbuGL3EOE7tQwaSMeeteA\r\nJD3kl23s8FOVbRkLextddYMdh1adzggRItkHHMuq0Nj+/TkSOiQ9AHrlLJML32hV\r\nGyDqp8sTGt/z7y7jRM49U9V+s18kBNSz3iCnKYaN2iZ3zzE+B2BVH6iLC0TGZRZZ\r\npMM/5vwLTkuzEFjqvj53ZSRupmAF94mt3goXj6nQiMItx78KrQOCAQUAAoIBAD/P\r\ndHzac4YzhZXuz/WZN+J6OKzniYVmU9C41HMpd2Ovl9isDdugg6uulRHXgMtJTkP0\r\nItRb355Eb4eOvJJu3FOrIqfLMk83dX123pMW3URjnQjRf6MQpq/IsmqV2eoOlcN8\r\nfOC0OBHg4TvlTTMui81PtAoM/99qwJn48CGaZj4rZ8pIHWIyvGUHKiJx06chN2Tu\r\npIi2OH084SsAFZ5YQaDPOZciuVYVZUiCZglpEr4ojvG8Gscp36EFjJHZHwEfgnSv\r\nPEkqXo/MqfRXOH868Wk011vRaQyPqdbtc2fbXrcTUe6x37ZN4HQ0nsMt7GDKnfcg\r\nnAfZb9LE8GoPjNBvYQE\x3D\r\n-----END PUBLIC KEY-----\r\n\r\n", Scope = Private
 	#tag EndConstant
 
 

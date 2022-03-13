@@ -143,16 +143,6 @@
 					Subdirectory = 
 					FolderItem = Li4vR1NBSUQudHh0
 				End
-				Begin CopyFilesBuildStep CopyWindowsFrameworks
-					AppliesTo = 1
-					Architecture = 0
-					Target = 0
-					Destination = 2
-					Subdirectory = 
-					FolderItem = Li4vLi4vU3BhcmtsZS9XaW5kb3dzJTIweDg2L1dpblNwYXJrbGUuZGxs
-					FolderItem = Li4vLi4vU3BhcmtsZS9XaW5kb3dzJTIweDg2L1dpblNwYXJrbGUubGli
-					FolderItem = Li4vLi4vU3BhcmtsZS9XaW5kb3dzJTIweDg2L1dpblNwYXJrbGUucGRi
-				End
 				Begin IDEScriptBuildStep DownloadClassesDebugWin , AppliesTo = 3, Architecture = 0, Target = 0
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then

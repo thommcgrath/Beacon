@@ -435,7 +435,6 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
    End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -495,6 +494,38 @@ End
 		  Else
 		    mInstance.Show
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub PresentInstallWindow()
+		  Self.Hide
+		  
+		  Var Message As String = "Beacon is ready to update."
+		  Var Explanation As String = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done"
+		  Var ActionCaption As String = "Install Now"
+		  Var CancelCaption As String = "Install On Quit"
+		  Var AlternateCaption As String = ""
+		  #if TargetMacOS
+		    Explanation = Explanation + "."
+		  #else
+		    Explanation = Explanation + ", or ""Show Archive"" to install the update yourself."
+		    AlternateCaption = "Show Archive"
+		  #endif
+		  
+		  Var Selection As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
+		  Select Case Selection
+		  Case BeaconUI.ConfirmResponses.Action
+		    App.LaunchUpdate(Self.mFile, True)
+		    Quit
+		    Self.Close
+		  Case BeaconUI.ConfirmResponses.Cancel
+		    App.LaunchUpdate(Self.mFile, False)
+		    Self.Close
+		  Case BeaconUI.ConfirmResponses.Alternate
+		    Self.mFile.Parent.Open
+		    Self.Close
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -620,7 +651,7 @@ End
 		  
 		  If Self.mFile.Exists Then
 		    If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
-		      App.LaunchUpdate(Self.mFile, False)
+		      Self.PresentInstallWindow()
 		      Return
 		    Else
 		      Self.mFile.Remove
@@ -714,32 +745,7 @@ End
 		  End If
 		  
 		  If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
-		    Self.Hide
-		    
-		    Var Message As String = "Beacon is ready to update."
-		    Var Explanation As String = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done"
-		    Var ActionCaption As String = "Install Now"
-		    Var CancelCaption As String = "Install On Quit"
-		    Var AlternateCaption As String = ""
-		    #if TargetMacOS
-		      Explanation = Explanation + "."
-		    #else
-		      Explanation = Explanation + ", or ""Show Archive"" to install the update yourself."
-		      AlternateCaption = "Show Archive"
-		    #endif
-		    
-		    Var Selection As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
-		    Select Case Selection
-		    Case BeaconUI.ConfirmResponses.Action
-		      App.LaunchUpdate(Self.mFile, False)
-		      Self.Close
-		    Case BeaconUI.ConfirmResponses.Cancel
-		      App.LaunchUpdate(Self.mFile, True)
-		      Self.Close
-		    Case BeaconUI.ConfirmResponses.Alternate
-		      Self.mFile.Parent.Open
-		      Self.Close
-		    End Select
+		    Self.PresentInstallWindow()
 		    Return
 		  End If
 		  
