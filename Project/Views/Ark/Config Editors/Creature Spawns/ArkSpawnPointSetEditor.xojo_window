@@ -1369,8 +1369,8 @@ End
 		  If Self.Width < ScaleDownStartWidth Or Self.Height < 600 Then
 		    Var WidthPercent As Double = 1.0 - ((ScaleDownStartWidth - Self.Width) / (ScaleDownStartWidth - Self.MinEditorWidth))
 		    Var HeightPercent As Double = 1.0 - ((ScaleDownStartHeight - Self.Height) / (ScaleDownStartHeight - Self.MinEditorHeight))
-		    MajorMargin = 10 + (10 * Min(WidthPercent, HeightPercent))
-		    MinorMargin = 10 + (2 * Min(WidthPercent, HeightPercent))
+		    MajorMargin = 10 + Round(10 * Min(WidthPercent, HeightPercent))
+		    MinorMargin = 10 + Round(2 * Min(WidthPercent, HeightPercent))
 		  End If
 		  
 		  Self.NameLabel.Left = MajorMargin
@@ -1388,11 +1388,9 @@ End
 		  Var AvailableWidth As Integer = Self.Width - ((MajorMargin * 2) + MinorMargin)
 		  Var ReplacementsWidth As Integer = Max(AvailableWidth * 0.4, ReplaceMinWidth)
 		  Var EntriesWidth As Integer = AvailableWidth - ReplacementsWidth
-		  Var DownsizeButtons As Boolean
 		  If EntriesWidth < ReplaceMinWidth Then
 		    EntriesWidth = Ceiling(AvailableWidth / 2)
 		    ReplacementsWidth = Floor(AvailableWidth / 2)
-		    DownsizeButtons = True
 		  End If
 		  
 		  Self.EntriesGroup.Left = MajorMargin

@@ -372,7 +372,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable, BeaconSubview.Notification_ViewShown)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_UpdateAvailable)
 		  #if TargetMacOS
 		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
 		  #endif
@@ -461,7 +461,7 @@ End
 		  #endif
 		  
 		  UpdatesKit.Init()
-		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable, BeaconSubview.Notification_ViewShown)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_UpdateAvailable)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True

@@ -216,7 +216,6 @@ Implements ObservationKit.Observable
 		Sub SwitchedTo(UserData As Variant = Nil)
 		  Self.mIsFrontmost = True
 		  RaiseEvent Shown(UserData)
-		  NotificationKit.Post(Self.Notification_ViewShown, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -486,9 +485,6 @@ Implements ObservationKit.Observable
 		ViewTitle As String
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = Notification_ViewShown, Type = String, Dynamic = False, Default = \"BeaconSubview Shown", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = ProgressIndeterminate, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant

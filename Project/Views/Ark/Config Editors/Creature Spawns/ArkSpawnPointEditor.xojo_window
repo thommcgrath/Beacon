@@ -484,7 +484,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function MinEditorWidth() As Integer
-		  Return SetsListMinWidth + ArkSpawnPointSetEditor.MinEditorWidth + 1
+		  Return SetsListMinWidth + ArkSpawnPointSetEditor.MinEditorWidth
 		End Function
 	#tag EndMethod
 
@@ -815,6 +815,7 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"217"
 	#tag EndConstant
 
 
