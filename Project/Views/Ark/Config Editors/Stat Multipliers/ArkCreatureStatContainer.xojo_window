@@ -1455,33 +1455,70 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Resize()
-		  Var AvailableWidth As Integer = Self.Group.Width - 64
-		  Var FieldWidth As Integer = Self.MultiplierField(0).Width
-		  Var LabelWidths As Integer = Floor((AvailableWidth - FieldWidth) / 2)
-		  Var Remainder As Integer = AvailableWidth - (FieldWidth + (LabelWidths * 2))
-		  Var LeftLabelWidth As Integer = LabelWidths + Remainder
-		  Var RightLabelWidth As Integer = LabelWidths
-		  Var StartingLeft As Integer = Self.Group.Left + 20
+		  Const NormalFieldWidth = 50
 		  
-		  Var Bound As Integer
 		  Var Stats() As Ark.Stat = Ark.Stats.All
+		  Var BaseLabels(), ComputedLabels() As Label
 		  For Each Stat As Ark.Stat In Stats
-		    Bound = Max(Bound, Stat.Index)
-		  Next
+		    BaseLabels.Add(Self.BaseLabel(Stat.Index))
+		    ComputedLabels.Add(Self.ComputedLabel(Stat.Index))
+		  Next Stat
+		  BeaconUI.SizeToFit(BaseLabels)
+		  BeaconUI.SizeToFit(ComputedLabels)
 		  
-		  For I As Integer = 0 To Bound
-		    If (BaseLabel(I) Is Nil) = False Then
-		      BaseLabel(I).Width = LeftLabelWidth
+		  Var BaseLeft As Integer = Self.Group.Left + 20
+		  Var BaseWidth As Integer = Self.BaseLabel(0).Width
+		  Var FieldLeft As Integer = BaseLeft + BaseWidth + 12
+		  Var FieldWidth As Integer = NormalFieldWidth
+		  Var ComputedLeft As Integer = FieldLeft + NormalFieldWidth + 12
+		  Var ComputedWidth As Integer = Self.ComputedLabel(0).Width
+		  
+		  Var IdealWidth As Integer = BaseWidth + 12 + FieldWidth + 12 + ComputedWidth
+		  Var AvailableWidth As Integer = Self.Group.Width - 40
+		  If IdealWidth <= AvailableWidth Then
+		    // Fits nicely
+		    FieldWidth = AvailableWidth - (IdealWidth - NormalFieldWidth)
+		    ComputedLeft = FieldLeft + FieldWidth + 12
+		  Else
+		    // Not so nice...
+		    // Computed value gets priority
+		    Var RemainingWidth As Integer = AvailableWidth - (NormalFieldWidth + 12 + Self.ComputedLabel(0).Width)
+		    If RemainingWidth > 20 Then
+		      BaseWidth = RemainingWidth - 12
+		      FieldLeft = BaseLeft + BaseWidth + 12
+		      ComputedLeft = FieldLeft + FieldWidth + 12
+		    Else
+		      // Base can't fit at all.
+		      FieldLeft = BaseLeft
+		      BaseLeft = 0
+		      BaseWidth = 0
+		      RemainingWidth = AvailableWidth - NormalFieldWidth
+		      If RemainingWidth > 20 Then
+		        ComputedLeft = FieldLeft + FieldWidth + 12
+		        FieldWidth = AvailableWidth - (ComputedWidth + 12)
+		      Else
+		        // Can't fit the computed value either
+		        ComputedLeft = 0
+		        ComputedWidth = 0
+		        FieldWidth = AvailableWidth
+		      End If
 		    End If
-		    If (MultiplierField(I) Is Nil) = False Then
-		      MultiplierField(I).Left = StartingLeft + LeftLabelWidth + 12
-		      MultiplierField(I).Width = FieldWidth
+		  End If
+		  
+		  For Each Stat As Ark.Stat In Stats
+		    If (Self.BaseLabel(Stat.Index) Is Nil) = False Then
+		      Self.BaseLabel(Stat.Index).Left = BaseLeft
+		      Self.BaseLabel(Stat.Index).Width = BaseWidth
 		    End If
-		    If (ComputedLabel(I) Is Nil) = False Then
-		      ComputedLabel(I).Left = StartingLeft + LeftLabelWidth + 12 + FieldWidth + 12
-		      ComputedLabel(I).Width = RightLabelWidth
+		    If (Self.MultiplierField(Stat.Index) Is Nil) = False Then
+		      Self.MultiplierField(Stat.Index).Left = FieldLeft
+		      Self.MultiplierField(Stat.Index).Width = FieldWidth
 		    End If
-		  Next
+		    If (Self.ComputedLabel(Stat.Index) Is Nil) = False Then
+		      Self.ComputedLabel(Stat.Index).Left = ComputedLeft
+		      Self.ComputedLabel(Stat.Index).Width = ComputedWidth
+		    End If
+		  Next Stat
 		End Sub
 	#tag EndMethod
 
@@ -1597,6 +1634,7 @@ End
 		      StatComputedLabel.Tooltip = StatComputedLabel.Text.Middle(2)
 		    End If
 		  Next
+		  Self.Resize()
 		  Self.mSettingUp = False
 		End Sub
 	#tag EndMethod

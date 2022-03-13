@@ -4406,7 +4406,16 @@ End
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
-		  Var CreatureAvailableWidth As Integer = Self.Width - 118
+		  Var StatLabelWidth As Integer
+		  Var Stats() As Ark.Stat = Ark.Stats.All
+		  For Each Stat As Ark.Stat In Stats
+		    If (Self.CreatureStatLabel(Stat.Index) Is Nil) = False And Self.CreatureStatLabel(Stat.Index).Visible Then
+		      StatLabelWidth = Self.CreatureStatLabel(Stat.Index).Width
+		      Exit
+		    End If
+		  Next Stat
+		  
+		  Var CreatureAvailableWidth As Integer = Self.Width - (StatLabelWidth + 40)
 		  Var CreatureGroupWidth As Integer = Floor(CreatureAvailableWidth / 4)
 		  Var CreatureRemainder As Integer = CreatureAvailableWidth - (CreatureGroupWidth * 4)
 		  
@@ -4415,6 +4424,7 @@ End
 		  Var ThirdWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 2, 1, 0)
 		  Var FourthWidth As Integer = CreatureGroupWidth
 		  
+		  Self.WildCreatureStats.Left = 26 + StatLabelWidth
 		  Self.WildCreatureStats.Width = FirstWidth
 		  Self.TamedCreatureStats.Left = Self.WildCreatureStats.Left + FirstWidth
 		  Self.TamedCreatureStats.Width = SecondWidth
@@ -4473,7 +4483,7 @@ End
 		    End If
 		    
 		    Var Creature As Ark.Creature = Ark.Creature(Blueprint)
-		    If Creature.StatBaseValue(Health) = Ark.Creature.MissingStatValue Then
+		    If Creature.StatsMask = 0 Or Creature.StatBaseValue(Health) = Ark.Creature.MissingStatValue Then
 		      Continue
 		    End If
 		    
@@ -4500,12 +4510,15 @@ End
 		  
 		  Var TopPos As Integer = 137
 		  Var Stats() As Ark.Stat = Ark.Stats.All
+		  Var StatLabels() As Label
 		  For Each Stat As Ark.Stat In Stats
 		    Var Visible As Boolean = (Creature.StatsMask And Stat.Mask) = Stat.Mask
 		    Var StatLabel As Label = CreatureStatLabel(Stat.Index)
 		    If StatLabel Is Nil Then
 		      Continue
 		    End If
+		    
+		    StatLabels.Add(StatLabel)
 		    
 		    If StatLabel.Visible <> Visible Then
 		      StatLabel.Visible = Visible
@@ -4519,7 +4532,9 @@ End
 		    End If
 		  Next
 		  
+		  BeaconUI.SizeToFit(StatLabels)
 		  Self.MinimumHeight = Max(495, TopPos + 8)
+		  Self.Resize(True)
 		  
 		  Self.WildCreatureStats.UpdateFigures(Ark.Creature.KeyWild, Config, Creature, OnlyStatIndex, Self.SettingUp, False, True)
 		  Self.TamedCreatureStats.UpdateFigures(Ark.Creature.KeyTamed, Config, Creature, OnlyStatIndex, Self.SettingUp, True, False)
@@ -4574,8 +4589,67 @@ End
 		      PerLevelComputedLabel.Tooltip = PerLevelComputedLabel.Text.Middle(2)
 		    End If
 		  Next
+		  
+		  Var StatLabels(), PerLevelLabels() As Label
+		  For Each Stat As Ark.Stat In Stats
+		    StatLabels.Add(Self.PlayerStatLabel(Stat.Index))
+		    PerLevelLabels.Add(Self.PlayerPerLevelAmountLabel(Stat.Index))
+		  Next Stat
+		  BeaconUI.SizeToFit(StatLabels)
+		  BeaconUI.SizeToFit(PerLevelLabels)
+		  
+		  Var BaseColumnLeft As Integer = Self.PlayerStatLabel(0).Right + 12
+		  Var BaseColumnWidth As Integer = Self.PlayerBaseColumnLabel.IdealWidth + 10
+		  Var PerLevelAmountLeft As Integer = BaseColumnLeft + BaseColumnWidth + 40
+		  Var PerLevelFieldWidth As Integer = Self.PlayerPerLevelColumnLabel.IdealWidth + 10
+		  Var PerLevelFieldLeft As Integer = PerLevelAmountLeft + Self.PlayerPerLevelAmountLabel(0).Width + 12
+		  Var PerLevelComputedLeft As Integer = PerLevelFieldLeft + PerLevelFieldWidth + 12
+		  
+		  Self.PlayerBaseColumnLabel.Left = BaseColumnLeft
+		  Self.PlayerBaseColumnLabel.Width = BaseColumnWidth
+		  Self.PlayerPerLevelColumnLabel.Left = PerLevelFieldLeft
+		  Self.PlayerPerLevelColumnLabel.Width = PerLevelFieldWidth
+		  For Each Stat As Ark.Stat In Stats
+		    If (Self.PlayerBaseField(Stat.Index) Is Nil) = False Then
+		      Self.PlayerBaseField(Stat.Index).Left = BaseColumnLeft
+		      Self.PlayerBaseField(Stat.Index).Width = BaseColumnWidth
+		    End If
+		    
+		    If (Self.PlayerBaseLabel(Stat.Index) Is Nil) = False Then
+		      Self.PlayerBaseLabel(Stat.Index).Left = BaseColumnLeft
+		      Self.PlayerBaseLabel(Stat.Index).Width = BaseColumnWidth
+		    End If
+		    
+		    If (Self.PlayerPerLevelAmountLabel(Stat.Index) Is Nil) = False Then
+		      Self.PlayerPerLevelAmountLabel(Stat.Index).Left = PerLevelAmountLeft
+		    End If
+		    
+		    If (Self.PlayerPerLevelMultiplierField(Stat.Index) Is Nil) = False Then
+		      Self.PlayerPerLevelMultiplierField(Stat.Index).Left = PerLevelFieldLeft
+		      Self.PlayerPerLevelMultiplierField(Stat.Index).Width = PerLevelFieldWidth
+		    End If
+		    
+		    If (Self.PlayerPerLevelMultiplierLabel(Stat.Index) Is Nil) = False Then
+		      Self.PlayerPerLevelMultiplierLabel(Stat.Index).Left = PerLevelFieldLeft
+		      Self.PlayerPerLevelMultiplierLabel(Stat.Index).Width = PerLevelFieldWidth
+		    End If
+		    
+		    If (Self.PlayerPerLevelComputedLabel(Stat.Index) Is Nil) = False Then
+		      Self.PlayerPerLevelComputedLabel(Stat.Index).Left = PerLevelComputedLeft
+		    End If
+		  Next Stat
 		End Sub
 	#tag EndMethod
+
+
+	#tag Constant, Name = PageCreatureStats, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageMutagenBonuses, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PagePlayerStats, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -4583,12 +4657,20 @@ End
 #tag Events PagePanel1
 	#tag Event
 		Sub Change()
-		  Var Bound As Integer = Self.ConfigToolbar.LastIndex
-		  For Idx As Integer = 0 To Bound
-		    If (Self.ConfigToolbar.Item(Idx) Is Nil) = False Then
-		      Self.ConfigToolbar.Item(Idx).Toggled = (Idx = Me.SelectedPanelIndex)
-		    End If
-		  Next
+		  Select Case Me.SelectedPanelIndex
+		  Case Self.PageCreatureStats
+		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = True
+		    Self.ConfigToolbar.Item("MutagenButton").Toggled = False
+		    Self.ConfigToolbar.Item("PlayersButton").Toggled = False
+		  Case Self.PageMutagenBonuses
+		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = False
+		    Self.ConfigToolbar.Item("MutagenButton").Toggled = True
+		    Self.ConfigToolbar.Item("PlayersButton").Toggled = False
+		  Case Self.PagePlayerStats
+		    Self.ConfigToolbar.Item("CreaturesButton").Toggled = False
+		    Self.ConfigToolbar.Item("MutagenButton").Toggled = False
+		    Self.ConfigToolbar.Item("PlayersButton").Toggled = True
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -4743,8 +4825,14 @@ End
 		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  #Pragma Unused ItemRect
 		  
-		  Var Idx As Integer = Me.IndexOf(Item)
-		  Self.PagePanel1.SelectedPanelIndex = Idx
+		  Select Case Item.Name
+		  Case "PlayersButton"
+		    Self.PagePanel1.SelectedPanelIndex = Self.PagePlayerStats
+		  Case "CreaturesButton"
+		    Self.PagePanel1.SelectedPanelIndex = Self.PageCreatureStats
+		  Case "MutagenButton"
+		    Self.PagePanel1.SelectedPanelIndex = Self.PageMutagenBonuses
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -248,6 +248,10 @@ Protected Module BeaconUI
 		  Var Pic As New Picture(20, 20)
 		  Var G As Graphics = Pic.Graphics
 		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Or Targets(Idx).Visible = False Then
+		      Continue
+		    End If
+		    
 		    G.FontName = Targets(Idx).FontName
 		    G.FontSize = Targets(Idx).FontSize
 		    G.FontUnit = Targets(Idx).FontUnit
@@ -641,6 +645,10 @@ Protected Module BeaconUI
 		Protected Sub SizeToFit(Targets() As Label)
 		  Var Width As Integer = IdealWidth(Targets)
 		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    If Targets(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
 		    Targets(Idx).Width = Width
 		  Next Idx
 		End Sub

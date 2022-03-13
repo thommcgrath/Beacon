@@ -22,13 +22,13 @@ Inherits ContainerControl
 
 	#tag Event
 		Sub Resized()
-		  Self.HandleResize()
+		  Self.Resize()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Resizing()
-		  Self.HandleResize()
+		  Self.Resize()
 		End Sub
 	#tag EndEvent
 
@@ -39,13 +39,21 @@ Inherits ContainerControl
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub HandleResize()
+	#tag Method, Flags = &h1
+		Protected Function ParentContainer() As BeaconContainer
+		  If (Self.Window Is Nil) = False And Self.Window IsA BeaconContainer Then
+		    Return BeaconContainer(Self.Window)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Resize(Force As Boolean = False)
 		  If Not Self.mFinishedOpening Then
 		    Return
 		  End If
 		  
-		  If Self.mLastWidth = Self.Width And Self.mLastHeight = Self.Height Then
+		  If Force = False And Self.mLastWidth = Self.Width And Self.mLastHeight = Self.Height Then
 		    Return
 		  End If
 		  
@@ -60,14 +68,6 @@ Inherits ContainerControl
 		  RaiseEvent Resize(Self.mFirstResize)
 		  Self.mFirstResize = False
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ParentContainer() As BeaconContainer
-		  If (Self.Window Is Nil) = False And Self.Window IsA BeaconContainer Then
-		    Return BeaconContainer(Self.Window)
-		  End If
-		End Function
 	#tag EndMethod
 
 
