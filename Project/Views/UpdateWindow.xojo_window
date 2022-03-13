@@ -469,6 +469,7 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
       End
    End
    Begin Timer DownloadWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
@@ -707,7 +708,7 @@ End
 		Sub Action()
 		  #if TargetMacOS
 		    Var Dialog As New SaveFileDialog
-		    Dialog.SuggestedFileName = Self.mFilename
+		    Dialog.SuggestedFileName = "Beacon.dmg"
 		    Dialog.PromptText = "Choose a location for the update file"
 		    
 		    Var File As FolderItem = Dialog.ShowModal(Self.TrueWindow)
