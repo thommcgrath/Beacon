@@ -230,6 +230,37 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function IdealWidth(Extends Target As Label) As Integer
+		  Return IdealWidth(Target)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealWidth(ParamArray Targets() As Label) As Integer
+		  Return IdealWidth(Targets)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IdealWidth(Targets() As Label) As Integer
+		  Var MaxWidth As Integer
+		  Var Pic As New Picture(20, 20)
+		  Var G As Graphics = Pic.Graphics
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    G.FontName = Targets(Idx).FontName
+		    G.FontSize = Targets(Idx).FontSize
+		    G.FontUnit = Targets(Idx).FontUnit
+		    G.Bold = Targets(Idx).Bold
+		    G.Italic = Targets(Idx).Italic
+		    G.Underline = Targets(Idx).Underline
+		    
+		    MaxWidth = Max(MaxWidth, Ceiling(G.TextWidth(Targets(Idx).Text)))
+		  Next Idx
+		  Return MaxWidth
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function IsBright(Extends Source As Color) As Boolean
 		  Return Source.Luminance > 0.65
@@ -598,6 +629,27 @@ Protected Module BeaconUI
 		  
 		  Return ShowConfirm(Win, Message, "This action cannot be undone.", If(Restore, "Restore", "Delete"), "Cancel")
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SizeToFit(Extends Target As Label)
+		  SizeToFit(Target)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SizeToFit(Targets() As Label)
+		  Var Width As Integer = IdealWidth(Targets)
+		  For Idx As Integer = Targets.FirstIndex To Targets.LastIndex
+		    Targets(Idx).Width = Width
+		  Next Idx
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SizeToFit(ParamArray Targets() As Label)
+		  SizeToFit(Targets)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

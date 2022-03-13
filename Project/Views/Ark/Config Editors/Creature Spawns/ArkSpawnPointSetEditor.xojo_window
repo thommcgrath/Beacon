@@ -426,6 +426,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -433,7 +434,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   472
    End
@@ -470,6 +470,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "500"
       TextAlignment   =   2
       TextColor       =   &c00000000
       Tooltip         =   ""
@@ -477,7 +478,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
-      Value           =   "500"
       Visible         =   True
       Width           =   80
    End
@@ -506,13 +506,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Name:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Name:"
       Visible         =   True
       Width           =   71
    End
@@ -541,13 +541,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Weight:"
       TextAlignment   =   3
       TextColor       =   &c00000000
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Weight:"
       Visible         =   True
       Width           =   71
    End
@@ -627,13 +627,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Min Water Height:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   494
          Transparent     =   False
          Underline       =   False
-         Value           =   "Min Water Height:"
          Visible         =   True
          Width           =   136
       End
@@ -662,13 +662,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Spread Radius:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   460
          Transparent     =   False
          Underline       =   False
-         Value           =   "Spread Radius:"
          Visible         =   True
          Width           =   136
       End
@@ -697,13 +697,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Distance Multipliers:"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   584
          Transparent     =   False
          Underline       =   False
-         Value           =   "Distance Multipliers:"
          Visible         =   True
          Width           =   136
       End
@@ -732,13 +732,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Offset (X, Y, Z):"
          TextAlignment   =   3
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   426
          Transparent     =   False
          Underline       =   False
-         Value           =   "Offset (X, Y, Z):"
          Visible         =   True
          Width           =   136
       End
@@ -776,6 +776,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -783,7 +784,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -821,6 +821,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -828,7 +829,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -866,6 +866,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -873,7 +874,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -911,6 +911,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -918,7 +919,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -956,6 +956,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -963,7 +964,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -1001,6 +1001,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1008,7 +1009,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -1046,6 +1046,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1053,7 +1054,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -1091,6 +1091,7 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   ""
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
@@ -1098,7 +1099,6 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   89
       End
@@ -1160,13 +1160,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Players"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   560
          Transparent     =   False
          Underline       =   False
-         Value           =   "Players"
          Visible         =   True
          Width           =   89
       End
@@ -1195,13 +1195,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Structures"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   560
          Transparent     =   False
          Underline       =   False
-         Value           =   "Structures"
          Visible         =   True
          Width           =   89
       End
@@ -1230,13 +1230,13 @@ Begin BeaconContainer ArkSpawnPointSetEditor
          TabIndex        =   17
          TabPanelIndex   =   0
          TabStop         =   True
+         Text            =   "Tames"
          TextAlignment   =   2
          TextColor       =   &c00000000
          Tooltip         =   ""
          Top             =   560
          Transparent     =   False
          Underline       =   False
-         Value           =   "Tames"
          Visible         =   True
          Width           =   89
       End
@@ -1348,13 +1348,40 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Open()
+		  Self.NameLabel.SizeToFit
+		  Self.WeightLabel.SizeToFit
+		  BeaconUI.SizeToFit(Self.OffsetLabel, Self.SpreadRadiusLabel, Self.WaterMinHeightLabel, Self.DistanceMultipliersLabel, Self.ColorSetsLabel)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
 		  Const ReplaceMinWidth = 304
 		  Const DesiredButtonsWidth = 80
 		  
-		  Var AvailableWidth As Integer = Self.Width - 52
+		  Var MajorMargin As Integer = 20
+		  Var MinorMargin As Integer = 12
+		  If Self.Width < 660 Or Self.Height < 600 Then
+		    MajorMargin = 10
+		    MinorMargin = 10
+		  End If
+		  
+		  Self.NameLabel.Left = MajorMargin
+		  Self.NameLabel.Top = Self.SpawnSetToolbar.Bottom + MajorMargin
+		  Self.WeightStepper.Top = Self.NameLabel.Top
+		  Self.WeightStepper.Left = Self.Width - (Self.WeightStepper.Width + MajorMargin)
+		  Self.WeightField.Top = Self.NameLabel.Top
+		  Self.WeightField.Left = Self.WeightStepper.Left - (Self.WeightField.Width + 1)
+		  Self.WeightLabel.Top = Self.WeightField.Top
+		  Self.WeightLabel.Left = Self.WeightField.Left - (Self.WeightLabel.Width + MinorMargin)
+		  Self.NameField.Top = Self.NameLabel.Top
+		  Self.NameField.Left = Self.NameLabel.Right + MinorMargin
+		  Self.NameField.Width = Self.WeightLabel.Left - (Self.NameField.Left + MinorMargin)
+		  
+		  Var AvailableWidth As Integer = Self.Width - ((MajorMargin * 2) + MinorMargin)
 		  Var ReplacementsWidth As Integer = Max(AvailableWidth * 0.4, ReplaceMinWidth)
 		  Var EntriesWidth As Integer = AvailableWidth - ReplacementsWidth
 		  Var DownsizeButtons As Boolean
@@ -1364,42 +1391,67 @@ End
 		    DownsizeButtons = True
 		  End If
 		  
+		  Self.EntriesGroup.Left = MajorMargin
+		  Self.EntriesGroup.Top = Self.NameLabel.Bottom + MajorMargin
 		  Self.EntriesGroup.Width = EntriesWidth
-		  Self.ReplaceGroup.Left = Self.EntriesGroup.Left + Self.EntriesGroup.Width + 12
+		  Self.ReplaceGroup.Left = Self.EntriesGroup.Right + MinorMargin
+		  Self.ReplaceGroup.Top = Self.EntriesGroup.Top
 		  Self.ReplaceGroup.Width = ReplacementsWidth
 		  
-		  If DownSizeButtons Then
-		    Var MaxButtonsWidth As Integer = Floor((Self.EntriesList.Width - 24) / 3)
-		    Var Remainder As Integer = (Self.EntriesList.Width - 24) - (MaxButtonsWidth * 3)
-		    
-		    Self.EntryAddButton.Left = Self.EntriesList.Left
-		    Self.EntryAddButton.Width = MaxButtonsWidth + If(Remainder > 0, 1, 0)
-		    Self.EntryEditButton.Left = Self.EntryAddButton.Left + Self.EntryAddButton.Width + 12
-		    Self.EntryEditButton.Width = MaxButtonsWidth + If(Remainder > 1, 1, 0)
-		    Self.EntryDeleteButton.Left = Self.EntryEditButton.Left + Self.EntryEditButton.Width + 12
-		    Self.EntryDeleteButton.Width = MaxButtonsWidth + If(Remainder > 2, 1, 0)
-		    
-		    Self.ReplaceAddButton.Left = Self.ReplaceList.Left
-		    Self.ReplaceAddButton.Width = MaxButtonsWidth + If(Remainder > 0, 1, 0)
-		    Self.ReplaceEditButton.Left = Self.ReplaceAddButton.Left + Self.ReplaceAddButton.Width + 12
-		    Self.ReplaceEditButton.Width = MaxButtonsWidth + If(Remainder > 1, 1, 0)
-		    Self.ReplaceDeleteButton.Left = Self.ReplaceEditButton.Left + Self.ReplaceEditButton.Width + 12
-		    Self.ReplaceDeleteButton.Width = MaxButtonsWidth + If(Remainder > 2, 1, 0)
-		  ElseIf Self.EntryAddButton.Width <> DesiredButtonsWidth Then
-		    Self.EntryAddButton.Left = Self.EntriesList.Left
-		    Self.EntryAddButton.Width = DesiredButtonsWidth
-		    Self.EntryEditButton.Left = Self.EntryAddButton.Left + Self.EntryAddButton.Width + 12
-		    Self.EntryEditButton.Width = DesiredButtonsWidth
-		    Self.EntryDeleteButton.Left = Self.EntryEditButton.Left + Self.EntryEditButton.Width + 12
-		    Self.EntryDeleteButton.Width = DesiredButtonsWidth
-		    
-		    Self.ReplaceAddButton.Left = Self.ReplaceList.Left
-		    Self.ReplaceAddButton.Width = DesiredButtonsWidth
-		    Self.ReplaceEditButton.Left = Self.ReplaceAddButton.Left + Self.ReplaceAddButton.Width + 12
-		    Self.ReplaceEditButton.Width = DesiredButtonsWidth
-		    Self.ReplaceDeleteButton.Left = Self.ReplaceEditButton.Left + Self.ReplaceEditButton.Width + 12
-		    Self.ReplaceDeleteButton.Width = DesiredButtonsWidth
-		  End If
+		  Self.SizeGroup(Self.EntriesGroup, Self.EntriesList, Self.EntryAddButton, Self.EntryEditButton, Self.EntryDeleteButton, MajorMargin, MinorMargin)
+		  Self.SizeGroup(Self.ReplaceGroup, Self.ReplaceList, Self.ReplaceAddButton, Self.ReplaceEditButton, Self.ReplaceDeleteButton, MajorMargin, MinorMargin)
+		  
+		  Self.OffsetLabel.Top = Self.AdvancedGroup.Top + 16 + MajorMargin
+		  Self.OffsetLabel.Left = Self.AdvancedGroup.Left + MajorMargin
+		  Self.OffsetFields(0).Top = Self.OffsetLabel.Top
+		  Self.OffsetFields(0).Left = Self.OffsetLabel.Right + MinorMargin
+		  Self.OffsetFields(1).Top = Self.OffsetLabel.Top
+		  Self.OffsetFields(1).Left = Self.OffsetFields(0).Right + MinorMargin
+		  Self.OffsetFields(2).Top = Self.OffsetLabel.Top
+		  Self.OffsetFields(2).Left = Self.OffsetFields(1).Right + MinorMargin
+		  
+		  Self.SpreadRadiusLabel.Top = Self.OffsetLabel.Bottom + MinorMargin
+		  Self.SpreadRadiusLabel.Left = Self.OffsetLabel.Left
+		  Self.SpreadRadiusField.Top = Self.SpreadRadiusLabel.Top
+		  Self.SpreadRadiusField.Left = Self.SpreadRadiusLabel.Right + MinorMargin
+		  
+		  Self.WaterMinHeightLabel.Top = Self.SpreadRadiusLabel.Bottom + MinorMargin
+		  Self.WaterMinHeightLabel.Left = Self.OffsetLabel.Left
+		  Self.WaterMinHeightField.Top = Self.WaterMinHeightLabel.Top
+		  Self.WaterMinHeightField.Left = Self.WaterMinHeightLabel.Right + MinorMargin
+		  
+		  Self.OffsetBeforeMultiplierCheck.Top = Self.WaterMinHeightField.Bottom + MinorMargin
+		  Self.OffsetBeforeMultiplierCheck.Left = Self.WaterMinHeightField.Left
+		  
+		  Self.PlayerDistanceLabel.Top = Self.OffsetBeforeMultiplierCheck.Bottom + MinorMargin
+		  Self.PlayerDistanceLabel.Left = Self.OffsetBeforeMultiplierCheck.Left
+		  Self.StructureDistanceLabel.Top = Self.PlayerDistanceLabel.Top
+		  Self.StructureDistanceLabel.Left = Self.PlayerDistanceLabel.Right + MinorMargin
+		  Self.TameDistanceLabel.Top = Self.PlayerDistanceLabel.Top
+		  Self.TameDistanceLabel.Left = Self.StructureDistanceLabel.Right + MinorMargin
+		  
+		  Self.PlayerDistanceField.Top = Self.PlayerDistanceLabel.Bottom + 4
+		  Self.PlayerDistanceField.Left = Self.PlayerDistanceLabel.Left
+		  Self.StructureDistanceField.Top = Self.PlayerDistanceField.Top
+		  Self.StructureDistanceField.Left = Self.StructureDistanceLabel.Left
+		  Self.TameDistanceField.Top = Self.PlayerDistanceField.Top
+		  Self.TameDistanceField.Left = Self.TameDistanceLabel.Left
+		  Self.DistanceMultipliersLabel.Top = Self.PlayerDistanceField.Top
+		  Self.DistanceMultipliersLabel.Left = Self.OffsetLabel.Left
+		  
+		  Self.ColorSetsLabel.Top = Self.DistanceMultipliersLabel.Bottom + MinorMargin
+		  Self.ColorSetsLabel.Left = Self.OffsetLabel.Left
+		  Self.ColorSetsMenu.Top = Self.ColorSetsLabel.Top
+		  Self.ColorSetsMenu.Left = Self.ColorSetsLabel.Right + MinorMargin
+		  
+		  Var AdvancedInnerHeight As Integer = Self.ColorSetsMenu.Bottom - Self.OffsetLabel.Top
+		  Self.AdvancedGroup.Height = AdvancedInnerHeight + 16 + (MajorMargin * 2)
+		  Self.AdvancedGroup.Width = Self.Width - (MajorMargin * 2)
+		  Self.AdvancedGroup.Top = Self.Height - (MajorMargin + Self.AdvancedGroup.Height)
+		  Self.AdvancedGroup.Left = MajorMargin
+		  
+		  Self.EntriesGroup.Height = Self.AdvancedGroup.Top - (MajorMargin + Self.EntriesGroup.Top)
+		  Self.ReplaceGroup.Height = Self.EntriesGroup.Height
 		End Sub
 	#tag EndEvent
 
@@ -1408,6 +1460,35 @@ End
 		Private Function Project() As Ark.Project
 		  Return RaiseEvent GetProject
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Sub SizeGroup(Group As GroupBox, List As Listbox, AddButton As PushButton, EditButton As PushButton, DeleteButton As PushButton, MajorMargin As Integer, MinorMargin As Integer)
+		  Const DesiredButtonsWidth = 80
+		  
+		  List.Left = Group.Left + MajorMargin
+		  List.Width = Group.Width - (MajorMargin * 2)
+		  List.Top = Group.Top + 16 + MajorMargin
+		  AddButton.Top = Group.Bottom - (MajorMargin + AddButton.Height)
+		  EditButton.Top = AddButton.Top
+		  DeleteButton.Top = AddButton.Top
+		  List.Height = AddButton.Top - (MinorMargin + List.Top)
+		  If List.Width < ((DesiredButtonsWidth * 3) + (MinorMargin * 2)) Then
+		    Var BaseButtonsWidth As Integer = Floor((List.Width - (MinorMargin * 2)) / 3)
+		    Var Remainder As Integer = List.Width - ((MinorMargin * 2) + (BaseButtonsWidth * 3))
+		    
+		    AddButton.Width = BaseButtonsWidth + If(Remainder > 0, 1, 0)
+		    EditButton.Width = BaseButtonsWidth + If(Remainder > 1, 1, 0)
+		    DeleteButton.Width = BaseButtonsWidth + If(Remainder > 2, 1, 0)
+		  Else
+		    AddButton.Width = DesiredButtonsWidth
+		    EditButton.Width = DesiredButtonsWidth
+		    DeleteButton.Width = DesiredButtonsWidth
+		  End If
+		  AddButton.Left = List.Left
+		  EditButton.Left = AddButton.Right + MinorMargin
+		  DeleteButton.Left = EditButton.Right + MinorMargin
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
