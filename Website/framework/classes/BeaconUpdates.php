@@ -22,15 +22,30 @@ abstract class BeaconUpdates {
 	const PLATFORM_WINDOWS = 'Windows';
 	const PLATFORM_LINUX = 'Linux';
 	
-	public static function FindUpdates(int $current_build, int $device_mask, int $channel): array {
+	public static function FindUpdates(int $current_build, int $device_mask, int $channel, string|null $device_os = null): array {
 		$database = BeaconCommon::Database();
 		$updates = [];
-		$sql = 'SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version, CASE WHEN UPPER_INC(lock_versions) THEN UPPER(lock_versions) ELSE UPPER(lock_versions) - 1 END AS critical_version FROM updates WHERE stage >= $1 AND build_number > $2 ORDER BY build_number DESC';
+		$values = [$channel, $current_build];
+		$sql = 'SELECT update_id, build_number, build_display, stage, preview, notes, min_mac_version, min_win_version, EXTRACT(epoch FROM published) AS release_date, delta_version, CASE WHEN UPPER_INC(lock_versions) THEN UPPER(lock_versions) ELSE UPPER(lock_versions) - 1 END AS critical_version FROM updates WHERE stage >= $1 AND build_number > $2';
+		if (is_null($device_os) === false) {
+			list($device_platform, $osversion) = explode(' ', $device_os, 2);
+			switch ($device_platform) {
+			case self::PLATFORM_MACOS:
+				$sql .= ' AND os_version_as_integer(min_mac_version) <= os_version_as_integer($3)';
+				$values[] = $osversion;
+				break;
+			case self::PLATFORM_WINDOWS:
+				$sql .= ' AND os_version_as_integer(min_win_version) <= os_version_as_integer($3)';
+				$values[] = $osversion;
+				break;
+			}
+		}
+		$sql .= ' ORDER BY build_number DESC';
 		if ($current_build <= 0) {
 			$sql .= ' LIMIT 10';
 		}
 		$sql .= ';';
-		$rows = $database->Query($sql, $channel, $current_build);
+		$rows = $database->Query($sql, $values);
 		while ($rows->EOF() === false) {
 			$update_id = $rows->Field('update_id');
 			$downloads = $database->Query('SELECT download_urls.url, download_urls.platform, download_signatures.format, download_signatures.signature, download_urls.architectures FROM download_urls INNER JOIN download_signatures ON (download_signatures.download_id = download_urls.download_id) WHERE download_urls.update_id = $1', $update_id);

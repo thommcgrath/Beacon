@@ -21,6 +21,21 @@ if (isset($_GET['html'])) {
 	header('Content-Type: application/json');
 }
 
+$device_os = null;
+if (isset($_GET['platform']) && isset($_GET['osversion'])) {
+	switch ($_GET['platform']) {
+	case 'mac':
+		$device_os = BeaconUpdates::PLATFORM_MACOS . ' ' . $_GET['osversion'];
+		break;
+	case 'win':
+		$device_os = BeaconUpdates::PLATFORM_WINDOWS . ' ' . $_GET['osversion'];
+		break;
+	case 'lin':
+		$device_os = BeaconUpdates::PLATFORM_LINUX . ' ' . $_GET['osversion'];
+		break;
+	}
+}
+
 // Beacon 1.2.0 and its betas did not report architecture correctly
 $device_mask = BeaconUpdates::ARCH_INTEL32;
 if ($current_build >= 10201300 && isset($_GET['arch'])) {
@@ -42,7 +57,7 @@ if ($current_build >= 10201300 && isset($_GET['arch'])) {
 	}
 }
 
-$updates = BeaconUpdates::FindUpdates($current_build, $device_mask, $stage);
+$updates = BeaconUpdates::FindUpdates($current_build, $device_mask, $stage, $device_os);
 	
 $include_notices = $current_build > 33;
 $database = BeaconCommon::Database();
@@ -122,7 +137,6 @@ foreach ($updates as $update) {
 	} else {
 		$markdown .= "\n\n## Changes in " . $update['build_display'] . "\n\n" . $update['notes'];
 	}
-	$results->MoveNext();
 }
 
 $parser = new Parsedown();

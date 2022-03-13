@@ -39,6 +39,7 @@ if (isset($_GET['arch'])) {
 }
 
 $platform = 'any';
+$device_os = null;
 if (isset($_GET['platform'])) {
 	switch ($_GET['platform']) {
 	case 'mac':
@@ -51,9 +52,14 @@ if (isset($_GET['platform'])) {
 		$platform = BeaconUpdates::PLATFORM_LINUX;
 		break;
 	}
+	
+	$device_os = null;
+	if (isset($_GET['osversion'])) {
+		$device_os = $platform . ' ' . $_GET['osversion'];
+	}
 }
 
-$updates = BeaconUpdates::FindUpdates($current_build, $device_mask, $stage);
+$updates = BeaconUpdates::FindUpdates($current_build, $device_mask, $stage, $device_os);
 
 if (BeaconCommon::InProduction()) {
 	header('Content-Type: application/rss+xml');
