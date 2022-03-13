@@ -432,12 +432,47 @@ Begin BeaconWindow UpdateWindow Implements NotificationKit.Receiver
          Visible         =   True
          Width           =   64
       End
+      Begin Label DownloadStatusLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Starting download…"
+         TextAlignment   =   0
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   84
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   468
+      End
    End
-   Begin URLConnection Downloader
-      AllowCertificateValidation=   False
-      HTTPStatusCode  =   0
+   Begin Timer DownloadWatchTimer
       Index           =   -2147483648
       LockedInPosition=   False
+      Period          =   100
+      RunMode         =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -447,7 +482,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable)
+		  NotificationKit.Ignore(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable, UpdatesKit.Notification_UpdateDownloaded, UpdatesKit.Notification_DownloadError, UpdatesKit.Notification_DownloadStarted)
 		  
 		  Self.mInstance = Nil
 		End Sub
@@ -455,7 +490,11 @@ End
 
 	#tag Event
 		Sub Open()
-		  NotificationKit.Watch(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable)
+		  NotificationKit.Watch(Self, UpdatesKit.Notification_Error, UpdatesKit.Notification_NoUpdates, UpdatesKit.Notification_UpdateAvailable, UpdatesKit.Notification_UpdateDownloaded, UpdatesKit.Notification_DownloadError, UpdatesKit.Notification_DownloadStarted)
+		  
+		  If UpdatesKit.IsDownloading Then
+		    Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
+		  End If
 		  
 		  Self.SwapButtons()
 		End Sub
@@ -472,12 +511,50 @@ End
 		      App.ShowBugReporter()
 		    End If
 		    
-		    Self.Close
+		    If UpdatesKit.AvailableUpdateRequired Then
+		      Quit
+		    Else
+		      Self.Close
+		    End If
 		  Case UpdatesKit.Notification_NoUpdates
 		    Self.ShowAlert("You are using the latest version.", "Beacon automatically checks for updates on each launch so you won't miss a release.")
 		    Self.Close
 		  Case UpdatesKit.Notification_UpdateAvailable
-		    Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature)
+		    If UpdatesKit.AvailableUpdateRequired Then
+		      Self.DownloadMessageLabel.Text = "Downloading required update…"
+		    End If
+		    If Preferences.AutomaticallyDownloadsUpdates Then
+		      Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
+		    Else
+		      Self.ShowResults(UpdatesKit.AvailableDisplayVersion, UpdatesKit.AvailableNotesURL, UpdatesKit.AvailableDownloadURL, UpdatesKit.AvailableSignature)
+		    End If
+		  Case UpdatesKit.Notification_UpdateDownloaded
+		    If Preferences.AutomaticallyDownloadsUpdates Then
+		      Self.Hide
+		      Var InstallNow As Boolean
+		      If UpdatesKit.AvailableUpdateRequired Then
+		        InstallNow = True
+		        BeaconUI.ShowAlert(Self, "A required update to Beacon " + UpdatesKit.AvailableDisplayVersion + " has been downloaded and will now be installed.", "Beacon will be relaunched when the install is finished.")
+		      Else
+		        InstallNow = BeaconUI.ShowConfirm(Self, "An update to Beacon " + UpdatesKit.AvailableDisplayVersion + " has been downloaded and will be installed when you exit Beacon.", "You can choose to install the update now if you would prefer.", "Install Now", "Cancel")
+		      End If
+		      If InstallNow Then
+		        App.LaunchUpdate(UpdatesKit.AvailableUpdateFile, True)
+		        Quit
+		      End If
+		      Self.Close
+		    Else
+		      Self.PresentInstallWindow()
+		    End If
+		  Case UpdatesKit.Notification_DownloadError
+		    Var Message As String = Notification.UserData
+		    If Self.ShowConfirm("Unable to download for update.", Message, "Report Now", "Cancel") Then
+		      App.ShowBugReporter()
+		    End If
+		    
+		    Self.Close
+		  Case UpdatesKit.Notification_DownloadStarted
+		    Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -502,28 +579,35 @@ End
 		  Self.Hide
 		  
 		  Var Message As String = "Beacon is ready to update."
-		  Var Explanation As String = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done"
-		  Var ActionCaption As String = "Install Now"
-		  Var CancelCaption As String = "Install On Quit"
-		  Var AlternateCaption As String = ""
-		  #if TargetMacOS
-		    Explanation = Explanation + "."
-		  #else
-		    Explanation = Explanation + ", or ""Show Archive"" to install the update yourself."
-		    AlternateCaption = "Show Archive"
-		  #endif
 		  
-		  Var Selection As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
+		  Var Selection As BeaconUI.ConfirmResponses
+		  If UpdatesKit.AvailableUpdateRequired Then
+		    BeaconUI.ShowAlert(Message, "Beacon will now quit to install the update.")
+		    Selection = BeaconUI.ConfirmResponses.Action
+		  Else
+		    Var Explanation As String = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done with Beacon."
+		    Var ActionCaption As String = "Install Now"
+		    Var CancelCaption As String = "Install On Quit"
+		    Var AlternateCaption As String = ""
+		    #if TargetMacOS
+		      Explanation = Explanation + "."
+		    #else
+		      Explanation = Explanation + ", or ""Show Archive"" to install the update yourself."
+		      AlternateCaption = "Show Archive"
+		    #endif
+		    
+		    Selection = Self.ShowConfirm(Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
+		  End If
 		  Select Case Selection
 		  Case BeaconUI.ConfirmResponses.Action
-		    App.LaunchUpdate(Self.mFile, True)
+		    App.LaunchUpdate(UpdatesKit.AvailableUpdateFile, True)
 		    Quit
 		    Self.Close
 		  Case BeaconUI.ConfirmResponses.Cancel
-		    App.LaunchUpdate(Self.mFile, False)
+		    App.LaunchUpdate(UpdatesKit.AvailableUpdateFile, False)
 		    Self.Close
 		  Case BeaconUI.ConfirmResponses.Alternate
-		    Self.mFile.Parent.Open
+		    UpdatesKit.AvailableUpdateFile.Parent.Open
 		    Self.Close
 		  End Select
 		End Sub
@@ -531,6 +615,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowResults(Version As String, NotesURL As String, URL As String, Signature As String)
+		  #Pragma Unused Version
+		  
 		  Self.mURL = URL
 		  Self.mSignature = Signature
 		  Self.mNotesURL = NotesURL
@@ -542,33 +628,10 @@ End
 		    Self.ResultsExplanationLabel.Text = "This update is required. Beacon will not function until updated."
 		  End If
 		  
-		  Var PathComponents() As String = FrameworkExtensions.FieldAtPosition(URL, "?", 1).Split("/")
-		  Var Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastIndex), "#", 1)
-		  Var FilenameParts() As String = Filename.Split(".")
-		  Var Extension As String = FilenameParts(FilenameParts.LastIndex)
-		  
-		  Self.mFilename = "Beacon " + Version + "." + Extension
-		  
-		  #if Not TargetMacOS
-		    Var Folder As FolderItem = App.ApplicationSupport.Child("Updates")
-		    If Not Folder.Exists Then
-		      Folder.CreateFolder
-		    End If
-		    Self.mFile = Folder.Child(Self.mFilename)
-		  #endif
-		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.ViewResults
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mFile As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mFilename As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As UpdateWindow
@@ -622,6 +685,8 @@ End
 		    Self.Height = Self.HeightDownload
 		    Self.Resizeable = False
 		  End Select
+		  
+		  Self.DownloadWatchTimer.RunMode = If(Me.SelectedPanelIndex = Self.ViewDownload, Timer.RunModes.Multiple, Timer.RunModes.Off)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -629,14 +694,18 @@ End
 	#tag Event
 		Sub Action()
 		  UpdatesKit.Cancel
-		  Self.Close
+		  If UpdatesKit.AvailableUpdateRequired Then
+		    Quit
+		  Else
+		    Self.Close
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ResultsActionButton
 	#tag Event
 		Sub Action()
-		  If Self.mFile = Nil Then
+		  #if TargetMacOS
 		    Var Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mFilename
 		    Dialog.PromptText = "Choose a location for the update file"
@@ -646,22 +715,11 @@ End
 		      Return
 		    End If
 		    
-		    Self.mFile = File
-		  End If
+		    UpdatesKit.AvailableUpdateFile = File
+		  #endif
 		  
-		  If Self.mFile.Exists Then
-		    If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
-		      Self.PresentInstallWindow()
-		      Return
-		    Else
-		      Self.mFile.Remove
-		    End If
-		  End If
-		  
-		  Self.Downloader.Send("GET", Self.mURL)
-		  Self.DownloadProgressBar.MaximumValue = 0
+		  UpdatesKit.DownloadUpdate
 		  Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
-		  Me.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -679,8 +737,12 @@ End
 #tag Events DownloadCancelButton
 	#tag Event
 		Sub Action()
-		  Self.Downloader.Disconnect
-		  Self.Close
+		  UpdatesKit.Cancel
+		  If UpdatesKit.AvailableUpdateRequired Then
+		    Quit
+		  Else
+		    Self.Close
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -702,61 +764,21 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Downloader
+#tag Events DownloadWatchTimer
 	#tag Event
-		Sub Error(e As RuntimeException)
-		  Me.Disconnect
-		  
-		  Self.ShowAlert("Unable to Download Update", e.Message)
-		  
-		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HeadersReceived(URL As String, HTTPStatus As Integer)
-		  If HTTPStatus <> 200 Then
-		    Me.Disconnect
-		    
-		    Self.ShowAlert("Unable to Download Update", "The address " + URL + " could not be found.")
-		    
-		    Self.Close
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ReceivingProgressed(bytesReceived As Int64, totalBytes As Int64, newData As String)
-		  #Pragma Unused NewData
-		  
+		Sub Action()
 		  If Self.DownloadProgressBar.MaximumValue <> 1000 Then
 		    Self.DownloadProgressBar.MaximumValue = 1000
 		  End If
-		  Self.DownloadProgressBar.Value = ((BytesReceived + NewData.Bytes) / TotalBytes) * Self.DownloadProgressBar.MaximumValue
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
-		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
 		  
-		  If Self.mFile.Write(Content) = False Then
-		    Self.ShowAlert("There was an error saving the new version.", "Attempted to save the new version to " + Self.mFile.NativePath)
-		    Self.Close
-		    Return
-		  End If
+		  Var BytesDownloaded As Int64 = UpdatesKit.DownloadedBytes
+		  Var BytesTotal As Int64 = UpdatesKit.TotalBytesToDownload
+		  Self.DownloadProgressBar.Value = (BytesDownloaded / BytesTotal) * Self.DownloadProgressBar.MaximumValue
 		  
-		  If UpdatesKit.VerifyFile(Self.mFile, Self.mSignature) Then
-		    Self.PresentInstallWindow()
-		    Return
-		  End If
+		  Var BytesPerSecond As Double = UpdatesKit.DownloadRate
+		  Var RemainingSeconds As Double = UpdatesKit.DownloadSecondsRemaining
 		  
-		  Self.mFile.Remove
-		  Self.mFile = Nil
-		  
-		  If Self.ShowConfirm("Unable to Download Update", "The file was downloaded, but the integrity check did not match. Please report this problem.", "Report Now", "Cancel") Then
-		    App.ShowBugReporter()
-		  End If
-		  
-		  Self.Close
+		  Self.DownloadStatusLabel.Text = "Downloaded " + Beacon.BytesToString(BytesDownloaded) + " of " + Beacon.BytesToString(BytesTotal) + " at " + Beacon.BytesToString(BytesPerSecond) + "ps, " + Beacon.SecondsToString(True, RemainingSeconds) + " remaining"
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -37,6 +37,18 @@ Protected Module UpdatesKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function AvailableUpdateFile() As FolderItem
+		  Return mUpdateFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub AvailableUpdateFile(Assigns File As FolderItem)
+		  mUpdateFile = File
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function AvailableUpdateRequired() As Boolean
 		  Return mAvailableUpdateRequired
 		End Function
@@ -48,6 +60,10 @@ Protected Module UpdatesKit
 		    If (mSocket Is Nil) = False Then
 		      mSocket.Disconnect
 		      mSocket = Nil
+		    End If
+		    If (mDownloader Is Nil) = False Then
+		      mDownloader.Disconnect
+		      mDownloader = Nil
 		    End If
 		    
 		    mChecking = False
@@ -114,6 +130,59 @@ Protected Module UpdatesKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DownloadedBytes() As Int64
+		  Return mDownloadedBytes
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DownloadRate() As Double
+		  Return mDownloadRate
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DownloadSecondsRemaining() As Double
+		  Return mDownloadSecondsRemaining
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub DownloadUpdate()
+		  If mUpdateFile Is Nil Then
+		    Var PathComponents() As String = FrameworkExtensions.FieldAtPosition(mAvailableDownloadURL, "?", 1).Split("/")
+		    Var Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastIndex), "#", 1)
+		    Var FilenameParts() As String = Filename.Split(".")
+		    Var Extension As String = FilenameParts(FilenameParts.LastIndex)
+		    Filename = "Beacon " + mAvailableDisplayVersion + "." + Extension
+		    
+		    Var Folder As FolderItem = App.ApplicationSupport.Child("Updates")
+		    If Not Folder.Exists Then
+		      Folder.CreateFolder
+		    End If
+		    mUpdateFile = Folder.Child(Filename)
+		  End If
+		  
+		  If VerifyFile(mUpdateFile, mAvailableSignature) Then
+		    // Start or present the install
+		    InstallUpdate()
+		    Return
+		  ElseIf mUpdateFile.Exists Then
+		    mUpdateFile.Remove
+		  End If
+		  
+		  mIsDownloading = True
+		  mDownloadStart = System.Microseconds
+		  mDownloader = New URLConnection
+		  AddHandler mDownloader.ReceivingProgressed, AddressOf mDownloader_ReceivingProgressed
+		  AddHandler mDownloader.FileReceived, AddressOf mDownloader_FileReceived
+		  AddHandler mDownloader.Error, AddressOf mDownloader_Error
+		  mDownloader.Send("GET", mAvailableDownloadURL, mUpdateFile)
+		  NotificationKit.Post(Notification_DownloadStarted, Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub Init()
 		  #if UseSparkle
 		    Var CheckInterval As Integer
@@ -166,6 +235,16 @@ Protected Module UpdatesKit
 		      mWinSparkle = Updater
 		    #endif
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub InstallUpdate()
+		  If Preferences.AutomaticallyDownloadsUpdates Then
+		    App.LaunchUpdate(mUpdateFile, False)
+		  End If
+		  
+		  NotificationKit.Post(Notification_UpdateDownloaded, mUpdateFile)
 		End Sub
 	#tag EndMethod
 
@@ -282,6 +361,12 @@ Protected Module UpdatesKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function IsDownloading() As Boolean
+		  Return mIsDownloading
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function IsUpdateAvailable() As Boolean
 		  #if Not UseSparkle
 		    Return mAvailableDisplayVersion.IsEmpty = False
@@ -297,6 +382,57 @@ Protected Module UpdatesKit
 		  If (mLastCheckTime Is Nil) Or DateTime.Now.SecondsFrom1970 - mLastCheckTime.SecondsFrom1970 >= 86400 Then
 		    Check()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDownloader_Error(Sender As URLConnection, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  mIsDownloading = False
+		  NotificationKit.Post(Notification_DownloadError, Err.Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDownloader_FileReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, File As FolderItem)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  #Pragma Unused File
+		  
+		  mIsDownloading = False
+		  
+		  If HTTPStatus <> 200 Then
+		    Var Message As String
+		    If HTTPStatus = 404 Then
+		      Message = "The update file could not be found."
+		    Else
+		      Message = "The update file could not be downloaded due to an HTTP " + HTTPStatus.ToString(Locale.Raw, "0") + " error."
+		    End If
+		    NotificationKit.Post(Notification_DownloadError, Message)
+		    Return
+		  End If
+		  
+		  If VerifyFile(mUpdateFile, mAvailableSignature) = False Then
+		    NotificationKit.Post(Notification_DownloadError, "The file was downloaded, but the integrity check did not match. Please report this problem.")
+		    Return
+		  End If
+		  
+		  InstallUpdate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDownloader_ReceivingProgressed(Sender As URLConnection, BytesReceived As Int64, BytesTotal As Int64, NewData As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused NewData
+		  
+		  mTotalBytesToDownload = BytesTotal
+		  mDownloadedBytes = BytesReceived + NewData.Bytes
+		  Var Elapsed As Double = System.Microseconds - mDownloadStart
+		  mDownloadRate = mDownloadedBytes / (Elapsed / 1000000)
+		  Var RemainingBytes As Int64 = BytesTotal - mDownloadedBytes
+		  mDownloadSecondsRemaining = RemainingBytes / mDownloadRate
 		End Sub
 	#tag EndMethod
 
@@ -356,6 +492,10 @@ Protected Module UpdatesKit
 		    #endif
 		    mAvailableDownloadURL = Location.Value("url")
 		    mAvailableSignature = Location.Value("signature")
+		    
+		    If Preferences.AutomaticallyDownloadsUpdates Then
+		      DownloadUpdate()
+		    End If
 		    
 		    NotificationKit.Post(Notification_UpdateAvailable, LatestBuild)
 		  Catch Err As RuntimeException
@@ -462,6 +602,12 @@ Protected Module UpdatesKit
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function TotalBytesToDownload() As Int64
+		  Return mTotalBytesToDownload
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function UpdateCheckParams() As Dictionary
 		  Var Params As New Dictionary
@@ -561,6 +707,30 @@ Protected Module UpdatesKit
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDownloadedBytes As Int64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDownloader As URLConnection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDownloadRate As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDownloadSecondsRemaining As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDownloadStart As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsDownloading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastCheckTime As DateTime
 	#tag EndProperty
 
@@ -573,9 +743,23 @@ Protected Module UpdatesKit
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mTotalBytesToDownload As Int64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mWinSparkle As WinSparkleMBS
 	#tag EndProperty
 
+
+	#tag Constant, Name = Notification_DownloadError, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.error", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_DownloadStarted, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.download_started", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = Notification_Error, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.error", Scope = Protected
 	#tag EndConstant
@@ -584,6 +768,9 @@ Protected Module UpdatesKit
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_UpdateAvailable, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.available", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_UpdateDownloaded, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.updates.downloaded", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = PublicKey, Type = String, Dynamic = False, Default = \"30820120300D06092A864886F70D01010105000382010D003082010802820101008F9D9B313D28FDE0FD2100032D2E1A7F968A2E4975AF93A507823A95EFFE6A73176BD76D1286CC5DE513D3F4163F6F4E3D2A2FC472D540533020035FA0ED3FDFA33CBA289A94753D70546544459BE69E99B3B08AACBF489DEFA45BA1CC04DE0976DE2DABDC523A13FCEAE701468D994FEC116F30D44B307FD80AB13B1E15E76EA8B1366EC22E814F15D8021993FAE0BA39DF440EEF17550BC3A6CE2831A1B479E93088F2CAACFD19179D1C0744F0293A94C06D8F7D1D73C089D950F86953C2605F70462A889C4A1160B70192C1F97964F0741ED74713E10FF9CDC5BE6205385E5245297D41C31A75067699CB85D9FA6F806E8C770C5E91D706BCD5426C3080B1020111", Scope = Private

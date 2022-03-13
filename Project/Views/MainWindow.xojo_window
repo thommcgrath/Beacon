@@ -715,7 +715,14 @@ End
 		    Return
 		  End If
 		  
-		  If UpdatesKit.IsUpdateAvailable Then
+		  Var ShowUpdateBar As Boolean = UpdatesKit.IsUpdateAvailable And Preferences.AutomaticallyDownloadsUpdates = False
+		  If UpdatesKit.AvailableUpdateRequired Then
+		    ShowUpdateBar = False
+		    Call App.HandleURL("beacon://action/checkforupdate")
+		    Self.Hide
+		  End If
+		  
+		  If ShowUpdateBar Then
 		    Var Preview As String = UpdatesKit.AvailablePreview
 		    If Preview.IsEmpty = False Then
 		      Preview = Preview + " Click here to update."

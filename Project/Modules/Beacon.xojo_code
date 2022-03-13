@@ -1174,7 +1174,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToString(ParamArray Intervals() As Double) As String
+		Protected Function SecondsToString(Human As Boolean, ParamArray Intervals() As Double) As String
+		  Return SecondsToString(Human, Intervals)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SecondsToString(Human As Boolean, Intervals() As Double) As String
 		  Var WithDays, WithHours, WithMinutes As Boolean = True
 		  For Each Interval As Double In Intervals
 		    WithDays = WithDays And Interval >= SecondsPerDay
@@ -1184,7 +1190,7 @@ Protected Module Beacon
 		  
 		  Var Values() As String
 		  For Each Interval As Double In Intervals
-		    Values.Add(SecondsToString(Interval, WithDays, WithHours, WithMinutes))
+		    Values.Add(SecondsToString(Interval, WithDays, WithHours, WithMinutes, Human))
 		  Next
 		  
 		  If Intervals.Count = 1 Then
@@ -1197,8 +1203,14 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SecondsToString(ParamArray Intervals() As Double) As String
+		  Return SecondsToString(False, Intervals)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Function SecondsToString(Seconds As Double, WithDays As Boolean, WithHours As Boolean, WithMinutes As Boolean) As String
+		Private Function SecondsToString(Seconds As Double, WithDays As Boolean, WithHours As Boolean, WithMinutes As Boolean, Human As Boolean) As String
 		  Var Days, Hours, Minutes As Integer
 		  
 		  If WithDays Then
@@ -1218,16 +1230,16 @@ Protected Module Beacon
 		  
 		  Var Parts() As String
 		  If Days > 0 Then
-		    Parts.Add(Days.ToString(Locale.Raw, "0") + "d")
+		    Parts.Add(If(Human, Language.NounWithQuantity(Days, "day", "days"), Days.ToString(Locale.Raw, "0") + "d"))
 		  End If
 		  If Hours > 0 Then
-		    Parts.Add(Hours.ToString(Locale.Raw, "0") + "h")
+		    Parts.Add(If(Human, Language.NounWithQuantity(Hours, "hour", "hours"), Hours.ToString(Locale.Raw, "0") + "h"))
 		  End If
 		  If Minutes > 0 Then
-		    Parts.Add(Minutes.ToString(Locale.Raw, "0") + "m")
+		    Parts.Add(If(Human, Language.NounWithQuantity(Minutes, "minute", "minutes"), Minutes.ToString(Locale.Raw, "0") + "m"))
 		  End If
-		  If Seconds > 0 Then
-		    Parts.Add(Seconds.PrettyText(False) + "s")
+		  If Seconds > 0 Or (Parts.Count = 0 And Human) Then
+		    Parts.Add(If(Human, Language.NounWithQuantity(Round(Seconds), "second", "seconds"), Seconds.PrettyText(False) + "s"))
 		  End If
 		  Return Parts.Join(" ")
 		End Function

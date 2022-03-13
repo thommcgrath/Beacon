@@ -1329,6 +1329,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
+		  #Pragma Unused Action
+		  
 		  Var Files() As FolderItem
 		  Do
 		    If Obj.FolderItemAvailable Then

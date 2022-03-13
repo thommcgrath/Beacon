@@ -33,11 +33,11 @@ Implements NotificationKit.Receiver,Beacon.Application
 		      Self.Log("Launching " + Self.mUpdateFile.NativePath)
 		      
 		      If TargetWindows And Self.mUpdateFile.Name.EndsWith(".exe") Then
-		        Var Params As String = "/SILENT /SP- /NOICONS /CLOSEAPPLICATIONS"
+		        Var Params As String = "/SP- /NOICONS /CLOSEAPPLICATIONS"
 		        If Self.mRelaunchAfterUpdate Then
-		          Params = Params + " /RESTARTAPPLICATIONS"
+		          Params = "/SILENT " + Params + " /RESTARTAPPLICATIONS"
 		        Else
-		          Params = Params + " /NOLAUNCH"
+		          Params = "/VERYSILENT " + Params + " /NOLAUNCH"
 		        End If
 		        Self.mUpdateFile.Open(Params)
 		      Else
@@ -509,7 +509,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  #elseif TargetWindows
 		    Var FolderNames() As String = Array(Self.ExecutableFile.NameWithoutExtensionMBS + " Libs", "Libs")
 		    For Each FolderName As String In FolderNames
-		      Var Folder As New FolderItem(FolderName)
+		      Var Folder As FolderItem = Self.ExecutableFile.Parent.Child(FolderName)
 		      If Folder.Exists Then
 		        Return Folder
 		      End If
