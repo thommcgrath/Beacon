@@ -1361,12 +1361,16 @@ End
 		  
 		  Const ReplaceMinWidth = 304
 		  Const DesiredButtonsWidth = 80
+		  Const ScaleDownStartWidth = 660
+		  Const ScaleDownStartHeight = 600
 		  
 		  Var MajorMargin As Integer = 20
 		  Var MinorMargin As Integer = 12
-		  If Self.Width < 660 Or Self.Height < 600 Then
-		    MajorMargin = 10
-		    MinorMargin = 10
+		  If Self.Width < ScaleDownStartWidth Or Self.Height < 600 Then
+		    Var WidthPercent As Double = 1.0 - ((ScaleDownStartWidth - Self.Width) / (ScaleDownStartWidth - Self.MinEditorWidth))
+		    Var HeightPercent As Double = 1.0 - ((ScaleDownStartHeight - Self.Height) / (ScaleDownStartHeight - Self.MinEditorHeight))
+		    MajorMargin = 10 + (10 * Min(WidthPercent, HeightPercent))
+		    MinorMargin = 10 + (2 * Min(WidthPercent, HeightPercent))
 		  End If
 		  
 		  Self.NameLabel.Left = MajorMargin
@@ -1726,6 +1730,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = kReplacementClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.ark.spawn.replacement", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MinEditorHeight, Type = Double, Dynamic = False, Default = \"535", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = MinEditorWidth, Type = Double, Dynamic = False, Default = \"519", Scope = Public
