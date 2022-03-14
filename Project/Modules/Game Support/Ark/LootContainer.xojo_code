@@ -163,7 +163,11 @@ Implements Ark.Blueprint,Beacon.Countable,Iterable,Beacon.Validateable
 	#tag Method, Flags = &h0
 		Function DefaultItemSetWeight() As Double
 		  If Self.mItemSets.Count = 0 Then
-		    Return 500
+		    If Self.mAppendMode Then
+		      Return 0.5
+		    Else
+		      Return 500
+		    End If
 		  End If
 		  
 		  Var Sum As Double
