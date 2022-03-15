@@ -1185,9 +1185,9 @@ Implements NotificationKit.Receiver,Beacon.Application
 		    Return Nil
 		  End If
 		  If Local Then
-		    Return New DateTime(Value, New TimeZone(0))
-		  Else
 		    Return New DateTime(Value)
+		  Else
+		    Return New DateTime(Value, New TimeZone(0))
 		  End If
 		End Function
 	#tag EndMethod
