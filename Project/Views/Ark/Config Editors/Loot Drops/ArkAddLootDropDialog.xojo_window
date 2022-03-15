@@ -877,7 +877,20 @@ End
 		    Self.mDestinations.Add(Source.Clone)
 		  Next
 		  
-		  Self.ShowCustomize()
+		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
+		    // Skip the customize step, load defaults, and finish
+		    Var Instance As Ark.DataSource = Ark.DataSource.SharedInstance
+		    For Each Destination As Ark.LootContainer In Self.mDestinations
+		      Var Mutable As New Ark.MutableLootContainer(Destination)
+		      Instance.LoadDefaults(Mutable)
+		      Self.mConfig.Add(Mutable)
+		    Next
+		    
+		    Self.mCancelled = False
+		    Self.Hide
+		  Else
+		    Self.ShowCustomize()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1041,19 +1054,6 @@ End
 	#tag Event
 		Sub Action()
 		  Self.ChooseSelectedLootSources()
-		  
-		  If Self.LoadDefaultsCheckbox.Visible And Self.LoadDefaultsCheckbox.Value Then
-		    // Skip the customize step, load defaults, and finish
-		    Var Instance As Ark.DataSource = Ark.DataSource.SharedInstance
-		    For Each Destination As Ark.LootContainer In Self.mDestinations
-		      Var Mutable As New Ark.MutableLootContainer(Destination)
-		      Instance.LoadDefaults(Mutable)
-		      Self.mConfig.Add(Mutable)
-		    Next
-		    
-		    Self.mCancelled = False
-		    Self.Hide
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -776,7 +776,7 @@ End
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 0.00001
-		  MaxValue = 1000000
+		  MaxValue = 1000000000
 		End Sub
 	#tag EndEvent
 	#tag Event
