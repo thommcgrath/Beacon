@@ -60,7 +60,13 @@ Inherits Ark.IntegrationEngine
 		  Next
 		  For Each Flag As Ark.ConfigValue In Flags
 		    Var Key As String = Flag.Header + Flag.AttributedKey
-		    CommandLine.Value(Key) = Flag.AttributedKey
+		    If Flag.Details.ValueType = Ark.ConfigKey.ValueTypes.TypeBoolean Then
+		      If Flag.Value = "True" Then
+		        CommandLine.Value(Key) = Flag.AttributedKey
+		      ElseIf CommandLine.HasKey(Key) Then
+		        CommandLine.Remove(Key)
+		      End If
+		    End If
 		  Next
 		  
 		  Var ChainElements(), TailElements() As String
