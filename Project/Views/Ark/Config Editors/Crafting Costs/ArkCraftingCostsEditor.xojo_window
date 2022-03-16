@@ -853,8 +853,17 @@ End
 	#tag Event
 		Sub ContentsChanged()
 		  If Self.List.SelectedRowCount = 1 Then
-		    Self.List.CellValueAt(Self.List.SelectedRowIndex, 0) = Me.Target.Label
+		    Var Blocked As Boolean = Self.List.SelectionChangeBlocked
+		    Self.List.SelectionChangeBlocked = True
+		    
+		    Var Cost As Ark.CraftingCost = Me.Target
+		    Self.List.CellValueAt(Self.List.SelectedRowIndex, 0) = Cost.Label
+		    Self.List.RowTagAt(Self.List.SelectedRowIndex) = Cost
 		    Self.List.Sort
+		    
+		    Self.Config(True).Add(Cost)
+		    
+		    Self.List.SelectionChangeBlocked = Blocked
 		    Self.Changed = True
 		  End If
 		End Sub
