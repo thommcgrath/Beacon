@@ -187,6 +187,7 @@ Begin BeaconWindow SupportTicketWindow
    End
    Begin Thread SubmitThread
       DebugIdentifier =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -287,7 +288,9 @@ Begin BeaconWindow SupportTicketWindow
          TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   279
+         _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton AddAttachmentButton
@@ -1241,7 +1244,7 @@ End
 		  #if Self.EncryptArchive
 		    Parts.Add("Content-Disposition: form-data; name=""archive_key""" + EndOfLine.Windows + EndOfLine.Windows + EncryptedPassword)
 		  #endif
-		  Parts.Add("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + SystemInformationMBS.OSVersionString)
+		  Parts.Add("Content-Disposition: form-data; name=""os""" + EndOfLine.Windows + EndOfLine.Windows + Beacon.OSVersionString)
 		  Parts.Add("Content-Disposition: form-data; name=""version""" + EndOfLine.Windows + EndOfLine.Windows + App.Version)
 		  Parts.Add("Content-Disposition: form-data; name=""build""" + EndOfLine.Windows + EndOfLine.Windows + App.BuildNumber.ToString)
 		  

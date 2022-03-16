@@ -895,6 +895,43 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function OSName() As String
+		  #if TargetMacOS
+		    Return "macOS"
+		  #elseif TargetWindows
+		    Return "Windows"
+		  #elseif TargetLinux
+		    Return "Linux"
+		  #else
+		    #Pragma Error "Not implemented"
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function OSVersionString() As String
+		  #if TargetMacOS Or TargetWindows
+		    Return SystemInformationMBS.OSVersionString
+		  #elseif TargetLinux
+		    Var Sh As New Shell
+		    Sh.Execute("cat /etc/os-release")
+		    Var Reg As New Regex
+		    Reg.SearchPattern = "PRETTY_NAME=""([^\n""]+)"""
+		    
+		    Var Matches As RegexMatch = Reg.Search(Sh.Result.Trim)
+		    If (Matches Is Nil) = False Then
+		      Return Matches.SubExpressionString(1)
+		    Else
+		      // The information returned by this method is kind of useless, but something
+		      Return SystemInformationMBS.OSVersionString
+		    End If
+		  #else
+		    #Pragma Error "Not implemented"
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ParseCommandLine(CommandLine As String, PreserveSyntax As Boolean = False) As Dictionary
 		  // This shouldn't take long, but still, probably best to only use this on a thread
 		  

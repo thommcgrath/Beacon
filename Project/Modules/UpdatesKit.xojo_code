@@ -551,33 +551,23 @@ Protected Module UpdatesKit
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub OSVersion(ByRef MajorVersion As Integer, ByRef MinorVersion As Integer, ByRef BugVersion As Integer)
+	#tag Method, Flags = &h1
+		Protected Sub OSVersion(ByRef MajorVersion As Integer, ByRef MinorVersion As Integer, ByRef BugVersion As Integer)
 		  #if TargetMacOS
-		    Declare Function NSClassFromString Lib "AppKit" (ClassName As CFStringRef) As Ptr
-		    Declare Function ProcessInfo Lib "AppKit" Selector "processInfo" (ClassRef As Ptr) As Ptr
-		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (NSProcessInfo As Ptr) As MacOSVersion
-		    
-		    Var Info As Ptr = ProcessInfo(NSClassFromString("NSProcessInfo"))
-		    Var Struct As MacOSVersion = OperatingSystemVersion(Info)
-		    
-		    MajorVersion = Struct.Major
-		    MinorVersion = Struct.Minor
-		    BugVersion = Struct.Bug
+		    MajorVersion = SystemInformationMBS.MacMajorVersion
+		    MinorVersion = SystemInformationMBS.MacMinorVersion
+		    BugVersion = SystemInformationMBS.MacBugFixVersion
 		  #elseif TargetWin32
-		    If System.IsFunctionAvailable("RtlGetVersion", "ntdll.dll") Then
-		      Soft Declare Function RtlGetVersion Lib "ntdll.dll" (ByRef VersionInformation As WinOSVersion) As Int32
-		      
-		      Var Struct As WinOSVersion
-		      Struct.OSVersionInfoSize = WinOSVersion.Size
-		      
-		      Call RtlGetVersion(Struct)
-		      
-		      MajorVersion = Struct.MajorVersion
-		      MinorVersion = Struct.MinorVersion
-		      BugVersion = Struct.BuildNumber
-		    End If
+		    MajorVersion = SystemInformationMBS.WinMajorVersion
+		    MinorVersion = SystemInformationMBS.WinMinorVersion
+		    BugVersion = SystemInformationMBS.WinBuildNumber
 		  #elseif TargetLinux
+		    // System version numbers are pretty pointless on Linux since every distro will have
+		    // different values. There's no way to every make this make sense, so just set to 0.
+		    MajorVersion = 0
+		    MinorVersion = 0
+		    BugVersion = 0
+		  #else
 		    #Pragma Error "No implementation yet"
 		  #endif
 		End Sub

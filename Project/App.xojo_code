@@ -1419,7 +1419,7 @@ Implements NotificationKit.Receiver,Beacon.Application
 		  If Self.mUserAgent.IsEmpty Then
 		    Var Components() As String
 		    Components.Add("Language=Xojo/" + XojoVersionString)
-		    Components.Add("Platform=" + SystemInformationMBS.OSName + "/" + SystemInformationMBS.OSVersionString)
+		    Components.Add("Platform=" + Beacon.OSName + "/" + Beacon.OSVersionString)
 		    #if Target32Bit
 		      Components.Add("Architecture=32-bit " + If(TargetARM, "ARM", "Intel"))
 		    #else

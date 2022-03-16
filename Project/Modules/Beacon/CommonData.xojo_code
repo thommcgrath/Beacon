@@ -371,15 +371,7 @@ Inherits Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function GetNews() As NewsItem()
 		  Var OSMajor, OSMinor, OSBug As Integer
-		  #if TargetMacOS
-		    OSMajor = SystemInformationMBS.MacMajorVersion
-		    OSMinor = SystemInformationMBS.MacMinorVersion
-		    OSBug = SystemInformationMBS.MacBugFixVersion
-		  #elseif TargetWin32
-		    OSMajor = SystemInformationMBS.WinMajorVersion
-		    OSMinor = SystemInformationMBS.WinMinorVersion
-		    OSBug = SystemInformationMBS.WinBuildNumber
-		  #endif
+		  UpdatesKit.OSVersion(OSMajor, OSMinor, OSBug)
 		  
 		  Var BuildNumber As Integer = App.BuildNumber
 		  Var Rows As RowSet = Self.SQLSelect("SELECT uuid, title, COALESCE(detail, '') AS detail, COALESCE(url, '') AS url, min_os_version FROM news WHERE (min_version IS NULL OR min_version <= ?1) AND (max_version IS NULL OR max_version >= ?1) ORDER BY moment DESC;", BuildNumber)

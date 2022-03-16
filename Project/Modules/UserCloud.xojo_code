@@ -223,7 +223,19 @@ Protected Module UserCloud
 		    Return Nil
 		  End If
 		  
-		  Return LocalFile.Read
+		  Var Mem As MemoryBlock = LocalFile.Read
+		  If BeaconEncryption.IsEncrypted(Mem) Then
+		    Try
+		      Mem = BeaconEncryption.SymmetricDecrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Mem)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Cloud file is encrypted, but could not be decrypted by the active identity.")
+		      Return Nil
+		    End Try
+		  End If
+		  If Beacon.IsCompressed(Mem) Then
+		    Mem = Beacon.Decompress(Mem)
+		  End If
+		  Return Mem
 		End Function
 	#tag EndMethod
 
@@ -267,7 +279,9 @@ Protected Module UserCloud
 		    Var Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
 		    Stream.Close // Make a 0 byte file to track the modification date
 		    
-		    LocalFile.CreationDateTime = ModificationDate
+		    #if Not TargetLinux
+		      LocalFile.CreationDateTime = ModificationDate
+		    #endif
 		  End If
 		  LocalFile.ModificationDateTime = ModificationDate
 		  

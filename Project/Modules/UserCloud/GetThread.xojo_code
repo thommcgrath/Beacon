@@ -36,14 +36,18 @@ Inherits Thread
 		  If LocalFile <> Nil Then
 		    Try
 		      If LocalFile.Exists Then
-		        Var CreationDate As DateTime = LocalFile.CreationDateTime
+		        #if Not TargetLinux
+		          Var CreationDate As DateTime = LocalFile.CreationDateTime
+		        #endif
 		        Var ModificationDate As DateTime = LocalFile.ModificationDateTime
 		        Var Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
 		        Stream.BytePosition = 0
 		        Stream.Length = 0
 		        Stream.Write(Content)
 		        Stream.Close
-		        LocalFile.CreationDateTime = CreationDate
+		        #if Not TargetLinux
+		          LocalFile.CreationDateTime = CreationDate
+		        #endif
 		        LocalFile.ModificationDateTime = ModificationDate
 		      Else
 		        Var Stream As BinaryStream = BinaryStream.Create(LocalFile, True)

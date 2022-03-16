@@ -22,10 +22,12 @@ Inherits PushButton
 
 	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"5"
+		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"6"
 	#tag EndConstant
 
 	#tag Constant, Name = TopDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"-2"
+		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"-3"
 	#tag EndConstant
 
 

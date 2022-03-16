@@ -22,9 +22,11 @@ Inherits TextField
 
 	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"1"
+		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"2"
 	#tag EndConstant
 
 	#tag Constant, Name = TopDelta, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"-1"
 	#tag EndConstant
 
 

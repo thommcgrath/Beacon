@@ -582,7 +582,7 @@ Begin BeaconDialog ArkAddLootDropDialog
          ColumnWidths    =   "50,*"
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   34
+         DefaultRowHeight=   "#BeaconListbox.DoubleLineRowHeight"
          DefaultSortColumn=   0
          DefaultSortDirection=   0
          EditCaption     =   "Edit"
