@@ -596,7 +596,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton EngramAddIngredient
+      Begin UITweaks.ResizedPushButton EngramAddIngredient
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
@@ -1436,6 +1436,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1480,6 +1481,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1515,7 +1517,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
-      Begin PopupMenu LootIconColorMenu
+      Begin UITweaks.ResizedPopupMenu LootIconColorMenu
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -1547,7 +1549,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   155
       End
-      Begin PopupMenu LootIconMenu
+      Begin UITweaks.ResizedPopupMenu LootIconMenu
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -1607,6 +1609,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Top             =   190
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   0
          Width           =   155
@@ -1790,6 +1793,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1954,6 +1958,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -2024,7 +2029,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   132
       End
-      Begin PushButton LootSortSuggestButton
+      Begin UITweaks.ResizedPushButton LootSortSuggestButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
