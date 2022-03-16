@@ -69,7 +69,7 @@ Protected Module BeaconUI
 		    
 		    Declare Function GetCapHeight Lib "Cocoa.framework" Selector "capHeight" (Target As Ptr) As CGFloat
 		    Return GetCapHeight(FontObject)
-		  #elseif TargetWin32
+		  #elseif TargetWin32 or TargetLinux
 		    Return G.FontAscent * 0.75
 		  #else
 		    Return G.FontAscent

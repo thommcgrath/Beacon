@@ -1012,8 +1012,7 @@ Inherits Listbox
 	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = DoubleLineRowHeight, Type = Double, Dynamic = False, Default = \"34", Scope = Public
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"44"
+	#tag Constant, Name = DoubleLineRowHeight, Type = Double, Dynamic = False, Default = \"38", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = InvalidSelectedRowColor, Type = Color, Dynamic = False, Default = \"&c800000", Scope = Public
