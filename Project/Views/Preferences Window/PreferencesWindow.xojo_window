@@ -288,7 +288,7 @@ Begin BeaconWindow PreferencesWindow
       Underline       =   False
       Visible         =   True
       Width           =   280
-      Begin PopupMenu ChannelMenu
+      Begin UITweaks.ResizedPopupMenu ChannelMenu
          AllowAutoDeactivate=   True
          Bold            =   False
          DataField       =   ""
@@ -376,6 +376,7 @@ Begin BeaconWindow PreferencesWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         State           =   1
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
@@ -385,7 +386,6 @@ Begin BeaconWindow PreferencesWindow
          Underline       =   False
          Value           =   True
          Visible         =   True
-         VisualState     =   1
          Width           =   240
       End
    End

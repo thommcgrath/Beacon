@@ -161,7 +161,7 @@ Begin BeaconDialog IdentityDecryptDialog
       Visible         =   True
       Width           =   460
    End
-   Begin TextField PasswordField
+   Begin UITweaks.ResizedTextField PasswordField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

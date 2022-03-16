@@ -24,7 +24,7 @@ Begin BeaconDialog DefineStatDialog
    Type            =   8
    Visible         =   True
    Width           =   400
-   Begin PopupMenu StatMenu
+   Begin UITweaks.ResizedPopupMenu StatMenu
       AllowAutoDeactivate=   True
       Bold            =   False
       DataField       =   ""

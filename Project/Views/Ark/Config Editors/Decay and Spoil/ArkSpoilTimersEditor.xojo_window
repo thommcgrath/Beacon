@@ -1005,7 +1005,7 @@ Begin ArkConfigEditor ArkSpoilTimersEditor
             Width           =   358
          End
       End
-      Begin TextField SpoilTimeMultiplierField
+      Begin UITweaks.ResizedTextField SpoilTimeMultiplierField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False

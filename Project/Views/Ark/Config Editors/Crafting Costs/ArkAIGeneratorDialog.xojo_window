@@ -94,7 +94,7 @@ Begin Window ArkAIGeneratorDialog
       Visible         =   True
       Width           =   460
    End
-   Begin TextField PhraseField
+   Begin UITweaks.ResizedTextField PhraseField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False

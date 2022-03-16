@@ -747,7 +747,7 @@ Begin BeaconDialog RegisterModDialog
          Visible         =   True
          Width           =   480
       End
-      Begin TextField NameInputField
+      Begin UITweaks.ResizedTextField NameInputField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -890,14 +890,12 @@ Begin BeaconDialog RegisterModDialog
       End
    End
    Begin BeaconAPI.Socket RegisterSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket ConfirmSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
