@@ -131,7 +131,7 @@ Begin ArkConfigEditor ArkGeneralSettingsEditor
       DelayPeriod     =   250
       Enabled         =   True
       Height          =   22
-      Hint            =   ""
+      Hint            =   "Filter Settings"
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   493
